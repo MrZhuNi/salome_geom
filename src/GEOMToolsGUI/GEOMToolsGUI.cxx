@@ -34,6 +34,7 @@ using namespace std;
 #include "QAD_Tools.h"
 #include "QAD_MessageBox.h"
 #include "QAD_RightFrame.h"
+#include "QAD_PyEditor.h"
 
 #include "OCCViewer_Viewer3d.h"
 #include "VTKViewer_ViewFrame.h"
