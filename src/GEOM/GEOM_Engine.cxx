@@ -366,6 +366,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
  
   aScript = "import geompy\n\n";
   aScript += "def RebuildData(theStudy):";
+  aScript += "\tgeompy.init_geom(theStudy)";
   
   Handle(TDataStd_TreeNode) aNode, aRoot;
   Handle(GEOM_Function) aFunction;
