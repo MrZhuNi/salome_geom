@@ -49,7 +49,7 @@ msgstr "&Exploser"
 
 #: GeometryGUI.cxx:563
 msgid "GEOM_INF_LOADED"
-msgstr "Le fichier %1 est chargé."
+msgstr "Le fichier %1 est chargÃ©."
 
 #
 #==============================================================================
@@ -57,15 +57,15 @@ msgstr "Le fichier %1 est chargé."
 
 #: GeometryGUI.cxx:3069
 msgid "GEOM_PRP_COMMAND"
-msgstr "Pas de commande associée à l'id = %1."
+msgstr "Pas de commande associÃ©e Ã  l'id = %1."
 
 #: GeometryGUI.cxx:4977
 msgid "GEOM_PRP_ABORT"
-msgstr "L'opération a echoué"
+msgstr "L'opÃ©ration a echouÃ©"
 
 #: GeometryGUI.cxx:5058
 msgid "GEOM_PRP_DONE"
-msgstr "Opération effectuée"
+msgstr "OpÃ©ration effectuÃ©e"
 
 #: GeometryGUI.cxx:3717
 msgid "GEOM_PRP_LOADING"
@@ -73,11 +73,11 @@ msgstr "Chargement de %1 ..."
 
 #: GeometryGUI.cxx:1412
 msgid "GEOM_PRP_NULLSHAPE"
-msgstr "Erreur, objet inconsistant ou inapproprié !"
+msgstr "Erreur, objet inconsistant ou inappropriÃ© !"
 
 #: GeometryGUI.cxx:5072
 msgid "GEOM_PRP_READY"
-msgstr "Prêt..."
+msgstr "PrÃªt..."
 
 #: GeometryGUI.cxx:1690
 msgid "GEOM_PRP_SELECT_SUBSHAPES"
@@ -127,11 +127,11 @@ msgstr "Angle :"
 
 #: GeometryGUI.cxx:3941
 msgid "GEOM_MEN_COMPONENT"
-msgstr "Géometrie"
+msgstr "GÃ©ometrie"
 
 #: GeometryGUI.cxx:4389
 msgid "GEOM_MEN_ENTER_ANGLE"
-msgstr "Saisir un angle en degrés"
+msgstr "Saisir un angle en degrÃ©s"
 
 #: GeometryGUI.cxx:3758
 msgid "GEOM_MEN_EXPORT"
@@ -250,7 +250,7 @@ msgstr "Objet %1"
 
 #Object and result
 msgid "GEOM_OBJECT_RESULT"
-msgstr "Objet Et Résultat"
+msgstr "Objet Et RÃ©sultat"
 
 #Point
 msgid "GEOM_POINT"
@@ -310,7 +310,7 @@ msgstr "poids"
 
 #Coordinates
 msgid "GEOM_COORDINATES"
-msgstr "Coordonnées"
+msgstr "CoordonnÃ©es"
 
 #Coor.
 msgid "GEOM_COOR"
@@ -362,11 +362,11 @@ msgstr "Base"
 
 #Water Density
 msgid "GEOM_WATER_DENSITY"
-msgstr "Densité de l'eau :"
+msgstr "DensitÃ© de l'eau :"
 
 #Meshing Deflection
 msgid "GEOM_MESHING_DEFLECTION"
-msgstr "Déflection Du Maillage :"
+msgstr "DÃ©flection Du Maillage :"
 
 #Dimensions
 msgid "GEOM_DIMENSIONS"
@@ -374,11 +374,11 @@ msgstr "Dimensions"
 
 #Precision
 msgid "GEOM_PRECISION"
-msgstr "Précision :"
+msgstr "PrÃ©cision :"
 
 #Selection
 msgid "GEOM_SELECTION"
-msgstr "Sélection"
+msgstr "SÃ©lection"
 
 #Nb. Times
 msgid "GEOM_NB_TIMES"
@@ -414,7 +414,7 @@ msgstr "Partition"
 
 #Tolerance
 msgid "GEOM_TOLERANCE"
-msgstr "Tolérance"
+msgstr "TolÃ©rance"
 
 #Orientation
 msgid "GEOM_ORIENTATION"
@@ -426,7 +426,7 @@ msgstr "Pipe"
 
 #Revolution
 msgid "GEOM_REVOLUTION"
-msgstr "Révolution"
+msgstr "RÃ©volution"
 
 #Rotation
 msgid "GEOM_ROTATION"
@@ -434,7 +434,7 @@ msgstr "Rotation"
 
 #Archimede
 msgid "GEOM_ARCHIMEDE"
-msgstr "Archimède"
+msgstr "ArchimÃ¨de"
 
 #Common
 msgid "GEOM_COMMON"
@@ -594,7 +594,7 @@ msgstr "Solide"
 
 #Sphere
 msgid "GEOM_SPHERE"
-msgstr "Sphère"
+msgstr "SphÃ¨re"
 
 #Conical Face
 msgid "GEOM_SURFCONE"
@@ -606,7 +606,7 @@ msgstr "Face Cylindrique"
 
 #Spherical Face
 msgid "GEOM_SURFSPHERE"
-msgstr "Face Sphèrique"
+msgstr "Face SphÃ¨rique"
 
 #Toroidal Face
 msgid "GEOM_SURFTORUS"
@@ -638,7 +638,7 @@ msgstr "Wire"
 	
 #Parameter
 msgid "GEOM_PARAMETER"
-msgstr "Paramètre :"
+msgstr "ParamÃ¨tre :"
 
 
 #
@@ -691,7 +691,7 @@ msgstr "D2 :"
 
 #: GeometryGUI.cxx
 msgid "GEOM_STEP_TITLE"
-msgstr "Increment par défaut lors des constructions"
+msgstr "Increment par dÃ©faut lors des constructions"
 
 #: GeometryGUI_ArcDlg.cxx:45
 msgid "GEOM_ARC_TITLE"
@@ -699,7 +699,7 @@ msgstr "Construction d'un Arc"
 
 #: GeometryGUI_ArchimedeDlg.cxx:55
 msgid "GEOM_ARCHIMEDE_TITLE"
-msgstr "Construction d'Archimède"
+msgstr "Construction d'ArchimÃ¨de"
 
 #: GeometryGUI_BndBoxDlg.cxx:59
 msgid "GEOM_BNDBOX_TITLE"
@@ -739,7 +739,7 @@ msgstr "Construction d'un Cercle"
 
 #: GeometryGUI_CenterMassDlg.cxx:77
 msgid "GEOM_CMASS_TITLE"
-msgstr "Centre De Gravité"
+msgstr "Centre De GravitÃ©"
 
 msgid "GEOM_PLANE_SIZE"
 msgstr "Taille du plan :"
@@ -750,7 +750,7 @@ msgstr "BOOLEEN : Jonction De Deux Objets"
 
 #: GeometryGUI_CompoundDlg.cxx:44
 msgid "GEOM_COMPOUND_TITLE"
-msgstr "Création d'un Compound"
+msgstr "CrÃ©ation d'un Compound"
 
 #: GeometryGUI_ConeDlg.cxx:49
 msgid "GEOM_CONE_TITLE"
@@ -782,27 +782,27 @@ msgstr "Objets Et Resultats"
 
 #: GeometryGUI_EdgeDlg.cxx:47
 msgid "GEOM_EDGE_TITLE"
-msgstr "Création d'un Edge"
+msgstr "CrÃ©ation d'un Edge"
 
 #: GeometryGUI_FilletDlg.cxx:58
 msgid "GEOM_FILLET_TITLE"
-msgstr "Construction d'un Congé"
+msgstr "Construction d'un CongÃ©"
 
 #: GeometryGUI_FilletDlg.cxx:58
 msgid "GEOM_FILLET_ALL"
-msgstr "Congé sur toute la Shape"
+msgstr "CongÃ© sur toute la Shape"
 
 #: GeometryGUI_FilletDlg.cxx:58
 msgid "GEOM_FILLET_EDGES"
-msgstr "Congé sur Edges de la Shape"
+msgstr "CongÃ© sur Edges de la Shape"
 
 #: GeometryGUI_FilletDlg.cxx:58
 msgid "GEOM_FILLET_FACES"
-msgstr "Congé sur Faces de la Shape"
+msgstr "CongÃ© sur Faces de la Shape"
 
 #: GeometryGUI_FaceDlg.cxx:49
 msgid "GEOM_FACE_TITLE"
-msgstr "Création d'une Face"
+msgstr "CrÃ©ation d'une Face"
 
 #: GeometryGUI_FaceDlg.cxx:78
 msgid "GEOM_FACE_FFW"
@@ -810,7 +810,7 @@ msgstr "Face a partir d'un wire"
 
 #: GeometryGUI_FaceDlg.cxx:103
 msgid "GEOM_FACE_OPT"
-msgstr "Création d'une Face plane"
+msgstr "CrÃ©ation d'une Face plane"
 
 #: GeometryGUI_FillingDlg.cxx:53
 msgid "GEOM_FILLING_TITLE"
@@ -911,6 +911,10 @@ msgstr "Objet garde"
 #: GeometryGUI_PartitionDlg.cxx:45
 msgid "GEOM_PARTITION_ORIENTATION"
 msgstr "Change l'orientation"
+
+#: GeometryGUI_PartitionDlg.cxx:45
+msgid "SUPPRESS_RESULT"
+msgstr "Suppress Result"
 
 #: GeometryGUI_PipeDlg.cxx:47
 msgid "GEOM_PIPE_TITLE"
@@ -1115,7 +1119,7 @@ msgid "GEOM_MULTIROTATION_DOUBLE"
 msgstr "Multi Rotation Double"
 
 msgid "GEOM_PARAM_POINT"
-msgstr "Point paramétrique"
+msgstr "Point paramÃ©trique"
 
 #
 #==============================================================================
@@ -1127,4 +1131,11 @@ msgstr "Filaire"
 
 #: GeometryGUI.cxx:4613
 msgid "GEOM_MEN_SHADING"
-msgstr "Ombré"
+msgstr "OmbrÃ©"
+
+msgid "GEOM_FILLET_ABORT"
+msgstr "Le congÃ© ne peut-Ãªtre realisÃ© avec un rayon de %1 "
+
+msgid "GEOM_CHAMFER_ABORT"
+msgstr "Le chanfrein ne peut-Ãªtre realisÃ© avec %1 et %2 "
+

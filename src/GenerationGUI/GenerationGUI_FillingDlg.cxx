@@ -172,6 +172,7 @@ void GenerationGUI_FillingDlg::ClickOnOk()
 //=================================================================================
 void GenerationGUI_FillingDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

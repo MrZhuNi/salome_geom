@@ -137,6 +137,7 @@ void BasicGUI_ArcDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_ArcDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

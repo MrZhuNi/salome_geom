@@ -37,6 +37,8 @@ using namespace std;
 
 #include <qtextedit.h>
 
+#include <BRep_Tool.hxx>
+
 //=================================================================================
 // class    : MeasureGUI_WhatisDlg()
 // purpose  : Constructs a MeasureGUI_WhatisDlg which is a child of 'parent', with the 
@@ -211,8 +213,15 @@ void MeasureGUI_WhatisDlg::CalculateWhatis(const TopoDS_Shape& S)
     return;
 
   TCollection_AsciiString Astr; 
-  Astr = Astr + " Number of shapes in " + strdup(SelectedName.latin1()) + " : \n";
 
+  if ( S.ShapeType() == TopAbs_EDGE ) {
+    if( BRep_Tool::Degenerated(TopoDS::Edge(S)) ) {
+      Astr = Astr + " " + strdup(SelectedName.latin1()) + " is a degenerated edge \n";
+    }
+  }
+  
+  Astr = Astr + " Number of shapes in " + strdup(SelectedName.latin1()) + " : \n";
+  
   try {
     int iType, nbTypes [TopAbs_SHAPE];
     for(iType = 0; iType < TopAbs_SHAPE; ++iType)

@@ -147,6 +147,7 @@ void BasicGUI_CircleDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_CircleDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

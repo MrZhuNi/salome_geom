@@ -145,6 +145,7 @@ void GenerationGUI_RevolDlg::ClickOnOk()
 //=================================================================================
 void GenerationGUI_RevolDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

@@ -142,6 +142,7 @@ void TransformationGUI_RotationDlg::ClickOnOk()
 //=================================================================================
 void TransformationGUI_RotationDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

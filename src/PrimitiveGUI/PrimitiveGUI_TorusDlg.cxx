@@ -230,6 +230,7 @@ void PrimitiveGUI_TorusDlg::ClickOnOk()
 //=================================================================================
 void PrimitiveGUI_TorusDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

@@ -131,6 +131,7 @@ void TransformationGUI_MirrorDlg::ClickOnOk()
 //=================================================================================
 void TransformationGUI_MirrorDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

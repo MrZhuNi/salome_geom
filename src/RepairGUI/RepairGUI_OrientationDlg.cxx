@@ -140,6 +140,7 @@ void RepairGUI_OrientationDlg::ClickOnOk()
 //=================================================================================
 void RepairGUI_OrientationDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

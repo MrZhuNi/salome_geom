@@ -30,11 +30,15 @@ using namespace std;
 #include "OperationGUI_FilletDlg.h"
 
 #include "DisplayGUI.h"
+#include "QAD_MessageBox.h"
 
 #include <AIS_InteractiveContext.hxx>
 #include <TopExp_Explorer.hxx>
 #include <BRepFilletAPI_MakeFillet.hxx>
 #include <Precision.hxx>
+
+#include <Standard_ErrorHandler.hxx> 
+#include <Standard_Failure.hxx>
 
 //=================================================================================
 // class    : OperationGUI_FilletDlg()
@@ -181,6 +185,11 @@ void OperationGUI_FilletDlg::ConstructorsClicked(int constructorId)
     myUseLocalContext = false;
   }
 
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC) {
+    myConstructorId = constructorId = 0; //No subshape selection if viewer is not OCC
+    RadioButton1->setChecked(TRUE);
+  }
+  
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   switch (constructorId)
     {
@@ -249,6 +258,7 @@ void OperationGUI_FilletDlg::ClickOnOk()
 //=================================================================================
 void OperationGUI_FilletDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QApplication::setOverrideCursor(Qt::waitCursor);
   QAD_Application::getDesktop()->putInfo(tr(""));
   myGeomBase->EraseSimulationShape();
@@ -504,47 +514,56 @@ void OperationGUI_FilletDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 void OperationGUI_FilletDlg::MakePreview()
 {
-  QApplication::setOverrideCursor(Qt::waitCursor);
-
-  if(!myOkShape) {
-    QApplication::restoreOverrideCursor();
-    return;
-  }
-
-  GEOM::GEOM_Shape::ListOfSubShapeID_var ListOfID = new GEOM::GEOM_Shape::ListOfSubShapeID;
-  ListOfID->length(0);
-
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  SALOMEDS::SObject_var theObj = aStudy->FindObjectIOR(myShapeIOR);
-  if(theObj->_is_nil()) {
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
-    QApplication::restoreOverrideCursor();
-    return;
-  }
-  
-  try {
-    if(myRadius <= Precision::Confusion()) {
+  QApplication::setOverrideCursor( Qt::waitCursor );
+  TopoDS_Shape tds ;
+  try
+    {
+      BRepFilletAPI_MakeFillet fill(myShape);
+      switch (myConstructorId)
+	{
+	case 0: /* Fillet All */
+	  {
+	    TopExp_Explorer Exp ( myShape, TopAbs_EDGE );
+	    for (Exp; Exp.More(); Exp.Next()) 
+	      {
+		TopoDS_Edge E =TopoDS::Edge(Exp.Current());
+		fill.Add(E);
+	      }
+	    for (int i = 1;i<=fill.NbContours();i++) {
+	      try
+		{
+		  fill.SetRadius(myRadius,i,i);
+		}  
+	      catch(Standard_Failure)
+		{
+		  QAD_MessageBox::warn1 (QAD_Application::getDesktop(), tr("GEOM_WRN_WARNING"), tr("GEOM_FILLET_ABORT").arg(myRadius), tr("GEOM_BUT_OK"));
+		  Group1->SpinBox_DX->SetValue(5.0);
+		  myGeomBase->EraseSimulationShape() ; 
+		  mySimulationTopoDs.Nullify() ;
+		  QApplication::restoreOverrideCursor();
+		  return;
+		}
+	    }
+	    tds = fill.Shape();
+	    break;
+	  }
+	  //    case 1: /* Fillet edges */
+	  //    case 2: /* Fillet Faces */
+	}
+      if (!tds.IsNull()) 
+	{
+	  mySimulationTopoDs = tds;
+	  myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ; 
+	}
+    }  
+  catch(Standard_Failure)
+    {
+      QAD_MessageBox::warn1 (QAD_Application::getDesktop(), tr("GEOM_WRN_WARNING"), tr("GEOM_FILLET_ABORT").arg(myRadius), tr("GEOM_BUT_OK"));
+      Group1->SpinBox_DX->SetValue(5.0);
+      myGeomBase->EraseSimulationShape() ; 
+      mySimulationTopoDs.Nullify() ;
       QApplication::restoreOverrideCursor();
-      return;
+     
     }
-
-    GEOM::GEOM_Shape_var aShape = myGeom->GetIORFromString(myShapeIOR);
-    GEOM::GEOM_Shape_var result = myGeom->MakeFillet(aShape, myRadius, myShapeType, ListOfID);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-      QApplication::restoreOverrideCursor();
-      return;
-    }
-    TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
-
-    mySimulationTopoDs = S;
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
-  }
-  catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakePreview");
-    QApplication::restoreOverrideCursor();
-    return;
-  }
   QApplication::restoreOverrideCursor();
-  return;
 }

@@ -30,6 +30,7 @@ using namespace std;
 #include "OperationGUI_ChamferDlg.h"
 
 #include "DisplayGUI.h"
+#include "QAD_MessageBox.h"
 
 #include <AIS_InteractiveContext.hxx>
 #include <BRepFilletAPI_MakeChamfer.hxx>
@@ -37,6 +38,9 @@ using namespace std;
 #include <BRep_Tool.hxx>
 #include <TopExp.hxx>
 #include <Precision.hxx>
+
+#include <Standard_ErrorHandler.hxx> 
+#include <Standard_Failure.hxx>
 
 //=================================================================================
 // class    : OperationGUI_ChamferDlg()
@@ -200,6 +204,11 @@ void OperationGUI_ChamferDlg::ConstructorsClicked(int constructorId)
     myUseLocalContext = false;
   }
 
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC) {
+    myConstructorId = constructorId = 0; //No subshape selection if viewer is not OCC
+    RadioButton1->setChecked(TRUE);
+  }
+
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   switch (constructorId)
     {
@@ -271,6 +280,7 @@ void OperationGUI_ChamferDlg::ClickOnOk()
 //=================================================================================
 void OperationGUI_ChamferDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QApplication::setOverrideCursor(Qt::waitCursor);
   QAD_Application::getDesktop()->putInfo(tr(""));
   myGeomBase->EraseSimulationShape();
@@ -538,49 +548,45 @@ void OperationGUI_ChamferDlg::ResetStateOfDialog()
 //=================================================================================
 void OperationGUI_ChamferDlg::MakePreview()
 {
-  QApplication::setOverrideCursor(Qt::waitCursor);
-
-  if(!myOkShape) {
-    QApplication::restoreOverrideCursor();
-    return;
-  }
-
-  GEOM::GEOM_Shape::ListOfSubShapeID_var ListOfID = new GEOM::GEOM_Shape::ListOfSubShapeID;
-  ListOfID->length(0);
-
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  SALOMEDS::SObject_var theObj = aStudy->FindObjectIOR(myShapeIOR);
-  if(theObj->_is_nil()) {
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
-    QApplication::restoreOverrideCursor();
-    return;
-  }
-
-  try {
-    if(myD1 <= Precision::Confusion() || myD2 <= Precision::Confusion()) {
-      QApplication::restoreOverrideCursor();
-      return;
+  QApplication::setOverrideCursor( Qt::waitCursor );
+  TopoDS_Shape tds ;
+  try
+  {
+  BRepFilletAPI_MakeChamfer MC(myShape);
+  switch (myConstructorId)
+    {
+    case 0: /* Chamfer All */
+      {
+	TopTools_IndexedDataMapOfShapeListOfShape M;
+	TopExp::MapShapesAndAncestors(myShape,TopAbs_EDGE,TopAbs_FACE,M);
+	for (int i = 1;i<=M.Extent();i++) 
+	  {
+	    TopoDS_Edge E = TopoDS::Edge(M.FindKey(i));
+	    TopoDS_Face F = TopoDS::Face(M.FindFromIndex(i).First());
+	    if (!BRepTools::IsReallyClosed(E, F) && !BRep_Tool::Degenerated(E))
+	      MC.Add(myD1, myD2,E,F);
+	  }
+	tds = MC.Shape();
+	break;
+      }
+//    case 1: /* Chamfer edges */
+//    case 2: /* Chamfer Faces */
+    }
+   if (!tds.IsNull()) 
+    {
+      mySimulationTopoDs = tds;
+      myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ; 
     }
 
-    GEOM::GEOM_Shape_var aShape = myGeom->GetIORFromString(myShapeIOR);
-    GEOM::GEOM_Shape_var result = myGeom->MakeChamfer(aShape, myD1, myD2, myShapeType, ListOfID);
-    if(result->_is_nil()) {
-      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+  }  
+  catch(Standard_Failure)
+    {
+      QAD_MessageBox::warn1 (QAD_Application::getDesktop(), tr("GEOM_WRN_WARNING"), tr("GEOM_CHAMFER_ABORT").arg(myD1).arg(myD2), tr("GEOM_BUT_OK"));
+      Group1->SpinBox_DX->SetValue(5.0);
+      Group1->SpinBox_DY->SetValue(5.0);
+      myGeomBase->EraseSimulationShape() ; 
+      mySimulationTopoDs.Nullify() ;
       QApplication::restoreOverrideCursor();
-      return;
     }
-
-    TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
-
-    mySimulationTopoDs = S;
-    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
-  }
-  catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakePreview");
-    QApplication::restoreOverrideCursor();
-    return;
-  }
   QApplication::restoreOverrideCursor();
-  return;
-
 }

@@ -579,7 +579,7 @@ bool EntityGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* Shap
     } 
     else {
       aResult->NameType(tr("GEOM_SHAPE"));
-      sprintf(nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->GetNbGeom()++);
+      sprintf(nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->myNbGeom++);
     }
     SALOMEDS::SObject_var SO = aStudy->FindObjectIOR(aResult->Name());
 
@@ -814,7 +814,7 @@ bool EntityGUI::OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char*
       } 
       else {
 	aResult->NameType(tr("GEOM_SHAPE"));
-	sprintf (nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->GetNbGeom()++);
+	sprintf (nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->myNbGeom++);
       }
       result = new GEOM_AISShape(Exp.Current(), nameG);
       IO = new GEOM_InteractiveObject(aResult->Name(), myGeomGUI->GetFatherior(), "GEOM");
@@ -823,10 +823,10 @@ bool EntityGUI::OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char*
   else {
     if ( myGeomBase->GetShapeTypeString(compound,Type)) {
       aResult->NameType(Type);
-      sprintf (nameG, "%s_%d", Type, myGeomGUI->GetNbGeom()++);
+      sprintf (nameG, "%s_%d", Type, myGeomGUI->myNbGeom++);
     } else {
       aResult->NameType(tr("GEOM_SHAPE"));
-      sprintf (nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->GetNbGeom()++);
+      sprintf (nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->myNbGeom++);
     }
     result = new GEOM_AISShape(compound, nameG);
     IO = new GEOM_InteractiveObject(aResult->Name(), myGeomGUI->GetFatherior(), "GEOM");

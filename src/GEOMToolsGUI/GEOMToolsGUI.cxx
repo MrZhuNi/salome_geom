@@ -150,7 +150,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       {
 	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
 	  break;
-
+	
 	OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
 
@@ -163,7 +163,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	} 
 	else {
 	  Quantity_Color Default = Quantity_Color();
-	  color = QColor ((int)Default.Red()  * 255.0, (int)Default.Green()* 255.0, (int)Default.Blue() * 255.0);
+	  color = QColor ((int)( Default.Red() * 255.0 ), (int)( Default.Green() * 255.0 ), (int)( Default.Blue() * 255.0 ) );
 	}
 	
 	QColor c = QColorDialog::getColor(color, QAD_Application::getDesktop());
@@ -372,7 +372,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	    Quantity_Color CSFColor;
 	    Shape->Color(CSFColor);
 	    
-	    QColor c = QColorDialog::getColor(QColor(CSFColor.Red()  * 255.0, CSFColor.Green()* 255.0, CSFColor.Blue() * 255.0), QAD_Application::getDesktop());
+	    QColor c = QColorDialog::getColor(QColor((int)(CSFColor.Red() * 255.0), (int)(CSFColor.Green() * 255.0), (int)(CSFColor.Blue() * 255.0)), QAD_Application::getDesktop());
 	    
 	    if(c.isValid()) {
 	      CSFColor = Quantity_Color (c.red()/255., c.green()/255., c.blue()/255., Quantity_TOC_RGB);
@@ -478,13 +478,50 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	    while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
 	      if(!obj->FindAttribute(anAttr, "AttributeIOR") &&
 		  obj->FindAttribute(anAttr, "AttributePersistentRef")) {
-		// load
-		Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer","GEOM");
-		if (!CORBA::is_nil(comp)) {
-		  SALOMEDS::Driver_var driver = SALOMEDS::Driver::_narrow(comp);
-		  SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
-		  aStudyBuilder->LoadWith(aStudy->FindComponent("GEOM"),driver);
-		} 
+		
+		SALOMEDS::SComponent_var FComp = obj->GetFatherComponent();
+		if (!CORBA::is_nil(FComp)) {
+		  if (FComp->FindAttribute(anAttr, "AttributeName")) {
+		    SALOMEDS::AttributeName_var aName = SALOMEDS::AttributeName::_narrow(anAttr);
+		    QString compName = parent->getComponentName(aName->Value());
+		    //		    parent->loadComponentData(parent->getComponentName(aName->Value()));
+		    Engines::Component_var comp ;
+		    if ( compName.compare("SUPERV") == 0 ) {
+		      comp = parent->getEngine( "SuperVisionContainer", compName) ;
+		    }
+		    else {
+		      comp = parent->getEngine( "FactoryServer", compName);
+		      if ( comp->_is_nil() )
+			comp = parent->getEngine( "FactoryServerPy", compName);
+		    }
+
+		    if (!CORBA::is_nil(comp)) {
+		      SALOMEDS::Driver_var   driver = SALOMEDS::Driver::_narrow(comp);
+		      if (!CORBA::is_nil(driver)) {
+			SALOMEDS::StudyBuilder_var  B = aStudy->NewBuilder();
+			if (!CORBA::is_nil(B)) {
+			  B->LoadWith(FComp,driver);
+			} else {
+			  return false;
+			}
+		      } else {
+			MESSAGE("loadComponentData(): Driver is null");
+			return false;
+		      }
+		    } else {
+		      MESSAGE("loadComponentData(): Engine is null");
+		      return false;
+		    }
+		    // 		// load
+		    // 		Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer","GEOM");
+		    // 		if (!CORBA::is_nil(comp)) {
+		    // 		  SALOMEDS::Driver_var driver = SALOMEDS::Driver::_narrow(comp);
+		    // 		  SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
+		    // 		  SALOMEDS::SComponent_var SC = aStudy->FindComponent("GEOM");
+		    // 		  if (!CORBA::is_nil(SC))
+		    // 		    aStudyBuilder->LoadWith(SC,driver);
+		  } 
+		}
 		else {
 		  MESSAGE("Component is null");
 		}
@@ -752,7 +789,7 @@ bool GEOMToolsGUI::Import(int aState)
 //      if (aLocked) return false;
     father->ComponentIOR(myGeomGUI->GetFatherior());
 
-    QString nameShape = QAD_Tools::getFileNameFromPath(file,false) +  QString("_%1").arg(myGeomGUI->GetNbGeom()++);
+    QString nameShape = QAD_Tools::getFileNameFromPath(file,false) +  QString("_%1").arg(myGeomGUI->myNbGeom++);
 
     if(myGeomBase->Display(aShape, strdup(nameShape.latin1()))) {
       QAD_Application::getDesktop()->getActiveStudy()->setMessage( tr("GEOM_INF_LOADED").arg(QAD_Tools::getFileNameFromPath( file )) );

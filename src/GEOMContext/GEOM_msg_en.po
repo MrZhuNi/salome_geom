@@ -937,6 +937,10 @@ msgstr "Keep Object"
 msgid "GEOM_PARTITION_ORIENTATION"
 msgstr "Change Orientation"
 
+#: GeometryGUI_PartitionDlg.cxx:45
+msgid "SUPPRESS_RESULT"
+msgstr "Suppress Result"
+
 #: GeometryGUI_PipeDlg.cxx:47
 msgid "GEOM_PIPE_TITLE"
 msgstr "Pipe Construction"
@@ -1299,3 +1303,10 @@ msgstr "Values"
 
 msgid "GEOM_SKETCHER_TYPE"
 msgstr "Type"
+
+msgid "GEOM_FILLET_ABORT"
+msgstr "Fillet can't be computed with radius %1"
+
+msgid "GEOM_CHAMFER_ABORT"
+msgstr "Chamfer can't be computed with %1 and %2"
+

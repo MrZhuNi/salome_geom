@@ -273,6 +273,7 @@ void BasicGUI_PlaneDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_PlaneDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

@@ -234,6 +234,7 @@ void PrimitiveGUI_CylinderDlg::ClickOnOk()
 //=================================================================================
 void PrimitiveGUI_CylinderDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;

@@ -153,6 +153,7 @@ void BasicGUI_EllipseDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_EllipseDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
