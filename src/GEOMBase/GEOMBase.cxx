@@ -675,11 +675,17 @@ bool GEOMBase::AddInStudy(bool selection, const Handle(SALOME_InteractiveObject)
     QString Name = SALOMEGUI_NameDlg::getName(QAD_Application::getDesktop(), anIO->getName());
     if(!Name.isEmpty()) {
       // VTK
-      if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
-	GActor->setName(strdup(Name.latin1()));
+      if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
+	char* aCopy = CORBA::string_dup(Name.latin1());
+	GActor->setName(aCopy);
+	delete(aCopy);
+      }
       // OCC
-      else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
-	GAISShape->setName(strdup(Name.latin1()));
+      else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	char* aCopy = CORBA::string_dup(Name.latin1());
+	GAISShape->setName(aCopy);
+	delete(aCopy);
+      }
     } 
     else
       return false;
@@ -916,55 +922,55 @@ bool GEOMBase::GetShapeTypeString(const TopoDS_Shape& aShape, Standard_CString& 
     {
     case TopAbs_COMPOUND:
       {
-	aTypeString = strdup(tr("GEOM_COMPOUND"));
+	aTypeString = CORBA::string_dup(tr("GEOM_COMPOUND"));
 	return true;
       }
     case  TopAbs_COMPSOLID:
       {
-	aTypeString = strdup(tr("GEOM_COMPOUNDSOLID")) ; 
+	aTypeString = CORBA::string_dup(tr("GEOM_COMPOUNDSOLID")) ; 
 	return true ;
       }
     case TopAbs_SOLID:
       {
-	aTypeString = strdup(tr("GEOM_SOLID")) ; 
+	aTypeString = CORBA::string_dup(tr("GEOM_SOLID")) ; 
 	return true ;
       }
     case TopAbs_SHELL:
       {
-	aTypeString = strdup(tr("GEOM_SHELL")) ; 
+	aTypeString = CORBA::string_dup(tr("GEOM_SHELL")) ; 
 	return true ;
       }
     case TopAbs_FACE:
       { 
 	BRepAdaptor_Surface surf(TopoDS::Face(aShape));
 	if(surf.GetType() == GeomAbs_Plane) {
-	  aTypeString = strdup(tr("GEOM_PLANE"));
+	  aTypeString = CORBA::string_dup(tr("GEOM_PLANE"));
 	  return true;
 	}
 	else if(surf.GetType() == GeomAbs_Cylinder) {
-	  aTypeString = strdup(tr("GEOM_SURFCYLINDER"));
+	  aTypeString = CORBA::string_dup(tr("GEOM_SURFCYLINDER"));
 	  return true;
 	}
 	else if(surf.GetType() == GeomAbs_Sphere) {
-	  aTypeString = strdup(tr("GEOM_SURFSPHERE"));
+	  aTypeString = CORBA::string_dup(tr("GEOM_SURFSPHERE"));
 	  return true ;
 	}
 	else if(surf.GetType() == GeomAbs_Torus) {
-	  aTypeString = strdup(tr("GEOM_SURFTORUS"));
+	  aTypeString = CORBA::string_dup(tr("GEOM_SURFTORUS"));
 	  return true ;
 	}
 	else if(surf.GetType() == GeomAbs_Cone) {
-	  aTypeString = strdup(tr("GEOM_SURFCONE"));
+	  aTypeString = CORBA::string_dup(tr("GEOM_SURFCONE"));
 	  return true ;
 	}
 	else {
-	  aTypeString = strdup(tr("GEOM_FACE"));
+	  aTypeString = CORBA::string_dup(tr("GEOM_FACE"));
 	  return true;
 	}
       }
     case TopAbs_WIRE:
       {
-	aTypeString = strdup(tr("GEOM_WIRE")); 
+	aTypeString = CORBA::string_dup(tr("GEOM_WIRE")); 
 	return true;
       }
     case TopAbs_EDGE:
@@ -972,31 +978,31 @@ bool GEOMBase::GetShapeTypeString(const TopoDS_Shape& aShape, Standard_CString& 
 	BRepAdaptor_Curve curv(TopoDS::Edge(aShape));
 	if(curv.GetType() == GeomAbs_Line) {
 	  if((Abs(curv.FirstParameter()) >= 1E6) || (Abs(curv.LastParameter()) >= 1E6))
-	    aTypeString = strdup(tr("GEOM_LINE"));
+	    aTypeString = CORBA::string_dup(tr("GEOM_LINE"));
 	  else
-	    aTypeString = strdup(tr("GEOM_EDGE"));
+	    aTypeString = CORBA::string_dup(tr("GEOM_EDGE"));
 	  return true;
 	}
 	else if(curv.GetType() == GeomAbs_Circle) {
 	  if(curv.IsClosed())
-	    aTypeString = strdup(tr("GEOM_CIRCLE"));
+	    aTypeString = CORBA::string_dup(tr("GEOM_CIRCLE"));
 	  else
-	    aTypeString = strdup(tr("GEOM_ARC"));
+	    aTypeString = CORBA::string_dup(tr("GEOM_ARC"));
 	return true;
       } 
 	else {
-	  aTypeString = strdup(tr("GEOM_EDGE"));
+	  aTypeString = CORBA::string_dup(tr("GEOM_EDGE"));
 	  return true;
 	}
       }
     case TopAbs_VERTEX:
       {
-	aTypeString = strdup(tr("GEOM_VERTEX"));
+	aTypeString = CORBA::string_dup(tr("GEOM_VERTEX"));
 	return true;
       }
     case TopAbs_SHAPE:
       {
-	aTypeString = strdup(tr("GEOM_SHAPE"));
+	aTypeString = CORBA::string_dup(tr("GEOM_SHAPE"));
 	return true;
       }
     }
@@ -1211,7 +1217,7 @@ void GEOMBase::ConvertListOfIOInListOfIOR(const SALOME_ListIO& aList, GEOM::GEOM
 	CORBA::String_var theValue = anIOR->Value();
 	CORBA::Object_var theObj = _orb->string_to_object(theValue);
 	if(theObj->_is_a("IDL:GEOM/GEOM_Shape:1.0")) {
-	  listIOR[j] = strdup(theValue);
+	  listIOR[j] = CORBA::string_dup(theValue);
 	  j++;
 	}
       }
@@ -1219,7 +1225,7 @@ void GEOMBase::ConvertListOfIOInListOfIOR(const SALOME_ListIO& aList, GEOM::GEOM
     else if(IObject->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject))) {
       Handle(GEOM_InteractiveObject) GIObject = Handle(GEOM_InteractiveObject)::DownCast(IObject);
       Standard_CString ior = GIObject->getIOR();
-      listIOR[j] = strdup(ior);
+      listIOR[j] = CORBA::string_dup(ior);
       j++;
     }
   }
@@ -1455,7 +1461,9 @@ bool GEOMBase::SelectionByNameInDialogs(QWidget* aWidget, const QString& objectU
   SALOMEDS::SObject_var theObj = listSO[0];
   /* Create a SALOME_InteractiveObject with a SALOME::SObject */
   Standard_CString anEntry = theObj->GetID();
-  Handle(SALOME_InteractiveObject) SI = new SALOME_InteractiveObject(anEntry, "GEOM", strdup(objectUserName));
+  char* aCopyobjectUserName = CORBA::string_dup(objectUserName);
+  Handle(SALOME_InteractiveObject) SI = new SALOME_InteractiveObject(anEntry, "GEOM", aCopyobjectUserName);
+  delete(aCopyobjectUserName);
 
   /* Add as a selected object       */
   /* Clear any previous selection : */
@@ -1477,6 +1485,23 @@ bool GEOMBase::DefineDlgPosition(QWidget* aDlg, int& x, int& y)
   x = abs(PP->x() + PP->size().width() - aDlg->size().width() - 10);
   y = abs(PP->y() + PP->size().height() - aDlg->size().height() - 10);
   return true;  
+}
+
+QString GEOMBase::GetDefaultName(const QString& theOperation)
+{
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+  int aNumber = 0;
+  QString aName;
+  SALOMEDS::SObject_var obj;
+
+  do 
+    {
+      aName = theOperation+"_"+QString::number(++aNumber);
+      obj = aStudy->FindObject(aName);
+    } 
+  while (!obj->_is_nil());
+
+  return aName;
 }
 
 
