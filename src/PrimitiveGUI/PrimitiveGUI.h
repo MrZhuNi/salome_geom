@@ -44,7 +44,8 @@ public :
   PrimitiveGUI();
   ~PrimitiveGUI();
 
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  static PrimitiveGUI* GetOrCreateGUI();
+  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void MakeBoxAndDisplay(const gp_Pnt P1, const gp_Pnt P2);
   void MakeCylinderAndDisplay(const gp_Pnt BasePoint, const gp_Dir aDir,
@@ -55,7 +56,6 @@ public :
   void MakeConeAndDisplay(const gp_Pnt BasePoint, const gp_Dir aDir,
 			  const double Radius1, const double Radius2, const double aHeight);
 
-private:
   GEOMBase_Context* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 

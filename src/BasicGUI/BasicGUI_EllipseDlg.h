@@ -33,8 +33,6 @@
 
 #include "BasicGUI.h"
 
-#include "GEOM_EdgeFilter.hxx"
-
 #include <gp_Dir.hxx>
 
 //=================================================================================
@@ -58,7 +56,7 @@ private :
 
     double step;
     Handle(GEOM_ShapeTypeFilter) myVertexFilter;
-    Handle(GEOM_EdgeFilter) myEdgeFilter;  /* Filter selection */
+    Handle(GEOM_ShapeTypeFilter) myEdgeFilter;  /* Filter selection */
 
     gp_Pnt myPoint;   /* Central point of ellipse */   
     bool myOkPoint;   /* true when myPoint is defined */

@@ -162,7 +162,6 @@ void GenerationGUI_FillingDlg::ClickOnApply()
 
   if(myOkSectionShape)	  
     myGenerationGUI->MakeFillingAndDisplay(myGeomShape, myMinDeg, myMaxDeg, myTol3D, myTol2D, myNbIter);
-
   return;
 }
 
@@ -209,13 +208,14 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
 void GenerationGUI_FillingDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  mySelection->ClearFilters();
 
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
     mySelection->AddFilter(myCompoundFilter);
+    this->SelectionIntoArgument();
   }
-  this->SelectionIntoArgument();
 
   return;
 }

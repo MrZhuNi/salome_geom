@@ -29,98 +29,49 @@
 #ifndef DIALOGBOX_TRANSLATION_H
 #define DIALOGBOX_TRANSLATION_H
 
+#include "GEOMBase_Skeleton.h"
+#include "DlgRef_1Sel3Spin.h"
+
 #include "TransformationGUI.h"
 
-#include "DlgRef_SpinBox.h"
-
 #include <gp_Vec.hxx>
-#include <TopoDS_Shape.hxx>
-#include <BRepBuilderAPI_Transform.hxx>
-
-#include <qvariant.h>
-#include <qdialog.h>
-
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
-
 
 //=================================================================================
 // class    : TransformationGUI_TranslationDlg
 // purpose  :
 //=================================================================================
-class TransformationGUI_TranslationDlg : public QDialog
+class TransformationGUI_TranslationDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
 public:
-    TransformationGUI_TranslationDlg( QWidget* parent = 0, const char* name = 0, TransformationGUI* theTransformationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    TransformationGUI_TranslationDlg(QWidget* parent = 0, const char* name = 0, TransformationGUI* theTransformationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_TranslationDlg();
 
 private :
+    void Init();
+    void enterEvent(QEvent* e);
+    void MakeTranslationSimulationAndDisplay();
+
     TransformationGUI* myTransformationGUI;
-    GEOM::GEOM_Gen_var               myGeom ;               /* Current Geom object */   
-    GEOMBase_Context*                        myGeomGUI ;            /* Current GeomGUI object */
-    TopoDS_Shape                        mySimulationTopoDs;    /* Shape used for simulation display */    
-    SALOME_Selection*                   mySelection ;          /* User shape selection */ 
-    TopoDS_Shape                        myBase ;
-    GEOM::GEOM_Shape_var                      myGeomShape ;           /* is myBase */
-    bool                                myOkBase ;
-    gp_Vec                              myVec ;
-    QLineEdit*                          myEditCurrentArgument;  /* Current LineEdit */   
-    int                                 myConstructorId ;       /* Current constructor id = radio button id */
-    Handle(GEOM_ShapeTypeFilter)        myEdgeFilter;           /* Filter selection */
+    double step;
 
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent( QEvent* e);
-    void Init( SALOME_Selection* Sel ) ;
-    void MakeTranslationSimulationAndDisplay() ;
+    TopoDS_Shape myBase;   /* is myBase */
+    GEOM::GEOM_Shape_var myGeomShape;
+    bool myOkBase;
+    gp_Vec myVec;
 
-    QButtonGroup* GroupConstructors;
-    QRadioButton* Constructor1;
-    QGroupBox* GroupC1;
-    QLabel* TextLabel_DX;
-    QLabel* TextLabel_DY;
-    QLabel* TextLabel_DZ;
+    DlgRef_1Sel3Spin* GroupPoints;
 
-    DlgRef_SpinBox*  SpinBox_DX ;
-    DlgRef_SpinBox*  SpinBox_DY ;
-    DlgRef_SpinBox*  SpinBox_DZ ;
-
-    QLabel* TextLabelC1A1;
-    QPushButton* SelectButtonC1A1;
-    QLineEdit* LineEditC1A1;
-    QGroupBox* GroupButtons;
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
-    QPushButton* buttonApply;
-
-private slots:
-
-    void ConstructorsClicked(int constructorId);
+private slots :
     void ClickOnOk();
-    void ClickOnCancel();
     void ClickOnApply();
-    void SetEditCurrentArgument() ;
-    void SelectionIntoArgument() ;
-    void LineEditReturnPressed() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
-    void ValueChangedInSpinBox( double newValue ) ;
+    void ActivateThisDialog();
+    void LineEditReturnPressed();
+    void SelectionIntoArgument();
+    void SetEditCurrentArgument();
+    void ValueChangedInSpinBox(double newValue);
 
-protected:
-    QGridLayout* TransformationGUI_TranslationDlgLayout;
-    QGridLayout* GroupConstructorsLayout;
-    QGridLayout* GroupC1Layout;
-    QGridLayout* GroupButtonsLayout;
-
-    QHBoxLayout* Layout1 ;
 };
 
 #endif // DIALOGBOX_TRANSLATION_H

@@ -34,8 +34,6 @@
 
 #include "BasicGUI.h"
 
-#include "GEOM_EdgeFilter.hxx"
-
 #include <gp_Dir.hxx>
 
 //=================================================================================
@@ -59,7 +57,7 @@ private :
 
     double step;
     Handle(GEOM_ShapeTypeFilter) myVertexFilter;
-    Handle(GEOM_EdgeFilter) myEdgeFilter;  /* Filter selection */
+    Handle(GEOM_ShapeTypeFilter) myEdgeFilter;  /* Filter selection */
 
     gp_Pnt myPoint1;
     gp_Dir myDir;

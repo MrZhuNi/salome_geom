@@ -42,6 +42,8 @@ using namespace std;
 #include "BasicGUI_PlaneDlg.h"        // Method PLANE
 #include "BasicGUI_WorkingPlaneDlg.h" // Method WORKING PLANE
 
+static BasicGUI* myBasicGUI = 0;
+
 //=======================================================================
 // function : BasicGUI()
 // purpose  : Constructor
@@ -65,59 +67,72 @@ BasicGUI::~BasicGUI()
 
 
 //=======================================================================
+// function : GetOrCreateGUI()
+// purpose  : Gets or create an object 'GUI' with initialisations
+//          : Returns 'GUI' as a pointer
+//=======================================================================
+BasicGUI* BasicGUI::GetOrCreateGUI()
+{
+  myBasicGUI = new BasicGUI();
+  return myBasicGUI;
+}
+
+
+//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool BasicGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection());
+  BasicGUI::GetOrCreateGUI();
+  myBasicGUI->myGeomGUI->EmitSignalDeactivateDialog();
+  SALOME_Selection* Sel = SALOME_Selection::Selection(myBasicGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
     case 4011: // POINT
       {
 	Handle(AIS_InteractiveContext) ic;
-	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	if(myBasicGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myBasicGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  ic = v3d->getAISContext();
 	}
-	BasicGUI_PointDlg *aDlg = new BasicGUI_PointDlg(parent, "", this, Sel, ic); 
+	BasicGUI_PointDlg *aDlg = new BasicGUI_PointDlg(parent, "", myBasicGUI, Sel, ic); 
 	break;
       }
     case 4012:  // LINE
       {
-  	BasicGUI_LineDlg *aDlg = new BasicGUI_LineDlg(parent, "", this, Sel);
+  	BasicGUI_LineDlg *aDlg = new BasicGUI_LineDlg(parent, "", myBasicGUI, Sel);
 	break;
       }
     case 4013:  // CIRCLE
       {
-  	BasicGUI_CircleDlg *aDlg = new BasicGUI_CircleDlg(parent, "", this, Sel);
+  	BasicGUI_CircleDlg *aDlg = new BasicGUI_CircleDlg(parent, "", myBasicGUI, Sel);
 	break;
       }
     case 4014:  // ELLIPSE
       {
-  	BasicGUI_EllipseDlg *aDlg = new BasicGUI_EllipseDlg(parent, "", this, Sel);
+  	BasicGUI_EllipseDlg *aDlg = new BasicGUI_EllipseDlg(parent, "", myBasicGUI, Sel);
 	break;
       }
     case 4015:  // ARC
       {
-  	BasicGUI_ArcDlg *aDlg = new BasicGUI_ArcDlg(parent, "", this, Sel);
+  	BasicGUI_ArcDlg *aDlg = new BasicGUI_ArcDlg(parent, "", myBasicGUI, Sel);
 	break ;
       }
     case 4016: // VECTOR
       {	
-  	BasicGUI_VectorDlg *aDlg = new BasicGUI_VectorDlg(parent, "", this, Sel);
+  	BasicGUI_VectorDlg *aDlg = new BasicGUI_VectorDlg(parent, "", myBasicGUI, Sel);
 	break;
       }
     case 4017: // PLANE
       {	
-  	BasicGUI_PlaneDlg *aDlg = new BasicGUI_PlaneDlg(parent, "", this, Sel);
+  	BasicGUI_PlaneDlg *aDlg = new BasicGUI_PlaneDlg(parent, "", myBasicGUI, Sel);
 	break;
       }
     case 4018: // WORKING PLANE
       {	
-	BasicGUI_WorkingPlaneDlg *aDlg = new BasicGUI_WorkingPlaneDlg(parent, "", this, Sel);
+	BasicGUI_WorkingPlaneDlg *aDlg = new BasicGUI_WorkingPlaneDlg(parent, "", myBasicGUI, Sel);
 	break;
       }
     default:
@@ -349,4 +364,14 @@ void BasicGUI::MakeWorkingPlane(const gp_Pnt P, const gp_Dir D)
   view3d->SetProj(D.X(), D.Y(), D.Z());
   myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   return;
+}
+
+
+//=====================================================================================
+// EXPORTED METHODS
+//=====================================================================================
+extern "C"
+{
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+  {return BasicGUI::OnGUIEvent(theCommandID, parent);}
 }

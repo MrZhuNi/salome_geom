@@ -292,6 +292,7 @@ void PrimitiveGUI_TorusDlg::SetEditCurrentArgument()
     return;
 
   QPushButton* send = (QPushButton*)sender();
+  mySelection->ClearFilters();
 
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();

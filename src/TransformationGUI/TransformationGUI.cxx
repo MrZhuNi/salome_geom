@@ -36,6 +36,8 @@ using namespace std;
 #include "TransformationGUI_MultiTranslationDlg.h"   // Method MULTI TRANSLATION
 #include "TransformationGUI_MultiRotationDlg.h"      // Method MULTI ROTATION
 
+static TransformationGUI* myTransformationGUI = 0;
+
 //=======================================================================
 // function : TransformationGUI()
 // purpose  : Constructor
@@ -59,44 +61,57 @@ TransformationGUI::~TransformationGUI()
 
 
 //=======================================================================
+// function : GetOrCreateGUI()
+// purpose  : Gets or create an object 'GUI' with initialisations
+//          : Returns 'GUI' as a pointer
+//=======================================================================
+TransformationGUI* TransformationGUI::GetOrCreateGUI()
+{
+  myTransformationGUI = new TransformationGUI();
+  return myTransformationGUI;
+}
+
+
+//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool TransformationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection());
+  TransformationGUI::GetOrCreateGUI();
+  myTransformationGUI->myGeomGUI->EmitSignalDeactivateDialog();
+  SALOME_Selection* Sel = SALOME_Selection::Selection(myTransformationGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
     case 5021: // TRANSLATION
       {	
-  	TransformationGUI_TranslationDlg *aDlg = new TransformationGUI_TranslationDlg(parent, "", this, Sel);
+  	TransformationGUI_TranslationDlg *aDlg = new TransformationGUI_TranslationDlg(parent, "", myTransformationGUI, Sel);
 	break;
       }
     case 5022: // ROTATION
       {	
-  	TransformationGUI_RotationDlg *aDlg = new TransformationGUI_RotationDlg(parent, "", this, Sel);
+  	TransformationGUI_RotationDlg *aDlg = new TransformationGUI_RotationDlg(parent, "", myTransformationGUI, Sel);
 	break;
       }
     case 5023: // MIRROR
       {	
-	TransformationGUI_MirrorDlg *aDlg = new TransformationGUI_MirrorDlg(parent, "", this, Sel);
+	TransformationGUI_MirrorDlg *aDlg = new TransformationGUI_MirrorDlg(parent, "", myTransformationGUI, Sel);
 	break;
       }
     case 5024: // SCALE
       {	
-  	TransformationGUI_ScaleDlg *aDlg = new TransformationGUI_ScaleDlg(parent, "", this, Sel );
+  	TransformationGUI_ScaleDlg *aDlg = new TransformationGUI_ScaleDlg(parent, "", myTransformationGUI, Sel );
 	break;
       }
     case 5025: // MULTI TRANSLATION
       {	
-  	TransformationGUI_MultiTranslationDlg *aDlg = new TransformationGUI_MultiTranslationDlg(parent, "", this, Sel);
+  	TransformationGUI_MultiTranslationDlg *aDlg = new TransformationGUI_MultiTranslationDlg(parent, "", myTransformationGUI, Sel);
 	break;
       }
     case 5026: // MULTI ROTATION
       {	
-  	TransformationGUI_MultiRotationDlg *aDlg = new TransformationGUI_MultiRotationDlg(parent, "", this, Sel);
+  	TransformationGUI_MultiRotationDlg *aDlg = new TransformationGUI_MultiRotationDlg(parent, "", myTransformationGUI, Sel);
 	break;
       }
     default:
@@ -317,4 +332,14 @@ void TransformationGUI::MakeMultiRotation2DAndDisplay(GEOM::GEOM_Shape_ptr Shape
     QtCatchCorbaException(S_ex);
   }
   return;
+}
+
+
+//=====================================================================================
+// EXPORTED METHODS
+//=====================================================================================
+extern "C"
+{
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+  {return TransformationGUI::OnGUIEvent(theCommandID, parent);}
 }

@@ -38,6 +38,8 @@ using namespace std;
 #include "MeasureGUI_WhatisDlg.h"        // Method WHATIS
 #include "MeasureGUI_CheckShape.h"       // Method CHECKSHAPE
 
+static MeasureGUI* myMeasureGUI = 0;
+
 //=======================================================================
 // function : MeasureGUI()
 // purpose  : Constructor
@@ -61,13 +63,26 @@ MeasureGUI::~MeasureGUI()
 
 
 //=======================================================================
+// function : GetOrCreateGUI()
+// purpose  : Gets or create an object 'GUI' with initialisations
+//          : Returns 'GUI' as a pointer
+//=======================================================================
+MeasureGUI* MeasureGUI::GetOrCreateGUI()
+{
+  myMeasureGUI = new MeasureGUI();
+  return myMeasureGUI;
+}
+
+
+//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool MeasureGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection());
+  MeasureGUI::GetOrCreateGUI();
+  myMeasureGUI->myGeomGUI->EmitSignalDeactivateDialog();
+  SALOME_Selection* Sel = SALOME_Selection::Selection(myMeasureGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
@@ -78,7 +93,7 @@ bool MeasureGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       }
     case 702: // CDG : Center of mass
       {
-	MeasureGUI_CenterMassDlg *aDlg = new MeasureGUI_CenterMassDlg(parent, "", this, Sel);
+	MeasureGUI_CenterMassDlg *aDlg = new MeasureGUI_CenterMassDlg(parent, "", myMeasureGUI, Sel);
 	break;
       }
     case 703: // INERTIA
@@ -141,4 +156,14 @@ void MeasureGUI::MakeCDGAndDisplay(GEOM::GEOM_Shape_ptr Shape)
     QtCatchCorbaException(S_ex);
   }
   return;
+}
+
+
+//=====================================================================================
+// EXPORTED METHODS
+//=====================================================================================
+extern "C"
+{
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+  {return MeasureGUI::OnGUIEvent(theCommandID, parent);}
 }

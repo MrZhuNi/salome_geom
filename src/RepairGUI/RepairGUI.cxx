@@ -37,6 +37,8 @@ using namespace std;
 #include "RepairGUI_SuppressFacesDlg.h" // Method SUPPRESS FACES
 #include "RepairGUI_SuppressHoleDlg.h"  // Method SUPPRESS HOLE
 
+static RepairGUI* myRepairGUI = 0;
+
 //=======================================================================
 // function : RepairGUI()
 // purpose  : Constructor
@@ -60,44 +62,57 @@ RepairGUI::~RepairGUI()
 
 
 //=======================================================================
+// function : GetOrCreateGUI()
+// purpose  : Gets or create an object 'GUI' with initialisations
+//          : Returns 'GUI' as a pointer
+//=======================================================================
+RepairGUI* RepairGUI::GetOrCreateGUI()
+{
+  myRepairGUI = new RepairGUI();
+  return myRepairGUI;
+}
+
+
+//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool RepairGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection());
+  RepairGUI::GetOrCreateGUI();
+  myRepairGUI->myGeomGUI->EmitSignalDeactivateDialog();
+  SALOME_Selection* Sel = SALOME_Selection::Selection(myRepairGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
     case 601: // SEWING
       {
-	RepairGUI_SewingDlg *aDlg = new RepairGUI_SewingDlg(parent, "", this, Sel);
+	RepairGUI_SewingDlg *aDlg = new RepairGUI_SewingDlg(parent, "", myRepairGUI, Sel);
 	break;
       }
     case 602: // ORIENTATION
       {
-	RepairGUI_OrientationDlg *aDlg = new RepairGUI_OrientationDlg(parent, "", this, Sel);
+	RepairGUI_OrientationDlg *aDlg = new RepairGUI_OrientationDlg(parent, "", myRepairGUI, Sel);
 	break;
       }
     case 603: // SUPPRESS FACES : use ic
       {
 	Handle(AIS_InteractiveContext) ic;
-	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	if(myRepairGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myRepairGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  ic = v3d->getAISContext();
 	}
-	RepairGUI_SuppressFacesDlg *aDlg = new RepairGUI_SuppressFacesDlg(parent, "", this, Sel, ic);
+	RepairGUI_SuppressFacesDlg *aDlg = new RepairGUI_SuppressFacesDlg(parent, "", myRepairGUI, Sel, ic);
 	break;
       }
     case 604: // SUPPRESS HOLES : use ic
       {
 	Handle(AIS_InteractiveContext) ic;
-	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	if(myRepairGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myRepairGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  ic = v3d->getAISContext();
 	}
-	RepairGUI_SuppressHoleDlg *aDlg = new RepairGUI_SuppressHoleDlg(parent, "", this, Sel, ic);
+	RepairGUI_SuppressHoleDlg *aDlg = new RepairGUI_SuppressHoleDlg(parent, "", myRepairGUI, Sel, ic);
 	break;
       }
     default:
@@ -330,4 +345,14 @@ bool RepairGUI::OnSuppressFaces( const TopoDS_Shape& ShapeTopo,
   
   myGeomGUI->GetDesktop()->putInfo (tr("GEOM_PRP_READY"));
   return true ;
+}
+
+
+//=====================================================================================
+// EXPORTED METHODS
+//=====================================================================================
+extern "C"
+{
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+  {return RepairGUI::OnGUIEvent(theCommandID, parent);}
 }

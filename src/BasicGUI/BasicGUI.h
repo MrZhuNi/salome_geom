@@ -44,7 +44,8 @@ public :
   BasicGUI();
   ~BasicGUI();
 
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  static BasicGUI* GetOrCreateGUI();
+  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void MakePointAndDisplay(const double x, const double y, const double z);
   void MakeLineAndDisplay(const gp_Pnt InitPoint, const gp_Pnt LastPoint);
@@ -57,7 +58,6 @@ public :
 			   const Standard_Real dz, const Standard_Real TrimSize);
   void MakeWorkingPlane(const gp_Pnt P, const gp_Dir D);
 
-private:
   GEOMBase_Context* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 

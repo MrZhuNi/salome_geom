@@ -49,6 +49,7 @@ public:
 private:
     void Init();
     void enterEvent(QEvent* e);
+    void MakePipeSimulationAndDisplay();
 
     GenerationGUI* myGenerationGUI;
 

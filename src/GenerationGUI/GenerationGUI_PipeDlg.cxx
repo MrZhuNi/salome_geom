@@ -30,8 +30,6 @@ using namespace std;
 #include "GenerationGUI_PipeDlg.h"
 
 #include <BRepOffsetAPI_MakePipe.hxx>
-// #include <Standard_ErrorHandler.hxx> 
-// #include <Standard_Failure.hxx>
 #include <BRepAlgoAPI.hxx>
 
 //=================================================================================
@@ -149,6 +147,8 @@ void GenerationGUI_PipeDlg::ClickOnApply()
 //=================================================================================
 void GenerationGUI_PipeDlg::SelectionIntoArgument()
 {
+  myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
   
@@ -185,25 +185,8 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     myShape2 = S;
   }
 
-  if(myOkShape1 && myOkShape2 && !myShape1.IsNull() && !myShape2.IsNull()) {
-    //Make preview
-    TopoDS_Shape tds;
-    TopoDS_Wire aWire;
-
-    if(myShape2.ShapeType() == TopAbs_WIRE) 
-      aWire = TopoDS::Wire(myShape2);
-    else if(myShape2.ShapeType() == TopAbs_EDGE) {
-	TopoDS_Edge aEdge = TopoDS::Edge(myShape2);
-	aWire = BRepBuilderAPI_MakeWire(aEdge);
-      }
-
-    tds = BRepOffsetAPI_MakePipe(aWire,myShape1);
-    if(BRepAlgoAPI::IsValid(tds)) {
-      //Draw Pipe
-      mySimulationTopoDs = tds;
-      myGeomGUI->DisplaySimulationShape(mySimulationTopoDs); 
-    }
-  }
+  if(myOkShape1 && myOkShape2)
+    this->MakePipeSimulationAndDisplay();
   return;
 }
 
@@ -272,5 +255,39 @@ void GenerationGUI_PipeDlg::ActivateThisDialog()
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
     myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+  return;
+}
+
+
+//=================================================================================
+// function : MakeMirrorSimulationAndDisplay()
+// purpose  : S1 is a shape and S2 a mirror.
+//=================================================================================
+void GenerationGUI_PipeDlg::MakePipeSimulationAndDisplay()
+{
+  myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
+  
+  try {
+    TopoDS_Wire aWire;
+
+    if(myShape2.ShapeType() == TopAbs_WIRE) 
+      aWire = TopoDS::Wire(myShape2);
+    else if(myShape2.ShapeType() == TopAbs_EDGE) {
+      TopoDS_Edge aEdge = TopoDS::Edge(myShape2);
+      aWire = BRepBuilderAPI_MakeWire(aEdge);
+    }
+
+    TopoDS_Shape tds = BRepOffsetAPI_MakePipe(aWire,myShape1);
+    if(BRepAlgoAPI::IsValid(tds)) {
+      //Draw Pipe
+      mySimulationTopoDs = tds;
+      myGeomGUI->DisplaySimulationShape(mySimulationTopoDs); 
+    }
+  }
+  catch(Standard_Failure) {
+    MESSAGE("Exception catched in MakeMirrorSimulationAndDisplay");
+    return;
+  }
   return;
 }

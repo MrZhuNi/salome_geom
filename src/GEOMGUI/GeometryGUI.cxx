@@ -34,10 +34,13 @@ using namespace std;
 #include <Prs3d_Drawer.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <BRep_Tool.hxx>
+#include <OSD_SharedLibrary.hxx>
 
 // SALOME Includes
 #include "QAD_RightFrame.h"
 #include "QAD_Resource.h"
+#include "QAD_Tools.h"
+#include "QAD_Config.h"
 
 #include "OCCViewer_ViewPort.h"
 #include "OCCViewer_ViewPort3d.h"
@@ -50,19 +53,11 @@ using namespace std;
 
 #include "GEOMBase_Tools.h"
 #include "GEOMBase_Sketcher.h"
-#include "BasicGUI.h"
-#include "BasicGUI_PointDlg.h"
-#include "PrimitiveGUI.h"
-#include "GenerationGUI.h"
-#include "BuildGUI.h"
-#include "BooleanGUI.h"
-#include "TransformationGUI.h"
-#include "OperationGUI.h"
-#include "RepairGUI.h"
-#include "MeasureGUI.h"
+// #include "BasicGUI_PointDlg.h"
 
 /* The object itself created in the static method 'GetOrCreateGEOMBase()' */
 static GEOMBase_Context* GeomGUI = 0;
+typedef bool OneDim(int, QAD_Desktop*);
 
 //=======================================================================
 // class   : CustomItem
@@ -129,6 +124,50 @@ GEOMBase_Context* GeometryGUI::GetOrCreateGeometryGUI(QAD_Desktop* desktop)
 // function : OnGUIEvent() [static]
 // purpose  : manage all events on GUI
 //=======================================================================
+bool GeometryGUI::LoadLibrary(int theCommandID, QAD_Desktop* parent, QString GUILibrary)
+{
+  QCString libs;
+  QFileInfo fileInfo;
+  QString GUILib, fileString, dir;
+
+  OSD_SharedLibrary myGUILibrary = OSD_SharedLibrary();
+
+  if(libs = getenv("LD_LIBRARY_PATH")) {
+    QStringList dirList = QStringList::split(":", libs, false); // skip empty entries
+    for(int i = dirList.count()-1; i >= 0; i--) {
+      dir = dirList[i];
+      fileString = QAD_Tools::addSlash(dir) + GUILibrary;
+      fileInfo.setFile(fileString);
+      if(fileInfo.exists()) {
+	GUILib = fileInfo.fileName();
+	break;
+      }
+    }
+  }
+
+  myGUILibrary.SetName(TCollection_AsciiString((char*)GUILib.latin1()).ToCString());
+  bool ok = myGUILibrary.DlOpen(OSD_RTLD_LAZY);
+  if(!ok) {
+    return false;
+  }
+
+  OSD_Function osdF = myGUILibrary.DlSymb("OnGUIEvent");
+  OneDim (*f1) = NULL;
+  if(osdF != NULL) {
+    f1 = (bool (*) (int, QAD_Desktop*)) osdF;
+    (*f1)(theCommandID, parent);
+  }
+  else
+    return false;
+
+  return true;
+}
+
+
+//=======================================================================
+// function : OnGUIEvent() [static]
+// purpose  : manage all events on GUI
+//=======================================================================
 bool GeometryGUI::OnGUIEvent(int theCommandID,	QAD_Desktop* parent)
 {
   GeometryGUI::GetOrCreateGeometryGUI(parent);
@@ -156,94 +195,142 @@ bool GeometryGUI::OnGUIEvent(int theCommandID,	QAD_Desktop* parent)
   if (GeomGUI->GetState() == CURRENT_SKETCH && theCommandID != 404 && theCommandID != 4041 && theCommandID != 4042 && theCommandID != 4043 && theCommandID != 4044 && theCommandID != 4045 && theCommandID != 4046 && theCommandID != 4047 && theCommandID != 4048 && theCommandID != 4051 && theCommandID != 4052 && theCommandID != 4053 && theCommandID != 4061 && theCommandID != 4062 && theCommandID != 4063 && theCommandID != 4064 && theCommandID != 4065)
     return false;
 
-
+//   cout<<"GeometryGUI::OnGUIEvent : theCommandID = "<<theCommandID<<endl;
 //   QString theCommandID_str = itoa(theCommandID);
 //   theCommandID_str.truncate(3);
 //   int theCommandID_Group = theCommandID_str.toInt();
-  if(theCommandID == 31 || theCommandID == 33 || theCommandID == 111 ||
-     theCommandID == 112 || theCommandID == 113 || theCommandID == 121 ||
-     theCommandID == 122 || theCommandID == 123 || theCommandID == 411 ||
-     theCommandID == 412 || theCommandID == 413 || theCommandID == 414 ||
-     theCommandID == 415 || theCommandID == 804 || theCommandID == 901 ||
-     theCommandID == 903 || theCommandID == 5103 || theCommandID == 8032 ||
-     theCommandID == 8033 || theCommandID == 8034 || theCommandID == 9024) {
+  if(theCommandID == 111 ||  // MENU FILE - IMPORT BREP
+     theCommandID == 112 ||  // MENU FILE - IMPORT IGES
+     theCommandID == 113 ||  // MENU FILE - IMPORT STEP
+     theCommandID == 121 ||  // MENU FILE - EXPORT BREP
+     theCommandID == 122 ||  // MENU FILE - EXPORT IGES
+     theCommandID == 123 ||  // MENU FILE - EXPORT STEP
+     theCommandID == 31 ||   // MENU EDIT - COPY
+     theCommandID == 33 ||   // MENU EDIT - DELETE
+     theCommandID == 411 ||  // MENU SETTINGS - COPY
+     theCommandID == 412 ||  // MENU SETTINGS - ADD IN STUDY
+     theCommandID == 413 ||  // MENU SETTINGS - SHADING COLOR
+     theCommandID == 414 ||  // MENU SETTINGS - ISOS
+     theCommandID == 415 ||  // MENU SETTINGS - STEP VALUE FOR SPIN BOXES
+     theCommandID == 5103 || // MENU TOOLS - CHECK GEOMETRY
+     theCommandID == 8032 || // POPUP VIEWER - COLOR
+     theCommandID == 8033 || // POPUP VIEWER - TRANSPARENCY
+     theCommandID == 8034 || // POPUP VIEWER - ISOS
+     theCommandID == 804 ||  // POPUP VIEWER - ADD IN STUDY
+     theCommandID == 901 ||  // OBJECT BROWSER - RENAME
+     theCommandID == 9024) { // OBJECT BROWSER - OPEN
     GEOMBase_Tools* myToolsGUI = new GEOMBase_Tools();
     myToolsGUI->OnGUIEvent(theCommandID, parent);
     return true;
   }
-  if(theCommandID == 404 || theCommandID == 4041 || theCommandID == 4042 ||
-     theCommandID == 4043 || theCommandID == 4044 || theCommandID == 4045 ||
-     theCommandID == 4046 || theCommandID == 4047 || theCommandID == 4048 ||
-     theCommandID == 4051 || theCommandID == 4052 || theCommandID == 4053 ||
-     theCommandID == 4061 || theCommandID == 4062 || theCommandID == 4063 ||
-     theCommandID == 4064 || theCommandID == 4065) {
-    GEOMBase_Sketcher* mySketcherGUI = new GEOMBase_Sketcher();
-    mySketcherGUI->OnGUIEvent(theCommandID, parent);
-    return true;
-  }
-  if(theCommandID == 211 || theCommandID == 212 || theCommandID == 214 ||
-     theCommandID == 8021 || theCommandID == 8022 || theCommandID == 8023 ||
-     theCommandID == 9022 || theCommandID == 9023) {
+  if(theCommandID == 211 ||  // MENU VIEW - WIREFRAME/SHADING
+     theCommandID == 212 ||  // MENU VIEW - DISPLAY ALL
+     theCommandID == 213 ||  // MENU VIEW - DISPLAY ONLY
+     theCommandID == 214 ||  // MENU VIEW - ERASE ALL
+     theCommandID == 215 ||  // MENU VIEW - ERASE ONLY
+     theCommandID == 8031) { // POPUP VIEWER - WIREFRAME/SHADING
+
     GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
     myDisplayGUI->OnGUIEvent(theCommandID, parent);
     return true;
   }
-  if(theCommandID == 4011 || theCommandID == 4012 || theCommandID == 4013 ||
-     theCommandID == 4014 || theCommandID == 4015 || theCommandID == 4016 ||
-     theCommandID == 4017 || theCommandID == 4018) {
-    BasicGUI* myBasicGUI = new BasicGUI();
-    myBasicGUI->OnGUIEvent(theCommandID, parent);
+  if(theCommandID == 404 ||  // SKETCHER
+     theCommandID == 4041 || // SKETCHER - POPUP VIEWER - SEGMENT
+     theCommandID == 4042 || // SKETCHER - POPUP VIEWER - ARC
+     theCommandID == 4043 || // SKETCHER - POPUP VIEWER - SET ANGLE
+     theCommandID == 4044 || // SKETCHER - POPUP VIEWER - SET X
+     theCommandID == 4045 || // SKETCHER - POPUP VIEWER - SET Y
+     theCommandID == 4046 || // SKETCHER - POPUP VIEWER - DELETE
+     theCommandID == 4047 || // SKETCHER - POPUP VIEWER - END
+     theCommandID == 4048 || // SKETCHER - POPUP VIEWER - CLOSE
+     theCommandID == 4051 || // SKETCHER - MENU - SET PLANE
+     theCommandID == 4052 || // SKETCHER - MENU - TANGENT
+     theCommandID == 4053 || // SKETCHER - MENU - PERPENDICULAR
+     theCommandID == 4061 || // SKETCHER - MENU - LENGTH
+     theCommandID == 4062 || // SKETCHER - MENU - ANGLE
+     theCommandID == 4063 || // SKETCHER - MENU - RADIUS
+     theCommandID == 4064 || // SKETCHER - MENU - X
+     theCommandID == 4065) { // SKETCHER - MENU - Y
+    GEOMBase_Sketcher* mySketcherGUI = new GEOMBase_Sketcher();
+    mySketcherGUI->OnGUIEvent(theCommandID, parent);
     return true;
   }
-  if(theCommandID == 4021 || theCommandID == 4022 || theCommandID == 4023 ||
-     theCommandID == 4024 || theCommandID == 4025) {
-    PrimitiveGUI* myPrimitiveGUI = new PrimitiveGUI();
-    myPrimitiveGUI->OnGUIEvent(theCommandID, parent);
-    return true;
+  if(theCommandID == 4011 || // MENU BASIC - POINT
+     theCommandID == 4012 || // MENU BASIC - LINE
+     theCommandID == 4013 || // MENU BASIC - CIRCLE
+     theCommandID == 4014 || // MENU BASIC - ELLIPSE
+     theCommandID == 4015 || // MENU BASIC - ARC
+     theCommandID == 4016 || // MENU BASIC - VECTOR
+     theCommandID == 4017 || // MENU BASIC - PLANE
+     theCommandID == 4018) { // MENU BASIC - WPLANE
+    bool testlib = GeometryGUI::LoadLibrary(theCommandID, parent, "libBasicGUI.so");
+    return testlib;
   }
-  if(theCommandID == 4031 || theCommandID == 4032 ||
-     theCommandID == 4033 || theCommandID == 4034) {
-    GenerationGUI* myGenerationGUI = new GenerationGUI();
-    myGenerationGUI->OnGUIEvent(theCommandID, parent);
-    return true;
+  if(theCommandID == 4021 || // MENU PRIMITIVE - BOX
+     theCommandID == 4022 || // MENU PRIMITIVE - CYLINDER
+     theCommandID == 4023 || // MENU PRIMITIVE - SPHERE
+     theCommandID == 4024 || // MENU PRIMITIVE - TORUS
+     theCommandID == 4025) { // MENU PRIMITIVE - CONE
+    bool testlib = GeometryGUI::LoadLibrary(theCommandID, parent, "libPrimitiveGUI.so");
+    return testlib;
   }
-  if(theCommandID == 407 || theCommandID == 4081 || theCommandID == 4082 ||
-     theCommandID == 4083 || theCommandID == 4084 || theCommandID == 4085 ||
-     theCommandID == 4086) {
-    BuildGUI* myBuildGUI = new BuildGUI();
-    myBuildGUI->OnGUIEvent(theCommandID, parent);
-    return true;
+  if(theCommandID == 4031 || // MENU GENERATION - PRISM
+     theCommandID == 4032 || // MENU GENERATION - REVOLUTION
+     theCommandID == 4033 || // MENU GENERATION - FILLING
+     theCommandID == 4034) { // MENU GENERATION - PIPE
+    bool testlib = GeometryGUI::LoadLibrary(theCommandID, parent, "libGenerationGUI.so");
+    return testlib;
   }
-  if(theCommandID == 5011 || theCommandID == 5012 || 
-     theCommandID == 5013 || theCommandID == 5014) {
-    BooleanGUI* myBooleanGUI = new BooleanGUI();
-    myBooleanGUI->OnGUIEvent(theCommandID, parent);
-    return true;
+  if(theCommandID == 407 ||  // MENU BUILD - EXPLODE
+     theCommandID == 4081 || // MENU BUILD - EDGE
+     theCommandID == 4082 || // MENU BUILD - WIRE
+     theCommandID == 4083 || // MENU BUILD - FACE
+     theCommandID == 4084 || // MENU BUILD - SHELL
+     theCommandID == 4085 || // MENU BUILD - SOLID
+     theCommandID == 4086) { // MENU BUILD - COMPUND
+    bool testlib = GeometryGUI::LoadLibrary(theCommandID, parent, "libBuildGUI.so");
+    return testlib;
   }
-  if(theCommandID == 5021 || theCommandID == 5022 || theCommandID == 5023 ||
-     theCommandID == 5024 || theCommandID == 5025 || theCommandID == 5026) {
-    TransformationGUI* myTransformationGUI = new TransformationGUI();
-    myTransformationGUI->OnGUIEvent(theCommandID, parent);
-    return true;
+  if(theCommandID == 5011 || // MENU BOOLEAN - FUSE
+     theCommandID == 5012 || // MENU BOOLEAN - COMMON
+     theCommandID == 5013 || // MENU BOOLEAN - CUT
+     theCommandID == 5014) { // MENU BOOLEAN - SECTION
+    bool testlib = GeometryGUI::LoadLibrary(theCommandID, parent, "libBooleanGUI.so");
+    return testlib;
   }
-  if(theCommandID == 503 || theCommandID == 504 ||
-     theCommandID == 505 || theCommandID == 506) {
-    OperationGUI* myOperationGUI = new OperationGUI();
-    myOperationGUI->OnGUIEvent(theCommandID, parent);
-    return true;
+  if(theCommandID == 5021 || // MENU TRANSFORMATION - TRANSLATION
+     theCommandID == 5022 || // MENU TRANSFORMATION - ROTATION
+     theCommandID == 5023 || // MENU TRANSFORMATION - MIRROR
+     theCommandID == 5024 || // MENU TRANSFORMATION - SCALE
+     theCommandID == 5025 || // MENU TRANSFORMATION - MULTI-TRANSLATION
+     theCommandID == 5026) { // MENU TRANSFORMATION - MULTI-ROTATION
+    bool testlib = GeometryGUI::LoadLibrary(theCommandID, parent, "libTransformationGUI.so");
+    return testlib;
   }
-  if(theCommandID == 601 || theCommandID == 602 ||
-     theCommandID == 603 || theCommandID == 604) {
-    RepairGUI* myRepairGUI = new RepairGUI();
-    myRepairGUI->OnGUIEvent(theCommandID, parent);
-    return true;
+  if(theCommandID == 503 ||  // MENU OPERATION - PARTITION
+     theCommandID == 504 ||  // MENU OPERATION - ARCHIMEDE
+     theCommandID == 505 ||  // MENU OPERATION - FILLET
+     theCommandID == 506) {  // MENU OPERATION - CHAMFER
+    bool testlib = GeometryGUI::LoadLibrary(theCommandID, parent, "libOperationGUI.so");
+    return testlib;
   }
-  if(theCommandID == 701 || theCommandID == 702 || theCommandID == 703 ||
-     theCommandID == 7041 || theCommandID == 7042 ||
-     theCommandID == 705 || theCommandID == 706 || theCommandID == 707) {
-    MeasureGUI* myMeasureGUI = new MeasureGUI();
-    myMeasureGUI->OnGUIEvent(theCommandID, parent);
-    return true;
+  if(theCommandID == 601 ||  // MENU REPAIR - SEWING
+     theCommandID == 602 ||  // MENU REPAIR - ORIENTATION
+     theCommandID == 603 ||  // MENU REPAIR - SUPPRESS FACES
+     theCommandID == 604) {  // MENU REPAIR - SUPPRESS HOLE
+    bool testlib = GeometryGUI::LoadLibrary(theCommandID, parent, "libRepairGUI.so");
+    return testlib;
+  }
+  if(theCommandID == 701 ||  // MENU MEASURE - PROPERTIES
+     theCommandID == 702 ||  // MENU MEASURE - CDG
+     theCommandID == 703 ||  // MENU MEASURE - INERTIA
+     theCommandID == 7041 || // MENU MEASURE - BOUNDING BOX
+     theCommandID == 7042 || // MENU MEASURE - MIN DISTANCE
+     theCommandID == 705 ||  // MENU MEASURE - TOLERANCE
+     theCommandID == 706 ||  // MENU MEASURE - WHATIS
+     theCommandID == 707) {  // MENU MEASURE - CHECK
+    bool testlib = GeometryGUI::LoadLibrary(theCommandID, parent, "libMeasureGUI.so");
+    return testlib;
   }
   return true;
 }
@@ -291,28 +378,28 @@ bool GeometryGUI::OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFr
     }
   }
   else if(GeomGUI->GetState() == POINT_METHOD) {
-    GeomGUI->EraseSimulationShape();
-    BasicGUI_PointDlg *DialogPt = (BasicGUI_PointDlg*)(GeomGUI->GetActiveDialogBox());
+//     GeomGUI->EraseSimulationShape();
+//     BasicGUI_PointDlg *DialogPt = (BasicGUI_PointDlg*)(GeomGUI->GetActiveDialogBox());
 
-    if(DialogPt->UseLocalContext()) {
-      ic->InitSelected();
-      if(pe->state() == Qt::ShiftButton)
-	v3d->getAISSelector()->shiftSelect();  /* Append selection */
-      else
-	v3d->getAISSelector()->select();       /* New selection    */
+//     if(DialogPt->UseLocalContext()) {
+//       ic->InitSelected();
+//       if(pe->state() == Qt::ShiftButton)
+// 	v3d->getAISSelector()->shiftSelect();  /* Append selection */
+//       else
+// 	v3d->getAISSelector()->select();       /* New selection    */
       
-      if(ic->MoreSelected())
-	thePoint = BRep_Tool::Pnt( TopoDS::Vertex(ic->SelectedShape()));
-      else
-	thePoint = GeomGUI->ConvertClickToPoint(pe->x(), pe->y(), ((OCCViewer_ViewPort3d*)vp)->getView());
-    } 
-    else
-      thePoint = GeomGUI->ConvertClickToPoint(pe->x(), pe->y(), ((OCCViewer_ViewPort3d*)vp)->getView());
+//       if(ic->MoreSelected())
+// 	thePoint = BRep_Tool::Pnt( TopoDS::Vertex(ic->SelectedShape()));
+//       else
+// 	thePoint = GeomGUI->ConvertClickToPoint(pe->x(), pe->y(), ((OCCViewer_ViewPort3d*)vp)->getView());
+//     } 
+//     else
+//       thePoint = GeomGUI->ConvertClickToPoint(pe->x(), pe->y(), ((OCCViewer_ViewPort3d*)vp)->getView());
 
-    if(DialogPt != 0)
-      DialogPt->PointIntoCoordinates(thePoint, true);  /* display point */
-    else
-      GeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+//     if(DialogPt != 0)
+//       DialogPt->PointIntoCoordinates(thePoint, true);  /* display point */
+//     else
+//       GeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
   }
   return false;
 }

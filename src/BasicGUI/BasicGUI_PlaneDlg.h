@@ -53,6 +53,7 @@ public:
 private :
     void Init();
     void enterEvent(QEvent* e);
+    void MakePlaneSimulationAndDisplay();
 
     BasicGUI* myBasicGUI;
 
@@ -87,9 +88,6 @@ private slots:
     void SetEditCurrentArgument();
     void ConstructorsClicked(int constructorId);
     void ValueChangedInSpinBox(double newValue);
-    void MakePlaneSimulationAndDisplay(const gp_Pnt& P, const Standard_Real dx,
-				       const Standard_Real dy, const Standard_Real dz,
-				       const Standard_Real trimSize);
 
 };
 

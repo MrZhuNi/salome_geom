@@ -35,6 +35,8 @@ using namespace std;
 #include "PrimitiveGUI_TorusDlg.h"    // Method TORUS
 #include "PrimitiveGUI_ConeDlg.h"     // Method CONE
 
+static PrimitiveGUI* myPrimitiveGUI = 0;
+
 //=======================================================================
 // function : PrimitiveGUI()
 // purpose  : Constructor
@@ -58,39 +60,52 @@ PrimitiveGUI::~PrimitiveGUI()
 
 
 //=======================================================================
+// function : GetOrCreateGUI()
+// purpose  : Gets or create an object 'GUI' with initialisations
+//          : Returns 'GUI' as a pointer
+//=======================================================================
+PrimitiveGUI* PrimitiveGUI::GetOrCreateGUI()
+{
+  myPrimitiveGUI = new PrimitiveGUI();
+  return myPrimitiveGUI;
+}
+
+
+//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool PrimitiveGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection());
+  PrimitiveGUI::GetOrCreateGUI();
+  myPrimitiveGUI->myGeomGUI->EmitSignalDeactivateDialog();
+  SALOME_Selection* Sel = SALOME_Selection::Selection(myPrimitiveGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
     case 4021: // BOX
       {
-	PrimitiveGUI_BoxDlg *aDlg = new PrimitiveGUI_BoxDlg(parent, "", this, Sel);
+	PrimitiveGUI_BoxDlg *aDlg = new PrimitiveGUI_BoxDlg(parent, "", myPrimitiveGUI, Sel);
 	break;
       }
     case 4022: // CYLINDER
       {
-	PrimitiveGUI_CylinderDlg *aDlg = new PrimitiveGUI_CylinderDlg(parent, "", this, Sel);
+	PrimitiveGUI_CylinderDlg *aDlg = new PrimitiveGUI_CylinderDlg(parent, "", myPrimitiveGUI, Sel);
 	break;
       }
     case 4023: // SPHERE
       {
-	PrimitiveGUI_SphereDlg *aDlg = new PrimitiveGUI_SphereDlg(parent, "", this, Sel);
+	PrimitiveGUI_SphereDlg *aDlg = new PrimitiveGUI_SphereDlg(parent, "", myPrimitiveGUI, Sel);
 	break;
       }
     case 4024: // TORUS
       {
-	PrimitiveGUI_TorusDlg *aDlg = new PrimitiveGUI_TorusDlg(parent, "", this, Sel);
+	PrimitiveGUI_TorusDlg *aDlg = new PrimitiveGUI_TorusDlg(parent, "", myPrimitiveGUI, Sel);
 	break;
       }
     case 4025: // CONE
       {
-	PrimitiveGUI_ConeDlg *aDlg = new PrimitiveGUI_ConeDlg(parent, "", this, Sel);
+	PrimitiveGUI_ConeDlg *aDlg = new PrimitiveGUI_ConeDlg(parent, "", myPrimitiveGUI, Sel);
 	break;
       }
     default:
@@ -233,4 +248,14 @@ void PrimitiveGUI::MakeConeAndDisplay(const gp_Pnt BasePoint, const gp_Dir aDir,
     QtCatchCorbaException(S_ex);
   }
   return;
+}
+
+
+//=====================================================================================
+// EXPORTED METHODS
+//=====================================================================================
+extern "C"
+{
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+  {return PrimitiveGUI::OnGUIEvent(theCommandID, parent);}
 }

@@ -29,101 +29,55 @@
 #ifndef DIALOGBOX_ROTATION_H
 #define DIALOGBOX_ROTATION_H
 
+#include "GEOMBase_Skeleton.h"
+#include "DlgRef_2Sel1Spin1Check.h"
+
 #include "TransformationGUI.h"
 
-#include "GEOM_EdgeFilter.hxx"
-#include "DlgRef_SpinBox.h"
-
-#include <TopLoc_Location.hxx>
-#include <BRepBuilderAPI_Transform.hxx>
 #include <gp_Dir.hxx>
-
-#include <qvariant.h>
-#include <qdialog.h>
-
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
-class QCheckBox;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
 
 //=================================================================================
 // class    : TransformationGUI_RotationDlg
 // purpose  :
 //=================================================================================
-class TransformationGUI_RotationDlg : public QDialog
+class TransformationGUI_RotationDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
 public:
-    TransformationGUI_RotationDlg( QWidget* parent = 0, const char* name = 0, TransformationGUI* theTransformationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    TransformationGUI_RotationDlg(QWidget* parent = 0, const char* name = 0, TransformationGUI* theTransformationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_RotationDlg();
 
 private :
+    void Init();
+    void enterEvent(QEvent* e);
+    void MakeRotationSimulationAndDisplay();
+
     TransformationGUI* myTransformationGUI;
-    GEOM::GEOM_Gen_var        myGeom ;                /* Current Geom object */   
-    GEOMBase_Context*                 myGeomGUI ;             /* Current GeomGUI object */ 
-    SALOME_Selection*            mySelection ;           /* User shape selection */
-    TopoDS_Shape                 mySimulationTopoDs;     /* Shape used for simulation display */
-    TopoDS_Shape                 myBase ;
-    GEOM::GEOM_Shape_var               myGeomShape ;           /* is myBase */
 
-    gp_Pnt                       myLoc ;
-    gp_Dir                       myDir ;    
-    Standard_Real                myAngle ;
-   
-    bool                         myOkBase ; 
-    bool                         myOkAxis ;
-    QLineEdit*                   myEditCurrentArgument;  /* Current LineEdit */   
-    int                          myConstructorId ;       /* Current constructor id = radio button id */ 
-    Handle(GEOM_EdgeFilter)      myEdgeFilter;           /* Filter selection */
+    double step;
+    Handle(GEOM_ShapeTypeFilter) myEdgeFilter;   /* Filters selection */
 
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent( QEvent* e);
-    void Init( SALOME_Selection* Sel ) ;
-    void MakeRotationSimulationAndDisplay( const TopoDS_Shape& S) ;
+    TopoDS_Shape myBase;
+    GEOM::GEOM_Shape_var myGeomShape;   /* is myBase */
+    gp_Pnt myLoc;
+    gp_Dir myDir;    
+    Standard_Real myAngle;
+    bool myOkBase; 
+    bool myOkAxis;
 
-    QButtonGroup* GroupConstructors;
-    QRadioButton* Constructor1;
-    QGroupBox* GroupButtons;
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
-    QPushButton* buttonApply;
-    QGroupBox* GroupC1;
-    QPushButton* SelectButtonC1A2;
-    QLineEdit* LineEditC1A1;
-    QLineEdit* LineEditC1A2;
-    QPushButton* SelectButtonC1A1;
-    QLabel* TextLabelC1A1;
-    QLabel* TextLabelC1A2;
-    DlgRef_SpinBox* SpinBox_C1A3 ; /* for angle */
-    QLabel* TextLabelC1A3;
-    QCheckBox* CheckBoxReverse;
+    DlgRef_2Sel1Spin1Check* GroupPoints;
 
 private slots:
-
-    void ConstructorsClicked(int constructorId);
     void ClickOnOk();
-    void ClickOnCancel();
     void ClickOnApply();
-    void SetEditCurrentArgument() ;
-    void SelectionIntoArgument() ;
-    void LineEditReturnPressed() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
-    void ReverseAngle(int state) ;
-    void ValueChangedInSpinBox( double newValue ) ;
+    void ActivateThisDialog();
+    void LineEditReturnPressed();
+    void SelectionIntoArgument();
+    void SetEditCurrentArgument();
+    void ReverseAngle(int state);
+    void ValueChangedInSpinBox(double newValue);
 
-protected:
-    QGridLayout* TransformationGUI_RotationDlgLayout;
-    QGridLayout* GroupConstructorsLayout;
-    QGridLayout* GroupButtonsLayout;
-    QGridLayout* GroupC1Layout;
 };
 
 #endif // DIALOGBOX_ROTATION_H

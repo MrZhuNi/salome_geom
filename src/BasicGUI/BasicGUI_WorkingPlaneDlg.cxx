@@ -128,7 +128,6 @@ void BasicGUI_WorkingPlaneDlg::ClickOnOk()
 void BasicGUI_WorkingPlaneDlg::ClickOnApply()
 {
   myGeomGUI->GetDesktop()->putInfo(tr(""));
-  mySelection->ClearFilters();
   if(myOkPlane)
     myBasicGUI->MakeWorkingPlane(myLoc, myDir);
 
@@ -147,8 +146,7 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
 
   int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel != 1) {
-    if(myEditCurrentArgument == GroupWPlane->LineEdit1)
-      myOkPlane = false;
+    myOkPlane = false;
     return;
   }
   
@@ -157,15 +155,13 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
   if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
     return;
    
-  if(myEditCurrentArgument == GroupWPlane->LineEdit1) {
-    BRepAdaptor_Surface surf(TopoDS::Face(S));
-    gp_Pln Plane = surf.Plane();
-    myLoc = Plane.Location();
-    myDir = Plane.Axis().Direction();
+  BRepAdaptor_Surface surf(TopoDS::Face(S));
+  gp_Pln Plane = surf.Plane();
+  myLoc = Plane.Location();
+  myDir = Plane.Axis().Direction();
 
-    GroupWPlane->LineEdit1->setText(aString);
-    myOkPlane = true;
-  }
+  GroupWPlane->LineEdit1->setText(aString);
+  myOkPlane = true;
 
   /* no simulation */
   return;
@@ -178,14 +174,8 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
 //=================================================================================
 void BasicGUI_WorkingPlaneDlg::SetEditCurrentArgument()
 {
-  QPushButton* send = (QPushButton*)sender();
-
-  if(send == GroupWPlane->PushButton1) {
-    GroupWPlane->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupWPlane->LineEdit1;
-    mySelection->AddFilter(myFaceFilter);
-    SelectionIntoArgument();
-  }
+  GroupWPlane->LineEdit1->setFocus();
+  this->SelectionIntoArgument();
   return;
 }
 
@@ -196,12 +186,6 @@ void BasicGUI_WorkingPlaneDlg::SetEditCurrentArgument()
 //=================================================================================
 void BasicGUI_WorkingPlaneDlg::LineEditReturnPressed()
 {
-  QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupWPlane->LineEdit1)
-    myEditCurrentArgument = GroupWPlane->LineEdit1;
-  else
-    return;
-
   GEOMBase_Skeleton::LineEditReturnPressed();
   return;
 }

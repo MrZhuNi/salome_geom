@@ -95,7 +95,6 @@ void GenerationGUI_PrismDlg::Init()
   myOkBase = myOkLine = false;
 
   myEdgeFilter = new GEOM_ShapeTypeFilter(TopAbs_EDGE, myGeom);
-  mySelection->AddFilter(myEdgeFilter);
 
   /* Get setting of step value from file configuration */
   QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
@@ -116,6 +115,7 @@ void GenerationGUI_PrismDlg::Init()
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
   connect(GroupPoints->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ReverseVector(int)));
   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
@@ -179,6 +179,8 @@ void GenerationGUI_PrismDlg::ClickOnApply()
 //=================================================================================
 void GenerationGUI_PrismDlg::SelectionIntoArgument()
 {
+  myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
   
@@ -198,7 +200,7 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
   if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
     return;
   
-  gp_Pnt aPoint1, aPoint2 ;
+  gp_Pnt aPoint1, aPoint2;
   
   if(myEditCurrentArgument == GroupPoints->LineEdit1) {
     myGeomShape = myGeomGUI->ConvertIOinGEOMShape(IO, testResult);
@@ -217,8 +219,7 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
   }
 
   if(myOkBase && myOkLine)
-    MakePrismSimulationAndDisplay(myBaseTopo);
-
+    this->MakePrismSimulationAndDisplay();
   return; 
 }
 
@@ -230,6 +231,7 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
 void GenerationGUI_PrismDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  mySelection->ClearFilters();
 
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
@@ -298,16 +300,9 @@ void GenerationGUI_PrismDlg::ActivateThisDialog()
 //=================================================================================
 void GenerationGUI_PrismDlg::ValueChangedInSpinBox(double newValue)
 {
-  myGeomGUI->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  QObject* send = (QObject*)sender();
-  
-  if(send == GroupPoints->SpinBox_DX) {
-    myHeight = newValue;
-
-    if(myOkBase && myOkLine)
-      MakePrismSimulationAndDisplay(myBaseTopo);
-  }
+  myHeight = newValue;
+  if(myOkBase && myOkLine)
+    this->MakePrismSimulationAndDisplay();
   return;
 }
 
@@ -318,14 +313,11 @@ void GenerationGUI_PrismDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 void GenerationGUI_PrismDlg::ReverseVector(int state)
 {
-  myGeomGUI->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-
   myDx = -myDx;
   myDy = -myDy;
   myDz = -myDz;
   if(myOkBase && myOkLine)
-    MakePrismSimulationAndDisplay(myBaseTopo);
+    this->MakePrismSimulationAndDisplay();
   return;
 } 
 
@@ -334,18 +326,24 @@ void GenerationGUI_PrismDlg::ReverseVector(int state)
 // function : MakePrismSimulationAndDisplay()
 // purpose  :
 //=================================================================================
-void GenerationGUI_PrismDlg::MakePrismSimulationAndDisplay(const TopoDS_Shape& S)
+void GenerationGUI_PrismDlg::MakePrismSimulationAndDisplay()
 {
+  myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
+
   try {
-    gp_Vec Vec(myDx, myDy, myDz );
+    gp_Vec Vec(myDx, myDy, myDz);
     Vec.Normalize();
     Vec *= myHeight;
-    mySimulationTopoDs = BRepPrimAPI_MakePrism(S, Vec, Standard_False).Shape();
+    mySimulationTopoDs = BRepPrimAPI_MakePrism(myBaseTopo, Vec, Standard_False).Shape();
+    if(mySimulationTopoDs.IsNull())
+      return;
+    else
+      myGeomGUI->DisplaySimulationShape(mySimulationTopoDs); 
   }
   catch(Standard_Failure) {
-    MESSAGE( "Exception catched in MakePrismSimulationAndDisplay" << endl ) ;
+    MESSAGE("Exception catched in MakePrismSimulationAndDisplay" << endl);
     return;
   }
-  myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }

@@ -49,7 +49,7 @@ public:
 private :
     void Init();
     void enterEvent(QEvent* e);
-    void MakePrismSimulationAndDisplay(const TopoDS_Shape& S);
+    void MakePrismSimulationAndDisplay();
 
     GenerationGUI* myGenerationGUI;
 

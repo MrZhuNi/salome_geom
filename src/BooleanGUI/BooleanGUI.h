@@ -43,13 +43,13 @@ public :
   BooleanGUI();
   ~BooleanGUI();
 
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  static BooleanGUI* GetOrCreateGUI();
+  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void MakeBooleanAndDisplay(GEOM::GEOM_Shape_ptr Shape1,
 			     GEOM::GEOM_Shape_ptr Shape2,
 			     const short operation);
 
-private:
   GEOMBase_Context* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 

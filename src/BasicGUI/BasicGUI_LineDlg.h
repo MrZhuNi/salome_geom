@@ -49,7 +49,7 @@ public:
 private :
     void Init();
     void enterEvent(QEvent* e);
-    bool AddArrowToSimulation(TopoDS_Shape& modifiedShape);
+    void MakeLineSimulationAndDisplay();
 
     BasicGUI* myBasicGUI;
     Handle(GEOM_ShapeTypeFilter) myVertexFilter;   /* Filter selection */

@@ -194,6 +194,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked(int constructorId)
   myConstructorId = constructorId;
   mySelection->ClearFilters();
   myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   myOkPoint1 = myOkDirection = myOkCoordinates = myOkPlanarFace = false;
 
@@ -366,7 +367,7 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
       myGeomGUI->GetBipointDxDyDz(Pfirst, Plast, myDx, myDy, myDz);
       GroupPointDirection->LineEdit2->setText(aString);
       myOkDirection = true;
-      this->myTrimSize = GroupPointDirection->SpinBox_DX->GetValue();
+      myTrimSize = GroupPointDirection->SpinBox_DX->GetValue();
     }
   }
   
@@ -377,7 +378,7 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
     myDx = GroupPointPlusCoordinates->SpinBox_DX->GetValue();
     myDy = GroupPointPlusCoordinates->SpinBox_DY->GetValue();
     myDz = GroupPointPlusCoordinates->SpinBox_DZ->GetValue();
-    this->myTrimSize = GroupPointPlusCoordinates->SpinBox_S->GetValue();
+    myTrimSize = GroupPointPlusCoordinates->SpinBox_S->GetValue();
     myOkPoint1 = true;    
     myOkCoordinates = true;
   }
@@ -394,14 +395,14 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
       myDx = (ax.Direction()).X();
       myDy = (ax.Direction()).Y();
       myDz = (ax.Direction()).Z();
-      this->myTrimSize = GroupFace->SpinBox_DX->GetValue();
+      myTrimSize = GroupFace->SpinBox_DX->GetValue();
     }
   }
 
   /* Call method simulation */    
   if((myOkPoint1 && myOkDirection) || (myOkPoint1 && myOkCoordinates) || myOkPlanarFace) {
     if(myDx*myDx + myDy*myDy + myDz*myDz > Precision::Confusion()*Precision::Confusion())
-      MakePlaneSimulationAndDisplay(myPoint1, myDx, myDy, myDz, myTrimSize) ;
+      this->MakePlaneSimulationAndDisplay();
   }
   return;
 }
@@ -414,7 +415,7 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
 void BasicGUI_PlaneDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();  
-  mySelection->ClearFilters() ;
+  mySelection->ClearFilters();
 
   switch (myConstructorId)
     {
@@ -430,7 +431,6 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
 	  myEditCurrentArgument = GroupPointDirection->LineEdit2;	
 	  /* Edge filter here */
 	  mySelection->AddFilter(myEdgeFilter);
-	  SelectionIntoArgument();
 	}	
 	break;
       }
@@ -441,7 +441,6 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
 	  myEditCurrentArgument = GroupPointPlusCoordinates->LineEdit1;
 	  /* Vertex filter here */
 	  mySelection->AddFilter(myVertexFilter);
-	  SelectionIntoArgument();
 	}
 	break;
       }
@@ -452,12 +451,12 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
 	  myEditCurrentArgument = GroupFace->LineEdit1;
 	  /* Face filter here */
 	  mySelection->AddFilter(myFaceFilter);
-	  SelectionIntoArgument();
 	}
 	break;
       }
     }
-  return ;
+  this->SelectionIntoArgument();
+  return;
 }
 
 
@@ -515,35 +514,26 @@ void BasicGUI_PlaneDlg::enterEvent(QEvent* e)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BasicGUI_PlaneDlg::ValueChangedInSpinBox( double newValue )
+void BasicGUI_PlaneDlg::ValueChangedInSpinBox(double newValue)
 {
-  myGeomGUI->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-  QObject* send = (QObject*)sender() ; 
+  QObject* send = (QObject*)sender(); 
   
-  if(send == GroupPointPlusCoordinates->SpinBox_DX) {
+  if(send == GroupPointPlusCoordinates->SpinBox_DX)
     myDx = newValue;
-    myDy = GroupPointPlusCoordinates->SpinBox_DY->GetValue();
-    myDz = GroupPointPlusCoordinates->SpinBox_DZ->GetValue();
-  } else if(send == GroupPointPlusCoordinates->SpinBox_DY) {
-    myDx = GroupPointPlusCoordinates->SpinBox_DX->GetValue();
+  else if(send == GroupPointPlusCoordinates->SpinBox_DY) 
     myDy = newValue;
-    myDz = GroupPointPlusCoordinates->SpinBox_DZ->GetValue();
-  } else if(send == GroupPointPlusCoordinates->SpinBox_DZ) {
-    myDx = GroupPointPlusCoordinates->SpinBox_DX->GetValue();
-    myDy = GroupPointPlusCoordinates->SpinBox_DY->GetValue();
+  else if(send == GroupPointPlusCoordinates->SpinBox_DZ)
     myDz = newValue;
-  } else if(send == GroupPointDirection->SpinBox_DX || send == GroupPointPlusCoordinates->SpinBox_S || send == GroupFace->SpinBox_DX) {
+  else if(send == GroupPointDirection->SpinBox_DX || send == GroupPointPlusCoordinates->SpinBox_S || send == GroupFace->SpinBox_DX) {
     myTrimSize = newValue;
   } else
     return;
 
   if((myOkPoint1 && myOkDirection) || (myOkPoint1 && myOkCoordinates) || myOkPlanarFace) {
-    if (myDx*myDx + myDy*myDy + myDz*myDz > Precision::Confusion() * Precision::Confusion())
-      MakePlaneSimulationAndDisplay( myPoint1, myDx, myDy, myDz, myTrimSize);
+    if(myDx*myDx + myDy*myDy + myDz*myDz > Precision::Confusion() * Precision::Confusion())
+      this->MakePlaneSimulationAndDisplay();
   }
-
-  return ;
+  return;
 }
 
 
@@ -551,23 +541,21 @@ void BasicGUI_PlaneDlg::ValueChangedInSpinBox( double newValue )
 // function : MakePlaneSimulationAndDisplay(()
 // purpose  :
 //=================================================================================
-void BasicGUI_PlaneDlg::MakePlaneSimulationAndDisplay(const gp_Pnt& P1,
-							 const Standard_Real dx,
-							 const Standard_Real dy, 
-							 const Standard_Real dz, 
-							 const Standard_Real trimsize)
+void BasicGUI_PlaneDlg::MakePlaneSimulationAndDisplay()
 {
+  myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
+
   try {
-    gp_Dir aDirection(dx, dy, dz);
+    gp_Dir aDirection(myDx, myDy, myDz);
     /* We make a trimmed plane */
-    gp_Pln gplane(P1, aDirection);
-    mySimulationTopoDs = BRepBuilderAPI_MakeFace(gplane, -trimsize, +trimsize, -trimsize, +trimsize);
+    gp_Pln gplane(myPoint1, aDirection);
+    mySimulationTopoDs = BRepBuilderAPI_MakeFace(gplane, -myTrimSize, +myTrimSize, -myTrimSize, +myTrimSize);
+    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
   }
   catch(Standard_Failure) {
     MESSAGE( "Exception catched in MakePlaneSimulation" << endl );
     return;
   }
-
-  myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
-  return ;
+  return;
 }

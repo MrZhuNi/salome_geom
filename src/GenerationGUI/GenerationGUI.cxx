@@ -34,6 +34,8 @@ using namespace std;
 #include "GenerationGUI_FillingDlg.h"   // Method FILLING
 #include "GenerationGUI_PipeDlg.h"      // Method PIPE
 
+static GenerationGUI* myGenerationGUI = 0;
+
 //=======================================================================
 // function : GenerationGUI()
 // purpose  : Constructor
@@ -57,34 +59,47 @@ GenerationGUI::~GenerationGUI()
 
 
 //=======================================================================
+// function : GetOrCreateGUI()
+// purpose  : Gets or create an object 'GUI' with initialisations
+//          : Returns 'GUI' as a pointer
+//=======================================================================
+GenerationGUI* GenerationGUI::GetOrCreateGUI()
+{
+  myGenerationGUI = new GenerationGUI();
+  return myGenerationGUI;
+}
+
+
+//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool GenerationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection());
+  GenerationGUI::GetOrCreateGUI();
+  myGenerationGUI->myGeomGUI->EmitSignalDeactivateDialog();
+  SALOME_Selection* Sel = SALOME_Selection::Selection(myGenerationGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
     case 4031: // PRISM
       {	
-  	GenerationGUI_PrismDlg *aDlg = new GenerationGUI_PrismDlg(parent, "", this, Sel);
+  	GenerationGUI_PrismDlg *aDlg = new GenerationGUI_PrismDlg(parent, "", myGenerationGUI, Sel);
 	break;
       }
     case 4032: // REVOL
       {	
-  	GenerationGUI_RevolDlg *aDlg = new GenerationGUI_RevolDlg(parent, "", this, Sel);
+  	GenerationGUI_RevolDlg *aDlg = new GenerationGUI_RevolDlg(parent, "", myGenerationGUI, Sel);
 	break;
       }
     case 4033: // FILLING
       {	
-  	GenerationGUI_FillingDlg *aDlg = new GenerationGUI_FillingDlg(parent, "", this, Sel);
+  	GenerationGUI_FillingDlg *aDlg = new GenerationGUI_FillingDlg(parent, "", myGenerationGUI, Sel);
 	break;
       }
     case 4034: // PIPE
       {	
-  	GenerationGUI_PipeDlg *aDlg = new  GenerationGUI_PipeDlg(parent, "", this, Sel);
+  	GenerationGUI_PipeDlg *aDlg = new  GenerationGUI_PipeDlg(parent, "", myGenerationGUI, Sel);
 	break;
       }
     default:
@@ -217,4 +232,14 @@ void GenerationGUI::MakePipeAndDisplay(GEOM::GEOM_Shape_ptr aPath, GEOM::GEOM_Sh
     QtCatchCorbaException(S_ex);
   }
   return;
+}
+
+
+//=====================================================================================
+// EXPORTED METHODS
+//=====================================================================================
+extern "C"
+{
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+  {return GenerationGUI::OnGUIEvent(theCommandID, parent);}
 }

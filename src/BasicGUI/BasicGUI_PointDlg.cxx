@@ -181,6 +181,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
   myConstructorId = constructorId;
   mySelection->ClearFilters();
   myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
   disconnect(mySelection, 0, this, 0);
 
   switch (constructorId)
@@ -300,6 +301,7 @@ void BasicGUI_PointDlg::ClickOnApply()
 void BasicGUI_PointDlg::SelectionIntoArgument()
 {
   myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
 
@@ -350,9 +352,6 @@ void BasicGUI_PointDlg::LineEditReturnPressed()
 //=================================================================================
 void BasicGUI_PointDlg::SetEditCurrentArgument()
 {
-  if(myConstructorId != 0)
-    return;
-
   QPushButton* send = (QPushButton*)sender();
 
   if(send == GroupPoints->PushButton1) {
@@ -411,11 +410,9 @@ void BasicGUI_PointDlg::ActivateThisDialog( )
 //=================================================================================
 void BasicGUI_PointDlg::ValueChangedInSpinBox(double newValue)
 {
-  myGeomGUI->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
-
   DlgRef_SpinBox* send = (DlgRef_SpinBox*)sender();
   double vx, vy, vz;
+
   if(send == GroupDimensions->SpinBox_DX) {
     vx = newValue;
     vy = GroupDimensions->SpinBox_DY->GetValue();

@@ -40,6 +40,8 @@ using namespace std;
 #include "OperationGUI_FilletDlg.h"      // Method FILLET
 #include "OperationGUI_ChamferDlg.h"     // Method CHAMFER
 
+static OperationGUI* myOperationGUI = 0;
+
 //=======================================================================
 // function : OperationGUI()
 // purpose  : Constructor
@@ -63,44 +65,57 @@ OperationGUI::~OperationGUI()
 
 
 //=======================================================================
+// function : GetOrCreateGUI()
+// purpose  : Gets or create an object 'GUI' with initialisations
+//          : Returns 'GUI' as a pointer
+//=======================================================================
+OperationGUI* OperationGUI::GetOrCreateGUI()
+{
+  myOperationGUI = new OperationGUI();
+  return myOperationGUI;
+}
+
+
+//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool OperationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection());
+  OperationGUI::GetOrCreateGUI();
+  myOperationGUI->myGeomGUI->EmitSignalDeactivateDialog();
+  SALOME_Selection* Sel = SALOME_Selection::Selection(myOperationGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
     case 503: // PARTITION
       {
-  	OperationGUI_PartitionDlg *aDlg = new OperationGUI_PartitionDlg(parent, "", this, Sel);	
+  	OperationGUI_PartitionDlg *aDlg = new OperationGUI_PartitionDlg(parent, "", myOperationGUI, Sel);	
 	break;
       }
     case 504: // ARCHIMEDE
       {
-	OperationGUI_ArchimedeDlg *aDlg = new OperationGUI_ArchimedeDlg(parent, "", this, Sel);	
+	OperationGUI_ArchimedeDlg *aDlg = new OperationGUI_ArchimedeDlg(parent, "", myOperationGUI, Sel);	
 	break;
       }
     case 505: // FILLET
       {
 	Handle(AIS_InteractiveContext) ic;
-	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	if(myOperationGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myOperationGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  ic = v3d->getAISContext();
 	}
-  	OperationGUI_FilletDlg *aDlg = new OperationGUI_FilletDlg(parent, "", this, Sel, ic);	
+  	OperationGUI_FilletDlg *aDlg = new OperationGUI_FilletDlg(parent, "", myOperationGUI, Sel, ic);	
 	break;
       }
     case 506: // CHAMFER
       {
 	Handle(AIS_InteractiveContext) ic;
-	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	if(myOperationGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myOperationGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  ic = v3d->getAISContext();
 	}
-	OperationGUI_ChamferDlg *aDlg = new OperationGUI_ChamferDlg(parent, "", this, Sel, ic);	
+	OperationGUI_ChamferDlg *aDlg = new OperationGUI_ChamferDlg(parent, "", myOperationGUI, Sel, ic);	
 	break;
       }
     default:
@@ -436,4 +451,14 @@ bool OperationGUI::OnChamferGetSelected(const TopoDS_Shape& ShapeTopo, const cha
   myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_READY"));
 
   return true;  
+}
+
+
+//=====================================================================================
+// EXPORTED METHODS
+//=====================================================================================
+extern "C"
+{
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+  {return OperationGUI::OnGUIEvent(theCommandID, parent);}
 }

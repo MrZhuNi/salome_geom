@@ -44,7 +44,8 @@ public :
     ~GeometryGUI();
 
     static GEOMBase_Context* GetOrCreateGeometryGUI(QAD_Desktop* desktop);
-/*     static GEOMBase_Context* GetGeomGUI(); */
+
+    static bool LoadLibrary(int theCommandID, QAD_Desktop* parent, QString GUILibrary);
 
     /* Managed by IAPP */
     Standard_EXPORT static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent); 

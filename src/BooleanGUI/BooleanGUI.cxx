@@ -29,13 +29,12 @@
 using namespace std;
 #include "BooleanGUI.h"
 
-#include "QAD_Application.h"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
-
 #include "BooleanGUI_FuseDlg.h"    // Method FUSE
 #include "BooleanGUI_CommonDlg.h"  // Method COMMON
 #include "BooleanGUI_CutDlg.h"     // Method CUT
 #include "BooleanGUI_SectionDlg.h" // Method SECTION
+
+static BooleanGUI* myBooleanGUI = 0;
 
 //=======================================================================
 // function : BooleanGUI()
@@ -60,34 +59,47 @@ BooleanGUI::~BooleanGUI()
 
 
 //=======================================================================
+// function : GetOrCreateGUI()
+// purpose  : Gets or create an object 'GUI' with initialisations
+//          : Returns 'GUI' as a pointer
+//=======================================================================
+BooleanGUI* BooleanGUI::GetOrCreateGUI()
+{
+  myBooleanGUI = new BooleanGUI();
+  return myBooleanGUI;
+}
+
+
+//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool BooleanGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection());
+  BooleanGUI::GetOrCreateGUI();
+  myBooleanGUI->myGeomGUI->EmitSignalDeactivateDialog();
+  SALOME_Selection* Sel = SALOME_Selection::Selection(myBooleanGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
     case 5011: // FUSE
       {
-	BooleanGUI_FuseDlg *aDlg = new BooleanGUI_FuseDlg(parent, "", this, Sel);
+	BooleanGUI_FuseDlg *aDlg = new BooleanGUI_FuseDlg(parent, "", myBooleanGUI, Sel);
 	break;
       }
     case 5012: // COMMON
       {
-	BooleanGUI_CommonDlg *aDlg = new BooleanGUI_CommonDlg(parent, "", this, Sel);
+	BooleanGUI_CommonDlg *aDlg = new BooleanGUI_CommonDlg(parent, "", myBooleanGUI, Sel);
 	break;
       }
     case 5013: // CUT
       {
-	BooleanGUI_CutDlg *aDlg = new BooleanGUI_CutDlg(parent, "", this, Sel);
+	BooleanGUI_CutDlg *aDlg = new BooleanGUI_CutDlg(parent, "", myBooleanGUI, Sel);
 	break;
       }
     case 5014: // SECTION
       {
-	BooleanGUI_SectionDlg *aDlg = new BooleanGUI_SectionDlg(parent, "", this, Sel);
+	BooleanGUI_SectionDlg *aDlg = new BooleanGUI_SectionDlg(parent, "", myBooleanGUI, Sel);
 	break;
       }
     default:
@@ -125,4 +137,14 @@ void BooleanGUI::MakeBooleanAndDisplay(GEOM::GEOM_Shape_ptr Shape1, GEOM::GEOM_S
     QtCatchCorbaException(S_ex);
   }
   return;
+}
+
+
+//=====================================================================================
+// EXPORTED METHODS
+//=====================================================================================
+extern "C"
+{
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+  {return BooleanGUI::OnGUIEvent(theCommandID, parent);}
 }

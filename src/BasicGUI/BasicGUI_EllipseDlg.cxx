@@ -95,7 +95,7 @@ void BasicGUI_EllipseDlg::Init()
   myMinorRadius = 100.0;
   myOkPoint = myOkDir = false;
 
-  myEdgeFilter = new GEOM_EdgeFilter(StdSelect_Line, myGeom);
+  myEdgeFilter = new GEOM_ShapeTypeFilter(TopAbs_EDGE, myGeom);
   myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
   mySelection->AddFilter(myVertexFilter);
 
@@ -169,7 +169,8 @@ void BasicGUI_EllipseDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_EllipseDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape(); 
+  myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
   
@@ -212,6 +213,7 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
 void BasicGUI_EllipseDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  mySelection->ClearFilters();
 
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
@@ -278,10 +280,8 @@ void BasicGUI_EllipseDlg::enterEvent(QEvent* e)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BasicGUI_EllipseDlg::ValueChangedInSpinBox( double newValue )
+void BasicGUI_EllipseDlg::ValueChangedInSpinBox(double newValue)
 {
-  myGeomGUI->EraseSimulationShape();
-  mySimulationTopoDs.Nullify();
   QObject* send = (QObject*)sender();
 
   if(send == GroupPoints->SpinBox_DX )

@@ -43,11 +43,11 @@ public :
   MeasureGUI();
   ~MeasureGUI();
 
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  static MeasureGUI* GetOrCreateGUI();
+  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void MakeCDGAndDisplay(GEOM::GEOM_Shape_ptr Shape);
 
-private:
   GEOMBase_Context* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 

@@ -69,7 +69,7 @@ bool GEOMBase_Display::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
   switch (theCommandID)
     {
-    case 211: // SHADING/WIREFRAME - MENU
+    case 211: // MENU VIEW - WIREFRAME/SHADING
       {
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
 	  QApplication::setOverrideCursor(waitCursor);
@@ -121,7 +121,7 @@ bool GEOMBase_Display::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	}
 	break;
       }
-    case 212: // DISPLAY ALL - MENU
+    case 212: // MENU VIEW - DISPLAY ALL
       {
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
 	  ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->DisplayAll();
@@ -129,7 +129,15 @@ bool GEOMBase_Display::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	  this->OnDisplayAll();
 	break;
       }
-    case 214: // ERASE ALL - MENU
+    case 213: // MENU VIEW - DISPLAY ONLY
+      {
+	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
+	  this->OnVTKDisplayOnly();
+	else if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
+	  this->OnDisplayOnly();	
+	break;
+      }
+    case 214: // MENU VIEW - ERASE ALL
       {
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
 	  ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->EraseAll();
@@ -142,7 +150,12 @@ bool GEOMBase_Display::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	}
       	break;
       }
-    case 8021: // WIREFRAME/SHADING - POPUP VIEWER
+    case 215: // MENU VIEW - ERASE ONLY
+      {
+	this->OnErase();
+	break;
+      }
+    case 8031: // POPUP VIEWER - WIREFRAME/SHADING
       {
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
 	  // VTK
@@ -182,32 +195,6 @@ bool GEOMBase_Display::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	  ic->UpdateCurrentViewer();
 	}
 	QApplication::restoreOverrideCursor();
-	break;
-      }
-    case 8022 : // ERASE - POPUP VIEWER
-      {
-	this->OnErase();
-	break;
-      }
-    case 8023: // DISPLAY ONLY - POPUP VIEWER
-      {
-	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
-	  this->OnVTKDisplayOnly();
-	else if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
-	  this->OnDisplayOnly();
-	break;
-      }
-    case 9022 : // ERASE - OBJBROSER POPUP
-      {
-	this->OnErase();
-	break;
-      }
-    case 9023 : // DISPLAY ONLY - OBJBROSER POPUP
-      {
-	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
-	  this->OnVTKDisplayOnly();
-	else if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
-	  this->OnDisplayOnly();
 	break;
       }
     default:

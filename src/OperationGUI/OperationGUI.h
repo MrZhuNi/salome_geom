@@ -43,7 +43,8 @@ public :
   OperationGUI();
   ~OperationGUI();
 
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  static OperationGUI* GetOrCreateGUI();
+  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void MakePartitionAndDisplay(const GEOM::GEOM_Gen::ListOfIOR& listShapesIOR,
 			       const GEOM::GEOM_Gen::ListOfIOR& listToolsIOR,
@@ -69,7 +70,6 @@ public :
 			    Standard_Integer& aLocalContextId,
 			    bool& myUseLocalContext);
 
-private:
   GEOMBase_Context* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 

@@ -43,7 +43,8 @@ public :
   RepairGUI();
   ~RepairGUI();
 
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  static RepairGUI* GetOrCreateGUI();
+  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void MakeSewingAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR, 
 			    const Standard_Real precision);
@@ -59,7 +60,6 @@ public :
 		       const Standard_Integer& aLocalContextId,
 		       bool& myUseLocalContext);
 
-private:
   GEOMBase_Context* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 

@@ -153,6 +153,7 @@ void BasicGUI_LineDlg::ClickOnApply()
 void BasicGUI_LineDlg::SelectionIntoArgument()
 {
   myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
 
@@ -179,12 +180,8 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
     myOkPoint2 = true;
   }
 
-  if(myOkPoint1 && myOkPoint2 && myPoint1.Distance(myPoint2) > Precision::Confusion() ) {
-    mySimulationTopoDs = BRepBuilderAPI_MakeEdge(myPoint1, myPoint2).Shape();
-    /* Try to add an arrow at simulation shape */
-    bool notNeedToTest = this->AddArrowToSimulation(mySimulationTopoDs);
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs); 
-  }  
+  if(myOkPoint1 && myOkPoint2 && myPoint1.Distance(myPoint2) > Precision::Confusion())
+    this->MakeLineSimulationAndDisplay();
   return;
 }
 
@@ -196,6 +193,7 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
 void BasicGUI_LineDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  mySelection->ClearFilters();
 
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
@@ -251,7 +249,7 @@ void BasicGUI_LineDlg::ActivateThisDialog()
 //=================================================================================
 void BasicGUI_LineDlg::enterEvent(QEvent* e)
 {
-   if(GroupConstructors->isEnabled())
+  if(GroupConstructors->isEnabled())
     return;
   this->ActivateThisDialog();
   return;
@@ -259,23 +257,32 @@ void BasicGUI_LineDlg::enterEvent(QEvent* e)
 
 
 //=================================================================================
-// function : AddArrowToSimulation()
+// function : MakeLineSimulationAndDisplay()
 // purpose  : An arrow (cone topology) is added to 'modifiedShape'
 //          : to simulate a vector or an 'oriented line' display. The result is in 'modifiedShape'.
 //          : If an arrow can't be added returns false and 'modifiedShape' isn't modified !
 //=================================================================================
-bool BasicGUI_LineDlg::AddArrowToSimulation(TopoDS_Shape& modifiedShape)
+void BasicGUI_LineDlg::MakeLineSimulationAndDisplay()
 {
-  TopoDS_Shape arrow;
-  /* Try to add a cone simulation shape to show direction of a linear edge */
-  if(myGeomGUI->CreateArrowForLinearEdge(modifiedShape, arrow)) {
-    TopoDS_Compound Comp;
-    BRep_Builder B;
-    B.MakeCompound (Comp);
-    B.Add(Comp, modifiedShape);
-    B.Add(Comp, arrow);
-    modifiedShape = Comp;
-    return true;
+  myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
+  
+  try {
+    mySimulationTopoDs = BRepBuilderAPI_MakeEdge(myPoint1, myPoint2).Shape();
+    TopoDS_Shape arrow;
+    if(myGeomGUI->CreateArrowForLinearEdge(mySimulationTopoDs, arrow)) {
+      TopoDS_Compound Comp;
+      BRep_Builder B;
+      B.MakeCompound (Comp);
+      B.Add(Comp, mySimulationTopoDs);
+      B.Add(Comp, arrow);
+      mySimulationTopoDs = Comp;
+    }
+    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
   }
-  return false;
+  catch(Standard_Failure) {
+    MESSAGE("Exception catched in MakeLineSimulationAndDisplay");
+    return;
+  }
+  return;
 }

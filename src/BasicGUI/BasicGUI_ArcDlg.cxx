@@ -155,6 +155,7 @@ void BasicGUI_ArcDlg::ClickOnApply()
 void BasicGUI_ArcDlg::SelectionIntoArgument()
 {
   myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
 
@@ -200,6 +201,7 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 void BasicGUI_ArcDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  mySelection->ClearFilters();
 
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
@@ -274,7 +276,7 @@ void BasicGUI_ArcDlg::enterEvent(QEvent* e)
 //=================================================================================
 void BasicGUI_ArcDlg::MakeArcSimulationAndDisplay() 
 {
- myGeomGUI->EraseSimulationShape();
+  myGeomGUI->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   try {

@@ -29,26 +29,7 @@
 using namespace std;
 #include "TransformationGUI_TranslationDlg.h"
 
-
-#include "QAD_Config.h"
-
-
-#include <qbuttongroup.h>
-#include <qgroupbox.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qlayout.h>
-#include <qvariant.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
-#include <qimage.h>
-#include <qvalidator.h>
-#include <qpixmap.h>
-#include <qevent.h>
-
-
+#include <BRepBuilderAPI_Transform.hxx>
 
 //=================================================================================
 // class    : TransformationGUI_TranslationDlg()
@@ -57,139 +38,35 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg( QWidget* parent, const char* name, TransformationGUI* theTransformationGUI, SALOME_Selection* Sel, bool modal, WFlags fl )
-    : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
+TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg(QWidget* parent, const char* name, TransformationGUI* theTransformationGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_TRANSLATION")));
-    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
+  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_TRANSLATION")));
+  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-    if ( !name )
-	setName( "TransformationGUI_TranslationDlg" );
-    resize( 303, 219 ); 
-    setCaption( tr( "GEOM_TRANSLATION_TITLE"  ) );
-    setSizeGripEnabled( TRUE );
-    TransformationGUI_TranslationDlgLayout = new QGridLayout( this ); 
-    TransformationGUI_TranslationDlgLayout->setSpacing( 6 );
-    TransformationGUI_TranslationDlgLayout->setMargin( 11 );
+  setCaption(tr("GEOM_TRANSLATION_TITLE"));
 
-    /***************************************************************/
-    GroupConstructors = new QButtonGroup( this, "GroupConstructors" );
-    GroupConstructors->setTitle( tr( "GEOM_TRANSLATION"  ) );
-    GroupConstructors->setExclusive( TRUE );
-    GroupConstructors->setColumnLayout(0, Qt::Vertical );
-    GroupConstructors->layout()->setSpacing( 0 );
-    GroupConstructors->layout()->setMargin( 0 );
-    GroupConstructorsLayout = new QGridLayout( GroupConstructors->layout() );
-    GroupConstructorsLayout->setAlignment( Qt::AlignTop );
-    GroupConstructorsLayout->setSpacing( 6 );
-    GroupConstructorsLayout->setMargin( 11 );
-    Constructor1 = new QRadioButton( GroupConstructors, "Constructor1" );
-    Constructor1->setText( tr( ""  ) );
-    Constructor1->setPixmap( image0 );
-    Constructor1->setChecked( TRUE );
-    Constructor1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, Constructor1->sizePolicy().hasHeightForWidth() ) );
-    Constructor1->setMinimumSize( QSize( 50, 0 ) );
-    GroupConstructorsLayout->addWidget( Constructor1, 0, 0 );
-    QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    GroupConstructorsLayout->addItem( spacer, 0, 1 );
-    TransformationGUI_TranslationDlgLayout->addWidget( GroupConstructors, 0, 0 );
+  /***************************************************************/
+  GroupConstructors->setTitle(tr("GEOM_TRANSLATION"));
+  RadioButton1->setPixmap(image0);
+  RadioButton2->close(TRUE);
+  RadioButton3->close(TRUE);
 
-    GroupC1 = new QGroupBox( this, "GroupC1" );
-    GroupC1->setTitle( tr( "GEOM_TRANSLATION"  ) ) ;
-    GroupC1->setMinimumSize( QSize( 0, 0 ) );
-    GroupC1->setFrameShape( QGroupBox::Box );
-    GroupC1->setFrameShadow( QGroupBox::Sunken );
-    GroupC1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)5, GroupC1->sizePolicy().hasHeightForWidth() ) );
-    GroupC1->setColumnLayout(0, Qt::Vertical );
-    GroupC1->layout()->setSpacing( 0 );
-    GroupC1->layout()->setMargin( 0 );
-    GroupC1Layout = new QGridLayout( GroupC1->layout() );
-    GroupC1Layout->setAlignment( Qt::AlignTop );
-    GroupC1Layout->setSpacing( 6 );
-    GroupC1Layout->setMargin( 11 );
+  GroupPoints = new DlgRef_1Sel3Spin(this, "GroupPoints");
+  GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
+  GroupPoints->TextLabel1->setText(tr("GEOM_OBJECT"));
+  GroupPoints->TextLabel2->setText(tr("GEOM_DX"));
+  GroupPoints->TextLabel3->setText(tr("GEOM_DY"));
+  GroupPoints->TextLabel4->setText(tr("GEOM_DZ"));
+  GroupPoints->PushButton1->setPixmap(image1);
 
-    TextLabelC1A1 = new QLabel( GroupC1, "TextLabelC1A1" );
-    TextLabelC1A1->setText( tr( "GEOM_OBJECT"  ) );
-    TextLabelC1A1->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC1A1->setFrameShape( QLabel::NoFrame );
-    TextLabelC1A1->setFrameShadow( QLabel::Plain );
-    GroupC1Layout->addWidget( TextLabelC1A1, 0, 0 );
+  Layout1->addWidget(GroupPoints, 1, 0);
+  /***************************************************************/
 
-    SelectButtonC1A1 = new QPushButton( GroupC1, "SelectButtonC1A1" );
-    SelectButtonC1A1->setText( tr( ""  ) );
-    SelectButtonC1A1->setPixmap( image1 );
-    SelectButtonC1A1->setToggleButton( FALSE );
-    SelectButtonC1A1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, SelectButtonC1A1->sizePolicy().hasHeightForWidth() ) );
-    GroupC1Layout->addWidget( SelectButtonC1A1, 0, 1 );
-
-    LineEditC1A1 = new QLineEdit( GroupC1, "LineEditC1A1" );
-    GroupC1Layout->addWidget( LineEditC1A1, 0, 2 );
-
-    Layout1 = new QHBoxLayout; 
-    Layout1->setSpacing( 6 );
-    Layout1->setMargin( 0 );
-
-    TextLabel_DX = new QLabel( GroupC1, "TextLabel_DX" );
-    TextLabel_DX->setText( tr( "GEOM_DX" ) );
-    Layout1->addWidget( TextLabel_DX );
-
-    SpinBox_DX = new DlgRef_SpinBox( GroupC1, "SpinBox_DX" );
-    SpinBox_DX->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, SpinBox_DX->sizePolicy().hasHeightForWidth() ) );
-    Layout1->addWidget( SpinBox_DX );
-
-    TextLabel_DY = new QLabel( GroupC1, "TextLabel_DY" );
-    TextLabel_DY->setText( tr( "GEOM_DY" ) );
-    Layout1->addWidget( TextLabel_DY );
-
-    SpinBox_DY = new DlgRef_SpinBox( GroupC1, "SpinBox_DY" );
-    SpinBox_DY->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, SpinBox_DY->sizePolicy().hasHeightForWidth() ) );
-    Layout1->addWidget( SpinBox_DY );
-
-    TextLabel_DZ = new QLabel( GroupC1, "TextLabel_DZ" );
-    TextLabel_DZ->setText( tr( "GEOM_DZ" ) );
-    Layout1->addWidget( TextLabel_DZ );
-
-    SpinBox_DZ = new DlgRef_SpinBox( GroupC1, "SpinBox_DZ" );
-    SpinBox_DZ->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, SpinBox_DZ->sizePolicy().hasHeightForWidth() ) );
-    Layout1->addWidget( SpinBox_DZ );
-
-    GroupC1Layout->addMultiCellLayout( Layout1, 1, 1, 0, 2 );
-
-    TransformationGUI_TranslationDlgLayout->addWidget( GroupC1, 1, 0 );
-
-
-    /***************************************************************/
-    GroupButtons = new QGroupBox( this, "GroupButtons" );
-    GroupButtons->setGeometry( QRect( 10, 10, 281, 48 ) ); 
-    GroupButtons->setTitle( tr( ""  ) );
-    GroupButtons->setColumnLayout(0, Qt::Vertical );
-    GroupButtons->layout()->setSpacing( 0 );
-    GroupButtons->layout()->setMargin( 0 );
-    GroupButtonsLayout = new QGridLayout( GroupButtons->layout() );
-    GroupButtonsLayout->setAlignment( Qt::AlignTop );
-    GroupButtonsLayout->setSpacing( 6 );
-    GroupButtonsLayout->setMargin( 11 );
-    buttonCancel = new QPushButton( GroupButtons, "buttonCancel" );
-    buttonCancel->setText( tr( "GEOM_BUT_CLOSE"  ) );
-    buttonCancel->setAutoDefault( TRUE );
-    GroupButtonsLayout->addWidget( buttonCancel, 0, 3 );
-    buttonApply = new QPushButton( GroupButtons, "buttonApply" );
-    buttonApply->setText( tr( "GEOM_BUT_APPLY"  ) );
-    buttonApply->setAutoDefault( TRUE );
-    GroupButtonsLayout->addWidget( buttonApply, 0, 1 );
-    QSpacerItem* spacer_9 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    GroupButtonsLayout->addItem( spacer_9, 0, 2 );
-    buttonOk = new QPushButton( GroupButtons, "buttonOk" );
-    buttonOk->setText( tr( "GEOM_BUT_OK"  ) );
-    buttonOk->setAutoDefault( TRUE );
-    buttonOk->setDefault( TRUE );
-    GroupButtonsLayout->addWidget( buttonOk, 0, 0 );
-    TransformationGUI_TranslationDlgLayout->addWidget( GroupButtons, 2, 0 );
-    /***************************************************************/
-    myTransformationGUI = theTransformationGUI;
-    Init(Sel) ; /* Initialisations */
+  /* Initialisations */
+  myTransformationGUI = theTransformationGUI;
+  Init();
 }
-
 
 
 //=================================================================================
@@ -198,7 +75,7 @@ TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg( QWidget* par
 //=================================================================================
 TransformationGUI_TranslationDlg::~TransformationGUI_TranslationDlg()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 
@@ -206,88 +83,51 @@ TransformationGUI_TranslationDlg::~TransformationGUI_TranslationDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void TransformationGUI_TranslationDlg::Init( SALOME_Selection* Sel )
+void TransformationGUI_TranslationDlg::Init()
 {
-  double step ;
-  QString St = QAD_CONFIG->getSetting( "Geometry:SettingsGeomStep" ) ;
-  step = St.toDouble() ;
+  /* init variables */
+  myEditCurrentArgument = GroupPoints->LineEdit1;
 
-  /* min, max, step and decimals for spin boxes */
-  SpinBox_DX->RangeStepAndValidator( -999.999, 999.999, step, 3 ) ;
-  SpinBox_DX->SetValue( 100.0 ) ;
-  SpinBox_DY->RangeStepAndValidator( -999.999, 999.999, step, 3 ) ;
-  SpinBox_DY->SetValue( 100.0 ) ;
-  SpinBox_DZ->RangeStepAndValidator( -999.999, 999.999, step, 3 ) ;
-  SpinBox_DZ->SetValue( 100.0 ) ; 
+  myVec.SetCoord(100.0, 100.0, 100.0);
+  myOkBase = false;
 
-  GroupC1->show();
-  myConstructorId = 0 ;
-  Constructor1->setChecked( TRUE );
-  myEditCurrentArgument = LineEditC1A1 ;	
-  mySelection = Sel;
-  myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
-  myOkBase = false ;
+  /* Get setting of step value from file configuration */
+  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
+  step = St.toDouble();
 
-  this->myVec.SetCoord( 100.0, 100.0, 100.0 ) ;
-  mySimulationTopoDs.Nullify() ;
-  myBase.Nullify() ;
-  myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;  
+  /* min, max, step and decimals for spin boxes & initial values */
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupPoints->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupPoints->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, step, 3);
 
-  // TODO : previous selection into argument ?
-
-  /* Filter definitions */
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);
-  // myEdgeFilter   = new GEOM_ShapeTypeFilter( TopAbs_EDGE, myGeom );
+  GroupPoints->SpinBox_DX->SetValue(100.0);
+  GroupPoints->SpinBox_DY->SetValue(100.0);
+  GroupPoints->SpinBox_DZ->SetValue(100.0);
 
   /* signals and slots connections */
-  connect( buttonOk, SIGNAL( clicked() ),     this, SLOT( ClickOnOk() ) );
-  connect( buttonCancel, SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) ) ;
-  connect( buttonApply, SIGNAL( clicked() ), this, SLOT(ClickOnApply() ) );
-  connect( GroupConstructors, SIGNAL(clicked(int) ), SLOT( ConstructorsClicked(int) ) );  
-  connect( SelectButtonC1A1, SIGNAL (clicked() ), this, SLOT( SetEditCurrentArgument() ) ) ;
+  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+
+  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+
+  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DZ, SLOT(SetStep(double)));
   
-  connect( SpinBox_DX, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
-  connect( SpinBox_DY, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
-  connect( SpinBox_DZ, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
-  connect( LineEditC1A1, SIGNAL ( returnPressed() ), this, SLOT( LineEditReturnPressed() ) ) ;
+  /* displays Dialog */
+  GroupPoints->show();
+  this->show();
 
-  connect( myGeomGUI, SIGNAL ( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) ) ;  
-  connect( mySelection, SIGNAL( currentSelectionChanged() ),     this, SLOT( SelectionIntoArgument() ) );
-  /* to close dialog if study change */
-  connect( myGeomGUI, SIGNAL ( SignalCloseAllDialogs() ), this, SLOT( ClickOnCancel() ) ) ;
- 
-  /* Move widget on the botton right corner of main widget */
-  int x, y ;
-  myGeomGUI->DefineDlgPosition( this, x, y ) ;
-  this->move( x, y ) ;
-  this->show() ; /* displays Dialog */
-
-  return ;
+  return;
 }
 
-
-//=================================================================================
-// function : ConstructorsClicked()
-// purpose  : Radio button management
-//=================================================================================
-void TransformationGUI_TranslationDlg::ConstructorsClicked(int constructorId)
-{
-  // myGeomGUI->EraseSimulationShape() ;
-  switch (constructorId)
-    {
-    case 0:
-      {
-	break;
-      }
-    case 1:
-      {
-	break;
-      }
-    }
-  return ;
-}
 
 //=================================================================================
 // function : ClickOnOk()
@@ -295,11 +135,11 @@ void TransformationGUI_TranslationDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void TransformationGUI_TranslationDlg::ClickOnOk()
 {
-  this->ClickOnApply() ;
-  this->ClickOnCancel() ;
-
-  return ;
+  this->ClickOnApply();
+  ClickOnCancel();
+  return;
 }
+
 
 //=================================================================================
 // function : ClickOnApply()
@@ -307,41 +147,15 @@ void TransformationGUI_TranslationDlg::ClickOnOk()
 //=================================================================================
 void TransformationGUI_TranslationDlg::ClickOnApply()
 {
-  myGeomGUI->EraseSimulationShape() ;
-  myGeomGUI->GetDesktop()->putInfo( tr("") ) ; 
-  mySimulationTopoDs.Nullify() ;
-  switch(myConstructorId)
-    { 
-    case 0 :
-      { 
-	if(myOkBase) {
-	  myTransformationGUI->MakeTranslationAndDisplay( myGeomShape, myVec ) ;
-	}
-	break ;
-      }
-    case 1 :
-      {
-	break ;
-      }
-    }
+  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  if (mySimulationTopoDs.IsNull())
+    return;
+  myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
 
-  // accept();
-  return ;
-}
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void TransformationGUI_TranslationDlg::ClickOnCancel()
-{
-  mySelection->ClearFilters() ;
-  myGeomGUI->EraseSimulationShape() ;
-  mySimulationTopoDs.Nullify() ;
-  disconnect( mySelection, 0, this, 0 );
-  myGeomGUI->ResetState() ;
-  reject() ;
-  return ;
+  if(myOkBase)
+    myTransformationGUI->MakeTranslationAndDisplay(myGeomShape, myVec);
+  return;
 }
 
 
@@ -351,43 +165,38 @@ void TransformationGUI_TranslationDlg::ClickOnCancel()
 //=================================================================================
 void TransformationGUI_TranslationDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("") ;
-  myGeomGUI->EraseSimulationShape() ; 
-  mySimulationTopoDs.Nullify() ;
-
-  /* Future name of selection */
-  QString aString = "";
-
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString) ;
-  if ( nbSel != 1 ) {
-    if ( myEditCurrentArgument == LineEditC1A1 ) {
-      LineEditC1A1->setText("") ;
-      myOkBase = false ;
-    }
-    return ;
-  }
-
-  /* nbSel == 1 ! */
-  TopoDS_Shape S; 
-  Standard_Boolean testResult ;
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject() ;
-
-  if( !myGeomGUI->GetTopoFromSelection(mySelection, S) )
-    return ;
-
-  if ( myConstructorId == 0 && myEditCurrentArgument == LineEditC1A1 ) { 
-    myGeomShape = myGeomGUI->ConvertIOinGEOMShape(IO, testResult) ;
-    if( !testResult )
-      return ;
-    LineEditC1A1->setText(aString) ;
-    myBase = S ;
-    myOkBase = true ;
-  }
+  myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
+  myEditCurrentArgument->setText("");
+  QString aString = ""; /* name of selection */
   
-  if( myOkBase ) {
-    MakeTranslationSimulationAndDisplay() ;
+  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  if (nbSel != 1) {
+    if(myEditCurrentArgument == GroupPoints->LineEdit1)
+      myOkBase = false;
+    return;
   }
-  return ;
+
+  /* nbSel == 1 */
+  TopoDS_Shape S;
+  Standard_Boolean testResult;
+  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
+  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+    return;  
+ 
+  /*  gp_Pnt : not used */
+  if(myEditCurrentArgument == GroupPoints->LineEdit1) {
+    myGeomShape = myGeomGUI->ConvertIOinGEOMShape(IO, testResult);
+    if(!testResult)
+      return ;
+    GroupPoints->LineEdit1->setText(aString);
+    myBase = S; 
+    myOkBase = true;
+  }
+
+  if(myOkBase)
+    this->MakeTranslationSimulationAndDisplay();
+  return;
 }
 
 
@@ -395,105 +204,34 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
 // function : SetEditCurrentArgument()
 // purpose  :
 //=================================================================================
-void TransformationGUI_TranslationDlg::SetEditCurrentArgument()
+void TransformationGUI_TranslationDlg::LineEditReturnPressed()
 {
-  QPushButton* send = (QPushButton*)sender();
-  switch (myConstructorId)
-    {
-    case 0: /* default constructor */
-      {	
-	if(send == SelectButtonC1A1) {
-	  LineEditC1A1->setFocus() ;
-	  myEditCurrentArgument = LineEditC1A1 ;
-	  SelectionIntoArgument() ;
-	}
-	break;
-      }
-    case 1:      
-      {		
-	break;
-      }
-    }
-  return ;
+  QLineEdit* send = (QLineEdit*)sender();
+  if(send == GroupPoints->LineEdit1)
+    myEditCurrentArgument = GroupPoints->LineEdit1;
+  else
+    return;
+
+  GEOMBase_Skeleton::LineEditReturnPressed();
+  return;
 }
+
 
 //=================================================================================
 // function : LineEditReturnPressed()
 // purpose  :
 //=================================================================================
-void TransformationGUI_TranslationDlg::LineEditReturnPressed()
+void TransformationGUI_TranslationDlg::SetEditCurrentArgument()
 {    
-  QLineEdit* send = (QLineEdit*)sender();  
-  if( send == LineEditC1A1 )
-    myEditCurrentArgument = LineEditC1A1 ;
-  else
-    return ;
-  
-  /* User name of object input management                          */
-  /* If successfull the selection is changed and signal emitted... */
-  /* so SelectionIntoArgument() is automatically called.           */
-  const QString objectUserName = myEditCurrentArgument->text() ;
-  QWidget* thisWidget = (QWidget*)this ;
-  if( myGeomGUI->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
-    myEditCurrentArgument->setText( objectUserName ) ;
-  }
-  return ;
-}
+  QPushButton* send = (QPushButton*)sender();
 
-
-
-//=================================================================================
-// function : ValueChangedInSpinBox()
-// purpose  :
-//=================================================================================
-void TransformationGUI_TranslationDlg::ValueChangedInSpinBox( double newValue )
-{  
-
-  QObject* send = (QObject*)sender() ; 
-  Standard_Real Dx, Dy, Dz ;
-
-  if( send == SpinBox_DX ) {
-    Dx = newValue ;
-    Dy = SpinBox_DY->GetValue() ;
-    Dz = SpinBox_DZ->GetValue() ;
-  } else if( send == SpinBox_DY ) {
-    Dx = SpinBox_DX->GetValue() ;
-    Dy = newValue ;
-    Dz = SpinBox_DZ->GetValue() ;
-  } else if( send == SpinBox_DZ ) {
-    Dx = SpinBox_DX->GetValue() ;
-    Dy = SpinBox_DY->GetValue() ;
-    Dz = newValue ;
+  if(send == GroupPoints->PushButton1) {
+    GroupPoints->LineEdit1->setFocus();
+    myEditCurrentArgument = GroupPoints->LineEdit1;
+    this->SelectionIntoArgument();
   }
 
-  this->myVec.SetCoord(Dx, Dy, Dz) ;
-  if ( myOkBase ) {
-    MakeTranslationSimulationAndDisplay() ;
-  }
-  else {
-    myGeomGUI->EraseSimulationShape() ; 
-    mySimulationTopoDs.Nullify() ;
-  }
-  return ;
-}
-
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  :
-//=================================================================================
-void TransformationGUI_TranslationDlg::DeactivateActiveDialog()
-{
-  if ( GroupConstructors->isEnabled() ) {
-    GroupConstructors->setEnabled(false) ;
-    GroupC1->setEnabled(false) ;
-    GroupButtons->setEnabled(false) ;
-    disconnect( mySelection, 0, this, 0 );
-    myGeomGUI->EraseSimulationShape() ;
-    mySelection->ClearFilters() ;
-  }
-  return ;
+  return;
 }
 
 
@@ -503,17 +241,11 @@ void TransformationGUI_TranslationDlg::DeactivateActiveDialog()
 //=================================================================================
 void TransformationGUI_TranslationDlg::ActivateThisDialog()
 {
-  /* Emit a signal to deactivate the active dialog */
-  myGeomGUI->EmitSignalDeactivateDialog() ;  
-  GroupConstructors->setEnabled(true) ;
-  GroupC1->setEnabled(true) ;
-  GroupButtons->setEnabled(true) ;
-
-  connect ( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-  if( !mySimulationTopoDs.IsNull() )
-    myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
-
-  return ;
+  GEOMBase_Skeleton::ActivateThisDialog();
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  if(!mySimulationTopoDs.IsNull())
+    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+  return;
 }
 
 
@@ -523,22 +255,42 @@ void TransformationGUI_TranslationDlg::ActivateThisDialog()
 //=================================================================================
 void TransformationGUI_TranslationDlg::enterEvent(QEvent* e)
 {
-  if ( GroupConstructors->isEnabled() )
-    return ;  
-  ActivateThisDialog() ;
+  if(GroupConstructors->isEnabled())
+    return;
+  this->ActivateThisDialog();
+  return;
 }
 
 
-
 //=================================================================================
-// function : closeEvent()
+// function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void TransformationGUI_TranslationDlg::closeEvent( QCloseEvent* e )
+void TransformationGUI_TranslationDlg::ValueChangedInSpinBox(double newValue)
 {
-  /* same than click on cancel button */
-  this->ClickOnCancel() ;
-  return ;
+  QObject* send = (QObject*)sender();
+  Standard_Real Dx, Dy, Dz;
+
+  if(send == GroupPoints->SpinBox_DX) {
+    Dx = newValue;
+    Dy = GroupPoints->SpinBox_DY->GetValue();
+    Dz = GroupPoints->SpinBox_DZ->GetValue();
+  }
+  else if(send == GroupPoints->SpinBox_DY) {
+    Dx = GroupPoints->SpinBox_DX->GetValue();
+    Dy = newValue;
+    Dz = GroupPoints->SpinBox_DZ->GetValue();
+  }
+  else if(send == GroupPoints->SpinBox_DZ) {
+    Dx = GroupPoints->SpinBox_DX->GetValue();
+    Dy = GroupPoints->SpinBox_DY->GetValue();
+    Dz = newValue;
+  }
+
+  myVec.SetCoord(Dx, Dy, Dz);
+  if(myOkBase)
+    MakeTranslationSimulationAndDisplay();
+  return;
 }
 
 
@@ -548,14 +300,22 @@ void TransformationGUI_TranslationDlg::closeEvent( QCloseEvent* e )
 //=================================================================================
 void TransformationGUI_TranslationDlg::MakeTranslationSimulationAndDisplay()
 {
-  myGeomGUI->EraseSimulationShape() ; 
-  mySimulationTopoDs.Nullify() ;
-
-  gp_Trsf theTransformation ;
-  theTransformation.SetTranslation(this->myVec) ;
-
-  BRepBuilderAPI_Transform myBRepTransformation(this->myBase, theTransformation, Standard_False) ;
-  mySimulationTopoDs = myBRepTransformation.Shape() ;
-  myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
-  return ;
+  myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
+  
+  try {
+    gp_Trsf theTransformation;
+    theTransformation.SetTranslation(myVec);
+    BRepBuilderAPI_Transform myBRepTransformation(myBase, theTransformation, Standard_False);
+    mySimulationTopoDs = myBRepTransformation.Shape();
+    if(mySimulationTopoDs.IsNull())
+      return;
+    else
+      myGeomGUI->DisplaySimulationShape(mySimulationTopoDs); 
+  }
+  catch(Standard_Failure) {
+    MESSAGE("Exception catched in MakeTranslationSimulationAndDisplay");
+    return;
+  }
+  return;
 }

@@ -180,7 +180,7 @@ void PrimitiveGUI_BoxDlg::ConstructorsClicked(int constructorId)
     case 1:
       {
 	GroupPoints->hide();
-	resize( 0, 0 );
+	resize(0, 0);
 	GroupDimensions->show();
 
 	double initValue = 200.0;
@@ -372,12 +372,21 @@ void PrimitiveGUI_BoxDlg::ValueChangedInSpinBox(double newValue)
   QObject* send = (QObject*)sender();
   double vx, vy, vz;
 
-  if(send == GroupDimensions->SpinBox_DX)
+  if(send == GroupDimensions->SpinBox_DX) {
     vx = newValue;
-  else if(send == GroupDimensions->SpinBox_DY)
+    vy = GroupDimensions->SpinBox_DY->GetValue();
+    vz = GroupDimensions->SpinBox_DZ->GetValue();
+  }
+  else if(send == GroupDimensions->SpinBox_DY) {
+    vx = GroupDimensions->SpinBox_DX->GetValue();
     vy = newValue;
-  else if(send == GroupDimensions->SpinBox_DZ)
+    vz = GroupDimensions->SpinBox_DZ->GetValue();
+  }
+  else if(send == GroupDimensions->SpinBox_DZ) {
+    vx = GroupDimensions->SpinBox_DX->GetValue();
+    vy = GroupDimensions->SpinBox_DY->GetValue();
     vz = newValue;
+  }
 
   myPoint1.SetCoord(0.0, 0.0, 0.0);
   myPoint2.SetCoord(vx, vy, vz);

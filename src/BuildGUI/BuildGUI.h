@@ -43,7 +43,8 @@ public :
   BuildGUI();
   ~BuildGUI();
 
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  static BuildGUI* GetOrCreateGUI();
+  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void MakeLinearEdgeAndDisplay(const gp_Pnt P1, const gp_Pnt P2);
   void MakeWireAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
@@ -57,7 +58,6 @@ public :
     bool OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType,
 			       Standard_Integer& aLocalContextId, bool& myUseLocalContext);
 
-private:
   GEOMBase_Context* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 
