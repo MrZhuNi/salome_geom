@@ -94,7 +94,9 @@
       <popup-item item-id="304" pos-id="" label-id="Edge" icon-id="build_edge.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
        <popup-item item-id="305" pos-id="" label-id="Wire" icon-id="build_wire.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
        <popup-item item-id="306" pos-id="" label-id="Face" icon-id="build_face.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
-       <popup-item item-id="308" pos-id="" label-id="Compound" icon-id="build_compound.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>   
+       <popup-item item-id="315" pos-id="" label-id="Shell" icon-id="build_shell.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="316" pos-id="" label-id="Solid" icon-id="build_solid.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="308" pos-id="" label-id="Compound" icon-id="build_compound.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
 </menu-item>
