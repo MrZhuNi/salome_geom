@@ -368,6 +368,8 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   aScript += "def RebuildData(theStudy):";
   aScript += "\n\tgeompy.init_geom(theStudy)";
   
+  Standard_Integer posToInertGlobalVars = aScript.Length() + 1;
+
   Handle(TDataStd_TreeNode) aNode, aRoot;
   Handle(GEOM_Function) aFunction;
   TColStd_MapOfTransient aMap;
@@ -387,25 +389,22 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 
   Resource_DataMapOfAsciiStringAsciiString aEntry2StEntry, aStEntry2Entry;
   Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString anEntryToNameIt;
-  if ( isPublished )
+  // build maps entry <-> studyEntry
+  for (anEntryToNameIt.Initialize( theObjectNames );
+       anEntryToNameIt.More();
+       anEntryToNameIt.Next())
   {
-    // build maps entry <-> studyEntry
-    for (anEntryToNameIt.Initialize( theObjectNames );
-         anEntryToNameIt.More();
-         anEntryToNameIt.Next())
-    {
-      const TCollection_AsciiString& aEntry = anEntryToNameIt.Key();
-      // look for an object by entry
-      TDF_Label L;
-      TDF_Tool::Label( aDoc->GetData(), aEntry, L );
-      if ( L.IsNull() ) continue;
-      Handle(GEOM_Object) obj = GEOM_Object::GetObject( L );
-      // fill maps
-      if ( !obj.IsNull() ) {
-        TCollection_AsciiString aStudyEntry (obj->GetAuxData());
-        aEntry2StEntry.Bind( aEntry,  aStudyEntry);
-        aStEntry2Entry.Bind( aStudyEntry, aEntry );
-      }
+    const TCollection_AsciiString& aEntry = anEntryToNameIt.Key();
+    // look for an object by entry
+    TDF_Label L;
+    TDF_Tool::Label( aDoc->GetData(), aEntry, L );
+    if ( L.IsNull() ) continue;
+    Handle(GEOM_Object) obj = GEOM_Object::GetObject( L );
+    // fill maps
+    if ( !obj.IsNull() ) {
+      TCollection_AsciiString aStudyEntry (obj->GetAuxData());
+      aEntry2StEntry.Bind( aEntry,  aStudyEntry);
+      aStEntry2Entry.Bind( aStudyEntry, aEntry );
     }
   }
 
@@ -491,8 +490,40 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 
   anUpdatedScript += "\n\tpass\n";
   aValidScript = true;
+
+  // fill _studyEntry2NameMap and build globalVars
+  TCollection_AsciiString globalVars;
+  _studyEntry2NameMap.Clear();
+  Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString aStEntryToEntryIt;
+  for (aStEntryToEntryIt.Initialize( aStEntry2Entry );
+       aStEntryToEntryIt.More();
+       aStEntryToEntryIt.Next() )
+  {
+    const TCollection_AsciiString & name = theObjectNames( aStEntryToEntryIt.Value() );
+    _studyEntry2NameMap.Bind (aStEntryToEntryIt.Key(), name );
+    if ( !globalVars.IsEmpty() )
+      globalVars += ", ";
+    globalVars += name;
+  }
+  if ( !globalVars.IsEmpty() ) {
+    globalVars.Insert( 1, "\n\tglobal " );
+    anUpdatedScript.Insert( posToInertGlobalVars, globalVars );
+  }
   
   return anUpdatedScript;
+}
+
+//=======================================================================
+//function : GetDumpName
+//purpose  : 
+//=======================================================================
+
+const char* GEOM_Engine::GetDumpName (const char* theStudyEntry) const
+{
+  if ( _studyEntry2NameMap.IsBound( (char*)theStudyEntry ))
+    return _studyEntry2NameMap( (char*)theStudyEntry ).ToCString();
+
+  return NULL;
 }
 
 

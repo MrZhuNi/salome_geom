@@ -68,7 +68,9 @@ class GEOM_Engine
 				     Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
 				     bool isPublished, 
 				     bool& aValidScript);
-  
+
+  const char* GetDumpName (const char* theStudyEntry) const;
+
  protected:
   static void SetEngine(GEOM_Engine* theEngine);       
 
@@ -78,6 +80,8 @@ class GEOM_Engine
   Interface_DataMapOfIntegerTransient _mapIDDocument;
   int _UndoLimit;
   GEOM_DataMapOfAsciiStringTransient _objects;
+
+  Resource_DataMapOfAsciiStringAsciiString _studyEntry2NameMap;
 };
 
 #endif
