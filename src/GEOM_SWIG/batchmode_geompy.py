@@ -103,8 +103,8 @@ GroupOp  = geom.GetIGroupOperations   (myStudyId)
 # Basic primitives
 # -----------------------------------------------------------------------------
 
-def MakeVertex(x,y,z):
-    anObj = BasicOp.MakePointXYZ(x,y,z)
+def MakeVertex(theX, theY, theZ):
+    anObj = BasicOp.MakePointXYZ(theX, theY, theZ)
     if BasicOp.IsDone() == 0:
       print "MakePointXYZ : ", BasicOp.GetErrorCode()
     return anObj
@@ -400,10 +400,10 @@ def GetFreeFacesIDs(theShape):
     return anIDs
 
 def GetSharedShapes(theShape1, theShape2, theShapeType):
-    anObj = ShapesOp.GetSharedShapes(theShape1, theShape2, theShapeType)
+    aList = ShapesOp.GetSharedShapes(theShape1, theShape2, theShapeType)
     if ShapesOp.IsDone() == 0:
       print "GetSharedShapes : ", ShapesOp.GetErrorCode()
-    return anObj
+    return aList
 
 #def GetShapesOnPlane(theShape, theShapeType, thePlane):
 #    anObj = ShapesOp.GetShapesOnPlane(theShape, theShapeType, thePlane)
@@ -462,7 +462,7 @@ def SubShapeAllIDs(aShape, aType):
       print "SubShapeAllIDs : ", ShapesOp.GetErrorCode()
     return ListObj
 
-def SubShapeAllSorted(aShape,aType):
+def SubShapeAllSorted(aShape, aType):
     ListObj = ShapesOp.MakeExplode(aShape,aType,1)
     if ShapesOp.IsDone() == 0:
       print "MakeExplode : ", ShapesOp.GetErrorCode()
@@ -611,8 +611,8 @@ def Partition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                           Limit, RemoveWebs, ListMaterials);
     return anObj
 
-def MakeHalfPartition(theShape):
-    anObj = BoolOp.MakeHalfPartition(theShape)
+def MakeHalfPartition(theShape, thePlane):
+    anObj = BoolOp.MakeHalfPartition(theShape, thePlane)
     if BoolOp.IsDone() == 0:
       print "MakeHalfPartition : ", BoolOp.GetErrorCode()
     return anObj
@@ -975,6 +975,12 @@ def MakeBlockExplode(theCompound, theMinNbFaces, theMaxNbFaces):
       print "MakeBlockExplode : ", BlocksOp.GetErrorCode()
     return aList
 
+def GetBlockNearPoint(theCompound, thePoint):
+    anObj = BlocksOp.GetBlockNearPoint(theCompound, thePoint)
+    if BlocksOp.IsDone() == 0:
+      print "GetBlockNearPoint : ", BlocksOp.GetErrorCode()
+    return anObj
+
 def GetBlockByParts(theCompound, theParts):
     anObj = BlocksOp.GetBlockByParts(theCompound, theParts)
     if BlocksOp.IsDone() == 0:
@@ -982,10 +988,10 @@ def GetBlockByParts(theCompound, theParts):
     return anObj
 
 def GetBlocksByParts(theCompound, theParts):
-    anObj = BlocksOp.GetBlocksByParts(theCompound, theParts)
+    aList = BlocksOp.GetBlocksByParts(theCompound, theParts)
     if BlocksOp.IsDone() == 0:
       print "GetBlocksByParts : ", BlocksOp.GetErrorCode()
-    return anObj
+    return aList
 
 def MakeMultiTransformation1D(Block, DirFaceID1, DirFaceID2, NbTimes):
     anObj = BlocksOp.MakeMultiTransformation1D(Block, DirFaceID1, DirFaceID2, NbTimes)
@@ -1002,10 +1008,10 @@ def MakeMultiTransformation2D(Block, DirFaceID1U, DirFaceID2U, NbTimesU,
     return anObj
 
 def Propagate(theShape):
-    anObj = BlocksOp.Propagate(theShape)
+    listChains = BlocksOp.Propagate(theShape)
     if BlocksOp.IsDone() == 0:
       print "Propagate : ", BlocksOp.GetErrorCode()
-    return anObj
+    return listChains
 
 # -----------------------------------------------------------------------------
 # Group operations
@@ -1045,6 +1051,8 @@ def GetMainShape(theGroup):
       print "GetMainShape : ", GroupOp.GetErrorCode()
     return anObj
 
+# Add Path to the system path
+#
 def addPath(Path):
     if (sys.path.count(Path) < 1):
 	sys.path.append(Path)
