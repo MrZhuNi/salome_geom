@@ -39,7 +39,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GeometryGUI_FuseDlg::GeometryGUI_FuseDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
+GeometryGUI_FuseDlg::GeometryGUI_FuseDlg(QWidget* parent, const char* name, BooleanGUI* theBooleanGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GeometryGUI_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_FUSE")));
@@ -64,7 +64,8 @@ GeometryGUI_FuseDlg::GeometryGUI_FuseDlg(QWidget* parent, const char* name, SALO
   /***************************************************************/
 
   /* Initialisation */
-  Init(Sel);
+  myBooleanGUI = theBooleanGUI;
+  Init();
 }
 
 
@@ -82,7 +83,7 @@ GeometryGUI_FuseDlg::~GeometryGUI_FuseDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void GeometryGUI_FuseDlg::Init(SALOME_Selection* Sel)
+void GeometryGUI_FuseDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupFuse->LineEdit1;
@@ -101,7 +102,7 @@ void GeometryGUI_FuseDlg::Init(SALOME_Selection* Sel)
   connect(GroupFuse->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupFuse->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT( SelectionIntoArgument()));
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   /* displays Dialog */
   GroupFuse->show();
@@ -132,7 +133,7 @@ void GeometryGUI_FuseDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
 
   if(myOkShape1 && myOkShape2)
-    myGeomGUI->MakeBooleanAndDisplay(myGeomShape1 ,myGeomShape2, 3);
+    myBooleanGUI->MakeBooleanAndDisplay(myGeomShape1 ,myGeomShape2, 3);
 
   return;
 }
@@ -243,7 +244,7 @@ void GeometryGUI_FuseDlg::ActivateThisDialog()
 //=================================================================================
 void GeometryGUI_FuseDlg::enterEvent(QEvent* e)
 {
-  if (GroupConstructors->isEnabled())
+  if(GroupConstructors->isEnabled())
     return;
   this->ActivateThisDialog();
   return;

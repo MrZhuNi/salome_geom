@@ -156,7 +156,7 @@ using namespace std;
 #include "VTKViewer_RenderWindowInteractor.h"
 #include "VTKViewer_ViewFrame.h"
 #include "GEOM_Actor.h"
-#include "GEOM_Client.hxx"
+//#include "GEOM_Client.hxx"
 #include "GEOM_AISShape.hxx"
 #include "GEOM_AssemblyBuilder.h"
 #include "GEOM_InteractiveObject.hxx"
@@ -165,19 +165,14 @@ using namespace std;
 #include "GeometryGUI_aParameterDlg.h"
 
 #include "GeometryGUI_PointDlg.h"         // Method POINT
-#include "GeometryGUI_BoxDlg.h"           // Method BOX
+
 #include "GeometryGUI_VectorDlg.h"        // Method VECTOR
 #include "GeometryGUI_PlaneDlg.h"         // Method PLANE
 #include "GeometryGUI_PrismDlg.h"         // Method PRISM
-#include "GeometryGUI_FuseDlg.h"          // Method FUSE
-#include "GeometryGUI_CommonDlg.h"        // Method COMMON
-#include "GeometryGUI_CutDlg.h"           // Method CUT
-#include "GeometryGUI_SectionDlg.h"       // Method SECTION
-
 #include "GeometryGUI_LineDlg.h"          // Method LINE
 #include "GeometryGUI_ScaleDlg.h"         // Method SCALE
 #include "GeometryGUI_MirrorDlg.h"        // Method MIRROR
-#include "GeometryGUI_SphereDlg.h"        // Method SPHERE
+
 #include "GeometryGUI_CircleDlg.h"        // Method CIRCLE
 #include "GeometryGUI_EllipseDlg.h"       // Method ELLIPSE
 #include "GeometryGUI_RevolDlg.h"         // Method REVOL
@@ -187,9 +182,6 @@ using namespace std;
 #include "GeometryGUI_MultiRotationDlg.h" // Method MULTI ROTATION
 #include "GeometryGUI_ArcDlg.h"           // Method ARC
 #include "GeometryGUI_PipeDlg.h"          // Method PIPE
-#include "GeometryGUI_CylinderDlg.h"      // Method CYLINDER
-#include "GeometryGUI_ConeDlg.h"          // Method CONE
-#include "GeometryGUI_TorusDlg.h"         // Method TORUS
 #include "GeometryGUI_FillingDlg.h"       // Method FILLING
 #include "GeometryGUI_SewingDlg.h"        // Method SEWING
 #include "GeometryGUI_CompoundDlg.h"      // Method GEOM::COMPOUND
@@ -219,20 +211,14 @@ using namespace std;
 #include "GeometryGUI_DistanceDlg.h"      // Method DISTANCE
 #include "GeometryGUI_SuppressHoleDlg.h"  // Method SUPPRESS HOLE
 
+#include "BooleanGUI.h"
+#include "PrimitiveGUI.h"
 
 static Handle(AIS_Shape) theConstructionShape = new AIS_Shape(TopoDS_Shape());
 static Handle(GEOM_AISShape) theSelectedShape = new GEOM_AISShape(TopoDS_Shape(), "");
 
-static AIS_ListOfInteractive ListDisplayedObject;
-
-static bool Settings_AddInStudy = false;
-static bool Settings_Copy = false;
-static Standard_CString Fatherior = "";
-static GEOM_Client ShapeReader;
-
 /* The object itself created in the static method 'GetOrCreateGeometryGUI()' */
 static GeometryGUI* GeomGUI = 0;
-
 
 
 //=======================================================================
@@ -271,6 +257,9 @@ private:
 GeometryGUI::GeometryGUI() :
   QObject()
 {
+  mySettings_AddInStudy = false;
+  mySettings_Copy = false;
+  myFatherior = "";
 }
 
 //=======================================================================
@@ -373,6 +362,7 @@ GeometryGUI* GeometryGUI::GetOrCreateGeometryGUI( QAD_Desktop* desktop )
     /* study may have changed */
     GeomGUI->myActiveStudy = desktop->getActiveStudy();
   }
+
   return GeomGUI;
 }
 
@@ -437,7 +427,7 @@ bool GeometryGUI::GetTopoFromSelection(SALOME_Selection *Sel, TopoDS_Shape& tds)
   Handle(SALOME_InteractiveObject) IO = Sel->firstIObject();
   /* case SObject */
   if ( IO->hasEntry() ) {
-    SALOMEDS::Study_var aStudy = GeomGUI->myActiveStudy->getStudyDocument();
+    SALOMEDS::Study_var aStudy = myActiveStudy->getStudyDocument();
     SALOMEDS::SObject_var obj = aStudy->FindObjectID( IO->getEntry() );
     SALOMEDS::GenericAttribute_var anAttr;
     SALOMEDS::AttributeIOR_var     anIOR;
@@ -677,7 +667,7 @@ GEOM_Actor* GeometryGUI::ConvertIORinGEOMActor( const char * IOR,
 						Standard_Boolean& testResult,
 						bool onlyInActiveView )
 {
-  int nbSf = GeomGUI->myActiveStudy->getStudyFramesCount();
+  int nbSf = myActiveStudy->getStudyFramesCount();
   for ( int i = 0; i < nbSf; i++ ) {
     QAD_StudyFrame* sf = myActiveStudy->getStudyFrame(i);
     if ( sf->getTypeView() == VIEW_VTK ) {
@@ -693,7 +683,7 @@ GEOM_Actor* GeometryGUI::ConvertIORinGEOMActor( const char * IOR,
 	    Standard_CString theIOR = GIO->getIOR();
 	    if ( strcmp( IOR, theIOR ) == 0 ) {
 	      if ( onlyInActiveView ) {
-		if ( sf == GeomGUI->myActiveStudy->getActiveStudyFrame() ) {
+		if ( sf == myActiveStudy->getActiveStudyFrame() ) {
 		  testResult = true;
 		  return anActor;
 		}
@@ -724,7 +714,7 @@ GEOM::GEOM_Shape_ptr GeometryGUI::ConvertIOinGEOMShape( const Handle(SALOME_Inte
 
   /* case SObject */
   if ( IO->hasEntry() ) {
-    SALOMEDS::Study_var aStudy = GeomGUI->myActiveStudy->getStudyDocument();
+    SALOMEDS::Study_var aStudy = myActiveStudy->getStudyDocument();
     SALOMEDS::SObject_var obj = aStudy->FindObjectID( IO->getEntry() );
     SALOMEDS::GenericAttribute_var anAttr;
     SALOMEDS::AttributeIOR_var     anIOR;
@@ -766,7 +756,7 @@ void GeometryGUI::ConvertListOfIOInListOfIOR( const SALOME_ListIO& aList,
       
       if ( IObject->hasEntry() ) 
 	{
-	  SALOMEDS::Study_var aStudy = GeomGUI->myActiveStudy->getStudyDocument();
+	  SALOMEDS::Study_var aStudy = myActiveStudy->getStudyDocument();
 	  SALOMEDS::SObject_var obj = aStudy->FindObjectID( IObject->getEntry() );
           SALOMEDS::GenericAttribute_var anAttr;
           SALOMEDS::AttributeIOR_var     anIOR;
@@ -877,7 +867,7 @@ bool GeometryGUI::GetShapeTypeString( const TopoDS_Shape& aShape, Standard_CStri
 //=================================================================================
 bool GeometryGUI::CreateArrowForLinearEdge( const TopoDS_Shape& tds, TopoDS_Shape& ArrowCone )
 {
-  if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() != VIEW_OCC || tds.ShapeType() != TopAbs_EDGE )
+  if (myActiveStudy->getActiveStudyFrame()->getTypeView() != VIEW_OCC || tds.ShapeType() != TopAbs_EDGE )
     return false;
   
   OCCViewer_ViewPort* vp = ((OCCViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewPort();
@@ -1003,23 +993,7 @@ void GeometryGUI::MakeVectorAndDisplay( const gp_Pnt P1, const gp_Pnt P2 )
 }
 
 
-//=======================================================================
-// function : MakeBoxAndDisplay()
-// purpose  : 
-//=======================================================================
-void GeometryGUI::MakeBoxAndDisplay( const gp_Pnt P1, const gp_Pnt P2 )
-{
-  try {
-    GEOM::GEOM_Shape_var box = myComponentGeom->MakeBox( P1.X(), P1.Y(), P1.Z(), P2.X(), P2.Y(), P2.Z() );
-    box->NameType(tr("GEOM_BOX"));
-    if ( Display( box, "") ) {
-      myDesktop->putInfo(tr("GEOM_PRP_DONE"));
-    }
-  }
-  catch (const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-}
+
 
 
 
@@ -1057,8 +1031,8 @@ void GeometryGUI::MakePlaneAndDisplay( const gp_Pnt P1,        const Standard_Re
 //=======================================================================
 void GeometryGUI::MakeWorkingPlane( const gp_Pnt P, const gp_Dir D)
 {
-  if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() != VIEW_OCC) {
-    GeomGUI->myDesktop->putInfo( tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
+  if (myActiveStudy->getActiveStudyFrame()->getTypeView() != VIEW_OCC) {
+    myDesktop->putInfo( tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
     return ;
   }
   OCCViewer_ViewPort* vp = ((OCCViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewPort();
@@ -1089,7 +1063,7 @@ void GeometryGUI::MakePrismAndDisplay( GEOM::GEOM_Shape_ptr BaseShape, const gp_
       return ;
     }  
 
-    TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, result);
+    TopoDS_Shape S = myShapeReader.GetShape(myComponentGeom, result);
     Standard_CString type;
     GetShapeTypeString(S,type);
     result->NameType( type );
@@ -1154,154 +1128,13 @@ void GeometryGUI::MakeLineAndDisplay( const gp_Pnt InitPoint, const gp_Pnt LastP
 
 
 
-//=======================================================================
-// function : MakeBooleanAndDisplay()
-// purpose  : 
-//=======================================================================
-void GeometryGUI::MakeBooleanAndDisplay( GEOM::GEOM_Shape_ptr Shape1, GEOM::GEOM_Shape_ptr Shape2, const short operation )
-{
-  try {
-    GEOM::GEOM_Shape_ptr result = myComponentGeom->MakeBoolean( Shape1, Shape2, operation ) ;
-    if (result->_is_nil()) {
-      myDesktop->putInfo (tr("GEOM_PRP_NULLSHAPE")) ; 
-      return ;
-    }  
-
-    TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, result);
-    Standard_CString type;
-    GetShapeTypeString(S,type);
-    result->NameType( type );
-
-    if ( Display( result, "") )
-      myDesktop->putInfo(tr("GEOM_PRP_DONE"));
-  }
-  catch (const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return ;
-}
 
 
-//=====================================================================================
-// function : MakeSphere()
-// purpose  :
-//=====================================================================================
-void GeometryGUI::MakeSphereAndDisplay( const gp_Pnt aCenterPoint, const double aRadius )
-{
-  try {
-    if( aRadius <= Precision::Confusion() ) {
-      QAD_MessageBox::warn1 ( QAD_Application::getDesktop(), tr ("GEOM_WRN_WARNING"),
-			      tr ("GEOM_WRN_RADIUS_NULL"),   tr ("GEOM_BUT_YES") );
-      return ;
-    }
-    GEOM::GEOM_Shape_ptr result = myComponentGeom->MakeSphere(aCenterPoint.X(),aCenterPoint.Y(),aCenterPoint.Z(), aRadius);
-    result->NameType(tr("GEOM_SPHERE"));
-    if ( Display( result, "") )
-      myDesktop->putInfo(tr("GEOM_PRP_DONE"));
-  }
-  catch (const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return ;
-}
 
 
-//=====================================================================================
-// function : MakeConeAndDisplay()
-// purpose  :
-//=====================================================================================
-void GeometryGUI::MakeConeAndDisplay( const gp_Pnt BasePoint,
-				      const gp_Dir aDir,
-				      const double Radius1,
-				      const double Radius2,
-				      const double aHeight )
-{
-  try {
-    if( ( Radius1 <= Precision::Confusion() && Radius2 <= Precision::Confusion() ) || aHeight <= Precision::Confusion() )
-      return ;
-    GEOM::PointStruct pstruct = myComponentGeom->MakePointStruct( BasePoint.X(), BasePoint.Y(), BasePoint.Z() ) ;
-    GEOM::PointStruct d = myComponentGeom->MakePointStruct( aDir.X(), aDir.Y(), aDir.Z() ) ;
-    GEOM::DirStruct dstruct = myComponentGeom->MakeDirection(d) ;
-    
-    GEOM::GEOM_Shape_var result = myComponentGeom->MakeCone( pstruct, dstruct, Radius1, Radius2, aHeight ) ;  
-    if ( result->_is_nil() ) {
-      myDesktop->putInfo(tr("GEOM_PRP_ABORT"));
-      return  ;
-    }
-    result->NameType(tr("GEOM_CONE"));
-    if ( Display( result, "") )
-      myDesktop->putInfo(tr("GEOM_PRP_DONE"));
-  } 
-  catch (const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return  ;
-}
 
 
-//=====================================================================================
-// function : MakeCylinderAndDisplay()
-// purpose  :
-//=====================================================================================
-void GeometryGUI::MakeCylinderAndDisplay( const gp_Pnt BasePoint,
-					  const gp_Dir aDir,
-					  const double Radius,
-					  const double aHeight )
-{
-  try {
-    if( Radius <= Precision::Confusion() || aHeight <= Precision::Confusion() )
-      return ;
-    GEOM::PointStruct pstruct = myComponentGeom->MakePointStruct( BasePoint.X(), BasePoint.Y(), BasePoint.Z() ) ;
-    GEOM::PointStruct d = myComponentGeom ->MakePointStruct( aDir.X(), aDir.Y(), aDir.Z() ) ;
-    GEOM::DirStruct dstruct = myComponentGeom->MakeDirection(d) ;
-    
-    GEOM::GEOM_Shape_var result = myComponentGeom->MakeCylinder(pstruct, dstruct, Radius, aHeight) ;
-    if ( result->_is_nil() ) {
-      myDesktop->putInfo(tr("GEOM_PRP_ABORT"));
-      return  ;
-    }
-    result->NameType(tr("GEOM_CYLINDER"));
-    if ( Display( result, "") )
-      myDesktop->putInfo(tr("GEOM_PRP_DONE"));
-  }
-  catch (const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return  ;
-}
 
-
-//=====================================================================================
-// function : MakeTorusAndDisplay()
-// purpose  :
-//=====================================================================================
-void GeometryGUI::MakeTorusAndDisplay( const gp_Pnt BasePoint,
-				       const gp_Dir aDir,
-				       const double Radius1,
-				       const double Radius2 )
-{
-  try {
-    if( Radius1 <= Precision::Confusion() || Radius2 <= Precision::Confusion() )
-      return ;
-    
-    GEOM::PointStruct pstruct = myComponentGeom->MakePointStruct( BasePoint.X(), BasePoint.Y(), BasePoint.Z() ) ;
-    GEOM::PointStruct d = myComponentGeom ->MakePointStruct( aDir.X(), aDir.Y(), aDir.Z() ) ;
-    GEOM::DirStruct dstruct = myComponentGeom->MakeDirection(d) ;
-    
-    GEOM::GEOM_Shape_var result = myComponentGeom->MakeTorus(pstruct, dstruct, Radius1, Radius2) ;
-    if ( result->_is_nil() ) {
-      myDesktop->putInfo(tr("GEOM_PRP_ABORT"));
-      return  ;
-    }
-    result->NameType(tr("GEOM_TORUS"));
-    if ( Display( result, "") )
-      myDesktop->putInfo(tr("GEOM_PRP_DONE"));
-  }
-  catch (const SALOME::SALOME_Exception& S_ex) {
-    QtCatchCorbaException(S_ex);
-  }
-  return  ;
-}
 
 
 //=====================================================================================
@@ -1314,7 +1147,7 @@ void GeometryGUI::MakePipeAndDisplay( GEOM::GEOM_Shape_ptr aPath, GEOM::GEOM_Sha
     GEOM::GEOM_Shape_ptr result = myComponentGeom->MakePipe(aPath, aBase);
     if ( !result->_is_nil() && Display( result, "") ) {
 
-      TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, result);
+      TopoDS_Shape S = myShapeReader.GetShape(myComponentGeom, result);
       Standard_CString type;
       GetShapeTypeString(S,type);
       result->NameType( type );
@@ -1352,7 +1185,7 @@ void GeometryGUI::MakeFillingAndDisplay( GEOM::GEOM_Shape_ptr SectionShape,
       return ;
     }  
 
-    TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, result);
+    TopoDS_Shape S = myShapeReader.GetShape(myComponentGeom, result);
     Standard_CString type;
     GetShapeTypeString(S,type);
     result->NameType( type );
@@ -1405,7 +1238,7 @@ void GeometryGUI::MakeSewingAndDisplay( GEOM::GEOM_Gen::ListOfIOR& listShapesIOR
       return ;
     }
 
-    TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, result);
+    TopoDS_Shape S = myShapeReader.GetShape(myComponentGeom, result);
     Standard_CString type;
     GetShapeTypeString(S,type);
     result->NameType( type );
@@ -1600,7 +1433,7 @@ void GeometryGUI::MakeRevolutionAndDisplay( GEOM::GEOM_Shape_ptr Shape, const gp
       return  ;
     }
 
-    TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, result);
+    TopoDS_Shape S = myShapeReader.GetShape(myComponentGeom, result);
     Standard_CString type;
     GetShapeTypeString(S,type);
     result->NameType( type );
@@ -1992,6 +1825,16 @@ QAD_Desktop* GeometryGUI::GetDesktop()
 }
 
 
+//=======================================================================
+// function : GetShapeReader()
+// purpose  : 
+//=======================================================================
+GEOM_Client& GeometryGUI::GetShapeReader()
+{
+  return this->myShapeReader ;
+}
+
+
 //=====================================================================================
 // function : OnSubShapeGetAll()
 // purpose  : Explode a shape in all sub shapes with a SubShapeType
@@ -2033,12 +1876,12 @@ bool GeometryGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* Sh
   QAD_Operation* op = new SALOMEGUI_ImportOperation( myActiveStudy );
   op->start();
   
-  TopoDS_Shape mainTopo = ShapeReader.GetShape(myComponentGeom, aShape);
+  TopoDS_Shape mainTopo = myShapeReader.GetShape(myComponentGeom, aShape);
   TopoDS_Shape mainShape;
   bool main = false;
   while ( !main ) {
     if ( aShape->IsMainShape() ) {
-      mainShape = ShapeReader.GetShape(myComponentGeom, aShape);
+      mainShape = myShapeReader.GetShape(myComponentGeom, aShape);
       main = true;
     } else
       aShape = myComponentGeom->GetIORFromString( aShape->MainName() );
@@ -2050,7 +1893,7 @@ bool GeometryGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* Sh
     
     /* Get each sub shape extracted CORBA and OCC */
     aResult = listGeomShapes[j] ;    
-    TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, aResult);
+    TopoDS_Shape S = myShapeReader.GetShape(myComponentGeom, aResult);
     
     if ( S.IsNull() ) {
       myDesktop->putInfo (tr("GEOM_PRP_ABORT"));
@@ -2081,12 +1924,12 @@ bool GeometryGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* Sh
 
     bool allreadyexist = false;
           
-    if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+    if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
       OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
       Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
       
       Handle(GEOM_AISShape) result = new GEOM_AISShape( S, nameG );      
-      Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(aResult->Name(), Fatherior, "GEOM");
+      Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(aResult->Name(), myFatherior, "GEOM");
       
       MESSAGE ( "SO->_is_nil() " << SO->_is_nil() )
 
@@ -2142,14 +1985,14 @@ bool GeometryGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* Sh
       if ( !allreadyexist )
 	ic->Display(result);
       
-    } else if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
-      VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+    } else if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
+      VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
       
       int themode = myRenderInter->GetDisplayMode();
-      vtkRenderer *theRenderer = ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+      vtkRenderer *theRenderer = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
       vtkRenderWindow *renWin = theRenderer->GetRenderWindow();
       
-      Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(aResult->Name(), Fatherior,"GEOM");
+      Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(aResult->Name(), myFatherior,"GEOM");
       
       if ( SO->_is_nil() ) {
 	SALOMEDS::SObject_var newObj = aStudyBuilder->NewObject( theObj );
@@ -2313,13 +2156,13 @@ bool GeometryGUI::OnSubShapeGetSelected( const TopoDS_Shape& ShapeTopo,
   }
 
   GEOM::GEOM_Shape_var aShape  = myComponentGeom->GetIORFromString( ShapeTopoIOR );
-  TopoDS_Shape mainTopo = ShapeReader.GetShape(myComponentGeom, aShape);
+  TopoDS_Shape mainTopo = myShapeReader.GetShape(myComponentGeom, aShape);
 
   TopoDS_Shape mainShape;
   bool main = false;
   while ( !main ) {
     if ( aShape->IsMainShape() ) {
-      mainShape = ShapeReader.GetShape(myComponentGeom, aShape);
+      mainShape = myShapeReader.GetShape(myComponentGeom, aShape);
       main = true;
     } else
       aShape = myComponentGeom->GetIORFromString( aShape->MainName() );
@@ -2380,7 +2223,7 @@ bool GeometryGUI::OnSubShapeGetSelected( const TopoDS_Shape& ShapeTopo,
 	sprintf (nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), this->myNbGeom++ );
       }
       result = new GEOM_AISShape( Exp.Current(), nameG );
-      IO = new GEOM_InteractiveObject(aResult->Name(), Fatherior, "GEOM");
+      IO = new GEOM_InteractiveObject(aResult->Name(), myFatherior, "GEOM");
     }
   }
   else {
@@ -2392,7 +2235,7 @@ bool GeometryGUI::OnSubShapeGetSelected( const TopoDS_Shape& ShapeTopo,
       sprintf (nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), this->myNbGeom++ );
     }
     result = new GEOM_AISShape( compound, nameG );
-    IO = new GEOM_InteractiveObject(aResult->Name(), Fatherior, "GEOM");
+    IO = new GEOM_InteractiveObject(aResult->Name(), myFatherior, "GEOM");
   }
   
   SALOMEDS::SObject_var SO = aStudy->FindObjectIOR( aResult->Name() );
@@ -2544,7 +2387,7 @@ bool GeometryGUI::OnSuppressFaces( const TopoDS_Shape& ShapeTopo,
   for( int i=0; i<listGeomShapes->length(); i++ ) {
     
     GEOM::GEOM_Shape_var aShellOrFace = listGeomShapes[i] ;
-    TopoDS_Shape S = ShapeReader.GetShape( this->myComponentGeom, aShellOrFace );
+    TopoDS_Shape S = myShapeReader.GetShape( this->myComponentGeom, aShellOrFace );
     
     if( S.IsNull() ) {
       return false ;
@@ -2594,7 +2437,7 @@ bool GeometryGUI::OnSuppressHole( const char* ShapeTopoIOR,
     GEOM::GEOM_Shape_var aShape  = myComponentGeom->GetIORFromString( ShapeTopoIOR );    
     GEOM::GEOM_Shape_var aResult = myComponentGeom->SuppressHole( aShape, ListOfIdFace, ListOfIdWire, ListOfIdEndFace ) ;
   
-    TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, aResult);
+    TopoDS_Shape S = myShapeReader.GetShape(myComponentGeom, aResult);
     Standard_CString type;
     GetShapeTypeString(S,type);
     aResult->NameType( type );
@@ -2626,7 +2469,7 @@ bool GeometryGUI::OnSuppressHolesInFaceOrShell( const char* ShapeTopoIOR,
     GEOM::GEOM_Shape_var aShape  = myComponentGeom->GetIORFromString( ShapeTopoIOR );    
     GEOM::GEOM_Shape_var aResult = myComponentGeom->SuppressHolesInFaceOrShell( aShape, ListOfIdWires ) ;
     
-    TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, aResult);
+    TopoDS_Shape S = myShapeReader.GetShape(myComponentGeom, aResult);
     Standard_CString type;
     GetShapeTypeString(S,type);
     aResult->NameType( type );
@@ -2642,43 +2485,7 @@ bool GeometryGUI::OnSuppressHolesInFaceOrShell( const char* ShapeTopoIOR,
 
 
 
-//=======================================================================
-// function : activeStudyChanged()
-// purpose  : static
-//=======================================================================
-void GeometryGUI::activeStudyChanged( QAD_Desktop* parent )
-{
-  MESSAGE ("GeometryGUI::activeStudyChanged init.")
-  /* Create or retrieve an object GeomGUI */
-  GeometryGUI::GetOrCreateGeometryGUI(parent); 
-  if(GeomGUI != 0) {  
 
-    if (GeomGUI->myState == CURRENT_SKETCH) {
-      GeomGUI->mySketcher.Clear();
-      GeomGUI->ResetState();
-    }
-
-    QMenuBar* Mb = GeomGUI->myDesktop->getMainMenuBar();
-    bool ViewOCC = false;
-    if ( GeomGUI->myDesktop->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) 
-      ViewOCC = true;
-
-    Mb->setItemEnabled( 312, ViewOCC); //Sketch
-    Mb->setItemEnabled( 309, ViewOCC); //SuppressFace
-    Mb->setItemEnabled( 314, ViewOCC); //SuppressHole
-    
-    Mb->setItemEnabled( 703, ViewOCC);// ShadingColor Settings
-    Mb->setItemEnabled( 704, ViewOCC);// Isos Settings
-
-    GeomGUI->EraseSimulationShape() ;
-    GeomGUI->EmitSignalCloseAllDialogs() ;
-    GeomGUI = 0 ;
-  }
-
-  //  GeomGUI->SetSettings( parent );
-  // MESSAGE ("GeometryGUI::activeStudyChanged done.")
-  return ;
-}
 
 
 //=======================================================================
@@ -2694,1742 +2501,6 @@ bool GeometryGUI::DefineDlgPosition(QWidget* aDlg, int& x, int& y)
   return true ;  
 }
 
-//=======================================================================
-// function : OnGUIEvent() [static]
-// purpose  : manage all events on GUI
-//=======================================================================
-bool GeometryGUI::OnGUIEvent(int theCommandID,	QAD_Desktop* parent)
-{
-  /* Create or retrieve an object GeomGUI */
-  GeometryGUI::GetOrCreateGeometryGUI(parent);
-
-  SALOMEDS::Study_var aStudy = GeomGUI->myActiveStudy->getStudyDocument();
-  SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
-  
-  OCCViewer_Viewer3d* v3d;
-  Handle(AIS_InteractiveContext) ic;
-  vtkRenderer* Renderer;
-
-  QMenuBar* Mb = GeomGUI->myDesktop->getMainMenuBar();
-
-  bool ViewOCC = false;
-
-  if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-    v3d = ((OCCViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    ic = v3d->getAISContext();
-    ViewOCC = true;    
-    Mb->setItemEnabled( 312, ViewOCC);//Sketch
-    Mb->setItemEnabled( 309, ViewOCC);//SuppressFace
-    Mb->setItemEnabled( 314, ViewOCC);//SuppressHole
-    
-    Mb->setItemEnabled( 703, ViewOCC);// ShadingColor Settings
-    Mb->setItemEnabled( 704, ViewOCC);// Isos Settings
-
-  } else if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
-    Renderer = ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
-
-    // OnSuppressFaces, OnSuppressHole, SETTINGS - SHADING COLOR, SETTINGS - ISOS, SETTINGS : STEP VALUE FOR SPIN BOXES, SKETCHER, ISOS - POPUP VIEWER, 
-    Mb->setItemEnabled( 312, ViewOCC);//Sketch
-    Mb->setItemEnabled( 309, ViewOCC);//SuppressFace
-    Mb->setItemEnabled( 314, ViewOCC);//SuppressHole
-    
-    Mb->setItemEnabled( 703, ViewOCC);// ShadingColor Settings
-    Mb->setItemEnabled( 704, ViewOCC);// Isos Settings
-  } else {
-    return 0;
-  }
-
-  if (GeomGUI->myState == CURRENT_SKETCH && theCommandID != 10000 && theCommandID != 10001 && theCommandID != 10002 && theCommandID != 10003 && theCommandID != 10004 && theCommandID != 10006 && theCommandID != 10007 && theCommandID != 10008 && theCommandID != 10010 && theCommandID != 10011 && theCommandID != 10012 && theCommandID != 10013 && theCommandID != 10014 && theCommandID != 3133 && theCommandID != 3134)
-    return false;
-
-  switch (theCommandID)
-    { 
-    case 31: // COPY
-      GeomGUI->OnEditCopy();
-      break;
-    
-    case 33: // DELETE
-      GeomGUI->OnEditDelete();
-      break;
-
-    case 111:
-      {
-	GeomGUI->SetState(111);
-	GeomGUI->Import();
-	GeomGUI->ResetState();
-	break;
-      }
-    case 112:
-      {
-	GeomGUI->SetState(112);
-	GeomGUI->Import();
-	GeomGUI->ResetState();
-	break;
-      }
-    case 113: // IMPORT STEP
-      {
-	GeomGUI->SetState(113);
-	GeomGUI->Import();
-	GeomGUI->ResetState();
-	break;
-      }
-
-    case 121: // EXPORT BREP
-      {
-	GeomGUI->SetState(121);
-	GeomGUI->Export();
-	GeomGUI->ResetState();
-	break;
-      }
-
-    case 122: // EXPORT IGES
-      {
-	GeomGUI->SetState(122);
-	GeomGUI->Export();
-	GeomGUI->ResetState();
-	break;
-      }
-
-    case 123: // EXPORT STEP
-      {
-	GeomGUI->SetState(123);
-	GeomGUI->Export();
-	GeomGUI->ResetState();
-	break;
-      }
-      
-    case 303: // EXPLODE : use ic
-      { 	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_SubShapeDlg *aDlg = new GeometryGUI_SubShapeDlg( parent, "", Sel, ic ) ;
-	break ;
-      }
-      
-    case 304: // GEOM::EDGE
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_EdgeDlg *aDlg = new GeometryGUI_EdgeDlg( parent, "", Sel ) ;
-	break ;
-      }
-      
-    case 305: // GEOM::WIRE
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_WireDlg *aDlg = new GeometryGUI_WireDlg( parent, "", Sel ) ;
-	break ;
-      }
-      
-    case 306: // GEOM::FACE
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_FaceDlg *aDlg = new GeometryGUI_FaceDlg ( parent, "", Sel ) ;
-	break ;
-      }
-
-    case 315: // GEOM::SHELL
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_ShellDlg *aDlg = new GeometryGUI_ShellDlg ( parent, "", Sel ) ;
-	break ;
-      }
-
-    case 316: // GEOM::SOLID
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_SolidDlg *aDlg = new GeometryGUI_SolidDlg ( parent, "", Sel ) ;
-	break ;
-      }
-      
-    case 308: // GEOM::COMPOUND
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_CompoundDlg *aDlg = new GeometryGUI_CompoundDlg ( parent, "", Sel ) ;
-	break ;
-      }
-      
-    case 309: // SUPPRESS FACES : use ic
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_SuppressFacesDlg *aDlg = new GeometryGUI_SuppressFacesDlg( parent, "", Sel, ic ) ;
-	break ;
-      }
-      
-    case 314: // SUPPRESS HOLES : use ic
-      {
-	if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-	  GeomGUI->EmitSignalDeactivateDialog() ;
-	  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	  GeometryGUI_SuppressHoleDlg *aDlg = new GeometryGUI_SuppressHoleDlg( parent, "", Sel, ic ) ;
-	}
-	else { 
-	  GeomGUI->myDesktop->putInfo( tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
-	}
-	break ;
-      }
-    case 501: // SEWING
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_SewingDlg *aDlg = new GeometryGUI_SewingDlg ( parent, "", Sel ) ;
-	break ;
-      }
-      
-    case 502: // ORIENTATION
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_OrientationDlg *aDlg = new GeometryGUI_OrientationDlg( parent, "", Sel ) ;
-	break ;
-      }
-      
-    case 601: // PROPERTIES (Length, surface, volume)
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_PropertiesDlg *aDlg = new GeometryGUI_PropertiesDlg( parent, "", Sel ) ;
-	break ;
-      }
-      
-    case 604: // CDG : Center of mass
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_CenterMassDlg *aDlg = new GeometryGUI_CenterMassDlg ( parent, "", Sel ) ;
-	break ;
-      }
-      
-    case 605: // INERTIA
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_InertiaDlg *aDlg = new GeometryGUI_InertiaDlg( parent, "", Sel ) ;
-	break ;
-      }
-      
-    case 607: // MAXTOLERANCE
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_MaxToleranceDlg *aDlg = new GeometryGUI_MaxToleranceDlg( parent, "", Sel ) ;
-	break ;
-      }
-     
-    case 608: // WHATIS
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_WhatisDlg *aDlg = new GeometryGUI_WhatisDlg( parent, "", Sel ) ;
-	break ;
-      }
-      
-    case 609: // CHECKSHAPE
-     {
-       GeomGUI->EmitSignalDeactivateDialog() ;
-       SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-       GeometryGUI_CheckShape *aDlg = new GeometryGUI_CheckShape( parent, "", Sel ) ;
-       break ;
-     }
-     
-    case 701: // SETTINGS - COPY
-      {
-	QMenuData* pp;
-	QMenuItem* item = parent->menuBar()->findItem(701,&pp);
-	bool check = !pp->isItemChecked(701);
-	pp->setItemChecked(701,check);
-	Settings_Copy = check;	
-	QAD_CONFIG->addSetting( "Geometry:SettingsCopy", Settings_Copy );
-	break;
-      }
-
-    case 702: // SETTINGS - ADD IN STUDY
-      {
-	QMenuData* pp;
-	QMenuItem* item = parent->menuBar()->findItem(702,&pp);
-	bool check = !pp->isItemChecked(702);
-	pp->setItemChecked(702,check);
-	Settings_AddInStudy = check;
-	
-	QAD_CONFIG->addSetting( "Geometry:SettingsAddInStudy", Settings_AddInStudy );
-	break;
-      }
-
-    case 703: // SETTINGS - SHADING COLOR
-      {
-	if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
-	  break;
-	
-	QString SCr = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorRed");
-	QString SCg = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorGreen");
-	QString SCb = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorBlue");
-	QColor color;
-	if( !SCr.isEmpty() && !SCg.isEmpty() && !SCb.isEmpty() ) {	  
-	  color = QColor (SCr.toInt(),
-			  SCg.toInt(),
-			  SCb.toInt());
-	} else {
-	  Quantity_Color Default = Quantity_Color();
-	  color = QColor ( (int)Default.Red()  * 255.0,
-			   (int)Default.Green()* 255.0,
-			   (int)Default.Blue() * 255.0 );
-	}
-	
-	QColor c = QColorDialog::getColor( color, QAD_Application::getDesktop() );
-	if ( c.isValid() ) {
-	  GeomGUI->myShadingColor = Quantity_Color(c.red()  / 255.0,
-						   c.green()/ 255.0,
-						   c.blue() / 255.0,
-						   Quantity_TOC_RGB);
-	  
-	  AIS_ListOfInteractive List;
-	  ic->DisplayedObjects(List);
-	  AIS_ListOfInteractive List1;
-	  ic->ObjectsInCollector(List1);
-	  List.Append(List1);
-	  
-	  AIS_ListIteratorOfListOfInteractive ite(List);
-	  while (ite.More()) {
-	    if (ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
-	      Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
-	      aSh->SetShadingColor( GeomGUI->myShadingColor );
-	      ic->Redisplay( aSh, Standard_True, Standard_True);
-	    }
-	    ite.Next();
-	  }
-	  
-	  ic->UpdateCurrentViewer();
-		
-	  QAD_CONFIG->addSetting("Geometry:SettingsShadingColorRed",   c.red()   );
-	  QAD_CONFIG->addSetting("Geometry:SettingsShadingColorGreen", c.green() );
-	  QAD_CONFIG->addSetting("Geometry:SettingsShadingColorBlue",  c.blue()  );	
-	}
-	break;
-      }
-
-     
-    case 704: // SETTINGS - ISOS
-      {
-	if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
-	  break;
-
-	QString IsoU = QAD_CONFIG->getSetting("Geometry:SettingsIsoU");
-	QString IsoV = QAD_CONFIG->getSetting("Geometry:SettingsIsoV");
-	if ( !IsoU.isEmpty() )
-	  ic->DefaultDrawer()->UIsoAspect()->SetNumber(IsoU.toInt());
-	else
-	  IsoU = "1";
-	if ( !IsoV.isEmpty() )
-	  ic->DefaultDrawer()->VIsoAspect()->SetNumber(IsoV.toInt());
-	else
-	  IsoV = "1";
-	
-	GeometryGUI_NbIsosDlg * NbIsosDlg = new GeometryGUI_NbIsosDlg( QAD_Application::getDesktop(),
-								       tr("GEOM_MEN_ISOS"), TRUE );	
-	int UIso = IsoU.toInt();
-	int VIso = IsoV.toInt();
-	
-	NbIsosDlg->SpinBoxU->setValue(UIso) ;
-	NbIsosDlg->SpinBoxV->setValue(VIso) ;
-
-	if ( NbIsosDlg->exec() ) {
-	  UIso = NbIsosDlg->SpinBoxU->text().toInt() ;
-	  VIso = NbIsosDlg->SpinBoxV->text().toInt() ;
-	  
-	  ic->DefaultDrawer()->UIsoAspect()->SetNumber(UIso);
-	  ic->DefaultDrawer()->VIsoAspect()->SetNumber(VIso);
-	  QAD_CONFIG->addSetting( "Geometry:SettingsIsoU", NbIsosDlg->SpinBoxU->text() ); /* text format */
-	  QAD_CONFIG->addSetting( "Geometry:SettingsIsoV", NbIsosDlg->SpinBoxV->text() ); /* text format */
-	}
-
-	AIS_ListOfInteractive List;
-	ic->DisplayedObjects(List);
-	AIS_ListOfInteractive List1;
-	ic->ObjectsInCollector(List1);
-	List.Append(List1);
-	
-	AIS_ListIteratorOfListOfInteractive ite(List);
-	ic->InitCurrent();
-	if ( ic->NbCurrents() )
-	  while (ite.More()) {
-	    if (ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
-	      
-	      Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
-	      Handle (AIS_Drawer) CurDrawer;
-	      CurDrawer = aSh->Attributes();
-	      CurDrawer->UIsoAspect()->SetNumber( UIso );
-	      CurDrawer->VIsoAspect()->SetNumber( VIso );
-	      ic->SetLocalAttributes(aSh, CurDrawer);
-	      ic->Redisplay(aSh);	
-	    }
-	    ite.Next();
-	  }
-	ic->UpdateCurrentViewer();
-	break;
-      }
- 
-    case 705: // SETTINGS : STEP VALUE FOR SPIN BOXES
-      {
-	//NRI	if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
-	//NRI	  break;
-	
-	QString step = QAD_CONFIG->getSetting( "Geometry:SettingsGeomStep" );
-	if( step.isEmpty() )
-	  step = "100.0" ;
-
-	Standard_Boolean res = false ;
-	double dd = Parameter( res, QString("%1").arg(step), tr("GEOM_MEN_STEP_LABEL"), tr("GEOM_STEP_TITLE"), 0.001, 10000.0, 3 ) ;
-	if( res ) {
-	  QAD_CONFIG->addSetting( "Geometry:SettingsGeomStep",  QString("%1").arg(dd) ) ;
-
-	  /* Emit signal to GeometryGUI_SpinBoxes */
-	  GeomGUI->SignalDefaultStepValueChanged( dd ) ;
-	}
-	else
-	  parent->putInfo(tr("GEOM_PRP_ABORT"));
-
-	break ;
-      }
-      
-    case 801: // ADD IN STUDY - POPUP VIEWER
-      {
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	const SALOME_ListIO& ListSelected = Sel->StoredIObjects();
-	SALOME_ListIteratorOfListIO It( ListSelected );
-	for ( ; It.More(); It.Next() ) {
-	  Handle(SALOME_InteractiveObject) IObject = It.Value();
-	  GeomGUI->AddInStudy(true, IObject);
-	}
-	/* Is set on the dialog box */
-	QApplication::restoreOverrideCursor();
-	break;
-      }
-
-    case 901: // RENAME
-      {
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
-	for ( ; It.More(); It.Next() ) {
-	  Handle(SALOME_InteractiveObject) IObject = It.Value();
-
-	  SALOMEDS::SObject_var obj = aStudy->FindObjectID( IObject->getEntry() );
-          SALOMEDS::GenericAttribute_var anAttr;
-          SALOMEDS::AttributeName_var    aName;
-	  if ( !obj->_is_nil() ) {
-	    if (obj->FindAttribute(anAttr, "AttributeName")) {
-              aName = SALOMEDS::AttributeName::_narrow(anAttr);
-
-	      QString nm = QString( aName->Value() );
-	      nm = SALOMEGUI_NameDlg::getName( QAD_Application::getDesktop(), nm );
-	      if ( !nm.isEmpty() ) {
-		QApplication::setOverrideCursor( Qt::waitCursor );
-		GeomGUI->myActiveStudy->renameIObject( IObject, nm );
-		QApplication::restoreOverrideCursor();
-	      }
-	    }
-	  }
-	}
-	break;
-      }  
- 
-    case 903: // DISPLAY OBJECT BROWSER
-      {
-	if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
-	  // VTK
-	  QApplication::setOverrideCursor( Qt::waitCursor );
-	  
-	  SALOMEDS::SObject_var fatherSF = 
-	    aStudy->FindObjectID(GeomGUI->myActiveStudy->getActiveStudyFrame()->entry());
-
-	  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
-	  
-	  for(;It.More();It.Next()) {
-	    Handle(SALOME_InteractiveObject) IObject = It.Value();
-	    SALOMEDS::SObject_var obj = aStudy->FindObjectID( IObject->getEntry() );
-
-	    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-
-            SALOMEDS::GenericAttribute_var anAttr;
-            SALOMEDS::AttributeName_var    aName;
-            SALOMEDS::AttributeIOR_var     anIOR;
-	 
-	    if(myRenderInter->isInViewer(IObject)) {
-	      myRenderInter->Display(IObject);
-	    }
-	    else {
-	      // Create new actor
-	      if ( !obj->_is_nil() ) {
-		if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
-		  // this SObject may be GEOM module root SObject
-		  SALOMEDS::ChildIterator_var anIter = GeomGUI->myActiveStudy->getStudyDocument()->NewChildIterator(obj);
-		  bool useSubItems = false;
-		  while (anIter->More() && !useSubItems) {
-		    SALOMEDS::SObject_var subobj = anIter->Value();
-		    SALOMEDS::GenericAttribute_var aTmpAttr;
-		    if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
-		      anAttr = aTmpAttr;
-		      obj = subobj;
-		      useSubItems = true;
-		    } else anIter->Next();
-		  }
-		  
-		  while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
-		    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-		    GEOM::GEOM_Shape_var aShape = GeomGUI->myComponentGeom->GetIORFromString(anIOR->Value());
-		    TopoDS_Shape Shape = ShapeReader.GetShape(GeomGUI->myComponentGeom,aShape);
-
-		    if (obj->FindAttribute(anAttr, "AttributeName")) {
-		      aName = SALOMEDS::AttributeName::_narrow(anAttr);
-
-		      vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
-		      vtkActorCollection* theAllActors = theRenderer->GetActors();
-		      theAllActors->InitTraversal();
-		      vtkActor* actor = (vtkActor*)theAllActors->GetNextActor();
-		      Handle(SALOME_InteractiveObject) anIObj;
-		      // don't create new study object if it already exists
-		      bool isDisplayed = false;
-		      while(!(actor==NULL)) {
-			SALOME_Actor* Gactor = SALOME_Actor::SafeDownCast(actor);
-			if (Gactor!=NULL) {
-			  if (Gactor->hasIO()) {
-			    if (strcmp(Gactor->getIO()->getEntry(),obj->GetID())==0) {
-			      isDisplayed = true;
-			      anIObj = Gactor->getIO();
-			      if (!anIObj.IsNull()) myRenderInter->Display(anIObj);
-			    }
-			  }
-			}
-			actor=(vtkActor*)(theAllActors->GetNextActor());
-		      }
-		      if (!isDisplayed) {
-			// open transaction
-			QAD_Operation* op = new SALOMEGUI_ImportOperation( GeomGUI->myActiveStudy );
-			op->start();
-			
-			SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(fatherSF);
-			aStudyBuilder->Addreference(newObj1, obj);
-			// commit transaction
-			op->finish();
-			
-			vtkRenderWindow *renWin = theRenderer->GetRenderWindow();
-			int themode = myRenderInter->GetDisplayMode();
-			
-			vtkActorCollection* theActors = 
-			  GEOM_AssemblyBuilder::BuildActors(Shape,0,themode,Standard_True);
-			theActors->InitTraversal();
-			vtkActor* anActor = (vtkActor*)theActors->GetNextActor();
-			while(!(anActor==NULL)) {
-			  GEOM_Actor* GActor = GEOM_Actor::SafeDownCast( anActor );
-			  Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(anIOR->Value(), Fatherior,"GEOM");
-			  IO->setEntry(obj->GetID());
-			  GActor->setIO( IO );
-			  GActor->setName( IObject->getName() );
-			  
-			  theRenderer->AddActor(GActor);
-			  renWin->Render();
-			  anActor = (vtkActor*)theActors->GetNextActor();
-			}
-		      }
-		    }
-		    // next item iteration
-		    if (useSubItems) {
-		      anIter->Next();
-		      anAttr = SALOMEDS::GenericAttribute::_nil();
-		      while (anIter->More() && anAttr->_is_nil()) {
-			SALOMEDS::SObject_var subobject = anIter->Value();
-			SALOMEDS::GenericAttribute_var aTmpAttribute;
-			if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
-			  anAttr = aTmpAttribute;
-			  obj = subobject;
-			} else anIter->Next();
-		      }
-		    } else anAttr = SALOMEDS::GenericAttribute::_nil();
-		  }
-		}
-	      }
-	    }
-	  }
-	  GeomGUI->myActiveStudy->updateObjBrowser( true );
-	  QApplication::restoreOverrideCursor();
-
-	} else if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-	  QApplication::setOverrideCursor( Qt::waitCursor );
-	  
-	  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
-	  for(;It.More();It.Next()) {
-	    Handle(SALOME_InteractiveObject) IObject = It.Value();
-
-	    SALOMEDS::SObject_var fatherSF = 
-	      aStudy->FindObjectID( GeomGUI->myActiveStudy->getActiveStudyFrame()->entry());
-            SALOMEDS::GenericAttribute_var anAttr;
-            SALOMEDS::AttributeName_var    aName;
-            SALOMEDS::AttributeIOR_var     anIOR;
-
-	    if ( v3d->isInViewer( IObject, true ) ) {
-	      Standard_Boolean found;
-	      Handle(GEOM_AISShape) aSh = GeomGUI->ConvertIOinGEOMAISShape( IObject, found, true );
-	      if ( found ) {
-		ic->Display(aSh);
-		ic->AddOrRemoveCurrentObject(aSh, true);
-	      }
-	      
-	    } else {
-	      SALOMEDS::SObject_var obj = aStudy->FindObjectID( IObject->getEntry() );	      
-	      if ( !obj->_is_nil() ) {
-		if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
-		  // this SObject may be GEOM module root SObject
-		  SALOMEDS::ChildIterator_var anIter = GeomGUI->myActiveStudy->getStudyDocument()->NewChildIterator(obj);
-		  bool useSubItems = false;
-		  while (anIter->More() && !useSubItems) {
-		    SALOMEDS::SObject_var subobj = anIter->Value();
-		    SALOMEDS::GenericAttribute_var aTmpAttr;
-		    if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
-		      anAttr = aTmpAttr;
-		      obj = subobj;
-		      useSubItems = true;
-		    } else anIter->Next();
-		  }
-		  while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
-		    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-		    GEOM::GEOM_Shape_var aShape = GeomGUI->myComponentGeom->GetIORFromString(anIOR->Value());
-		    TopoDS_Shape Shape = ShapeReader.GetShape(GeomGUI->myComponentGeom,aShape);
-		    if (obj->FindAttribute(anAttr, "AttributeName")) {
-		      aName = SALOMEDS::AttributeName::_narrow(anAttr);
-		      // searchin for already displayed objects with the same shape
-		      AIS_ListOfInteractive aDisplayed;
-		      ic->DisplayedObjects(aDisplayed);
-		      AIS_ListIteratorOfListOfInteractive anIObjects(aDisplayed);
-		      Handle(AIS_Shape) anAISShape;
-		      for(;anIObjects.More();anIObjects.Next()) {
-			anAISShape = Handle(AIS_Shape)::DownCast(anIObjects.Value());
-			if (!anAISShape.IsNull()) {
-			  if (anAISShape->Shape().IsSame(Shape)) break;
-			  anAISShape.Nullify();
-			}
-		      }
-		      if (!anAISShape.IsNull()) {
-			if (!ic->IsDisplayed(anAISShape)) ic->Display(anAISShape);
-		      } else {
-			if (!useSubItems) {
-			  // open transaction
-			  QAD_Operation* op = new SALOMEGUI_ImportOperation( GeomGUI->myActiveStudy );
-			  op->start();
-			  
-			  SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(fatherSF);
-			  aStudyBuilder->Addreference(newObj1, obj);
-			  // commit transaction
-			  op->finish();
-			}
-
-			Handle(GEOM_AISShape) aSh = new GEOM_AISShape(Shape, aName->Value());
-			aSh->SetShadingColor( GeomGUI->myShadingColor );
-			Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(anIOR->Value(),
-										       Fatherior,
-										       "GEOM");
-			IO->setEntry(obj->GetID());
-			aSh->setIO( IO );
-			aSh->setName( aName->Value() );
-			ic->Display (aSh);
-			if (!useSubItems) ic->AddOrRemoveCurrentObject(aSh, true);
-		      }
-		    }
-		    // next item iteration
-		    if (useSubItems) {
-		      anIter->Next();
-		      anAttr=SALOMEDS::GenericAttribute::_nil();
-		      while (anIter->More() && anAttr->_is_nil()) {
-			SALOMEDS::SObject_var subobject = anIter->Value();
-			SALOMEDS::GenericAttribute_var aTmpAttribute;
-			if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
-			  anAttr = aTmpAttribute;
-			  obj = subobject;
-			} else anIter->Next();
-		      }
-		    } else anAttr = SALOMEDS::GenericAttribute::_nil();
-		  }
-		}
-	      }
-	    }
-	  }
-	  GeomGUI->myActiveStudy->updateObjBrowser( true );
-	  QApplication::restoreOverrideCursor();
-	}
-	break;
-      }
-      
-    case 3011: // POINT
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_PointDlg *aDlg = new GeometryGUI_PointDlg( parent, "", Sel, ic ) ; 
-	break;
-      }
-      
-    case 3012:  // LINE
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_LineDlg *aDlg = new GeometryGUI_LineDlg( parent, "", Sel ) ;
-	break ;
-      }
-      
-    case 3013:  // CIRCLE
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_CircleDlg *aDlg = new GeometryGUI_CircleDlg( parent, "", Sel ) ;
-	break ;
-      }
-
-    case 3014:  // ELLIPSE
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_EllipseDlg *aDlg = new GeometryGUI_EllipseDlg( parent, "", Sel ) ;
-	break ;
-      }
-
-    case 3015:  // ARC
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_ArcDlg *aDlg = new GeometryGUI_ArcDlg( parent, "", Sel ) ;
-	break ;
-      }
-      
-    case 3016: // VECTOR
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_VectorDlg *aDlg = new GeometryGUI_VectorDlg( parent, "", Sel ) ;
-	break;
-      }
-      
-    case 3017: // PLANE
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_PlaneDlg *aDlg = new GeometryGUI_PlaneDlg( parent, "", Sel ) ;
-	break;
-      }
-      
-    case 3018: // WORKING PLANE
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_WorkingPlaneDlg *aDlg = new GeometryGUI_WorkingPlaneDlg( parent, "", Sel ) ;
-	break;
-      }
-      
-    case 312: // SKETCHER
-      {
-	if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
-	  break;
-
-	GeomGUI->EmitSignalDeactivateDialog() ;
-
-	((OCCViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->onViewTop(); // DCQ : 28/02/2002
-	
-	GeomGUI->mySketcher = Sketch( v3d->getViewer3d() );
-	GeomGUI->SetState(CURRENT_SKETCH);
-	
-	QMenuBar* Mb = GeomGUI->myDesktop->getMainMenuBar();
-	QMenuData* pp;
-
-        QMenuItem* item = Mb->findItem(10010,&pp);
-	GeomGUI->mySketcher.SetParameterVisibility(LENGTH_PARAMETER,pp->isItemChecked(10010));
-	item = Mb->findItem(10011,&pp);
-	GeomGUI->mySketcher.SetParameterVisibility(ANGLE_PARAMETER,pp->isItemChecked(10011));
-	item = Mb->findItem(10012,&pp);
-	GeomGUI->mySketcher.SetParameterVisibility(RADIUS_PARAMETER,pp->isItemChecked(10012));
-	item = Mb->findItem(10013,&pp);
-	GeomGUI->mySketcher.SetParameterVisibility(XVALUE_PARAMETER,pp->isItemChecked(10013));
-	item = Mb->findItem(10014,&pp);
-	GeomGUI->mySketcher.SetParameterVisibility(YVALUE_PARAMETER,pp->isItemChecked(10014));
-	
-	GeomGUI->mySketcher.SetTransitionStatus(NOCONSTRAINT);
-	item = Mb->findItem(3133,&pp);
-	pp->setItemChecked(3133,false);
-	item = Mb->findItem(3134,&pp);
-	pp->setItemChecked(3134,false);
-	break;
-      }
-
-    case 3021: // BOX
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
- 	GeometryGUI_BoxDlg *aDlg = new GeometryGUI_BoxDlg( parent, "", Sel ) ;
-	break;
-      }
-
-    case 3022: // CYLINDER
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
- 	GeometryGUI_CylinderDlg *aDlg = new GeometryGUI_CylinderDlg( parent, "", Sel ) ;	
-	break;
-      }
-
-    case 3023: // SPHERE
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_SphereDlg *aDlg = new GeometryGUI_SphereDlg( parent, "", Sel ) ;
-	break;
-      }
-      
-    case 3024: // TORUS
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
- 	GeometryGUI_TorusDlg *aDlg = new GeometryGUI_TorusDlg( parent, "", Sel ) ;
-	break;
-      }
-
-    case 3025: // CONE
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
- 	GeometryGUI_ConeDlg *aDlg = new GeometryGUI_ConeDlg( parent, "", Sel ) ;
-	break;
-      }
-
-    case 3131:
-      {
-	break;
-      }
-
-    case 3133: // sketcher
-      { 
-	QMenuBar* Mb = GeomGUI->myDesktop->getMainMenuBar();
-        QMenuData* pp;
-	QMenuItem* item = Mb->findItem(3133,&pp);
-	pp->setItemChecked(3133,!pp->isItemChecked(3133));
-	if (pp->isItemChecked(3133) == true) 
-	  GeomGUI->mySketcher.SetTransitionStatus(TANGENT);
-	else
-	  GeomGUI->mySketcher.SetTransitionStatus(NOCONSTRAINT);
-
-	pp->setItemChecked(3134,false);
-	break;
-      }
-
-    case 3134: // sketcher
-      {
-	QMenuBar* Mb = GeomGUI->myDesktop->getMainMenuBar();
-        QMenuData* pp;
-	QMenuItem* item = Mb->findItem(3134,&pp);
-	pp->setItemChecked(3134,!pp->isItemChecked(3134));
-	if (pp->isItemChecked(3134) == true) 
-	  GeomGUI->mySketcher.SetTransitionStatus(PERPENDICULAR);
-	else 
-	  GeomGUI->mySketcher.SetTransitionStatus(NOCONSTRAINT);
-	
-	pp->setItemChecked(3133,false);
-	break;
-      }
-
-    case 4011: // FUSE
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
- 	GeometryGUI_FuseDlg *aDlg = new GeometryGUI_FuseDlg( parent, "", Sel ) ;
-	break;
-      }
-
-    case 4012: // COMMON
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_CommonDlg *aDlg = new GeometryGUI_CommonDlg( parent, "", Sel ) ;
-	break;
-      }
-
-    case 4013: // CUT
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_CutDlg *aDlg = new GeometryGUI_CutDlg( parent, "", Sel ) ;
-	break;
-      }
-
-    case 4014: // SECTION
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_SectionDlg *aDlg = new GeometryGUI_SectionDlg( parent, "", Sel ) ;
-	break;
-      }
-      
-    case 4021: // TRANSLATION
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_TranslationDlg *aDlg = new GeometryGUI_TranslationDlg( parent, "", Sel ) ;
-	break;
-      }
-
-    case 4022: // ROTATION
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_RotationDlg *aDlg = new GeometryGUI_RotationDlg( parent, "", Sel ) ;
-	break;
-      }
-
-   case 4030: // MULTI TRANSLATION
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_MultiTranslationDlg *aDlg = new GeometryGUI_MultiTranslationDlg( parent, "", Sel ) ;
-	break;
-      }
-
-    case 4040: // MULTI ROTATION
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_MultiRotationDlg *aDlg = new GeometryGUI_MultiRotationDlg( parent, "", Sel ) ;
-	break;
-      }
-
-    case 4023: // MIRROR
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_MirrorDlg *aDlg = new GeometryGUI_MirrorDlg( parent, "", Sel ) ;
-	break;
-      }
-      
-    case 4024: // SCALE
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_ScaleDlg *aDlg = new GeometryGUI_ScaleDlg( parent, "", Sel ) ;
-	break;
-      }
-      
-    case 4025: // PARTITION
-      {		
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_PartitionDlg *aDlg = new GeometryGUI_PartitionDlg( parent, "", Sel ) ;	
-	break;
-      }
-
-    case 4026: // ARCHIMEDE
-      {		
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_ArchimedeDlg *aDlg = new GeometryGUI_ArchimedeDlg( parent, "", Sel ) ;	
-	break;
-      }
-
-    case 4027: // FILLET
-      {		
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_FilletDlg *aDlg = new GeometryGUI_FilletDlg( parent, "", Sel, ic ) ;	
-	break;
-      }
-
-    case 4028: // CHAMFER
-      {		
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_ChamferDlg *aDlg = new GeometryGUI_ChamferDlg( parent, "", Sel, ic ) ;	
-	break;
-      }
-
-    case 4031: // PRISM
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_PrismDlg *aDlg = new GeometryGUI_PrismDlg( parent, "", Sel ) ;
-	break;
-      }
-
-    case 4032: // REVOL
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_RevolDlg *aDlg = new GeometryGUI_RevolDlg( parent, "", Sel ) ;
-	break;
-      }
-
-    case 4033: // FILLING
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_FillingDlg *aDlg = new GeometryGUI_FillingDlg( parent, "", Sel ) ;
-	break;
-      }
-
-    case 4034: // PIPE
-      {	
-	GeomGUI->EmitSignalDeactivateDialog() ;
-  	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  	GeometryGUI_PipeDlg *aDlg = new  GeometryGUI_PipeDlg(parent, "", Sel ) ;
-	break;
-      }
-      
-    case 5001: // CHECK GEOMETRY
-      {
-	QAD_PyEditor* PyEditor = GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getPyEditor();
-	PyEditor->setText("from GEOM_usinggeom import *\n");
-	PyEditor->setText(">>> ");
-	PyEditor->handleReturn();
-	break;
-      }
-
-    case 6021: // SHADING - WIREFRAME
-      {
-	if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
-	  VTKViewer_RenderWindowInteractor* myRenderInter= 
-	    ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-
-	  QApplication::setOverrideCursor(waitCursor); 
-	  
-	  int themode = myRenderInter->GetDisplayMode();
-	  if( themode==0 ) {
-	    myRenderInter->SetDisplayMode(1);
-	    GeomGUI->GetDesktop()->menuBar()->changeItem(6021, tr("GEOM_MEN_WIREFRAME") );
-	  } else {
-	    myRenderInter->SetDisplayMode(0);
-	    GeomGUI->GetDesktop()->menuBar()->changeItem(6021, tr("GEOM_MEN_SHADING") );
-	  }
-
-	  QApplication::restoreOverrideCursor(); 	  
-	  
-	} else if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  AIS_DisplayMode mode = ( AIS_DisplayMode )ic->DisplayMode();
-	  QApplication::setOverrideCursor( Qt::waitCursor );
-	  AIS_DisplayMode newmode = (mode == AIS_WireFrame ? AIS_Shaded : AIS_WireFrame);
-
-	  AIS_ListOfInteractive List;
-	  ic->DisplayedObjects(List);
-	  AIS_ListOfInteractive List1;
-	  ic->ObjectsInCollector(List1);
-	  List.Append(List1);
-	  
-	  AIS_ListIteratorOfListOfInteractive ite(List);
-	  while (ite.More()) {
-	    if (ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
-	      Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
-	      ic->SetDisplayMode(aSh,Standard_Integer(newmode),true);
-	    }
-	    ite.Next();
-	  }
-
-	  ic->SetDisplayMode( newmode, Standard_False);
-	  if ( newmode == 1 )
-	    GeomGUI->GetDesktop()->menuBar()->changeItem(6021, tr("GEOM_MEN_WIREFRAME") );
-	  else
-	    GeomGUI->GetDesktop()->menuBar()->changeItem(6021, tr("GEOM_MEN_SHADING") );
-	  
-	  QApplication::restoreOverrideCursor();
-	}
-	break;
-      }
-      
-    case 6022: // DISPLAY ALL
-      {
-	if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK )
-	  //VTK
-	  ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->DisplayAll();
-	else if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC )
-	  GeomGUI->OnDisplayAll();
-	break;
-      }
-      
-    case 6023: // DISPLAY ONLY
-    case 8023: // DISPLAY ONLY - POPUP VIEWER
-      {
-	if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
-	  // VTK
-	  GeomGUI->OnVTKDisplayOnly();
-	}
-	else if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
-	  GeomGUI->OnDisplayOnly();
-	break;
-      }
-      
-    case 6024: // ERASE ALL
-      {
-	if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
-	  //VTK
-	  ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->EraseAll();
-	}
-	else if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC)  {
-	  ic->EraseAll(Standard_True, Standard_False);
-	  ic->Display(v3d->getTrihedron());
-	}
-
-	//NRI	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
-	//NRI	Sel->ClearInteractiveObjects();
-      	break;
-      }
-
-    case 6025 : // ERASE ONLY
-    case 8022 : // ERASE - POPUP VIEWER
-      {
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
-	  // VTK
-	  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
-	  Handle(SALOME_InteractiveObject) anIObject;
-	  for(;It.More();It.Next()) {
-	    anIObject = It.Value();
-	    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-	    
-	    if(myRenderInter->isInViewer(anIObject)) {
-	      myRenderInter->Erase(anIObject);
-	    } else {
-	      SALOMEDS::SObject_var obj = aStudy->FindObjectID( anIObject->getEntry() );
-	      SALOMEDS::GenericAttribute_var anAttr;
-	      SALOMEDS::AttributeIOR_var     anIOR;
-	      if ( !obj->_is_nil() ) {
-		if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
-		  // this SObject may be GEOM module root SObject
-		  SALOMEDS::ChildIterator_var anIter = GeomGUI->myActiveStudy->getStudyDocument()->NewChildIterator(obj);
-		  bool useSubItems = false;
-		  while (anIter->More() && !useSubItems) {
-		    SALOMEDS::SObject_var subobj = anIter->Value();
-		    SALOMEDS::GenericAttribute_var aTmpAttr;
-		    if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
-		      anAttr = aTmpAttr;
-		      obj = subobj;
-		      useSubItems = true;
-		    } else anIter->Next();
-		  }
-		  
-		  while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
-		    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-		    GEOM::GEOM_Shape_var aShape = GeomGUI->myComponentGeom->GetIORFromString(anIOR->Value());
-		    TopoDS_Shape Shape = ShapeReader.GetShape(GeomGUI->myComponentGeom,aShape);
-		    if (obj->FindAttribute(anAttr, "AttributeName")) {
-		      // searchin for already displayed objects with the same shape
-		      vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
-		      vtkActorCollection* theAllActors = theRenderer->GetActors();
-		      theAllActors->InitTraversal();
-		      vtkActor* actor = (vtkActor*)theAllActors->GetNextActor();
-		      Handle(SALOME_InteractiveObject) anIObj;
-		      // don't create new study object if it already exists
-		      bool isDisplayed = false;
-		      while(!(actor==NULL)) {
-			SALOME_Actor* Gactor = SALOME_Actor::SafeDownCast(actor);
-			if (Gactor!=NULL) {
-			  if (Gactor->hasIO()) {
-			    if (strcmp(Gactor->getIO()->getEntry(),obj->GetID())==0) {
-			      isDisplayed = true;
-			      anIObj = Gactor->getIO();
-			      if (!anIObj.IsNull()) myRenderInter->Erase(anIObj);
-			    }
-			  }
-			}
-			actor=(vtkActor*)(theAllActors->GetNextActor());
-		      }
-		    }
-		    if (useSubItems) {
-		      anIter->Next();
-		      anAttr=SALOMEDS::GenericAttribute::_nil();
-		      while (anIter->More() && anAttr->_is_nil()) {
-			SALOMEDS::SObject_var subobject = anIter->Value();
-			SALOMEDS::GenericAttribute_var aTmpAttribute;
-			if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
-			  anAttr = aTmpAttribute;
-			  obj = subobject;
-			} else anIter->Next();
-		      }
-		    } else anAttr = SALOMEDS::GenericAttribute::_nil();
-		  }
-		}
-	      }
-	    }
-	  }
-//  	  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
-//  	  for(;It.More();It.Next()) {
-//  	    Handle(SALOME_InteractiveObject) IOS = It.Value();
-	  //  	    GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getVTKView()->getRWInteractor()->Erase(IOS);;
-	}
-	else if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  // OCC
-	  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
-	  Handle(SALOME_InteractiveObject) anIObject;
-	  for(;It.More();It.Next()) {
-	    anIObject = It.Value();
-	    if ( v3d->isInViewer( anIObject, true ) ) {
-	      Standard_Boolean found;
-	      Handle(GEOM_AISShape) aSh = GeomGUI->ConvertIOinGEOMAISShape( anIObject, found, true );
-	      if ( found ) {
-		ic->Erase(aSh);
-		ic->AddOrRemoveCurrentObject(aSh, true);
-	      }
-	    } else {
-	      SALOMEDS::SObject_var obj = aStudy->FindObjectID( anIObject->getEntry() );
-	      SALOMEDS::GenericAttribute_var anAttr;
-	      SALOMEDS::AttributeIOR_var     anIOR;
-	      if ( !obj->_is_nil() ) {
-		if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
-		  // this SObject may be GEOM module root SObject
-		  SALOMEDS::ChildIterator_var anIter = GeomGUI->myActiveStudy->getStudyDocument()->NewChildIterator(obj);
-		  bool useSubItems = false;
-		  while (anIter->More() && !useSubItems) {
-		    SALOMEDS::SObject_var subobj = anIter->Value();
-		    SALOMEDS::GenericAttribute_var aTmpAttr;
-		    if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
-		      anAttr = aTmpAttr;
-		      obj = subobj;
-		      useSubItems = true;
-		    } else anIter->Next();
-		  }
-		  
-		  while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
-		    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-		    GEOM::GEOM_Shape_var aShape = GeomGUI->myComponentGeom->GetIORFromString(anIOR->Value());
-		    TopoDS_Shape Shape = ShapeReader.GetShape(GeomGUI->myComponentGeom,aShape);
-		    if (obj->FindAttribute(anAttr, "AttributeName")) {
-		      // searchin for already displayed objects with the same shape
-		      AIS_ListOfInteractive aDisplayed;
-		      ic->DisplayedObjects(aDisplayed);
-		      AIS_ListIteratorOfListOfInteractive anIObjects(aDisplayed);
-		      Handle(AIS_Shape) anAISShape;
-		      for(;anIObjects.More();anIObjects.Next()) {
-			anAISShape = Handle(AIS_Shape)::DownCast(anIObjects.Value());
-			if (!anAISShape.IsNull()) {
-			  if (anAISShape->Shape().IsSame(Shape)) break;
-			  anAISShape.Nullify();
-			}
-		      }
-		      if (!anAISShape.IsNull()) {
-			if (ic->IsDisplayed(anAISShape)) ic->Erase(anAISShape);
-		      }
-		    }
-		    if (useSubItems) {
-		      anIter->Next();
-		      anAttr=SALOMEDS::GenericAttribute::_nil();
-		      while (anIter->More() && anAttr->_is_nil()) {
-			SALOMEDS::SObject_var subobject = anIter->Value();
-			SALOMEDS::GenericAttribute_var aTmpAttribute;
-			if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
-			  anAttr = aTmpAttribute;
-			  obj = subobject;
-			} else anIter->Next();
-		      }
-		    } else anAttr = SALOMEDS::GenericAttribute::_nil();
-		  }
-		}
-	      }
-	    }
-	  }
-	}
-	Sel->ClearIObjects();
-	break;
-      }
-      
-
-    case 6060: // BOUNDING BOX
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_BndBoxDlg *aDlg = new  GeometryGUI_BndBoxDlg(parent, "", Sel ) ;
-	break ;
-      }
-
-    case 6061: // MIN DISTANCE
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_DistanceDlg *aDlg = new GeometryGUI_DistanceDlg(parent, "", Sel ) ;
-	break ;
-      }
-
-    case 8021: // WIREFRAME-SHADING
-      {
-	if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
-	  // VTK
-	  VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-	  
-	  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
-	  
-	  QApplication::setOverrideCursor( Qt::waitCursor );
-	  for(;It.More();It.Next()) {
-	    Handle(SALOME_InteractiveObject) IOS = It.Value();
-	    myRenderInter->SwitchRepresentation(IOS, false);
-	  }
-	  myRenderInter->Render();
-	  QApplication::restoreOverrideCursor();
-	}
-	else if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-	  QApplication::setOverrideCursor( Qt::waitCursor );
-	  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
-	  for(;It.More();It.Next()) {
-	    Handle(SALOME_InteractiveObject) IObject = It.Value();
-	    Standard_Boolean found;
-	    Handle(GEOM_AISShape) Shape = GeomGUI->ConvertIOinGEOMAISShape( IObject, found, true );
-            if (!Shape.IsNull()) {
-  	      AIS_DisplayMode mode = ( AIS_DisplayMode )Shape->DisplayMode();
-	      if ( mode == -1 )
-	        mode = ( AIS_DisplayMode )ic->DisplayMode();
-	      
-	      QApplication::setOverrideCursor( Qt::waitCursor );
-	      ic->SetDisplayMode(Shape, mode == AIS_WireFrame ? AIS_Shaded : AIS_WireFrame, false);
-	    }
-	    QApplication::restoreOverrideCursor();
-	  }
-	  ic->UpdateCurrentViewer();
-	}
-	QApplication::restoreOverrideCursor();
-	break;
-      }
-      
-    case 8031: // COLOR - POPUP VIEWER
-      {
-	if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
-	  // VTK
-	  VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-	  
-	  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
-	  
-	  Handle(SALOME_InteractiveObject) FirstIOS =  Sel->firstIObject();
-	  if(!FirstIOS.IsNull()) {
-	    
-	    QColor initcolor = myRenderInter->GetColor(FirstIOS);
-	    
-	    QColor c = QColorDialog::getColor( initcolor,
-					       QAD_Application::getDesktop() );
-	    
-	    if ( c.isValid() ) {
-	      QApplication::setOverrideCursor( Qt::waitCursor );
-	      for(;It.More();It.Next()) {
-		Handle(SALOME_InteractiveObject) IOS = It.Value();
-		myRenderInter->SetColor(IOS,c);
-	      }
-	    }
-	    QApplication::restoreOverrideCursor();
-	  }
-	}
-	else if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-	  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	  Handle(SALOME_InteractiveObject) IO = Sel->firstIObject();
-	  Standard_Boolean found;
-	  Handle(GEOM_AISShape) Shape = GeomGUI->ConvertIOinGEOMAISShape(IO, found, true);
-	  if ( found ) {
-	    Quantity_Color CSFColor;
-	    Shape->Color( CSFColor );
-	    
-	    QColor c = QColorDialog::getColor( QColor(CSFColor.Red()  * 255.0,
-						      CSFColor.Green()* 255.0, 
-						      CSFColor.Blue() * 255.0 ),
-					       QAD_Application::getDesktop() );
-	    
-	    if ( c.isValid() ) {
-	      CSFColor = Quantity_Color ( c.red()/255., c.green()/255., c.blue()/255., Quantity_TOC_RGB );
-	      QApplication::setOverrideCursor( Qt::waitCursor );
-	    
-	      SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
-	      for(;It.More();It.Next()) {
-		Handle(SALOME_InteractiveObject) IObject = It.Value();
-		Standard_Boolean found;
-		Handle(GEOM_AISShape) Shape = GeomGUI->ConvertIOinGEOMAISShape(IObject, found, true);
-		if ( found ) {
-		  Shape->SetColor ( CSFColor );
-		  Shape->SetShadingColor ( CSFColor );
-		}
-	      }
-	    }
-	  }
-	}
-	QApplication::restoreOverrideCursor();
-	break;
-      }
-      
-    case 8032: // TRANSPARENCY - POPUP VIEWER
-      {
-	GeomGUI->EmitSignalDeactivateDialog() ;
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	GeometryGUI_TransparencyDlg *aDlg = new GeometryGUI_TransparencyDlg( parent, "", Sel, ic ) ;
-	break ;
-      }
-      
-    case 8033: // ISOS - POPUP VIEWER
-      {
-	if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
-	  break;
-	else {
-	  ic->InitCurrent();
-	  if ( ic->MoreCurrent() ) {
-	    Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
-	    QString IsoU = QAD_CONFIG->getSetting("Geometry:SettingsIsoU");
-	    QString IsoV = QAD_CONFIG->getSetting("Geometry:SettingsIsoV");
-	    
-	    if ( !IsoU.isEmpty() )
-	      ic->DefaultDrawer()->UIsoAspect()->SetNumber(IsoU.toInt());
-	    else
-	      IsoU = "1";
-	    if ( !IsoV.isEmpty() )
-	      ic->DefaultDrawer()->VIsoAspect()->SetNumber(IsoV.toInt());
-	    else
-	      IsoV = "1";
-	    
-	    GeometryGUI_NbIsosDlg * NbIsosDlg =
-	      new GeometryGUI_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE );
-	    
-	    NbIsosDlg->SpinBoxU->setValue(IsoU.toInt());
-	    NbIsosDlg->SpinBoxV->setValue(IsoV.toInt());
-	    
-	    if ( NbIsosDlg->exec() ) {
-	      QApplication::setOverrideCursor( Qt::waitCursor );
-	      for ( ; ic->MoreCurrent (); ic->NextCurrent () ) {
-		Handle (AIS_Drawer) CurDrawer;
-		
-		CurDrawer = ic->Current()->Attributes();
-		CurDrawer->UIsoAspect()->SetNumber( NbIsosDlg->SpinBoxU->text().toInt() );
-		CurDrawer->VIsoAspect()->SetNumber( NbIsosDlg->SpinBoxV->text().toInt() );
-		
-		ic->SetLocalAttributes(CurObject, CurDrawer);
-		ic->Redisplay(CurObject);
-	      }
-	    }
-	  }
-	}
-	QApplication::restoreOverrideCursor();
-	break;
-      }
-
-    case 9022 : // ERASE - OBJBROSER POPUP
-      {
-	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
-	  // VTK
-	  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
-	  Handle(SALOME_InteractiveObject) anIObject;
-	  for(;It.More();It.Next()) {
-	    anIObject = It.Value();
-	  VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-	 
-//	  Handle(SALOME_InteractiveObject) IObject;
-	  if(myRenderInter->isInViewer(anIObject)) {
-	    myRenderInter->Erase(anIObject);
-	  } else {
-	    SALOMEDS::SObject_var obj = aStudy->FindObjectID( anIObject->getEntry() );
-	    SALOMEDS::GenericAttribute_var anAttr;
-	    SALOMEDS::AttributeIOR_var     anIOR;
-	    if ( !obj->_is_nil() ) {
-	      if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
-		// this SObject may be GEOM module root SObject
-		SALOMEDS::ChildIterator_var anIter = GeomGUI->myActiveStudy->getStudyDocument()->NewChildIterator(obj);
-		bool useSubItems = false;
-		while (anIter->More() && !useSubItems) {
-		  SALOMEDS::SObject_var subobj = anIter->Value();
-		  SALOMEDS::GenericAttribute_var aTmpAttr;
-		  if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
-		    anAttr = aTmpAttr;
-		    obj = subobj;
-		    useSubItems = true;
-		  } else anIter->Next();
-		}
-		
-		while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
-		  anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-		  GEOM::GEOM_Shape_var aShape = GeomGUI->myComponentGeom->GetIORFromString(anIOR->Value());
-		  TopoDS_Shape Shape = ShapeReader.GetShape(GeomGUI->myComponentGeom,aShape);
-		  if (obj->FindAttribute(anAttr, "AttributeName")) {
-		    // searchin for already displayed objects with the same shape
-		    vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
-		    vtkActorCollection* theAllActors = theRenderer->GetActors();
-		    theAllActors->InitTraversal();
-		    vtkActor* actor = (vtkActor*)theAllActors->GetNextActor();
-		    Handle(SALOME_InteractiveObject) anIObj;
-		    // don't create new study object if it already exists
-		    bool isDisplayed = false;
-		    while(!(actor==NULL)) {
-		      SALOME_Actor* Gactor = SALOME_Actor::SafeDownCast(actor);
-		      if (Gactor!=NULL) {
-			if (Gactor->hasIO()) {
-			  if (strcmp(Gactor->getIO()->getEntry(),obj->GetID())==0) {
-			    isDisplayed = true;
-			    anIObj = Gactor->getIO();
-			    if (!anIObj.IsNull()) myRenderInter->Erase(anIObj);
-			  }
-			}
-		      }
-		      actor=(vtkActor*)(theAllActors->GetNextActor());
-		    }
-		  }
-		  if (useSubItems) {
-		    anIter->Next();
-		    anAttr=SALOMEDS::GenericAttribute::_nil();
-		    while (anIter->More() && anAttr->_is_nil()) {
-		      SALOMEDS::SObject_var subobject = anIter->Value();
-		      SALOMEDS::GenericAttribute_var aTmpAttribute;
-		      if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
-			anAttr = aTmpAttribute;
-			obj = subobject;
-		      } else anIter->Next();
-		    }
-		  } else anAttr = SALOMEDS::GenericAttribute::_nil();
-		}      
-	      }
-	    }
-	  }
-//  	  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
-//  	  for(;It.More();It.Next()) {
-//  	    Handle(SALOME_InteractiveObject) IOS = It.Value();
-//  	    GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getVTKView()->getRWInteractor()->Erase(IOS);;
-	}
-//  	  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
-//  	  for(;It.More();It.Next()) {
-//  	    Handle(SALOME_InteractiveObject) IOS = It.Value();
-//  	    GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getVTKView()->getRWInteractor()->Erase(IOS);;
-//  	  }
-	}
-	else if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-	  // OCC
-	  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
-	  Handle(SALOME_InteractiveObject) anIObject;
-	  for(;It.More();It.Next()) {
-	    anIObject = It.Value();
-	    if ( v3d->isInViewer( anIObject, true ) ) {
-	      Standard_Boolean found;
-	      Handle(GEOM_AISShape) aSh = GeomGUI->ConvertIOinGEOMAISShape( anIObject, found, true );
-	      if ( found ) {
-		ic->Erase(aSh);
-		ic->AddOrRemoveCurrentObject(aSh, true);
-	      }
-	    } else {
-	      SALOMEDS::SObject_var obj = aStudy->FindObjectID( anIObject->getEntry() );
-	      SALOMEDS::GenericAttribute_var anAttr;
-	      SALOMEDS::AttributeIOR_var     anIOR;
-	      if ( !obj->_is_nil() ) {
-		if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
-		  // this SObject may be GEOM module root SObject
-		  SALOMEDS::ChildIterator_var anIter = GeomGUI->myActiveStudy->getStudyDocument()->NewChildIterator(obj);
-		  bool useSubItems = false;
-		  while (anIter->More() && !useSubItems) {
-		    SALOMEDS::SObject_var subobj = anIter->Value();
-		    SALOMEDS::GenericAttribute_var aTmpAttr;
-		    if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
-		      anAttr = aTmpAttr;
-		      obj = subobj;
-		      useSubItems = true;
-		    } else anIter->Next();
-		  }
-		  
-		  while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
-		    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-		    GEOM::GEOM_Shape_var aShape = GeomGUI->myComponentGeom->GetIORFromString(anIOR->Value());
-		    TopoDS_Shape Shape = ShapeReader.GetShape(GeomGUI->myComponentGeom,aShape);
-		    if (obj->FindAttribute(anAttr, "AttributeName")) {
-		      // searchin for already displayed objects with the same shape
-		      AIS_ListOfInteractive aDisplayed;
-		      ic->DisplayedObjects(aDisplayed);
-		      AIS_ListIteratorOfListOfInteractive anIObjects(aDisplayed);
-		      Handle(AIS_Shape) anAISShape;
-		      for(;anIObjects.More();anIObjects.Next()) {
-			anAISShape = Handle(AIS_Shape)::DownCast(anIObjects.Value());
-			if (!anAISShape.IsNull()) {
-			  if (anAISShape->Shape().IsSame(Shape)) break;
-			  anAISShape.Nullify();
-			}
-		      }
-		      if (!anAISShape.IsNull()) {
-			if (ic->IsDisplayed(anAISShape)) ic->Erase(anAISShape);
-		      }
-		    }
-		    if (useSubItems) {
-		      anIter->Next();
-		      anAttr=SALOMEDS::GenericAttribute::_nil();
-		      while (anIter->More() && anAttr->_is_nil()) {
-			SALOMEDS::SObject_var subobject = anIter->Value();
-			SALOMEDS::GenericAttribute_var aTmpAttribute;
-			if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
-			  anAttr = aTmpAttribute;
-			  obj = subobject;
-			} else anIter->Next();
-		      }
-		    } else anAttr = SALOMEDS::GenericAttribute::_nil();
-		  }
-		}
-	      }
-	    }
-	  }
-//  	  QAD_Viewer3d* v3d = GeomGUI->myActiveStudy->getActiveStudyFrame()->getViewerOCC();
-//  	  Handle (AIS_InteractiveContext) myContext = v3d->getAISContext();
-//  	  myContext->EraseSelected();
-	}
-
-	Sel->ClearIObjects();
-	break;
-      }
-      
-    case 9023 : // DISPLAY ONLY - OBJBROSER POPUP
-      {
-	if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK )
-	  GeomGUI->OnVTKDisplayOnly();
-	else if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC )
-	  GeomGUI->OnDisplayOnly();
-	break;
-      }
-
-    case 9024 : // OPEN - OBJBROSER POPUP
-      {
-	  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
-	  Handle(SALOME_InteractiveObject) anIObject;
-	  for(;It.More();It.Next()) {
-	    anIObject = It.Value();
-	    SALOMEDS::SObject_var obj = aStudy->FindObjectID( anIObject->getEntry() );
-	    SALOMEDS::AttributePersistentRef_var aPersist;
-	    SALOMEDS::AttributeIOR_var anIOR;
-	    if ( !obj->_is_nil() ) {
-	      // this SObject may be GEOM module root SObject
-	      SALOMEDS::ChildIterator_var anIter = GeomGUI->myActiveStudy->getStudyDocument()->NewChildIterator(obj);
-	      SALOMEDS::GenericAttribute_var anAttr;
-	      bool useSubItems = false;
-	      while (anIter->More() && !useSubItems) {
-		SALOMEDS::SObject_var subobj = anIter->Value();
-		if (subobj->FindAttribute(anAttr, "AttributePersistentRef")) {
-		  useSubItems = true;
-		  obj = subobj;
-		}
-		else anIter->Next();
-	      }
-	      obj->FindAttribute(anAttr, "AttributePersistentRef");
-
-	      while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
-		if (!obj->FindAttribute(anAttr, "AttributeIOR") &&
-		    obj->FindAttribute(anAttr, "AttributePersistentRef")) {
-		  // load
-		  Engines::Component_var comp = GeomGUI->myDesktop->getEngine("FactoryServer","GEOM");
-		  if (!CORBA::is_nil(comp)) {
-		    SALOMEDS::Driver_var   driver = SALOMEDS::Driver::_narrow(comp);
-
-
-	            SALOMEDS::StudyBuilder_var aStudyBuilder = GeomGUI->myActiveStudy->getStudyDocument()->NewBuilder();
-	            aStudyBuilder->LoadWith(GeomGUI->myActiveStudy->getStudyDocument()->FindComponent("GEOM"),driver);
-
-		  } else {
-		    MESSAGE("Component is null");
-		  }
-		}
-	        if (useSubItems) {
-		  anIter->Next();
-		  obj = anIter->Value();
-		} else anAttr = SALOMEDS::GenericAttribute::_nil();
-              }
-	    }
-	  }
-	break;
-      }
-      
-    case 10000 : // SKETCH Segment
-      {
-	if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
-	  break;
-	GeomGUI->OnSketchSegment();
-	break;
-      }
-    case 10001 : // SKETCH Arc
-      {
-	if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
-	  break;
-	GeomGUI->OnSketchArc();
-	break;
-      }
-    case 10002 : // SKETCH Set Angle
-      {
-	if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
-	  break;
-	GeomGUI->OnSketchSetAngle();
-	break;
-      }
-    case 10003 : // SKETCH Set X
-      {
-	if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
-	  break;
-	GeomGUI->OnSketchSetx();
-	break;
-      }
-    case 10004 : // SKETCH Set Y
-      {
-	if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
-	  break;
-	GeomGUI->OnSketchSety();
-	break;
-      }
-    case 10006 : // SKETCH Delete
-      {
-	if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
-	  break;
-	GeomGUI->OnSketchDelete();
-	break;
-      }
-    case 10007 : // SKETCH End
-      {
-	if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
-	  break;
-	GeomGUI->OnSketchEnd();
-	break;
-      }
-    case 10008 : // SKETCH Close
-      {
-	if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
-	  break;
-	GeomGUI->OnSketchClose();
-	break;
-      }
-    case 10010 : // SKETCH OptionsOnofflengthdimension
-      {
-	GeomGUI->OnSketchOptionsOnofflengthdimension();
-	break;
-      }
-    case 10011 : // SKETCH OptionsOnoffangledimension
-      {
-	GeomGUI->OnSketchOptionsOnoffangledimension();
-	break;
-      }
-    case 10012 : // SKETCH OptionsOnoffradiusdimension
-      {
-	GeomGUI->OnSketchOptionsOnoffradiusdimension();
-	break;
-      }
-    case 10013 : // SKETCH OptionsOnoffxdimension
-      {
-	GeomGUI->OnSketchOptionsOnoffxdimension();
-	break;
-      }
-    case 10014 : // SKETCH OptionsOnoffydimension
-      {
-	GeomGUI->OnSketchOptionsOnoffydimension();
-	break;
-      }
-
-    default:
-      {
-	parent->putInfo( tr("GEOM_PRP_COMMAND").arg(theCommandID ) );
-	break;
-      }
-    }
-  
-  return true ;
-}
 
 //=======================================================================
 // function : ConvertClickToPoint()
@@ -4464,87 +2535,7 @@ gp_Pnt GeometryGUI::ConvertClickToPoint( Standard_Real x,
 
 
 
-//==================================================================================
-// function : 0nMousePress()
-// purpose  : [static] manage mouse events
-//==================================================================================
-bool GeometryGUI::OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
-{
-  MESSAGE ( "GeometryGUI::OnMousePress")
-  GeometryGUI::GetOrCreateGeometryGUI(parent);
 
-  if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
-    return false;
-
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
-  OCCViewer_ViewPort* vp = ((OCCViewer_ViewFrame*)studyFrame->getRightFrame()->getViewFrame())->getViewPort();
-  
-  /* Get the clicked or selected point */
-  gp_Pnt thePoint;
-
-  if ( GeomGUI->myState == CURRENT_SKETCH) {
-    GeomGUI->mySketcher.ValidateEdge();
-    if (GeomGUI->mySketcher.GetmyEdgesNumber() == 1 ) {
-      QMenuBar* Mb = GeomGUI->myDesktop->getMainMenuBar();
-      QMenuData* pp;
-      QMenuItem* item = Mb->findItem(313,&pp);
-      pp->setItemEnabled( 313, true);  // SKETCH CONTRAINTS
-    }
-  } else if( GeomGUI->myState == POINT_METHOD ) {
-
-    GeomGUI->EraseSimulationShape() ;
-    GeometryGUI_PointDlg *DialogPt = (GeometryGUI_PointDlg*)(GeomGUI->myActiveDialogBox) ;
-
-    if ( DialogPt->UseLocalContext() ) {
-      ic->InitSelected();
-      if ( pe->state() == Qt::ShiftButton )
-	v3d->getAISSelector()->shiftSelect();  /* Append selection */
-      else
-	v3d->getAISSelector()->select();       /* New selection    */
-      
-      if ( ic->MoreSelected() ) {
-	thePoint = BRep_Tool::Pnt( TopoDS::Vertex(ic->SelectedShape()) );
-      }
-      else
-	thePoint = ConvertClickToPoint(pe->x(), pe->y(), ( (OCCViewer_ViewPort3d*)vp)->getView() );
-    } 
-    else
-      thePoint = ConvertClickToPoint(pe->x(), pe->y(), ( (OCCViewer_ViewPort3d*)vp)->getView() );
-    
-    if( DialogPt != 0 ) { 
-      DialogPt->PointIntoCoordinates(thePoint, true) ;  /* display point */
-    }
-    else {
-      // MESSAGE ("On Mouse Press : myActiveDialogBox is null"  << endl) ;
-      GeomGUI->myDesktop->putInfo(tr("GEOM_PRP_ABORT"));
-    }
-  }
-
-  return false ;
-}
-
-
-//=======================================================================
-// function : OnMouseMove()
-// purpose  : [static] manage mouse events
-//=======================================================================
-bool GeometryGUI::OnMouseMove (QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
-{
-  GeometryGUI::GetOrCreateGeometryGUI(parent);
-
-  if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
-    return false;
-
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
-  OCCViewer_ViewPort* vp = ((OCCViewer_ViewFrame*)studyFrame->getRightFrame()->getViewFrame())->getViewPort();
-
-  if ( GeomGUI->myState == CURRENT_SKETCH) 
-    GeomGUI->mySketcher.MakeCurrentEdge( pe->x(), pe->y(), ((OCCViewer_ViewPort3d*)vp)->getView() );
-  
-   return true;
-}
 
 
 //================================================================================
@@ -4557,10 +2548,10 @@ void GeometryGUI::SetDisplayedObjectList()
     return;
 
   OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-  ListDisplayedObject.Clear();
+  myListDisplayedObject.Clear();
 
   Handle (AIS_InteractiveContext) aContext = v3d->getAISContext();
-  aContext->DisplayedObjects( ListDisplayedObject );
+  aContext->DisplayedObjects( myListDisplayedObject );
 }
 
 
@@ -4596,7 +2587,7 @@ void GeometryGUI::OnDisplayAll(bool onlyPreviousDisplayedObject)
       ite1.Next();
     }
   } else {
-    AIS_ListIteratorOfListOfInteractive ite(ListDisplayedObject);
+    AIS_ListIteratorOfListOfInteractive ite(myListDisplayedObject);
     while (ite.More()) {
       if (ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
 	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
@@ -4626,7 +2617,7 @@ void GeometryGUI::OnVTKDisplayOnly()
   
   QApplication::setOverrideCursor( Qt::waitCursor );
 
-  vtkRenderer* aren = ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+  vtkRenderer* aren = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
   vtkActorCollection* theActors = aren->GetActors();
   theActors->InitTraversal();
   vtkActor *ac = theActors->GetNextActor();
@@ -4641,19 +2632,19 @@ void GeometryGUI::OnVTKDisplayOnly()
   // Display selection
   SALOMEDS::Study_var            aStudy = myActiveStudy->getStudyDocument();
   SALOMEDS::StudyBuilder_var     aStudyBuilder = aStudy->NewBuilder();
-  SALOMEDS::SObject_var          fatherSF = aStudy->FindObjectID(GeomGUI->myActiveStudy->getActiveStudyFrame()->entry());
+  SALOMEDS::SObject_var          fatherSF = aStudy->FindObjectID(myActiveStudy->getActiveStudyFrame()->entry());
   SALOMEDS::GenericAttribute_var anAttr;
   SALOMEDS::AttributeName_var    aName;
   SALOMEDS::AttributeIOR_var     anIOR;
 
-  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
+  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
   SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
 	  
   for(;It.More();It.Next()) {
     Handle(SALOME_InteractiveObject) IObject = It.Value();
     SALOMEDS::SObject_var obj = aStudy->FindObjectID( IObject->getEntry() );
 
-    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
 
     if(myRenderInter->isInViewer(IObject)) {
       myRenderInter->Display(IObject);
@@ -4664,18 +2655,18 @@ void GeometryGUI::OnVTKDisplayOnly()
 	if ( !obj->FindAttribute(anAttr, "AttributeIOR")) 
 	  break;
 	// If selected object contains displayable subobjects, then do nothing
-	SALOMEDS::ChildIterator_var anIter = GeomGUI->myActiveStudy->getStudyDocument()->NewChildIterator(obj);
+	SALOMEDS::ChildIterator_var anIter = myActiveStudy->getStudyDocument()->NewChildIterator(obj);
 	SALOMEDS::GenericAttribute_var aTmpAttr;
 	
 	anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	GEOM::GEOM_Shape_var aShape = GeomGUI->myComponentGeom->GetIORFromString(anIOR->Value());
+	GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString(anIOR->Value());
 	if (CORBA::is_nil(aShape)) continue;
-	TopoDS_Shape Shape = ShapeReader.GetShape(GeomGUI->myComponentGeom,aShape);
+	TopoDS_Shape Shape = myShapeReader.GetShape(myComponentGeom,aShape);
 
 	if (obj->FindAttribute(anAttr, "AttributeName")) {
           aName = SALOMEDS::AttributeName::_narrow(anAttr);
 	  // open transaction
-	  QAD_Operation* op = new SALOMEGUI_ImportOperation( GeomGUI->myActiveStudy );
+	  QAD_Operation* op = new SALOMEGUI_ImportOperation( myActiveStudy );
 	  op->start();
 		  
 	  SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(fatherSF);
@@ -4683,7 +2674,7 @@ void GeometryGUI::OnVTKDisplayOnly()
 	  // commit transaction
 	  op->finish();
 		  
-	  vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+	  vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
 	  int themode = myRenderInter->GetDisplayMode();
 	  vtkActorCollection* theActors = 
 	    GEOM_AssemblyBuilder::BuildActors(Shape,0,themode,Standard_True);
@@ -4696,7 +2687,7 @@ void GeometryGUI::OnVTKDisplayOnly()
 		    
 	    theRenderer->AddActor(GActor);
 	    vtkRenderWindow *renWin
-	      = ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer()->GetRenderWindow();
+	      = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer()->GetRenderWindow();
 	    renWin->Render();
 	    anActor = (vtkActor*)theActors->GetNextActor();
 	  }
@@ -4704,7 +2695,7 @@ void GeometryGUI::OnVTKDisplayOnly()
       }
     }
   }
-  GeomGUI->myActiveStudy->updateObjBrowser( true );
+  myActiveStudy->updateObjBrowser( true );
   QApplication::restoreOverrideCursor();
 }    
 
@@ -4777,7 +2768,7 @@ void GeometryGUI::OnDisplayOnly()
 	    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
 	    GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString( anIOR->Value() );
 	    if (CORBA::is_nil(aShape)) continue;
-	    TopoDS_Shape Shape = ShapeReader.GetShape(myComponentGeom, aShape);
+	    TopoDS_Shape Shape = myShapeReader.GetShape(myComponentGeom, aShape);
 	    
 	    if (obj->FindAttribute(anAttr, "AttributeName")) {
 	      aName = SALOMEDS::AttributeName::_narrow(anAttr);
@@ -4792,7 +2783,7 @@ void GeometryGUI::OnDisplayOnly()
 	    }
 	    
 	    Handle(GEOM_AISShape) aSh = new GEOM_AISShape(Shape, aName->Value());
-	    Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(anIOR->Value(), Fatherior,"GEOM");
+	    Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(anIOR->Value(), myFatherior,"GEOM");
 		
 	    IO->setEntry(obj->GetID());
 	    aSh->setIO( IO );
@@ -4833,7 +2824,7 @@ void GeometryGUI::OnEditDelete()
   for(;It.More();It.Next()) {
     Handle(SALOME_InteractiveObject) IObject = It.Value();
     if ( IObject->hasEntry() ) {
-      SALOMEDS::Study_var aStudy = GeomGUI->myActiveStudy->getStudyDocument();
+      SALOMEDS::Study_var aStudy = myActiveStudy->getStudyDocument();
       SALOMEDS::SObject_var SO = aStudy->FindObjectID( IObject->getEntry() );
       
       /* Erase child graphical objects */
@@ -4844,20 +2835,20 @@ void GeometryGUI::OnEditDelete()
           anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
 	  /* Delete child(s) shape in Client : */
 	  const TCollection_AsciiString ASCior(anIOR->Value()) ;
-	  ShapeReader.RemoveShapeFromBuffer( ASCior ) ;
+	  myShapeReader.RemoveShapeFromBuffer( ASCior ) ;
 
 	  for ( int i = 0; i < nbSf; i++ ) {
 	    QAD_StudyFrame* sf = myActiveStudy->getStudyFrame(i);
 	    if ( sf->getTypeView() == VIEW_OCC ) {
 	      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getViewer();
 	      Handle (AIS_InteractiveContext) myContext = v3d->getAISContext();
-	      Handle(GEOM_AISShape) Result = GeomGUI->ConvertIORinGEOMAISShape( anIOR->Value(), found );
+	      Handle(GEOM_AISShape) Result = ConvertIORinGEOMAISShape( anIOR->Value(), found );
 	      if ( found )
 		myContext->Erase( Result, true, false );
 	    } else if ( sf->getTypeView() == VIEW_VTK ) {
 	      //vtkRenderer* Renderer = ((VTKViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getRenderer();
 	      VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getRWInteractor();
-	      GEOM_Actor* ac = GeomGUI->ConvertIORinGEOMActor( anIOR->Value(), found );
+	      GEOM_Actor* ac = ConvertIORinGEOMActor( anIOR->Value(), found );
 	      if ( found ) {
 		//Renderer->RemoveActor(ac);
 		if ( ac->hasIO() ) 
@@ -4874,7 +2865,7 @@ void GeometryGUI::OnEditDelete()
 	if ( sf->getTypeView() == VIEW_OCC ) {
 	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getViewer();
 	  Handle (AIS_InteractiveContext) myContext = v3d->getAISContext();
-	  Handle(GEOM_AISShape) Result = GeomGUI->ConvertIOinGEOMAISShape( IObject, found );
+	  Handle(GEOM_AISShape) Result = ConvertIOinGEOMAISShape( IObject, found );
 	  if ( found )
 	    myContext->Erase( Result, true, false );
 	} else if ( sf->getTypeView() == VIEW_VTK ) {
@@ -4887,7 +2878,7 @@ void GeometryGUI::OnEditDelete()
       if (SO->FindAttribute(anAttr, "AttributeIOR") ) {
         anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
 	const TCollection_AsciiString ASCIor(anIOR->Value()) ;
-	ShapeReader.RemoveShapeFromBuffer( ASCIor ) ;
+	myShapeReader.RemoveShapeFromBuffer( ASCIor ) ;
       }
 
       /* Erase objects in Study */
@@ -4919,7 +2910,7 @@ void GeometryGUI::OnEditCopy()
 
   const SALOME_ListIO& List = Sel->StoredIObjects();
 
-  GeomGUI->ConvertListOfIOInListOfIOR( List, listIOR);
+  ConvertListOfIOInListOfIOR( List, listIOR);
 
   Sel->ClearIObjects();
 
@@ -4937,23 +2928,6 @@ void GeometryGUI::OnEditCopy()
   
   myDesktop->putInfo(tr("GEOM_PRP_READY"));
 }
-
-
-
-//=====================================================================================
-// function : OnKeyPress()
-// purpose  : [static]
-//=====================================================================================
-bool GeometryGUI::OnKeyPress (QKeyEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
-{
-  GeometryGUI::GetOrCreateGeometryGUI(parent);
-
-  if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
-    return false;
-
-  return true ;
-}
-
 
 
 //=====================================================================================
@@ -5028,7 +3002,7 @@ bool GeometryGUI::Import( )
   QString file;
   QStringList filtersList ;
   
-  switch ( GeomGUI->myState )
+  switch ( myState )
     {
     case 111 :	// Import BREP
       {
@@ -5122,7 +3096,7 @@ bool GeometryGUI::Import( )
     }
 //      if (aLocked) return false;
     aStudyBuilder->DefineComponentInstance( father, myComponentGeom );
-    father->ComponentIOR( Fatherior );
+    father->ComponentIOR( myFatherior );
 
     QString nameShape = QAD_Tools::getFileNameFromPath(file,false) +  QString("_%1").arg(this->myNbGeom++);
 
@@ -5154,7 +3128,7 @@ bool GeometryGUI::Export( )
   SALOME_Selection* Sel = SALOME_Selection::Selection( this->myActiveStudy->getSelection() );
   SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
 
-  switch ( GeomGUI->myState )
+  switch ( myState )
     {
     case 121 :
       {
@@ -5162,7 +3136,7 @@ bool GeometryGUI::Export( )
 	  QApplication::restoreOverrideCursor();
 	  Handle(SALOME_InteractiveObject) IObject = It.Value();
 	  Standard_Boolean found;
-	  GEOM::GEOM_Shape_var aShape = GeomGUI->ConvertIOinGEOMShape(IObject, found);
+	  GEOM::GEOM_Shape_var aShape = ConvertIOinGEOMShape(IObject, found);
 	  //	  Handle(GEOM_AISShape) Shape = ConvertIOinGEOMAISShape(IObject, found, true);
 	  if ( found ) {
 	    QString file = QAD_FileDlg::getFileName(myDesktop, 
@@ -5174,7 +3148,7 @@ bool GeometryGUI::Export( )
 	      QApplication::setOverrideCursor( Qt::waitCursor );
 	      //      Standard_Boolean result = BRepTools::Write(Shape->Shape(), strdup(file.latin1()) );
 	      try {
-		GeomGUI->myComponentGeom->ExportBREP(strdup( file.latin1()), aShape);
+		myComponentGeom->ExportBREP(strdup( file.latin1()), aShape);
 	      }  
 	      catch (const SALOME::SALOME_Exception& S_ex) {
 		QtCatchCorbaException(S_ex);
@@ -5190,7 +3164,7 @@ bool GeometryGUI::Export( )
 	  QApplication::restoreOverrideCursor();
 	  Handle(SALOME_InteractiveObject) IObject = It.Value();
 	  Standard_Boolean found;
-	  GEOM::GEOM_Shape_var aShape = GeomGUI->ConvertIOinGEOMShape(IObject, found);
+	  GEOM::GEOM_Shape_var aShape = ConvertIOinGEOMShape(IObject, found);
 	  //	  Handle(GEOM_AISShape) Shape = ConvertIOinGEOMAISShape(IObject, found, true);
 	  if ( found ) {
 	    QString file = QAD_FileDlg::getFileName(myDesktop, 
@@ -5201,7 +3175,7 @@ bool GeometryGUI::Export( )
 	    if ( !file.isEmpty() && !aShape->_is_nil() ) {
 	      QApplication::setOverrideCursor( Qt::waitCursor );
 	      try {
-		GeomGUI->myComponentGeom->ExportIGES(strdup( file.latin1()), aShape);
+		myComponentGeom->ExportIGES(strdup( file.latin1()), aShape);
 	      }  
 	      catch (const SALOME::SALOME_Exception& S_ex) {
 		QtCatchCorbaException(S_ex);
@@ -5231,11 +3205,11 @@ bool GeometryGUI::Export( )
 	QString file;
 
 	for( ; It.More(); It.Next() ) {
-//  	  GEOM::GEOM_Shape_var aShape = GeomGUI->ConvertIOinGEOMShape(IObject, found);
+//  	  GEOM::GEOM_Shape_var aShape = ConvertIOinGEOMShape(IObject, found);
   	  QApplication::restoreOverrideCursor();
 	  Handle(SALOME_InteractiveObject) IObject = It.Value();
 	  Standard_Boolean found;
-	  GEOM::GEOM_Shape_var aShape = GeomGUI->ConvertIOinGEOMShape(IObject, found);
+	  GEOM::GEOM_Shape_var aShape = ConvertIOinGEOMShape(IObject, found);
 	  //	  Handle(GEOM_AISShape) Shape = ConvertIOinGEOMAISShape(IObject, found, true);
 	  if ( found ) {
 	    file = QAD_FileDlg::getFileName(myDesktop, 
@@ -5247,7 +3221,7 @@ bool GeometryGUI::Export( )
 
 	      QApplication::setOverrideCursor( Qt::waitCursor ) ;	
 	      try {   
-		GeomGUI->myComponentGeom->ExportSTEP(strdup( file.latin1()), aShape);   
+		myComponentGeom->ExportSTEP(strdup( file.latin1()), aShape);   
 	      }  
 	      catch (const SALOME::SALOME_Exception& S_ex) {
 		QtCatchCorbaException(S_ex);
@@ -5296,7 +3270,7 @@ bool GeometryGUI::Display( GEOM::GEOM_Shape_ptr aShape,
     return false ;
   }
   
-  TopoDS_Shape shape = ShapeReader.GetShape(myComponentGeom, aShape);
+  TopoDS_Shape shape = myShapeReader.GetShape(myComponentGeom, aShape);
 
   if ( shape.IsNull() )
     return false;
@@ -5329,7 +3303,7 @@ bool GeometryGUI::Display( GEOM::GEOM_Shape_ptr aShape,
 //    if (aLocked) return false;
 
   aStudyBuilder->DefineComponentInstance( father, myComponentGeom );
-  father->ComponentIOR( Fatherior );
+  father->ComponentIOR( myFatherior );
 
   TCollection_AsciiString nameG("");
   Standard_CString Type;
@@ -5339,18 +3313,18 @@ bool GeometryGUI::Display( GEOM::GEOM_Shape_ptr aShape,
       GetShapeTypeString(shape,type);
       aShape->NameType( type );
       nameG += TCollection_AsciiString( type ) + TCollection_AsciiString("_") + 
-	TCollection_AsciiString( GeomGUI->myNbGeom++ ) + TCollection_AsciiString("\0");
+	TCollection_AsciiString( myNbGeom++ ) + TCollection_AsciiString("\0");
     } else
       nameG += TCollection_AsciiString( aShape->NameType()) + TCollection_AsciiString("_") + 
-	TCollection_AsciiString( GeomGUI->myNbGeom++ ) + TCollection_AsciiString("\0");
+	TCollection_AsciiString( myNbGeom++ ) + TCollection_AsciiString("\0");
   } else 
     nameG = TCollection_AsciiString(name);
   
   // VTK
   if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
-    VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+    VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
     
-    vtkRenderer *theRenderer = ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+    vtkRenderer *theRenderer = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
     int themode = myRenderInter->GetDisplayMode();
 
     vtkActorCollection* theActors = 
@@ -5359,7 +3333,7 @@ bool GeometryGUI::Display( GEOM::GEOM_Shape_ptr aShape,
     vtkActor* anActor = (vtkActor*)theActors->GetNextActor();
 
     IO = new GEOM_InteractiveObject(aShape->Name(),
-				    Fatherior,
+				    myFatherior,
 				    "GEOM");
     while(!(anActor==NULL)) {
       GEOM_Actor* GActor = GEOM_Actor::SafeDownCast( anActor );
@@ -5377,7 +3351,7 @@ bool GeometryGUI::Display( GEOM::GEOM_Shape_ptr aShape,
     Handle(GEOM_AISShape) theResult = new GEOM_AISShape( shape, nameG.ToCString() );
     theResult->SetShadingColor( myShadingColor );
     IO = new GEOM_InteractiveObject(aShape->Name(),
-				    Fatherior,
+				    myFatherior,
 				    "GEOM");
     theResult->setIO( IO );
     theResult->setName( nameG.ToCString() );
@@ -5395,8 +3369,8 @@ bool GeometryGUI::Display( GEOM::GEOM_Shape_ptr aShape,
 
   Sel->AddIObject( IO, false );
   myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame()->Repaint();
-  if ( Settings_AddInStudy )
-    GeomGUI->AddInStudy( false, IO );
+  if ( mySettings_AddInStudy )
+    AddInStudy( false, IO );
   
   return true;
 }
@@ -5410,7 +3384,7 @@ bool GeometryGUI::AddInStudy( bool selection,
 			      const Handle(SALOME_InteractiveObject)& anIO)
 {
   SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
-  if ( !( !Settings_AddInStudy || selection ) ) {
+  if ( !( !mySettings_AddInStudy || selection ) ) {
     Sel->ClearIObjects();
   }
 
@@ -5443,7 +3417,7 @@ bool GeometryGUI::AddInStudy( bool selection,
 //    if (aLocked) return false;
 
   aStudyBuilder->DefineComponentInstance( father, myComponentGeom );
-  father->ComponentIOR( Fatherior );
+  father->ComponentIOR( myFatherior );
   
   SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(myActiveStudy->getActiveStudyFrame()->entry());
   
@@ -5510,7 +3484,7 @@ bool GeometryGUI::AddInStudy( bool selection,
       return false;
   }
 
-  if ( !Settings_AddInStudy || selection ) {
+  if ( !mySettings_AddInStudy || selection ) {
     QString Name = SALOMEGUI_NameDlg::getName( QAD_Application::getDesktop(), anIO->getName() );
     if ( !Name.isEmpty() ) {
       // VTK
@@ -5611,7 +3585,7 @@ bool GeometryGUI::AddInStudy( bool selection,
   op->finish();
 
 
-  if ( !Settings_AddInStudy || selection ) {
+  if ( !mySettings_AddInStudy || selection ) {
     myActiveStudy->updateObjBrowser();
   } else {
     myActiveStudy->updateObjBrowser(false);
@@ -5640,781 +3614,12 @@ TopoDS_Shape GeometryGUI::GetShapeFromIOR( QString IOR )
     return result;
   GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString( IOR );
   if (!aShape->_is_nil()) {
-    result = ShapeReader.GetShape( myComponentGeom, aShape );
+    result = myShapeReader.GetShape( myComponentGeom, aShape );
   }
   return result;
 }
 
 
-//=====================================================================================
-// function : SetSettings()
-// purpose  : [static]
-//=====================================================================================
-bool GeometryGUI::SetSettings( QAD_Desktop* parent )
-{
-  /* Create or retrieve an object GeomGUI */
-  GeometryGUI::GetOrCreateGeometryGUI(parent);
-
-  //DCQ  parent->menuBar()->setItemEnabled( 504, false);  // CORRECTING
-  //DCQ  parent->menuBar()->setItemEnabled( 6062, false); // RADIUS
-  //VSR  parent->menuBar()->setItemEnabled( 701, false);  // AUTOMATIC COPY
-  parent->menuBar()->setItemEnabled( 313, false);  // SKETCH CONTRAINTS
-  parent->menuBar()->setItemEnabled( 3131, false); // SKETCH SET PLAN
-
-  /* Shading Color */
-  QString SCr = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorRed");
-  QString SCg = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorGreen");
-  QString SCb = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorBlue");
-  if( !SCr.isEmpty() && !SCg.isEmpty() && !SCb.isEmpty() )   
-    GeomGUI->myShadingColor = Quantity_Color ( SCr.toInt()/255., SCg.toInt()/255., SCb.toInt()/255.,
-					       Quantity_TOC_RGB );
-
-  /* Wireframe or Shading */
-  int DisplayMode = 0;
-  if ( parent->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)parent->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
-    DisplayMode = ic->DisplayMode();
-  } else if ( parent->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
-    VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)parent->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-    DisplayMode = myRenderInter->GetDisplayMode();
-  }
-
-  if ( DisplayMode == 1 )
-    parent->menuBar()->changeItem(6021, tr("GEOM_MEN_WIREFRAME") );
-  else
-    parent->menuBar()->changeItem(6021, tr("GEOM_MEN_SHADING") );
-
-  /* Copy */
-//    QString Copy = QAD_CONFIG->getSetting("Geometry:SettingsCopy");
-//    if ( !Copy.isEmpty() ) {
-//      Settings_Copy = Copy.toInt();
-//      QMenuData* pp;
-//      parent->menuBar()->findItem(701,&pp);
-//      pp->setItemChecked(701, Settings_Copy);
-//    }
- QMenuData* pp;
- if ( parent->menuBar()->findItem(701,&pp) )
-   pp->removeItem(701);
-
-  /* Add in Study */
-  QString AddInStudy = QAD_CONFIG->getSetting("Geometry:SettingsAddInStudy");
-  if ( !AddInStudy.isEmpty() )
-    Settings_AddInStudy	 = AddInStudy.toInt();
-  else
-    Settings_AddInStudy = 1;
-  parent->menuBar()->findItem(702,&pp);
-  pp->setItemChecked(702, Settings_AddInStudy);
-
-  /* step value */
-  QString S = QAD_CONFIG->getSetting( "Geometry:SettingsGeomStep" );
-  if( S.isEmpty() )
-    QAD_CONFIG->addSetting( "Geometry:SettingsGeomStep", "100" );
-  
-  /* isos */
-  QAD_Study* ActiveStudy = parent->getActiveStudy();
-  int count = ActiveStudy->getStudyFramesCount();
-
-  bool ViewOCC = false;
-  for ( int i = 0; i < count; i++ ) {
-    if ( ActiveStudy->getStudyFrame(i)->getTypeView() == VIEW_OCC ) {
-      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)ActiveStudy->getStudyFrame(i)->getRightFrame()->getViewFrame())->getViewer();
-      Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
-      
-      QString IsoU = QAD_CONFIG->getSetting("Geometry:SettingsIsoU");
-      QString IsoV = QAD_CONFIG->getSetting("Geometry:SettingsIsoV");
-      if ( !IsoU.isEmpty() )
-	ic->DefaultDrawer()->UIsoAspect()->SetNumber(IsoU.toInt());
-      if ( !IsoV.isEmpty() )
-	ic->DefaultDrawer()->VIsoAspect()->SetNumber(IsoV.toInt());
-
-      ViewOCC = true;
-    }
-  }
-
-  QMenuBar* Mb = GeomGUI->myDesktop->getMainMenuBar();
-
-  Mb->setItemEnabled( 312, ViewOCC); //Sketch
-  Mb->setItemEnabled( 309, ViewOCC); //SuppressFace
-  Mb->setItemEnabled( 314, ViewOCC); //SuppressHole
-  
-  Mb->setItemEnabled( 703, ViewOCC);// ShadingColor Settings
-  Mb->setItemEnabled( 704, ViewOCC);// Isos Settings
-
-  return true;
-}
-
-
-//=====================================================================================
-// function : DefinePopup()
-// purpose  : [static]
-//=====================================================================================
-void GeometryGUI::DefinePopup( QString & theContext, QString & theParent, QString & theObject )
-{
-  /* Create or retrieve an object GeomGUI */
-  GeometryGUI::GetOrCreateGeometryGUI(QAD_Application::getDesktop());
-  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-
-  theObject = "";
-  if ( Sel->IObjectCount() == 1 ) 
-    {
-      Handle(SALOME_InteractiveObject) IO = Sel->firstIObject();
-      if (IO->hasEntry())
-	{
-	  SALOMEDS::SObject_var sobj = GeomGUI->myActiveStudy->getStudyDocument()->FindObjectID(IO->getEntry());
-	  if (!sobj->_is_nil()) 
-	    {
-	      SALOMEDS::SComponent_var scomp = sobj->GetFatherComponent();
-	      if (strcmp(scomp->GetID(), IO->getEntry()) == 0) 
-		{ 
-		  // component is selected
-		  theObject = "Component";
-		}
-	    }
-	}
-    }
-
-  if ( ( theParent.compare("Viewer")==0 ) ) 
-    {
-      if ( GeomGUI->myState == CURRENT_SKETCH ) 
-	theContext = "Sketch";
-      else 
-	{
-	  if ( Sel->IObjectCount() > 0 )
-	    theContext = "";
-	  else
-	    theContext = "NothingSelected";
-	}
-    } 
-  else 
-    theContext = "";
-  
-}
-
-//=====================================================================================
-// function : CustomPopup()
-// purpose  : [static]
-//=====================================================================================
-bool GeometryGUI::CustomPopup( QAD_Desktop* parent,
-			       QPopupMenu* popup,
-			       const QString& theContext,
-			       const QString& theParent,
-			       const QString& theObject )
-{
-  /* Create or retrieve an object GeomGUI */
-  GeometryGUI::GetOrCreateGeometryGUI(parent);
-  
-  /* Deactivate any non modal dialog box to get the neutral point */
-  GeomGUI->EmitSignalDeactivateDialog() ;
-  
-  SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
-  int nbSel = Sel->IObjectCount();
-  
-  if ( (nbSel == 0) && ( theContext.compare("Sketch")!=0 ) )
-    return false;
-  
-    
-  if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
-    {
-      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->
-				 getRightFrame()->getViewFrame())->getViewer();
-      Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
-      if ( theParent.compare("Viewer")==0 )
-	{
-	  if ( theContext.compare("Sketch")==0 )
-	    {
-	      SketchStatus myCS = GeomGUI->mySketcher.GetCurrentStatus();
-	      popup->setCheckable(TRUE);
-	      if (myCS==SEGMENT) 
-		{
-		  popup->setItemChecked(10000,true);
-		  popup->setItemChecked(10001,false);
-		}
-	      else if (myCS==ARC_CHORD)
-		{
-		  popup->setItemChecked(10000,false);
-		  popup->setItemChecked(10001,true);
-		}
-	      
-	      return true;
-	    }
-	  else
-	    if (theObject.compare("Component") == 0)
-	      {
-		popup->removeItem(QAD_DisplayOnly_Popup_ID);
-		return true;
-	      }
-	    else
-	      {
-		QFont f = QApplication::font();
-		f.setBold( TRUE );
-		if (nbSel==1)
-		  {
-		    Handle(SALOME_InteractiveObject) IObject = Sel->firstIObject();
-		    popup->removeItem(QAD_TopLabel_Popup_ID);
-		    popup->insertItem( new CustomItem ( QString(IObject->getName()), f ), QAD_TopLabel_Popup_ID, 0 );
-		    if ( IObject->hasEntry() )
-		      popup->setItemEnabled( 801, false );
-		    else
-		      popup->setItemEnabled( 801, true );
-		    
-		    if (IObject->IsKind(STANDARD_TYPE(GEOM_InteractiveObject)))
-		      {
-			Standard_Boolean found;
-			Handle(GEOM_AISShape) Result = GeomGUI->ConvertIOinGEOMAISShape(IObject, found, true);
-
-			if ( found )
-			  {
-			    if ( Result->DisplayMode() == 1 )
-			      popup->changeItem(8021, tr("GEOM_MEN_WIREFRAME") );
-			    else
-			      popup->changeItem(8021, tr("GEOM_MEN_SHADING") );
-			  }
-		      }
-
-		    if ( !(v3d->isInViewer( IObject ) && v3d->isVisible( IObject )) )
-		      popup->removeItem(QAD_Erase_Popup_ID);
-		    else
-		      popup->removeItem(QAD_Display_Popup_ID);
-		    
-		  }
-		else
-		  {
-		    popup->removeItem(QAD_DisplayOnly_Popup_ID);
-		    popup->removeItem(QAD_TopLabel_Popup_ID);
-		    popup->insertItem( new CustomItem ( tr("GEOM_MEN_POPUP_NAME").arg(nbSel), f ),
-				      QAD_TopLabel_Popup_ID, 0 );
-		    popup->setItemEnabled( 801, false );
-		  }
-	      }
-	  return true;
-	}
-      else
-	if ( theParent.compare("ObjectBrowser")==0 )
-	  {
-	    popup->removeItem(QAD_TopLabel_Popup_ID);
-	    int id = popup->idAt(0); // separator
-	    if (id < 0) popup->removeItem(id);
-	    
-	    // checking for GEOM label in the selected list
-	    SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
-	    Handle(SALOME_InteractiveObject) anIObject;
-
-	    bool useSubItems = false;
-	    bool needOpen = false;
-	    bool needDisplay = false;
-	    bool needErase = false;
-	    SALOMEDS::GenericAttribute_var aTmpAttr;
-	    for(;It.More();It.Next())
-	      {
-		anIObject = It.Value();
-		if (!anIObject->hasEntry())
-		    continue;
-		
-		if (v3d->isInViewer(anIObject) && v3d->isVisible(anIObject)) 
-		  needErase = true; 
-		else 
-		  needDisplay = true;
-		SALOMEDS::SObject_var obj =
-		  GeomGUI->myActiveStudy->getStudyDocument()->FindObjectID( anIObject->getEntry() );
-		if (!obj->_is_nil())
-		  {
-		    GEOM::GEOM_Shape_var aShape;
-		    if (obj->FindAttribute(aTmpAttr, "AttributeIOR")) {
-		      char *str = SALOMEDS::AttributeIOR::_narrow(aTmpAttr)->Value();
-		      if (str && strlen(str))
-			aShape = GeomGUI->myComponentGeom-> GetIORFromString(str);
-		    }
-		    else
-		      if (obj->FindAttribute(aTmpAttr, "AttributePersistentRef"))
-			needOpen = true;
-		    if (aShape->_is_nil())
-		      {
-			SALOMEDS::ChildIterator_var anIter = GeomGUI->myActiveStudy->
-			  getStudyDocument()->NewChildIterator(obj);
-			while (anIter->More())
-			  {
-			    SALOMEDS::SObject_var subobj = anIter->Value();
-			    if (subobj->FindAttribute(aTmpAttr, "AttributeIOR"))
-			      {
-				useSubItems = true;
-				needErase = true;
-				needDisplay = true;
-			      }
-			    else
-			      if (subobj->FindAttribute(aTmpAttr, "AttributePersistentRef"))
-				{
-				  needOpen = true;
-				  useSubItems = true;
-				}
-			    anIter->Next();
-			  }
-		      }
-		  }
-	      }
-	    // remove useless popup items
-	    if (nbSel != 1) popup->removeItem(901); // rename
-	    if (useSubItems) popup->removeItem(QAD_DisplayOnly_Popup_ID); // display only
-	    if (!needOpen)
-	      {
-		int index = popup->indexOf(9024);
-		popup->removeItem(9024); // open
-		popup->removeItemAt(index); // separator under Open
-
-		if (!needDisplay) popup->removeItem(QAD_Display_Popup_ID);
-		if (!needErase) popup->removeItem(QAD_Erase_Popup_ID);
-		if (!needDisplay && !needErase)
-		  {
-		    int id = popup->idAt(popup->count()-1); // last item
-		    popup->removeItem(id); // separator
-		  }
-	      }
-	    else
-	      {
-		popup->removeItem(QAD_DisplayOnly_Popup_ID); // display only
-		popup->removeItem(QAD_Display_Popup_ID);
-		popup->removeItem(QAD_Erase_Popup_ID);
-		if (nbSel!=1)
-		  {
-		    int id = popup->idAt(popup->count()-1); // last item
-		    popup->removeItem(id); // separator
-		  }
-	      }
-	    return true;
-	  }
-      // MESSAGE ( " CUSTOM POPUP VIEWER OCC done. ")
-    }
-  else
-    if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
-      {
-	// MESSAGE ( " CUSTOM POPUP VIEWER VTK ")
-	if ( ( theParent.compare("Viewer")==0 ) )
-	  {
-	    
-	    popup->setItemEnabled( 8033, false );
-	    if (theObject.compare("Component") == 0)
-	      {
-		popup->removeItem(QAD_DisplayOnly_Popup_ID);
-		return true;
-	      } 
-
-	  //int id = popup->idAt(0);
-	  QFont f = QApplication::font();
-	  f.setBold( TRUE );
-	  
-	  if (nbSel==1)
-	    {
-	      Handle(SALOME_InteractiveObject) IObject = Sel->firstIObject();
-	      popup->removeItem(QAD_TopLabel_Popup_ID);
-	      popup->insertItem( new CustomItem ( QString(IObject->getName()), f ), QAD_TopLabel_Popup_ID, 0 );
-	      if ( IObject->hasEntry() )
-		{
-		  popup->setItemEnabled( 801, false );
-		  SALOMEDS::Study_var aStudy = GeomGUI->myActiveStudy->getStudyDocument();
-		  SALOMEDS::SObject_var SO = aStudy->FindObjectID( IObject->getEntry() );
-		  SALOMEDS::GenericAttribute_var anAttr;
-		  SALOMEDS::AttributeIOR_var     anIOR;
-		  if ( !SO->_is_nil() )
-		    {
-		      if (SO->FindAttribute(anAttr, "AttributeIOR") )
-			{
-			  anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-			  Standard_Boolean found;
-			  GEOM_Actor* Result = GeomGUI->ConvertIORinGEOMActor(anIOR->Value(), found, true);
-			  if ( found )
-			    {
-			      if ( Result->getDisplayMode() == 1 )
-				popup->changeItem(8021, "Wireframe" );
-			      else
-				popup->changeItem(8021, "Shading" );
-			      
-			      if ( !Result->GetVisibility() )
-				popup->removeItem(QAD_Erase_Popup_ID);
-			      else
-				popup->removeItem(QAD_Display_Popup_ID);		  
-			    }
-			  else
-			    popup->removeItem(QAD_Erase_Popup_ID);
-			}
-		    }
-		}
-	      else
-		popup->setItemEnabled( 801, true );
-	    }
-	  else
-	    {
-	      popup->removeItem(QAD_DisplayOnly_Popup_ID);
-	      popup->removeItem(QAD_TopLabel_Popup_ID);
-	      popup->insertItem( new CustomItem ( tr("GEOM_MEN_POPUP_NAME").arg(nbSel), f ), QAD_TopLabel_Popup_ID, 0 );
-	      popup->setItemEnabled( 801, false );
-	    }
-	  return true;
-	}
-	else
-	  if ( theParent.compare("ObjectBrowser")==0 )
-	    {
-	      popup->removeItem(QAD_TopLabel_Popup_ID);
-	      int id = popup->idAt(0); // separator
-	      if (id < 0) popup->removeItem(id);
-      
-	      // checking for GEOM label in the selected list
-	      SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
-	      Handle(SALOME_InteractiveObject) anIObject;
-	      
-	      bool useSubItems = false;
-	      bool needOpen = false;
-	      bool needDisplay = false;
-	      bool needErase = false;
-	      SALOMEDS::GenericAttribute_var aTmpAttr;
-	      VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->
-					       getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-	      for(;It.More();It.Next())
-		{
-		  anIObject = It.Value();
-		  if ( !anIObject->hasEntry() )
-		    continue;
-		  
-		  if (myRenderInter->isInViewer(anIObject) && myRenderInter->isVisible(anIObject)) 
-		    needErase = true; 
-		  else 
-		    needDisplay = true;
-
-		  SALOMEDS::SObject_var obj = GeomGUI->myActiveStudy->getStudyDocument()
-		    ->FindObjectID( anIObject->getEntry() );
-		  if (!obj->_is_nil()) {
-		    GEOM::GEOM_Shape_var aShape;
-		    if (obj->FindAttribute(aTmpAttr, "AttributeIOR")){
-		      char *str = SALOMEDS::AttributeIOR::_narrow(aTmpAttr)->Value();
-		      if (str && strlen(str))
-			aShape = GeomGUI->myComponentGeom->GetIORFromString(str);
-		    }
-		    else
-		      if (obj->FindAttribute(aTmpAttr, "AttributePersistentRef"))
-			needOpen = true;
-		    if (aShape->_is_nil())
-		      {
-			SALOMEDS::ChildIterator_var anIter =
-			  GeomGUI->myActiveStudy->getStudyDocument()->NewChildIterator(obj);
-			while (anIter->More())
-			  {
-			    SALOMEDS::SObject_var subobj = anIter->Value();
-			    if (subobj->FindAttribute(aTmpAttr, "AttributeIOR"))
-			      {
-				useSubItems = true;
-				needDisplay = true;
-				needErase = true;
-			      }
-			    else
-			      if (subobj->FindAttribute(aTmpAttr, "AttributePersistentRef"))
-				{
-				  needOpen = true;
-				  useSubItems = true;
-				}
-			    anIter->Next();
-			  }
-		      }
-		  }
-		}
-	      // remove useless popup items
-	      if (nbSel != 1) popup->removeItem(901); // rename
-	      if (useSubItems) popup->removeItem(QAD_DisplayOnly_Popup_ID); // display only
-	      if (!needOpen)
-		{
-		  int index = popup->indexOf(9024);
-		  popup->removeItem(9024); // open
-		  popup->removeItemAt(index); // separator under Open
-		  
-		  if (!needDisplay) popup->removeItem(QAD_Display_Popup_ID);
-		  if (!needErase) popup->removeItem(QAD_Erase_Popup_ID);
-		  if (!needDisplay && !needErase)
-		    {
-		      int id = popup->idAt(popup->count()-1); // last item
-		      popup->removeItem(id); // separator
-		    }
-		}
-	      else
-		{
-		  popup->removeItem(QAD_DisplayOnly_Popup_ID); // display only
-		  popup->removeItem(QAD_Display_Popup_ID);
-		  popup->removeItem(QAD_Erase_Popup_ID);
-		  if (nbSel!=1)
-		    {
-		      int id = popup->idAt(popup->count()-1); // last item
-		      popup->removeItem(id); // separator
-		    }
-		}
-	      return true;
-	      // MESSAGE ( " CUSTOM POPUP VIEWER VTK done.")
-	    }
-      } else
-	{ // other viewer types not supported.
-	  while (1)
-	    {
-	      int id = popup->idAt(0);
-	      if (id <= QAD_TopLabel_Popup_ID && id != -1)
-		popup->removeItemAt(0);
-	      else
-		break;
-	    }
-	  popup->removeItem(QAD_DisplayOnly_Popup_ID);	
-	  popup->removeItem(QAD_Display_Popup_ID);
-	  popup->removeItem(QAD_Erase_Popup_ID);
-	  int id = popup->idAt(popup->count()-1); // last item
-	  if (id < 0 && id != -1) popup->removeItem(id); // separator
-	  return false;
-	}
-  return false;
-}
-
-void GeometryGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO)
-{
-  /* Create or retrieve an object GeomGUI */
-  GeometryGUI::GetOrCreateGeometryGUI(QAD_Application::getDesktop());
-  
-  SALOMEDS::Study_var aStudy = GeomGUI->myActiveStudy->getStudyDocument();
-  SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
-  
-  OCCViewer_Viewer3d* v3d;
-  Handle(AIS_InteractiveContext) ic;
-  vtkRenderer* Renderer;
-
-  if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-    v3d = ((OCCViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    ic = v3d->getAISContext();
-  } else if ( GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
-    Renderer = ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
-  } else
-    return;
-
-  if (theIO.IsNull())
-    MESSAGE("BuildPresentation(): null SALOME_InteractiveObject passed")
-
-  if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
-    // VTK
-	  
-    SALOMEDS::SObject_var fatherSF = 
-      aStudy->FindObjectID(GeomGUI->myActiveStudy->getActiveStudyFrame()->entry());
-	    
-    SALOMEDS::SObject_var obj = aStudy->FindObjectID( theIO->getEntry() );
-
-    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-
-    SALOMEDS::GenericAttribute_var anAttr;
-    SALOMEDS::AttributeName_var    aName;
-    SALOMEDS::AttributeIOR_var     anIOR;
-	 
-    if(myRenderInter->isInViewer(theIO)) {
-      myRenderInter->Display(theIO, false);
-    }
-    else {
-      // Create new actor
-      if ( !obj->_is_nil() ) {
-	if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
-	  // this SObject may be GEOM module root SObject
-
-	  bool useSubItems = false;
-	  SALOMEDS::ChildIterator_var anIter = GeomGUI->myActiveStudy->getStudyDocument()->NewChildIterator(obj);
-	  if (GeomGUI->myComponentGeom->GetIORFromString(SALOMEDS::AttributeIOR::_narrow(anAttr)->Value())->_is_nil()) {
-	    while (anIter->More() && !useSubItems) {
-	      SALOMEDS::SObject_var subobj = anIter->Value();
-	      SALOMEDS::GenericAttribute_var aTmpAttr;
-	      if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
-		if (!GeomGUI->myComponentGeom->GetIORFromString(SALOMEDS::AttributeIOR::_narrow(aTmpAttr)->Value())->_is_nil()) {
-		  anAttr = aTmpAttr;
-		  obj = subobj;
-		  useSubItems = true;
-		} else anIter->Next();
-	      } else anIter->Next();
-	    }
-	  }
-
-	  while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
-	    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	    GEOM::GEOM_Shape_var aShape = GeomGUI->myComponentGeom->GetIORFromString(anIOR->Value());
-	    TopoDS_Shape Shape = ShapeReader.GetShape(GeomGUI->myComponentGeom,aShape);
-	    
-	    if (obj->FindAttribute(anAttr, "AttributeName")) {
-	      aName = SALOMEDS::AttributeName::_narrow(anAttr);
-	      
-	      vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)GeomGUI->myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
-	      vtkActorCollection* theAllActors = theRenderer->GetActors();
-	      theAllActors->InitTraversal();
-	      vtkActor* actor = (vtkActor*)theAllActors->GetNextActor();
-	      Handle(SALOME_InteractiveObject) anIObj;
-	      // don't create new study object if it already exists
-	      bool isDisplayed = false;
-	      while(!(actor==NULL)) {
-		SALOME_Actor* Gactor = SALOME_Actor::SafeDownCast(actor);
-		if (Gactor!=NULL) {
-		  if (Gactor->hasIO()) {
-		    if (strcmp(Gactor->getIO()->getEntry(),obj->GetID())==0) {
-		      isDisplayed = true;
-		      anIObj = Gactor->getIO();
-		      if (!anIObj.IsNull()) myRenderInter->Display(anIObj, false);
-		    }
-		  }
-		}
-		actor=(vtkActor*)(theAllActors->GetNextActor());
-	      }
-	      if (!isDisplayed) {
-		// open transaction
-		QAD_Operation* op = new SALOMEGUI_ImportOperation( GeomGUI->myActiveStudy );
-		op->start();
-		
-		SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(fatherSF);
-		aStudyBuilder->Addreference(newObj1, obj);
-		// commit transaction
-		op->finish();
-		
-		vtkRenderWindow *renWin = theRenderer->GetRenderWindow();
-		int themode = myRenderInter->GetDisplayMode();
-		
-		vtkActorCollection* theActors = 
-		  GEOM_AssemblyBuilder::BuildActors(Shape,0,themode,Standard_True);
-		theActors->InitTraversal();
-		vtkActor* anActor = (vtkActor*)theActors->GetNextActor();
-		while(!(anActor==NULL)) {
-		  GEOM_Actor* GActor = GEOM_Actor::SafeDownCast( anActor );
-		  Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(anIOR->Value(), Fatherior,"GEOM");
-		  IO->setEntry(obj->GetID());
-		  GActor->setIO( IO );
-		  GActor->setName( theIO->getName() );
-		  
-		  theRenderer->AddActor(GActor);
-		  //		  renWin->Render();
-		  anActor = (vtkActor*)theActors->GetNextActor();
-		}
-	      }
-	    }
-	    // next item iteration
-	    if (useSubItems) {
-	      anIter->Next();
-	      anAttr = SALOMEDS::GenericAttribute::_nil();
-	      while (anIter->More() && anAttr->_is_nil()) {
-		SALOMEDS::SObject_var subobject = anIter->Value();
-		SALOMEDS::GenericAttribute_var aTmpAttribute;
-		if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
-		  anAttr = aTmpAttribute;
-		  obj = subobject;
-		} else anIter->Next();
-	      }
-	    } else anAttr = SALOMEDS::GenericAttribute::_nil();
-	  }
-	}
-      }
-    }
-    // No viewer update should be done here!
-    //myRenderInter->Render();
-    //GeomGUI->myActiveStudy->updateObjBrowser( true );
-  } else if (GeomGUI->myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-    SALOMEDS::SObject_var fatherSF = 
-      aStudy->FindObjectID( GeomGUI->myActiveStudy->getActiveStudyFrame()->entry());
-    SALOMEDS::GenericAttribute_var anAttr;
-    SALOMEDS::AttributeName_var    aName;
-    SALOMEDS::AttributeIOR_var     anIOR;
-
-    if ( v3d->isInViewer( theIO, true ) ) {
-      Standard_Boolean found;
-      Handle(GEOM_AISShape) aSh = GeomGUI->ConvertIOinGEOMAISShape( theIO, found, true );
-      if ( found ) {
-	ic->Display(aSh, false);
-	ic->AddOrRemoveCurrentObject(aSh, false);
-      }
-      
-    } else {
-      SALOMEDS::SObject_var obj = aStudy->FindObjectID( theIO->getEntry() );	      
-      if ( !obj->_is_nil() ) {
-	MESSAGE("BuildPresentation(): SObject not null")
-	if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
-	  MESSAGE("BuildPresentation(): SObject has IOR")
-	  // this SObject may be GEOM module root SObject
-
-	  bool useSubItems = false;
-	  SALOMEDS::ChildIterator_var anIter = GeomGUI->myActiveStudy->getStudyDocument()->NewChildIterator(obj);
-	  if (GeomGUI->myComponentGeom->GetIORFromString(SALOMEDS::AttributeIOR::_narrow(anAttr)->Value())->_is_nil()) {
-	    while (anIter->More() && !useSubItems) {
-	      SALOMEDS::SObject_var subobj = anIter->Value();
-	      SALOMEDS::GenericAttribute_var aTmpAttr;
-	      if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
-		if (!GeomGUI->myComponentGeom->GetIORFromString(SALOMEDS::AttributeIOR::_narrow(aTmpAttr)->Value())->_is_nil()) {
-		  anAttr = aTmpAttr;
-		  obj = subobj;
-		  useSubItems = true;
-		} else anIter->Next();
-	      } else anIter->Next();
-	    }
-	  }
-
-	  while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
-	    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	    GEOM::GEOM_Shape_var aShape = GeomGUI->myComponentGeom->GetIORFromString(anIOR->Value());
-	    TopoDS_Shape Shape = ShapeReader.GetShape(GeomGUI->myComponentGeom,aShape);
-	    if (Shape.IsNull())
-	      MESSAGE("BuildPresentation(): TopoDS_Shape is null!")
-	    if (obj->FindAttribute(anAttr, "AttributeName")) {
-	      MESSAGE("BuildPresentation(): SObject has Name")
-	      aName = SALOMEDS::AttributeName::_narrow(anAttr);
-	      // searchin for already displayed objects with the same shape
-	      AIS_ListOfInteractive aDisplayed;
-	      ic->DisplayedObjects(aDisplayed);
-	      AIS_ListIteratorOfListOfInteractive anIObjects(aDisplayed);
-	      Handle(AIS_Shape) anAISShape;
-	      for(;anIObjects.More();anIObjects.Next()) {
-		anAISShape = Handle(AIS_Shape)::DownCast(anIObjects.Value());
-		if (!anAISShape.IsNull()) {
-		  if (anAISShape->Shape().IsSame(Shape)) break;
-		  anAISShape.Nullify();
-		}
-	      }
-	      if (!anAISShape.IsNull()) {
-		if (!ic->IsDisplayed(anAISShape)) ic->Display(anAISShape, false);
-	      } else {
-		if (!useSubItems) {
-		  // open transaction
-		  QAD_Operation* op = new SALOMEGUI_ImportOperation( GeomGUI->myActiveStudy );
-		  op->start();
-		  if (fatherSF->_is_nil())
-		    MESSAGE("BuildPresentation(): fatherSF is nil!")
-		  SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(fatherSF);
-		  aStudyBuilder->Addreference(newObj1, obj);
-		  // commit transaction
-		  op->finish();
-		}
-		Handle(GEOM_AISShape) aSh = new GEOM_AISShape(Shape, aName->Value());
-		aSh->SetShadingColor( GeomGUI->myShadingColor );
-		Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(anIOR->Value(),
-									       Fatherior,
-									       "GEOM");
-		IO->setEntry(obj->GetID());
-		aSh->setIO( IO );
-		aSh->setName( aName->Value() );
-		ic->Display (aSh, false);
-		if (!useSubItems) ic->AddOrRemoveCurrentObject(aSh, false);
-	      }
-	    }
-	    // next item iteration
-	    if (useSubItems) {
-	      anIter->Next();
-	      anAttr=SALOMEDS::GenericAttribute::_nil();
-	      while (anIter->More() && anAttr->_is_nil()) {
-		SALOMEDS::SObject_var subobject = anIter->Value();
-		SALOMEDS::GenericAttribute_var aTmpAttribute;
-		if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
-		  anAttr = aTmpAttribute;
-		  obj = subobject;
-		} else anIter->Next();
-	      }
-	    } else 
-	      anAttr = SALOMEDS::GenericAttribute::_nil();
-	  }
-	}
-      }
-    }
-    // No viewer update should be done here!
-    //GeomGUI->myActiveStudy->updateObjBrowser( true );
-    //ic->UpdateCurrentViewer();
-  }
-}
 
 //=======================================================================
 // function : Parameter()
@@ -6556,16 +3761,16 @@ void GeometryGUI::OnSketchSety()
 //=======================================================================
 void GeometryGUI::OnSketchDelete()
 {
-  if (GeomGUI->mySketcher.GetmyEdgesNumber() == 1 ) {
-    QMenuBar* Mb = GeomGUI->myDesktop->getMainMenuBar();
+  if (mySketcher.GetmyEdgesNumber() == 1 ) {
+    QMenuBar* Mb = myDesktop->getMainMenuBar();
     QMenuData* pp;
     QMenuItem* item = Mb->findItem(313,&pp);
     pp->setItemEnabled( 313, false);  // SKETCH CONTRAINTS
-    GeomGUI->mySketcher.SetTransitionStatus(NOCONSTRAINT);
+    mySketcher.SetTransitionStatus(NOCONSTRAINT);
   }
 
   if (this->mySketcher.Delete())
-    GeomGUI->ResetState();
+    ResetState();
 }
 
 
@@ -6641,7 +3846,7 @@ void GeometryGUI::OnSketchClose()
       Ex.Next();
     }
     GEOM::GEOM_Shape_var Wire = myComponentGeom->MakeWire(listShapes) ;
-    TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, Wire);
+    TopoDS_Shape S = myShapeReader.GetShape(myComponentGeom, Wire);
     Standard_CString type;
     GetShapeTypeString(S,type);
     Wire->NameType( type );
@@ -6650,12 +3855,12 @@ void GeometryGUI::OnSketchClose()
       QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
     } 
   }
-  GeomGUI->ResetState();
+  ResetState();
   QMenuBar* Mb = this->myDesktop->getMainMenuBar();
   QMenuData* pp;
   QMenuItem* item = Mb->findItem(313,&pp);
   pp->setItemEnabled( 313, false);  // SKETCH CONTRAINTS
-  GeomGUI->mySketcher.SetTransitionStatus(NOCONSTRAINT);
+  mySketcher.SetTransitionStatus(NOCONSTRAINT);
 }
 
 
@@ -6733,7 +3938,7 @@ void GeometryGUI::OnSketchEnd()
     }
 
     GEOM::GEOM_Shape_var Wire = myComponentGeom->MakeWire(listShapes) ;
-    TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, Wire);
+    TopoDS_Shape S = myShapeReader.GetShape(myComponentGeom, Wire);
     Standard_CString type;
     GetShapeTypeString(S,type);
     Wire->NameType( type );
@@ -6742,12 +3947,12 @@ void GeometryGUI::OnSketchEnd()
       QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
     }
   }
-  GeomGUI->ResetState();
+  ResetState();
   QMenuBar* Mb = this->myDesktop->getMainMenuBar();
   QMenuData* pp;
   QMenuItem* item = Mb->findItem(313,&pp);
   pp->setItemEnabled( 313, false);  // SKETCH CONTRAINTS
-  GeomGUI->mySketcher.SetTransitionStatus(NOCONSTRAINT);
+  mySketcher.SetTransitionStatus(NOCONSTRAINT);
 }
 
 //=======================================================================
@@ -6857,9 +4062,9 @@ void GeometryGUI::Archimede( const Handle(SALOME_InteractiveObject)& IO,
     if ( IO->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject)) ) {
       Handle(GEOM_InteractiveObject) GIO =
 	Handle(GEOM_InteractiveObject)::DownCast( IO );
-      GEOM::GEOM_Shape_var Shape = GeomGUI->myComponentGeom->GetIORFromString( GIO->getIOR() );
+      GEOM::GEOM_Shape_var Shape = myComponentGeom->GetIORFromString( GIO->getIOR() );
       
-      GEOM::GEOM_Shape_var Result = GeomGUI->myComponentGeom->Archimede( Shape, aWeight, aWaterDensity, aMeshingDeflection);
+      GEOM::GEOM_Shape_var Result = myComponentGeom->Archimede( Shape, aWeight, aWaterDensity, aMeshingDeflection);
       Result->NameType(tr("GEOM_PLANE"));
       if ( Display(Result, "") ) {
 	QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
@@ -6867,15 +4072,15 @@ void GeometryGUI::Archimede( const Handle(SALOME_InteractiveObject)& IO,
       return;
     }
     if ( IO->hasEntry() ) {
-      SALOMEDS::Study_var aStudy = GeomGUI->myActiveStudy->getStudyDocument();
+      SALOMEDS::Study_var aStudy = myActiveStudy->getStudyDocument();
       SALOMEDS::SObject_var obj = aStudy->FindObjectID( IO->getEntry() );
       SALOMEDS::GenericAttribute_var anAttr;
       SALOMEDS::AttributeIOR_var     anIOR;
       if ( !obj->_is_nil() ) {
 	if (obj->FindAttribute(anAttr, "AttributeIOR")) {
           anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-	  GEOM::GEOM_Shape_var Shape = GeomGUI->myComponentGeom->GetIORFromString( anIOR->Value() );
-	  GEOM::GEOM_Shape_var Result = GeomGUI->myComponentGeom->Archimede( Shape, aWeight, aWaterDensity, aMeshingDeflection);
+	  GEOM::GEOM_Shape_var Shape = myComponentGeom->GetIORFromString( anIOR->Value() );
+	  GEOM::GEOM_Shape_var Result = myComponentGeom->Archimede( Shape, aWeight, aWaterDensity, aMeshingDeflection);
 	  Result->NameType(tr("GEOM_PLANE"));
 	  if ( Display(Result, "") ) {
 	    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
@@ -6890,65 +4095,6 @@ void GeometryGUI::Archimede( const Handle(SALOME_InteractiveObject)& IO,
   }
 }
 
-
-//=====================================================================================
-// EXPORTED METHODS
-//=====================================================================================
-extern "C"
-{
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
-  {
-    return GeometryGUI::OnGUIEvent(theCommandID, parent);
-  }
-
-  bool OnKeyPress (QKeyEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
-  {
-    return GeometryGUI::OnKeyPress (pe, parent, studyFrame);
-  }
-
-  bool OnMousePress (QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
-  {
-    return GeometryGUI::OnMousePress (pe, parent, studyFrame);
-  }
-
-  bool OnMouseMove (QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
-  {
-    return GeometryGUI::OnMouseMove (pe, parent, studyFrame);
-  }
-
-  bool SetSettings ( QAD_Desktop* parent )
-  {
-    return GeometryGUI::SetSettings( parent );
-  }
-
-  bool customPopup ( QAD_Desktop* parent, QPopupMenu* popup, const QString & theContext,
-		     const QString & theParent, const QString & theObject )
-  {
-     return GeometryGUI::CustomPopup( parent, popup, theContext, theParent, theObject );
-  }
-
-  void definePopup ( QString & theContext, QString & theParent, QString & theObject )
-  {
-    GeometryGUI::DefinePopup( theContext, theParent, theObject );
-  }
-  
-  bool activeStudyChanged ( QAD_Desktop* parent )
-  {
-    GeometryGUI::activeStudyChanged( parent );
-  }
-
-  void buildPresentation ( const Handle(SALOME_InteractiveObject)& theIO )
-  {
-    GeometryGUI::BuildPresentation(theIO);
-  }
-
-  void supportedViewType(int* buffer, int bufferSize)
-  {
-    if (!buffer || !bufferSize) return;
-    buffer[0] = (int)VIEW_OCC;
-    if (--bufferSize) buffer[1] = (int)VIEW_VTK;
-  }
-}
 
 //=====================================================================================
 // function : OnFilletGetAll()
@@ -6976,7 +4122,7 @@ bool GeometryGUI::OnFilletGetAll(const TopoDS_Shape& ShapeTopo, const double Rad
       myDesktop->putInfo(tr("GEOM_PRP_ABORT"));
       return  false;
     }
-    TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, result);
+    TopoDS_Shape S = myShapeReader.GetShape(myComponentGeom, result);
     Standard_CString type;
     GetShapeTypeString(S,type);
     result->NameType( type );
@@ -7051,7 +4197,7 @@ bool GeometryGUI::OnFilletGetSelected(const TopoDS_Shape& ShapeTopo,
     ic->CloseLocalContext(aLocalContextId) ;
     myUseLocalContext = false ;
 
-    TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, aResult);
+    TopoDS_Shape S = myShapeReader.GetShape(myComponentGeom, aResult);
     Standard_CString type;
     GetShapeTypeString(S,type);
     aResult->NameType( type );
@@ -7105,7 +4251,7 @@ bool GeometryGUI::OnChamferGetAll(const TopoDS_Shape& ShapeTopo, const double D1
       return  false;
     }
 
-    TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, result);
+    TopoDS_Shape S = myShapeReader.GetShape(myComponentGeom, result);
     Standard_CString type;
     GetShapeTypeString(S,type);
     result->NameType( type );
@@ -7179,7 +4325,7 @@ bool GeometryGUI::OnChamferGetSelected(const TopoDS_Shape& ShapeTopo,
     ic->CloseLocalContext(aLocalContextId) ;
     myUseLocalContext = false ;
 
-    TopoDS_Shape S = ShapeReader.GetShape(myComponentGeom, aResult);
+    TopoDS_Shape S = myShapeReader.GetShape(myComponentGeom, aResult);
     Standard_CString type;
     GetShapeTypeString(S,type);
     aResult->NameType( type );
@@ -7227,7 +4373,7 @@ void GeometryGUI::MakeCDGAndDisplay(GEOM::GEOM_Shape_ptr Shape)
 }
 
 bool GeometryGUI::SObjectExist(SALOMEDS::SObject_ptr theFatherObject, const char* IOR) {
-  SALOMEDS::Study_var aStudy = GeomGUI->myActiveStudy->getStudyDocument();
+  SALOMEDS::Study_var aStudy = myActiveStudy->getStudyDocument();
   SALOMEDS::ChildIterator_var it = aStudy->NewChildIterator(theFatherObject);
   SALOMEDS::SObject_var RefSO;
   SALOMEDS::GenericAttribute_var anAttr;
@@ -7248,4 +4394,2627 @@ bool GeometryGUI::SObjectExist(SALOMEDS::SObject_ptr theFatherObject, const char
     }
   }
   return false;
+}
+
+
+//=======================================================================
+// function : OnGUIEvent() [static]
+// purpose  : manage all events on GUI
+//=======================================================================
+bool GeometryGUI::OnGUIEvent(int theCommandID,	QAD_Desktop* parent)
+{
+  SALOMEDS::Study_var aStudy = myActiveStudy->getStudyDocument();
+  SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
+  
+  OCCViewer_Viewer3d* v3d;
+  Handle(AIS_InteractiveContext) ic;
+  vtkRenderer* Renderer;
+
+  QMenuBar* Mb = myDesktop->getMainMenuBar();
+
+  bool ViewOCC = false;
+
+  if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+    v3d = ((OCCViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+    ic = v3d->getAISContext();
+    ViewOCC = true;    
+    Mb->setItemEnabled( 312, ViewOCC);//Sketch
+    Mb->setItemEnabled( 309, ViewOCC);//SuppressFace
+    Mb->setItemEnabled( 314, ViewOCC);//SuppressHole
+    
+    Mb->setItemEnabled( 703, ViewOCC);// ShadingColor Settings
+    Mb->setItemEnabled( 704, ViewOCC);// Isos Settings
+
+  } else if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
+    Renderer = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+
+    // OnSuppressFaces, OnSuppressHole, SETTINGS - SHADING COLOR, SETTINGS - ISOS, SETTINGS : STEP VALUE FOR SPIN BOXES, SKETCHER, ISOS - POPUP VIEWER, 
+    Mb->setItemEnabled( 312, ViewOCC);//Sketch
+    Mb->setItemEnabled( 309, ViewOCC);//SuppressFace
+    Mb->setItemEnabled( 314, ViewOCC);//SuppressHole
+    
+    Mb->setItemEnabled( 703, ViewOCC);// ShadingColor Settings
+    Mb->setItemEnabled( 704, ViewOCC);// Isos Settings
+  } else {
+    return 0;
+  }
+
+  if (myState == CURRENT_SKETCH && theCommandID != 10000 && theCommandID != 10001 && theCommandID != 10002 && theCommandID != 10003 && theCommandID != 10004 && theCommandID != 10006 && theCommandID != 10007 && theCommandID != 10008 && theCommandID != 10010 && theCommandID != 10011 && theCommandID != 10012 && theCommandID != 10013 && theCommandID != 10014 && theCommandID != 3133 && theCommandID != 3134)
+    return false;
+
+
+//   QString theCommandID_str = itoa(theCommandID);
+//   theCommandID_str.truncate(3);
+//   int theCommandID_Group = theCommandID_str.toInt();
+  if (theCommandID == 3021 || theCommandID == 3022 || theCommandID == 3023 || theCommandID == 3024 || theCommandID == 3025) {
+    PrimitiveGUI* myPrimitiveGUI = new PrimitiveGUI();
+    myPrimitiveGUI->OnGUIEvent(theCommandID, parent);
+    return true ;
+  }
+  if (theCommandID == 4011 || theCommandID == 4012 || theCommandID == 4013 || theCommandID == 4014) {
+    BooleanGUI* myBooleanGUI = new BooleanGUI();
+    myBooleanGUI->OnGUIEvent(theCommandID, parent);
+    return true ;
+  }
+
+
+  switch (theCommandID)
+    { 
+    case 31: // COPY
+      OnEditCopy();
+      break;
+    
+    case 33: // DELETE
+      OnEditDelete();
+      break;
+
+    case 111:
+      {
+	SetState(111);
+	Import();
+	ResetState();
+	break;
+      }
+    case 112:
+      {
+	SetState(112);
+	Import();
+	ResetState();
+	break;
+      }
+    case 113: // IMPORT STEP
+      {
+	SetState(113);
+	Import();
+	ResetState();
+	break;
+      }
+
+    case 121: // EXPORT BREP
+      {
+	SetState(121);
+	Export();
+	ResetState();
+	break;
+      }
+
+    case 122: // EXPORT IGES
+      {
+	SetState(122);
+	Export();
+	ResetState();
+	break;
+      }
+
+    case 123: // EXPORT STEP
+      {
+	SetState(123);
+	Export();
+	ResetState();
+	break;
+      }
+      
+    case 303: // EXPLODE : use ic
+      { 	
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_SubShapeDlg *aDlg = new GeometryGUI_SubShapeDlg( parent, "", Sel, ic ) ;
+	break ;
+      }
+      
+    case 304: // GEOM::EDGE
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_EdgeDlg *aDlg = new GeometryGUI_EdgeDlg( parent, "", Sel ) ;
+	break ;
+      }
+      
+    case 305: // GEOM::WIRE
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_WireDlg *aDlg = new GeometryGUI_WireDlg( parent, "", Sel ) ;
+	break ;
+      }
+      
+    case 306: // GEOM::FACE
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_FaceDlg *aDlg = new GeometryGUI_FaceDlg ( parent, "", Sel ) ;
+	break ;
+      }
+
+    case 315: // GEOM::SHELL
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_ShellDlg *aDlg = new GeometryGUI_ShellDlg ( parent, "", Sel ) ;
+	break ;
+      }
+
+    case 316: // GEOM::SOLID
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_SolidDlg *aDlg = new GeometryGUI_SolidDlg ( parent, "", Sel ) ;
+	break ;
+      }
+      
+    case 308: // GEOM::COMPOUND
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_CompoundDlg *aDlg = new GeometryGUI_CompoundDlg ( parent, "", Sel ) ;
+	break ;
+      }
+      
+    case 309: // SUPPRESS FACES : use ic
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_SuppressFacesDlg *aDlg = new GeometryGUI_SuppressFacesDlg( parent, "", Sel, ic ) ;
+	break ;
+      }
+      
+    case 314: // SUPPRESS HOLES : use ic
+      {
+	if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+	  EmitSignalDeactivateDialog() ;
+	  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	  GeometryGUI_SuppressHoleDlg *aDlg = new GeometryGUI_SuppressHoleDlg( parent, "", Sel, ic ) ;
+	}
+	else { 
+	  myDesktop->putInfo( tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
+	}
+	break ;
+      }
+    case 501: // SEWING
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_SewingDlg *aDlg = new GeometryGUI_SewingDlg ( parent, "", Sel ) ;
+	break ;
+      }
+      
+    case 502: // ORIENTATION
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_OrientationDlg *aDlg = new GeometryGUI_OrientationDlg( parent, "", Sel ) ;
+	break ;
+      }
+      
+    case 601: // PROPERTIES (Length, surface, volume)
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_PropertiesDlg *aDlg = new GeometryGUI_PropertiesDlg( parent, "", Sel ) ;
+	break ;
+      }
+      
+    case 604: // CDG : Center of mass
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_CenterMassDlg *aDlg = new GeometryGUI_CenterMassDlg ( parent, "", Sel ) ;
+	break ;
+      }
+      
+    case 605: // INERTIA
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_InertiaDlg *aDlg = new GeometryGUI_InertiaDlg( parent, "", Sel ) ;
+	break ;
+      }
+      
+    case 607: // MAXTOLERANCE
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_MaxToleranceDlg *aDlg = new GeometryGUI_MaxToleranceDlg( parent, "", Sel ) ;
+	break ;
+      }
+     
+    case 608: // WHATIS
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_WhatisDlg *aDlg = new GeometryGUI_WhatisDlg( parent, "", Sel ) ;
+	break ;
+      }
+      
+    case 609: // CHECKSHAPE
+     {
+       EmitSignalDeactivateDialog() ;
+       SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+       GeometryGUI_CheckShape *aDlg = new GeometryGUI_CheckShape( parent, "", Sel ) ;
+       break ;
+     }
+     
+    case 701: // SETTINGS - COPY
+      {
+	QMenuData* pp;
+	QMenuItem* item = parent->menuBar()->findItem(701,&pp);
+	bool check = !pp->isItemChecked(701);
+	pp->setItemChecked(701,check);
+	mySettings_Copy = check;	
+	QAD_CONFIG->addSetting( "Geometry:SettingsCopy", mySettings_Copy );
+	break;
+      }
+
+    case 702: // SETTINGS - ADD IN STUDY
+      {
+	QMenuData* pp;
+	QMenuItem* item = parent->menuBar()->findItem(702,&pp);
+	bool check = !pp->isItemChecked(702);
+	pp->setItemChecked(702,check);
+	mySettings_AddInStudy = check;
+	
+	QAD_CONFIG->addSetting( "Geometry:SettingsAddInStudy", mySettings_AddInStudy );
+	break;
+      }
+
+    case 703: // SETTINGS - SHADING COLOR
+      {
+	if ( myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
+	  break;
+	
+	QString SCr = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorRed");
+	QString SCg = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorGreen");
+	QString SCb = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorBlue");
+	QColor color;
+	if( !SCr.isEmpty() && !SCg.isEmpty() && !SCb.isEmpty() ) {	  
+	  color = QColor (SCr.toInt(),
+			  SCg.toInt(),
+			  SCb.toInt());
+	} else {
+	  Quantity_Color Default = Quantity_Color();
+	  color = QColor ( (int)Default.Red()  * 255.0,
+			   (int)Default.Green()* 255.0,
+			   (int)Default.Blue() * 255.0 );
+	}
+	
+	QColor c = QColorDialog::getColor( color, QAD_Application::getDesktop() );
+	if ( c.isValid() ) {
+	  myShadingColor = Quantity_Color(c.red()  / 255.0,
+						   c.green()/ 255.0,
+						   c.blue() / 255.0,
+						   Quantity_TOC_RGB);
+	  
+	  AIS_ListOfInteractive List;
+	  ic->DisplayedObjects(List);
+	  AIS_ListOfInteractive List1;
+	  ic->ObjectsInCollector(List1);
+	  List.Append(List1);
+	  
+	  AIS_ListIteratorOfListOfInteractive ite(List);
+	  while (ite.More()) {
+	    if (ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
+	      Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
+	      aSh->SetShadingColor( myShadingColor );
+	      ic->Redisplay( aSh, Standard_True, Standard_True);
+	    }
+	    ite.Next();
+	  }
+	  
+	  ic->UpdateCurrentViewer();
+		
+	  QAD_CONFIG->addSetting("Geometry:SettingsShadingColorRed",   c.red()   );
+	  QAD_CONFIG->addSetting("Geometry:SettingsShadingColorGreen", c.green() );
+	  QAD_CONFIG->addSetting("Geometry:SettingsShadingColorBlue",  c.blue()  );	
+	}
+	break;
+      }
+
+     
+    case 704: // SETTINGS - ISOS
+      {
+	if (myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
+	  break;
+
+	QString IsoU = QAD_CONFIG->getSetting("Geometry:SettingsIsoU");
+	QString IsoV = QAD_CONFIG->getSetting("Geometry:SettingsIsoV");
+	if ( !IsoU.isEmpty() )
+	  ic->DefaultDrawer()->UIsoAspect()->SetNumber(IsoU.toInt());
+	else
+	  IsoU = "1";
+	if ( !IsoV.isEmpty() )
+	  ic->DefaultDrawer()->VIsoAspect()->SetNumber(IsoV.toInt());
+	else
+	  IsoV = "1";
+	
+	GeometryGUI_NbIsosDlg * NbIsosDlg = new GeometryGUI_NbIsosDlg( QAD_Application::getDesktop(),
+								       tr("GEOM_MEN_ISOS"), TRUE );	
+	int UIso = IsoU.toInt();
+	int VIso = IsoV.toInt();
+	
+	NbIsosDlg->SpinBoxU->setValue(UIso) ;
+	NbIsosDlg->SpinBoxV->setValue(VIso) ;
+
+	if ( NbIsosDlg->exec() ) {
+	  UIso = NbIsosDlg->SpinBoxU->text().toInt() ;
+	  VIso = NbIsosDlg->SpinBoxV->text().toInt() ;
+	  
+	  ic->DefaultDrawer()->UIsoAspect()->SetNumber(UIso);
+	  ic->DefaultDrawer()->VIsoAspect()->SetNumber(VIso);
+	  QAD_CONFIG->addSetting( "Geometry:SettingsIsoU", NbIsosDlg->SpinBoxU->text() ); /* text format */
+	  QAD_CONFIG->addSetting( "Geometry:SettingsIsoV", NbIsosDlg->SpinBoxV->text() ); /* text format */
+	}
+
+	AIS_ListOfInteractive List;
+	ic->DisplayedObjects(List);
+	AIS_ListOfInteractive List1;
+	ic->ObjectsInCollector(List1);
+	List.Append(List1);
+	
+	AIS_ListIteratorOfListOfInteractive ite(List);
+	ic->InitCurrent();
+	if ( ic->NbCurrents() )
+	  while (ite.More()) {
+	    if (ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
+	      
+	      Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
+	      Handle (AIS_Drawer) CurDrawer;
+	      CurDrawer = aSh->Attributes();
+	      CurDrawer->UIsoAspect()->SetNumber( UIso );
+	      CurDrawer->VIsoAspect()->SetNumber( VIso );
+	      ic->SetLocalAttributes(aSh, CurDrawer);
+	      ic->Redisplay(aSh);	
+	    }
+	    ite.Next();
+	  }
+	ic->UpdateCurrentViewer();
+	break;
+      }
+ 
+    case 705: // SETTINGS : STEP VALUE FOR SPIN BOXES
+      {
+	//NRI	if (myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
+	//NRI	  break;
+	
+	QString step = QAD_CONFIG->getSetting( "Geometry:SettingsGeomStep" );
+	if( step.isEmpty() )
+	  step = "100.0" ;
+
+	Standard_Boolean res = false ;
+	double dd = Parameter( res, QString("%1").arg(step), tr("GEOM_MEN_STEP_LABEL"), tr("GEOM_STEP_TITLE"), 0.001, 10000.0, 3 ) ;
+	if( res ) {
+	  QAD_CONFIG->addSetting( "Geometry:SettingsGeomStep",  QString("%1").arg(dd) ) ;
+
+	  /* Emit signal to GeometryGUI_SpinBoxes */
+	  SignalDefaultStepValueChanged( dd ) ;
+	}
+	else
+	  parent->putInfo(tr("GEOM_PRP_ABORT"));
+
+	break ;
+      }
+      
+    case 801: // ADD IN STUDY - POPUP VIEWER
+      {
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	const SALOME_ListIO& ListSelected = Sel->StoredIObjects();
+	SALOME_ListIteratorOfListIO It( ListSelected );
+	for ( ; It.More(); It.Next() ) {
+	  Handle(SALOME_InteractiveObject) IObject = It.Value();
+	  AddInStudy(true, IObject);
+	}
+	/* Is set on the dialog box */
+	QApplication::restoreOverrideCursor();
+	break;
+      }
+
+    case 901: // RENAME
+      {
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+	for ( ; It.More(); It.Next() ) {
+	  Handle(SALOME_InteractiveObject) IObject = It.Value();
+
+	  SALOMEDS::SObject_var obj = aStudy->FindObjectID( IObject->getEntry() );
+          SALOMEDS::GenericAttribute_var anAttr;
+          SALOMEDS::AttributeName_var    aName;
+	  if ( !obj->_is_nil() ) {
+	    if (obj->FindAttribute(anAttr, "AttributeName")) {
+              aName = SALOMEDS::AttributeName::_narrow(anAttr);
+
+	      QString nm = QString( aName->Value() );
+	      nm = SALOMEGUI_NameDlg::getName( QAD_Application::getDesktop(), nm );
+	      if ( !nm.isEmpty() ) {
+		QApplication::setOverrideCursor( Qt::waitCursor );
+		myActiveStudy->renameIObject( IObject, nm );
+		QApplication::restoreOverrideCursor();
+	      }
+	    }
+	  }
+	}
+	break;
+      }  
+ 
+    case 903: // DISPLAY OBJECT BROWSER
+      {
+	if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
+	  // VTK
+	  QApplication::setOverrideCursor( Qt::waitCursor );
+	  
+	  SALOMEDS::SObject_var fatherSF = 
+	    aStudy->FindObjectID(myActiveStudy->getActiveStudyFrame()->entry());
+
+	  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+	  
+	  for(;It.More();It.Next()) {
+	    Handle(SALOME_InteractiveObject) IObject = It.Value();
+	    SALOMEDS::SObject_var obj = aStudy->FindObjectID( IObject->getEntry() );
+
+	    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+
+            SALOMEDS::GenericAttribute_var anAttr;
+            SALOMEDS::AttributeName_var    aName;
+            SALOMEDS::AttributeIOR_var     anIOR;
+	 
+	    if(myRenderInter->isInViewer(IObject)) {
+	      myRenderInter->Display(IObject);
+	    }
+	    else {
+	      // Create new actor
+	      if ( !obj->_is_nil() ) {
+		if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
+		  // this SObject may be GEOM module root SObject
+		  SALOMEDS::ChildIterator_var anIter = myActiveStudy->getStudyDocument()->NewChildIterator(obj);
+		  bool useSubItems = false;
+		  while (anIter->More() && !useSubItems) {
+		    SALOMEDS::SObject_var subobj = anIter->Value();
+		    SALOMEDS::GenericAttribute_var aTmpAttr;
+		    if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
+		      anAttr = aTmpAttr;
+		      obj = subobj;
+		      useSubItems = true;
+		    } else anIter->Next();
+		  }
+		  
+		  while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
+		    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+		    GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString(anIOR->Value());
+		    TopoDS_Shape Shape = myShapeReader.GetShape(myComponentGeom,aShape);
+
+		    if (obj->FindAttribute(anAttr, "AttributeName")) {
+		      aName = SALOMEDS::AttributeName::_narrow(anAttr);
+
+		      vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+		      vtkActorCollection* theAllActors = theRenderer->GetActors();
+		      theAllActors->InitTraversal();
+		      vtkActor* actor = (vtkActor*)theAllActors->GetNextActor();
+		      Handle(SALOME_InteractiveObject) anIObj;
+		      // don't create new study object if it already exists
+		      bool isDisplayed = false;
+		      while(!(actor==NULL)) {
+			SALOME_Actor* Gactor = SALOME_Actor::SafeDownCast(actor);
+			if (Gactor!=NULL) {
+			  if (Gactor->hasIO()) {
+			    if (strcmp(Gactor->getIO()->getEntry(),obj->GetID())==0) {
+			      isDisplayed = true;
+			      anIObj = Gactor->getIO();
+			      if (!anIObj.IsNull()) myRenderInter->Display(anIObj);
+			    }
+			  }
+			}
+			actor=(vtkActor*)(theAllActors->GetNextActor());
+		      }
+		      if (!isDisplayed) {
+			// open transaction
+			QAD_Operation* op = new SALOMEGUI_ImportOperation( myActiveStudy );
+			op->start();
+			
+			SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(fatherSF);
+			aStudyBuilder->Addreference(newObj1, obj);
+			// commit transaction
+			op->finish();
+			
+			vtkRenderWindow *renWin = theRenderer->GetRenderWindow();
+			int themode = myRenderInter->GetDisplayMode();
+			
+			vtkActorCollection* theActors = 
+			  GEOM_AssemblyBuilder::BuildActors(Shape,0,themode,Standard_True);
+			theActors->InitTraversal();
+			vtkActor* anActor = (vtkActor*)theActors->GetNextActor();
+			while(!(anActor==NULL)) {
+			  GEOM_Actor* GActor = GEOM_Actor::SafeDownCast( anActor );
+			  Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(anIOR->Value(), myFatherior,"GEOM");
+			  IO->setEntry(obj->GetID());
+			  GActor->setIO( IO );
+			  GActor->setName( IObject->getName() );
+			  
+			  theRenderer->AddActor(GActor);
+			  renWin->Render();
+			  anActor = (vtkActor*)theActors->GetNextActor();
+			}
+		      }
+		    }
+		    // next item iteration
+		    if (useSubItems) {
+		      anIter->Next();
+		      anAttr = SALOMEDS::GenericAttribute::_nil();
+		      while (anIter->More() && anAttr->_is_nil()) {
+			SALOMEDS::SObject_var subobject = anIter->Value();
+			SALOMEDS::GenericAttribute_var aTmpAttribute;
+			if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
+			  anAttr = aTmpAttribute;
+			  obj = subobject;
+			} else anIter->Next();
+		      }
+		    } else anAttr = SALOMEDS::GenericAttribute::_nil();
+		  }
+		}
+	      }
+	    }
+	  }
+	  myActiveStudy->updateObjBrowser( true );
+	  QApplication::restoreOverrideCursor();
+
+	} else if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+	  QApplication::setOverrideCursor( Qt::waitCursor );
+	  
+	  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+	  for(;It.More();It.Next()) {
+	    Handle(SALOME_InteractiveObject) IObject = It.Value();
+
+	    SALOMEDS::SObject_var fatherSF = 
+	      aStudy->FindObjectID( myActiveStudy->getActiveStudyFrame()->entry());
+            SALOMEDS::GenericAttribute_var anAttr;
+            SALOMEDS::AttributeName_var    aName;
+            SALOMEDS::AttributeIOR_var     anIOR;
+
+	    if ( v3d->isInViewer( IObject, true ) ) {
+	      Standard_Boolean found;
+	      Handle(GEOM_AISShape) aSh = ConvertIOinGEOMAISShape( IObject, found, true );
+	      if ( found ) {
+		ic->Display(aSh);
+		ic->AddOrRemoveCurrentObject(aSh, true);
+	      }
+	      
+	    } else {
+	      SALOMEDS::SObject_var obj = aStudy->FindObjectID( IObject->getEntry() );	      
+	      if ( !obj->_is_nil() ) {
+		if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
+		  // this SObject may be GEOM module root SObject
+		  SALOMEDS::ChildIterator_var anIter = myActiveStudy->getStudyDocument()->NewChildIterator(obj);
+		  bool useSubItems = false;
+		  while (anIter->More() && !useSubItems) {
+		    SALOMEDS::SObject_var subobj = anIter->Value();
+		    SALOMEDS::GenericAttribute_var aTmpAttr;
+		    if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
+		      anAttr = aTmpAttr;
+		      obj = subobj;
+		      useSubItems = true;
+		    } else anIter->Next();
+		  }
+		  while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
+		    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+		    GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString(anIOR->Value());
+		    TopoDS_Shape Shape = myShapeReader.GetShape(myComponentGeom,aShape);
+		    if (obj->FindAttribute(anAttr, "AttributeName")) {
+		      aName = SALOMEDS::AttributeName::_narrow(anAttr);
+		      // searchin for already displayed objects with the same shape
+		      AIS_ListOfInteractive aDisplayed;
+		      ic->DisplayedObjects(aDisplayed);
+		      AIS_ListIteratorOfListOfInteractive anIObjects(aDisplayed);
+		      Handle(AIS_Shape) anAISShape;
+		      for(;anIObjects.More();anIObjects.Next()) {
+			anAISShape = Handle(AIS_Shape)::DownCast(anIObjects.Value());
+			if (!anAISShape.IsNull()) {
+			  if (anAISShape->Shape().IsSame(Shape)) break;
+			  anAISShape.Nullify();
+			}
+		      }
+		      if (!anAISShape.IsNull()) {
+			if (!ic->IsDisplayed(anAISShape)) ic->Display(anAISShape);
+		      } else {
+			if (!useSubItems) {
+			  // open transaction
+			  QAD_Operation* op = new SALOMEGUI_ImportOperation( myActiveStudy );
+			  op->start();
+			  
+			  SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(fatherSF);
+			  aStudyBuilder->Addreference(newObj1, obj);
+			  // commit transaction
+			  op->finish();
+			}
+
+			Handle(GEOM_AISShape) aSh = new GEOM_AISShape(Shape, aName->Value());
+			aSh->SetShadingColor( myShadingColor );
+			Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(anIOR->Value(),
+										       myFatherior,
+										       "GEOM");
+			IO->setEntry(obj->GetID());
+			aSh->setIO( IO );
+			aSh->setName( aName->Value() );
+			ic->Display (aSh);
+			if (!useSubItems) ic->AddOrRemoveCurrentObject(aSh, true);
+		      }
+		    }
+		    // next item iteration
+		    if (useSubItems) {
+		      anIter->Next();
+		      anAttr=SALOMEDS::GenericAttribute::_nil();
+		      while (anIter->More() && anAttr->_is_nil()) {
+			SALOMEDS::SObject_var subobject = anIter->Value();
+			SALOMEDS::GenericAttribute_var aTmpAttribute;
+			if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
+			  anAttr = aTmpAttribute;
+			  obj = subobject;
+			} else anIter->Next();
+		      }
+		    } else anAttr = SALOMEDS::GenericAttribute::_nil();
+		  }
+		}
+	      }
+	    }
+	  }
+	  myActiveStudy->updateObjBrowser( true );
+	  QApplication::restoreOverrideCursor();
+	}
+	break;
+      }
+      
+    case 3011: // POINT
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_PointDlg *aDlg = new GeometryGUI_PointDlg( parent, "", Sel, ic ) ; 
+	break;
+      }
+      
+    case 3012:  // LINE
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_LineDlg *aDlg = new GeometryGUI_LineDlg( parent, "", Sel ) ;
+	break ;
+      }
+      
+    case 3013:  // CIRCLE
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_CircleDlg *aDlg = new GeometryGUI_CircleDlg( parent, "", Sel ) ;
+	break ;
+      }
+
+    case 3014:  // ELLIPSE
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_EllipseDlg *aDlg = new GeometryGUI_EllipseDlg( parent, "", Sel ) ;
+	break ;
+      }
+
+    case 3015:  // ARC
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_ArcDlg *aDlg = new GeometryGUI_ArcDlg( parent, "", Sel ) ;
+	break ;
+      }
+      
+    case 3016: // VECTOR
+      {	
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_VectorDlg *aDlg = new GeometryGUI_VectorDlg( parent, "", Sel ) ;
+	break;
+      }
+      
+    case 3017: // PLANE
+      {	
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_PlaneDlg *aDlg = new GeometryGUI_PlaneDlg( parent, "", Sel ) ;
+	break;
+      }
+      
+    case 3018: // WORKING PLANE
+      {	
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_WorkingPlaneDlg *aDlg = new GeometryGUI_WorkingPlaneDlg( parent, "", Sel ) ;
+	break;
+      }
+      
+    case 312: // SKETCHER
+      {
+	if (myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+	  break;
+
+	EmitSignalDeactivateDialog() ;
+
+	((OCCViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->onViewTop(); // DCQ : 28/02/2002
+	
+	mySketcher = Sketch( v3d->getViewer3d() );
+	SetState(CURRENT_SKETCH);
+	
+	QMenuBar* Mb = myDesktop->getMainMenuBar();
+	QMenuData* pp;
+
+        QMenuItem* item = Mb->findItem(10010,&pp);
+	mySketcher.SetParameterVisibility(LENGTH_PARAMETER,pp->isItemChecked(10010));
+	item = Mb->findItem(10011,&pp);
+	mySketcher.SetParameterVisibility(ANGLE_PARAMETER,pp->isItemChecked(10011));
+	item = Mb->findItem(10012,&pp);
+	mySketcher.SetParameterVisibility(RADIUS_PARAMETER,pp->isItemChecked(10012));
+	item = Mb->findItem(10013,&pp);
+	mySketcher.SetParameterVisibility(XVALUE_PARAMETER,pp->isItemChecked(10013));
+	item = Mb->findItem(10014,&pp);
+	mySketcher.SetParameterVisibility(YVALUE_PARAMETER,pp->isItemChecked(10014));
+	
+	mySketcher.SetTransitionStatus(NOCONSTRAINT);
+	item = Mb->findItem(3133,&pp);
+	pp->setItemChecked(3133,false);
+	item = Mb->findItem(3134,&pp);
+	pp->setItemChecked(3134,false);
+	break;
+      }
+
+
+
+    case 3131:
+      {
+	break;
+      }
+
+    case 3133: // sketcher
+      { 
+	QMenuBar* Mb = myDesktop->getMainMenuBar();
+        QMenuData* pp;
+	QMenuItem* item = Mb->findItem(3133,&pp);
+	pp->setItemChecked(3133,!pp->isItemChecked(3133));
+	if (pp->isItemChecked(3133) == true) 
+	  mySketcher.SetTransitionStatus(TANGENT);
+	else
+	  mySketcher.SetTransitionStatus(NOCONSTRAINT);
+
+	pp->setItemChecked(3134,false);
+	break;
+      }
+
+    case 3134: // sketcher
+      {
+	QMenuBar* Mb = myDesktop->getMainMenuBar();
+        QMenuData* pp;
+	QMenuItem* item = Mb->findItem(3134,&pp);
+	pp->setItemChecked(3134,!pp->isItemChecked(3134));
+	if (pp->isItemChecked(3134) == true) 
+	  mySketcher.SetTransitionStatus(PERPENDICULAR);
+	else 
+	  mySketcher.SetTransitionStatus(NOCONSTRAINT);
+	
+	pp->setItemChecked(3133,false);
+	break;
+      }
+      
+    case 4021: // TRANSLATION
+      {	
+	EmitSignalDeactivateDialog() ;
+  	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_TranslationDlg *aDlg = new GeometryGUI_TranslationDlg( parent, "", Sel ) ;
+	break;
+      }
+
+    case 4022: // ROTATION
+      {	
+	EmitSignalDeactivateDialog() ;
+  	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_RotationDlg *aDlg = new GeometryGUI_RotationDlg( parent, "", Sel ) ;
+	break;
+      }
+
+   case 4030: // MULTI TRANSLATION
+      {	
+	EmitSignalDeactivateDialog() ;
+  	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_MultiTranslationDlg *aDlg = new GeometryGUI_MultiTranslationDlg( parent, "", Sel ) ;
+	break;
+      }
+
+    case 4040: // MULTI ROTATION
+      {	
+	EmitSignalDeactivateDialog() ;
+  	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_MultiRotationDlg *aDlg = new GeometryGUI_MultiRotationDlg( parent, "", Sel ) ;
+	break;
+      }
+
+    case 4023: // MIRROR
+      {	
+	EmitSignalDeactivateDialog() ;
+  	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_MirrorDlg *aDlg = new GeometryGUI_MirrorDlg( parent, "", Sel ) ;
+	break;
+      }
+      
+    case 4024: // SCALE
+      {	
+	EmitSignalDeactivateDialog() ;
+  	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_ScaleDlg *aDlg = new GeometryGUI_ScaleDlg( parent, "", Sel ) ;
+	break;
+      }
+      
+    case 4025: // PARTITION
+      {		
+	EmitSignalDeactivateDialog() ;
+  	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_PartitionDlg *aDlg = new GeometryGUI_PartitionDlg( parent, "", Sel ) ;	
+	break;
+      }
+
+    case 4026: // ARCHIMEDE
+      {		
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_ArchimedeDlg *aDlg = new GeometryGUI_ArchimedeDlg( parent, "", Sel ) ;	
+	break;
+      }
+
+    case 4027: // FILLET
+      {		
+	EmitSignalDeactivateDialog() ;
+  	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_FilletDlg *aDlg = new GeometryGUI_FilletDlg( parent, "", Sel, ic ) ;	
+	break;
+      }
+
+    case 4028: // CHAMFER
+      {		
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_ChamferDlg *aDlg = new GeometryGUI_ChamferDlg( parent, "", Sel, ic ) ;	
+	break;
+      }
+
+    case 4031: // PRISM
+      {	
+	EmitSignalDeactivateDialog() ;
+  	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_PrismDlg *aDlg = new GeometryGUI_PrismDlg( parent, "", Sel ) ;
+	break;
+      }
+
+    case 4032: // REVOL
+      {	
+	EmitSignalDeactivateDialog() ;
+  	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_RevolDlg *aDlg = new GeometryGUI_RevolDlg( parent, "", Sel ) ;
+	break;
+      }
+
+    case 4033: // FILLING
+      {	
+	EmitSignalDeactivateDialog() ;
+  	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_FillingDlg *aDlg = new GeometryGUI_FillingDlg( parent, "", Sel ) ;
+	break;
+      }
+
+    case 4034: // PIPE
+      {	
+	EmitSignalDeactivateDialog() ;
+  	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  	GeometryGUI_PipeDlg *aDlg = new  GeometryGUI_PipeDlg(parent, "", Sel ) ;
+	break;
+      }
+      
+    case 5001: // CHECK GEOMETRY
+      {
+	QAD_PyEditor* PyEditor = myActiveStudy->getActiveStudyFrame()->getRightFrame()->getPyEditor();
+	PyEditor->setText("from GEOM_usinggeom import *\n");
+	PyEditor->setText(">>> ");
+	PyEditor->handleReturn();
+	break;
+      }
+
+    case 6021: // SHADING - WIREFRAME
+      {
+	if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
+	  VTKViewer_RenderWindowInteractor* myRenderInter= 
+	    ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+
+	  QApplication::setOverrideCursor(waitCursor); 
+	  
+	  int themode = myRenderInter->GetDisplayMode();
+	  if( themode==0 ) {
+	    myRenderInter->SetDisplayMode(1);
+	    GetDesktop()->menuBar()->changeItem(6021, tr("GEOM_MEN_WIREFRAME") );
+	  } else {
+	    myRenderInter->SetDisplayMode(0);
+	    GetDesktop()->menuBar()->changeItem(6021, tr("GEOM_MEN_SHADING") );
+	  }
+
+	  QApplication::restoreOverrideCursor(); 	  
+	  
+	} else if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  AIS_DisplayMode mode = ( AIS_DisplayMode )ic->DisplayMode();
+	  QApplication::setOverrideCursor( Qt::waitCursor );
+	  AIS_DisplayMode newmode = (mode == AIS_WireFrame ? AIS_Shaded : AIS_WireFrame);
+
+	  AIS_ListOfInteractive List;
+	  ic->DisplayedObjects(List);
+	  AIS_ListOfInteractive List1;
+	  ic->ObjectsInCollector(List1);
+	  List.Append(List1);
+	  
+	  AIS_ListIteratorOfListOfInteractive ite(List);
+	  while (ite.More()) {
+	    if (ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
+	      Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
+	      ic->SetDisplayMode(aSh,Standard_Integer(newmode),true);
+	    }
+	    ite.Next();
+	  }
+
+	  ic->SetDisplayMode( newmode, Standard_False);
+	  if ( newmode == 1 )
+	    GetDesktop()->menuBar()->changeItem(6021, tr("GEOM_MEN_WIREFRAME") );
+	  else
+	    GetDesktop()->menuBar()->changeItem(6021, tr("GEOM_MEN_SHADING") );
+	  
+	  QApplication::restoreOverrideCursor();
+	}
+	break;
+      }
+      
+    case 6022: // DISPLAY ALL
+      {
+	if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK )
+	  //VTK
+	  ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->DisplayAll();
+	else if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC )
+	  OnDisplayAll();
+	break;
+      }
+      
+    case 6023: // DISPLAY ONLY
+    case 8023: // DISPLAY ONLY - POPUP VIEWER
+      {
+	if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
+	  // VTK
+	  OnVTKDisplayOnly();
+	}
+	else if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
+	  OnDisplayOnly();
+	break;
+      }
+      
+    case 6024: // ERASE ALL
+      {
+	if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
+	  //VTK
+	  ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->EraseAll();
+	}
+	else if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC)  {
+	  ic->EraseAll(Standard_True, Standard_False);
+	  ic->Display(v3d->getTrihedron());
+	}
+
+	//NRI	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	//NRI	Sel->ClearInteractiveObjects();
+      	break;
+      }
+
+    case 6025 : // ERASE ONLY
+    case 8022 : // ERASE - POPUP VIEWER
+      {
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
+	  // VTK
+	  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+	  Handle(SALOME_InteractiveObject) anIObject;
+	  for(;It.More();It.Next()) {
+	    anIObject = It.Value();
+	    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+	    
+	    if(myRenderInter->isInViewer(anIObject)) {
+	      myRenderInter->Erase(anIObject);
+	    } else {
+	      SALOMEDS::SObject_var obj = aStudy->FindObjectID( anIObject->getEntry() );
+	      SALOMEDS::GenericAttribute_var anAttr;
+	      SALOMEDS::AttributeIOR_var     anIOR;
+	      if ( !obj->_is_nil() ) {
+		if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
+		  // this SObject may be GEOM module root SObject
+		  SALOMEDS::ChildIterator_var anIter = myActiveStudy->getStudyDocument()->NewChildIterator(obj);
+		  bool useSubItems = false;
+		  while (anIter->More() && !useSubItems) {
+		    SALOMEDS::SObject_var subobj = anIter->Value();
+		    SALOMEDS::GenericAttribute_var aTmpAttr;
+		    if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
+		      anAttr = aTmpAttr;
+		      obj = subobj;
+		      useSubItems = true;
+		    } else anIter->Next();
+		  }
+		  
+		  while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
+		    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+		    GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString(anIOR->Value());
+		    TopoDS_Shape Shape = myShapeReader.GetShape(myComponentGeom,aShape);
+		    if (obj->FindAttribute(anAttr, "AttributeName")) {
+		      // searchin for already displayed objects with the same shape
+		      vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+		      vtkActorCollection* theAllActors = theRenderer->GetActors();
+		      theAllActors->InitTraversal();
+		      vtkActor* actor = (vtkActor*)theAllActors->GetNextActor();
+		      Handle(SALOME_InteractiveObject) anIObj;
+		      // don't create new study object if it already exists
+		      bool isDisplayed = false;
+		      while(!(actor==NULL)) {
+			SALOME_Actor* Gactor = SALOME_Actor::SafeDownCast(actor);
+			if (Gactor!=NULL) {
+			  if (Gactor->hasIO()) {
+			    if (strcmp(Gactor->getIO()->getEntry(),obj->GetID())==0) {
+			      isDisplayed = true;
+			      anIObj = Gactor->getIO();
+			      if (!anIObj.IsNull()) myRenderInter->Erase(anIObj);
+			    }
+			  }
+			}
+			actor=(vtkActor*)(theAllActors->GetNextActor());
+		      }
+		    }
+		    if (useSubItems) {
+		      anIter->Next();
+		      anAttr=SALOMEDS::GenericAttribute::_nil();
+		      while (anIter->More() && anAttr->_is_nil()) {
+			SALOMEDS::SObject_var subobject = anIter->Value();
+			SALOMEDS::GenericAttribute_var aTmpAttribute;
+			if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
+			  anAttr = aTmpAttribute;
+			  obj = subobject;
+			} else anIter->Next();
+		      }
+		    } else anAttr = SALOMEDS::GenericAttribute::_nil();
+		  }
+		}
+	      }
+	    }
+	  }
+//  	  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
+//  	  for(;It.More();It.Next()) {
+//  	    Handle(SALOME_InteractiveObject) IOS = It.Value();
+	  //  	    myActiveStudy->getActiveStudyFrame()->getRightFrame()->getVTKView()->getRWInteractor()->Erase(IOS);;
+	}
+	else if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  // OCC
+	  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+	  Handle(SALOME_InteractiveObject) anIObject;
+	  for(;It.More();It.Next()) {
+	    anIObject = It.Value();
+	    if ( v3d->isInViewer( anIObject, true ) ) {
+	      Standard_Boolean found;
+	      Handle(GEOM_AISShape) aSh = ConvertIOinGEOMAISShape( anIObject, found, true );
+	      if ( found ) {
+		ic->Erase(aSh);
+		ic->AddOrRemoveCurrentObject(aSh, true);
+	      }
+	    } else {
+	      SALOMEDS::SObject_var obj = aStudy->FindObjectID( anIObject->getEntry() );
+	      SALOMEDS::GenericAttribute_var anAttr;
+	      SALOMEDS::AttributeIOR_var     anIOR;
+	      if ( !obj->_is_nil() ) {
+		if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
+		  // this SObject may be GEOM module root SObject
+		  SALOMEDS::ChildIterator_var anIter = myActiveStudy->getStudyDocument()->NewChildIterator(obj);
+		  bool useSubItems = false;
+		  while (anIter->More() && !useSubItems) {
+		    SALOMEDS::SObject_var subobj = anIter->Value();
+		    SALOMEDS::GenericAttribute_var aTmpAttr;
+		    if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
+		      anAttr = aTmpAttr;
+		      obj = subobj;
+		      useSubItems = true;
+		    } else anIter->Next();
+		  }
+		  
+		  while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
+		    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+		    GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString(anIOR->Value());
+		    TopoDS_Shape Shape = myShapeReader.GetShape(myComponentGeom,aShape);
+		    if (obj->FindAttribute(anAttr, "AttributeName")) {
+		      // searchin for already displayed objects with the same shape
+		      AIS_ListOfInteractive aDisplayed;
+		      ic->DisplayedObjects(aDisplayed);
+		      AIS_ListIteratorOfListOfInteractive anIObjects(aDisplayed);
+		      Handle(AIS_Shape) anAISShape;
+		      for(;anIObjects.More();anIObjects.Next()) {
+			anAISShape = Handle(AIS_Shape)::DownCast(anIObjects.Value());
+			if (!anAISShape.IsNull()) {
+			  if (anAISShape->Shape().IsSame(Shape)) break;
+			  anAISShape.Nullify();
+			}
+		      }
+		      if (!anAISShape.IsNull()) {
+			if (ic->IsDisplayed(anAISShape)) ic->Erase(anAISShape);
+		      }
+		    }
+		    if (useSubItems) {
+		      anIter->Next();
+		      anAttr=SALOMEDS::GenericAttribute::_nil();
+		      while (anIter->More() && anAttr->_is_nil()) {
+			SALOMEDS::SObject_var subobject = anIter->Value();
+			SALOMEDS::GenericAttribute_var aTmpAttribute;
+			if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
+			  anAttr = aTmpAttribute;
+			  obj = subobject;
+			} else anIter->Next();
+		      }
+		    } else anAttr = SALOMEDS::GenericAttribute::_nil();
+		  }
+		}
+	      }
+	    }
+	  }
+	}
+	Sel->ClearIObjects();
+	break;
+      }
+      
+
+    case 6060: // BOUNDING BOX
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_BndBoxDlg *aDlg = new  GeometryGUI_BndBoxDlg(parent, "", Sel ) ;
+	break ;
+      }
+
+    case 6061: // MIN DISTANCE
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_DistanceDlg *aDlg = new GeometryGUI_DistanceDlg(parent, "", Sel ) ;
+	break ;
+      }
+
+    case 8021: // WIREFRAME-SHADING
+      {
+	if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
+	  // VTK
+	  VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+	  
+	  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
+	  
+	  QApplication::setOverrideCursor( Qt::waitCursor );
+	  for(;It.More();It.Next()) {
+	    Handle(SALOME_InteractiveObject) IOS = It.Value();
+	    myRenderInter->SwitchRepresentation(IOS, false);
+	  }
+	  myRenderInter->Render();
+	  QApplication::restoreOverrideCursor();
+	}
+	else if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+	  QApplication::setOverrideCursor( Qt::waitCursor );
+	  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+	  for(;It.More();It.Next()) {
+	    Handle(SALOME_InteractiveObject) IObject = It.Value();
+	    Standard_Boolean found;
+	    Handle(GEOM_AISShape) Shape = ConvertIOinGEOMAISShape( IObject, found, true );
+            if (!Shape.IsNull()) {
+  	      AIS_DisplayMode mode = ( AIS_DisplayMode )Shape->DisplayMode();
+	      if ( mode == -1 )
+	        mode = ( AIS_DisplayMode )ic->DisplayMode();
+	      
+	      QApplication::setOverrideCursor( Qt::waitCursor );
+	      ic->SetDisplayMode(Shape, mode == AIS_WireFrame ? AIS_Shaded : AIS_WireFrame, false);
+	    }
+	    QApplication::restoreOverrideCursor();
+	  }
+	  ic->UpdateCurrentViewer();
+	}
+	QApplication::restoreOverrideCursor();
+	break;
+      }
+      
+    case 8031: // COLOR - POPUP VIEWER
+      {
+	if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
+	  // VTK
+	  VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+	  
+	  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
+	  
+	  Handle(SALOME_InteractiveObject) FirstIOS =  Sel->firstIObject();
+	  if(!FirstIOS.IsNull()) {
+	    
+	    QColor initcolor = myRenderInter->GetColor(FirstIOS);
+	    
+	    QColor c = QColorDialog::getColor( initcolor,
+					       QAD_Application::getDesktop() );
+	    
+	    if ( c.isValid() ) {
+	      QApplication::setOverrideCursor( Qt::waitCursor );
+	      for(;It.More();It.Next()) {
+		Handle(SALOME_InteractiveObject) IOS = It.Value();
+		myRenderInter->SetColor(IOS,c);
+	      }
+	    }
+	    QApplication::restoreOverrideCursor();
+	  }
+	}
+	else if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+	  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	  Handle(SALOME_InteractiveObject) IO = Sel->firstIObject();
+	  Standard_Boolean found;
+	  Handle(GEOM_AISShape) Shape = ConvertIOinGEOMAISShape(IO, found, true);
+	  if ( found ) {
+	    Quantity_Color CSFColor;
+	    Shape->Color( CSFColor );
+	    
+	    QColor c = QColorDialog::getColor( QColor(CSFColor.Red()  * 255.0,
+						      CSFColor.Green()* 255.0, 
+						      CSFColor.Blue() * 255.0 ),
+					       QAD_Application::getDesktop() );
+	    
+	    if ( c.isValid() ) {
+	      CSFColor = Quantity_Color ( c.red()/255., c.green()/255., c.blue()/255., Quantity_TOC_RGB );
+	      QApplication::setOverrideCursor( Qt::waitCursor );
+	    
+	      SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+	      for(;It.More();It.Next()) {
+		Handle(SALOME_InteractiveObject) IObject = It.Value();
+		Standard_Boolean found;
+		Handle(GEOM_AISShape) Shape = ConvertIOinGEOMAISShape(IObject, found, true);
+		if ( found ) {
+		  Shape->SetColor ( CSFColor );
+		  Shape->SetShadingColor ( CSFColor );
+		}
+	      }
+	    }
+	  }
+	}
+	QApplication::restoreOverrideCursor();
+	break;
+      }
+      
+    case 8032: // TRANSPARENCY - POPUP VIEWER
+      {
+	EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	GeometryGUI_TransparencyDlg *aDlg = new GeometryGUI_TransparencyDlg( parent, "", Sel, ic ) ;
+	break ;
+      }
+      
+    case 8033: // ISOS - POPUP VIEWER
+      {
+	if ( myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
+	  break;
+	else {
+	  ic->InitCurrent();
+	  if ( ic->MoreCurrent() ) {
+	    Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+	    QString IsoU = QAD_CONFIG->getSetting("Geometry:SettingsIsoU");
+	    QString IsoV = QAD_CONFIG->getSetting("Geometry:SettingsIsoV");
+	    
+	    if ( !IsoU.isEmpty() )
+	      ic->DefaultDrawer()->UIsoAspect()->SetNumber(IsoU.toInt());
+	    else
+	      IsoU = "1";
+	    if ( !IsoV.isEmpty() )
+	      ic->DefaultDrawer()->VIsoAspect()->SetNumber(IsoV.toInt());
+	    else
+	      IsoV = "1";
+	    
+	    GeometryGUI_NbIsosDlg * NbIsosDlg =
+	      new GeometryGUI_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE );
+	    
+	    NbIsosDlg->SpinBoxU->setValue(IsoU.toInt());
+	    NbIsosDlg->SpinBoxV->setValue(IsoV.toInt());
+	    
+	    if ( NbIsosDlg->exec() ) {
+	      QApplication::setOverrideCursor( Qt::waitCursor );
+	      for ( ; ic->MoreCurrent (); ic->NextCurrent () ) {
+		Handle (AIS_Drawer) CurDrawer;
+		
+		CurDrawer = ic->Current()->Attributes();
+		CurDrawer->UIsoAspect()->SetNumber( NbIsosDlg->SpinBoxU->text().toInt() );
+		CurDrawer->VIsoAspect()->SetNumber( NbIsosDlg->SpinBoxV->text().toInt() );
+		
+		ic->SetLocalAttributes(CurObject, CurDrawer);
+		ic->Redisplay(CurObject);
+	      }
+	    }
+	  }
+	}
+	QApplication::restoreOverrideCursor();
+	break;
+      }
+
+    case 9022 : // ERASE - OBJBROSER POPUP
+      {
+	SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
+	  // VTK
+	  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+	  Handle(SALOME_InteractiveObject) anIObject;
+	  for(;It.More();It.Next()) {
+	    anIObject = It.Value();
+	  VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+	 
+//	  Handle(SALOME_InteractiveObject) IObject;
+	  if(myRenderInter->isInViewer(anIObject)) {
+	    myRenderInter->Erase(anIObject);
+	  } else {
+	    SALOMEDS::SObject_var obj = aStudy->FindObjectID( anIObject->getEntry() );
+	    SALOMEDS::GenericAttribute_var anAttr;
+	    SALOMEDS::AttributeIOR_var     anIOR;
+	    if ( !obj->_is_nil() ) {
+	      if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
+		// this SObject may be GEOM module root SObject
+		SALOMEDS::ChildIterator_var anIter = myActiveStudy->getStudyDocument()->NewChildIterator(obj);
+		bool useSubItems = false;
+		while (anIter->More() && !useSubItems) {
+		  SALOMEDS::SObject_var subobj = anIter->Value();
+		  SALOMEDS::GenericAttribute_var aTmpAttr;
+		  if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
+		    anAttr = aTmpAttr;
+		    obj = subobj;
+		    useSubItems = true;
+		  } else anIter->Next();
+		}
+		
+		while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
+		  anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+		  GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString(anIOR->Value());
+		  TopoDS_Shape Shape = myShapeReader.GetShape(myComponentGeom,aShape);
+		  if (obj->FindAttribute(anAttr, "AttributeName")) {
+		    // searchin for already displayed objects with the same shape
+		    vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+		    vtkActorCollection* theAllActors = theRenderer->GetActors();
+		    theAllActors->InitTraversal();
+		    vtkActor* actor = (vtkActor*)theAllActors->GetNextActor();
+		    Handle(SALOME_InteractiveObject) anIObj;
+		    // don't create new study object if it already exists
+		    bool isDisplayed = false;
+		    while(!(actor==NULL)) {
+		      SALOME_Actor* Gactor = SALOME_Actor::SafeDownCast(actor);
+		      if (Gactor!=NULL) {
+			if (Gactor->hasIO()) {
+			  if (strcmp(Gactor->getIO()->getEntry(),obj->GetID())==0) {
+			    isDisplayed = true;
+			    anIObj = Gactor->getIO();
+			    if (!anIObj.IsNull()) myRenderInter->Erase(anIObj);
+			  }
+			}
+		      }
+		      actor=(vtkActor*)(theAllActors->GetNextActor());
+		    }
+		  }
+		  if (useSubItems) {
+		    anIter->Next();
+		    anAttr=SALOMEDS::GenericAttribute::_nil();
+		    while (anIter->More() && anAttr->_is_nil()) {
+		      SALOMEDS::SObject_var subobject = anIter->Value();
+		      SALOMEDS::GenericAttribute_var aTmpAttribute;
+		      if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
+			anAttr = aTmpAttribute;
+			obj = subobject;
+		      } else anIter->Next();
+		    }
+		  } else anAttr = SALOMEDS::GenericAttribute::_nil();
+		}      
+	      }
+	    }
+	  }
+//  	  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
+//  	  for(;It.More();It.Next()) {
+//  	    Handle(SALOME_InteractiveObject) IOS = It.Value();
+//  	    myActiveStudy->getActiveStudyFrame()->getRightFrame()->getVTKView()->getRWInteractor()->Erase(IOS);;
+	}
+//  	  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
+//  	  for(;It.More();It.Next()) {
+//  	    Handle(SALOME_InteractiveObject) IOS = It.Value();
+//  	    myActiveStudy->getActiveStudyFrame()->getRightFrame()->getVTKView()->getRWInteractor()->Erase(IOS);;
+//  	  }
+	}
+	else if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+	  // OCC
+	  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+	  Handle(SALOME_InteractiveObject) anIObject;
+	  for(;It.More();It.Next()) {
+	    anIObject = It.Value();
+	    if ( v3d->isInViewer( anIObject, true ) ) {
+	      Standard_Boolean found;
+	      Handle(GEOM_AISShape) aSh = ConvertIOinGEOMAISShape( anIObject, found, true );
+	      if ( found ) {
+		ic->Erase(aSh);
+		ic->AddOrRemoveCurrentObject(aSh, true);
+	      }
+	    } else {
+	      SALOMEDS::SObject_var obj = aStudy->FindObjectID( anIObject->getEntry() );
+	      SALOMEDS::GenericAttribute_var anAttr;
+	      SALOMEDS::AttributeIOR_var     anIOR;
+	      if ( !obj->_is_nil() ) {
+		if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
+		  // this SObject may be GEOM module root SObject
+		  SALOMEDS::ChildIterator_var anIter = myActiveStudy->getStudyDocument()->NewChildIterator(obj);
+		  bool useSubItems = false;
+		  while (anIter->More() && !useSubItems) {
+		    SALOMEDS::SObject_var subobj = anIter->Value();
+		    SALOMEDS::GenericAttribute_var aTmpAttr;
+		    if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
+		      anAttr = aTmpAttr;
+		      obj = subobj;
+		      useSubItems = true;
+		    } else anIter->Next();
+		  }
+		  
+		  while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
+		    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+		    GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString(anIOR->Value());
+		    TopoDS_Shape Shape = myShapeReader.GetShape(myComponentGeom,aShape);
+		    if (obj->FindAttribute(anAttr, "AttributeName")) {
+		      // searchin for already displayed objects with the same shape
+		      AIS_ListOfInteractive aDisplayed;
+		      ic->DisplayedObjects(aDisplayed);
+		      AIS_ListIteratorOfListOfInteractive anIObjects(aDisplayed);
+		      Handle(AIS_Shape) anAISShape;
+		      for(;anIObjects.More();anIObjects.Next()) {
+			anAISShape = Handle(AIS_Shape)::DownCast(anIObjects.Value());
+			if (!anAISShape.IsNull()) {
+			  if (anAISShape->Shape().IsSame(Shape)) break;
+			  anAISShape.Nullify();
+			}
+		      }
+		      if (!anAISShape.IsNull()) {
+			if (ic->IsDisplayed(anAISShape)) ic->Erase(anAISShape);
+		      }
+		    }
+		    if (useSubItems) {
+		      anIter->Next();
+		      anAttr=SALOMEDS::GenericAttribute::_nil();
+		      while (anIter->More() && anAttr->_is_nil()) {
+			SALOMEDS::SObject_var subobject = anIter->Value();
+			SALOMEDS::GenericAttribute_var aTmpAttribute;
+			if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
+			  anAttr = aTmpAttribute;
+			  obj = subobject;
+			} else anIter->Next();
+		      }
+		    } else anAttr = SALOMEDS::GenericAttribute::_nil();
+		  }
+		}
+	      }
+	    }
+	  }
+//  	  QAD_Viewer3d* v3d = myActiveStudy->getActiveStudyFrame()->getViewerOCC();
+//  	  Handle (AIS_InteractiveContext) myContext = v3d->getAISContext();
+//  	  myContext->EraseSelected();
+	}
+
+	Sel->ClearIObjects();
+	break;
+      }
+      
+    case 9023 : // DISPLAY ONLY - OBJBROSER POPUP
+      {
+	if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK )
+	  OnVTKDisplayOnly();
+	else if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC )
+	  OnDisplayOnly();
+	break;
+      }
+
+    case 9024 : // OPEN - OBJBROSER POPUP
+      {
+	  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+	  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+	  Handle(SALOME_InteractiveObject) anIObject;
+	  for(;It.More();It.Next()) {
+	    anIObject = It.Value();
+	    SALOMEDS::SObject_var obj = aStudy->FindObjectID( anIObject->getEntry() );
+	    SALOMEDS::AttributePersistentRef_var aPersist;
+	    SALOMEDS::AttributeIOR_var anIOR;
+	    if ( !obj->_is_nil() ) {
+	      // this SObject may be GEOM module root SObject
+	      SALOMEDS::ChildIterator_var anIter = myActiveStudy->getStudyDocument()->NewChildIterator(obj);
+	      SALOMEDS::GenericAttribute_var anAttr;
+	      bool useSubItems = false;
+	      while (anIter->More() && !useSubItems) {
+		SALOMEDS::SObject_var subobj = anIter->Value();
+		if (subobj->FindAttribute(anAttr, "AttributePersistentRef")) {
+		  useSubItems = true;
+		  obj = subobj;
+		}
+		else anIter->Next();
+	      }
+	      obj->FindAttribute(anAttr, "AttributePersistentRef");
+
+	      while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
+		if (!obj->FindAttribute(anAttr, "AttributeIOR") &&
+		    obj->FindAttribute(anAttr, "AttributePersistentRef")) {
+		  // load
+		  Engines::Component_var comp = myDesktop->getEngine("FactoryServer","GEOM");
+		  if (!CORBA::is_nil(comp)) {
+		    SALOMEDS::Driver_var   driver = SALOMEDS::Driver::_narrow(comp);
+
+
+	            SALOMEDS::StudyBuilder_var aStudyBuilder = myActiveStudy->getStudyDocument()->NewBuilder();
+	            aStudyBuilder->LoadWith(myActiveStudy->getStudyDocument()->FindComponent("GEOM"),driver);
+
+		  } else {
+		    MESSAGE("Component is null");
+		  }
+		}
+	        if (useSubItems) {
+		  anIter->Next();
+		  obj = anIter->Value();
+		} else anAttr = SALOMEDS::GenericAttribute::_nil();
+              }
+	    }
+	  }
+	break;
+      }
+      
+    case 10000 : // SKETCH Segment
+      {
+	if ( myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
+	  break;
+	OnSketchSegment();
+	break;
+      }
+    case 10001 : // SKETCH Arc
+      {
+	if ( myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
+	  break;
+	OnSketchArc();
+	break;
+      }
+    case 10002 : // SKETCH Set Angle
+      {
+	if ( myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
+	  break;
+	OnSketchSetAngle();
+	break;
+      }
+    case 10003 : // SKETCH Set X
+      {
+	if ( myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
+	  break;
+	OnSketchSetx();
+	break;
+      }
+    case 10004 : // SKETCH Set Y
+      {
+	if ( myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
+	  break;
+	OnSketchSety();
+	break;
+      }
+    case 10006 : // SKETCH Delete
+      {
+	if ( myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
+	  break;
+	OnSketchDelete();
+	break;
+      }
+    case 10007 : // SKETCH End
+      {
+	if ( myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
+	  break;
+	OnSketchEnd();
+	break;
+      }
+    case 10008 : // SKETCH Close
+      {
+	if ( myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
+	  break;
+	OnSketchClose();
+	break;
+      }
+    case 10010 : // SKETCH OptionsOnofflengthdimension
+      {
+	OnSketchOptionsOnofflengthdimension();
+	break;
+      }
+    case 10011 : // SKETCH OptionsOnoffangledimension
+      {
+	OnSketchOptionsOnoffangledimension();
+	break;
+      }
+    case 10012 : // SKETCH OptionsOnoffradiusdimension
+      {
+	OnSketchOptionsOnoffradiusdimension();
+	break;
+      }
+    case 10013 : // SKETCH OptionsOnoffxdimension
+      {
+	OnSketchOptionsOnoffxdimension();
+	break;
+      }
+    case 10014 : // SKETCH OptionsOnoffydimension
+      {
+	OnSketchOptionsOnoffydimension();
+	break;
+      }
+
+    default:
+      {
+	parent->putInfo( tr("GEOM_PRP_COMMAND").arg(theCommandID ) );
+	break;
+      }
+    }
+  
+  return true ;
+}
+
+
+//=====================================================================================
+// function : OnKeyPress()
+// purpose  : [static]
+//=====================================================================================
+bool GeometryGUI::OnKeyPress(QKeyEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
+{
+  if (myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+    return false;
+  return true ;
+}
+
+
+//==================================================================================
+// function : 0nMousePress()
+// purpose  : [static] manage mouse events
+//==================================================================================
+bool GeometryGUI::OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
+{
+  MESSAGE ( "GeometryGUI::OnMousePress")
+
+  if (myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
+    return false;
+
+  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+  OCCViewer_ViewPort* vp = ((OCCViewer_ViewFrame*)studyFrame->getRightFrame()->getViewFrame())->getViewPort();
+  
+  /* Get the clicked or selected point */
+  gp_Pnt thePoint;
+
+  if ( myState == CURRENT_SKETCH) {
+    mySketcher.ValidateEdge();
+    if (mySketcher.GetmyEdgesNumber() == 1 ) {
+      QMenuBar* Mb = myDesktop->getMainMenuBar();
+      QMenuData* pp;
+      QMenuItem* item = Mb->findItem(313,&pp);
+      pp->setItemEnabled( 313, true);  // SKETCH CONTRAINTS
+    }
+  } else if( myState == POINT_METHOD ) {
+
+    EraseSimulationShape() ;
+    GeometryGUI_PointDlg *DialogPt = (GeometryGUI_PointDlg*)(myActiveDialogBox) ;
+
+    if ( DialogPt->UseLocalContext() ) {
+      ic->InitSelected();
+      if ( pe->state() == Qt::ShiftButton )
+	v3d->getAISSelector()->shiftSelect();  /* Append selection */
+      else
+	v3d->getAISSelector()->select();       /* New selection    */
+      
+      if ( ic->MoreSelected() ) {
+	thePoint = BRep_Tool::Pnt( TopoDS::Vertex(ic->SelectedShape()) );
+      }
+      else
+	thePoint = ConvertClickToPoint(pe->x(), pe->y(), ( (OCCViewer_ViewPort3d*)vp)->getView() );
+    } 
+    else
+      thePoint = ConvertClickToPoint(pe->x(), pe->y(), ( (OCCViewer_ViewPort3d*)vp)->getView() );
+    
+    if( DialogPt != 0 ) { 
+      DialogPt->PointIntoCoordinates(thePoint, true) ;  /* display point */
+    }
+    else {
+      // MESSAGE ("On Mouse Press : myActiveDialogBox is null"  << endl) ;
+      myDesktop->putInfo(tr("GEOM_PRP_ABORT"));
+    }
+  }
+
+  return false ;
+}
+
+
+//=======================================================================
+// function : OnMouseMove()
+// purpose  : [static] manage mouse events
+//=======================================================================
+bool GeometryGUI::OnMouseMove (QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
+{
+  if (myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+    return false;
+
+  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+  OCCViewer_ViewPort* vp = ((OCCViewer_ViewFrame*)studyFrame->getRightFrame()->getViewFrame())->getViewPort();
+
+  if ( myState == CURRENT_SKETCH)
+    mySketcher.MakeCurrentEdge(pe->x(), pe->y(), ((OCCViewer_ViewPort3d*)vp)->getView());
+
+  return true;
+}
+
+
+//=====================================================================================
+// function : SetSettings()
+// purpose  : [static]
+//=====================================================================================
+bool GeometryGUI::SetSettings( QAD_Desktop* parent )
+{
+  //DCQ  parent->menuBar()->setItemEnabled( 504, false);  // CORRECTING
+  //DCQ  parent->menuBar()->setItemEnabled( 6062, false); // RADIUS
+  //VSR  parent->menuBar()->setItemEnabled( 701, false);  // AUTOMATIC COPY
+  parent->menuBar()->setItemEnabled( 313, false);  // SKETCH CONTRAINTS
+  parent->menuBar()->setItemEnabled( 3131, false); // SKETCH SET PLAN
+
+  /* Shading Color */
+  QString SCr = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorRed");
+  QString SCg = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorGreen");
+  QString SCb = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorBlue");
+  if(!SCr.isEmpty() && !SCg.isEmpty() && !SCb.isEmpty())   
+    myShadingColor = Quantity_Color (SCr.toInt()/255., SCg.toInt()/255., SCb.toInt()/255., Quantity_TOC_RGB);
+
+  /* Wireframe or Shading */
+  int DisplayMode = 0;
+  if ( parent->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)parent->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+    Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
+    DisplayMode = ic->DisplayMode();
+  } else if ( parent->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
+    VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)parent->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+    DisplayMode = myRenderInter->GetDisplayMode();
+  }
+
+  if ( DisplayMode == 1 )
+    parent->menuBar()->changeItem(6021, tr("GEOM_MEN_WIREFRAME") );
+  else
+    parent->menuBar()->changeItem(6021, tr("GEOM_MEN_SHADING") );
+
+  /* Copy */
+//    QString Copy = QAD_CONFIG->getSetting("Geometry:SettingsCopy");
+//    if ( !Copy.isEmpty() ) {
+//      mySettings_Copy = Copy.toInt();
+//      QMenuData* pp;
+//      parent->menuBar()->findItem(701,&pp);
+//      pp->setItemChecked(701, mySettings_Copy);
+//    }
+ QMenuData* pp;
+ if ( parent->menuBar()->findItem(701,&pp) )
+   pp->removeItem(701);
+
+  /* Add in Study */
+  QString AddInStudy = QAD_CONFIG->getSetting("Geometry:SettingsAddInStudy");
+  if ( !AddInStudy.isEmpty() )
+    mySettings_AddInStudy = AddInStudy.toInt();
+  else
+    mySettings_AddInStudy = 1;
+  parent->menuBar()->findItem(702,&pp);
+  pp->setItemChecked(702, mySettings_AddInStudy);
+
+  /* step value */
+  QString S = QAD_CONFIG->getSetting( "Geometry:SettingsGeomStep" );
+  if( S.isEmpty() )
+    QAD_CONFIG->addSetting( "Geometry:SettingsGeomStep", "100" );
+  
+  /* isos */
+  QAD_Study* ActiveStudy = parent->getActiveStudy();
+  int count = ActiveStudy->getStudyFramesCount();
+
+  bool ViewOCC = false;
+  for ( int i = 0; i < count; i++ ) {
+    if ( ActiveStudy->getStudyFrame(i)->getTypeView() == VIEW_OCC ) {
+      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)ActiveStudy->getStudyFrame(i)->getRightFrame()->getViewFrame())->getViewer();
+      Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+      
+      QString IsoU = QAD_CONFIG->getSetting("Geometry:SettingsIsoU");
+      QString IsoV = QAD_CONFIG->getSetting("Geometry:SettingsIsoV");
+      if ( !IsoU.isEmpty() )
+	ic->DefaultDrawer()->UIsoAspect()->SetNumber(IsoU.toInt());
+      if ( !IsoV.isEmpty() )
+	ic->DefaultDrawer()->VIsoAspect()->SetNumber(IsoV.toInt());
+
+      ViewOCC = true;
+    }
+  }
+
+  QMenuBar* Mb = myDesktop->getMainMenuBar();
+
+  Mb->setItemEnabled( 312, ViewOCC); //Sketch
+  Mb->setItemEnabled( 309, ViewOCC); //SuppressFace
+  Mb->setItemEnabled( 314, ViewOCC); //SuppressHole
+  
+  Mb->setItemEnabled( 703, ViewOCC);// ShadingColor Settings
+  Mb->setItemEnabled( 704, ViewOCC);// Isos Settings
+
+  return true;
+}
+
+
+//=====================================================================================
+// function : DefinePopup()
+// purpose  : [static]
+//=====================================================================================
+void GeometryGUI::DefinePopup(QString & theContext, QString & theParent, QString & theObject)
+{
+  SALOME_Selection* Sel = SALOME_Selection::Selection(myActiveStudy->getSelection());
+  theObject = "";
+
+  if(Sel->IObjectCount() == 1) {
+    Handle(SALOME_InteractiveObject) IO = Sel->firstIObject();
+    if(IO->hasEntry()) {
+      SALOMEDS::SObject_var sobj = myActiveStudy->getStudyDocument()->FindObjectID(IO->getEntry());
+      if(!sobj->_is_nil()) {
+	SALOMEDS::SComponent_var scomp = sobj->GetFatherComponent();
+	if(strcmp(scomp->GetID(), IO->getEntry()) == 0) {
+	  // component is selected
+	  theObject = "Component";
+	}
+      }
+    }
+  }
+
+  if((theParent.compare("Viewer")==0)) {
+    if(myState == CURRENT_SKETCH) 
+      theContext = "Sketch";
+    else {
+      if (Sel->IObjectCount() > 0)
+	theContext = "";
+      else
+	theContext = "NothingSelected";
+    }
+  } 
+  else 
+    theContext = "";
+}
+
+//=====================================================================================
+// function : CustomPopup()
+// purpose  : [static]
+//=====================================================================================
+bool GeometryGUI::CustomPopup( QAD_Desktop* parent,
+			       QPopupMenu* popup,
+			       const QString& theContext,
+			       const QString& theParent,
+			       const QString& theObject )
+{ 
+  /* Deactivate any non modal dialog box to get the neutral point */
+  EmitSignalDeactivateDialog() ;
+  
+  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
+  int nbSel = Sel->IObjectCount();
+  
+  if ( (nbSel == 0) && ( theContext.compare("Sketch")!=0 ) )
+    return false;
+  
+    
+  if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
+    {
+      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->
+				 getRightFrame()->getViewFrame())->getViewer();
+      Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+      if ( theParent.compare("Viewer")==0 )
+	{
+	  if ( theContext.compare("Sketch")==0 )
+	    {
+	      SketchStatus myCS = mySketcher.GetCurrentStatus();
+	      popup->setCheckable(TRUE);
+	      if (myCS==SEGMENT) 
+		{
+		  popup->setItemChecked(10000,true);
+		  popup->setItemChecked(10001,false);
+		}
+	      else if (myCS==ARC_CHORD)
+		{
+		  popup->setItemChecked(10000,false);
+		  popup->setItemChecked(10001,true);
+		}
+	      
+	      return true;
+	    }
+	  else
+	    if (theObject.compare("Component") == 0)
+	      {
+		popup->removeItem(QAD_DisplayOnly_Popup_ID);
+		return true;
+	      }
+	    else
+	      {
+		QFont f = QApplication::font();
+		f.setBold( TRUE );
+		if (nbSel==1)
+		  {
+		    Handle(SALOME_InteractiveObject) IObject = Sel->firstIObject();
+		    popup->removeItem(QAD_TopLabel_Popup_ID);
+		    popup->insertItem( new CustomItem ( QString(IObject->getName()), f ), QAD_TopLabel_Popup_ID, 0 );
+		    if ( IObject->hasEntry() )
+		      popup->setItemEnabled( 801, false );
+		    else
+		      popup->setItemEnabled( 801, true );
+		    
+		    if (IObject->IsKind(STANDARD_TYPE(GEOM_InteractiveObject)))
+		      {
+			Standard_Boolean found;
+			Handle(GEOM_AISShape) Result = ConvertIOinGEOMAISShape(IObject, found, true);
+
+			if ( found )
+			  {
+			    if ( Result->DisplayMode() == 1 )
+			      popup->changeItem(8021, tr("GEOM_MEN_WIREFRAME") );
+			    else
+			      popup->changeItem(8021, tr("GEOM_MEN_SHADING") );
+			  }
+		      }
+
+		    if ( !(v3d->isInViewer( IObject ) && v3d->isVisible( IObject )) )
+		      popup->removeItem(QAD_Erase_Popup_ID);
+		    else
+		      popup->removeItem(QAD_Display_Popup_ID);
+		    
+		  }
+		else
+		  {
+		    popup->removeItem(QAD_DisplayOnly_Popup_ID);
+		    popup->removeItem(QAD_TopLabel_Popup_ID);
+		    popup->insertItem( new CustomItem ( tr("GEOM_MEN_POPUP_NAME").arg(nbSel), f ),
+				      QAD_TopLabel_Popup_ID, 0 );
+		    popup->setItemEnabled( 801, false );
+		  }
+	      }
+	  return true;
+	}
+      else
+	if ( theParent.compare("ObjectBrowser")==0 )
+	  {
+	    popup->removeItem(QAD_TopLabel_Popup_ID);
+	    int id = popup->idAt(0); // separator
+	    if (id < 0) popup->removeItem(id);
+	    
+	    // checking for GEOM label in the selected list
+	    SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+	    Handle(SALOME_InteractiveObject) anIObject;
+
+	    bool useSubItems = false;
+	    bool needOpen = false;
+	    bool needDisplay = false;
+	    bool needErase = false;
+	    SALOMEDS::GenericAttribute_var aTmpAttr;
+	    for(;It.More();It.Next())
+	      {
+		anIObject = It.Value();
+		if (!anIObject->hasEntry())
+		    continue;
+		
+		if (v3d->isInViewer(anIObject) && v3d->isVisible(anIObject)) 
+		  needErase = true; 
+		else 
+		  needDisplay = true;
+		SALOMEDS::SObject_var obj =
+		  myActiveStudy->getStudyDocument()->FindObjectID( anIObject->getEntry() );
+		if (!obj->_is_nil())
+		  {
+		    GEOM::GEOM_Shape_var aShape;
+		    if (obj->FindAttribute(aTmpAttr, "AttributeIOR")) {
+		      char *str = SALOMEDS::AttributeIOR::_narrow(aTmpAttr)->Value();
+		      if (str && strlen(str))
+			aShape = myComponentGeom-> GetIORFromString(str);
+		    }
+		    else
+		      if (obj->FindAttribute(aTmpAttr, "AttributePersistentRef"))
+			needOpen = true;
+		    if (aShape->_is_nil())
+		      {
+			SALOMEDS::ChildIterator_var anIter = myActiveStudy->
+			  getStudyDocument()->NewChildIterator(obj);
+			while (anIter->More())
+			  {
+			    SALOMEDS::SObject_var subobj = anIter->Value();
+			    if (subobj->FindAttribute(aTmpAttr, "AttributeIOR"))
+			      {
+				useSubItems = true;
+				needErase = true;
+				needDisplay = true;
+			      }
+			    else
+			      if (subobj->FindAttribute(aTmpAttr, "AttributePersistentRef"))
+				{
+				  needOpen = true;
+				  useSubItems = true;
+				}
+			    anIter->Next();
+			  }
+		      }
+		  }
+	      }
+	    // remove useless popup items
+	    if (nbSel != 1) popup->removeItem(901); // rename
+	    if (useSubItems) popup->removeItem(QAD_DisplayOnly_Popup_ID); // display only
+	    if (!needOpen)
+	      {
+		int index = popup->indexOf(9024);
+		popup->removeItem(9024); // open
+		popup->removeItemAt(index); // separator under Open
+
+		if (!needDisplay) popup->removeItem(QAD_Display_Popup_ID);
+		if (!needErase) popup->removeItem(QAD_Erase_Popup_ID);
+		if (!needDisplay && !needErase)
+		  {
+		    int id = popup->idAt(popup->count()-1); // last item
+		    popup->removeItem(id); // separator
+		  }
+	      }
+	    else
+	      {
+		popup->removeItem(QAD_DisplayOnly_Popup_ID); // display only
+		popup->removeItem(QAD_Display_Popup_ID);
+		popup->removeItem(QAD_Erase_Popup_ID);
+		if (nbSel!=1)
+		  {
+		    int id = popup->idAt(popup->count()-1); // last item
+		    popup->removeItem(id); // separator
+		  }
+	      }
+	    return true;
+	  }
+      // MESSAGE ( " CUSTOM POPUP VIEWER OCC done. ")
+    }
+  else
+    if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
+      {
+	// MESSAGE ( " CUSTOM POPUP VIEWER VTK ")
+	if ( ( theParent.compare("Viewer")==0 ) )
+	  {
+	    
+	    popup->setItemEnabled( 8033, false );
+	    if (theObject.compare("Component") == 0)
+	      {
+		popup->removeItem(QAD_DisplayOnly_Popup_ID);
+		return true;
+	      } 
+
+	  //int id = popup->idAt(0);
+	  QFont f = QApplication::font();
+	  f.setBold( TRUE );
+	  
+	  if (nbSel==1)
+	    {
+	      Handle(SALOME_InteractiveObject) IObject = Sel->firstIObject();
+	      popup->removeItem(QAD_TopLabel_Popup_ID);
+	      popup->insertItem( new CustomItem ( QString(IObject->getName()), f ), QAD_TopLabel_Popup_ID, 0 );
+	      if ( IObject->hasEntry() )
+		{
+		  popup->setItemEnabled( 801, false );
+		  SALOMEDS::Study_var aStudy = myActiveStudy->getStudyDocument();
+		  SALOMEDS::SObject_var SO = aStudy->FindObjectID( IObject->getEntry() );
+		  SALOMEDS::GenericAttribute_var anAttr;
+		  SALOMEDS::AttributeIOR_var     anIOR;
+		  if ( !SO->_is_nil() )
+		    {
+		      if (SO->FindAttribute(anAttr, "AttributeIOR") )
+			{
+			  anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+			  Standard_Boolean found;
+			  GEOM_Actor* Result = ConvertIORinGEOMActor(anIOR->Value(), found, true);
+			  if ( found )
+			    {
+			      if ( Result->getDisplayMode() == 1 )
+				popup->changeItem(8021, "Wireframe" );
+			      else
+				popup->changeItem(8021, "Shading" );
+			      
+			      if ( !Result->GetVisibility() )
+				popup->removeItem(QAD_Erase_Popup_ID);
+			      else
+				popup->removeItem(QAD_Display_Popup_ID);		  
+			    }
+			  else
+			    popup->removeItem(QAD_Erase_Popup_ID);
+			}
+		    }
+		}
+	      else
+		popup->setItemEnabled( 801, true );
+	    }
+	  else
+	    {
+	      popup->removeItem(QAD_DisplayOnly_Popup_ID);
+	      popup->removeItem(QAD_TopLabel_Popup_ID);
+	      popup->insertItem( new CustomItem ( tr("GEOM_MEN_POPUP_NAME").arg(nbSel), f ), QAD_TopLabel_Popup_ID, 0 );
+	      popup->setItemEnabled( 801, false );
+	    }
+	  return true;
+	}
+	else
+	  if ( theParent.compare("ObjectBrowser")==0 )
+	    {
+	      popup->removeItem(QAD_TopLabel_Popup_ID);
+	      int id = popup->idAt(0); // separator
+	      if (id < 0) popup->removeItem(id);
+      
+	      // checking for GEOM label in the selected list
+	      SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+	      Handle(SALOME_InteractiveObject) anIObject;
+	      
+	      bool useSubItems = false;
+	      bool needOpen = false;
+	      bool needDisplay = false;
+	      bool needErase = false;
+	      SALOMEDS::GenericAttribute_var aTmpAttr;
+	      VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)myActiveStudy->
+					       getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+	      for(;It.More();It.Next())
+		{
+		  anIObject = It.Value();
+		  if ( !anIObject->hasEntry() )
+		    continue;
+		  
+		  if (myRenderInter->isInViewer(anIObject) && myRenderInter->isVisible(anIObject)) 
+		    needErase = true; 
+		  else 
+		    needDisplay = true;
+
+		  SALOMEDS::SObject_var obj = myActiveStudy->getStudyDocument()
+		    ->FindObjectID( anIObject->getEntry() );
+		  if (!obj->_is_nil()) {
+		    GEOM::GEOM_Shape_var aShape;
+		    if (obj->FindAttribute(aTmpAttr, "AttributeIOR")){
+		      char *str = SALOMEDS::AttributeIOR::_narrow(aTmpAttr)->Value();
+		      if (str && strlen(str))
+			aShape = myComponentGeom->GetIORFromString(str);
+		    }
+		    else
+		      if (obj->FindAttribute(aTmpAttr, "AttributePersistentRef"))
+			needOpen = true;
+		    if (aShape->_is_nil())
+		      {
+			SALOMEDS::ChildIterator_var anIter =
+			  myActiveStudy->getStudyDocument()->NewChildIterator(obj);
+			while (anIter->More())
+			  {
+			    SALOMEDS::SObject_var subobj = anIter->Value();
+			    if (subobj->FindAttribute(aTmpAttr, "AttributeIOR"))
+			      {
+				useSubItems = true;
+				needDisplay = true;
+				needErase = true;
+			      }
+			    else
+			      if (subobj->FindAttribute(aTmpAttr, "AttributePersistentRef"))
+				{
+				  needOpen = true;
+				  useSubItems = true;
+				}
+			    anIter->Next();
+			  }
+		      }
+		  }
+		}
+	      // remove useless popup items
+	      if (nbSel != 1) popup->removeItem(901); // rename
+	      if (useSubItems) popup->removeItem(QAD_DisplayOnly_Popup_ID); // display only
+	      if (!needOpen)
+		{
+		  int index = popup->indexOf(9024);
+		  popup->removeItem(9024); // open
+		  popup->removeItemAt(index); // separator under Open
+		  
+		  if (!needDisplay) popup->removeItem(QAD_Display_Popup_ID);
+		  if (!needErase) popup->removeItem(QAD_Erase_Popup_ID);
+		  if (!needDisplay && !needErase)
+		    {
+		      int id = popup->idAt(popup->count()-1); // last item
+		      popup->removeItem(id); // separator
+		    }
+		}
+	      else
+		{
+		  popup->removeItem(QAD_DisplayOnly_Popup_ID); // display only
+		  popup->removeItem(QAD_Display_Popup_ID);
+		  popup->removeItem(QAD_Erase_Popup_ID);
+		  if (nbSel!=1)
+		    {
+		      int id = popup->idAt(popup->count()-1); // last item
+		      popup->removeItem(id); // separator
+		    }
+		}
+	      return true;
+	      // MESSAGE ( " CUSTOM POPUP VIEWER VTK done.")
+	    }
+      } else
+	{ // other viewer types not supported.
+	  while (1)
+	    {
+	      int id = popup->idAt(0);
+	      if (id <= QAD_TopLabel_Popup_ID && id != -1)
+		popup->removeItemAt(0);
+	      else
+		break;
+	    }
+	  popup->removeItem(QAD_DisplayOnly_Popup_ID);	
+	  popup->removeItem(QAD_Display_Popup_ID);
+	  popup->removeItem(QAD_Erase_Popup_ID);
+	  int id = popup->idAt(popup->count()-1); // last item
+	  if (id < 0 && id != -1) popup->removeItem(id); // separator
+	  return false;
+	}
+  return false;
+}
+
+
+//=======================================================================
+// function : activeStudyChanged()
+// purpose  : static
+//=======================================================================
+void GeometryGUI::activeStudyChanged(QAD_Desktop* parent)
+{
+  if(GeomGUI != 0) {
+    if(myState == CURRENT_SKETCH) {
+      mySketcher.Clear();
+      ResetState();
+    }
+
+    QMenuBar* Mb = myDesktop->getMainMenuBar();
+    bool ViewOCC = false;
+    if(myDesktop->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) 
+      ViewOCC = true;
+
+    Mb->setItemEnabled(312, ViewOCC); //Sketch
+    Mb->setItemEnabled(309, ViewOCC); //SuppressFace
+    Mb->setItemEnabled(314, ViewOCC); //SuppressHole
+    
+    Mb->setItemEnabled(703, ViewOCC);// ShadingColor Settings
+    Mb->setItemEnabled(704, ViewOCC);// Isos Settings
+
+    EraseSimulationShape();
+    EmitSignalCloseAllDialogs();
+    GeomGUI = 0;
+  }
+  return ;
+}
+
+
+//=======================================================================
+// function : BuildPresentation()
+// purpose  : static
+//=======================================================================
+void GeometryGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO)
+{
+  SALOMEDS::Study_var aStudy = myActiveStudy->getStudyDocument();
+  SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
+  
+  OCCViewer_Viewer3d* v3d;
+  Handle(AIS_InteractiveContext) ic;
+  vtkRenderer* Renderer;
+
+  if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+    v3d = ((OCCViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+    ic = v3d->getAISContext();
+  } else if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
+    Renderer = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+  } else
+    return;
+
+  if (theIO.IsNull())
+    MESSAGE("BuildPresentation(): null SALOME_InteractiveObject passed")
+
+  if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
+    // VTK
+	  
+    SALOMEDS::SObject_var fatherSF = 
+      aStudy->FindObjectID(myActiveStudy->getActiveStudyFrame()->entry());
+	    
+    SALOMEDS::SObject_var obj = aStudy->FindObjectID( theIO->getEntry() );
+
+    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+
+    SALOMEDS::GenericAttribute_var anAttr;
+    SALOMEDS::AttributeName_var    aName;
+    SALOMEDS::AttributeIOR_var     anIOR;
+	 
+    if(myRenderInter->isInViewer(theIO)) {
+      myRenderInter->Display(theIO, false);
+    }
+    else {
+      // Create new actor
+      if ( !obj->_is_nil() ) {
+	if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
+	  // this SObject may be GEOM module root SObject
+
+	  bool useSubItems = false;
+	  SALOMEDS::ChildIterator_var anIter = myActiveStudy->getStudyDocument()->NewChildIterator(obj);
+	  if (myComponentGeom->GetIORFromString(SALOMEDS::AttributeIOR::_narrow(anAttr)->Value())->_is_nil()) {
+	    while (anIter->More() && !useSubItems) {
+	      SALOMEDS::SObject_var subobj = anIter->Value();
+	      SALOMEDS::GenericAttribute_var aTmpAttr;
+	      if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
+		if (!myComponentGeom->GetIORFromString(SALOMEDS::AttributeIOR::_narrow(aTmpAttr)->Value())->_is_nil()) {
+		  anAttr = aTmpAttr;
+		  obj = subobj;
+		  useSubItems = true;
+		} else anIter->Next();
+	      } else anIter->Next();
+	    }
+	  }
+
+	  while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
+	    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+	    GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString(anIOR->Value());
+	    TopoDS_Shape Shape = myShapeReader.GetShape(myComponentGeom,aShape);
+	    
+	    if (obj->FindAttribute(anAttr, "AttributeName")) {
+	      aName = SALOMEDS::AttributeName::_narrow(anAttr);
+	      
+	      vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+	      vtkActorCollection* theAllActors = theRenderer->GetActors();
+	      theAllActors->InitTraversal();
+	      vtkActor* actor = (vtkActor*)theAllActors->GetNextActor();
+	      Handle(SALOME_InteractiveObject) anIObj;
+	      // don't create new study object if it already exists
+	      bool isDisplayed = false;
+	      while(!(actor==NULL)) {
+		SALOME_Actor* Gactor = SALOME_Actor::SafeDownCast(actor);
+		if (Gactor!=NULL) {
+		  if (Gactor->hasIO()) {
+		    if (strcmp(Gactor->getIO()->getEntry(),obj->GetID())==0) {
+		      isDisplayed = true;
+		      anIObj = Gactor->getIO();
+		      if (!anIObj.IsNull()) myRenderInter->Display(anIObj, false);
+		    }
+		  }
+		}
+		actor=(vtkActor*)(theAllActors->GetNextActor());
+	      }
+	      if (!isDisplayed) {
+		// open transaction
+		QAD_Operation* op = new SALOMEGUI_ImportOperation( myActiveStudy );
+		op->start();
+		
+		SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(fatherSF);
+		aStudyBuilder->Addreference(newObj1, obj);
+		// commit transaction
+		op->finish();
+		
+		vtkRenderWindow *renWin = theRenderer->GetRenderWindow();
+		int themode = myRenderInter->GetDisplayMode();
+		
+		vtkActorCollection* theActors = 
+		  GEOM_AssemblyBuilder::BuildActors(Shape,0,themode,Standard_True);
+		theActors->InitTraversal();
+		vtkActor* anActor = (vtkActor*)theActors->GetNextActor();
+		while(!(anActor==NULL)) {
+		  GEOM_Actor* GActor = GEOM_Actor::SafeDownCast( anActor );
+		  Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(anIOR->Value(), myFatherior,"GEOM");
+		  IO->setEntry(obj->GetID());
+		  GActor->setIO( IO );
+		  GActor->setName( theIO->getName() );
+		  
+		  theRenderer->AddActor(GActor);
+		  //		  renWin->Render();
+		  anActor = (vtkActor*)theActors->GetNextActor();
+		}
+	      }
+	    }
+	    // next item iteration
+	    if (useSubItems) {
+	      anIter->Next();
+	      anAttr = SALOMEDS::GenericAttribute::_nil();
+	      while (anIter->More() && anAttr->_is_nil()) {
+		SALOMEDS::SObject_var subobject = anIter->Value();
+		SALOMEDS::GenericAttribute_var aTmpAttribute;
+		if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
+		  anAttr = aTmpAttribute;
+		  obj = subobject;
+		} else anIter->Next();
+	      }
+	    } else anAttr = SALOMEDS::GenericAttribute::_nil();
+	  }
+	}
+      }
+    }
+    // No viewer update should be done here!
+    //myRenderInter->Render();
+    //myActiveStudy->updateObjBrowser( true );
+  } else if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+    SALOMEDS::SObject_var fatherSF = 
+      aStudy->FindObjectID( myActiveStudy->getActiveStudyFrame()->entry());
+    SALOMEDS::GenericAttribute_var anAttr;
+    SALOMEDS::AttributeName_var    aName;
+    SALOMEDS::AttributeIOR_var     anIOR;
+
+    if ( v3d->isInViewer( theIO, true ) ) {
+      Standard_Boolean found;
+      Handle(GEOM_AISShape) aSh = ConvertIOinGEOMAISShape( theIO, found, true );
+      if ( found ) {
+	ic->Display(aSh, false);
+	ic->AddOrRemoveCurrentObject(aSh, false);
+      }
+      
+    } else {
+      SALOMEDS::SObject_var obj = aStudy->FindObjectID( theIO->getEntry() );	      
+      if ( !obj->_is_nil() ) {
+	MESSAGE("BuildPresentation(): SObject not null")
+	if ( obj->FindAttribute(anAttr, "AttributeIOR")) {
+	  MESSAGE("BuildPresentation(): SObject has IOR")
+	  // this SObject may be GEOM module root SObject
+
+	  bool useSubItems = false;
+	  SALOMEDS::ChildIterator_var anIter = myActiveStudy->getStudyDocument()->NewChildIterator(obj);
+	  if (myComponentGeom->GetIORFromString(SALOMEDS::AttributeIOR::_narrow(anAttr)->Value())->_is_nil()) {
+	    while (anIter->More() && !useSubItems) {
+	      SALOMEDS::SObject_var subobj = anIter->Value();
+	      SALOMEDS::GenericAttribute_var aTmpAttr;
+	      if (subobj->FindAttribute(aTmpAttr, "AttributeIOR")) {
+		if (!myComponentGeom->GetIORFromString(SALOMEDS::AttributeIOR::_narrow(aTmpAttr)->Value())->_is_nil()) {
+		  anAttr = aTmpAttr;
+		  obj = subobj;
+		  useSubItems = true;
+		} else anIter->Next();
+	      } else anIter->Next();
+	    }
+	  }
+
+	  while(useSubItems?anIter->More():!anAttr->_is_nil()) { 
+	    anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+	    GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString(anIOR->Value());
+	    TopoDS_Shape Shape = myShapeReader.GetShape(myComponentGeom,aShape);
+	    if (Shape.IsNull())
+	      MESSAGE("BuildPresentation(): TopoDS_Shape is null!")
+	    if (obj->FindAttribute(anAttr, "AttributeName")) {
+	      MESSAGE("BuildPresentation(): SObject has Name")
+	      aName = SALOMEDS::AttributeName::_narrow(anAttr);
+	      // searchin for already displayed objects with the same shape
+	      AIS_ListOfInteractive aDisplayed;
+	      ic->DisplayedObjects(aDisplayed);
+	      AIS_ListIteratorOfListOfInteractive anIObjects(aDisplayed);
+	      Handle(AIS_Shape) anAISShape;
+	      for(;anIObjects.More();anIObjects.Next()) {
+		anAISShape = Handle(AIS_Shape)::DownCast(anIObjects.Value());
+		if (!anAISShape.IsNull()) {
+		  if (anAISShape->Shape().IsSame(Shape)) break;
+		  anAISShape.Nullify();
+		}
+	      }
+	      if (!anAISShape.IsNull()) {
+		if (!ic->IsDisplayed(anAISShape)) ic->Display(anAISShape, false);
+	      } else {
+		if (!useSubItems) {
+		  // open transaction
+		  QAD_Operation* op = new SALOMEGUI_ImportOperation( myActiveStudy );
+		  op->start();
+		  if (fatherSF->_is_nil())
+		    MESSAGE("BuildPresentation(): fatherSF is nil!")
+		  SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(fatherSF);
+		  aStudyBuilder->Addreference(newObj1, obj);
+		  // commit transaction
+		  op->finish();
+		}
+		Handle(GEOM_AISShape) aSh = new GEOM_AISShape(Shape, aName->Value());
+		aSh->SetShadingColor( myShadingColor );
+		Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(anIOR->Value(),
+									       myFatherior,
+									       "GEOM");
+		IO->setEntry(obj->GetID());
+		aSh->setIO( IO );
+		aSh->setName( aName->Value() );
+		ic->Display (aSh, false);
+		if (!useSubItems) ic->AddOrRemoveCurrentObject(aSh, false);
+	      }
+	    }
+	    // next item iteration
+	    if (useSubItems) {
+	      anIter->Next();
+	      anAttr=SALOMEDS::GenericAttribute::_nil();
+	      while (anIter->More() && anAttr->_is_nil()) {
+		SALOMEDS::SObject_var subobject = anIter->Value();
+		SALOMEDS::GenericAttribute_var aTmpAttribute;
+		if (subobject->FindAttribute(aTmpAttribute, "AttributeIOR")) {
+		  anAttr = aTmpAttribute;
+		  obj = subobject;
+		} else anIter->Next();
+	      }
+	    } else 
+	      anAttr = SALOMEDS::GenericAttribute::_nil();
+	  }
+	}
+      }
+    }
+    // No viewer update should be done here!
+    //myActiveStudy->updateObjBrowser( true );
+    //ic->UpdateCurrentViewer();
+  }
+}
+
+
+//=====================================================================================
+// EXPORTED METHODS
+//=====================================================================================
+extern "C"
+{
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
+  {
+    return GeometryGUI::GetOrCreateGeometryGUI(parent)->OnGUIEvent(theCommandID, parent);
+  }
+
+  bool OnKeyPress (QKeyEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
+  {
+    return GeometryGUI::GetOrCreateGeometryGUI(parent)->OnKeyPress(pe, parent, studyFrame);
+  }
+
+  bool OnMousePress (QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
+  {
+    return GeometryGUI::GetOrCreateGeometryGUI(parent)->OnMousePress(pe, parent, studyFrame);
+  }
+
+  bool OnMouseMove (QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
+  {
+    return GeometryGUI::GetOrCreateGeometryGUI(parent)->OnMouseMove(pe, parent, studyFrame);
+  }
+
+  bool SetSettings (QAD_Desktop* parent)
+  {
+    return GeometryGUI::GetOrCreateGeometryGUI(parent)->SetSettings(parent);
+  }
+
+  bool customPopup (QAD_Desktop* parent, QPopupMenu* popup, const QString & theContext,
+		     const QString & theParent, const QString & theObject)
+  {
+     return GeometryGUI::GetOrCreateGeometryGUI(parent)->CustomPopup(parent, popup, theContext, 
+								     theParent, theObject);
+  }
+
+  void definePopup (QString & theContext, QString & parent, QString & theObject)
+  {
+    GeometryGUI::GetGeometryGUI()->DefinePopup(theContext, parent, theObject);
+  }
+  
+  bool activeStudyChanged (QAD_Desktop* parent)
+  {
+    GeometryGUI::GetOrCreateGeometryGUI(parent)->activeStudyChanged(parent);
+  }
+
+  void buildPresentation (const Handle(SALOME_InteractiveObject)& theIO)
+  {
+    GeometryGUI::GetGeometryGUI()->BuildPresentation(theIO);
+  }
+
+  void supportedViewType(int* buffer, int bufferSize)
+  {
+    if(!buffer || !bufferSize) return;
+    buffer[0] = (int)VIEW_OCC;
+    if (--bufferSize) buffer[1] = (int)VIEW_VTK;
+  }
 }

@@ -33,6 +33,8 @@
 #include "GeometryGUI_2Sel_QTD.h"
 #include "GeometryGUI_3Spin.h"
 
+#include "PrimitiveGUI.h"
+
 #include <gp_Pnt.hxx>
 
 //=================================================================================
@@ -44,13 +46,15 @@ class GeometryGUI_BoxDlg : public GeometryGUI_Skeleton
     Q_OBJECT
 
 public:
-    GeometryGUI_BoxDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    GeometryGUI_BoxDlg(QWidget* parent = 0, const char* name = 0, PrimitiveGUI* thePrimitiveGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~GeometryGUI_BoxDlg();
 
 private :
-    void Init(SALOME_Selection* Sel);
+    void Init();
     void enterEvent(QEvent* e);
     bool TestBoxDimensions(gp_Pnt P1, gp_Pnt P2);
+
+    PrimitiveGUI* myPrimitiveGUI;
 
     double step;
     int myConstructorId;

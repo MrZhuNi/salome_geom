@@ -29,27 +29,13 @@
 using namespace std;
 #include "GeometryGUI_ConeDlg.h"
 
-#include "GeometryGUI.h"
-#include "QAD_Application.h"
-#include "QAD_Desktop.h"
-#include "QAD_Config.h"
-#include "utilities.h"
-
+#include <BRepPrimAPI_MakeCone.hxx>
+#include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepAdaptor_Curve.hxx>
 
-#include <qbuttongroup.h>
-#include <qgroupbox.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qlayout.h>
-#include <qvariant.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
-#include <qimage.h>
-#include <qpixmap.h>
-
+#include "GeometryGUI.h"
+#include "QAD_Desktop.h"
+#include "QAD_Config.h"
 
 //=================================================================================
 // class    : GeometryGUI_ConeDlg()
@@ -58,189 +44,44 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GeometryGUI_ConeDlg::GeometryGUI_ConeDlg( QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl )
-    : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
+GeometryGUI_ConeDlg::GeometryGUI_ConeDlg(QWidget* parent, const char* name, PrimitiveGUI* thePrimitiveGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+  :GeometryGUI_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_CONE_PV")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
-  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_CONE_DXYZ")));
+  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CONE_PV")));
+  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CONE_DXYZ")));
+  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-    if ( !name )
-	setName( "GeometryGUI_ConeDlg" );
-    resize( 303, 309 ); 
-    setCaption( tr( "GEOM_CONE_TITLE"  ) );
-    setSizeGripEnabled( TRUE );
-    GeometryGUI_ConeDlgLayout = new QGridLayout( this ); 
-    GeometryGUI_ConeDlgLayout->setSpacing( 6 );
-    GeometryGUI_ConeDlgLayout->setMargin( 11 );
+  setCaption(tr("GEOM_CONE_TITLE"));
 
-    /***************************************************************/
-    GroupConstructors = new QButtonGroup( this, "GroupConstructors" );
-    GroupConstructors->setTitle( tr( "GEOM_CONE"  ) );
-    GroupConstructors->setExclusive( TRUE );
-    GroupConstructors->setColumnLayout(0, Qt::Vertical );
-    GroupConstructors->layout()->setSpacing( 0 );
-    GroupConstructors->layout()->setMargin( 0 );
-    GroupConstructorsLayout = new QGridLayout( GroupConstructors->layout() );
-    GroupConstructorsLayout->setAlignment( Qt::AlignTop );
-    GroupConstructorsLayout->setSpacing( 6 );
-    GroupConstructorsLayout->setMargin( 11 );
-    QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    GroupConstructorsLayout->addItem( spacer, 0, 1 );
-    Constructor1 = new QRadioButton( GroupConstructors, "Constructor1" );
-    Constructor1->setText( tr( ""  ) );
-    Constructor1->setPixmap( image0 );
-    Constructor1->setChecked( TRUE );
-    Constructor1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, Constructor1->sizePolicy().hasHeightForWidth() ) );
-    Constructor1->setMinimumSize( QSize( 50, 0 ) );
-    GroupConstructorsLayout->addWidget( Constructor1, 0, 0 );
-    Constructor2 = new QRadioButton( GroupConstructors, "Constructor2" );
-    Constructor2->setText( tr( ""  ) );
-    Constructor2->setMinimumSize( QSize( 50, 0 ) );
-    Constructor2->setPixmap( image2 );
-    Constructor2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, Constructor1->sizePolicy().hasHeightForWidth() ) );
-    GroupConstructorsLayout->addWidget( Constructor2, 0, 2 );
-    QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    GroupConstructorsLayout->addItem( spacer_2, 0, 3 );
-    GeometryGUI_ConeDlgLayout->addWidget( GroupConstructors, 0, 0 );
+  /***************************************************************/
+  GroupConstructors->setTitle(tr("GEOM_CONE"));
+  RadioButton1->setPixmap(image0);
+  RadioButton2->setPixmap(image1);
+  RadioButton3->close(TRUE);
 
-    /***************************************************************/
-    GroupButtons = new QGroupBox( this, "GroupButtons" );
-    GroupButtons->setGeometry( QRect( 10, 10, 281, 48 ) ); 
-    GroupButtons->setTitle( tr( ""  ) );
-    GroupButtons->setColumnLayout(0, Qt::Vertical );
-    GroupButtons->layout()->setSpacing( 0 );
-    GroupButtons->layout()->setMargin( 0 );
-    GroupButtonsLayout = new QGridLayout( GroupButtons->layout() );
-    GroupButtonsLayout->setAlignment( Qt::AlignTop );
-    GroupButtonsLayout->setSpacing( 6 );
-    GroupButtonsLayout->setMargin( 11 );
-    buttonCancel = new QPushButton( GroupButtons, "buttonCancel" );
-    buttonCancel->setText( tr( "GEOM_BUT_CLOSE"  ) );
-    buttonCancel->setAutoDefault( TRUE );
-    GroupButtonsLayout->addWidget( buttonCancel, 0, 3 );
-    buttonApply = new QPushButton( GroupButtons, "buttonApply" );
-    buttonApply->setText( tr( "GEOM_BUT_APPLY"  ) );
-    buttonApply->setAutoDefault( TRUE );
-    GroupButtonsLayout->addWidget( buttonApply, 0, 1 );
-    QSpacerItem* spacer_9 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    GroupButtonsLayout->addItem( spacer_9, 0, 2 );
-    buttonOk = new QPushButton( GroupButtons, "buttonOk" );
-    buttonOk->setText( tr( "GEOM_BUT_OK"  ) );
-    buttonOk->setAutoDefault( TRUE );
-    buttonOk->setDefault( TRUE );
-    GroupButtonsLayout->addWidget( buttonOk, 0, 0 );
-    GeometryGUI_ConeDlgLayout->addWidget( GroupButtons, 2, 0 );
+  GroupPoints = new GeometryGUI_2Sel3Spin(this, "GroupPoints");
+  GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
+  GroupPoints->TextLabel1->setText(tr("GEOM_BASE_POINT"));
+  GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR"));
+  GroupPoints->TextLabel3->setText(tr("GEOM_RADIUS_I").arg("1"));
+  GroupPoints->TextLabel4->setText(tr("GEOM_RADIUS_I").arg("2"));
+  GroupPoints->TextLabel5->setText(tr("GEOM_HEIGHT"));
+  GroupPoints->PushButton1->setPixmap(image2);
+  GroupPoints->PushButton2->setPixmap(image2);
 
-    /***************************************************************/
-    GroupC1 = new QGroupBox( this, "GroupC1" );
-    GroupC1->setTitle( tr( "GEOM_ARGUMENTS"  ) );
-    GroupC1->setColumnLayout(0, Qt::Vertical );
-    GroupC1->layout()->setSpacing( 0 );
-    GroupC1->layout()->setMargin( 0 );
-    GroupC1Layout = new QGridLayout( GroupC1->layout() );
-    GroupC1Layout->setAlignment( Qt::AlignTop );
-    GroupC1Layout->setSpacing( 6 );
-    GroupC1Layout->setMargin( 11 );
-    SelectButtonC1A1 = new QPushButton( GroupC1, "SelectButtonC1A1" );
-    SelectButtonC1A1->setText( tr( ""  ) );
-    SelectButtonC1A1->setPixmap( image1 );
-    GroupC1Layout->addWidget( SelectButtonC1A1, 0, 1 );
-    LineEditC1A1 = new QLineEdit( GroupC1, "LineEditC1A1" );
-    LineEditC1A1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, LineEditC1A1->sizePolicy().hasHeightForWidth() ) );
-    GroupC1Layout->addWidget( LineEditC1A1, 0, 2 );
-    TextLabelC1A1 = new QLabel( GroupC1, "TextLabelC1A1" );
-    TextLabelC1A1->setText( tr( "GEOM_BASE_POINT"  ) );
-    TextLabelC1A1->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC1A1->setFrameShape( QLabel::NoFrame );
-    TextLabelC1A1->setFrameShadow( QLabel::Plain );
-    GroupC1Layout->addWidget( TextLabelC1A1, 0, 0 );
-    SelectButtonC1A2 = new QPushButton( GroupC1, "SelectButtonC1A2" );
-    SelectButtonC1A2->setText( tr( ""  ) );
-    SelectButtonC1A2->setPixmap( image1 );
-    GroupC1Layout->addWidget( SelectButtonC1A2, 1, 1 );
-    LineEditC1A2 = new QLineEdit( GroupC1, "LineEditC1A2" );
-    LineEditC1A2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, LineEditC1A2->sizePolicy().hasHeightForWidth() ) );
-    GroupC1Layout->addWidget( LineEditC1A2, 1, 2 );
-    TextLabelC1A2 = new QLabel( GroupC1, "TextLabelC1A2" );
-    TextLabelC1A2->setText( tr( "GEOM_VECTOR"  ) );
-    TextLabelC1A2->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC1A2->setFrameShape( QLabel::NoFrame );
-    TextLabelC1A2->setFrameShadow( QLabel::Plain );
-    GroupC1Layout->addWidget( TextLabelC1A2, 1, 0 );
-    TextLabelC1A3 = new QLabel( GroupC1, "TextLabelC1A3" );
-    TextLabelC1A3->setText( tr( "GEOM_RADIUS_I"  ).arg("1") );
-    TextLabelC1A3->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC1A3->setFrameShape( QLabel::NoFrame );
-    TextLabelC1A3->setFrameShadow( QLabel::Plain );
-    GroupC1Layout->addWidget( TextLabelC1A3, 2, 0 );
+  GroupDimensions = new GeometryGUI_3Spin(this, "GroupDimensions");
+  GroupDimensions->GroupBox1->setTitle(tr("GEOM_BOX_OBJ"));
+  GroupDimensions->TextLabel1->setText(tr("GEOM_RADIUS_I").arg("1"));
+  GroupDimensions->TextLabel2->setText(tr("GEOM_RADIUS_I").arg("2"));
+  GroupDimensions->TextLabel3->setText(tr("GEOM_HEIGHT"));
 
-    SpinBox_C1A3 = new GeometryGUI_SpinBox(GroupC1, "GeomSpinBox_C1A3" ) ;
-    SpinBox_C1A3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, SpinBox_C1A3->sizePolicy().hasHeightForWidth() ) );
-    GroupC1Layout->addWidget( SpinBox_C1A3 , 2, 2 );
+  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupDimensions, 1, 0);
+  /***************************************************************/
 
-    TextLabelC1A4 = new QLabel( GroupC1, "TextLabelC1A4" );
-    TextLabelC1A4->setText( tr( "GEOM_RADIUS_I"  ).arg("2") );
-    TextLabelC1A4->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC1A4->setFrameShape( QLabel::NoFrame );
-    TextLabelC1A4->setFrameShadow( QLabel::Plain );
-    GroupC1Layout->addWidget( TextLabelC1A4, 3, 0 );
-
-    SpinBox_C1A4 = new GeometryGUI_SpinBox( GroupC1, "GeomSpinBox_C1A4" ) ;
-    SpinBox_C1A4->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, SpinBox_C1A4->sizePolicy().hasHeightForWidth() ) );
-    GroupC1Layout->addWidget( SpinBox_C1A4 , 3, 2 ) ;
-
-    TextLabelC1A5 = new QLabel( GroupC1, "TextLabelC1A5" );
-    TextLabelC1A5->setText( tr( "GEOM_HEIGHT"  ) );
-    TextLabelC1A5->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC1A5->setFrameShape( QLabel::NoFrame );
-    TextLabelC1A5->setFrameShadow( QLabel::Plain );
-    GroupC1Layout->addWidget( TextLabelC1A5, 4, 0 );
-
-    SpinBox_C1A5 = new GeometryGUI_SpinBox( GroupC1, "GeomSpinBox_C1A5" ) ;
-    SpinBox_C1A5->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, SpinBox_C1A5->sizePolicy().hasHeightForWidth() ) );
-    GroupC1Layout->addWidget( SpinBox_C1A5 , 4, 2 ) ;
-
-    GeometryGUI_ConeDlgLayout->addWidget( GroupC1, 1, 0 ); 
-    /***************************************************************/
-    
-    GroupC2 = new QGroupBox( this, "GroupC2" );
-    GroupC2->setTitle( tr( "GEOM_BOX_OBJ"  ) );
-    GroupC2->setColumnLayout(0, Qt::Vertical );
-    GroupC2->layout()->setSpacing( 0 );
-    GroupC2->layout()->setMargin( 0 );
-    GroupC2Layout = new QGridLayout( GroupC2->layout() );
-    GroupC2Layout->setAlignment( Qt::AlignTop );
-    GroupC2Layout->setSpacing( 6 );
-    GroupC2Layout->setMargin( 11 );
-    TextLabel_Height = new QLabel(GroupC2 , "TextLabel_Height" );
-    TextLabel_Height->setText( tr( "GEOM_HEIGHT"  ) );
-    GroupC2Layout->addWidget( TextLabel_Height, 2, 0 );
-    TextLabel_Radius1 = new QLabel( GroupC2, "TextLabel_Radius1" );
-    TextLabel_Radius1->setText( tr( "GEOM_RADIUS_I"  ).arg("1") );
-    GroupC2Layout->addWidget( TextLabel_Radius1, 0, 0 );
-    TextLabel_Radius2 = new QLabel( GroupC2, "TextLabel_Radius2" );
-    TextLabel_Radius2->setText( tr( "GEOM_RADIUS_I"  ).arg("2") );
-    GroupC2Layout->addWidget( TextLabel_Radius2, 1, 0 );
-
-    SpinBox_Radius1 = new GeometryGUI_SpinBox( GroupC2, "GeomSpinBox_Radius1" ) ;
-    GroupC2Layout->addWidget( SpinBox_Radius1 , 0, 1 ) ;
-
-    SpinBox_Radius2 = new GeometryGUI_SpinBox( GroupC2, "GeomSpinBox_Radius2" ) ;
-    GroupC2Layout->addWidget( SpinBox_Radius2 , 1, 1 ) ;
-
-    SpinBox_Height = new GeometryGUI_SpinBox( GroupC2, "GeomSpinBox_Height" ) ;
-    GroupC2Layout->addWidget( SpinBox_Height , 2, 1 ) ;
-
-    QSpacerItem* spacer1 = new QSpacerItem( 20, 60, QSizePolicy::Minimum, QSizePolicy::Fixed );
-    GroupC2Layout->addItem( spacer1 );
-
-    GeometryGUI_ConeDlgLayout->addWidget(GroupC2 , 1, 0 );
-
-    /***************************************************************/
-
-    /* Initialisations */
-    Init(Sel) ;
+  /* Initialisations */
+  myPrimitiveGUI = thePrimitiveGUI;
+  Init();
 }
 
 
@@ -258,91 +99,69 @@ GeometryGUI_ConeDlg::~GeometryGUI_ConeDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void GeometryGUI_ConeDlg::Init( SALOME_Selection* Sel )
+void GeometryGUI_ConeDlg::Init()
 {
+  /* init variables */
+  myConstructorId = 0;
+  myEditCurrentArgument = GroupPoints->LineEdit1;
+
+  myRadius1 = 100.0;
+  myRadius2 = 0.0;
+  myHeight = 300.0;
+
+  myOkRadius1 = myOkRadius2 = myOkHeight = true;
+  myOkPoint1 = myOkDir = false;
+
+  myEdgeFilter = new GEOM_EdgeFilter(StdSelect_Line, myGeom);
+  myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
+  mySelection->AddFilter(myVertexFilter);
 
   /* Get setting of step value from file configuration */
-  double step ;
-  QString St = QAD_CONFIG->getSetting( "Geometry:SettingsGeomStep" ) ;
-  step = St.toDouble() ;
+  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
+  step = St.toDouble();
 
-  /* min, max, step and decimals for spin boxes */
-  SpinBox_C1A3->RangeStepAndValidator( 0.001, 999.999, step, 3 ) ; /* radius 1 */
-  SpinBox_C1A3->SetValue( 100.0 ) ;  
-  SpinBox_C1A4->RangeStepAndValidator( 0.000, 999.999, step, 3 ) ; /* radius 2 */
-  SpinBox_C1A4->SetValue( 0.0 ) ;
-  SpinBox_C1A5->RangeStepAndValidator( -999.999, 999.999, step, 3 ) ; /* algebric height */
-  SpinBox_C1A5->SetValue( 300.0 ) ;
+  /* min, max, step and decimals for spin boxes & initial values */
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
+  GroupPoints->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
+  GroupPoints->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupDimensions->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
+  GroupDimensions->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
+  GroupDimensions->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, step, 3);
 
-  SpinBox_Radius1->RangeStepAndValidator( 0.001, 999.999, step, 3 ) ; /* radius 1 */
-  SpinBox_Radius1->SetValue( 100.0 ) ;
-  SpinBox_Radius2->RangeStepAndValidator( 0.000, 999.999, step, 3 ) ; /* radius 2 */
-  SpinBox_Radius2->SetValue( 0.0 ) ;
-  SpinBox_Height->RangeStepAndValidator( -999.999, 999.999, step, 3 ) ;  /* algebric height */
-  SpinBox_Height->SetValue( 300.0 ) ;
-  
-  GroupC1->show();
-  GroupC2->hide();
-  myConstructorId = 0 ;
-  Constructor1->setChecked( TRUE );
-  myEditCurrentArgument = LineEditC1A1 ;	
-  mySelection = Sel;
-  myGeomGUI = GeometryGUI::GetGeometryGUI() ;
-  myRadius1 = 100.0 ;
-  myRadius2 = 0.0 ;
-  myHeight = 300.0 ;
-  
-  myOkRadius1 = true ;
-  myOkRadius2 = true ;
-  myOkHeight  = true ;
-  myOkPoint1  = false ;
-  myOkDir     = false ;
-
-  mySimulationTopoDs.Nullify() ;
-  myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;
-
-  // TODO : previous selection into argument ?
-
-  /* Filter definitions */
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);  
-  myEdgeFilter   = new GEOM_EdgeFilter( StdSelect_Line, myGeom );
-  myVertexFilter = new GEOM_ShapeTypeFilter( TopAbs_VERTEX, myGeom );
-  /* first filter used */
-  mySelection->AddFilter(myVertexFilter) ;
+  GroupPoints->SpinBox_DX->SetValue(myRadius1);
+  GroupPoints->SpinBox_DY->SetValue(myRadius2);
+  GroupPoints->SpinBox_DZ->SetValue(myHeight);
+  GroupDimensions->SpinBox_DX->SetValue(myRadius1);
+  GroupDimensions->SpinBox_DY->SetValue(myRadius2);
+  GroupDimensions->SpinBox_DZ->SetValue(myHeight);
 
   /* signals and slots connections */
-  connect( buttonOk, SIGNAL( clicked() ),     this, SLOT( ClickOnOk() ) );
-  connect( buttonCancel, SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) ) ;
-  connect( buttonApply, SIGNAL( clicked() ), this, SLOT(ClickOnApply() ) );
-  connect( GroupConstructors, SIGNAL(clicked(int) ), SLOT( ConstructorsClicked(int) ) );  
-  connect( SelectButtonC1A1, SIGNAL (clicked() ), this, SLOT( SetEditCurrentArgument() ) ) ;
-  connect( SelectButtonC1A2, SIGNAL (clicked() ), this, SLOT( SetEditCurrentArgument() ) ) ;
+  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
 
-  connect( SpinBox_C1A3, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
-  connect( SpinBox_C1A4, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
-  connect( SpinBox_C1A5, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
-  connect( SpinBox_Radius1, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
-  connect( SpinBox_Radius2, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
-  connect( SpinBox_Height, SIGNAL  ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
+  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect( LineEditC1A1, SIGNAL ( returnPressed() ), this, SLOT( LineEditReturnPressed() ) ) ;
-  connect( LineEditC1A2, SIGNAL ( returnPressed() ), this, SLOT( LineEditReturnPressed() ) ) ;
+  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect( myGeomGUI, SIGNAL ( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) ) ;  
-  connect( mySelection, SIGNAL( currentSelectionChanged() ),     this, SLOT( SelectionIntoArgument() ) );
-  /* to close dialog if study change */
-  connect( myGeomGUI, SIGNAL ( SignalCloseAllDialogs() ), this, SLOT( ClickOnCancel() ) ) ;
+  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupDimensions->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupDimensions->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupDimensions->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   
-  /* Move widget on the botton right corner of main widget */
-  int x, y ;
-  myGeomGUI->DefineDlgPosition( this, x, y ) ;
-  this->move( x, y ) ;
-  this->show() ; /* displays Dialog */
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+
+  /* displays Dialog */
+  GroupDimensions->hide();
+  GroupPoints->show();
+  this->show();
 
   return ;
 }
-
 
 
 //=================================================================================
@@ -351,63 +170,58 @@ void GeometryGUI_ConeDlg::Init( SALOME_Selection* Sel )
 //=================================================================================
 void GeometryGUI_ConeDlg::ConstructorsClicked(int constructorId)
 {
-  mySelection->ClearFilters() ;
-  myGeomGUI->EraseSimulationShape() ;
+  myConstructorId = constructorId;
+  mySelection->ClearFilters();
+  myGeomGUI->EraseSimulationShape();
+  disconnect(mySelection, 0, this, 0);
+  myOkHeight = myOkRadius1 = myOkRadius2 = true;
+  myRadius1 = 100.0;
+  myRadius2 = 0.0;
+  myHeight = 300.0;
 
   switch(myConstructorId)
     { 
     case 0 :
-      { 
-	GroupC1->hide();
-	GroupC2->show();
-	myConstructorId = constructorId ;
-	myOkHeight = myOkRadius1 = myOkRadius2  = myOkPoint1 = myOkDir = true ;
+      {
+	GroupDimensions->hide();
+	resize(0, 0);
+	GroupPoints->show();
+	myOkPoint1 = myOkDir = false;
+
+	myEditCurrentArgument = GroupPoints->LineEdit1;
+	GroupPoints->LineEdit1->setText(tr(""));
+	GroupPoints->LineEdit2->setText(tr(""));
 	
-	SpinBox_Radius1->SetValue( 100.0 ) ;  /* radius 1 */
-	SpinBox_Radius2->SetValue( 0.0 ) ;    /* radius 2 */
-	SpinBox_Height->SetValue( 300.0 ) ;   /* height   */
+	GroupPoints->SpinBox_DX->SetValue(myRadius1);
+	GroupPoints->SpinBox_DY->SetValue(myRadius2);
+	GroupPoints->SpinBox_DZ->SetValue(myHeight);
 
-	disconnect( mySelection, 0, this, 0 );
-	
-	myRadius1 = 100.0 ;
-	myRadius2 = 0.0 ;
-	myHeight = 300.0 ;
-
-	myPoint1.SetCoord( 0.0, 0.0, 0.0 ) ;
-	myDir.SetCoord( 0.0, 0.0, 1.0 ) ;
-
-	if( myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2 && myOkHeight ) {
-	  gp_Dir aDir = myDir ;
-	  /* allows user to reverse direction of construction with a negative height */
-	  if( this->myHeight < -Precision::Confusion() ) {
-	    aDir.Reverse() ;
-	  }
-	  MakeConeSimulationAndDisplay() ;
-	} 
-	break ;
+	/* filter for next selection */
+	mySelection->AddFilter(myVertexFilter);
+	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+	break;
       }
     case 1 :
       { 
-	GroupC2->hide();
-	GroupC1->show();
-	myConstructorId = constructorId ;
-	myEditCurrentArgument = LineEditC1A1 ;
-	myOkHeight = myOkRadius1 =  myOkRadius2 = true ;
-	myOkPoint1 = myOkDir = false ;
+	GroupPoints->hide();
+	resize( 0, 0 );
+	GroupDimensions->show();
+	myOkPoint1 = myOkDir = true;
 
-	SpinBox_C1A3->SetValue( 100.0 ) ; /* radius 1 */
-	SpinBox_C1A4->SetValue( 0.0 ) ;   /* radius 2 */
-	SpinBox_C1A5->SetValue( 300.0 ) ; /* height   */
+	GroupDimensions->SpinBox_DX->SetValue(myRadius1);
+	GroupDimensions->SpinBox_DY->SetValue(myRadius2);
+	GroupDimensions->SpinBox_DZ->SetValue(myHeight);
 
-	myRadius1 = 100.0 ;
-	myRadius2 = 0.0 ;
-	myHeight = 300.0 ;
-	disconnect( mySelection, 0, this, 0 );
-	break ;
+	myPoint1.SetCoord(0.0, 0.0, 0.0);
+	myDir.SetCoord(0.0, 0.0, 1.0);
+
+	MakeConeSimulationAndDisplay();
+	break;
       }
     }
   return ;
 }
+
 
 //=================================================================================
 // function : ClickOnOk()
@@ -415,11 +229,11 @@ void GeometryGUI_ConeDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void GeometryGUI_ConeDlg::ClickOnOk()
 {
-  this->ClickOnApply() ;
-  this->ClickOnCancel() ;
-
-  return ;
+  this->ClickOnApply();
+  ClickOnCancel();
+  return;
 }
+
 
 //=================================================================================
 // function : ClickOnApply()
@@ -427,54 +241,19 @@ void GeometryGUI_ConeDlg::ClickOnOk()
 //=================================================================================
 void GeometryGUI_ConeDlg::ClickOnApply()
 {
-  myGeomGUI->EraseSimulationShape() ;
-  mySimulationTopoDs.Nullify() ;
-  myGeomGUI->GetDesktop()->putInfo( tr("") ) ;
+  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  if (mySimulationTopoDs.IsNull())
+    return;
+  myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
  
-  switch(myConstructorId)
-    {
-    case 0 :
-      {
-	if(myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2 && myOkHeight) {
-	  gp_Dir aDir = myDir ;
-	  /* allows user to reverse direction of construction with a negative height */
-	  if( this->myHeight < -Precision::Confusion() ) {
-	    aDir.Reverse() ;
-	  }
-	  myGeomGUI->MakeConeAndDisplay( myPoint1, aDir, myRadius1, myRadius2, fabs(myHeight) ) ; 
-	}
-	break ;
-      }
-    case 1 :
-      {
-	if(myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2 && myOkHeight) {
-	  gp_Dir aDir = myDir ;
-	  /* allows user to reverse direction of construction with a negative height */
-	  if( this->myHeight < -Precision::Confusion() ) {
-	    aDir.Reverse() ;
-	  }
-	  myGeomGUI->MakeConeAndDisplay( myPoint1, aDir, myRadius1, myRadius2, fabs(myHeight) ) ; 
-	}
-	break ;
-      }
-    }
-  // accept();
-  return ;
-}
-
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void GeometryGUI_ConeDlg::ClickOnCancel()
-{
-  mySelection->ClearFilters() ;
-  myGeomGUI->EraseSimulationShape() ;
-  mySimulationTopoDs.Nullify() ;
-  disconnect( mySelection, 0, this, 0 );
-  myGeomGUI->ResetState() ;
-  reject() ;
+  if(myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2 && myOkHeight) {
+    gp_Dir aDir = myDir;
+    /* allows user to reverse direction of construction with a negative height */
+    if(this->myHeight < -Precision::Confusion())
+      aDir.Reverse();
+    myPrimitiveGUI->MakeConeAndDisplay(myPoint1, aDir, myRadius1, myRadius2, fabs(myHeight)); 
+  }
   return ;
 }
 
@@ -485,47 +264,41 @@ void GeometryGUI_ConeDlg::ClickOnCancel()
 //=================================================================================
 void GeometryGUI_ConeDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape() ; 
-  mySimulationTopoDs.Nullify() ;
-  
-  /* Future name of selection */
-  QString aString = "";
-  
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString) ;
-  if ( nbSel != 1 ) {
-    if ( myEditCurrentArgument == LineEditC1A1 ) {
-      LineEditC1A1->setText("") ;
-      myOkPoint1 = false ;
-    }
-    else if ( myEditCurrentArgument == LineEditC1A2 ) { 
-      LineEditC1A2->setText("") ;
-      myOkDir = false ;
-    }
-    return ;
+  myGeomGUI->EraseSimulationShape(); 
+  myEditCurrentArgument->setText("");
+  QString aString = ""; /* name of selection */
+
+  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  if(nbSel != 1) {
+    if(myEditCurrentArgument == GroupPoints->LineEdit1)
+      myOkPoint1 = false;
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2)
+      myOkDir = false;
+    return;
   }
 
-  /* nbSel == 1 ! */
+  /* nbSel == 1 */
   TopoDS_Shape S;
-  if( !myGeomGUI->GetTopoFromSelection(mySelection, S) )
-    return ;  
- 
-  /* gp_Pnt : not used */
-  if ( myEditCurrentArgument == LineEditC1A1 && myGeomGUI->VertexToPoint(S, myPoint1) ) {
-    LineEditC1A1->setText(aString) ;
-    myOkPoint1 = true ;
+  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+    return;
+
+  /*  gp_Pnt : not used */
+  if (myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomGUI->VertexToPoint(S, myPoint1)) {
+    GroupPoints->LineEdit1->setText(aString);
+    myOkPoint1 = true;
   }    
-  else if ( myEditCurrentArgument == LineEditC1A2 /*&& myGeomGUI->LinearLocationAndDirection(S, notUsed, myDir)*/ ) {
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
     BRepAdaptor_Curve curv(TopoDS::Edge(S));
     myDir = curv.Line().Direction();
-    LineEditC1A2->setText(aString) ;
-    myOkDir = true ;
+    GroupPoints->LineEdit2->setText(aString);
+    myOkDir = true;
   }
 
-  if( myConstructorId == 0 && myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2 && myOkHeight) {
-    MakeConeSimulationAndDisplay() ;
-  }
-  return ;
+  if(myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2 && myOkHeight)
+    MakeConeSimulationAndDisplay();
+  return;
 }
+
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -533,33 +306,26 @@ void GeometryGUI_ConeDlg::SelectionIntoArgument()
 //=================================================================================
 void GeometryGUI_ConeDlg::SetEditCurrentArgument()
 {
-  QPushButton* send = (QPushButton*)sender();
-  mySelection->ClearFilters() ;
-  switch (myConstructorId)
-    {
-    case 0: /* default constructor */
-      {	
-	if(send == SelectButtonC1A1) {
-	  LineEditC1A1->setFocus() ;
-	  myEditCurrentArgument = LineEditC1A1;
-	  mySelection->AddFilter(myVertexFilter) ;
-	}
-	else if(send == SelectButtonC1A2) {
-	  LineEditC1A2->setFocus() ;	  
-	  myEditCurrentArgument = LineEditC1A2;
-	  mySelection->AddFilter(myEdgeFilter) ;
-	}	
-	SelectionIntoArgument() ;
-	break;
-      }
-     case 1:
-      {	
-	break ;
-      }
-    }
+  if(myConstructorId != 0)
+    return;
 
-  return ;
+  QPushButton* send = (QPushButton*)sender();
+
+  if(send == GroupPoints->PushButton1) {
+    GroupPoints->LineEdit1->setFocus();
+    myEditCurrentArgument = GroupPoints->LineEdit1;
+    mySelection->AddFilter(myVertexFilter);
+  }
+  else if(send == GroupPoints->PushButton2) {
+    GroupPoints->LineEdit2->setFocus();
+    myEditCurrentArgument = GroupPoints->LineEdit2;
+    mySelection->AddFilter(myEdgeFilter);
+  }
+  this->SelectionIntoArgument();
+
+  return;
 }
+
 
 //=================================================================================
 // function : LineEditReturnPressed()
@@ -567,145 +333,16 @@ void GeometryGUI_ConeDlg::SetEditCurrentArgument()
 //=================================================================================
 void GeometryGUI_ConeDlg::LineEditReturnPressed()
 {
-  QLineEdit* send = (QLineEdit*)sender();  
-  if( send == LineEditC1A1 )
-    myEditCurrentArgument = LineEditC1A1 ;
-  else if ( send == LineEditC1A2 )
-    myEditCurrentArgument = LineEditC1A2 ; 
+  QLineEdit* send = (QLineEdit*)sender();
+  if(send == GroupPoints->LineEdit1)
+    myEditCurrentArgument = GroupPoints->LineEdit1;
+  else if (send == GroupPoints->LineEdit2)
+    myEditCurrentArgument = GroupPoints->LineEdit2;
   else
-    return ;
-  
-  /* User name of object input management                          */
-  /* If successfull the selection is changed and signal emitted... */
-  /* so SelectionIntoArgument() is automatically called.           */
-  QLineEdit* LE = (QLineEdit*)myEditCurrentArgument ;
-  const QString objectUserName = LE->text() ;
-  QWidget* thisWidget = (QWidget*)this ;
-  if( myGeomGUI->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
-    LE->setText( objectUserName ) ;
-  }
-  return ;
-}
+    return;
 
-//=================================================================================
-// function : ValueChangedInSpinBox()
-// purpose  :
-//=================================================================================
-void GeometryGUI_ConeDlg::ValueChangedInSpinBox( double newValue )
-{
-  myGeomGUI->EraseSimulationShape() ; 
-  mySimulationTopoDs.Nullify() ; 
-
-  QObject* send = (QObject*)sender();
-  
-  if( send == SpinBox_C1A3 || send == SpinBox_Radius1 ) {         /* radius1 */
-    myRadius1 = newValue ;
-    myOkRadius1 = true ;
-  } else if( send == SpinBox_C1A4 || send == SpinBox_Radius2 ) {  /* radius2 */    
-    myRadius2 = newValue ;
-    myOkRadius2 = true ;
-  }
-  else if( send == SpinBox_C1A5 || send == SpinBox_Height )  {    /* algebric height */
-    myHeight = newValue ;
-    myOkHeight = true ;
-  }
-  
-  if ( myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2 && myOkHeight ) {
-    MakeConeSimulationAndDisplay() ;
-  }
-  
-  return ;
-}
-
-
-//=================================================================================
-// function : TextChangedInLineEdit()
-// purpose  :
-//=================================================================================
-//  void GeometryGUI_ConeDlg::TextChangedInLineEdit(const QString& newText)
-//  {  
-  
-//    myGeomGUI->EraseSimulationShape() ; 
-//    mySimulationTopoDs.Nullify() ;  
-//    QLineEdit* send = (QLineEdit*)sender();
-//    QString newT = strdup(newText) ;
-//    int i ;
-  
-//    if(send == LineEditC1A3) {  /* radius1 */
-//      if( myVa->validate(newT, i) == myVa->Acceptable ) { 
-//        myRadius1 = newText.toFloat() ;
-//        myOkRadius1 = true ;      
-//      }
-//      else {
-//        myOkRadius1 = false ;
-//      }
-//    } else if(send == LineEditC1A4) {  /* radius2 */
-//      if( myVb->validate(newT, i) == myVb->Acceptable ) { 
-//        myRadius2 = newText.toFloat() ;
-//        myOkRadius2 = true ;
-//      } 
-//      else {
-//        myOkRadius2 = false ;
-//      }
-//    } else if(send == LineEditC1A5) { /* algebric height */
-    
-//      if( myVc->validate(newT, i) == myVc->Acceptable ) {
-//        myHeight = newText.toFloat() ;
-//        if( fabs(myHeight) > Precision::Confusion() )
-//  	myOkHeight = true ;
-//        else
-//  	myOkHeight = false ;
-//      }
-//    }else if(send == LineEdit_Radius1) {  /* radius1 */
-//      if( myVa->validate(newT, i) == myVa->Acceptable ) { 
-//        myRadius1 = newText.toFloat() ;
-//        myOkRadius1 = true ;      
-//      }
-//      else {
-//        myOkRadius1 = false ;
-//      }
-//    } else if(send == LineEdit_Radius2) {  /* radius2 */
-//      if( myVb->validate(newT, i) == myVb->Acceptable ) { 
-//        myRadius2 = newText.toFloat() ;
-//        myOkRadius2 = true ;
-//      } 
-//      else {
-//        myOkRadius2 = false ;
-//      }
-//    } else if(send == LineEdit_Height) { /* algebric height */
-    
-//      if( myVc->validate(newT, i) == myVc->Acceptable ) {
-//        myHeight = newText.toFloat() ;
-//        if( fabs(myHeight) > Precision::Confusion() )
-//  	myOkHeight = true ;
-//        else
-//  	myOkHeight = false ;
-//      }
-//    }
-//    if (myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2 && myOkHeight) {
-//      MakeConeSimulationAndDisplay() ;
-//    }
-
-//    return ;
-//  }
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  :
-//=================================================================================
-void GeometryGUI_ConeDlg::DeactivateActiveDialog()
-{
-  if ( GroupConstructors->isEnabled() ) {
-    GroupConstructors->setEnabled(false) ;
-    GroupC1->setEnabled(false) ;
-    GroupC2->setEnabled(false) ;
-    GroupButtons->setEnabled(false) ;
-    disconnect( mySelection, 0, this, 0 );
-    myGeomGUI->EraseSimulationShape() ;
-    mySelection->ClearFilters() ;
-  }
-  return ;
+  GeometryGUI_Skeleton::LineEditReturnPressed();
+  return;
 }
 
 
@@ -715,16 +352,11 @@ void GeometryGUI_ConeDlg::DeactivateActiveDialog()
 //=================================================================================
 void GeometryGUI_ConeDlg::ActivateThisDialog()
 {
-  /* Emit a signal to deactivate the active dialog */
-  myGeomGUI->EmitSignalDeactivateDialog() ;   
-  GroupConstructors->setEnabled(true) ;
-  GroupC1->setEnabled(true) ;
-  GroupC2->setEnabled(true) ;
-  GroupButtons->setEnabled(true) ;
-  connect ( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-  if( !mySimulationTopoDs.IsNull() )
-    myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
-  return ;
+  GeometryGUI_Skeleton::ActivateThisDialog();
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  if(!mySimulationTopoDs.IsNull())
+    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+  return;
 }
 
 
@@ -734,22 +366,39 @@ void GeometryGUI_ConeDlg::ActivateThisDialog()
 //=================================================================================
 void GeometryGUI_ConeDlg::enterEvent(QEvent* e)
 {
-  if ( GroupConstructors->isEnabled() )
-    return ;  
-  ActivateThisDialog() ;
-  return ;
+  if (GroupConstructors->isEnabled())
+    return;
+  this->ActivateThisDialog();
+  return;
 }
 
 
 //=================================================================================
-// function : closeEvent()
+// function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void GeometryGUI_ConeDlg::closeEvent( QCloseEvent* e )
+void GeometryGUI_ConeDlg::ValueChangedInSpinBox(double newValue)
 {
-  /* same than click on cancel button */
-  this->ClickOnCancel() ;
-  return ;
+  myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
+  QObject* send = (QObject*)sender();
+  
+  if(send == GroupPoints->SpinBox_DX || send == GroupDimensions->SpinBox_DX) {
+    myRadius1 = newValue;
+    myOkRadius1 = true;
+  }
+  else if(send == GroupPoints->SpinBox_DY || send == GroupDimensions->SpinBox_DY) {
+    myRadius2 = newValue;
+    myOkRadius2 = true;
+  }
+  else if(send == GroupPoints->SpinBox_DZ || send == GroupDimensions->SpinBox_DZ) {
+    myHeight = newValue;
+    myOkHeight = true;
+  }
+
+  if (myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2 && myOkHeight)
+    MakeConeSimulationAndDisplay();
+  return;
 }
 
 
@@ -759,30 +408,27 @@ void GeometryGUI_ConeDlg::closeEvent( QCloseEvent* e )
 //=================================================================================
 void GeometryGUI_ConeDlg::MakeConeSimulationAndDisplay() 
 {
-  myGeomGUI->EraseSimulationShape() ;
-  mySimulationTopoDs.Nullify() ;
-  gp_Dir aDir = myDir ;
+  myGeomGUI->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
+  gp_Dir aDir = myDir;
   
   try {
     /* allows user to reverse direction of construction with a negative height */
-    if( this->myHeight < -Precision::Confusion() ) {      
-      aDir.Reverse() ;
-    }  
-    
-    gp_Ax2 anAxis(this->myPoint1, aDir) ;
+    if(this->myHeight < -Precision::Confusion())
+      aDir.Reverse();
 
-    if( fabs(myRadius1 - myRadius2) <= Precision::Confusion() ) {
-      mySimulationTopoDs = BRepPrimAPI_MakeCylinder( anAxis, (myRadius1+myRadius2)/2.0, fabs(myHeight) ).Shape() ;
-    }
+    gp_Ax2 anAxis(this->myPoint1, aDir);
+
+    if(fabs(myRadius1 - myRadius2) <= Precision::Confusion())
+      mySimulationTopoDs = BRepPrimAPI_MakeCylinder(anAxis, (myRadius1+myRadius2)/2.0, fabs(myHeight)).Shape();
     else {
-      if( fabs(myHeight) > Precision::Confusion() )
-	mySimulationTopoDs = BRepPrimAPI_MakeCone( anAxis, myRadius1, myRadius2, fabs(myHeight) ).Shape() ;
+      if(fabs(myHeight) > Precision::Confusion())
+	mySimulationTopoDs = BRepPrimAPI_MakeCone(anAxis, myRadius1, myRadius2, fabs(myHeight)).Shape();
     }
-    myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
+    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
   }
   catch(Standard_Failure) {
-    MESSAGE( "Exception catched in MakeConeSimulationAndDisplay" ) ;
+    MESSAGE("Exception catched in MakeConeSimulationAndDisplay");
   }
-  return ;
+  return;
 }
-

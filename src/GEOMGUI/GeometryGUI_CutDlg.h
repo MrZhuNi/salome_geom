@@ -29,90 +29,48 @@
 #ifndef DIALOGBOX_CUT_H
 #define DIALOGBOX_CUT_H
 
-#include "SALOME_Selection.h"
-#include "GEOM_ShapeTypeFilter.hxx"
+#include "GeometryGUI_Skeleton.h"
+#include "GeometryGUI_2Sel_QTD.h"
+
+#include "BooleanGUI.h"
 
 #include <BRepAlgoAPI_Cut.hxx>
-
-#include <qvariant.h>
-#include <qdialog.h>
-
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
-class QFrame;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
-class GeometryGUI;
-
 
 //=================================================================================
 // class    : GeometryGUI_CutDlg
 // purpose  :
 //=================================================================================
-class GeometryGUI_CutDlg : public QDialog
+class GeometryGUI_CutDlg : public GeometryGUI_Skeleton
 { 
     Q_OBJECT
 
 public:
-    GeometryGUI_CutDlg( QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    GeometryGUI_CutDlg( QWidget* parent = 0, const char* name = 0, BooleanGUI* theBooleanGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
     ~GeometryGUI_CutDlg();
 
 private:
+    void Init();
+    void enterEvent(QEvent* e);
 
-    void Init( SALOME_Selection* Sel ) ;
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent ( QEvent * ) ;                /* mouse enter the QWidget */
+    BooleanGUI* myBooleanGUI;
 
-    GEOM::GEOM_Gen_var myGeom ;                /* Current GeomI object */
-    GeometryGUI*          myGeomGUI ;             /* Current GeomGUI object */
-    SALOME_Selection*     mySelection ;           /* User shape selection */
-    TopoDS_Shape          myShape1 ;              /* topology used to fuse */
-    TopoDS_Shape          myShape2 ;              /* topology used to fuse */
-    GEOM::GEOM_Shape_var        myGeomShape1 ;          /* is myShape1 */
-    GEOM::GEOM_Shape_var        myGeomShape2 ;          /* is myShape2 */
-    bool                  myOkShape1 ;
-    bool                  myOkShape2 ;            /* to check when arguments are defined */
-    int                   myConstructorId ;       /* Current constructor id = radio button id */
-    QLineEdit*            myEditCurrentArgument;  /* Current LineEdit */
+    TopoDS_Shape myShape1;   /* topology used to fuse */
+    TopoDS_Shape myShape2;   /* topology used to fuse */
+    GEOM::GEOM_Shape_var myGeomShape1;          /* is myShape1 */
+    GEOM::GEOM_Shape_var myGeomShape2;          /* is myShape2 */
+    bool myOkShape1;        /* to check when arguments are defined */
+    bool myOkShape2;
 
-    QButtonGroup* GroupConstructors;
-    QRadioButton* Constructor1;
-
-    QGroupBox* GroupConstructor1;
-    QLineEdit* LineEditC1A1Shape;
-    QLineEdit* LineEditC1A2Shape;
-    QPushButton* SelectButtonC1A1Shape;
-    QPushButton* SelectButtonC1A2Shape;
-    QLabel* TextLabelC1A2Shape;
-    QLabel* TextLabelC1A1Shape;
-
-    QGroupBox* GroupButtons;
-    QPushButton* buttonApply;
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
+    GeometryGUI_2Sel_QTD* GroupCut;
 
 private slots:
-
-    void ConstructorsClicked(int constructorId);
     void ClickOnOk();
-    void ClickOnCancel();
     void ClickOnApply();
-    void SetEditCurrentArgument() ;
-    void SelectionIntoArgument() ;
-    void LineEditReturnPressed() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
+    void SetEditCurrentArgument();
+    void SelectionIntoArgument();
+    void LineEditReturnPressed();
+    void ActivateThisDialog();
 
-protected:
-    QGridLayout* GeometryGUI_CutDlgLayout;
-    QGridLayout* GroupConstructorsLayout;
-    QGridLayout* GroupButtonsLayout;
-    QGridLayout* GroupConstructor1Layout;
 };
 
 #endif // DIALOGBOX_CUT_H

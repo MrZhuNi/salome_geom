@@ -21,34 +21,27 @@
 //
 //
 //
-//  File   : GeometryGUI_1Sel1Spin.cxx
+//  File   : GeometryGUI_1Spin.h
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header: 
 
-#include "GeometryGUI_1Sel1Spin.h"
+#ifndef GEOMETRYGUI_1SPIN_H
+#define GEOMETRYGUI_1SPIN_H
 
-#include <qlayout.h>
-#include <qspinbox.h>
-#include <qgroupbox.h>
+#include "GeometryGUI_1Spin_QTD.h"
+#include "GeometryGUI_SpinBox.h"
 
-/* 
- *  Constructs a GeometryGUI_1Sel1Spin which is a child of 'parent', with the 
- *  name 'name' and widget flags set to 'f' 
- */
-GeometryGUI_1Sel1Spin::GeometryGUI_1Sel1Spin(QWidget* parent,  const char* name, WFlags fl)
-  :GeometryGUI_1Sel1Spin_QTD(parent, name, fl)
-{
-  SpinBox1->close(TRUE);
-  SpinBox_DX = new GeometryGUI_SpinBox(GroupBox1, "SpinBox_DX");
-  Layout2->addWidget(SpinBox_DX, 0, 1);
-}
+class GeometryGUI_1Spin : public GeometryGUI_1Spin_QTD
+{ 
+    Q_OBJECT
 
+public:
+    GeometryGUI_1Spin(QWidget* parent = 0, const char* name = 0, WFlags fl = 0);
+    ~GeometryGUI_1Spin();
 
-/*  
- *  Destroys the object and frees any allocated resources
- */
-GeometryGUI_1Sel1Spin::~GeometryGUI_1Sel1Spin()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
+    GeometryGUI_SpinBox* SpinBox_DX;
+
+};
+
+#endif // GEOMETRYGUI_1SPIN_H

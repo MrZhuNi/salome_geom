@@ -36,23 +36,21 @@
  *  Constructs a GeometryGUI_3Spin which is a child of 'parent', with the 
  *  name 'name' and widget flags set to 'f' 
  */
-GeometryGUI_3Spin::GeometryGUI_3Spin( QWidget* parent,  const char* name, WFlags fl )
-    : GeometryGUI_3Spin_QTD( parent, name, fl )
+GeometryGUI_3Spin::GeometryGUI_3Spin(QWidget* parent,  const char* name, WFlags fl)
+  :GeometryGUI_3Spin_QTD(parent, name, fl)
 {
+  SpinBox1->close(TRUE);
+  SpinBox2->close(TRUE);
+  SpinBox3->close(TRUE);
 
-  SpinBox1->close( TRUE );
-  SpinBox2->close( TRUE );
-  SpinBox3->close( TRUE );
+  SpinBox_DX = new GeometryGUI_SpinBox(GroupBox1, "SpinBox_DX");
+  Layout1->addWidget(SpinBox_DX, 0, 1);
 
-  SpinBox_DX = new GeometryGUI_SpinBox( GroupBox1, "SpinBox_DX" ) ;
-  Layout1->addWidget( SpinBox_DX, 0, 1 );
+  SpinBox_DY = new GeometryGUI_SpinBox(GroupBox1, "SpinBox_DY");
+  Layout1->addWidget(SpinBox_DY, 1, 1);
 
-  SpinBox_DY = new GeometryGUI_SpinBox( GroupBox1, "SpinBox_DY" ) ;
-  Layout1->addWidget( SpinBox_DY, 1, 1 );
-
-  SpinBox_DZ = new GeometryGUI_SpinBox( GroupBox1, "SpinBox_DZ" ) ;
-  Layout1->addWidget( SpinBox_DZ, 2, 1 );
-
+  SpinBox_DZ = new GeometryGUI_SpinBox(GroupBox1, "SpinBox_DZ");
+  Layout1->addWidget(SpinBox_DZ, 2, 1);
 }
 
 

@@ -29,7 +29,6 @@
 using namespace std;
 #include "GeometryGUI_BoxDlg.h"
 
-#include <Precision.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
 
 #include "GeometryGUI.h"
@@ -43,7 +42,7 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GeometryGUI_BoxDlg::GeometryGUI_BoxDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
+GeometryGUI_BoxDlg::GeometryGUI_BoxDlg(QWidget* parent, const char* name, PrimitiveGUI* thePrimitiveGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GeometryGUI_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM", tr("ICON_DLG_BOX_2P")));
@@ -76,7 +75,8 @@ GeometryGUI_BoxDlg::GeometryGUI_BoxDlg(QWidget* parent, const char* name, SALOME
   /***************************************************************/
 
   /* Initialisations */
-  Init(Sel);
+  myPrimitiveGUI = thePrimitiveGUI;
+  Init();
 }
 
 
@@ -94,7 +94,7 @@ GeometryGUI_BoxDlg::~GeometryGUI_BoxDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void GeometryGUI_BoxDlg::Init(SALOME_Selection* Sel)
+void GeometryGUI_BoxDlg::Init()
 {
   /* init variables */
   myConstructorId = 0;
@@ -144,7 +144,7 @@ void GeometryGUI_BoxDlg::Init(SALOME_Selection* Sel)
   GroupPoints->show();
   this->show();
 
-  return ;
+  return;
 }
 
 
@@ -167,13 +167,14 @@ void GeometryGUI_BoxDlg::ConstructorsClicked(int constructorId)
 	GroupDimensions->hide();
 	resize(0, 0);
 	GroupPoints->show();
+
 	myEditCurrentArgument = GroupPoints->LineEdit1;
 	GroupPoints->LineEdit1->setText("");
  	GroupPoints->LineEdit2->setText("");
 
 	/* filter for next selection */
 	mySelection->AddFilter(myVertexFilter);
-	connect (mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
     case 1:
@@ -228,7 +229,7 @@ void GeometryGUI_BoxDlg::ClickOnApply()
     case 0 :
       {
 	if(myOkPoint1 && myOkPoint2)
-	  myGeomGUI->MakeBoxAndDisplay(myPoint1, myPoint2);
+	  myPrimitiveGUI->MakeBoxAndDisplay(myPoint1, myPoint2);
 	break;
       }
     case 1 :
@@ -239,7 +240,7 @@ void GeometryGUI_BoxDlg::ClickOnApply()
 	double vz = GroupDimensions->SpinBox_DZ->GetValue();
 	myPoint1.SetCoord(0.0, 0.0, 0.0);
 	myPoint2.SetCoord(vx, vy, vz);
-	myGeomGUI->MakeBoxAndDisplay(myPoint1, myPoint2);
+	myPrimitiveGUI->MakeBoxAndDisplay(myPoint1, myPoint2);
 	break;
       }
     }

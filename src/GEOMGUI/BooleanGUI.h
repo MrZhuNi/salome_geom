@@ -21,34 +21,38 @@
 //
 //
 //
-//  File   : GeometryGUI_1Sel1Spin.cxx
+//  File   : BooleanGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header: 
 
-#include "GeometryGUI_1Sel1Spin.h"
+#ifndef BOOLEANGUI_H
+#define BOOLEANGUI_H
 
-#include <qlayout.h>
-#include <qspinbox.h>
-#include <qgroupbox.h>
+#include "GeometryGUI.h"
 
-/* 
- *  Constructs a GeometryGUI_1Sel1Spin which is a child of 'parent', with the 
- *  name 'name' and widget flags set to 'f' 
- */
-GeometryGUI_1Sel1Spin::GeometryGUI_1Sel1Spin(QWidget* parent,  const char* name, WFlags fl)
-  :GeometryGUI_1Sel1Spin_QTD(parent, name, fl)
+//=================================================================================
+// class    : BooleanGUI
+// purpose  :
+//=================================================================================
+class BooleanGUI : public QObject
 {
-  SpinBox1->close(TRUE);
-  SpinBox_DX = new GeometryGUI_SpinBox(GroupBox1, "SpinBox_DX");
-  Layout2->addWidget(SpinBox_DX, 0, 1);
-}
+  Q_OBJECT /* for QT compatibility */
 
+public :
+  BooleanGUI();
+  ~BooleanGUI();
 
-/*  
- *  Destroys the object and frees any allocated resources
- */
-GeometryGUI_1Sel1Spin::~GeometryGUI_1Sel1Spin()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
+  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+
+  void MakeBooleanAndDisplay(GEOM::GEOM_Shape_ptr Shape1,
+			     GEOM::GEOM_Shape_ptr Shape2,
+			     const short operation);
+
+private:
+  GeometryGUI* myGeomGUI;
+  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
+
+};
+
+#endif

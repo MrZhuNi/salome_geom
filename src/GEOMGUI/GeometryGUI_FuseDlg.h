@@ -32,6 +32,8 @@
 #include "GeometryGUI_Skeleton.h"
 #include "GeometryGUI_2Sel_QTD.h"
 
+#include "BooleanGUI.h"
+
 #include <BRepAlgoAPI_Fuse.hxx>
 
 //=================================================================================
@@ -43,12 +45,14 @@ class GeometryGUI_FuseDlg : public GeometryGUI_Skeleton
     Q_OBJECT
 
 public:
-    GeometryGUI_FuseDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    GeometryGUI_FuseDlg(QWidget* parent = 0, const char* name = 0, BooleanGUI* theBooleanGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~GeometryGUI_FuseDlg();
 
 private:
-    void Init(SALOME_Selection* Sel);
+    void Init();
     void enterEvent(QEvent* e);
+
+    BooleanGUI* myBooleanGUI;
 
     TopoDS_Shape myShape1;   /* topology used to fuse */
     TopoDS_Shape myShape2;   /* topology used to fuse */
@@ -57,15 +61,15 @@ private:
     bool myOkShape1;        /* to check when arguments are defined */
     bool myOkShape2;
 
-    GeometryGUI_2Sel_QTD* GroupFuse ;
+    GeometryGUI_2Sel_QTD* GroupFuse;
 
 private slots:
     void ClickOnOk();
     void ClickOnApply();
-    void SetEditCurrentArgument() ;
-    void SelectionIntoArgument() ;
-    void LineEditReturnPressed() ;
-    void ActivateThisDialog() ;
+    void SetEditCurrentArgument();
+    void SelectionIntoArgument();
+    void LineEditReturnPressed();
+    void ActivateThisDialog();
 
 };
 

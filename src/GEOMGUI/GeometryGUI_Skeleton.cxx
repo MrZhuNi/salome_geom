@@ -39,7 +39,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 GeometryGUI_Skeleton::GeometryGUI_Skeleton(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-    :GeometryGUI_Skeleton_QTD(parent, name, modal, fl)
+  :GeometryGUI_Skeleton_QTD(parent, name, modal, fl)
 {
   if (!name)
     setName("GeometryGUI_Skeleton");
@@ -51,7 +51,7 @@ GeometryGUI_Skeleton::GeometryGUI_Skeleton(QWidget* parent, const char* name, SA
   GroupMedium->close(TRUE);
   resize(0, 0);
 
-  Init(Sel) ;
+  Init(Sel);
 }
 
 
@@ -87,13 +87,13 @@ void GeometryGUI_Skeleton::Init(SALOME_Selection* Sel)
   connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
 
   /* Move widget on the botton right corner of main widget */
-//   int x, y ;
-//   myGeomGUI->DefineDlgPosition( this, x, y ) ;
+//   int x, y;
+//   myGeomGUI->DefineDlgPosition( this, x, y );
 
   /* displays Dialog */
   RadioButton1->setChecked(TRUE);
 
-  return ;
+  return;
 }
 
 
@@ -140,7 +140,7 @@ void GeometryGUI_Skeleton::LineEditReturnPressed()
 //=================================================================================
 void GeometryGUI_Skeleton::DeactivateActiveDialog()
 {
-  Layout1->setEnabled(false);
+  this->setEnabled(false);
   mySelection->ClearFilters();
   disconnect(mySelection, 0, this, 0);
   myGeomGUI->EraseSimulationShape();
@@ -156,8 +156,8 @@ void GeometryGUI_Skeleton::DeactivateActiveDialog()
 void GeometryGUI_Skeleton::ActivateThisDialog()
 {
   /* Emit a signal to deactivate the active dialog */
-  myGeomGUI->EmitSignalDeactivateDialog(); 
-  Layout1->setEnabled(true);
+  myGeomGUI->EmitSignalDeactivateDialog();
+  this->setEnabled(true);
   myGeomGUI->SetActiveDialogBox((QDialog*)this);
   return;
 }

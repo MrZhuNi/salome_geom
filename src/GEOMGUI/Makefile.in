@@ -47,6 +47,8 @@ PO_FILES = \
 # Libraries targets 
 LIB = libGEOMGUI.la
 LIB_SRC =	GeometryGUI.cxx \
+		BooleanGUI.cxx \
+		PrimitiveGUI.cxx \
 		GeometryGUI_SpinBox.cxx \
 		GeometryGUI_Skeleton_QTD.cxx \
 		GeometryGUI_Skeleton.cxx \
@@ -58,6 +60,14 @@ LIB_SRC =	GeometryGUI.cxx \
 		GeometryGUI_1Sel4Spin.cxx \
 		GeometryGUI_2Sel1Spin_QTD.cxx \
 		GeometryGUI_2Sel1Spin.cxx \
+		GeometryGUI_2Sel2Spin_QTD.cxx \
+		GeometryGUI_2Sel2Spin.cxx \
+		GeometryGUI_2Sel3Spin_QTD.cxx \
+		GeometryGUI_2Sel3Spin.cxx \
+		GeometryGUI_1Spin_QTD.cxx \
+		GeometryGUI_1Spin.cxx \
+		GeometryGUI_2Spin_QTD.cxx \
+		GeometryGUI_2Spin.cxx \
 		GeometryGUI_3Spin_QTD.cxx \
 		GeometryGUI_3Spin.cxx \
 		GeometryGUI_TransparencyDlg.cxx \
@@ -117,6 +127,8 @@ LIB_SRC =	GeometryGUI.cxx \
 
 LIB_MOC = \
                 GeometryGUI.h \
+		BooleanGUI.h \
+		PrimitiveGUI.h \
                 GeometryGUI_SpinBox.h \
 		GeometryGUI_Skeleton_QTD.h \
 		GeometryGUI_Skeleton.h \
@@ -128,6 +140,14 @@ LIB_MOC = \
 		GeometryGUI_1Sel4Spin.h \
 		GeometryGUI_2Sel1Spin_QTD.h \
 		GeometryGUI_2Sel1Spin.h \
+		GeometryGUI_2Sel2Spin_QTD.h \
+		GeometryGUI_2Sel2Spin.h \
+		GeometryGUI_2Sel3Spin_QTD.h \
+		GeometryGUI_2Sel3Spin.h \
+		GeometryGUI_1Spin_QTD.h \
+		GeometryGUI_1Spin.h \
+		GeometryGUI_2Spin_QTD.h \
+		GeometryGUI_2Spin.h \
 		GeometryGUI_3Spin_QTD.h \
 		GeometryGUI_3Spin.h \
                 GeometryGUI_TransparencyDlg.h \
