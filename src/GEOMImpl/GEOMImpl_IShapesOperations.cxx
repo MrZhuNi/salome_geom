@@ -27,8 +27,12 @@ using namespace std;
 #include <TDataStd_Integer.hxx>
 #include <TDF_Tool.hxx>
 
+#include <BRepExtrema_ExtCF.hxx>
+
 #include <BRep_Tool.hxx>
 #include <BRepGProp.hxx>
+#include <BRepAdaptor_Curve.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -39,6 +43,7 @@ using namespace std;
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopExp_Explorer.hxx>
+#include <TopLoc_Location.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_Array1OfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
@@ -48,6 +53,9 @@ using namespace std;
 #include <Geom_Plane.hxx>
 #include <Geom_SphericalSurface.hxx>
 #include <Geom_CylindricalSurface.hxx>
+#include <GeomAdaptor_Surface.hxx>
+
+#include <Geom2d_Curve.hxx>
 
 #include <GProp_GProps.hxx>
 #include <gp_Pnt.hxx>
@@ -1061,11 +1069,30 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetShapesOnPlane
         break;
       case TopAbs_EDGE:
         {
-          TopoDS_Edge anE = TopoDS::Edge(aSS);
-          Standard_Real pf, pl;
-          Handle(Geom_Curve) cur_curve = BRep_Tool::Curve(anE, pf, pl);
-          if (true) {
-            listSS.Append(aSS);
+          TopoDS_Edge anEdge = TopoDS::Edge(aSS);
+          Standard_Real f, l;
+          Handle(Geom2d_Curve) PC;
+          Handle(Geom_Surface) cur_surf;
+          TopLoc_Location L;
+          Standard_Integer i = 0;
+
+          // iterate on the surfaces of the edge
+          while (Standard_True) {
+            i++;
+            BRep_Tool::CurveOnSurface(anEdge, PC , cur_surf, L, f, l, i);
+            if (cur_surf.IsNull()) break;
+
+            Handle(Geom_Plane) cur_pln = Handle(Geom_Plane)::DownCast(cur_surf);
+            if (!cur_pln.IsNull()) {
+              const gp_Ax3 cur_pos = cur_pln->Position();
+              const gp_Pnt cur_loc = cur_pos.Location();
+              const gp_Dir cur_dir = cur_pos.Direction();
+              gp_Vec vecToLoc (cur_loc, loc);
+              if (vecToLoc.IsNormal(dir, Precision::Angular()) &&
+                  cur_dir.IsParallel(dir, Precision::Angular())) {
+                listSS.Append(aSS);
+              }
+            }
           }
         }
         break;
@@ -1090,6 +1117,11 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetShapesOnPlane
         break;
       }
     }
+  }
+
+  if (listSS.Extent() < 1) {
+    SetErrorCode("Not a single sub-shape of the requested type found on the given plane");
+    return NULL;
   }
 
   //Fill array of indices
@@ -1195,11 +1227,33 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetShapesOnCylinder
         break;
       case TopAbs_EDGE:
         {
-          TopoDS_Edge anE = TopoDS::Edge(aSS);
-          Standard_Real pf, pl;
-          Handle(Geom_Curve) cur_curve = BRep_Tool::Curve(anE, pf, pl);
-          if (true) {
-            listSS.Append(aSS);
+          TopoDS_Edge anEdge = TopoDS::Edge(aSS);
+          Standard_Real f, l;
+          Handle(Geom2d_Curve) PC;
+          Handle(Geom_Surface) cur_surf;
+          TopLoc_Location L;
+          Standard_Integer i = 0;
+
+          // iterate on the surfaces of the edge
+          while (Standard_True) {
+            i++;
+            BRep_Tool::CurveOnSurface(anEdge, PC , cur_surf, L, f, l, i);
+            if (cur_surf.IsNull()) break;
+
+            Handle(Geom_CylindricalSurface) cur_cyl =
+              Handle(Geom_CylindricalSurface)::DownCast(cur_surf);
+            if (!cur_cyl.IsNull()) {
+              const gp_Ax3 cur_pos = cur_cyl->Position();
+              const gp_Pnt cur_loc = cur_pos.Location();
+              const gp_Dir cur_dir = cur_pos.Direction();
+              const Standard_Real cur_rad = cur_cyl->Radius();
+              gp_Vec vecToLoc (cur_loc, loc);
+              if (vecToLoc.IsParallel(dir, Precision::Angular()) &&
+                  cur_dir.IsParallel(dir, Precision::Angular()) &&
+                  Abs(cur_rad - theRadius) < Precision::Confusion()) {
+                listSS.Append(aSS);
+              }
+            }
           }
         }
         break;
@@ -1227,6 +1281,11 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetShapesOnCylinder
         break;
       }
     }
+  }
+
+  if (listSS.Extent() < 1) {
+    SetErrorCode("Not a single sub-shape of the requested type found on the given cylinder");
+    return NULL;
   }
 
   //Fill array of indices
@@ -1319,11 +1378,30 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetShapesOnSphere
         break;
       case TopAbs_EDGE:
         {
-          TopoDS_Edge anE = TopoDS::Edge(aSS);
-          Standard_Real pf, pl;
-          Handle(Geom_Curve) cur_curve = BRep_Tool::Curve(anE, pf, pl);
-          if (true) {
-            listSS.Append(aSS);
+          TopoDS_Edge anEdge = TopoDS::Edge(aSS);
+          Standard_Real f, l;
+          Handle(Geom2d_Curve) PC;
+          Handle(Geom_Surface) cur_surf;
+          TopLoc_Location L;
+          Standard_Integer i = 0;
+
+          // iterate on the surfaces of the edge
+          while (Standard_True) {
+            i++;
+            BRep_Tool::CurveOnSurface(anEdge, PC , cur_surf, L, f, l, i);
+            if (cur_surf.IsNull()) break;
+
+            Handle(Geom_SphericalSurface) cur_sph =
+              Handle(Geom_SphericalSurface)::DownCast(cur_surf);
+            if (!cur_sph.IsNull()) {
+              const gp_Ax3 cur_pos = cur_sph->Position();
+              const gp_Pnt cur_loc = cur_pos.Location();
+              const Standard_Real cur_rad = cur_sph->Radius();
+              if (cur_loc.Distance(aC) < Precision::Confusion() &&
+                  Abs(cur_rad - theRadius) < Precision::Confusion()) {
+                listSS.Append(aSS);
+              }
+            }
           }
         }
         break;
@@ -1348,6 +1426,11 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetShapesOnSphere
         break;
       }
     }
+  }
+
+  if (listSS.Extent() < 1) {
+    SetErrorCode("Not a single sub-shape of the requested type found on the given sphere");
+    return NULL;
   }
 
   //Fill array of indices
