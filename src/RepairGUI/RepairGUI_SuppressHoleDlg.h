@@ -29,52 +29,35 @@
 #ifndef GEOMETRYGUI_SUPPRESSHOLE_H
 #define GEOMETRYGUI_SUPPRESSHOLE_H
 
+#include "GEOMBase_Skeleton.h"
+#include "DlgRef_1Sel1Check_QTD.h"
+#include "DlgRef_1Sel3Check_QTD.h"
+
 #include "RepairGUI.h"
-
-#include <qvariant.h>
-#include <qdialog.h>
-
-#include <AIS_InteractiveContext.hxx>
-
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
-class QCheckBox;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
-class RepairGUI;
 
 //=================================================================================
 // class    : RepairGUI_SuppressHoleDlg
 // purpose  :
 //=================================================================================
-class RepairGUI_SuppressHoleDlg : public QDialog
+class RepairGUI_SuppressHoleDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
       
 public:
-    RepairGUI_SuppressHoleDlg( QWidget* parent = 0,
-				 const char* name = 0,
-			         RepairGUI* theRepairGUI = 0, 
-				 SALOME_Selection* Sel = 0,		
-				 Handle (AIS_InteractiveContext) ic = 0,  
-				 bool modal = FALSE,
-				 WFlags fl = 0 );
-
+    RepairGUI_SuppressHoleDlg(QWidget* parent = 0, const char* name = 0, RepairGUI* theRepairGUI = 0, SALOME_Selection* Sel = 0, Handle(AIS_InteractiveContext) ic = 0, bool modal = FALSE, WFlags fl = 0);
     ~RepairGUI_SuppressHoleDlg();
 
 private :
-      RepairGUI* myRepairGUI;
-    void Init( SALOME_Selection* Sel, Handle (AIS_InteractiveContext) ic ) ;
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent ( QEvent * ) ;                            /* Mouse enter the QWidget (to reactivate it) */
+    void Init(Handle(AIS_InteractiveContext) ic);
+    void enterEvent(QEvent* e);
+    void closeEvent(QCloseEvent* e);
 
-    void ResetStateOfDialog() ;
-    void ResetPartial() ;
+    void ResetStateOfDialog();
+    void ResetPartial();
+
+    RepairGUI* myRepairGUI;
+
+    int myConstructorId;   /* Current constructor id = radio button id */
     
     /* Define a list of indices of sub shapes selected in a local context */
     bool GetIndexSubShapeSelected(const TopoDS_Shape& ShapeTopo, const int SubShapeType,
@@ -82,87 +65,48 @@ private :
 				  Standard_Integer& aLocalContextId, bool& myUseLocalContext);
 
     /* Return the face selected by user from the main shape and index in a ListOfSub */
-    TopoDS_Shape FaceFromList( const TopoDS_Shape& aShape,
-			       const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfSub ) ;
+    TopoDS_Shape FaceFromList(const TopoDS_Shape& aShape,
+			      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfSub);
 
-    Handle (AIS_InteractiveContext)   myIC ;                  /* Interactive context  */ 
-    Standard_Integer                  myLocalContextId ;      /* identify a local context used by this method    */
-    bool                              myUseLocalContext ;     /* true when this method as opened a local context */
-    
-    GEOM::GEOM_Gen_var             myGeom ;                /* Current Geom object */
-    GEOMBase*                      myGeomBase ;             /* Current GeomGUI object */
-    GEOMContext*                      myGeomGUI ;             /* Current GeomGUI object */
-    SALOME_Selection*                 mySelection ;           /* User shape selection */
+    /* Interactive and local context management see also : bool myUseLocalContext() */
+    Handle(AIS_InteractiveContext) myIC;   /* Interactive context */ 
+    Standard_Integer myLocalContextId;   /* identify a local context used by this method */
+    bool myUseLocalContext;   /* true when this method as opened a local context */
 
-    TopoDS_Shape                      myShape ;               /* Main shape selected  */
-    TopoDS_Shape                      myFace ;                /* Face selected        */
+    TopoDS_Shape myShape;   /* Main shape selected */
+    TopoDS_Shape myFace;    /* Face selected */
 
-    char*                             myShapeIOR ;
-    bool                              myOkShape ;
+    char* myShapeIOR;
+    bool myOkShape;
 
-    bool                              myOkSelectFace ;        /* true = sub mode GEOM::FACE selection done               */
-    bool                              myOkSelectWire ;        /* true = sub mode GEOM::WIRE selection done (first wire)  */  
+    bool myOkSelectFace;   /* true = sub mode GEOM::FACE selection done */
+    bool myOkSelectWire;   /* true = sub mode GEOM::WIRE selection done (first wire)  */  
 
-    GEOM::GEOM_Shape::ListOfSubShapeID_var  myListOfIdFace ;        /* After selection contains index of face into myShape      */
-    GEOM::GEOM_Shape::ListOfSubShapeID_var  myListOfIdWire ;        /* After selection contains index of wire into myFace       */
-    GEOM::GEOM_Shape::ListOfSubShapeID_var  myListOfIdEndFace ;     /* After selection contains index of end face into myShape  */
+    /* After selection contains index of face into myShape, wire into myFace, end face into myShape*/
+    GEOM::GEOM_Shape::ListOfSubShapeID_var myListOfIdFace;
+    GEOM::GEOM_Shape::ListOfSubShapeID_var myListOfIdWire;
+    GEOM::GEOM_Shape::ListOfSubShapeID_var myListOfIdEndFace;
   
-    QLineEdit*                        myEditCurrentArgument;  /* Current LineEdit */   
-    int                               myConstructorId ;       /* Current constructor id = radio button id */
-
-    QButtonGroup* GroupConstructors;
-    QRadioButton* Constructor1;
-    QGroupBox* GroupButtons;
-    QPushButton* buttonOk;
-    QPushButton* buttonApply;
-    QPushButton* buttonClose;
-    QGroupBox* GroupC1;
-    QLabel* TextLabelC1A1;
-    QPushButton* SelectButtonC1A1;
-    QLineEdit* LineEditC1A1;
-    QCheckBox* CheckBox1;
-    QCheckBox* CheckBox2;
-    QCheckBox* CheckBox3;
-
-    /* Second constructor */
-    QRadioButton* Constructor2;
-    QGroupBox* GroupC2;
-    QLabel* TextLabelC2A1;
-    QPushButton* SelectButtonC2A1;
-    QLineEdit* LineEditC2A1;
-    QCheckBox* CheckBoxC2_1;
-
+    DlgRef_1Sel3Check_QTD* Group1;
+    DlgRef_1Sel1Check_QTD* Group2;
 
 private slots:
-
-    void ConstructorsClicked(int constructorId);
     void ClickOnOk();
-    void ClickOnApply() ;
-    void ClickOnClose();
-
-    void LineEditReturnPressed() ;
-    void SetEditCurrentArgument() ;
-    void SelectionIntoArgument() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
-    void ActivateUserFaceSelection() ;
-    void ActivateUserWireSelection() ;
-    void ActivateUserEndFaceSelection() ;
+    void ClickOnApply();
+    void ClickOnCancel();
+    void ActivateThisDialog();
+    void DeactivateActiveDialog();
+    void LineEditReturnPressed();
+    void SelectionIntoArgument();
+    void SetEditCurrentArgument();
+    void ConstructorsClicked(int constructorId);
+    void ActivateUserFaceSelection();
+    void ActivateUserWireSelection();
+    void ActivateUserEndFaceSelection();
     
     /* For the second constructor */
     void ActivateUserWiresOnFaceShellSelection() ;
 
-  
-protected:
-
-    QGridLayout* RepairGUI_SuppressHoleLayout;
-    QGridLayout* GroupConstructorsLayout;
-    QHBoxLayout* GroupButtonsLayout;
-    QGridLayout* GroupC1Layout;
-    QHBoxLayout* Layout2;
-
-    QGridLayout* GroupC2Layout;
-    QHBoxLayout* Layout3;
 };
 
 #endif // GEOMETRYGUI_SUPPRESSHOLE_H

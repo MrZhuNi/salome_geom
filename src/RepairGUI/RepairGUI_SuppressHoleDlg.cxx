@@ -30,27 +30,11 @@ using namespace std;
 #include "RepairGUI_SuppressHoleDlg.h"
 
 #include "DisplayGUI.h"
-#include "TopExp_Explorer.hxx"
-
 
 #include "QAD_RightFrame.h"
 #include "OCCViewer_Viewer3d.h"
 
-#include <qapplication.h>
-#include <qbuttongroup.h>
-#include <qcheckbox.h>
-#include <qgroupbox.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qlayout.h>
-#include <qvariant.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
-#include <qimage.h>
-#include <qpixmap.h>
-
+#include <TopExp_Explorer.hxx>
 
 //=================================================================================
 // class    : RepairGUI_SuppressHoleDlg()
@@ -59,199 +43,43 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_SuppressHoleDlg::RepairGUI_SuppressHoleDlg( QWidget* parent, 
-							  const char* name,
-						          RepairGUI* theRepairGUI,
-							  SALOME_Selection* Sel,
-							  Handle (AIS_InteractiveContext) ic,
-							  bool modal,
-							  WFlags fl )
-  : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
+RepairGUI_SuppressHoleDlg::RepairGUI_SuppressHoleDlg(QWidget* parent, const char* name, RepairGUI* theRepairGUI, SALOME_Selection* Sel, Handle(AIS_InteractiveContext) ic, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_SUPRESS_HOLE")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
-  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_SUPRESS_HOLE_FACE_SHELL")));
+  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SUPRESS_HOLE")));
+  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SUPRESS_HOLE_FACE_SHELL")));
+  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-  if ( !name )
-    setName( "RepairGUI_SuppressHoleDlg" );
-  resize( 303, 204 ); 
-  setCaption( tr( "GEOM_SUPPRESSHOLE_TITLE"  ) );
-  setSizeGripEnabled( TRUE );
-  RepairGUI_SuppressHoleLayout = new QGridLayout( this ); 
-  RepairGUI_SuppressHoleLayout->setSpacing( 6 );
-  RepairGUI_SuppressHoleLayout->setMargin( 11 );
-  
+  setCaption(tr("GEOM_SUPPRESSHOLE_TITLE"));
 
   /***************************************************************/
-  GroupConstructors = new QButtonGroup( this, "GroupConstructors" );
-  GroupConstructors->setTitle( tr( ""  ) );
-  GroupConstructors->setExclusive( TRUE );
-  GroupConstructors->setColumnLayout(0, Qt::Vertical );
-  GroupConstructors->layout()->setSpacing( 0 );
-  GroupConstructors->layout()->setMargin( 0 );
-  GroupConstructorsLayout = new QGridLayout( GroupConstructors->layout() );
-  GroupConstructorsLayout->setAlignment( Qt::AlignTop );
-  GroupConstructorsLayout->setSpacing( 6 );
-  GroupConstructorsLayout->setMargin( 11 );
-  
-  Constructor1 = new QRadioButton( GroupConstructors, "Constructor1" );
-  Constructor1->setText( tr( ""  ) );
-  Constructor1->setPixmap( image0 );
-  Constructor1->setChecked( TRUE );
-  Constructor1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, Constructor1->sizePolicy().hasHeightForWidth() ) );
-  Constructor1->setMinimumSize( QSize( 50, 0 ) );
-  GroupConstructorsLayout->addWidget( Constructor1, 0, 0 );
-  QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-  GroupConstructorsLayout->addItem( spacer, 0, 1 );
+  GroupConstructors->setTitle(tr(""));
+  RadioButton1->setPixmap(image0);
+  RadioButton2->setPixmap(image1);
+  RadioButton3->close(TRUE);
 
-  Constructor2 = new QRadioButton( GroupConstructors, "Constructor2" );
-  Constructor2->setText( tr( ""  ) );
-  Constructor2->setPixmap( image2 );
-  Constructor2->setChecked( TRUE );
-  Constructor2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, Constructor2->sizePolicy().hasHeightForWidth() ) );
-  Constructor2->setMinimumSize( QSize( 50, 0 ) );
-  GroupConstructorsLayout->addWidget( Constructor2, 0, 2 );  
-  QSpacerItem* spacer_4 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-  GroupConstructorsLayout->addItem( spacer_4, 0, 3 );  
-  RepairGUI_SuppressHoleLayout->addWidget( GroupConstructors, 0, 0 );
-  
+  Group1 = new DlgRef_1Sel3Check_QTD(this, "Group1");
+  Group1->GroupBox1->setTitle(tr(""));
+  Group1->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
+  Group1->CheckButton1->setText(tr("GEOM_SUPPRESSHOLE_SELECTFACE"));
+  Group1->CheckButton2->setText(tr("GEOM_SUPPRESSHOLE_SELECTWIRE"));
+  Group1->CheckButton3->setText(tr("GEOM_SUPPRESSHOLE_SELECTFACE_END"));
+  Group1->PushButton1->setPixmap(image2);
 
+  Group2 = new DlgRef_1Sel1Check_QTD(this, "Group2");
+  Group2->GroupBox1->setTitle(tr(""));
+  Group2->TextLabel1->setText(tr("GEOM_SUPPRESSHOLE_FACE_SHELL"));
+  Group2->CheckButton1->setText(tr("GEOM_SUPPRESSHOLE_SELECT_HOLES_ON_FACE"));
+  Group2->PushButton1->setPixmap(image2);
+
+  Layout1->addWidget(Group1, 1, 0);
+  Layout1->addWidget(Group2, 1, 0);
   /***************************************************************/
-  GroupButtons = new QGroupBox( this, "GroupButtons" );
-  GroupButtons->setTitle( tr( ""  ) );
-  GroupButtons->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)5, GroupButtons->sizePolicy().hasHeightForWidth() ) );
-  GroupButtons->setColumnLayout(0, Qt::Vertical );
-  GroupButtons->layout()->setSpacing( 0 );
-  GroupButtons->layout()->setMargin( 0 );
-  GroupButtonsLayout = new QHBoxLayout( GroupButtons->layout() );
-  GroupButtonsLayout->setAlignment( Qt::AlignTop );
-  GroupButtonsLayout->setSpacing( 6 );
-  GroupButtonsLayout->setMargin( 11 );
-  
-  buttonOk = new QPushButton( GroupButtons, "buttonOk" );
-  buttonOk->setText( tr( "GEOM_BUT_OK"  ) );
-  buttonOk->setAutoDefault( TRUE );
-  buttonOk->setDefault( TRUE );
-  buttonOk->setAccel( 276824143 );
-  GroupButtonsLayout->addWidget( buttonOk );
-  QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-  GroupButtonsLayout->addItem( spacer_2 );  
-  buttonApply = new QPushButton( GroupButtons, "buttonApply" );
-  buttonApply->setText( tr( "GEOM_BUT_APPLY"  ) );
-  buttonApply->setAutoDefault( TRUE );
-  buttonApply->setDefault( TRUE );
-  GroupButtonsLayout->addWidget( buttonApply );  
-  buttonClose = new QPushButton( GroupButtons, "buttonClose" );
-  buttonClose->setText( tr( "GEOM_BUT_CLOSE"  ) );
-  buttonClose->setAutoDefault( TRUE );
-  GroupButtonsLayout->addWidget( buttonClose );  
-  RepairGUI_SuppressHoleLayout->addWidget( GroupButtons, 2, 0 );
-  
-  /* First constructor */
-  GroupC1 = new QGroupBox( this, "GroupC1" );
-  GroupC1->setTitle( tr( ""  ) );
-  GroupC1->setMinimumSize( QSize( 0, 0 ) );
-  GroupC1->setFrameShape( QGroupBox::Box );
-  GroupC1->setFrameShadow( QGroupBox::Sunken );
-  GroupC1->setColumnLayout(0, Qt::Vertical );
-  GroupC1->layout()->setSpacing( 0 );
-  GroupC1->layout()->setMargin( 0 );
-  GroupC1Layout = new QGridLayout( GroupC1->layout() );
-  GroupC1Layout->setAlignment( Qt::AlignTop );
-  GroupC1Layout->setSpacing( 6 );
-  GroupC1Layout->setMargin( 11 );
-  
-  Layout2 = new QHBoxLayout; 
-  Layout2->setSpacing( 6 );
-  Layout2->setMargin( 0 );
 
-  TextLabelC1A1 = new QLabel( GroupC1, "TextLabelC1A1" );
-  TextLabelC1A1->setText( tr( "GEOM_MAIN_OBJECT"  ) );
-  TextLabelC1A1->setMinimumSize( QSize( 50, 0 ) );
-  TextLabelC1A1->setFrameShape( QLabel::NoFrame );
-  TextLabelC1A1->setFrameShadow( QLabel::Plain );
-  Layout2->addWidget( TextLabelC1A1 );
-  
-  SelectButtonC1A1 = new QPushButton( GroupC1, "SelectButtonC1A1" );
-  SelectButtonC1A1->setText( tr( ""  ) );
-  SelectButtonC1A1->setPixmap( image1 );
-  SelectButtonC1A1->setToggleButton( FALSE );
-  SelectButtonC1A1->setMaximumSize( QSize( 28, 32767 ) );
-  Layout2->addWidget( SelectButtonC1A1 );
-  
-  LineEditC1A1 = new QLineEdit( GroupC1, "LineEditC1A1" );
-  LineEditC1A1->setAlignment( int( QLineEdit::AlignLeft ) );
-  Layout2->addWidget( LineEditC1A1 );
-  
-  GroupC1Layout->addLayout( Layout2, 0, 0 );
-  
-  CheckBox1 = new QCheckBox( GroupC1, "CheckBox1" );
-  CheckBox1->setText( tr( "GEOM_SUPPRESSHOLE_SELECTFACE" ) );
-  CheckBox1->setChecked( FALSE );
-  GroupC1Layout->addWidget( CheckBox1, 1, 0 );
-
-  CheckBox2 = new QCheckBox( GroupC1, "CheckBox2" );
-  CheckBox2->setText( tr( "GEOM_SUPPRESSHOLE_SELECTWIRE" ) );
-  CheckBox2->setChecked( FALSE );
-  GroupC1Layout->addWidget( CheckBox2, 2, 0 );
-  
-  CheckBox3 = new QCheckBox( GroupC1, "CheckBox3" );
-  CheckBox3->setText( tr( "GEOM_SUPPRESSHOLE_SELECTFACE_END" ) );
-  CheckBox3->setChecked( FALSE );
-  GroupC1Layout->addWidget( CheckBox3, 3, 0 );
-  RepairGUI_SuppressHoleLayout->addWidget( GroupC1, 1, 0 );
-
-  /* Second constructor */
-  GroupC2 = new QGroupBox( this, "GroupC2" );
-  GroupC2->setTitle( tr( ""  ) );
-  GroupC2->setMinimumSize( QSize( 0, 0 ) );
-  GroupC2->setFrameShape( QGroupBox::Box );
-  GroupC2->setFrameShadow( QGroupBox::Sunken );
-  GroupC2->setColumnLayout(0, Qt::Vertical );
-  GroupC2->layout()->setSpacing( 0 );
-  GroupC2->layout()->setMargin( 0 );
-  GroupC2Layout = new QGridLayout( GroupC2->layout() );
-  GroupC2Layout->setAlignment( Qt::AlignTop );
-  GroupC2Layout->setSpacing( 6 );
-  GroupC2Layout->setMargin( 11 );
-  
-  Layout3 = new QHBoxLayout; 
-  Layout3->setSpacing( 6 );
-  Layout3->setMargin( 0 );
-  
-  TextLabelC2A1 = new QLabel( GroupC2, "TextLabelC2A1" );
-  TextLabelC2A1->setText( tr( "GEOM_SUPPRESSHOLE_FACE_SHELL"  ) );
-  TextLabelC2A1->setMinimumSize( QSize( 50, 0 ) );
-  TextLabelC2A1->setFrameShape( QLabel::NoFrame );
-  TextLabelC2A1->setFrameShadow( QLabel::Plain );
-  Layout3->addWidget( TextLabelC2A1 );
-  
-  SelectButtonC2A1 = new QPushButton( GroupC2, "SelectButtonC2A1" );
-  SelectButtonC2A1->setText( tr( ""  ) );
-  SelectButtonC2A1->setPixmap( image1 );
-  SelectButtonC2A1->setToggleButton( FALSE );
-  SelectButtonC2A1->setMaximumSize( QSize( 28, 32767 ) );
-  Layout3->addWidget( SelectButtonC2A1 );
-  
-  LineEditC2A1 = new QLineEdit( GroupC2, "LineEditC2A1" );
-  LineEditC2A1->setAlignment( int( QLineEdit::AlignLeft ) );
-  Layout3->addWidget( LineEditC2A1 );
-  
-  GroupC2Layout->addLayout( Layout3, 0, 0 );
-  QSpacerItem* spacer_3 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
-  GroupC2Layout->addItem( spacer_3, 2, 0 );
-  
-  CheckBoxC2_1 = new QCheckBox( GroupC2, "CheckBoxC2_1" );
-  CheckBoxC2_1->setText( tr( "GEOM_SUPPRESSHOLE_SELECT_HOLES_ON_FACE"  ) );
-  CheckBoxC2_1->setChecked( FALSE );
-  
-  GroupC2Layout->addWidget( CheckBoxC2_1, 1, 0 );
-  RepairGUI_SuppressHoleLayout->addWidget( GroupC2, 1, 0 );
-
-  myRepairGUI = theRepairGUI;
   /* Initialisations */
-  Init(Sel, ic) ;
+  myRepairGUI = theRepairGUI;
+  Init(ic);
 }
 
 
@@ -261,84 +89,59 @@ RepairGUI_SuppressHoleDlg::RepairGUI_SuppressHoleDlg( QWidget* parent,
 //=================================================================================
 RepairGUI_SuppressHoleDlg::~RepairGUI_SuppressHoleDlg()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
-
 
 
 //=================================================================================
 // function : Init()
 // purpose  :
 //=================================================================================
-void RepairGUI_SuppressHoleDlg::Init( SALOME_Selection* Sel, Handle (AIS_InteractiveContext) ic )
+void RepairGUI_SuppressHoleDlg::Init(Handle (AIS_InteractiveContext) ic)
 {
-  GroupC1->show();
-  GroupC2->hide();
-  
-  myConstructorId = 0 ;
-  Constructor1->setChecked( TRUE );
-  myEditCurrentArgument = LineEditC1A1 ;
-  mySelection = Sel;
-  myShape.Nullify() ;
-  
-  myIC = ic ;
-  myUseLocalContext = false ;
-  myOkShape         = false ;
-  myOkSelectFace    = false ;
+  /* init variables */
+  myConstructorId = 0;
+  myEditCurrentArgument = Group1->LineEdit1;
 
-  myListOfIdFace    = new GEOM::GEOM_Shape::ListOfSubShapeID;
-  myListOfIdWire    = new GEOM::GEOM_Shape::ListOfSubShapeID;
+  myIC = ic;
+  myUseLocalContext = myOkShape = myOkSelectFace = false;
+  myLocalContextId = -1;
+
+  myListOfIdFace = new GEOM::GEOM_Shape::ListOfSubShapeID;
+  myListOfIdWire = new GEOM::GEOM_Shape::ListOfSubShapeID;
   myListOfIdEndFace = new GEOM::GEOM_Shape::ListOfSubShapeID;
   
-  myListOfIdFace->length(0) ;
-  myListOfIdWire->length(0) ;
-  myListOfIdEndFace->length(0) ; 
-  
-  myGeomBase = new GEOMBase() ;
-  myGeomGUI = GEOMContext::GetGeomGUI() ;
-  
-  /* Select sub modes not checked */
-  CheckBox1->setChecked( FALSE );    /* sub mode GEOM::FACE     */
-  CheckBox2->setChecked( FALSE );    /* sub mode GEOM::WIRE     */
-  CheckBox3->setChecked( FALSE );    /* sub mode END GEOM::FACE */
-
-  CheckBoxC2_1->setChecked( FALSE ); /* sub mode GEOM::WIRE(S)  */
-
-  // TODO : previous selection into argument ?
-
-  /* Filter definitions */
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myListOfIdFace->length(0);
+  myListOfIdWire->length(0);
+  myListOfIdEndFace->length(0); 
 
   /* signals and slots connections */
-  connect( buttonOk,          SIGNAL( clicked() ),    this, SLOT( ClickOnOk() ) );
-  connect( buttonApply,       SIGNAL( clicked() ),    this, SLOT( ClickOnApply() ) );
-  connect( buttonClose,       SIGNAL( clicked() ),    this, SLOT( ClickOnClose() ) );
-  connect( GroupConstructors, SIGNAL( clicked(int) ), this, SLOT( ConstructorsClicked(int) ));
+  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
 
-  connect( SelectButtonC1A1,  SIGNAL( clicked() ),         this, SLOT( SetEditCurrentArgument() ));
-  connect( SelectButtonC2A1,  SIGNAL( clicked() ),         this, SLOT( SetEditCurrentArgument() ));
+  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
+
+  connect(Group1->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group2->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group1->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group2->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+
+  connect(Group1->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ActivateUserFaceSelection()));
+  connect(Group1->CheckButton2, SIGNAL(stateChanged(int)), this, SLOT(ActivateUserWireSelection()));
+  connect(Group1->CheckButton3, SIGNAL(stateChanged(int)), this, SLOT(ActivateUserEndFaceSelection()));
+  connect(Group2->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ActivateUserWiresOnFaceShellSelection()));
   
-  connect( CheckBox1,         SIGNAL( stateChanged(int) ), this, SLOT( ActivateUserFaceSelection() ));
-  connect( CheckBox2,         SIGNAL( stateChanged(int) ), this, SLOT( ActivateUserWireSelection() ));
-  connect( CheckBox3,         SIGNAL( stateChanged(int) ), this, SLOT( ActivateUserEndFaceSelection() ));
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  connect( LineEditC1A1, SIGNAL ( returnPressed() ), this, SLOT( LineEditReturnPressed() ) ) ;
-  connect( LineEditC2A1, SIGNAL ( returnPressed() ), this, SLOT( LineEditReturnPressed() ) ) ;
+  /* displays Dialog */
+  Group2->hide();
+  Group1->show();
+  this->show();
 
-  /* for the second constructor */
-  connect( CheckBoxC2_1,      SIGNAL( stateChanged(int) ), this, SLOT( ActivateUserWiresOnFaceShellSelection() ));
-
-  connect( mySelection,       SIGNAL( currentSelectionChanged() ),      this, SLOT( SelectionIntoArgument() ));
-  connect( myGeomGUI,         SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) ) ;  
-  connect( myGeomGUI,         SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnClose() ));
- 
-  /* Move widget on the botton right corner of main widget */
-  int x, y ;
-  myGeomBase->DefineDlgPosition( this, x, y ) ;
-  this->move( x, y ) ;
-  this->show() ; /* display Dialog */
-  return ;
+  return;
 }
 
 
@@ -348,36 +151,49 @@ void RepairGUI_SuppressHoleDlg::Init( SALOME_Selection* Sel, Handle (AIS_Interac
 //=================================================================================
 void RepairGUI_SuppressHoleDlg::ConstructorsClicked(int constructorId)
 {
+  myConstructorId = constructorId;
+  disconnect(mySelection, 0, this, 0);
+  myOkShape = false;
+
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myUseLocalContext) {
+    myIC->CloseLocalContext(myLocalContextId);
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->OnDisplayAll(true);
+    myUseLocalContext = false;
+  }
+
   switch (constructorId)
     {
     case 0:
       {
-	GroupC1->show();
-	GroupC2->hide();
-	myConstructorId = constructorId ;
-	myEditCurrentArgument = LineEditC1A1 ;	
-	LineEditC1A1->setText(tr("")) ;
-	myOkShape         = false ;
-	myOkSelectFace    = false ;
-	this->ResetPartial() ;
-	connect ( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+	Group2->hide();
+	resize(0, 0);
+	Group1->show();
+
+	myEditCurrentArgument = Group1->LineEdit1;
+	Group1->LineEdit1->setText("");
+	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+
+	myOkSelectFace = false;
+	this->ResetPartial();
 	break;
       }
     case 1:
       {
-	GroupC1->hide();
-	GroupC2->show();
-	myConstructorId = constructorId ;
-	myEditCurrentArgument = LineEditC2A1 ;
-	LineEditC2A1->setText(tr("")) ;
-	myOkShape = false ;
-	this->ResetPartial() ;
+	Group1->hide();
+	resize(0, 0);
+	Group2->show();
+
+	myEditCurrentArgument = Group2->LineEdit1;
+	Group2->LineEdit1->setText("");
+
+	this->ResetPartial();
 	connect ( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-	this->ResetPartial() ;
+	this->ResetPartial();
 	break;
       }
     }
- return ;
+ return;
 }
 
 
@@ -387,12 +203,10 @@ void RepairGUI_SuppressHoleDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void RepairGUI_SuppressHoleDlg::ClickOnOk()
 {
-  this->ClickOnApply() ;
-  accept();
-
-  return ;
+  this->ClickOnApply();
+  this->ClickOnCancel();
+  return;
 }
-
 
 
 //=================================================================================
@@ -401,118 +215,106 @@ void RepairGUI_SuppressHoleDlg::ClickOnOk()
 //=================================================================================
 void RepairGUI_SuppressHoleDlg::ClickOnApply()
 {
-  QAD_Application::getDesktop()->putInfo( tr("") ) ; 
-  bool testResult = false ;
+  QAD_Application::getDesktop()->putInfo(tr(""));
+  bool testResult = false;
   
-  if( !myOkShape )
-    return ;
+  if(!myOkShape)
+    return;
+
   switch (myConstructorId)
     {
     case 0: /* default constructor */
       {
-	if(  !myOkSelectFace )
-	  return ;
+	if(!myOkSelectFace)
+	  return;
   
-	if( CheckBox2->isChecked() ) {
-	  
-	  if( !CheckBox3->isChecked() ) {
-	    
+	if(Group1->CheckButton2->isChecked()) {
+	  if(!Group1->CheckButton3->isChecked()) {
 	    /* Call method to get sub shape selection of GEOM::WIRE */
-	    bool aTest = this->GetIndexSubShapeSelected(myFace, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
+	    bool aTest = this->GetIndexSubShapeSelected(myFace, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext);
 	    
+	    /* Display all objects so that next method using ic can memorize them */
 	    DisplayGUI* myDisplayGUI = new DisplayGUI();
-	    myDisplayGUI->OnDisplayAll(true) ;/* Display all objects so that next method using ic can memorize them */
-	    if( !aTest || myListOfIdWire->length() != 1 ) {
-	      CheckBox2->setChecked(FALSE) ;
-	      QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ; 
+	    myDisplayGUI->OnDisplayAll(true);
+
+	    if(!aTest || myListOfIdWire->length() != 1) {
+	      Group1->CheckButton2->setChecked(FALSE);
+	      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT")); 
 	    }
 	    else {
-	      myListOfIdEndFace->length(0) ; /* no end face */	
-	      QApplication::setOverrideCursor( Qt::waitCursor );
-	      testResult = myRepairGUI->OnSuppressHole( myShapeIOR, myListOfIdFace, myListOfIdWire, myListOfIdEndFace ) ;
+	      myListOfIdEndFace->length(0); /* no end face */	
+	      QApplication::setOverrideCursor(Qt::waitCursor);
+	      testResult = myRepairGUI->OnSuppressHole(myShapeIOR, myListOfIdFace, myListOfIdWire, myListOfIdEndFace);
 	      QApplication::restoreOverrideCursor();
 	    }
 	  }
-	  else { /* CheckBox3->isChecked() */
+	  else { /* Group1->CheckButton3->isChecked() */
 	    
 	    /* Call method to get sub shape selection of END GEOM::FACE */
-	    bool aTest = this->GetIndexSubShapeSelected(myShape, int(TopAbs_FACE), myListOfIdEndFace, myLocalContextId, myUseLocalContext) ;
-	    
+	    bool aTest = this->GetIndexSubShapeSelected(myShape, int(TopAbs_FACE), myListOfIdEndFace, myLocalContextId, myUseLocalContext);
+
+	    /* Display all objects so that next method using ic can memorize them */
 	    DisplayGUI* myDisplayGUI = new DisplayGUI();
-	    myDisplayGUI->OnDisplayAll(true) ; /* Display all objects so that next method using ic can memorize them */
-	    if( !aTest || myListOfIdEndFace->length() != 1 ) {
-	      CheckBox3->setChecked(FALSE) ;
-	      QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ; 
+	    myDisplayGUI->OnDisplayAll(true);
+
+	    if(!aTest || myListOfIdEndFace->length() != 1) {
+	      Group1->CheckButton3->setChecked(FALSE);
+	      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT")); 
 	    }
 	    else {	
-	      QApplication::setOverrideCursor( Qt::waitCursor );
-	      testResult = myRepairGUI->OnSuppressHole( myShapeIOR, myListOfIdFace, myListOfIdWire, myListOfIdEndFace ) ; 
+	      QApplication::setOverrideCursor(Qt::waitCursor);
+	      testResult = myRepairGUI->OnSuppressHole(myShapeIOR, myListOfIdFace, myListOfIdWire, myListOfIdEndFace); 
 	      QApplication::restoreOverrideCursor();
 	    }     
 	  }
 	}
-	break ;
+	break;
       }
-
     case 1:  /* second constructor */
       {
-	if( CheckBoxC2_1->isChecked() ) {
-	  
+	if(Group2->CheckButton1->isChecked()) {
 	  /* Call method to get sub shape selection of one or more GEOM::WIRE(s) on a face or a shell */
-	  bool aTest = this->GetIndexSubShapeSelected(myShape, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
+	  bool aTest = this->GetIndexSubShapeSelected(myShape, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext);
 	  
+	  /* Display all objects so that next method using ic can memorize them */
 	  DisplayGUI* myDisplayGUI = new DisplayGUI();
-	  myDisplayGUI->OnDisplayAll(true) ; /* Display all objects so that next method using ic can memorize them */
+	  myDisplayGUI->OnDisplayAll(true);
 	  
-	  if( !aTest || myListOfIdWire->length() < 1 ) {
-	    CheckBoxC2_1->setChecked(FALSE) ;
-	    QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ;
+	  if(!aTest || myListOfIdWire->length() < 1) {
+	    Group2->CheckButton1->setChecked(FALSE);
+	    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
 	  }
 	  else {
-	    QApplication::setOverrideCursor( Qt::waitCursor );
-	    testResult = myRepairGUI->OnSuppressHolesInFaceOrShell( myShapeIOR, myListOfIdWire ) ;
+	    QApplication::setOverrideCursor(Qt::waitCursor);
+	    testResult = myRepairGUI->OnSuppressHolesInFaceOrShell(myShapeIOR, myListOfIdWire);
 	    QApplication::restoreOverrideCursor();
 	  }
 	}
-	break ;
+	break;
       }
     }
   
 
-  if( !testResult )
-    QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ;
+  if(!testResult)
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
   else
-    QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_DONE") ) ;
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   
   /* Reset arguments to allow a new selection */
-  this->ResetStateOfDialog() ;
-  return ;
+  this->ResetStateOfDialog();
+  return;
 }
 
 
-
 //=================================================================================
-// function : ClickOnClose()
+// function : ClickOnCancel()
 // purpose  :
 //=================================================================================
-void RepairGUI_SuppressHoleDlg::ClickOnClose()
+void RepairGUI_SuppressHoleDlg::ClickOnCancel()
 {
-  disconnect( mySelection, 0, this, 0 );
-  //myGeomGUI->ResetState() ;
-
-  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext(); //    myIC = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getViewerOCC()->getAISContext();
-    if(myUseLocalContext) {
-      myIC->CloseLocalContext(myLocalContextId) ;
-      this->myUseLocalContext = false ;
-      DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->OnDisplayAll(true) ;
-    }
-  }
-
-  reject() ;
-  return ;
+  this->ResetStateOfDialog();
+  GEOMBase_Skeleton::ClickOnCancel();
+  return;
 }
 
 
@@ -523,61 +325,57 @@ void RepairGUI_SuppressHoleDlg::ClickOnClose()
 //=================================================================================
 void RepairGUI_SuppressHoleDlg::SelectionIntoArgument()
 {
-  
-  /* Reset argument and local context when selection as changed */
-  this->ResetStateOfDialog() ;
-  
-  QString aString = ""; /* Name of selection */
-  
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString) ;
-  if ( nbSel != 1 )
-    return ;
+  myEditCurrentArgument->setText("");
+  this->ResetStateOfDialog();
+  QString aString = ""; /* name of selection */
+
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
+  if(nbSel != 1)
+    return;
   
   /* nbSel == 1 */
-  TopoDS_Shape S ;
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject() ;
+  TopoDS_Shape S;
+  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
 
-  if( !myGeomBase->GetTopoFromSelection(mySelection, S) )
-    return ;
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
+    return;
   
-  if ( S.IsNull() || S.ShapeType() == TopAbs_VERTEX || S.ShapeType() == TopAbs_EDGE || S.ShapeType() == TopAbs_WIRE ) {
-    return ;
-  }
+  if(S.IsNull() || S.ShapeType() == TopAbs_VERTEX || S.ShapeType() == TopAbs_EDGE || S.ShapeType() == TopAbs_WIRE)
+    return;
   
   /* Test the exact type of topology to suppress faces into.         */
   /* For the second constructor a face or shell selection is needed  */
-  if (  myConstructorId == 0 || ( myConstructorId == 1 && ( S.ShapeType() == TopAbs_FACE || S.ShapeType() == TopAbs_SHELL ) ) ) {
-    
-    if ( IO->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject)) ) {
-      Handle(GEOM_InteractiveObject) GIObject = Handle(GEOM_InteractiveObject)::DownCast( IO );
+  if(myConstructorId == 0 || (myConstructorId == 1 && (S.ShapeType() == TopAbs_FACE || S.ShapeType() == TopAbs_SHELL))) {
+    if(IO->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject))) {
+      Handle(GEOM_InteractiveObject) GIObject = Handle(GEOM_InteractiveObject)::DownCast(IO);
 
       /* The Geom IOR string of selection */
       myShapeIOR = GIObject->getIOR();
-      myEditCurrentArgument->setText(aString) ;
-      myShape = S ;
-      myOkShape = true ;
+      myEditCurrentArgument->setText(aString);
+      myShape = S;
+      myOkShape = true;
       return;
     } 
     
-    if ( IO->hasEntry() ) {
+    if(IO->hasEntry()) {
       SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-      SALOMEDS::SObject_var obj = aStudy->FindObjectID( IO->getEntry() );
+      SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
       SALOMEDS::GenericAttribute_var anAttr;
-      SALOMEDS::AttributeIOR_var     anIOR;
-      if ( !obj->_is_nil() ) {
-	if (obj->FindAttribute(anAttr, "AttributeIOR")) {
+      SALOMEDS::AttributeIOR_var anIOR;
+      if(!obj->_is_nil()) {
+	if(obj->FindAttribute(anAttr, "AttributeIOR")) {
           anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
 	  myShapeIOR = anIOR->Value();
-	  myOkShape = true ;
-	  myShape = S ;
-	  myEditCurrentArgument->setText(aString) ;
+	  myOkShape = true;
+	  myShape = S;
+	  myEditCurrentArgument->setText(aString);
 	  return;
 	}
       }
     }
     
   }
-  return ;
+  return;
 }
 
 
@@ -587,29 +385,18 @@ void RepairGUI_SuppressHoleDlg::SelectionIntoArgument()
 //=================================================================================
 void RepairGUI_SuppressHoleDlg::SetEditCurrentArgument()
 {
-  QPushButton* send = (QPushButton*)sender();
-  switch (myConstructorId)
-    {
-    case 0: /* default constructor */
-      {
-	if(send == SelectButtonC1A1) {
-	  LineEditC1A1->setFocus() ;
-	  myEditCurrentArgument = LineEditC1A1;	  
-	  SelectionIntoArgument() ;
-	}
-	break;
-      }
-   case 1:
-      {
-	if(send == SelectButtonC2A1) {
-	  LineEditC2A1->setFocus() ;
-	  myEditCurrentArgument = LineEditC2A1;	  
-	  SelectionIntoArgument() ;
-	}
-	break;
-      }
-    }
-  return ;
+  QPushButton* send = (QPushButton*)sender();  
+
+  if(send == Group1->PushButton1) {
+    Group1->LineEdit1->setFocus();
+    myEditCurrentArgument = Group1->LineEdit1;
+  }
+  else if(send == Group2->PushButton1) {
+    Group2->LineEdit1->setFocus();
+    myEditCurrentArgument = Group2->LineEdit1;
+  }
+  this->SelectionIntoArgument();
+  return;
 }
 
 
@@ -620,23 +407,15 @@ void RepairGUI_SuppressHoleDlg::SetEditCurrentArgument()
 void RepairGUI_SuppressHoleDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if( send == LineEditC1A1 )
-    myEditCurrentArgument = LineEditC1A1 ;
-  else if ( send == LineEditC2A1)
-    myEditCurrentArgument = LineEditC2A1; 
+  if(send == Group1->LineEdit1)
+    myEditCurrentArgument = Group1->LineEdit1;
+  else if (send == Group2->LineEdit1)
+    myEditCurrentArgument = Group2->LineEdit1;
   else
-    return ;
-  
-  /* User name of object input management                          */
-  /* If successfull the selection is changed and signal emitted... */
-  /* so SelectionIntoArgument() is automatically called.           */
-  const QString objectUserName = myEditCurrentArgument->text() ;
-  QWidget* thisWidget = (QWidget*)this ;
-  if( myGeomBase->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
-    myEditCurrentArgument->setText( objectUserName ) ;
-  }
-  
-  return ;
+    return;
+
+  GEOMBase_Skeleton::LineEditReturnPressed();
+  return;
 }
 
 
@@ -646,22 +425,9 @@ void RepairGUI_SuppressHoleDlg::LineEditReturnPressed()
 //=================================================================================
 void RepairGUI_SuppressHoleDlg::DeactivateActiveDialog()
 {
-  if ( GroupConstructors->isEnabled() ) {
-    
-    this->ResetStateOfDialog() ;
-    
-    disconnect( mySelection, 0, this, 0 );
-    GroupConstructors->setEnabled(false) ;    
-    GroupC1->setEnabled(false) ;
-    GroupC2->setEnabled(false) ;
-    GroupButtons->setEnabled(false) ;
-
-    //myGeomGUI->ResetState() ;    
-    myGeomGUI->SetActiveDialogBox(0) ;
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true) ;
-  }
-  return ;
+  this->ResetStateOfDialog();
+  GEOMBase_Skeleton::DeactivateActiveDialog();
+  return;
 }
 
 
@@ -671,17 +437,9 @@ void RepairGUI_SuppressHoleDlg::DeactivateActiveDialog()
 //=================================================================================
 void RepairGUI_SuppressHoleDlg::ActivateThisDialog()
 {
-  /* Emit a signal to deactivate other active dialog */
-  myGeomGUI->EmitSignalDeactivateDialog() ;
-
-  GroupConstructors->setEnabled(true) ;
-  GroupC1->setEnabled(true) ;
-  GroupC2->setEnabled(true) ;
-  GroupButtons->setEnabled(true) ;
-
-  connect ( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-  myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;
-  return ;
+  GEOMBase_Skeleton::ActivateThisDialog();
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  return;
 }
 
 
@@ -691,10 +449,10 @@ void RepairGUI_SuppressHoleDlg::ActivateThisDialog()
 //=================================================================================
 void RepairGUI_SuppressHoleDlg::enterEvent(QEvent* e)
 {
-  if ( GroupConstructors->isEnabled() )
-    return ;  
-  ActivateThisDialog() ;
-  return ;
+  if(GroupConstructors->isEnabled())
+    return;
+  this->ActivateThisDialog();
+  return;
 }
 
 
@@ -702,11 +460,11 @@ void RepairGUI_SuppressHoleDlg::enterEvent(QEvent* e)
 // function : closeEvent()
 // purpose  :
 //=================================================================================
-void RepairGUI_SuppressHoleDlg::closeEvent( QCloseEvent* e )
+void RepairGUI_SuppressHoleDlg::closeEvent(QCloseEvent* e)
 {
   /* same than click on cancel button */
-  this->ClickOnClose() ;
-  return ;
+  this->ClickOnCancel();
+  return;
 }
 
 
@@ -717,32 +475,23 @@ void RepairGUI_SuppressHoleDlg::closeEvent( QCloseEvent* e )
 //=================================================================================
 void RepairGUI_SuppressHoleDlg::ActivateUserFaceSelection()
 {
-  if( !this->myOkShape ) {
-    this->ResetStateOfDialog() ;
-    QAD_Application::getDesktop()->putInfo( tr("GEOM_MAIN_OBJECT") ) ;
-    return ;
-  }
-  
-  /* Test the viewer type VTK */
-  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
-    QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
-    this->ResetStateOfDialog() ;  
+  if(!this->myOkShape) {
+    this->ResetStateOfDialog();
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_MAIN_OBJECT"));
     return;
   }
   
-  if( CheckBox1->isChecked() ) {
-    
+  if(Group1->CheckButton1->isChecked()) {
     /* local context is opened into the method : Prepare GEOM::FACE sub selection */
     DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->PrepareSubShapeSelection( int(TopAbs_FACE), this->myLocalContextId ) ;    
-    myUseLocalContext = true ;
-    QAD_Application::getDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECTFACE") ) ;
+    myDisplayGUI->PrepareSubShapeSelection(int(TopAbs_FACE), myLocalContextId);    
+    myUseLocalContext = true;
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_SUPPRESSHOLE_SELECTFACE"));
   } 
-  else {
-    this->ResetPartial() ;
-  }
+  else
+    this->ResetPartial();
 
-  return ;
+  return;
 }
 
 
@@ -754,58 +503,47 @@ void RepairGUI_SuppressHoleDlg::ActivateUserFaceSelection()
 void RepairGUI_SuppressHoleDlg::ActivateUserWireSelection()
 {
   
-  if( !this->myOkShape ) {
-    this->ResetStateOfDialog() ;
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_MAIN_OBJECT") ) ;
-    return ;
+  if(!myOkShape) {
+    this->ResetStateOfDialog();
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_MAIN_OBJECT"));
+    return;
   } 
-  
-  /* Test the type of viewer VTK */
-  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
-    this->ResetStateOfDialog() ;
+
+  if(Group1->CheckButton1->isChecked()) {
+    /* Get sub shape selection GEOM::FACE : local context is closed */    
+    bool aTest = this->GetIndexSubShapeSelected(myShape, int(TopAbs_FACE), myListOfIdFace, myLocalContextId, myUseLocalContext);
+    
+    /* Display all objects so that next method using ic can memorize them */
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->OnDisplayAll(true);
+    if(!aTest || myListOfIdFace->length() != 1) {
+      Group1->CheckButton1->setChecked(FALSE);
+      myOkSelectFace = false;
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT")); 
+    }
+    else
+      myOkSelectFace = true;
+  }
+  else {
+    this->ResetPartial();
     return;
   }
-
-  if( CheckBox1->isChecked() ) {
-    
-    /* Get sub shape selection GEOM::FACE : local context is closed */    
-    bool aTest = this->GetIndexSubShapeSelected(myShape, int(TopAbs_FACE), myListOfIdFace, myLocalContextId, myUseLocalContext) ;
-    
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true) ; /* Display all objects so that next method using ic can memorize them */
-    if( !aTest || myListOfIdFace->length() != 1 ) {
-      CheckBox1->setChecked(FALSE) ;
-      myOkSelectFace = false ;
-      QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ; 
-    }
-    else {
-      myOkSelectFace = true ;
-    }
-  }
-  else {
-    this->ResetPartial() ;
-    return ;
-  }
   
 
-  if( CheckBox2->isChecked() ) {
-    
+  if(Group1->CheckButton2->isChecked()) {
     /* Get the face selection */
-    this->myFace = FaceFromList(myShape, myListOfIdFace) ;    
+    myFace = FaceFromList(myShape, myListOfIdFace);    
     /* Local context is opened into the method : Prepare GEOM::WIRE sub selection into a face */
     DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->PrepareSubShapeSelectionArgumentShape( this->myFace, int(TopAbs_WIRE), this->myLocalContextId ) ;    
-    myUseLocalContext = true ;
-    QAD_Application::getDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECTWIRE") ) ;
+    myDisplayGUI->PrepareSubShapeSelectionArgumentShape(myFace, int(TopAbs_WIRE), myLocalContextId);    
+    myUseLocalContext = true;
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_SUPPRESSHOLE_SELECTWIRE"));
   }
   else {
-    this->ResetPartial() ;
+    this->ResetPartial();
   }
-  
-  return ;
+  return;
 }
-
 
 
 //=================================================================================
@@ -816,54 +554,44 @@ void RepairGUI_SuppressHoleDlg::ActivateUserWireSelection()
 void RepairGUI_SuppressHoleDlg::ActivateUserEndFaceSelection()
 {
   
-  if( !this->myOkShape ) {
-    this->ResetStateOfDialog() ;
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_MAIN_OBJECT") ) ;
-    return ;
-  }
-  
-  /* Test the type of viewer VTK */
-  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
-    this->ResetStateOfDialog() ;
+  if(!myOkShape) {
+    this->ResetStateOfDialog();
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_MAIN_OBJECT"));
     return;
   }
- 
-   
-  if( CheckBox2->isChecked() ) {
+  
+  if(Group1->CheckButton2->isChecked()) {
     /* Call method to get sub shape selection for the GEOM::WIRE into myFace : local context is closed */
-    bool aTest = this->GetIndexSubShapeSelected(this->myFace, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
+    bool aTest = this->GetIndexSubShapeSelected(myFace, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext);
     
+    /* Display all objects so that next method using ic can memorize them */
     DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true) ; /* Display all objects so that next method using ic can memorize them */
+    myDisplayGUI->OnDisplayAll(true);
     
-    if( !aTest || myListOfIdWire->length() != 1 ) {
-      CheckBox2->setChecked(FALSE) ;
-      CheckBox3->setChecked(FALSE) ;
-      QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ;     
-      return ;
+    if(!aTest || myListOfIdWire->length() != 1) {
+      Group1->CheckButton2->setChecked(FALSE);
+      Group1->CheckButton3->setChecked(FALSE);
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));     
+      return;
     }
   }
   else {
-    this->ResetPartial() ;
-    return ;
+    this->ResetPartial();
+    return;
   }
   
   
-  if( CheckBox3->isChecked() ) {    
+  if(Group1->CheckButton3->isChecked()) {    
     /* Local context is opened into the method : prepare GEOM::FACE(end) into myShape sub selection */
     DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->PrepareSubShapeSelectionArgumentShape( this->myShape, int(TopAbs_FACE), this->myLocalContextId ) ;    
-    myUseLocalContext = true ;
-    QAD_Application::getDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECTFACE_END") ) ;
+    myDisplayGUI->PrepareSubShapeSelectionArgumentShape(myShape, int(TopAbs_FACE), myLocalContextId);    
+    myUseLocalContext = true;
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_SUPPRESSHOLE_SELECTFACE_END"));
   }
-  else {
-    this->ResetPartial() ;
-  }
-
-  return ;
+  else
+    this->ResetPartial();
+  return;
 }
-
 
 
 //=================================================================================
@@ -875,32 +603,23 @@ void RepairGUI_SuppressHoleDlg::ActivateUserEndFaceSelection()
 void RepairGUI_SuppressHoleDlg::ActivateUserWiresOnFaceShellSelection()
 {
   
-  if( !this->myOkShape ) {
-    this->ResetStateOfDialog() ;
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_MAIN_OBJECT") ) ;
-    return ;
-  }
-  
-  /* Test the type of viewer VTK */
-  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
-    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
-    this->ResetStateOfDialog() ;
+  if(!myOkShape) {
+    this->ResetStateOfDialog();
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_MAIN_OBJECT"));
     return;
   }
   
-  if( CheckBoxC2_1->isChecked() ) {    
+  if(Group2->CheckButton1->isChecked()) {    
     /* Local context is opened to prepare GEOM::WIRE(S) selection into 'myShape' that is a (main) face */
     DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->PrepareSubShapeSelectionArgumentShape( this->myShape, int(TopAbs_WIRE), this->myLocalContextId ) ;    
-    myUseLocalContext = true ;
-    QAD_Application::getDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECT_HOLES_ON_FACE") ) ;
+    myDisplayGUI->PrepareSubShapeSelectionArgumentShape(myShape, int(TopAbs_WIRE), myLocalContextId);    
+    myUseLocalContext = true;
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_SUPPRESSHOLE_SELECT_HOLES_ON_FACE"));
   }
-  else {
-    this->ResetPartial() ;
-  }
-  return ;
+  else
+    this->ResetPartial();
+  return;
 }
-
 
 
 //=================================================================================
@@ -910,26 +629,24 @@ void RepairGUI_SuppressHoleDlg::ActivateUserWiresOnFaceShellSelection()
 //          : This allows opening a local context with this face loaded.
 //          : See : myGeomBase->PrepareSubShapeSelectionArgumentShape(...)
 //=================================================================================
-TopoDS_Shape RepairGUI_SuppressHoleDlg::FaceFromList( const TopoDS_Shape& aShape,
-							const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfSub )
+TopoDS_Shape RepairGUI_SuppressHoleDlg::FaceFromList(const TopoDS_Shape& aShape,
+						     const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfSub)
 {
-  TopoDS_Shape tds ;
-  tds.Nullify() ;
-  if( ListOfSub.length() != 1 || aShape.IsNull() )
-    return tds ;
+  TopoDS_Shape tds;
+  tds.Nullify();
+  if(ListOfSub.length() != 1 || aShape.IsNull())
+    return tds;
   
-  int i = ListOfSub[0] ;
-  TopExp_Explorer exp ;
-  int j = 1 ; 
-  for( exp.Init(aShape, TopAbs_FACE); exp.More(); exp.Next() ) {
+  int i = ListOfSub[0];
+  TopExp_Explorer exp;
+  int j = 1; 
+  for(exp.Init(aShape, TopAbs_FACE); exp.More(); exp.Next()) {
     if(j == i)
-      return exp.Current() ;    
-    j++ ;
+      return exp.Current();    
+    j++;
   }
-  return tds ;
+  return tds;
 }
-
-
 
 
 //=================================================================================
@@ -938,13 +655,14 @@ TopoDS_Shape RepairGUI_SuppressHoleDlg::FaceFromList( const TopoDS_Shape& aShape
 //=================================================================================
 void RepairGUI_SuppressHoleDlg::ResetStateOfDialog()
 {
-  this->myOkShape = false ;
-  this->myEditCurrentArgument->setText("") ;
+  myOkShape = false;
+  myEditCurrentArgument->setText("");
+  QApplication::restoreOverrideCursor();
   
   /* Partial reset and more ...*/
-  this->ResetPartial() ;
+  this->ResetPartial();
 
-  return ;
+  return;
 }
 
 
@@ -955,29 +673,24 @@ void RepairGUI_SuppressHoleDlg::ResetStateOfDialog()
 void RepairGUI_SuppressHoleDlg::ResetPartial()
 {
   /* Select sub shape modes not checked */
-  this->myOkSelectFace = false ;
-  this->CheckBox1->setChecked( FALSE );
-  this->CheckBox2->setChecked( FALSE );
-  this->CheckBox3->setChecked( FALSE );
-  this->CheckBoxC2_1->setChecked( FALSE );
+  myOkSelectFace = false ;
+  Group1->CheckButton1->setChecked(FALSE);
+  Group1->CheckButton2->setChecked(FALSE);
+  Group1->CheckButton3->setChecked(FALSE);
+  Group2->CheckButton1->setChecked(FALSE);
   
-  myListOfIdFace->length(0) ;
-  myListOfIdWire->length(0) ;
-  myListOfIdEndFace->length(0) ;
-  
-  /* Close its local contact if opened */
-  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext(); //    myIC = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getViewerOCC()->getAISContext();
-    if( this->myUseLocalContext ) {
-      myIC->CloseLocalContext(this->myLocalContextId) ;
-      this->myUseLocalContext = false ;
-      DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->OnDisplayAll(true) ;
-    }
-  }
+  myListOfIdFace->length(0);
+  myListOfIdWire->length(0);
+  myListOfIdEndFace->length(0);
 
-  return ;
+  /* Close its local contact if opened */
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myUseLocalContext) {
+    myIC->CloseLocalContext(myLocalContextId);
+    myUseLocalContext = false;
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->OnDisplayAll(true);
+  }
+  return;
 }
 
 
@@ -993,7 +706,7 @@ bool RepairGUI_SuppressHoleDlg::GetIndexSubShapeSelected(const TopoDS_Shape& Sha
     return false;
   
   OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+  Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
 
   ic->InitSelected();
   int nbSelected = ic->NbSelected();
