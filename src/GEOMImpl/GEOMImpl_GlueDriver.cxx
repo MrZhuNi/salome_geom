@@ -84,7 +84,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesWithWarnings (const TopoDS_Shape& the
       {
         Standard_Integer nbAlone = aGluer.AloneShapes();
         theWarning = TCollection_AsciiString(nbAlone);
-        theWarning += " solids can not be glued by faces";
+        theWarning += " solid(s) can not be glued by faces";
       }
       break;
     default:
