@@ -30,14 +30,29 @@ using namespace std;
 #include "RepairGUI_FreeFacesDlg.h"
 
 #include "QAD_Desktop.h"
-#include "QAD_SpinBoxDbl.h"
+#include "QAD_WaitCursor.h"
 
-#include "OCCViewer_Viewer3d.h"
-#include "DlgRef_1Sel_Ext.h"
 #include "SALOME_ListIteratorOfListIO.hxx"
 
 #include "GEOMImpl_Types.hxx"
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopExp.hxx>
+#include "GEOMBase.h"
+#include "GeometryGUI.h"
+#include "GEOM_Displayer.h"
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
+#include "SALOME_Selection.h"
+#include "SALOME_Prs.h"
 
+
+#include <qlineedit.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qgroupbox.h>
+#include <qpushbutton.h>
+#define SPACING 5
+#define MARGIN 10
+#define MIN_WIDTH 200
 
 
 //=================================================================================
@@ -47,31 +62,55 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg(QWidget* parent, const char* name, SALOME_Selection* theSelection, bool modal, WFlags fl)
+:QDialog( parent, "RepairGUI_FreeBoundDlg", false,
+    WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose )
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_FREE_FACES")));
+  myDisplayer = 0;
+
+  setSizeGripEnabled( TRUE );
   QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_FREE_FACES_TITLE"));
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_FREE_FACES_TITLE"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_1Sel_Ext(this, "GroupPoints");
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_FREE_FACES"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_SELECTED_SHAPE"));
-  GroupPoints->PushButton1->setPixmap(image1);
-  GroupPoints->LineEdit1->setReadOnly( true );
-  Layout1->removeChild( GroupBoxName );
-  Layout1->addWidget(GroupPoints, 1, 0);
+  QGroupBox* aMainGrp = new QGroupBox( 1, Qt::Horizontal, tr( "GEOM_SELECTED_SHAPE" ), this );
+  
 
+  QGroupBox* aSelGrp = new QGroupBox( 1, Qt::Vertical, aMainGrp );
+
+  aSelGrp->setInsideMargin( 0 );
+  aSelGrp->setFrameStyle( QFrame::NoFrame );
+  new QLabel( tr( "GEOM_OBJECT" ), aSelGrp );
+  mySelBtn = new QPushButton( aSelGrp );
+  mySelBtn->setPixmap( image1 );
+  myEdit = new QLineEdit( aSelGrp );
+  myEdit->setReadOnly( true );
+  myEdit->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
+  myEdit->setMinimumWidth( MIN_WIDTH );
+
+  QFrame* aFrame = new QFrame( this );
+  aFrame->setFrameStyle( QFrame::Box | QFrame::Sunken );
+  QPushButton* aCloseBtn = new QPushButton( tr( "GEOM_BUT_CLOSE" ), aFrame );
+  QHBoxLayout* aBtnLay = new QHBoxLayout( aFrame, MARGIN, SPACING );
+  aBtnLay->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ) );
+  aBtnLay->addWidget( aCloseBtn );
+  aBtnLay->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ) );
+
+  QVBoxLayout* aLay = new QVBoxLayout( this );
+  aLay->setSpacing( SPACING );
+  aLay->setMargin( MARGIN );
+  aLay->addWidget( aMainGrp );
+  aLay->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ) );
+  aLay->addWidget( aFrame );
+  
+  connect( aCloseBtn, SIGNAL( clicked() ), SLOT( onClose() ) );
+  connect( mySelBtn,    SIGNAL( clicked() ),
+           this,        SLOT  ( onSetEditCurrentArgument() ) );
   /***************************************************************/
 
-  Init();
+  Init( theSelection );
 }
 
 
@@ -85,151 +124,90 @@ RepairGUI_FreeFacesDlg::~RepairGUI_FreeFacesDlg()
 
 
 //=================================================================================
+// function : onClose
+// purpose  : SLOT. Called when "close" button pressed. Close dialog
+//=================================================================================
+void RepairGUI_FreeFacesDlg::onClose()
+{
+  globalSelection();
+  disconnect( mySelection, 0, this, 0 );
+  GeometryGUI::GetGeomGUI()->SetActiveDialogBox( 0 );
+  reject();
+  erasePreview();
+}
+
+//=================================================================================
+// function : onDeactivate
+// purpose  : Deactivate this dialog
+//=================================================================================
+void RepairGUI_FreeFacesDlg::onDeactivate()
+{
+  setEnabled(false);
+  globalSelection();
+  disconnect( mySelection, 0, this, 0 );
+  GeometryGUI::GetGeomGUI()->SetActiveDialogBox( 0 );
+}
+
+//=================================================================================
+// function : onActivate
+// purpose  : Activate this dialog
+//=================================================================================
+void RepairGUI_FreeFacesDlg::onActivate()
+{
+  GeometryGUI::GetGeomGUI()->EmitSignalDeactivateDialog();
+  setEnabled( true );
+  GeometryGUI::GetGeomGUI()->SetActiveDialogBox( this );
+  connect( mySelection, SIGNAL( currentSelectionChanged() ), SLOT  ( onSelectionDone() ) );
+  activateSelection();
+}
+
+//=================================================================================
 // function : Init()
 // purpose  :
 //=================================================================================
-void RepairGUI_FreeFacesDlg::Init()
+void RepairGUI_FreeFacesDlg::Init(SALOME_Selection* theSel)
 {
-  /* init variables */
-  myEditCurrentArgument = GroupPoints->LineEdit1;
+  myObj = GEOM::GEOM_Object::_nil();
 
-  myObject = GEOM::GEOM_Object::_nil();
-
-  myGeomGUI->SetState( 0 );
-  globalSelection( GEOM_COMPOUND );
+  mySelection = theSel;
 
   /* signals and slots connections */
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  GeometryGUI* aGeomGUI = GeometryGUI::GetGeomGUI();
+  connect( aGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), SLOT  ( onDeactivate() ) );
+  connect( mySelection, SIGNAL( currentSelectionChanged() ), SLOT  ( onSelectionDone() ) );
 
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-
+  activateSelection();
+  onSelectionDone();
 }
 
-
 //=================================================================================
-// function : ClickOnOk()
-// purpose  : Same than click on apply but close this dialog.
+// function : onSelectionDone
+// purpose  : SLOT. Called when selection changed.
 //=================================================================================
-void RepairGUI_FreeFacesDlg::ClickOnOk()
-{
-  if ( ClickOnApply() )
-    ClickOnCancel();
-}
-
-
-
-//=================================================================================
-// function : ClickOnApply()
-// purpose  :
-//=================================================================================
-bool RepairGUI_FreeFacesDlg::ClickOnApply()
-{
-  if ( !onAccept() )
-    return false;
-
-  initName();
-
-  GroupPoints->LineEdit1->setText("");
-  myObject = GEOM::GEOM_Object::_nil();
-
-  globalSelection( GEOM_COMPOUND );
-
-  return true;
-}
-
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void RepairGUI_FreeFacesDlg::ClickOnCancel()
-{
-  GEOMBase_Skeleton::ClickOnCancel();
-}
-
-
-//=================================================================================
-// function : SelectionIntoArgument()
-// purpose  : Called when selection
-//=================================================================================
-void RepairGUI_FreeFacesDlg::SelectionIntoArgument()
+void RepairGUI_FreeFacesDlg::onSelectionDone()
 {
   erasePreview();
-  myEditCurrentArgument->setText("");
-  myObject = GEOM::GEOM_Object::_nil();
+  if( mySelection->IObjectCount() != 1 )
+  {
+    myEdit->setText( "" );
+    return;
+  }
 
-  if ( mySelection->IObjectCount() == 1 ) {
-    Handle(SALOME_InteractiveObject) anIO = mySelection->firstIObject();
-    Standard_Boolean aRes;
-    myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-    if ( aRes )
-      myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
+  Standard_Boolean isOk = Standard_False;
+  GEOM::GEOM_Object_var anObj =
+    GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), isOk );
+
+  if ( !isOk || anObj->_is_nil() || !GEOMBase::IsShape( anObj ) )
+  {
+    myEdit->setText( "" );
+    return;
+  }
+  else
+  {
+    myObj = anObj;
+    displayPreview( false, true, true, 3 );
   }
 }
-
-//=================================================================================
-// function : SetEditCurrentArgument()
-// purpose  :
-//=================================================================================
-void RepairGUI_FreeFacesDlg::SetEditCurrentArgument()
-{
-  const QObject* send = sender();
-  if ( send == GroupPoints->PushButton1 )  {
-    myEditCurrentArgument->setFocus();
-    SelectionIntoArgument();
-  }
-}
-
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void RepairGUI_FreeFacesDlg::LineEditReturnPressed()
-{
-  const QObject* send = sender();
-  if( send == GroupPoints->LineEdit1 ) {
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  :
-//=================================================================================
-void RepairGUI_FreeFacesDlg::DeactivateActiveDialog()
-{
-  myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::DeactivateActiveDialog();
-}
-
-
-//=================================================================================
-// function : ActivateThisDialog()
-// purpose  :
-//=================================================================================
-void RepairGUI_FreeFacesDlg::ActivateThisDialog()
-{
-  GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-
-  GroupPoints->LineEdit1->setText("");
-  myObject = GEOM::GEOM_Object::_nil();
-
-  myGeomGUI->SetState( 0 );
-  globalSelection( GEOM_COMPOUND );
-}
-
 
 //=================================================================================
 // function : enterEvent()
@@ -237,10 +215,20 @@ void RepairGUI_FreeFacesDlg::ActivateThisDialog()
 //=================================================================================
 void RepairGUI_FreeFacesDlg::enterEvent(QEvent* e)
 {
-  if ( !GroupConstructors->isEnabled() )
-    ActivateThisDialog();
+  onActivate();
 }
 
+//=================================================================================
+// function : activateSelection
+// purpose  : activate selection of faces, shells, and solids
+//=================================================================================
+void RepairGUI_FreeFacesDlg::activateSelection()
+{
+  TColStd_MapOfInteger aMap;
+  aMap.Add( GEOM_SOLID );
+  aMap.Add( GEOM_COMPOUND );
+  globalSelection( aMap );
+}
 
 //=================================================================================
 // function : closeEvent()
@@ -248,8 +236,7 @@ void RepairGUI_FreeFacesDlg::enterEvent(QEvent* e)
 //=================================================================================
 void RepairGUI_FreeFacesDlg::closeEvent(QCloseEvent* e)
 {
-  myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
+  onClose();
 }
 
 //=================================================================================
@@ -267,7 +254,7 @@ GEOM::GEOM_IOperations_ptr RepairGUI_FreeFacesDlg::createOperation()
 //=================================================================================
 bool RepairGUI_FreeFacesDlg::isValid( QString& msg )
 {
-  return !myObject->_is_nil() ;
+  return !myObj->_is_nil() ;
 }
 
 //=================================================================================
@@ -277,11 +264,63 @@ bool RepairGUI_FreeFacesDlg::isValid( QString& msg )
 bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
 {
   bool aResult = false;
-  GEOM::ListOfLong_var aCurrList = GEOM::GEOM_IShapesOperations::_narrow( getOperation() )->GetFreeFacesIDs( myObject );
-  for ( int i = 0, n = aCurrList->length(); i < n; i++ )
+  GEOM::ListOfLong_var aFaceLst = 
+    GEOM::GEOM_IShapesOperations::_narrow( getOperation() )->GetFreeFacesIDs( myObj );
+  TopoDS_Shape aSelShape;
+  TopoDS_Shape aFace; 
+  TopTools_IndexedMapOfShape anIndices;
+  if ( !myObj->_is_nil() && GEOMBase::GetShape( myObj, aSelShape ) )
   {
-    //NOT yet implemented
-  }
+    myEdit->setText( GEOMBase::GetName( myObj ) );
+    QString aMess;
+    if ( !isValid( aMess ) )
+    {
+      erasePreview( true );
+      return false;
+    }
 
+    TopExp::MapShapes( aSelShape, anIndices);
+    SALOME_Prs* aPrs = 0;
+    QAD_WaitCursor wc;
+
+    for ( int i = 0, n = aFaceLst->length(); i < n; i++ )
+    {
+      aFace = anIndices.FindKey( aFaceLst[i] );
+      try
+      {
+        getDisplayer()->SetColor( Quantity_NOC_RED );
+        getDisplayer()->SetToActivate( false );
+	aPrs = !aFace.IsNull() ? getDisplayer()->BuildPrs( aFace ) : 0;
+        if ( aPrs )
+	  displayPreview( aPrs, true );
+      }
+      catch( const SALOME::SALOME_Exception& e )
+      {
+        QtCatchCorbaException( e );
+      }
+    }
+  }
   return aResult;
 }
+
+//================================================================
+// Function : getDisplayer
+// Purpose  :
+//================================================================
+GEOM_Displayer* RepairGUI_FreeFacesDlg::getDisplayer()
+{
+  if ( !myDisplayer )
+    myDisplayer = new GEOM_Displayer();
+  return myDisplayer;
+}
+
+//=================================================================================
+// function : SetEditCurrentArgument
+// purpose  :
+//=================================================================================
+void RepairGUI_FreeFacesDlg::onSetEditCurrentArgument()
+{
+  myEdit->setFocus();
+  onSelectionDone();
+}
+

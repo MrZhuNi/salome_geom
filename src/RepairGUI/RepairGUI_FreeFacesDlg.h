@@ -29,16 +29,21 @@
 #ifndef DIALOGBOX_FreeFaces_H
 #define DIALOGBOX_FreeFaces_H
 
-#include "GEOMBase_Skeleton.h"
+#include <qdialog.h>
+#include "GEOMBase_Helper.h"
 
-class QAD_SpinBoxDbl;
-class DlgRef_1Sel_Ext;
+class GEOM_Displayer;
+class SALOME_Selection;
+class SALOME_Prs;
+class QPushButton;
+class QLineEdit;
 
 //=================================================================================
 // class    : RepairGUI_FreeFacesDlg
 // purpose  :
 //=================================================================================
-class RepairGUI_FreeFacesDlg : public GEOMBase_Skeleton
+class RepairGUI_FreeFacesDlg : public QDialog,
+                               public GEOMBase_Helper
 {
     Q_OBJECT
 
@@ -53,26 +58,29 @@ protected:
     virtual bool execute( ObjectList& objects );
 
 private :
-    void Init();
+
+    void Init(SALOME_Selection*);
     void enterEvent(QEvent* e);
     void closeEvent(QCloseEvent* e);
-    void initSelection();
-
-    GEOM::GEOM_Object_var myObject;
-
-    DlgRef_1Sel_Ext* GroupPoints;
+    void activateSelection();
+    GEOM_Displayer*           getDisplayer();
 
 private slots:
-    void ClickOnOk();
-    bool ClickOnApply();
-    void ClickOnCancel();
 
-    void ActivateThisDialog();
-    void DeactivateActiveDialog();
+  void                                  onClose();
+  void                                  onDeactivate();
+  void                                  onActivate();
+  void                                  onSelectionDone();
+  void                                  onSetEditCurrentArgument();                              
 
-    void LineEditReturnPressed();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
+private :
+
+    GEOM_Displayer*        myDisplayer;
+    GEOM::GEOM_Object_var  myObj;
+    SALOME_Selection*      mySelection;
+    QPushButton*           mySelBtn;
+    QLineEdit*             myEdit;
+
 };
 
 #endif // DIALOGBOX_FreeFaces_H
