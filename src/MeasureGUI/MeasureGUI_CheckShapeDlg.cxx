@@ -31,6 +31,8 @@ using namespace std;
 
 #include <BRepCheck_Analyzer.hxx>
 
+#include <qtextedit.h>
+
 //=================================================================================
 // class    : MeasureGUI_CheckShapeDlg()
 // purpose  : Constructs a MeasureGUI_CheckShapeDlg which is a child of 'parent', with the 

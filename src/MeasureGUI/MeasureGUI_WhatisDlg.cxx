@@ -35,6 +35,8 @@ using namespace std;
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopoDS_Iterator.hxx>
 
+#include <qtextedit.h>
+
 //=================================================================================
 // class    : MeasureGUI_WhatisDlg()
 // purpose  : Constructs a MeasureGUI_WhatisDlg which is a child of 'parent', with the 
