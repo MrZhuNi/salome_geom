@@ -2177,6 +2177,7 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocksOld
   TColStd_MapOfInteger aCurrentSet;
   for (ibl = 1; ibl <= nbBlocks; ibl++) {
     if (!aProcessedMap.Contains(ibl)) {
+      aCurrentSet.Clear();
       FindConnected(ibl, aRelations, aProcessedMap, aCurrentSet);
       if (aCurrentSet.Extent() > aLargestSet.Extent()) {
         aLargestSet = aCurrentSet;
@@ -2409,6 +2410,7 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
   TColStd_MapOfInteger aCurrentSet;
   for (ibl = 1; ibl <= nbBlocks; ibl++) {
     if (!aProcessedMap.Contains(ibl)) {
+      aCurrentSet.Clear();
       FindConnected(ibl, aRelations, aProcessedMap, aCurrentSet);
       if (aCurrentSet.Extent() > aLargestSet.Extent()) {
         aLargestSet = aCurrentSet;
