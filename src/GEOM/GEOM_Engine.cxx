@@ -395,18 +395,31 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     anUpdatedScript += aScript.SubString(aStart, aSeq->Value(i)-1);
     anEntry = aScript.SubString(aSeq->Value(i), aSeq->Value(i+1));
     if(theObjectNames.IsBound(anEntry)) {
-      aName = theObjectNames.Find(anEntry); 
+      aName = theObjectNames.Find(anEntry);
+      if ( theObjectNames.IsBound( aName ) && anEntry != theObjectNames( aName ))
+      {  // diff objects have same name - make a new name
+        TCollection_AsciiString aName2;
+        Standard_Integer i = 0;
+        do {
+          aName2 = aName + "_" + ++i;
+        } while ( theObjectNames.IsBound( aName2 ) && anEntry != theObjectNames( aName2 ));
+        aName = aName2;
+        theObjectNames( anEntry ) = aName;
+      }
     }
     else {
-      aName = aBaseName + TCollection_AsciiString(++objectCounter);
-      while(theObjectNames.IsBound(aName)) aName = aBaseName + TCollection_AsciiString(++objectCounter);
+      do {
+        aName = aBaseName + TCollection_AsciiString(++objectCounter);
+      } while(theObjectNames.IsBound(aName));
+      theObjectNames.Bind(anEntry, aName);
     }
+    theObjectNames.Bind(aName, anEntry); // to detect same name of diff objects
 
     anUpdatedScript += aName;
     aNames.Bind(aName, "1");
     aStart = aSeq->Value(i+1) + 1;
   }
- 
+
   //Add final part of the script
   if(aSeq->Value(aLen) < aScriptLength)  anUpdatedScript += aScript.SubString(aSeq->Value(aLen)+1, aScriptLength);
  
@@ -474,7 +487,7 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
 	if(c == 58) isFound = Standard_True;
       }
       
-      if(isFound) {
+      if(isFound && arr[j-2] != 58) { // last char should be a diggit
 	aSeq->Append(i+1); // +1 because AsciiString starts from 1
 	aSeq->Append(j-1);
       }
