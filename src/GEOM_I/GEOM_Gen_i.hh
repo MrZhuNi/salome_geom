@@ -181,6 +181,8 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen, public Engines_Component_i
 
   char* GetDumpName (const char* theStudyEntry);
 
+  GEOM::string_array* GetAllDumpNames();
+
   //********************************************************************************************************//
   //     Internal methods
   //********************************************************************************************************//

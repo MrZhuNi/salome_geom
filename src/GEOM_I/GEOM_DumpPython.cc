@@ -6,6 +6,11 @@ using namespace std;
 #include <TColStd_HSequenceOfAsciiString.hxx>
 #include <Resource_DataMapOfAsciiStringAsciiString.hxx>
 
+//=======================================================================
+//function : DumpPython
+//purpose  : 
+//=======================================================================
+
 Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy, 
 					 CORBA::Boolean isPublished, 
 					 CORBA::Boolean& isValidScript)
@@ -68,3 +73,22 @@ char* GEOM_Gen_i::GetDumpName (const char* theStudyEntry)
   return NULL;
 }
 
+//=======================================================================
+//function : GetAllDumpNames
+//purpose  : 
+//=======================================================================
+
+GEOM::string_array* GEOM_Gen_i::GetAllDumpNames()
+{
+  Handle(TColStd_HSequenceOfAsciiString) aHSeq = _impl->GetAllDumpNames();
+  int i = 0, aLen = aHSeq->Length();
+
+  GEOM::string_array_var seq = new GEOM::string_array();
+  seq->length(aLen);
+
+  for (; i < aLen; i++) {
+    seq[i] = CORBA::string_dup(aHSeq->Value(i + 1).ToCString());
+  }
+
+  return seq._retn();
+}
