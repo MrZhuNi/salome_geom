@@ -270,6 +270,15 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
   if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
 
+  if(myConstructorId == 1) {
+    if(S.ShapeType() > TopAbs_EDGE)
+      return;
+  }
+  else if(myConstructorId == 2) {
+    if(S.ShapeType() > TopAbs_FACE)
+      return;
+  }
+
   if(myEditCurrentArgument == Group1->LineEdit1) {
     myShape1 = S;
     myGeomShape1 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
