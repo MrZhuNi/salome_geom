@@ -238,7 +238,9 @@ module GEOM
     GEOM_Shape MakeWire     (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
     GEOM_Shape MakeCompound (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
     GEOM_Shape MakeFace     (in GEOM_Shape shapeWire,
-			     in boolean wantplanarface ) raises (SALOME::SALOME_Exception) ;
+			     in boolean wantplanarface) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeFaces    (in ListOfIOR ListShape,
+			     in boolean wantplanarface) raises (SALOME::SALOME_Exception) ;
     GEOM_Shape MakeShell    (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
     GEOM_Shape MakeSolid    (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
 

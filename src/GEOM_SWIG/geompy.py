@@ -178,6 +178,12 @@ def MakeCircle(p1,d1,radius):
     anObj._set_Name(ior)
     return anObj
 
+def MakeEllipse(p1,d1,radiusMaj,radiusMin):  
+    anObj = geom.MakeEllipse(p1,d1,radiusMaj, radiusMin)
+    ior = orb.object_to_string(anObj)
+    anObj._set_Name(ior)
+    return anObj
+
 def MakePlane(p1,d1,trimsize): 
     anObj = geom.MakePlane(p1,d1,trimsize)
     ior = salome.orb.object_to_string(anObj)
@@ -236,6 +242,12 @@ def MakeWire(ListShape):
 
 def MakeFace(aShapeWire,WantPlanarFace):
     anObj = geom.MakeFace(aShapeWire,WantPlanarFace)
+    ior = salome.orb.object_to_string(anObj)
+    anObj._set_Name(ior)
+    return anObj
+
+def MakeFaces(ListShape,WantPlanarFace):
+    anObj = geom.MakeFaces(ListShape,WantPlanarFace)
     ior = salome.orb.object_to_string(anObj)
     anObj._set_Name(ior)
     return anObj
@@ -382,10 +394,11 @@ def Partition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[], 
     return anObj
 
 def SuppressFaces(aShape,ListOfId):
-    anObj = geom.SuppressFaces(aShape,ListOfId)
-    ior = salome.orb.object_to_string(anObj)
-    anObj._set_Name(ior)
-    return anObj
+    ListObj = geom.SuppressFaces(aShape,ListOfId)
+    for anObj in ListObj :
+	    ior = salome.orb.object_to_string(anObj)
+	    anObj._set_Name(ior)
+    return ListObj
 
 def SuppressHole(aShape,ListOfFace,ListOfWire,ListOfEndFace):
     anObj = geom.SuppressHole(aShape,ListOfFace,ListOfWire,ListOfEndFace)

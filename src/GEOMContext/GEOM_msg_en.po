@@ -662,6 +662,10 @@ msgstr "Vertex"
 msgid "GEOM_WIRE"
 msgstr "Wire"
 
+#Wire(s)
+msgid "GEOM_WIRES"
+msgstr "Wire(s)"
+
 #Parameter
 msgid "GEOM_PARAMETER"
 msgstr "Parameter :"
