@@ -29,8 +29,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=5488>
-<meta name=layout-width content=700>
+<meta name=layout-height content=7535>
+<meta name=layout-width content=684>
 
 
 <!--(Links)=========================================================-->
@@ -78,14 +78,29 @@ p.whs18 {font-size: 12pt; margin-left: 40px; font-weight: bold;}
 img_whs19 {border-style: none; border: none; width: 150px; height: 154px;}
 img_whs20 {border-style: none; border: none; width: 200px; height: 202px;}
 img_whs21 {border-style: none; border: none; width: 150px; height: 123px;}
-img_whs22 {border-style: none; border: none; width: 200px; height: 175px;}
-img_whs23 {border-style: none; border: none; width: 150px; height: 128px;}
-img_whs24 {border-style: none; border: none; width: 200px; height: 192px;}
-p.whs25 {font-size: 12pt; font-weight: bold; color: #000000;}
-img_whs26 {border-style: none; border: none; width: 150px; height: 131px;}
-img_whs27 {border-style: none; border: none; width: 200px; height: 148px;}
-p.whs28 {font-size: 12pt; margin-left: 0px;}
-p.whs29 {font-size: 12pt; font-weight: bold; margin-left: 40px;}
+p.whs22 {font-size: 14pt;}
+img_whs23 {border-style: none; border: none; width: 20px; height: 20px;}
+img_whs24 {border-style: none; border: none; width: 200px; height: 194px;}
+p.whs25 {font-size: 12pt; font-weight: bold;}
+p.whs26 {font-size: 12pt; font-weight: bold; font-style: italic; x-text-underline: off; /*begin!kadov{{*/ text-decoration: none; /*}}end!kadov*/ }
+img_whs27 {border-style: none; border: none; width: 200px; height: 181px; float: none;}
+img_whs28 {border-style: none; border: none; width: 175px; height: 181px;}
+img_whs29 {border-style: none; border: none; width: 203px; height: 181px;}
+img_whs30 {border-style: none; border: none; width: 200px; height: 175px;}
+img_whs31 {border-style: none; border: none; width: 150px; height: 128px;}
+img_whs32 {border-style: none; border: none; width: 200px; height: 192px;}
+p.whs33 {font-size: 12pt; font-weight: bold; color: #000000;}
+img_whs34 {border-style: none; border: none; width: 150px; height: 131px;}
+p.whs35 {margin-left: 40px; font-size: 12pt;}
+img_whs36 {border-style: none; border: none; width: 200px; height: 162px;}
+p.whs37 {font-size: 12pt; margin-left: 40px; font-weight: bold; text-indent: -40px;}
+img_whs38 {border-style: none; border: none; width: 16px; height: 16px;}
+p.whs39 {margin-left: 40px; font-weight: bold; text-indent: -40px; font-size: 14pt;}
+p.whs40 {font-weight: bold; text-indent: -40px; font-size: 14pt; margin-left: 80px;}
+img_whs41 {border-style: none; border: none; width: 200px; height: 185px;}
+p.whs42 {font-weight: bold; margin-left: 80px; text-indent: -80px; font-size: 12pt;}
+p.whs43 {font-weight: bold; text-indent: -80px; font-size: 12pt; margin-left: 120px;}
+img_whs44 {border-style: none; border: none; width: 200px; height: 219px;}
 -->
 </style>
 <script type="text/javascript" language="JavaScript">
@@ -93,7 +108,11 @@ p.whs29 {font-size: 12pt; font-weight: bold; margin-left: 40px;}
 if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
 {
   var strNSS = "<style type='text/css'>";
-  strNSS += "p.whs28 {margin-left:1; }";
+  strNSS += "p.whs37 {text-indent:1; }";
+  strNSS += "p.whs39 {text-indent:1; }";
+  strNSS += "p.whs40 {text-indent:1; }";
+  strNSS += "p.whs42 {text-indent:1; }";
+  strNSS += "p.whs43 {text-indent:1; }";
   strNSS +="</style>";
   document.write(strNSS);
 }
@@ -148,7 +167,7 @@ addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
 
 	if (window.setRelStartPage)
 	{
-	setRelStartPage("../geom.html");
+	setRelStartPage("../geom_help.html");
 
 		autoSync(0);
 		sendSyncInfo();
@@ -193,9 +212,10 @@ else
 									size=4>&nbsp;Ellipse&#9;</font></span></a></p></li>
 		
 		<li class=kadov-p><p class="whs1"><a 
- HREF="#_Toc57604484"><span><font style="font-family: 'Times New Roman', serif; font-size: 12pt;"
-									face="Times New Roman"
-									size=4>&nbsp;Arc&#9;</font></span></a></p></li>
+ HREF="#_Toc57604484">&nbsp;Arc</a></p></li>
+		
+		<li class=kadov-p><p class="whs1">&nbsp;<a 
+ href="#_Toc57604488">Curve</a></p></li>
 		
 		<li class=kadov-p><p class="whs1"><a 
  HREF="#_Toc57604485"><span><font style="font-family: 'Times New Roman', serif; font-size: 12pt;"
@@ -208,9 +228,11 @@ else
 									size=4>&nbsp;Plane&#9;</font></span></a></p></li>
 		
 		<li class=kadov-p><p class="whs1"><a 
- HREF="#_Toc57604487"><span><font style="font-family: 'Times New Roman', serif; font-size: 12pt;"
-									face="Times New Roman"
-									size=4>&nbsp;Working plane&#9;</font></span></a></p></li>
+ HREF="#_Toc57604487">&nbsp;Working plane</a></p></li>
+		
+		<li class=kadov-p><p class="whs1">&nbsp;<a 
+ href="#_Toc57604489">Local coordinate system</a><a 
+ HREF="#_Toc57604487">&#9;</a></p></li>
 	</ul>
 </dir>
 
@@ -239,13 +261,14 @@ else
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (vertex).</p>
 
 <p class="whs4">&nbsp;</p>
 
 <p class="whs4"><b style="font-weight: bold;">TUI Command :</b> 
- <i>geom.MakeVertex(Double, Double, Double)</i></p>
+ <span style="font-style: italic;"><I>geompy.MakeVertex(X, Y, X)</I></span>, where 
+ X, Y, Z are coordinates of the point.</p>
 
 <p class="whs4">&nbsp;</p>
 
@@ -291,13 +314,15 @@ else
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (edge).</p>
 
 <p class="whs4">&nbsp;</p>
 
 <p class="whs4"><b style="font-weight: bold;">TUI Command:</b> 
- <i>geom.MakeLine(PointStruct, DirStruct)</i></p>
+ <span style="font-style: italic;"><I>geompy.MakeLine(Point1, Point2)</I></span>, 
+ where Point1 and Point2 are points through &nbsp;which 
+ the line passes.</p>
 
 <p class="whs4">&nbsp;</p>
 
@@ -334,13 +359,15 @@ else
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (edge).</p>
 
 <p class="whs4">&nbsp;</p>
 
 <p class="whs4"><b style="font-weight: bold;">TUI Command:</b> 
- <i>geom.MakeCircle(PointStruct, DirStruct, Double)</i></p>
+ <span style="font-style: italic;"><I>geompy.MakeCircle(Point, Vector, Radius)</I></span>, 
+ where Point defines the center of the circle, Vector gives the circle’s 
+ normal and Radius is the circle’s &nbsp;radius.</p>
 
 <p class="whs4">&nbsp;</p>
 
@@ -375,13 +402,16 @@ else
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (edge).</p>
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs4"><b style="font-weight: bold;">TUI Command:</b> 
- <i>geom.MakeEllipse(PointStruct, DirStruct, Double, Double)</i></p>
+<p class="whs4"><b style="font-weight: bold;">TUI Command:</b><span 
+ style="font-style: italic;"><I> geompy.MakeEllipse(Point, Vector, RadiusMajor, 
+ RadiusMinor)</I></span>, where Point defines the center of the ellipse, Vector 
+ gives the ellipse’s normal, RadiusMajor and RadiusMinor &nbsp;are 
+ correspondingly a major and minor radiuses of the ellipse.</p>
 
 <p class="whs4">&nbsp;</p>
 
@@ -415,17 +445,19 @@ else
 <p class="whs6">&nbsp;</p>
 
 <p class="whs4"><b style="font-weight: bold;">Description:</b> 
- Create an arc.</p>
+ Creates an arc.</p>
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (edge).</p>
 
 <p class="whs4">&nbsp;</p>
 
 <p class="whs4"><b style="font-weight: bold;">TUI Command:</b> 
- <i>geom.MakeArc(PointStruct, PointStruct, PointStruct)</i></p>
+ <span style="font-style: italic;"><I>geompy.MakeArc(Point1, Point2, Point3)</I></span>, 
+ where Point1 is the starting point of the arc, Point2 is a middle point 
+ of the arc and Point3 is the ending point of the arc.</p>
 
 <p class="whs4">&nbsp;</p>
 
@@ -452,6 +484,64 @@ else
 
 <p class="whs4">&nbsp;</p>
 
+<p class="whs22"><b style="font-weight: bold;"><a NAME=_Toc57604488><img src="../image32.gif" width="20px" height="20px" border="0" class="img_whs23"> Curve</a></b></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4"><b style="font-weight: bold;">Description:</b> 
+ Creates a curve in 3D space.</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Result:</b> 
+ GEOM_Object (edge).</font></span></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4"><b style="font-weight: bold;">TUI Command:</b> 
+ </p>
+
+<ul type="disc" class="whs3">
+	
+	<li class=kadov-p><p class="whs4"><span style="font-style: italic;"><I>geompy.MakePolyline(ListOfShapes)</I></span>, 
+ where ListOfShape is a list of points through which the curve passes .</p></li>
+	
+	<li class=kadov-p><p class="whs4"><span style="font-style: italic;"><I>geompy.MakeInterpol(ListOfShapes)</I></span>, 
+ where ListOfShape is a list of points through which the curve passes .</p></li>
+	
+	<li class=kadov-p><p class="whs4"><span style="font-style: italic;"><I>geompy.MakeBezier(ListOfShapes)</I></span>, 
+ where ListOfShape is a list of points through which the curve passes .</p></li>
+</ul>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4"><b style="font-weight: bold;">Arguments:</b> 
+ at least 2.</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs8"><img src="../image144.jpg" width="200px" height="194px" border="0" class="img_whs24"></p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs25">Example:</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs26">Polyline 
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bezier 
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B-Spline</p>
+
+<p class="whs4"><img src="../image147.jpg" x-maintain-ratio="TRUE" width="200px" height="181px" border="0" class="img_whs27"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="../image149.jpg" width="175px" height="181px" border="0" class="img_whs28"> &nbsp;&nbsp;&nbsp;&nbsp;<img src="../image150.jpg" width="203px" height="181px" border="0" class="img_whs29"></p>
+
+<p class="whs8">&nbsp;</p>
+
+<p class="whs4">&nbsp;</p>
+
 <p class="whs6"><b style="font-weight: bold;"><a 
  NAME=_Toc57604485><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="salome2_sp3_basicgui_functions_salome2_sp3_basicgui_functions_image32.gif" width="20px" height="20px" border="0" class="img_whs7"> Vector</font></span></a></b></p>
 
@@ -462,13 +552,15 @@ else
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (edge).</p>
 
 <p class="whs4">&nbsp;</p>
 
 <p class="whs4"><b style="font-weight: bold;">TUI Command:</b> 
- <i>geom.MakeVector(PointStruct, PointStruct)</i></p>
+ <span style="font-style: italic;"><I>geompy.MakeVector(Point1, Point2)</I></span>, 
+ where Point1 is the first point of the vector and the Point2 is the last 
+ point of the vector.</p>
 
 <p class="whs4">&nbsp;</p>
 
@@ -490,7 +582,7 @@ else
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs8"><img src="../image71.jpg" width="200px" height="175px" border="0" class="img_whs22"> &nbsp;&nbsp;&nbsp;<img src="../image72.jpg" width="200px" height="175px" border="0" class="img_whs22"></p>
+<p class="whs8"><img src="../image71.jpg" width="200px" height="175px" border="0" class="img_whs30"> &nbsp;&nbsp;&nbsp;<img src="../image72.jpg" width="200px" height="175px" border="0" class="img_whs30"></p>
 
 <p class="whs8">&nbsp;</p>
 
@@ -498,7 +590,7 @@ else
 
 <p class="whs10">&nbsp;</p>
 
-<p class="whs12"><img src="../image21.gif" width="150px" height="128px" border="0" class="img_whs23"></p>
+<p class="whs12"><img src="../image21.gif" width="150px" height="128px" border="0" class="img_whs31"></p>
 
 <p class="whs4">&nbsp;</p>
 
@@ -512,13 +604,16 @@ else
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Shape 
+<p class="whs4"><b style="font-weight: bold;">Result:</b> GEOM_Object 
  (face).</p>
 
 <p class="whs4">&nbsp;</p>
 
 <p class="whs4"><b style="font-weight: bold;">TUI Command:</b> 
- <i>geom.MakePlane(PointStruct, DirStruct, Double)</i></p>
+ <span style="font-style: italic;"><I>geompy.MakePlane(Point, Vector, TrimSize)</I></span>, 
+ where Point is a point through which &nbsp;the 
+ plane passes, Vector gives a normal of the plane and TrimSize is a half 
+ size of a side of quadrangle face, representing the plane.</p>
 
 <p class="whs4">&nbsp;</p>
 
@@ -544,22 +639,23 @@ else
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs4">&nbsp; <img src="../image73.jpg" width="200px" height="192px" border="0" class="img_whs24"> &nbsp;<img src="../image74.jpg" width="200px" height="192px" border="0" class="img_whs24"> &nbsp;<img src="../image75.jpg" width="200px" height="192px" border="0" class="img_whs24"> &nbsp;</p>
+<p class="whs4">&nbsp; <img src="../image73.jpg" width="200px" height="192px" border="0" class="img_whs32"> &nbsp;<img src="../image74.jpg" width="200px" height="192px" border="0" class="img_whs32"> &nbsp;<img src="../image75.jpg" width="200px" height="192px" border="0" class="img_whs32"> &nbsp;</p>
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs25"><b><span style="font-weight: bold;"><B>Example:</B></span></b></p>
+<p class="whs33"><b><span style="font-weight: bold;"><B>Example:</B></span></b></p>
 
 <p class="whs10">&nbsp;</p>
 
-<p class="whs12"><img src="../image76.jpg" width="150px" height="131px" border="0" class="img_whs26"></p>
+<p class="whs12"><img src="../image76.jpg" width="150px" height="131px" border="0" class="img_whs34"></p>
 
 <p class="whs4">&nbsp;</p>
 
 <p class="whs4">&nbsp;</p>
 
 <p class="whs6"><b style="font-weight: bold;"><a 
- NAME=_Toc57604487><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="salome2_sp3_basicgui_functions_salome2_sp3_basicgui_functions_image34.gif" width="20px" height="20px" border="0" class="img_whs7"> WorkingPlane</font></span></a></b></p>
+ NAME=_Toc57604487><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="salome2_sp3_basicgui_functions_salome2_sp3_basicgui_functions_image34.gif" width="20px" height="20px" border="0" class="img_whs7"> Working 
+ Plane</font></span></a></b></p>
 
 <p class="whs6">&nbsp;</p>
 
@@ -569,7 +665,18 @@ else
 <p class="whs4">&nbsp;</p>
 
 <p class="whs4"><b style="font-weight: bold;">Arguments:</b> 
- 1 face.</p>
+ </p>
+
+<ul type="disc" class="whs3">
+	
+	<li class=kadov-p><p class="whs4">1 face, or</p></li>
+	
+	<li class=kadov-p><p class="whs4">2 vectors, or</p></li>
+	
+	<li class=kadov-p><p class="whs4">XYZ coordinate system</p></li>
+</ul>
+
+<p class="whs4">&nbsp;</p>
 
 <p class="whs4">&nbsp;</p>
 
@@ -577,13 +684,76 @@ else
 
 <p class="whs4">&nbsp;</p>
 
-<p class="whs8"><img src="../image77.jpg" width="200px" height="148px" border="0" class="img_whs27"></p>
+<p class="whs35"><img src="../image175.jpg" width="200px" height="162px" border="0" class="img_whs36"></p>
 
 <p class="whs8">&nbsp;</p>
 
-<p class="whs28">&nbsp;</p>
+<p class="whs18">&nbsp;</p>
 
-<p class="whs29">&nbsp;</p>
+<p class="whs37">&nbsp;</p>
+
+<p class="whs37"><a name=_Toc57604489><img src="../image35.gif" width="16px" height="16px" border="0" class="img_whs38"><span 
+ style="font-size: 14pt;"> <font size=4 style="font-size:14pt;"></font></span><b><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;">Local 
+ coordinate system</font></span></b></a></p>
+
+<p class="whs37">&nbsp;</p>
+
+<p class="whs4"><b style="font-weight: bold;">Description:</b> 
+ &nbsp;The user 
+ may manually enter values of X, Y, and Z coordinates of origin in the 
+ corresponding fields of the dialog box, or select a point in the object 
+ browser or 3D viewer, in this case coordinates of origin are automatically 
+ filled in with the coordinates of the selected point. </p>
+
+<p class="whs4">The user then specifies components of X and 
+ Y axes direction.</p>
+
+<p class="whs4">Preview of the new LCS (small trihedron located 
+ and oriented according to parameters of LCS) is displayed in the 3D viewer 
+ and updated as soon as the user modifies some parameter. </p>
+
+<p class="whs4">Then the user presses «OK» or «Apply» button 
+ to create an LCS at the location with the specified coordinates. The new 
+ object is shown in the Object Browser and in 3D viewer.</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4"><span style="font-weight: bold;"><B>TUI command:</B></span> 
+ <span style="font-style: italic;"><I>geompy.MakeMarker(OX, OY, OZ, XDX, XDY, 
+ XDZ, YDX, YDY, YDZ)</I></span>, where OX, OY, OZ are coordinates of the origin 
+ of LCS, XDX, XDY, XDZ is a vector of OX &nbsp;direction 
+ of the LCS and YDX, YDY, YDZ is a a vector of OY direction of the LCS.</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4"><b style="font-weight: bold;">Arguments:</b> 
+ </p>
+
+<p class="whs4">Coordinates of origin</p>
+
+<p class="whs4">X axis direction</p>
+
+<p class="whs4"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;">Y axis direction</font></span>.</p>
+
+<p class="whs4">&nbsp;</p>
+
+<p class="whs4"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs39">&nbsp;</p>
+
+<p class="whs40"><img src="../image146.jpg" width="200px" height="185px" border="0" class="img_whs41"></p>
+
+<p class="whs40">&nbsp;</p>
+
+<p class="whs42">Example:</p>
+
+<p class="whs42">&nbsp;</p>
+
+<p class="whs43"><img src="../image145.jpg" width="200px" height="219px" border="0" class="img_whs44"></p>
 
 <script type="text/javascript" language="javascript1.2">
 <!--

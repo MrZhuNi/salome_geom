@@ -1,0 +1,152 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Sketcher</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=536>
+<meta name=layout-width content=491>
+
+
+<!--(Links)=========================================================-->
+
+ <link rel='stylesheet' href='default_ns.css'>
+<script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='default.css'>");}
+//-->
+</script>
+<style type="text/css">
+<!--
+img_whs1 {border-style: none; border: none; float: none; width: 30px; height: 30px;}
+p.whs2 {font-size: 12pt;}
+-->
+</style>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+  div.WebHelpPopupMenu {position:absolute; left:0px; top:0px; z-index:4; visibility:hidden;}
+-->
+</style>
+<script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("GEOM module\nCreating geometrical objects\nSketcher");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("geom_help.html");
+
+		autoSync(0);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	document.location.reload();
+//-->
+</script>
+<h1>Sketcher</h1>
+
+<p><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;"><img src="i_blue.jpg" x-maintain-ratio="TRUE" x-save-file="TRUE" x-save-method="compute-relative" width="30px" height="30px" border="0" class="img_whs1"></b></font></span>Sketcher allows to create curves of 2 types: line 
+ segment and arc. &nbsp;The 
+ curve is created from the current point (center of coordinates when the 
+ sketcher is started). &nbsp;The 
+ end of the curve is defined by means of &quot;destination&quot;, which 
+ can be a destination point (for segment only) or destination direction 
+ coupled with length of a segment or angle and radius of an arc.</p>
+
+<p>&nbsp;</p>
+
+<p>Sketcher is able to create planar curves only. Therefore, it is necessary 
+ to select a working plane before starting a sketch (by default, XOY plane 
+ is used). Sketcher creates curves lying in the current working plane (New 
+ Entity -&gt; Basic -&gt; Working Plane).</p>
+
+<p>&nbsp;</p>
+
+<p class="whs2"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Description:</b> 
+ Creates curves (line segment and arc).</font></span></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Result:</b> GEOM_Object.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">TUI Command:</b><i> 
+ </i><span style="font-style: italic;"><I>geompy.MakeSketcher(Command, LWP)</I></span>, 
+ where Command is a string containing the coordinates of points in the 
+ local working plane, LWP is a list of 9 doubles which are coordinates 
+ of OZ and OX of the local working plane.</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Arguments:</b> 
+ 1 shape + 3 values (coordinates).</p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs2"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</body>
+
+</html>
