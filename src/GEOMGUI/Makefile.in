@@ -48,6 +48,18 @@ PO_FILES = \
 LIB = libGEOMGUI.la
 LIB_SRC =	GeometryGUI.cxx \
 		GeometryGUI_SpinBox.cxx \
+		GeometryGUI_Skeleton_QTD.cxx \
+		GeometryGUI_Skeleton.cxx \
+		GeometryGUI_1Sel_QTD.cxx \
+		GeometryGUI_2Sel_QTD.cxx \
+		GeometryGUI_1Sel1Spin_QTD.cxx \
+		GeometryGUI_1Sel1Spin.cxx \
+		GeometryGUI_1Sel4Spin_QTD.cxx \
+		GeometryGUI_1Sel4Spin.cxx \
+		GeometryGUI_2Sel1Spin_QTD.cxx \
+		GeometryGUI_2Sel1Spin.cxx \
+		GeometryGUI_3Spin_QTD.cxx \
+		GeometryGUI_3Spin.cxx \
 		GeometryGUI_TransparencyDlg.cxx \
 		GeometryGUI_NbIsosDlg.cxx \
 		GeometryGUI_BoxDlg.cxx \
@@ -87,6 +99,8 @@ LIB_SRC =	GeometryGUI.cxx \
 		GeometryGUI_InertiaDlg.cxx \
 		GeometryGUI_CenterMassDlg.cxx \
 		GeometryGUI_FaceDlg.cxx \
+		GeometryGUI_ShellDlg.cxx \
+		GeometryGUI_SolidDlg.cxx \
 		GeometryGUI_BndBoxDlg.cxx \
 		GeometryGUI_MaxToleranceDlg.cxx \
 		GeometryGUI_WhatisDlg.cxx \
@@ -104,6 +118,18 @@ LIB_SRC =	GeometryGUI.cxx \
 LIB_MOC = \
                 GeometryGUI.h \
                 GeometryGUI_SpinBox.h \
+		GeometryGUI_Skeleton_QTD.h \
+		GeometryGUI_Skeleton.h \
+		GeometryGUI_1Sel_QTD.h \
+		GeometryGUI_2Sel_QTD.h \
+		GeometryGUI_1Sel1Spin_QTD.h \
+		GeometryGUI_1Sel1Spin.h \
+		GeometryGUI_1Sel4Spin_QTD.h \
+		GeometryGUI_1Sel4Spin.h \
+		GeometryGUI_2Sel1Spin_QTD.h \
+		GeometryGUI_2Sel1Spin.h \
+		GeometryGUI_3Spin_QTD.h \
+		GeometryGUI_3Spin.h \
                 GeometryGUI_TransparencyDlg.h \
                 GeometryGUI_NbIsosDlg.h \
                 GeometryGUI_BoxDlg.h \
@@ -143,6 +169,8 @@ LIB_MOC = \
                 GeometryGUI_InertiaDlg.h \
                 GeometryGUI_CenterMassDlg.h \
                 GeometryGUI_FaceDlg.h \
+		GeometryGUI_ShellDlg.h \
+		GeometryGUI_SolidDlg.h \
                 GeometryGUI_BndBoxDlg.h \
                 GeometryGUI_MaxToleranceDlg.h \
                 GeometryGUI_WhatisDlg.h \

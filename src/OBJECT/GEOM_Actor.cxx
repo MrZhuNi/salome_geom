@@ -65,6 +65,9 @@ GEOM_Actor::GEOM_Actor()
 
   this->ShadingProperty = NULL;
   this->WireframeProperty = NULL;
+  //DCQ : Bug Color Face :
+  this->PreviewProperty = NULL;
+  //DCQ
 
   this->deflection = 0;
   myDisplayMode = 0; 
@@ -86,6 +89,10 @@ GEOM_Actor::~GEOM_Actor()
     ShadingMapper->Delete();
   if (ShadingProperty != NULL)
     ShadingProperty->Delete();
+  //DCQ : Bug Color Face :
+  if (PreviewProperty != NULL)
+    PreviewProperty->Delete();
+  //DCQ
   if (WireframeProperty != NULL)
     WireframeProperty->Delete();
   if (HighlightProperty != NULL)
@@ -126,12 +133,15 @@ void GEOM_Actor::setDisplayMode(int thenewmode) {
     if ((myShape.ShapeType() == TopAbs_WIRE) || 
 	(myShape.ShapeType() == TopAbs_EDGE) || 
 	(myShape.ShapeType() == TopAbs_VERTEX)) {
-      if ( !subshape )
+      if ( !subshape ) {
 	CreateWireframeMapper();
-      else
+      }
+      else {
 	return;
-    } else
+      }
+    } else {
       CreateShadingMapper();
+    }
   } else
     CreateWireframeMapper();
 }
@@ -180,16 +190,36 @@ void GEOM_Actor::CreateMapper(int theMode) {
   aread->setDisplayMode(theMode);
   aread->GetOutput()->ReleaseDataFlagOn(); 
     
-  vtkPolyDataMapper* aMapper = vtkPolyDataMapper::New();
-  if (theMode == 0) { 
-    aMapper->SetInput(aread->GetOutput());
-  } else {
-    vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
-    normals->SetInput(aread->GetOutput());
-    aMapper->SetInput(normals->GetOutput());
-  }
+//   vtkPolyDataMapper* aMapper = vtkPolyDataMapper::New();
+//   if (theMode == 0) { 
+//     aMapper->SetInput(aread->GetOutput());
+//   } else {
+//     vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
+//     normals->SetInput(aread->GetOutput());
+//     aMapper->SetInput(normals->GetOutput());
+//   }
+//   aread->Delete();
+//   this->SetMapper(theMode == 0? WireframeMapper = aMapper : ShadingMapper = aMapper);
+
+  vtkPolyDataMapper* aMapperWF = vtkPolyDataMapper::New();
+  vtkPolyDataMapper* aMapperSH = vtkPolyDataMapper::New();
+  vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
+
+  aMapperWF->SetInput(aread->GetOutput());
+  normals->SetInput(aread->GetOutput());
+  aMapperSH->SetInput(normals->GetOutput());
+
+  WireframeMapper = aMapperWF;
+  ShadingMapper = aMapperSH;
+
   aread->Delete();
-  this->SetMapper(theMode == 0? WireframeMapper = aMapper : ShadingMapper = aMapper);
+
+  if (theMode == 0) { 
+    this->SetMapper(WireframeMapper);
+  } else {
+    this->SetMapper(ShadingMapper);
+  }
+  
 }
 
 void GEOM_Actor::CreateShadingMapper() {
@@ -256,6 +286,7 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *Mapper)
   else {
     if(WireframeMapper==NULL) CreateWireframeMapper();
   }
+
   if(myShape.ShapeType() == TopAbs_VERTEX) {
     if(ren){
       //The parameter determine size of vertex actor relate to diagonal of RendererWindow
@@ -274,7 +305,11 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *Mapper)
     aMatrix->Delete();    
   } else
     this->Device->Render(ren, this->Mapper);
-  this->EstimatedRenderTime = WireframeMapper->GetTimeToDraw();
+
+  if(myDisplayMode >= 1)
+    this->EstimatedRenderTime = ShadingMapper->GetTimeToDraw();
+  else
+    this->EstimatedRenderTime = WireframeMapper->GetTimeToDraw();
 }
 
 // SubShape
@@ -296,6 +331,9 @@ void GEOM_Actor::SetOpacity(float opa)
   //HighlightProperty->SetOpacity(opa);
   SALOME_Actor::SetOpacity(opa);
   ShadingProperty->SetOpacity(opa);
+  //DCQ : Bug Color Face :
+  PreviewProperty->SetOpacity(opa);
+  //DCQ
 }
 
 float GEOM_Actor::GetOpacity() {
@@ -306,7 +344,10 @@ float GEOM_Actor::GetOpacity() {
 // Color methods
 //-------------------------------------------------------------
 void GEOM_Actor::SetColor(float r,float g,float b) {
-  ShadingProperty->SetColor(r,g,b);  
+  ShadingProperty->SetColor(r,g,b);
+  //DCQ : Bug Color Face :
+  PreviewProperty->SetColor(r,g,b);
+  //DCQ
 }
 
 void GEOM_Actor::GetColor(float& r,float& g,float& b) {
@@ -336,7 +377,7 @@ void GEOM_Actor::highlight(Standard_Boolean highlight) {
       HighlightProperty->SetDiffuseColor(1, 1, 1);
       HighlightProperty->SetSpecularColor(0.5, 0.5, 0.5); 
     }
-      
+
     this->Property = HighlightProperty;
  
   }

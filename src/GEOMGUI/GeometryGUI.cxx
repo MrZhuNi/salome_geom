@@ -138,20 +138,20 @@ using namespace std;
 
 // QT Includes
 #define	 INCLUDE_MENUITEM_DEF
-#include <qapplication.h>
-#include <qmenudata.h>
-#include <qmenubar.h>
-#include <qpopupmenu.h>
-#include <qfont.h>
-#include <qstring.h>
-#include <qcheckbox.h>
+// #include <qapplication.h>
+// #include <qmenudata.h>
+// #include <qmenubar.h>
+// #include <qpopupmenu.h>
+// #include <qfont.h>
+// #include <qstring.h>
+// #include <qcheckbox.h>
 #include <qcolordialog.h>
 #include <qmessagebox.h>
 #include <qspinbox.h>
-#include <qlist.h>
-#include <qwidget.h> 
-#include <qevent.h> 
-#include <qlineedit.h>
+// #include <qlist.h>
+// #include <qwidget.h> 
+// #include <qevent.h> 
+// #include <qlineedit.h>
 
 #include "VTKViewer_RenderWindowInteractor.h"
 #include "VTKViewer_ViewFrame.h"
@@ -203,6 +203,8 @@ using namespace std;
 #include "GeometryGUI_CenterMassDlg.h"    // Method CENTER MASS
 #include "GeometryGUI_InertiaDlg.h"       // Method INERTIA
 #include "GeometryGUI_FaceDlg.h"          // Method GEOM::FACE
+#include "GeometryGUI_ShellDlg.h"          // Method GEOM::SHELL
+#include "GeometryGUI_SolidDlg.h"          // Method GEOM::SOLID
 #include "GeometryGUI_FilletDlg.h"        // Method FILLET
 #include "GeometryGUI_ChamferDlg.h"       // Method CHAMFER
 #include "GeometryGUI_FillingHoleDlg.h"   // Method FILLING HOLE
@@ -1466,6 +1468,51 @@ void GeometryGUI::MakeFaceAndDisplay( GEOM::GEOM_Shape_ptr aWire, const Standard
   return ;
 }
 
+
+//=====================================================================================
+// function : MakeShellAndDisplay()
+// purpose  :
+//=====================================================================================
+void GeometryGUI::MakeShellAndDisplay( GEOM::GEOM_Gen::ListOfIOR& listShapesIOR )
+{
+  try {
+    GEOM::GEOM_Shape_var result = myComponentGeom->MakeShell(listShapesIOR) ;
+    if( result->_is_nil() ) {
+      myDesktop->putInfo(tr("GEOM_PRP_NULLSHAPE")) ;
+      return ;
+    }
+    result->NameType(tr("GEOM_SHELL"));
+    if( Display( result, "" ))
+      myDesktop->putInfo(tr("GEOM_PRP_DONE")) ;
+  }
+  catch (const SALOME::SALOME_Exception& S_ex) {
+    QtCatchCorbaException(S_ex);
+  }
+  return ;
+}
+
+
+//=====================================================================================
+// function : MakeSolidAndDisplay()
+// purpose  :
+//=====================================================================================
+void GeometryGUI::MakeSolidAndDisplay( GEOM::GEOM_Gen::ListOfIOR& listShapesIOR )
+{
+  try {
+    GEOM::GEOM_Shape_var result = myComponentGeom->MakeSolid(listShapesIOR) ;
+    if( result->_is_nil() ) {
+      myDesktop->putInfo(tr("GEOM_PRP_NULLSHAPE")) ;
+      return ;
+    }
+    result->NameType(tr("GEOM_SOLID"));
+    if( Display( result, "" ))
+      myDesktop->putInfo(tr("GEOM_PRP_DONE")) ;
+  }
+  catch (const SALOME::SALOME_Exception& S_ex) {
+    QtCatchCorbaException(S_ex);
+  }
+  return ;
+}
 
 
 //=====================================================================================
@@ -2780,6 +2827,22 @@ bool GeometryGUI::OnGUIEvent(int theCommandID,	QAD_Desktop* parent)
 	GeomGUI->EmitSignalDeactivateDialog() ;
 	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
 	GeometryGUI_FaceDlg *aDlg = new GeometryGUI_FaceDlg ( parent, "", Sel ) ;
+	break ;
+      }
+
+    case 315: // GEOM::SHELL
+      {
+	GeomGUI->EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
+	GeometryGUI_ShellDlg *aDlg = new GeometryGUI_ShellDlg ( parent, "", Sel ) ;
+	break ;
+      }
+
+    case 316: // GEOM::SOLID
+      {
+	GeomGUI->EmitSignalDeactivateDialog() ;
+	SALOME_Selection* Sel = SALOME_Selection::Selection( GeomGUI->myActiveStudy->getSelection() );
+	GeometryGUI_SolidDlg *aDlg = new GeometryGUI_SolidDlg ( parent, "", Sel ) ;
 	break ;
       }
       

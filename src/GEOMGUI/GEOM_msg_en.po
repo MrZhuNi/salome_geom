@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "POT-Creation-Date: 2002-03-19 09:35:48 AM CET\n"
-"PO-Revision-Date: YYYY-MM-DD\n"
+"PO-Revision-Date: 2003-09-22 16:38+0200\n"
 "Last-Translator: FULLNAME <EMAIL@ADDRESS>\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 
@@ -1005,9 +1005,9 @@ msgstr "Sewing Topologies"
 msgid "GEOM_SHELL_TITLE"
 msgstr "Shell Construction"
 
-#: GeometryGUI_ShellDlg.cxx:74
-msgid "GEOM_SHELL_LIST"
-msgstr "List Of Connected Faces"
+#: GeometryGUI_SolidDlg.cxx:74
+msgid "GEOM_SOLID_TITLE"
+msgstr "Solid Construction"
 
 #: GeometryGUI_SphereDlg.cxx:50
 msgid "GEOM_SPHERE_TITLE"

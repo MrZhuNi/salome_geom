@@ -4243,6 +4243,93 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeCompound( const GEOM::GEOM_Gen::ListOfIOR& 
 }
 
 
+//=================================================================================
+// function : MakeShell()
+// purpose  : Make a compound from a list containing one or more shapes
+//=================================================================================
+GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeShell( const GEOM::GEOM_Gen::ListOfIOR& ListShapes )
+  throw (SALOME::SALOME_Exception)
+{
+  GEOM::GEOM_Shape_var result ;
+  BRepTools_Quilt Glue;
+  TopoDS_Shape C;
+
+  for ( unsigned int i = 0; i < ListShapes.length(); i++) {
+    GEOM::GEOM_Shape_var aShape = GetIORFromString( ListShapes[i] );    
+    TopoDS_Shape Shape = GetTopoShape(aShape) ;
+    if( Shape.IsNull() ) {
+       THROW_SALOME_CORBA_EXCEPTION("Shell aborted : null shape during operation", SALOME::BAD_PARAM);
+    }
+    Glue.Add(Shape) ;
+  }
+
+  TopExp_Explorer exp(Glue.Shells(), TopAbs_SHELL);
+  Standard_Integer ish = 0; 
+  for (; exp.More(); exp.Next()) {
+    C = exp.Current(); 
+    ish++;
+  }
+
+  if (ish != 1)
+    C = Glue.Shells();
+  
+  if ( C.IsNull() ) {
+    THROW_SALOME_CORBA_EXCEPTION("Null result : Shell operation aborted", SALOME::BAD_PARAM);
+  }
+  else {
+    result = CreateObject(C) ;
+    InsertInLabelMoreArguments(C, result, ListShapes, myCurrentOCAFDoc) ;
+  }
+  return result;
+}
+
+
+//=================================================================================
+// function : MakeSolid()
+// purpose  : Make a compound from a list containing one or more shapes
+//=================================================================================
+GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeSolid( const GEOM::GEOM_Gen::ListOfIOR& ListShapes )
+  throw (SALOME::SALOME_Exception)
+{
+  GEOM::GEOM_Shape_var result ;
+  Standard_Integer ish = 0;
+  TopoDS_Compound  Res;
+  TopoDS_Solid     Sol;
+  BRep_Builder     B;
+  TopoDS_Shape     Shape;
+
+  B.MakeCompound(Res);
+
+  for ( unsigned int i = 0; i < ListShapes.length(); i++) {
+    GEOM::GEOM_Shape_var aShape = GetIORFromString( ListShapes[i] );    
+    TopoDS_Shape Sh = GetTopoShape(aShape) ;
+    if( Sh.IsNull() ) {
+       THROW_SALOME_CORBA_EXCEPTION("Solid aborted : null shape during operation", SALOME::BAD_PARAM);
+    }
+    B.MakeSolid(Sol);
+    B.Add(Sol,Sh);
+    BRepClass3d_SolidClassifier SC(Sol);
+    SC.PerformInfinitePoint(Precision::Confusion());
+    if (SC.State() == TopAbs_IN) {
+      B.MakeSolid(Sol);
+      B.Add(Sol,Sh.Reversed());
+    }
+    B.Add(Res,Sol);
+    ish++;
+  }
+  if (ish == 1) { Shape = Sol;}
+  else          { Shape = Res;} 
+  
+  if ( Shape.IsNull() ) {
+    THROW_SALOME_CORBA_EXCEPTION("Null result : Solid operation aborted", SALOME::BAD_PARAM);
+  }
+  else {
+    result = CreateObject(Shape) ;
+    InsertInLabelMoreArguments(Shape, result, ListShapes, myCurrentOCAFDoc) ;
+  }
+  return result;
+}
+
 
 //================================================================================
 // function : MakeEdge()

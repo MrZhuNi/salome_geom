@@ -208,7 +208,10 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
       FaceActor->SetShadingProperty(FaceProp);
       FaceActor->SetWireframeProperty(IsoProp);
 
-      FaceActor->SetPreviewProperty(IsoPVProp);
+      //DCQ : Bug Color Face :
+      //FaceActor->SetPreviewProperty(IsoPVProp);
+      FaceActor->SetPreviewProperty(FaceProp);
+      //DCQ
       
       FaceActor->setInputShape(ex.Current(),deflection,mode);
       
@@ -266,7 +269,10 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
       EdgeActor->setInputShape(ex.Current(),deflection,mode);
       EdgeActor->SetShadingProperty(EdgeIProp);
       EdgeActor->SetWireframeProperty(EdgeIProp);
-      EdgeActor->SetPreviewProperty(EdgePVProp);
+      //DCQ : Bug Color Face :
+      //EdgeActor->SetPreviewProperty(EdgePVProp);
+      EdgeActor->SetPreviewProperty(EdgeIProp);
+      //DCQ
       
       AISActors->AddItem(EdgeActor);
     }
@@ -275,7 +281,10 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
     EdgeActor->setInputShape(myShape,deflection,mode);
     EdgeActor->SetShadingProperty(EdgeIProp);
     EdgeActor->SetWireframeProperty(EdgeIProp);
-    EdgeActor->SetPreviewProperty(EdgePVProp);
+    //DCQ : Bug Color Face :
+    //EdgeActor->SetPreviewProperty(EdgePVProp);
+    EdgeActor->SetPreviewProperty(EdgeIProp);
+    //DCQ
     
     AISActors->AddItem(EdgeActor);
   } else if ( myShape.ShapeType() == TopAbs_VERTEX ) { // VERTEX Actor
@@ -283,7 +292,10 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
     VertexActor->setInputShape(myShape,deflection,mode);
     VertexActor->SetShadingProperty(VertexProp);
     VertexActor->SetWireframeProperty(VertexProp);
-    VertexActor->SetPreviewProperty(VertexPVProp);
+    //DCQ : Bug Color Face :
+    //VertexActor->SetPreviewProperty(VertexPVProp);
+    VertexActor->SetPreviewProperty(VertexProp);
+    //DCQ
     
     AISActors->AddItem(VertexActor);
   

@@ -21,44 +21,44 @@
 //
 //
 //
-//  File   : GeometryGUI_ShellDlg.cxx
+//  File   : GeometryGUI_SolidDlg.cxx
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header: 
 
 using namespace std;
-#include "GeometryGUI_ShellDlg.h"
+#include "GeometryGUI_SolidDlg.h"
 
 #include "GeometryGUI.h"
 #include "QAD_Desktop.h"
 
 //=================================================================================
-// class    : GeometryGUI_ShellDlg()
-// purpose  : Constructs a GeometryGUI_ShellDlg which is a child of 'parent', with the 
+// class    : GeometryGUI_SolidDlg()
+// purpose  : Constructs a GeometryGUI_SolidDlg which is a child of 'parent', with the 
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GeometryGUI_ShellDlg::GeometryGUI_ShellDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
+GeometryGUI_SolidDlg::GeometryGUI_SolidDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GeometryGUI_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_SHELL")));
+  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_SOLID")));
   QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_SHELL_TITLE"));
+  setCaption(tr("GEOM_SOLID_TITLE"));
     
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_SHELL"));
+  GroupConstructors->setTitle(tr("GEOM_SOLID"));
   RadioButton1->setPixmap(image0);
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  GroupShell = new GeometryGUI_1Sel_QTD(this, "GroupShell");
-  GroupShell->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  GroupShell->TextLabel1->setText(tr("GEOM_OBJECTS"));
-  GroupShell->PushButton1->setPixmap(image1);
+  GroupSolid = new GeometryGUI_1Sel_QTD(this, "GroupSolid");
+  GroupSolid->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
+  GroupSolid->TextLabel1->setText(tr("GEOM_OBJECTS"));
+  GroupSolid->PushButton1->setPixmap(image1);
   
-  Layout1->addWidget(GroupShell, 1, 0);
+  Layout1->addWidget(GroupSolid, 1, 0);
   /***************************************************************/
 
   /* Initialisations */
@@ -67,10 +67,10 @@ GeometryGUI_ShellDlg::GeometryGUI_ShellDlg(QWidget* parent, const char* name, SA
 
 
 //=================================================================================
-// function : ~GeometryGUI_ShellDlg()
+// function : ~GeometryGUI_SolidDlg()
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
-GeometryGUI_ShellDlg::~GeometryGUI_ShellDlg()
+GeometryGUI_SolidDlg::~GeometryGUI_SolidDlg()
 {
     // no need to delete child widgets, Qt does it all for us
 }
@@ -80,26 +80,26 @@ GeometryGUI_ShellDlg::~GeometryGUI_ShellDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void GeometryGUI_ShellDlg::Init( SALOME_Selection* Sel )
+void GeometryGUI_SolidDlg::Init(SALOME_Selection* Sel)
 {
   /* init variables */
-  myEditCurrentArgument = GroupShell->LineEdit1;
+  myEditCurrentArgument = GroupSolid->LineEdit1;
   myOkListShapes = false;
 
-  myFaceFilter = new GEOM_FaceFilter( StdSelect_Plane, myGeom );
-  /* Filter for the next selection */
-  mySelection->AddFilter( myFaceFilter ) ;
+  myShellFilter = new GEOM_ShapeTypeFilter(TopAbs_SHELL, myGeom);
+  /* filter for next selection */
+  mySelection->AddFilter(myShellFilter);
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
-  connect(GroupShell->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupSolid->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-
+ 
   /* displays Dialog */
-  GroupShell->show();
+  GroupSolid->show();
   this->show();
 
   return;
@@ -110,24 +110,23 @@ void GeometryGUI_ShellDlg::Init( SALOME_Selection* Sel )
 // function : ClickOnOk()
 // purpose  :
 //=================================================================================
-void GeometryGUI_ShellDlg::ClickOnOk()
+void GeometryGUI_SolidDlg::ClickOnOk()
 {
   this->ClickOnApply();
   ClickOnCancel();
   return ;
 }
 
-
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void GeometryGUI_ShellDlg::ClickOnApply()
+void GeometryGUI_SolidDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  myGeomGUI->GetDesktop()->putInfo(tr("")); 
 
-  if(myOkListShapes) 
-    myGeomGUI->MakeShellAndDisplay(myListShapes);
+  if(myOkListShapes)  
+    myGeomGUI->MakeSolidAndDisplay(myListShapes);
 
   return;
 }
@@ -137,7 +136,7 @@ void GeometryGUI_ShellDlg::ClickOnApply()
 // function : SelectionIntoArgument()
 // purpose  : Called when selection as changed or other case
 //=================================================================================
-void GeometryGUI_ShellDlg::SelectionIntoArgument()
+void GeometryGUI_SolidDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
   QString aString = "";
@@ -148,28 +147,27 @@ void GeometryGUI_ShellDlg::SelectionIntoArgument()
     return;
 
   aString = tr("%1_objects").arg(nbSel);
-
+  
   myGeomGUI->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListShapes);
   myEditCurrentArgument->setText(aString);
   myOkListShapes = true;
 
-  return;
+  return ;
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()
 // purpose  :
 //=================================================================================
-void GeometryGUI_ShellDlg::SetEditCurrentArgument()
+void GeometryGUI_SolidDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
   mySelection->ClearFilters() ;
 
-  if(send == GroupShell->PushButton1) {
-    GroupShell->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupShell->LineEdit1;
-    mySelection->AddFilter(myFaceFilter);
+  if(send == GroupSolid->PushButton1) {
+    GroupSolid->LineEdit1->setFocus();
+    myEditCurrentArgument = GroupSolid->LineEdit1;
+    mySelection->AddFilter(myShellFilter);
   }
   SelectionIntoArgument();
 
@@ -181,7 +179,7 @@ void GeometryGUI_ShellDlg::SetEditCurrentArgument()
 // function : ActivateThisDialog()
 // purpose  :
 //=================================================================================
-void GeometryGUI_ShellDlg::ActivateThisDialog()
+void GeometryGUI_SolidDlg::ActivateThisDialog()
 {
   GeometryGUI_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
@@ -193,7 +191,7 @@ void GeometryGUI_ShellDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void GeometryGUI_ShellDlg::enterEvent(QEvent* e)
+void GeometryGUI_SolidDlg::enterEvent(QEvent* e)
 {
   if (GroupConstructors->isEnabled())
     return;  

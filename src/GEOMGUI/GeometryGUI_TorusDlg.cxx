@@ -400,7 +400,7 @@ void GeometryGUI_TorusDlg::ClickOnApply()
       }
     case 1 :
       { 
-	if(myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2 ) {	  
+	if(myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2 ) {
 	  myGeomGUI->MakeTorusAndDisplay( myPoint1, myDir, myRadius1, myRadius2 ) ; 
 	}
 	break ;

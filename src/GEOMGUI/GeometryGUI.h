@@ -200,6 +200,8 @@ public :
   void MakeSewingAndDisplay( GEOM::GEOM_Gen::ListOfIOR& listShapesIOR, 
 			     const Standard_Real precision ) ;
   void MakeCompoundAndDisplay( GEOM::GEOM_Gen::ListOfIOR& listShapesIOR ) ;
+  void MakeShellAndDisplay( GEOM::GEOM_Gen::ListOfIOR& listShapesIOR ) ;
+  void MakeSolidAndDisplay( GEOM::GEOM_Gen::ListOfIOR& listShapesIOR ) ;
   void MakeLinearEdgeAndDisplay( const gp_Pnt P1, const gp_Pnt P2 ) ;
   void MakeOrientationChangeAndDisplay( GEOM::GEOM_Shape_ptr Shape ) ;
 

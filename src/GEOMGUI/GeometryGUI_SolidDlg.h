@@ -21,40 +21,38 @@
 //
 //
 //
-//  File   : GeometryGUI_ShellDlg.h
+//  File   : GeometryGUI_SolidDlg.h
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header: 
 
-#ifndef DIALOGBOX_SHELL_H
-#define DIALOGBOX_SHELL_H
+#ifndef DIALOGBOX_SOLID_H
+#define DIALOGBOX_SOLID_H
 
 #include "GeometryGUI_Skeleton.h"
 #include "GeometryGUI_1Sel_QTD.h"
 
-#include "GEOM_FaceFilter.hxx"
-
 //=================================================================================
-// class    : GeometryGUI_ShellDlg
+// class    : GeometryGUI_SolidDlg
 // purpose  :
 //=================================================================================
-class GeometryGUI_ShellDlg : public GeometryGUI_Skeleton
+class GeometryGUI_SolidDlg : public GeometryGUI_Skeleton
 { 
     Q_OBJECT
 
 public:
-    GeometryGUI_ShellDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
-    ~GeometryGUI_ShellDlg();
+    GeometryGUI_SolidDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    ~GeometryGUI_SolidDlg();
 
 private:
     void Init(SALOME_Selection* Sel);
     void enterEvent(QEvent * e);
 
-    Handle(GEOM_FaceFilter) myFaceFilter;    /* Filters selection */
+    Handle(GEOM_ShapeTypeFilter) myShellFilter;  /* filter for selection */
     GEOM::GEOM_Gen::ListOfIOR myListShapes;
     bool myOkListShapes;          /* to check when arguments is defined */
 
-    GeometryGUI_1Sel_QTD* GroupShell ;
+    GeometryGUI_1Sel_QTD* GroupSolid;
 
 private slots:
     void ClickOnOk();
@@ -66,4 +64,4 @@ private slots:
 
 };
 
-#endif // DIALOGBOX_SHELL_H
+#endif // DIALOGBOX_SOLID_H

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "POT-Creation-Date: 2001-06-14 09:11:49 PM CEST\n"
-"PO-Revision-Date: YYYY-MM-DD\n"
+"PO-Revision-Date: 2003-09-22 16:39+0200\n"
 "Last-Translator: FULLNAME <EMAIL@ADDRESS>\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 
@@ -189,6 +189,10 @@ msgstr "build_face.png"
 #ShellDlg
 msgid "ICON_DLG_BUILD_SHELL"
 msgstr "build_shell.png"
+
+#SolidDlg
+msgid "ICON_DLG_BUILD_SOLID"
+msgstr "build_solid.png"
 
 #WireDlg
 msgid "ICON_DLG_BUILD_WIRE"
