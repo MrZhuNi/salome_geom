@@ -528,7 +528,6 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
 
   // to provide warning
   if (!isWarning) SetErrorCode(OK);
-  SetErrorCode(OK);
   return aGlued;
 }
 
