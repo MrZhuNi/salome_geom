@@ -1,4 +1,4 @@
-#  GEOM GEOMCONTEXT : 
+#  GEOM GEOMBASE : 
 #
 #  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 #  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
@@ -35,21 +35,23 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 @COMMENCE@
 
 # Libraries targets
-LIB = libGEOMContext.la
-
-# ressources files
-PO_FILES = \
-	GEOM_icons.po \
-	GEOM_msg_en.po \
-	GEOM_msg_fr.po
+LIB = libGEOMBase.la
 
 # header files 
-EXPORT_HEADERS= GEOMContext.h
+EXPORT_HEADERS= GEOMBase.h \
+		GEOMBase_Sketcher.h \
+		GEOMBase_Skeleton.h
 
-LIB_SRC = 	GEOMContext.cxx
+LIB_SRC = 	GEOMBase.cxx \
+		GEOMBase_Skeleton.cxx \
+		GEOMBase_Sketcher.cxx \
+		GEOMBase_aParameterDlg.cxx
 
 LIB_MOC = \
-		GEOMContext.h
+		GEOMBase.h \
+		GEOMBase_Skeleton.h \
+		GEOMBase_Sketcher.h \
+		GEOMBase_aParameterDlg.h
 
 LIB_CLIENT_IDL = SALOME_Exception.idl \
 		 GEOM_Gen.idl \
@@ -66,6 +68,6 @@ LIB_SERVER_IDL =
 CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMSketcher -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMFiltersSelection -lGEOMSketcher -lDlgRef -lGEOMContext -L${KERNEL_ROOT_DIR}/lib/salome
 
 @CONCLUDE@
