@@ -45,42 +45,40 @@ class Kinematic_Animation
 public:
   Kinematic_Animation();
   Kinematic_Animation(Kinematic_Assembly* Ass, TopoDS_Shape frame,
-		      double duration, int nbseq, bool isinloop);
+		      double duration, int nbseq);
   ~Kinematic_Animation();
 
 private:
-  AIS_SequenceOfInteractive ListOfAIS;
-  TopTools_IndexedMapOfShape myIndexToShape;
-  TopTools_IndexedMapOfShape myMovedShape;
   map <int, list <Kinematic_Contact *> > myStlMapofShapeListOfContact;
   Kinematic_Assembly* myAss;
   TopoDS_Shape myFrame;
   double myDuration;
   int myNbSeq;
-  int myNbAIS;
-  bool myIsInLoop;
-  bool IsCreated;
 
 public:
+  AIS_SequenceOfInteractive ListOfAIS;
+  TopTools_IndexedMapOfShape myIndexToShape;
+  TopTools_IndexedMapOfShape myMovedShape;
+  bool IsCreated;
+  int myNbAIS;
+  bool myIsShading;
+
   void SetMap();
-  void Animate(const Handle(AIS_InteractiveContext)& ic);
   void GetNextShape(const Handle (AIS_InteractiveContext)& ic, 
 		    gp_Trsf& aLoc, TopoDS_Shape Shape1, double Step);
   void MoveShape(const Handle(AIS_InteractiveContext)& ic,
 		 gp_Trsf& aLoc, Kinematic_Contact* aContact,
 		 double Step);
 
-  void Assembly(Kinematic_Assembly& Assembly){myAss = &Assembly;};
+  void Assembly(Kinematic_Assembly* Assembly){myAss = Assembly;};
   void Frame(TopoDS_Shape Frame){myFrame = Frame;};
   void Duration(double Duration){myDuration = Duration;};
   void NbSeq(int NbSeq){myNbSeq = NbSeq;};
-  void IsInLoop(bool IsInLoop){myIsInLoop = IsInLoop;};
 
   Kinematic_Assembly* Assembly(){return myAss;};
   TopoDS_Shape& Frame(){return myFrame;};
   double& Duration(){return myDuration;};
   int& NbSeq(){return myNbSeq;};
-  bool& IsInLoop(){return myIsInLoop;};
 
 };
 

@@ -42,7 +42,8 @@ using namespace std;
 #include "KinematicGUI_PositionDlg.h"    // Method POSITION
 #include "KinematicGUI_RotationDlg.h"    // Method ROTATION
 #include "KinematicGUI_TranslationDlg.h" // Method TRANSLATION
-#include "KinematicGUI_AnimationDlg.h"   // Method ANIMATION
+#include "KinematicGUI_AnimationDlg.h"   // Method Create ANIMATION
+#include "KinematicGUI_AnimDlg.h"        // Method Play ANIMATION
 
 //=======================================================================
 // function : KinematicGUI()
@@ -155,9 +156,12 @@ bool KinematicGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       }
     case 6141: // RUN ANIMATION
       {
-	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC)
-	  break;
-	myKinematicGUI->RunAnimation(Sel);
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  Handle(AIS_InteractiveContext) ic;
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	  ic = v3d->getAISContext();
+	  KinematicGUI_AnimDlg *aDlg = new KinematicGUI_AnimDlg(parent, "", myKinematicGUI, Sel, ic, true);
+	}
 	break;
       }
     default:
@@ -207,7 +211,6 @@ void KinematicGUI::AddContact(GEOM::GEOM_Assembly_ptr Ass, GEOM::GEOM_Shape_ptr 
       return;
     }  
     
-    Ass->AddContact(result);
     if(this->AddContactInStudy(Ass, result))
       QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
@@ -223,10 +226,10 @@ void KinematicGUI::AddContact(GEOM::GEOM_Assembly_ptr Ass, GEOM::GEOM_Shape_ptr 
 // purpose  : 
 //=======================================================================
 void KinematicGUI::AddAnimation(GEOM::GEOM_Assembly_ptr Ass, GEOM::GEOM_Shape_ptr Shape1,
-				double Duration, int NbSeq, bool IsInLoop)
+				double Duration, int NbSeq)
 {
   try {
-    GEOM::GEOM_Animation_ptr result = myGeom->AddAnimation(Ass, Shape1, Duration, NbSeq, IsInLoop);
+    GEOM::GEOM_Animation_ptr result = myGeom->AddAnimation(Ass, Shape1, Duration, NbSeq);
     if(result->_is_nil()) {
       QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
       return;
@@ -591,32 +594,6 @@ TCollection_AsciiString KinematicGUI::GetNameFromType(int type)
 
 
 //=======================================================================
-// function : RunAnimation()
-// purpose  : 
-//=======================================================================
-void KinematicGUI::RunAnimation(SALOME_Selection* Sel)
-{
-  QApplication::setOverrideCursor(Qt::waitCursor);
-  Standard_Boolean testResult;
-  Handle(SALOME_InteractiveObject) IO = Sel->firstIObject();
-
-  GEOM::GEOM_Animation_var myGeomAnimation = myGeomBase->ConvertIOinAnimation(IO, testResult);
-  if(!testResult)
-    return;
-
-  Handle(AIS_InteractiveContext) ic;
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-  ic = v3d->getAISContext();
-
-  Kinematic_Animation* KAnimation = CreateAnimation(myGeomAnimation);
-  KAnimation->Animate(ic);
-  QApplication::restoreOverrideCursor();
-
-  return;
-}
-
-
-//=======================================================================
 // function : CreateContact()
 // purpose  : 
 //=======================================================================
@@ -668,7 +645,6 @@ Kinematic_Assembly* KinematicGUI::CreateAssembly(GEOM::GEOM_Assembly_ptr aAssemb
 {
   int NbContact = aAssembly->NbContacts();
   GEOM::ListOfContact_var aContactList = aAssembly->GetContactList();
-
   Kinematic_Assembly* KAssembly = new Kinematic_Assembly();
 
   for(int i = 0; i < NbContact; i++) {
@@ -676,7 +652,6 @@ Kinematic_Assembly* KinematicGUI::CreateAssembly(GEOM::GEOM_Assembly_ptr aAssemb
     Kinematic_Contact* KContact = CreateContact(myContact);
     KAssembly->AddContact(KContact);
   }
-
   return KAssembly;
 }
 
@@ -690,14 +665,12 @@ Kinematic_Animation* KinematicGUI::CreateAnimation(GEOM::GEOM_Animation_ptr aAni
   GEOM::GEOM_Shape_var aFrame = aAnimation->GetFrame();
   double Duration = aAnimation->GetDuration();
   int NbSeq = aAnimation->GetNbSeq();
-  bool IsInLoop = aAnimation->GetIsInLoop();
 
   GEOM::GEOM_Assembly_var myAssembly = aAnimation->GetAssembly();
   Kinematic_Assembly* KAssembly = CreateAssembly(myAssembly);
-
   TopoDS_Shape myFrame = myGeomGUI->GetShapeReader().GetShape(myGeom, aFrame);
-  Kinematic_Animation* KAnimation = new Kinematic_Animation(KAssembly, myFrame, Duration, NbSeq, IsInLoop);
 
+  Kinematic_Animation* KAnimation = new Kinematic_Animation(KAssembly, myFrame, Duration, NbSeq);
   return KAnimation;
 }
 

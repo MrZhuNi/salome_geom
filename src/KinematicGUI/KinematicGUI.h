@@ -58,7 +58,7 @@ public :
   void AddContact(GEOM::GEOM_Assembly_ptr Ass, GEOM::GEOM_Shape_ptr Shape1,
 		  GEOM::GEOM_Shape_ptr Shape2, int type, double step = 0);
   void AddAnimation(GEOM::GEOM_Assembly_ptr Ass, GEOM::GEOM_Shape_ptr Shape1,
-		    double Duration, int NbSeq, bool IsInLoop);
+		    double Duration, int NbSeq);
 
   bool AddContactInStudy(GEOM::GEOM_Assembly_ptr Ass, 
 			 GEOM::GEOM_Contact_ptr aContact);
@@ -73,8 +73,6 @@ public :
 		   double Val1, double Val2, double Val3);
   void SetTranslation(GEOM::GEOM_Contact_ptr aContact,
 		      double Val1, double Val2, double Val3);
-
-  void RunAnimation(SALOME_Selection* Sel);
 
   Kinematic_Contact* CreateContact(GEOM::GEOM_Contact_ptr aContact);
   Kinematic_Assembly* CreateAssembly(GEOM::GEOM_Assembly_ptr aAssembly);

@@ -180,9 +180,6 @@ module GEOM
     long GetNbSeq()
       raises (SALOME::SALOME_Exception);
 
-    boolean GetIsInLoop()
-      raises (SALOME::SALOME_Exception);
-
     attribute string Name;
     attribute string ShapeId;
     attribute string StudyShapeId;

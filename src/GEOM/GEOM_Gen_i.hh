@@ -626,8 +626,7 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen,
   GEOM::GEOM_Animation_ptr AddAnimation(GEOM::GEOM_Assembly_ptr Ass, 
 					GEOM::GEOM_Shape_ptr Shape1,
 					CORBA::Double Duration,
-					const short NbSeq,
-					CORBA::Boolean IsInLoop) 
+					const short NbSeq) 
     throw (SALOME::SALOME_Exception) ;
   void SetPosition(GEOM::GEOM_Contact_ptr Contact) 
     throw (SALOME::SALOME_Exception) ;

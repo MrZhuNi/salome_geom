@@ -50,13 +50,12 @@ KinematicGUI_AnimationDlg::KinematicGUI_AnimationDlg(QWidget* parent, const char
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  Group1 = new KinematicGUI_2Sel2Spin1Check(this, "Group1");
+  Group1 = new DlgRef_2Sel2Spin(this, "Group1");
   Group1->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   Group1->TextLabel1->setText(tr("GEOM_ASSEMBLY"));
   Group1->TextLabel2->setText(tr("GEOM_FRAME"));
   Group1->TextLabel3->setText(tr("GEOM_DURATION"));
   Group1->TextLabel4->setText(tr("GEOM_NBSEQ"));
-  Group1->CheckButton1->setText(tr("GEOM_IS_IN_LOOP"));
   Group1->PushButton1->setPixmap(image1);
   Group1->PushButton2->setPixmap(image1);
 
@@ -98,8 +97,6 @@ void KinematicGUI_AnimationDlg::Init()
 
   Group1->SpinBox_DX->SetValue(myDuration);
   Group1->SpinBox_DY->SetValue(myNbSeq);
-
-  Group1->CheckButton1->setEnabled(false);
 
    /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -146,9 +143,8 @@ void KinematicGUI_AnimationDlg::ClickOnApply()
 {
   QAD_Application::getDesktop()->putInfo(tr(""));
 
-  bool IsInLoop = Group1->CheckButton1->isChecked();
   if(myOkAssembly && myOkShape1)
-    myKinematicGUI->AddAnimation(myGeomAssembly, myGeomShape1, myDuration, myNbSeq, IsInLoop);
+    myKinematicGUI->AddAnimation(myGeomAssembly, myGeomShape1, myDuration, myNbSeq);
 
   return;
 }

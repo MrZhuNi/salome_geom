@@ -19,18 +19,6 @@ msgid "ICON_OBJBROWSER_Geometry"
 msgstr "geometry.png"
 
 #: 
-msgid "ICON_ANIMATION"
-msgstr "animation.png"
-
-#: 
-msgid "ICON_ASSEMBLY"
-msgstr "assembly.png"
-
-#: 
-msgid "ICON_CONTACT"
-msgstr "contact.png"
-
-#: 
 msgid "ICON_OBJBROWSER_ANIMATION"
 msgstr "tree_animation.png"
 
@@ -397,3 +385,39 @@ msgstr "positionvect.png"
 #PositionDlg
 msgid "ICON_DLG_POS_FACE"
 msgstr "positionface.png"
+
+#: 
+msgid "ICON_ANIMATION"
+msgstr "animation.png"
+
+#: 
+msgid "ICON_ASSEMBLY"
+msgstr "assembly.png"
+
+#: 
+msgid "ICON_CONTACT"
+msgstr "contact.png"
+
+#: 
+msgid "ICON_ANIM_FIRST"
+msgstr "anim_first.png"
+
+#: 
+msgid "ICON_ANIM_PREV"
+msgstr "anim_prev.png"
+
+#: 
+msgid "ICON_ANIM_PLAY"
+msgstr "anim_play.png"
+
+#: 
+msgid "ICON_ANIM_STOP"
+msgstr "anim_stop.png"
+
+#: 
+msgid "ICON_ANIM_NEXT"
+msgstr "anim_next.png"
+
+#: 
+msgid "ICON_ANIM_LAST"
+msgstr "anim_last.png"

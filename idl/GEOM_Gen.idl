@@ -341,8 +341,7 @@ module GEOM
     GEOM_Animation AddAnimation(in GEOM_Assembly Ass,
 				in GEOM_Shape Shape1,
 				in double Duration,
-				in short NbSeq,
-				in boolean IsInLoop) raises (SALOME::SALOME_Exception) ;
+				in short NbSeq) raises (SALOME::SALOME_Exception) ;
 
     void SetPosition(in GEOM_Contact Contact) raises (SALOME::SALOME_Exception) ;
 

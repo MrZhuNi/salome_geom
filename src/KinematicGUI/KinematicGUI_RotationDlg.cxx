@@ -39,14 +39,13 @@ using namespace std;
 KinematicGUI_RotationDlg::KinematicGUI_RotationDlg(QWidget* parent, const char* name, KinematicGUI* theKinematicGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  //QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_COMMON")));
-  //QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_CONTACT")));
 
   setCaption(tr("GEOM_KROTATION_TITLE"));
 
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_KROTATION"));
-  //RadioButton1->setPixmap(image0);
+  RadioButton1->setPixmap(image0);
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 

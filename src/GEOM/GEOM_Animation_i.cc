@@ -100,22 +100,12 @@ CORBA::Double GEOM_Animation_i::GetDuration() throw(SALOME::SALOME_Exception)
 
 
 //=================================================================================
-// function : GetDuration()
+// function : GetNbSeq()
 // purpose  : 
 //=================================================================================
 CORBA::Long GEOM_Animation_i::GetNbSeq() throw(SALOME::SALOME_Exception)
 {
   return _Animation->NbSeq();
-}
-
-
-//=================================================================================
-// function : GetDuration()
-// purpose  : 
-//=================================================================================
-CORBA::Boolean GEOM_Animation_i::GetIsInLoop() throw(SALOME::SALOME_Exception)
-{
-  return _Animation->IsInLoop();
 }
 
 

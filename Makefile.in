@@ -22,6 +22,12 @@ GEOM_fr.xml \
 GEOMCatalog.xml \
 GEOMDS_Resources \
 animation.png \
+anim_first.png \
+anim_last.png \
+anim_next.png \
+anim_play.png \
+anim_prev.png \
+anim_stop.png \
 arc.png \
 archimede.png \
 assembly.png \

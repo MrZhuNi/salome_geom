@@ -428,9 +428,6 @@ TDF_Label GEOMDS_Commands::AddAnimation(Kinematic_Animation& KAnimation,
   TDF_Label LabNbSeq = LabAnimation.NewChild();
   TDataStd_Integer::Set(LabNbSeq, KAnimation.NbSeq());
 
-  TDF_Label LabIsInLoop = LabAnimation.NewChild();
-  TDataStd_Integer::Set(LabIsInLoop, KAnimation.IsInLoop());
-
   return LabAnimation;
 }
 
@@ -555,7 +552,6 @@ Standard_Boolean GEOMDS_Commands::GetAnimation(const TDF_Label& aLabel,
     Handle(TDataStd_Real) anAttReal;
     Handle(TDataStd_Integer) anAttInteger;
     Handle(TDataStd_Integer) anAttInteger1;
-    Handle(TDataStd_Integer) anAttInteger2;
 
     if(i == 1 && L.FindAttribute(TDataStd_Integer::GetID(), anAttInteger)) {
       if(anAttInteger->Get() != 3) {
@@ -564,8 +560,8 @@ Standard_Boolean GEOMDS_Commands::GetAnimation(const TDF_Label& aLabel,
       }
     }
     if(i == 2) {
-      Kinematic_Assembly aAss;
-      Standard_Boolean test = GetAssembly(L, aAss);
+      Kinematic_Assembly* aAss =  new Kinematic_Assembly();
+      Standard_Boolean test = GetAssembly(L, *aAss);
       Anim->Assembly(aAss);
     }
     if(i == 3 && L.FindAttribute(TNaming_NamedShape::GetID(), anAttTopo)) {
@@ -577,11 +573,9 @@ Standard_Boolean GEOMDS_Commands::GetAnimation(const TDF_Label& aLabel,
     if(i == 5 && L.FindAttribute(TDataStd_Integer::GetID(), anAttInteger1)) {
       Anim->NbSeq(anAttInteger1->Get());
     }
-    if(i == 6 && L.FindAttribute(TDataStd_Integer::GetID(), anAttInteger2)) {
-      Anim->IsInLoop(anAttInteger2->Get());
-    }
     i++;
   }
+  Anim->SetMap();
   returnAnim = *Anim;
   return true;
 }

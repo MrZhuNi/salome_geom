@@ -30,7 +30,7 @@
 #define DIALOGBOX_ANIMATION_H
 
 #include "GEOMBase_Skeleton.h"
-#include "KinematicGUI_2Sel2Spin1Check.h"
+#include "DlgRef_2Sel2Spin.h"
 
 #include "KinematicGUI.h"
 
@@ -59,7 +59,7 @@ private:
     double myDuration;
     int  myNbSeq;
 
-    KinematicGUI_2Sel2Spin1Check* Group1;
+    DlgRef_2Sel2Spin* Group1;
 
 private slots:
     void ClickOnOk();

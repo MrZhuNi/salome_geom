@@ -78,9 +78,6 @@ public:
   CORBA::Long GetNbSeq()
     throw (SALOME::SALOME_Exception);
 
-  CORBA::Boolean GetIsInLoop()
-    throw (SALOME::SALOME_Exception);
-
   char* Name();
   void  Name(const char* name);
 

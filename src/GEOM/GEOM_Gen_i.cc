@@ -5353,6 +5353,7 @@ GEOM::GEOM_Contact_ptr GEOM_Gen_i::AddContact(GEOM::GEOM_Assembly_ptr Ass,
   TDF_Tool::Entry(LabContact, entry);
   Contact->ShapeId(entry.ToCString());
 
+  Ass->AddContact(Contact);
   return Contact;
 }
 
@@ -5364,8 +5365,7 @@ GEOM::GEOM_Contact_ptr GEOM_Gen_i::AddContact(GEOM::GEOM_Assembly_ptr Ass,
 GEOM::GEOM_Animation_ptr GEOM_Gen_i::AddAnimation(GEOM::GEOM_Assembly_ptr Ass, 
 						  GEOM::GEOM_Shape_ptr Shape1,
 						  CORBA::Double Duration,
-						  const short NbSeq,
-						  CORBA::Boolean IsInLoop)
+						  const short NbSeq)
   throw (SALOME::SALOME_Exception)
 {
   Kinematic_Animation* tds;
@@ -5377,7 +5377,7 @@ GEOM::GEOM_Animation_ptr GEOM_Gen_i::AddAnimation(GEOM::GEOM_Assembly_ptr Ass,
     Kinematic_Assembly* aAss = new Kinematic_Assembly();
     Standard_Boolean test = GC.GetAssembly(mainRefLab, *aAss);
     TopoDS_Shape aShape1 = GetTopoShape(Shape1);
-    tds = new Kinematic_Animation(aAss, aShape1, Duration, NbSeq, IsInLoop);
+    tds = new Kinematic_Animation(aAss, aShape1, Duration, NbSeq);
   }
   catch(Standard_Failure)
     THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::AddAnimation", SALOME::BAD_PARAM);

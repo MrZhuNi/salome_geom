@@ -37,7 +37,13 @@ using namespace std;
 // profile
 // command to build a profile
 //=======================================================================
-Kinematic_Animation::Kinematic_Animation(){}
+Kinematic_Animation::Kinematic_Animation()
+{
+  myIsShading = false;
+  IsCreated = false;
+  myNbAIS = 0;
+  return;
+}
 
 
 //=======================================================================
@@ -45,17 +51,16 @@ Kinematic_Animation::Kinematic_Animation(){}
 // command to build a profile
 //=======================================================================
 Kinematic_Animation::Kinematic_Animation(Kinematic_Assembly* Ass, TopoDS_Shape frame,
-					 double duration, int nbseq, bool isinloop)
+					 double duration, int nbseq)
 {
   myAss = Ass;
   myFrame = frame;
   myDuration = duration;
   myNbSeq = nbseq;
-  myIsInLoop = isinloop;
+  myIsShading = false;
   IsCreated = false;
-  myNbAIS = 1;
+  myNbAIS = 0;
   this->SetMap();
-
   return;
 }
 
@@ -106,67 +111,6 @@ void Kinematic_Animation::SetMap()
 
 
 //=================================================================================
-// function : Animate()
-// purpose  : 
-//=================================================================================
-void Kinematic_Animation::Animate(const Handle(AIS_InteractiveContext)& ic)
-{
-  bool IsOk = false;
-  for(int cpt = 1; cpt <= myIndexToShape.Extent(); cpt++) {
-    TopoDS_Shape myShape = myIndexToShape.FindKey(cpt);
-    if(myShape == myFrame)
-      IsOk = true;
-  }
-  if(!IsOk)
-    return;
-
-  myMovedShape.Clear();
-  myMovedShape.Add(myFrame);
-
-  IsCreated = false;
-  gp_Trsf aLoc;
-  GetNextShape(ic, aLoc, myFrame, 1);
-  IsCreated = true;
-
-  Handle(AIS_Shape) mySimulationShape;
-  mySimulationShape = new AIS_Shape(TopoDS_Shape());
-  mySimulationShape->Set(myFrame);
-  mySimulationShape->SetColor(Quantity_NOC_RED);
-  ic->Deactivate(mySimulationShape);
-  ic->Display(mySimulationShape, Standard_False);
-  ic->UpdateCurrentViewer();
-
-  double Step, Val;
-  Step = 1.0 / myNbSeq;
-  for(int i = 0; i <= myNbSeq; i++) {
-    Val = i * Step;
-
-    myMovedShape.Clear();
-    myMovedShape.Add(myFrame);
-
-    myNbAIS = 1;
-    GetNextShape(ic, aLoc, myFrame, Val);
-
-    ic->UpdateCurrentViewer();
-    usleep(myDuration / myNbSeq * 1e6);
-  }
-
-  ic->Erase(mySimulationShape, Standard_True, Standard_False);
-  ic->ClearPrs(mySimulationShape);
-
-  for(int i = 1; i <= myNbAIS; i++) {
-    Handle(AIS_Shape) myShape = Handle(AIS_Shape)::DownCast(ListOfAIS.Value(i));
-    ic->Erase(myShape, Standard_True, Standard_False);
-    ic->ClearPrs(myShape);
-  }
-
-  ic->UpdateCurrentViewer();
-
-  return;
-}
-
-
-//=================================================================================
 // function : GetNextShape()
 // purpose  : 
 //=================================================================================
@@ -198,8 +142,6 @@ void Kinematic_Animation::GetNextShape(const Handle(AIS_InteractiveContext)& ic,
 	    Handle(AIS_Shape) mySimulationShape;
 	    mySimulationShape = new AIS_Shape(TopoDS_Shape());
 	    mySimulationShape->Set(myShape2);
-	    mySimulationShape->SetColor(Quantity_NOC_GREEN);
-	    ic->Deactivate(mySimulationShape);
 	    ListOfAIS.Append(mySimulationShape);
 	  }
 	  else
@@ -228,13 +170,20 @@ void Kinematic_Animation::MoveShape(const Handle(AIS_InteractiveContext)& ic,
   gp_Trsf aTrans = aContact->GetTransformation(Step);
   aLoc = aLoc * aTrans;
 
+  myNbAIS++;
   Handle(AIS_Shape) mySimulationShape = Handle(AIS_Shape)::DownCast(ListOfAIS.Value(myNbAIS));
   Handle(Geom_Transformation) aGTrans = new Geom_Transformation();
   aGTrans->SetTrsf(aLoc);
   mySimulationShape->SetTransformation(aGTrans, false, false);
 
+  if(myIsShading) {
+    mySimulationShape->SetColor(Quantity_NOC_GOLDENROD);
+    ic->SetDisplayMode(mySimulationShape, 1, Standard_False);
+  }
+  else {
+    mySimulationShape->SetColor(Quantity_NOC_GREEN);
+    ic->SetDisplayMode(mySimulationShape, 0, Standard_False);
+  }
   ic->Display(mySimulationShape, Standard_False);
-
-  myNbAIS++;
   return;
 }

@@ -42,6 +42,7 @@ LIB_SRC =	Kinematic_Position.cxx \
 		Kinematic_Contact.cxx \
 	  	Kinematic_Assembly.cxx \
 		Kinematic_Animation.cxx
+
 LIB_CLIENT_IDL = 
 
 # header files 

@@ -1369,7 +1369,19 @@ msgstr "Duration"
 msgid "GEOM_NBSEQ"
 msgstr "Nb. Sequences"
 
-msgid "GEOM_IS_IN_LOOP"
+msgid "GEOM_ANIM_EXPORT"
+msgstr "Export Animation"
+
+msgid "GEOM_ANIM_SHADING"
+msgstr "In Shading"
+
+msgid "GEOM_ANIM_TITLE"
+msgstr "Animate an Assembly"
+
+msgid "GEOM_ANIM"
+msgstr "Animation"
+
+msgid "GEOM_ANIM_INLOOP"
 msgstr "In Loop"
 
 msgid "GEOM_POSITION"
