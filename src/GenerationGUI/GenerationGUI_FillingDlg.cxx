@@ -175,7 +175,7 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkSectionShape = false;
@@ -186,12 +186,12 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
   TopoDS_Shape S; 
   Standard_Boolean testResult;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
   
   if(myEditCurrentArgument == GroupPoints->LineEdit1 && S.ShapeType() == TopAbs_COMPOUND) {
     myEditCurrentArgument->setText(aString);
-    myGeomShape = myGeomGUI->ConvertIOinGEOMShape(IO, testResult);
+    myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return;
     myOkSectionShape = true;

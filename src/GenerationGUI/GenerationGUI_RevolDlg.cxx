@@ -148,7 +148,7 @@ void GenerationGUI_RevolDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   if(myOkBase && myOkAxis)
@@ -163,12 +163,12 @@ void GenerationGUI_RevolDlg::ClickOnApply()
 //=================================================================================
 void GenerationGUI_RevolDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkBase = false;
@@ -181,11 +181,11 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
   TopoDS_Shape S; 
   Standard_Boolean testResult;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
     
   if(myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myGeomShape = myGeomGUI->ConvertIOinGEOMShape(IO, testResult);
+    myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return;
     TopAbs_ShapeEnum aType = S.ShapeType();
@@ -261,7 +261,7 @@ void GenerationGUI_RevolDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -312,7 +312,7 @@ void GenerationGUI_RevolDlg::ReverseAngle(int state)
 //=================================================================================
 void GenerationGUI_RevolDlg::MakeRevolutionSimulationAndDisplay() 
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   TopAbs_ShapeEnum aType = myBase.ShapeType();
@@ -322,7 +322,7 @@ void GenerationGUI_RevolDlg::MakeRevolutionSimulationAndDisplay()
   try {
     gp_Ax1 AX(myLoc, myDir);
     mySimulationTopoDs = BRepPrimAPI_MakeRevol(myBase, AX, myAngle*PI180);
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   }
   catch(Standard_Failure) {
     MESSAGE("Exception catched in MakeRevolutionSimulationAndDisplay");

@@ -29,7 +29,7 @@
 #ifndef GENERATIONGUI_H
 #define GENERATIONGUI_H
 
-#include "GEOMBase_Display.h"
+#include "GEOMBase.h"
 
 //=================================================================================
 // class    : GenerationGUI
@@ -43,7 +43,6 @@ public :
   GenerationGUI();
   ~GenerationGUI();
 
-  static GenerationGUI* GetOrCreateGUI();
   static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void MakePrismAndDisplay(GEOM::GEOM_Shape_ptr BaseShape, const gp_Pnt P1, const gp_Pnt P2);
@@ -53,7 +52,8 @@ public :
 			     const double tol3d, const double tol2d, const short nbiter);
   void MakePipeAndDisplay(GEOM::GEOM_Shape_ptr aPath, GEOM::GEOM_Shape_ptr aBase);
 
-  GEOMBase_Context* myGeomGUI;
+  GEOMBase* myGeomBase;
+  GEOMContext* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 
 };

@@ -29,7 +29,7 @@
 #ifndef MEASUREGUI_H
 #define MEASUREGUI_H
 
-#include "GEOMBase_Context.h"
+#include "GEOMBase.h"
 
 //=================================================================================
 // class    : MeasureGUI
@@ -43,12 +43,12 @@ public :
   MeasureGUI();
   ~MeasureGUI();
 
-  static MeasureGUI* GetOrCreateGUI();
   static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void MakeCDGAndDisplay(GEOM::GEOM_Shape_ptr Shape);
 
-  GEOMBase_Context* myGeomGUI;
+  GEOMBase* myGeomBase;
+  GEOMContext* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 
 };

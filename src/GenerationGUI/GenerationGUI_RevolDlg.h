@@ -34,6 +34,7 @@
 
 #include "GenerationGUI.h"
 
+#include "GEOM_ShapeTypeFilter.hxx"
 #include <gp_Dir.hxx>
 
 //=================================================================================

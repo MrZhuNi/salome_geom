@@ -31,6 +31,7 @@ using namespace std;
 
 #include <BRepPrimAPI_MakeTorus.hxx>
 #include <BRepAdaptor_Curve.hxx>
+#include "QAD_Config.h"
 
 //=================================================================================
 // class    : PrimitiveGUI_TorusDlg()
@@ -163,7 +164,7 @@ void PrimitiveGUI_TorusDlg::ConstructorsClicked(int constructorId)
 {
   myConstructorId = constructorId;
   mySelection->ClearFilters();
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   disconnect(mySelection, 0, this, 0);
   myOkRadius1 = myOkRadius2 = true;
   myRadius1 = 300.0;
@@ -231,7 +232,7 @@ void PrimitiveGUI_TorusDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   if(myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2 )	  
@@ -246,11 +247,11 @@ void PrimitiveGUI_TorusDlg::ClickOnApply()
 //=================================================================================
 void PrimitiveGUI_TorusDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape(); 
+  myGeomBase->EraseSimulationShape(); 
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkPoint1 = false;
@@ -261,11 +262,11 @@ void PrimitiveGUI_TorusDlg::SelectionIntoArgument()
 
   /* nbSel == 1 */
   TopoDS_Shape S;  
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;  
  
   /*  gp_Pnt : not used */
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomGUI->VertexToPoint(S, myPoint1)) {
+  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
     GroupPoints->LineEdit1->setText(aString);
     myOkPoint1 = true;
   }    
@@ -338,7 +339,7 @@ void PrimitiveGUI_TorusDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -362,7 +363,7 @@ void PrimitiveGUI_TorusDlg::enterEvent(QEvent* e)
 //=================================================================================
 void PrimitiveGUI_TorusDlg::ValueChangedInSpinBox(double newValue)
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   QObject* send = (QObject*)sender();
   
@@ -387,13 +388,13 @@ void PrimitiveGUI_TorusDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 void PrimitiveGUI_TorusDlg::MakeTorusSimulationAndDisplay() 
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   try {
     gp_Ax2 anAxis(myPoint1, myDir);
     mySimulationTopoDs = BRepPrimAPI_MakeTorus(anAxis, myRadius1, myRadius2).Shape();
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   }
   catch(Standard_Failure) {
     MESSAGE("Exception catched in MakeTorusSimulationAndDisplay");

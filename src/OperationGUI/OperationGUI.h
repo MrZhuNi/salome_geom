@@ -29,7 +29,7 @@
 #ifndef OPERATIONGUI_H
 #define OPERATIONGUI_H
 
-#include "GEOMBase_Display.h"
+#include "GEOMBase.h"
 
 //=================================================================================
 // class    : OperationGUI
@@ -43,7 +43,6 @@ public :
   OperationGUI();
   ~OperationGUI();
 
-  static OperationGUI* GetOrCreateGUI();
   static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void MakePartitionAndDisplay(const GEOM::GEOM_Gen::ListOfIOR& listShapesIOR,
@@ -70,7 +69,8 @@ public :
 			    Standard_Integer& aLocalContextId,
 			    bool& myUseLocalContext);
 
-  GEOMBase_Context* myGeomGUI;
+  GEOMBase* myGeomBase;
+  GEOMContext* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 
 };

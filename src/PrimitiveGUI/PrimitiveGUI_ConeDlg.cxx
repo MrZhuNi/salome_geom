@@ -32,6 +32,8 @@ using namespace std;
 #include <BRepPrimAPI_MakeCone.hxx>
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepAdaptor_Curve.hxx>
+#include <Precision.hxx>
+#include "QAD_Config.h"
 
 //=================================================================================
 // class    : PrimitiveGUI_ConeDlg()
@@ -175,7 +177,7 @@ void PrimitiveGUI_ConeDlg::ConstructorsClicked(int constructorId)
 {
   myConstructorId = constructorId;
   mySelection->ClearFilters();
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   disconnect(mySelection, 0, this, 0);
   myOkHeight = myOkRadius1 = myOkRadius2 = true;
   myRadius1 = 100.0;
@@ -247,7 +249,7 @@ void PrimitiveGUI_ConeDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
  
   if(myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2 && myOkHeight) {
@@ -267,11 +269,11 @@ void PrimitiveGUI_ConeDlg::ClickOnApply()
 //=================================================================================
 void PrimitiveGUI_ConeDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape(); 
+  myGeomBase->EraseSimulationShape(); 
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkPoint1 = false;
@@ -282,11 +284,11 @@ void PrimitiveGUI_ConeDlg::SelectionIntoArgument()
 
   /* nbSel == 1 */
   TopoDS_Shape S;
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
 
   /*  gp_Pnt : not used */
-  if (myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomGUI->VertexToPoint(S, myPoint1)) {
+  if (myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
     GroupPoints->LineEdit1->setText(aString);
     myOkPoint1 = true;
   }    
@@ -359,7 +361,7 @@ void PrimitiveGUI_ConeDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -383,7 +385,7 @@ void PrimitiveGUI_ConeDlg::enterEvent(QEvent* e)
 //=================================================================================
 void PrimitiveGUI_ConeDlg::ValueChangedInSpinBox(double newValue)
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   QObject* send = (QObject*)sender();
   
@@ -412,7 +414,7 @@ void PrimitiveGUI_ConeDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 void PrimitiveGUI_ConeDlg::MakeConeSimulationAndDisplay() 
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   gp_Dir aDir = myDir;
   
@@ -429,7 +431,7 @@ void PrimitiveGUI_ConeDlg::MakeConeSimulationAndDisplay()
       if(fabs(myHeight) > Precision::Confusion())
 	mySimulationTopoDs = BRepPrimAPI_MakeCone(anAxis, myRadius1, myRadius2, fabs(myHeight)).Shape();
     }
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   }
   catch(Standard_Failure) {
     MESSAGE("Exception catched in MakeConeSimulationAndDisplay");

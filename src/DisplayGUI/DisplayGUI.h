@@ -21,43 +21,41 @@
 //
 //
 //
-//  File   : RepairGUI.h
+//  File   : DisplayGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header: 
 
-#ifndef REPAIRGUI_H
-#define REPAIRGUI_H
+#ifndef DISPLAYGUI_H
+#define DISPLAYGUI_H
 
 #include "GEOMBase.h"
 
 //=================================================================================
-// class    : RepairGUI
+// class    : GEOMBase_Display
 // purpose  :
 //=================================================================================
-class RepairGUI : public QObject
+class DisplayGUI : public QObject
 {
   Q_OBJECT /* for QT compatibility */
 
 public :
-  RepairGUI();
-  ~RepairGUI();
+  DisplayGUI();
+  ~DisplayGUI();
 
   static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  static void BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO);
 
-  void MakeSewingAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR, 
-			    const Standard_Real precision);
-  void MakeOrientationChangeAndDisplay(GEOM::GEOM_Shape_ptr Shape);
-  bool OnSuppressHole(const char* ShapeTopoIOR,
-		      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdFace,
-		      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdWire,
-		      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdEndFace);
-  bool OnSuppressHolesInFaceOrShell(const char* ShapeTopoIOR,
-				    const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdWires);
-  bool OnSuppressFaces(const TopoDS_Shape& ShapeTopo,
-		       const char* ShapeTopoIOR,
-		       const Standard_Integer& aLocalContextId,
-		       bool& myUseLocalContext);
+  void OnDisplayAll(bool onlyPreviousDisplayedObject = false);
+  void OnVTKDisplayOnly();
+  void OnDisplayOnly();
+  void OnErase();
+
+  /* Method opening context for any sub shape selection */
+  bool PrepareSubShapeSelection(const int SubShapeType, Standard_Integer& returnLocalContextId);
+  /* Method opening context for sub shape selection on an argument shape */
+  bool PrepareSubShapeSelectionArgumentShape(const TopoDS_Shape& aShape, const int SubShapeType,
+					     Standard_Integer& returnLocalContextId);
 
   GEOMBase* myGeomBase;
   GEOMContext* myGeomGUI;

@@ -30,6 +30,7 @@ using namespace std;
 #include "TransformationGUI_TranslationDlg.h"
 
 #include <BRepBuilderAPI_Transform.hxx>
+#include "QAD_Config.h"
 
 //=================================================================================
 // class    : TransformationGUI_TranslationDlg()
@@ -150,7 +151,7 @@ void TransformationGUI_TranslationDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   if(myOkBase)
@@ -165,12 +166,12 @@ void TransformationGUI_TranslationDlg::ClickOnApply()
 //=================================================================================
 void TransformationGUI_TranslationDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if (nbSel != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkBase = false;
@@ -181,12 +182,12 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
   TopoDS_Shape S;
   Standard_Boolean testResult;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;  
  
   /*  gp_Pnt : not used */
   if(myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myGeomShape = myGeomGUI->ConvertIOinGEOMShape(IO, testResult);
+    myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return ;
     GroupPoints->LineEdit1->setText(aString);
@@ -244,7 +245,7 @@ void TransformationGUI_TranslationDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -300,7 +301,7 @@ void TransformationGUI_TranslationDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 void TransformationGUI_TranslationDlg::MakeTranslationSimulationAndDisplay()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   
   try {
@@ -311,7 +312,7 @@ void TransformationGUI_TranslationDlg::MakeTranslationSimulationAndDisplay()
     if(mySimulationTopoDs.IsNull())
       return;
     else
-      myGeomGUI->DisplaySimulationShape(mySimulationTopoDs); 
+      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
   }
   catch(Standard_Failure) {
     MESSAGE("Exception catched in MakeTranslationSimulationAndDisplay");

@@ -134,7 +134,7 @@ void TransformationGUI_MirrorDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   if(myOkShape1 && myOkShape2)
@@ -149,12 +149,12 @@ void TransformationGUI_MirrorDlg::ClickOnApply()
 //=================================================================================
 void TransformationGUI_MirrorDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkShape1 = false;
@@ -167,11 +167,11 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
   TopoDS_Shape S;
   Standard_Boolean testResult;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
   
   if(myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myGeomShape1 = myGeomGUI->ConvertIOinGEOMShape(IO, testResult);
+    myGeomShape1 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return;
     myShape1 = S;
@@ -179,7 +179,7 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
     myOkShape1 = true;
   }
   else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
-    myGeomShape2 = myGeomGUI->ConvertIOinGEOMShape(IO, testResult);
+    myGeomShape2 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return ;
     myShape2 = S;
@@ -258,7 +258,7 @@ void TransformationGUI_MirrorDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -269,7 +269,7 @@ void TransformationGUI_MirrorDlg::ActivateThisDialog()
 //=================================================================================
 void TransformationGUI_MirrorDlg::MakeMirrorSimulationAndDisplay()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   
   try {
@@ -289,7 +289,7 @@ void TransformationGUI_MirrorDlg::MakeMirrorSimulationAndDisplay()
     if(mySimulationTopoDs.IsNull())
       return;
     else
-      myGeomGUI->DisplaySimulationShape(mySimulationTopoDs); 
+      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
   }
   catch(Standard_Failure) {
     MESSAGE("Exception catched in MakeMirrorSimulationAndDisplay");

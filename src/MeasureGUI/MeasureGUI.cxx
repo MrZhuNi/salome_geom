@@ -29,6 +29,8 @@
 using namespace std;
 #include "MeasureGUI.h"
 
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
+
 #include "MeasureGUI_PropertiesDlg.h"    // Method PROPERTIES
 #include "MeasureGUI_CenterMassDlg.h"    // Method CENTER MASS
 #include "MeasureGUI_InertiaDlg.h"       // Method INERTIA
@@ -38,8 +40,6 @@ using namespace std;
 #include "MeasureGUI_WhatisDlg.h"        // Method WHATIS
 #include "MeasureGUI_CheckShape.h"       // Method CHECKSHAPE
 
-static MeasureGUI* myMeasureGUI = 0;
-
 //=======================================================================
 // function : MeasureGUI()
 // purpose  : Constructor
@@ -47,9 +47,9 @@ static MeasureGUI* myMeasureGUI = 0;
 MeasureGUI::MeasureGUI() :
   QObject()
 {
-  myGeomGUI = GEOMBase_Context::GetGeomGUI();
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myGeomBase = new GEOMBase();
+  myGeomGUI = GEOMContext::GetGeomGUI();
+  myGeom = myGeomGUI->myComponentGeom;
 }
 
 
@@ -63,24 +63,12 @@ MeasureGUI::~MeasureGUI()
 
 
 //=======================================================================
-// function : GetOrCreateGUI()
-// purpose  : Gets or create an object 'GUI' with initialisations
-//          : Returns 'GUI' as a pointer
-//=======================================================================
-MeasureGUI* MeasureGUI::GetOrCreateGUI()
-{
-  myMeasureGUI = new MeasureGUI();
-  return myMeasureGUI;
-}
-
-
-//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool MeasureGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  MeasureGUI::GetOrCreateGUI();
+  MeasureGUI* myMeasureGUI = new MeasureGUI();
   myMeasureGUI->myGeomGUI->EmitSignalDeactivateDialog();
   SALOME_Selection* Sel = SALOME_Selection::Selection(myMeasureGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
@@ -149,7 +137,7 @@ void MeasureGUI::MakeCDGAndDisplay(GEOM::GEOM_Shape_ptr Shape)
       return;
     }
     result->NameType(tr("GEOM_POINT"));
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }  
   catch(const SALOME::SALOME_Exception& S_ex) {

@@ -29,12 +29,12 @@
 using namespace std;
 #include "GenerationGUI.h"
 
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
+
 #include "GenerationGUI_PrismDlg.h"     // Method PRISM
 #include "GenerationGUI_RevolDlg.h"     // Method REVOL
 #include "GenerationGUI_FillingDlg.h"   // Method FILLING
 #include "GenerationGUI_PipeDlg.h"      // Method PIPE
-
-static GenerationGUI* myGenerationGUI = 0;
 
 //=======================================================================
 // function : GenerationGUI()
@@ -43,9 +43,9 @@ static GenerationGUI* myGenerationGUI = 0;
 GenerationGUI::GenerationGUI() :
   QObject()
 {
-  myGeomGUI = GEOMBase_Context::GetGeomGUI();
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myGeomBase = new GEOMBase();
+  myGeomGUI = GEOMContext::GetGeomGUI();
+  myGeom = myGeomGUI->myComponentGeom;
 }
 
 
@@ -59,24 +59,12 @@ GenerationGUI::~GenerationGUI()
 
 
 //=======================================================================
-// function : GetOrCreateGUI()
-// purpose  : Gets or create an object 'GUI' with initialisations
-//          : Returns 'GUI' as a pointer
-//=======================================================================
-GenerationGUI* GenerationGUI::GetOrCreateGUI()
-{
-  myGenerationGUI = new GenerationGUI();
-  return myGenerationGUI;
-}
-
-
-//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool GenerationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  GenerationGUI::GetOrCreateGUI();
+  GenerationGUI* myGenerationGUI = new GenerationGUI();
   myGenerationGUI->myGeomGUI->EmitSignalDeactivateDialog();
   SALOME_Selection* Sel = SALOME_Selection::Selection(myGenerationGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
@@ -134,10 +122,10 @@ void GenerationGUI::MakePrismAndDisplay(GEOM::GEOM_Shape_ptr BaseShape, const gp
 
     TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
     Standard_CString type;
-    myGeomGUI->GetShapeTypeString(S,type);
+    myGeomBase->GetShapeTypeString(S,type);
     result->NameType(type);
 
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -163,10 +151,10 @@ void GenerationGUI::MakeRevolutionAndDisplay(GEOM::GEOM_Shape_ptr Shape, const g
 
     TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
     Standard_CString type;
-    myGeomGUI->GetShapeTypeString(S,type);
+    myGeomBase->GetShapeTypeString(S,type);
     result->NameType(type);
 
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -194,10 +182,10 @@ void GenerationGUI::MakeFillingAndDisplay(GEOM::GEOM_Shape_ptr SectionShape, con
 
     TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
     Standard_CString type;
-    myGeomGUI->GetShapeTypeString(S,type);
+    myGeomBase->GetShapeTypeString(S,type);
     result->NameType(type);
 
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
     return;  
   } 
@@ -216,10 +204,10 @@ void GenerationGUI::MakePipeAndDisplay(GEOM::GEOM_Shape_ptr aPath, GEOM::GEOM_Sh
 {
   try {
     GEOM::GEOM_Shape_ptr result = myGeom->MakePipe(aPath, aBase);
-    if (!result->_is_nil() && myGeomGUI->Display(result)) {
+    if (!result->_is_nil() && myGeomBase->Display(result)) {
       TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
       Standard_CString type;
-      myGeomGUI->GetShapeTypeString(S,type);
+      myGeomBase->GetShapeTypeString(S,type);
       result->NameType(type);
 
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));

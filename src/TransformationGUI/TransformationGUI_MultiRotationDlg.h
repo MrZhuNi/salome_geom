@@ -68,7 +68,8 @@ public:
 private :
     TransformationGUI* myTransformationGUI;
     GEOM::GEOM_Gen_var        myGeom ;                /* Current Geom object */   
-    GEOMBase_Context*                 myGeomGUI ;             /* Current GeomGUI object */ 
+    GEOMBase*                 myGeomBase ;             /* Current GeomGUI object */ 
+    GEOMContext*                 myGeomGUI ;             /* Current GeomGUI object */ 
     TopoDS_Shape                 mySimulationTopoDs ;    /* Shape used for simulation display */
     SALOME_Selection*            mySelection ;           /* User shape selection */
     TopoDS_Shape                 myBase ;

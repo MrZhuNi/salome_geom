@@ -36,6 +36,7 @@
 #include "PrimitiveGUI.h"
 
 #include "GEOM_EdgeFilter.hxx"
+#include "GEOM_ShapeTypeFilter.hxx"
 
 #include <gp_Pnt.hxx>
 #include <gp_Dir.hxx>

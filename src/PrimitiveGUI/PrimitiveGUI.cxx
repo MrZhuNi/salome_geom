@@ -29,13 +29,14 @@
 using namespace std;
 #include "PrimitiveGUI.h"
 
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
+#include <Precision.hxx>
+
 #include "PrimitiveGUI_BoxDlg.h"      // Method BOX
 #include "PrimitiveGUI_CylinderDlg.h" // Method CYLINDER
 #include "PrimitiveGUI_SphereDlg.h"   // Method SPHERE
 #include "PrimitiveGUI_TorusDlg.h"    // Method TORUS
 #include "PrimitiveGUI_ConeDlg.h"     // Method CONE
-
-static PrimitiveGUI* myPrimitiveGUI = 0;
 
 //=======================================================================
 // function : PrimitiveGUI()
@@ -44,9 +45,9 @@ static PrimitiveGUI* myPrimitiveGUI = 0;
 PrimitiveGUI::PrimitiveGUI() :
   QObject()
 {
-  myGeomGUI = GEOMBase_Context::GetGeomGUI();
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myGeomBase = new GEOMBase();
+  myGeomGUI = GEOMContext::GetGeomGUI();
+  myGeom = myGeomGUI->myComponentGeom;
 }
 
 
@@ -60,52 +61,39 @@ PrimitiveGUI::~PrimitiveGUI()
 
 
 //=======================================================================
-// function : GetOrCreateGUI()
-// purpose  : Gets or create an object 'GUI' with initialisations
-//          : Returns 'GUI' as a pointer
-//=======================================================================
-PrimitiveGUI* PrimitiveGUI::GetOrCreateGUI()
-{
-  myPrimitiveGUI = new PrimitiveGUI();
-  return myPrimitiveGUI;
-}
-
-
-//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool PrimitiveGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  PrimitiveGUI::GetOrCreateGUI();
-  myPrimitiveGUI->myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myPrimitiveGUI->myGeomGUI->GetActiveStudy()->getSelection());
-
+  PrimitiveGUI* aPrimitiveGUI = new PrimitiveGUI();
+  aPrimitiveGUI->myGeomGUI->EmitSignalDeactivateDialog();
+  SALOME_Selection* Sel = SALOME_Selection::Selection(aPrimitiveGUI->myGeomGUI->GetActiveStudy()->getSelection());
   switch (theCommandID)
     {
     case 4021: // BOX
       {
-	PrimitiveGUI_BoxDlg *aDlg = new PrimitiveGUI_BoxDlg(parent, "", myPrimitiveGUI, Sel);
+	PrimitiveGUI_BoxDlg* aDlg = new PrimitiveGUI_BoxDlg(parent, "", aPrimitiveGUI, Sel);
 	break;
       }
     case 4022: // CYLINDER
       {
-	PrimitiveGUI_CylinderDlg *aDlg = new PrimitiveGUI_CylinderDlg(parent, "", myPrimitiveGUI, Sel);
+	PrimitiveGUI_CylinderDlg* aDlg = new PrimitiveGUI_CylinderDlg(parent, "", aPrimitiveGUI, Sel);
 	break;
       }
     case 4023: // SPHERE
       {
-	PrimitiveGUI_SphereDlg *aDlg = new PrimitiveGUI_SphereDlg(parent, "", myPrimitiveGUI, Sel);
+	PrimitiveGUI_SphereDlg* aDlg = new PrimitiveGUI_SphereDlg(parent, "", aPrimitiveGUI, Sel);
 	break;
       }
     case 4024: // TORUS
       {
-	PrimitiveGUI_TorusDlg *aDlg = new PrimitiveGUI_TorusDlg(parent, "", myPrimitiveGUI, Sel);
+	PrimitiveGUI_TorusDlg* aDlg = new PrimitiveGUI_TorusDlg(parent, "", aPrimitiveGUI, Sel);
 	break;
       }
     case 4025: // CONE
       {
-	PrimitiveGUI_ConeDlg *aDlg = new PrimitiveGUI_ConeDlg(parent, "", myPrimitiveGUI, Sel);
+	PrimitiveGUI_ConeDlg* aDlg = new PrimitiveGUI_ConeDlg(parent, "", aPrimitiveGUI, Sel);
 	break;
       }
     default:
@@ -127,7 +115,7 @@ void PrimitiveGUI::MakeBoxAndDisplay(const gp_Pnt P1, const gp_Pnt P2)
   try {
     GEOM::GEOM_Shape_var box = myGeom->MakeBox(P1.X(), P1.Y(), P1.Z(), P2.X(), P2.Y(), P2.Z());
     box->NameType(tr("GEOM_BOX"));
-    if(myGeomGUI->Display(box, ""))
+    if(myGeomBase->Display(box))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -157,7 +145,7 @@ void PrimitiveGUI::MakeCylinderAndDisplay(const gp_Pnt BasePoint, const gp_Dir a
       return;
     }
     result->NameType(tr("GEOM_CYLINDER"));
-    if(myGeomGUI->Display(result, ""))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -179,7 +167,7 @@ void PrimitiveGUI::MakeSphereAndDisplay(const gp_Pnt aCenterPoint, const double 
 
     GEOM::GEOM_Shape_ptr result = myGeom->MakeSphere(aCenterPoint.X(),aCenterPoint.Y(),aCenterPoint.Z(), aRadius);
     result->NameType(tr("GEOM_SPHERE"));
-    if (myGeomGUI->Display(result, ""))
+    if (myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch (const SALOME::SALOME_Exception& S_ex) {
@@ -210,7 +198,7 @@ void PrimitiveGUI::MakeTorusAndDisplay(const gp_Pnt BasePoint, const gp_Dir aDir
       return;
     }
     result->NameType(tr("GEOM_TORUS"));
-    if(myGeomGUI->Display(result, ""))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -241,7 +229,7 @@ void PrimitiveGUI::MakeConeAndDisplay(const gp_Pnt BasePoint, const gp_Dir aDir,
       return;
     }
     result->NameType(tr("GEOM_CONE"));
-    if(myGeomGUI->Display(result, ""))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   } 
   catch(const SALOME::SALOME_Exception& S_ex) {

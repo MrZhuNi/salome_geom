@@ -30,6 +30,7 @@ using namespace std;
 #include "TransformationGUI_MultiTranslationDlg.h"
 
 #include "QAD_Config.h"
+#include "DisplayGUI.h"
 
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
@@ -400,7 +401,8 @@ void TransformationGUI_MultiTranslationDlg::Init( SALOME_Selection* Sel )
   Constructor1->setChecked( TRUE );
   myEditCurrentArgument = LineEditC1A1 ;	
   mySelection = Sel;
-  myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
+  myGeomBase = new GEOMBase() ;
+  myGeomGUI = GEOMContext::GetGeomGUI() ;
 
   myOkBase = myOkDir1 = myOkDir2  = false ;
   mySimulationTopoDs.Nullify() ;
@@ -453,7 +455,7 @@ void TransformationGUI_MultiTranslationDlg::Init( SALOME_Selection* Sel )
  
   /* Move widget on the botton right corner of main widget */
   int x, y ;
-  myGeomGUI->DefineDlgPosition( this, x, y ) ;
+  myGeomBase->DefineDlgPosition( this, x, y ) ;
   this->move( x, y ) ;
   this->show() ; /* displays Dialog */
 
@@ -473,7 +475,7 @@ void TransformationGUI_MultiTranslationDlg::ReverseAngle1(int state)
     MakeMultiTranslationSimulationAndDisplay() ;
   }
   else {
-    myGeomGUI->EraseSimulationShape() ; 
+    myGeomBase->EraseSimulationShape() ; 
     mySimulationTopoDs.Nullify() ;
   }
    return ;
@@ -492,7 +494,7 @@ void TransformationGUI_MultiTranslationDlg::ReverseAngle2(int state)
     MakeMultiTranslationSimulationAndDisplay() ;
   }
   else {
-    myGeomGUI->EraseSimulationShape() ; 
+    myGeomBase->EraseSimulationShape() ; 
     mySimulationTopoDs.Nullify() ;
   }
    return ;
@@ -506,7 +508,7 @@ void TransformationGUI_MultiTranslationDlg::ReverseAngle2(int state)
 void TransformationGUI_MultiTranslationDlg::ConstructorsClicked(int constructorId)
 {
   myEditCurrentArgument->setText(tr("")) ;
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   mySimulationTopoDs.Nullify() ;
 
   myStep1 = 50.0 ;
@@ -569,7 +571,7 @@ void TransformationGUI_MultiTranslationDlg::ClickOnOk()
 //=================================================================================
 void TransformationGUI_MultiTranslationDlg::ClickOnApply()
 {
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   mySimulationTopoDs.Nullify() ;
   myGeomGUI->GetDesktop()->putInfo( tr("") ) ; 
   switch(myConstructorId)
@@ -600,7 +602,7 @@ void TransformationGUI_MultiTranslationDlg::ClickOnApply()
 void TransformationGUI_MultiTranslationDlg::ClickOnCancel()
 {
   mySelection->ClearFilters() ;
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   mySimulationTopoDs.Nullify() ;
   disconnect( mySelection, 0, this, 0 );
   myGeomGUI->ResetState() ;
@@ -634,7 +636,7 @@ void TransformationGUI_MultiTranslationDlg::LineEditReturnPressed()
   /* so SelectionIntoArgument() is automatically called.           */
   const QString objectUserName = myEditCurrentArgument->text() ;
   QWidget* thisWidget = (QWidget*)this ;
-  if( myGeomGUI->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
+  if( myGeomBase->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
     myEditCurrentArgument->setText( objectUserName ) ;
   }
   return ;
@@ -649,12 +651,12 @@ void TransformationGUI_MultiTranslationDlg::LineEditReturnPressed()
 void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("") ;
-  myGeomGUI->EraseSimulationShape() ; 
+  myGeomBase->EraseSimulationShape() ; 
   mySimulationTopoDs.Nullify() ;
 
   /* Future name of selection */
   QString aString = "";
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString) ;
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString) ;
 
   TopoDS_Shape S;
   Standard_Boolean testResult ;
@@ -676,11 +678,11 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
 	}
 
 	Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject() ;
-	if( !myGeomGUI->GetTopoFromSelection(mySelection, S) )
+	if( !myGeomBase->GetTopoFromSelection(mySelection, S) )
 	  return ;
 
 	if ( myEditCurrentArgument == LineEditC1A1 ) {
-	  myGeomShape = myGeomGUI->ConvertIOinGEOMShape(IO, testResult) ;
+	  myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult) ;
 	  if( !testResult )
 	    return ;
 	  myEditCurrentArgument->setText(aString) ;
@@ -698,7 +700,7 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
 	  MakeMultiTranslationSimulationAndDisplay() ;
 	}
 	else {
-	  myGeomGUI->EraseSimulationShape() ; 
+	  myGeomBase->EraseSimulationShape() ; 
 	  mySimulationTopoDs.Nullify() ;
 	}
 	break;
@@ -722,11 +724,11 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
 	}
 
 	Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject() ;
-	if( !myGeomGUI->GetTopoFromSelection(mySelection, S) )
+	if( !myGeomBase->GetTopoFromSelection(mySelection, S) )
 	  return ; 
 
 	if ( myEditCurrentArgument == LineEditC2A1 ) {
-	  myGeomShape = myGeomGUI->ConvertIOinGEOMShape(IO, testResult) ;
+	  myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult) ;
 	  if( !testResult )
 	    return ;
 	  myEditCurrentArgument->setText(aString) ;
@@ -750,7 +752,7 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
 	  MakeMultiTranslationSimulationAndDisplay() ;
 	}
 	else {
-	  myGeomGUI->EraseSimulationShape() ; 
+	  myGeomBase->EraseSimulationShape() ; 
 	  mySimulationTopoDs.Nullify() ;
 	}
 	break;
@@ -838,7 +840,7 @@ void TransformationGUI_MultiTranslationDlg::ValueChangedInt( int newIntValue )
 	  MakeMultiTranslationSimulationAndDisplay() ;
 	}
 	else {
-	  myGeomGUI->EraseSimulationShape() ; 
+	  myGeomBase->EraseSimulationShape() ; 
 	  mySimulationTopoDs.Nullify() ;
 	}
 	break;
@@ -849,7 +851,7 @@ void TransformationGUI_MultiTranslationDlg::ValueChangedInt( int newIntValue )
 	  MakeMultiTranslationSimulationAndDisplay() ;
 	}
 	else {
-	  myGeomGUI->EraseSimulationShape() ; 
+	  myGeomBase->EraseSimulationShape() ; 
 	  mySimulationTopoDs.Nullify() ;
 	}
 	break;
@@ -887,7 +889,7 @@ void TransformationGUI_MultiTranslationDlg::ValueChangedInSpinBox( double newVal
 	  MakeMultiTranslationSimulationAndDisplay() ;
 	}
 	else {
-	  myGeomGUI->EraseSimulationShape() ; 
+	  myGeomBase->EraseSimulationShape() ; 
 	  mySimulationTopoDs.Nullify() ;
 	}
 	break;
@@ -898,7 +900,7 @@ void TransformationGUI_MultiTranslationDlg::ValueChangedInSpinBox( double newVal
 	  MakeMultiTranslationSimulationAndDisplay() ;
 	}
 	else {
-	  myGeomGUI->EraseSimulationShape() ; 
+	  myGeomBase->EraseSimulationShape() ; 
 	  mySimulationTopoDs.Nullify() ;
 	}
 	break;
@@ -920,11 +922,11 @@ void TransformationGUI_MultiTranslationDlg::DeactivateActiveDialog()
     GroupC2->setEnabled(false) ;
     GroupButtons->setEnabled(false) ;
     disconnect( mySelection, 0, this, 0 );
-    myGeomGUI->EraseSimulationShape() ;
+    myGeomBase->EraseSimulationShape() ;
     mySelection->ClearFilters() ;
     myGeomGUI->ResetState() ;    
     myGeomGUI->SetActiveDialogBox(0) ;
-    GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->OnDisplayAll(true) ;
   }
   return ;
@@ -946,7 +948,7 @@ void TransformationGUI_MultiTranslationDlg::ActivateThisDialog()
   connect ( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;
   if( !mySimulationTopoDs.IsNull() )
-    myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
+    myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ;
   return ;
 }
 
@@ -983,7 +985,7 @@ void TransformationGUI_MultiTranslationDlg::closeEvent( QCloseEvent* e )
 //=================================================================================
 void TransformationGUI_MultiTranslationDlg::MakeMultiTranslationSimulationAndDisplay() 
 {
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   gp_Trsf theTransformation ;
   mySimulationTopoDs.Nullify() ;
 
@@ -1024,7 +1026,7 @@ void TransformationGUI_MultiTranslationDlg::MakeMultiTranslationSimulationAndDis
 	    B.Add( compound, myBRepTransformation.Shape() );
 	  }
 	  mySimulationTopoDs = compound;
-	  myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
+	  myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ;
 	  break;
 	}
       case 1 :
@@ -1047,7 +1049,7 @@ void TransformationGUI_MultiTranslationDlg::MakeMultiTranslationSimulationAndDis
 	    }
 	  }
 	  mySimulationTopoDs = compound ;
-	  myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
+	  myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ;
 	  break;
 	}
       }

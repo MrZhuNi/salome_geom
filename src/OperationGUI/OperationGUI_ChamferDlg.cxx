@@ -29,32 +29,15 @@
 using namespace std;
 #include "OperationGUI_ChamferDlg.h"
 
+#include "DisplayGUI.h"
 #include "QAD_Config.h"
 #include "QAD_RightFrame.h"
 #include "OCCViewer_Viewer3d.h"
-
-#include <qbuttongroup.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qgroupbox.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qlayout.h>
-#include <qvariant.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
-#include <qimage.h>
-#include <qpixmap.h>
 
 #include <BRepFilletAPI_MakeChamfer.hxx>
 #include <BRepTools.hxx>
 #include <BRep_Tool.hxx>
 #include <TopExp.hxx>
-
-#include <Standard_ErrorHandler.hxx> 
-#include <Standard_Failure.hxx>
 
 //=================================================================================
 // class    : OperationGUI_ChamferDlg()
@@ -63,283 +46,51 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-OperationGUI_ChamferDlg::OperationGUI_ChamferDlg( QWidget* parent,
-						const char* name,
-						OperationGUI* theOperationGUI,
-						SALOME_Selection* Sel,
-						Handle (AIS_InteractiveContext) ic, 
-						bool modal,
-						WFlags fl )
-  : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
+OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(QWidget* parent, const char* name, OperationGUI* theOperationGUI, SALOME_Selection* Sel, Handle(AIS_InteractiveContext) ic, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-    /***************************************************************/
-    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_CHAMFER_ALL")));
-    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
-    QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_CHAMFER_EDGE")));
-    QPixmap image3(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_CHAMFER_FACE")));
+  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_ALL")));
+  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_EDGE")));
+  QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_CHAMFER_FACE")));
+  QPixmap image3(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
-    if ( !name )
-	setName( "OperationGUI_ChamferDlg" );
-    resize( 365, 220 ); 
-    setCaption( tr( "GEOM_CHAMFER_TITLE"  ) );
-    setSizeGripEnabled( TRUE );
-    OperationGUI_ChamferDlgLayout = new QGridLayout( this ); 
-    OperationGUI_ChamferDlgLayout->setSpacing( 6 );
-    OperationGUI_ChamferDlgLayout->setMargin( 11 );
+    setCaption(tr("GEOM_CHAMFER_TITLE"));
 
-    /***************************************************************/
-    GroupButtons = new QGroupBox( this, "GroupButtons" );
-    GroupButtons->setGeometry( QRect( 10, 10, 281, 48 ) ); 
-    GroupButtons->setTitle( tr( ""  ) );
-    GroupButtons->setColumnLayout(0, Qt::Vertical );
-    GroupButtons->layout()->setSpacing( 0 );
-    GroupButtons->layout()->setMargin( 0 );
-    GroupButtonsLayout = new QGridLayout( GroupButtons->layout() );
-    GroupButtonsLayout->setAlignment( Qt::AlignTop );
-    GroupButtonsLayout->setSpacing( 6 );
-    GroupButtonsLayout->setMargin( 11 );
-    buttonCancel = new QPushButton( GroupButtons, "buttonCancel" );
-    buttonCancel->setText( tr( "GEOM_BUT_CLOSE"  ) );
-    buttonCancel->setAutoDefault( TRUE );
-    GroupButtonsLayout->addWidget( buttonCancel, 0, 3 );
-    buttonApply = new QPushButton( GroupButtons, "buttonApply" );
-    buttonApply->setText( tr( "GEOM_BUT_APPLY"  ) );
-    buttonApply->setAutoDefault( TRUE );
-    GroupButtonsLayout->addWidget( buttonApply, 0, 1 );
-    QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    GroupButtonsLayout->addItem( spacer, 0, 2 );
-    buttonOk = new QPushButton( GroupButtons, "buttonOk" );
-    buttonOk->setText( tr( "GEOM_BUT_OK"  ) );
-    buttonOk->setAutoDefault( TRUE );
-    buttonOk->setDefault( TRUE );
-    GroupButtonsLayout->addWidget( buttonOk, 0, 0 );
-    OperationGUI_ChamferDlgLayout->addWidget( GroupButtons, 2, 0 );
+  /***************************************************************/
+  GroupConstructors->setTitle(tr("GEOM_CHAMFER"));
+  RadioButton1->setPixmap(image0);
+  RadioButton2->setPixmap(image1);
+  RadioButton3->setPixmap(image2);
 
-    /***************************************************************/
-    GroupConstructors = new QButtonGroup( this, "GroupConstructors" );
-    GroupConstructors->setTitle( tr( "GEOM_CHAMFER"  ) );
-    GroupConstructors->setExclusive( TRUE );
-    GroupConstructors->setColumnLayout(0, Qt::Vertical );
-    GroupConstructors->layout()->setSpacing( 0 );
-    GroupConstructors->layout()->setMargin( 0 );
-    GroupConstructorsLayout = new QGridLayout( GroupConstructors->layout() );
-    GroupConstructorsLayout->setAlignment( Qt::AlignTop );
-    GroupConstructorsLayout->setSpacing( 6 );
-    GroupConstructorsLayout->setMargin( 11 );
-    Constructor1 = new QRadioButton( GroupConstructors, "Constructor1" );
-    Constructor1->setText( tr( ""  ) );
-    Constructor1->setPixmap( image0 );
-    Constructor1->setChecked( TRUE );
-    Constructor1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, Constructor1->sizePolicy().hasHeightForWidth() ) );
-    Constructor1->setMinimumSize( QSize( 50, 0 ) );
-    GroupConstructorsLayout->addWidget( Constructor1, 0, 0 );
-    Constructor2 = new QRadioButton( GroupConstructors, "Constructor2" );
-    Constructor2->setText( tr( ""  ) );
-    Constructor2->setPixmap( image2 );
-    Constructor2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, Constructor2->sizePolicy().hasHeightForWidth() ) );
-    Constructor2->setMinimumSize( QSize( 50, 0 ) );
-    GroupConstructorsLayout->addWidget( Constructor2, 0, 2 );
-    QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    GroupConstructorsLayout->addItem( spacer_2, 0, 3 );
-    QSpacerItem* spacer_3 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    GroupConstructorsLayout->addItem( spacer_3, 0, 1 );
-    Constructor3 = new QRadioButton( GroupConstructors, "Constructor3" );
-    Constructor3->setText( tr( ""  ) );
-    Constructor3->setPixmap( image3 );
-    Constructor3->setMinimumSize( QSize( 50, 0 ) );
-    GroupConstructorsLayout->addWidget( Constructor3, 0, 4 );
-    QSpacerItem* spacer_4 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    GroupConstructorsLayout->addItem( spacer_4, 0, 5 );
-    OperationGUI_ChamferDlgLayout->addWidget( GroupConstructors, 0, 0 );
+  Group1 = new DlgRef_1Sel2Spin(this, "Group1");
+  Group1->GroupBox1->setTitle(tr("GEOM_CHAMFER_ALL"));
+  Group1->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
+  Group1->TextLabel2->setText(tr("GEOM_D1"));
+  Group1->TextLabel3->setText(tr("GEOM_D2"));
+  Group1->PushButton1->setPixmap(image3);
 
-    /***************************************************************/
-    GroupC1 = new QGroupBox( this, "GroupC1" );
-    GroupC1->setTitle( tr( "GEOM_CHAMFER_ALL"  ) );
-    GroupC1->setMinimumSize( QSize( 0, 0 ) );
-    GroupC1->setFrameShape( QGroupBox::Box );
-    GroupC1->setFrameShadow( QGroupBox::Sunken );
-    GroupC1->setColumnLayout(0, Qt::Vertical );
-    GroupC1->layout()->setSpacing( 0 );
-    GroupC1->layout()->setMargin( 0 );
-    GroupC1Layout = new QGridLayout( GroupC1->layout() );
-    GroupC1Layout->setAlignment( Qt::AlignTop );
-    GroupC1Layout->setSpacing( 6 );
-    GroupC1Layout->setMargin( 11 );
-    
-    TextLabelC1A1 = new QLabel( GroupC1, "TextLabelC1A1" );
-    TextLabelC1A1->setText( tr( "GEOM_MAIN_OBJECT"  ) );
-    TextLabelC1A1->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC1A1->setFrameShape( QLabel::NoFrame );
-    TextLabelC1A1->setFrameShadow( QLabel::Plain );
-    GroupC1Layout->addWidget( TextLabelC1A1, 0, 0 );
+  Group2 = new DlgRef_1Sel2Spin(this, "Group2");
+  Group2->GroupBox1->setTitle(tr("GEOM_CHAMFER_EDGES"));
+  Group2->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
+  Group2->TextLabel2->setText(tr("GEOM_D1"));
+  Group2->TextLabel3->setText(tr("GEOM_D2"));
+  Group2->PushButton1->setPixmap(image3);
 
-    TextLabelC1A2 = new QLabel( GroupC1, "TextLabelC1A2" );
-    TextLabelC1A2->setText( tr( "GEOM_D1"  ) );
-    TextLabelC1A2->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC1A2->setFrameShape( QLabel::NoFrame );
-    TextLabelC1A2->setFrameShadow( QLabel::Plain );
-    GroupC1Layout->addWidget( TextLabelC1A2, 1, 0 );
+  Group3 = new DlgRef_1Sel2Spin(this, "Group3");
+  Group3->GroupBox1->setTitle(tr("GEOM_CHAMFER_FACES"));
+  Group3->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
+  Group3->TextLabel2->setText(tr("GEOM_D1"));
+  Group3->TextLabel3->setText(tr("GEOM_D2"));
+  Group3->PushButton1->setPixmap(image3);
 
-    TextLabelC1A3 = new QLabel( GroupC1, "TextLabelC1A3" );
-    TextLabelC1A3->setText( tr( "GEOM_D2"  ) );
-    TextLabelC1A3->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC1A3->setFrameShape( QLabel::NoFrame );
-    TextLabelC1A3->setFrameShadow( QLabel::Plain );
-    GroupC1Layout->addWidget( TextLabelC1A3, 2, 0 );
-   
-    LineEditC1A1 = new QLineEdit( GroupC1, "LineEditC1A1" );
-    GroupC1Layout->addWidget( LineEditC1A1, 0, 2 );
+  Layout1->addWidget(Group1, 1, 0);
+  Layout1->addWidget(Group2, 1, 0);
+  Layout1->addWidget(Group3, 1, 0);
+  /***************************************************************/
 
-//      LineEditC1A2 = new QLineEdit( GroupC1, "LineEditC1A2" );
-//      LineEditC1A2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, LineEditC1A2->sizePolicy().hasHeightForWidth() ) );
-//      GroupC1Layout->addWidget( LineEditC1A2, 1, 2 );
-
-//      LineEditC1A3 = new QLineEdit( GroupC1, "LineEditC1A3" );
-//      LineEditC1A3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, LineEditC1A3->sizePolicy().hasHeightForWidth() ) );
-//      GroupC1Layout->addWidget( LineEditC1A3, 2, 2 );
-    
-    SpinBox_C1A2 = new DlgRef_SpinBox( GroupC1, "GeomSpinBox_C1A2" ) ;
-    SpinBox_C1A2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, SpinBox_C1A2->sizePolicy().hasHeightForWidth() ) );
-    GroupC1Layout->addWidget( SpinBox_C1A2, 1, 2 );
-    
-    SpinBox_C1A3 = new DlgRef_SpinBox( GroupC1, "GeomSpinBox_C1A3" ) ;
-    SpinBox_C1A3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, SpinBox_C1A3->sizePolicy().hasHeightForWidth() ) );
-    GroupC1Layout->addWidget( SpinBox_C1A3, 2, 2 );
-
-    SelectButtonC1A1 = new QPushButton( GroupC1, "SelectButtonC1A1" );
-    SelectButtonC1A1->setText( tr( ""  ) );
-    SelectButtonC1A1->setPixmap( image1 );
-    SelectButtonC1A1->setToggleButton( FALSE );
-    SelectButtonC1A1->setMaximumSize( QSize( 28, 32767 ) );
-    GroupC1Layout->addWidget( SelectButtonC1A1, 0, 1 );
-    OperationGUI_ChamferDlgLayout->addWidget( GroupC1, 1, 0 );
-
-    /***************************************************************/
-    GroupC2 = new QGroupBox( this, "GroupC2" );
-    GroupC2->setTitle( tr( "GEOM_CHAMFER_EDGES"  ) );
-    GroupC2->setMinimumSize( QSize( 0, 0 ) );
-    GroupC2->setFrameShape( QGroupBox::Box );
-    GroupC2->setFrameShadow( QGroupBox::Sunken );
-    GroupC2->setColumnLayout(0, Qt::Vertical );
-    GroupC2->layout()->setSpacing( 0 );
-    GroupC2->layout()->setMargin( 0 );
-    GroupC2Layout = new QGridLayout( GroupC2->layout() );
-    GroupC2Layout->setAlignment( Qt::AlignTop );
-    GroupC2Layout->setSpacing( 6 );
-    GroupC2Layout->setMargin( 11 );
-    
-    TextLabelC2A1 = new QLabel( GroupC2, "TextLabelC2A1" );
-    TextLabelC2A1->setText( tr( "GEOM_MAIN_OBJECT"  ) );
-    TextLabelC2A1->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC2A1->setFrameShape( QLabel::NoFrame );
-    TextLabelC2A1->setFrameShadow( QLabel::Plain );
-    GroupC2Layout->addWidget( TextLabelC2A1, 0, 0 );
-
-    TextLabelC2A2 = new QLabel( GroupC2, "TextLabelC2A2" );
-    TextLabelC2A2->setText( tr( "GEOM_D1"  ) );
-    TextLabelC2A2->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC2A2->setFrameShape( QLabel::NoFrame );
-    TextLabelC2A2->setFrameShadow( QLabel::Plain );
-    GroupC2Layout->addWidget( TextLabelC2A2, 1, 0 );
-
-    TextLabelC2A3 = new QLabel( GroupC2, "TextLabelC2A3" );
-    TextLabelC2A3->setText( tr( "GEOM_D2"  ) );
-    TextLabelC2A3->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC2A3->setFrameShape( QLabel::NoFrame );
-    TextLabelC2A3->setFrameShadow( QLabel::Plain );
-    GroupC2Layout->addWidget( TextLabelC2A3, 2, 0 );
-   
-    LineEditC2A1 = new QLineEdit( GroupC2, "LineEditC2A1" );
-    GroupC2Layout->addWidget( LineEditC2A1, 0, 2 );
-
- //     LineEditC2A2 = new QLineEdit( GroupC2, "LineEditC2A2" );
-//      LineEditC2A2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, LineEditC2A2->sizePolicy().hasHeightForWidth() ) );
-//      GroupC2Layout->addWidget( LineEditC2A2, 1, 2 );
-
-//      LineEditC2A3 = new QLineEdit( GroupC2, "LineEditC2A3" );
-//      LineEditC2A3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, LineEditC2A3->sizePolicy().hasHeightForWidth() ) );
-//      GroupC2Layout->addWidget( LineEditC2A3, 2, 2 );
-
-    SpinBox_C2A2 = new DlgRef_SpinBox( GroupC2, "GeomSpinBox_C2A2" ) ;
-    SpinBox_C2A2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, SpinBox_C2A2->sizePolicy().hasHeightForWidth() ) );
-    GroupC2Layout->addWidget( SpinBox_C2A2, 1, 2 );
-    
-    SpinBox_C2A3 = new DlgRef_SpinBox( GroupC2, "GeomSpinBox_C2A3" ) ;
-    SpinBox_C2A3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, SpinBox_C2A3->sizePolicy().hasHeightForWidth() ) );
-    GroupC2Layout->addWidget( SpinBox_C2A3, 2, 2 );
-
-    SelectButtonC2A1 = new QPushButton( GroupC2, "SelectButtonC2A1" );
-    SelectButtonC2A1->setText( tr( ""  ) );
-    SelectButtonC2A1->setPixmap( image1 );
-    SelectButtonC2A1->setToggleButton( FALSE );
-    SelectButtonC2A1->setMaximumSize( QSize( 28, 32767 ) );
-    GroupC2Layout->addWidget( SelectButtonC2A1, 0, 1 );
-    OperationGUI_ChamferDlgLayout->addWidget( GroupC2, 1, 0 );
-    
-    /***************************************************************/
-    GroupC3 = new QGroupBox( this, "GroupC3" );
-    GroupC3->setTitle( tr( "GEOM_CHAMFER_FACES"  ) );
-    GroupC3->setMinimumSize( QSize( 0, 0 ) );
-    GroupC3->setFrameShape( QGroupBox::Box );
-    GroupC3->setFrameShadow( QGroupBox::Sunken );
-    GroupC3->setColumnLayout(0, Qt::Vertical );
-    GroupC3->layout()->setSpacing( 0 );
-    GroupC3->layout()->setMargin( 0 );
-    GroupC3Layout = new QGridLayout( GroupC3->layout() );
-    GroupC3Layout->setAlignment( Qt::AlignTop );
-    GroupC3Layout->setSpacing( 6 );
-    GroupC3Layout->setMargin( 11 );
-    
-    TextLabelC3A1 = new QLabel( GroupC3, "TextLabelC3A1" );
-    TextLabelC3A1->setText( tr( "GEOM_MAIN_OBJECT"  ) );
-    TextLabelC3A1->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC3A1->setFrameShape( QLabel::NoFrame );
-    TextLabelC3A1->setFrameShadow( QLabel::Plain );
-    GroupC3Layout->addWidget( TextLabelC3A1, 0, 0 );
-
-    TextLabelC3A2 = new QLabel( GroupC3, "TextLabelC3A2" );
-    TextLabelC3A2->setText( tr( "GEOM_D1"  ) );
-    TextLabelC3A2->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC3A2->setFrameShape( QLabel::NoFrame );
-    TextLabelC3A2->setFrameShadow( QLabel::Plain );
-    GroupC3Layout->addWidget( TextLabelC3A2, 1, 0 );
-
-    TextLabelC3A3 = new QLabel( GroupC3, "TextLabelC3A3" );
-    TextLabelC3A3->setText( tr( "GEOM_D2"  ) );
-    TextLabelC3A3->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC3A3->setFrameShape( QLabel::NoFrame );
-    TextLabelC3A3->setFrameShadow( QLabel::Plain );
-    GroupC3Layout->addWidget( TextLabelC3A3, 2, 0 );
-   
-    LineEditC3A1 = new QLineEdit( GroupC3, "LineEditC3A1" );
-    GroupC3Layout->addWidget( LineEditC3A1, 0, 2 );
-
- //     LineEditC3A2 = new QLineEdit( GroupC3, "LineEditC3A2" );
-//      LineEditC3A2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, LineEditC3A2->sizePolicy().hasHeightForWidth() ) );
-//      GroupC3Layout->addWidget( LineEditC3A2, 1, 2 );
-
-//      LineEditC3A3 = new QLineEdit( GroupC3, "LineEditC3A3" );
-//      LineEditC3A3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, LineEditC3A3->sizePolicy().hasHeightForWidth() ) );
-//      GroupC3Layout->addWidget( LineEditC3A3, 2, 2 );
-
-    SpinBox_C3A2 = new DlgRef_SpinBox( GroupC3, "GeomSpinBox_C3A2" ) ;
-    SpinBox_C3A2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, SpinBox_C3A2->sizePolicy().hasHeightForWidth() ) );
-    GroupC3Layout->addWidget( SpinBox_C3A2, 1, 2 );
-    
-    SpinBox_C3A3 = new DlgRef_SpinBox( GroupC3, "GeomSpinBox_C3A3" ) ;
-    SpinBox_C3A3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, SpinBox_C3A3->sizePolicy().hasHeightForWidth() ) );
-    GroupC3Layout->addWidget( SpinBox_C3A3, 2, 2 );
-
-    SelectButtonC3A1 = new QPushButton( GroupC3, "SelectButtonC3A1" );
-    SelectButtonC3A1->setText( tr( ""  ) );
-    SelectButtonC3A1->setPixmap( image1 );
-    SelectButtonC3A1->setToggleButton( FALSE );
-    SelectButtonC3A1->setMaximumSize( QSize( 28, 32767 ) );
-    GroupC3Layout->addWidget( SelectButtonC3A1, 0, 1 );
-    OperationGUI_ChamferDlgLayout->addWidget( GroupC3, 1, 0 );
-    myOperationGUI = theOperationGUI;
-    /* Initialisation */
-    Init( Sel, ic ) ;
+  /* Initialisations */
+  myOperationGUI = theOperationGUI;
+  Init(ic);
 }
 
 
@@ -350,7 +101,6 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg( QWidget* parent,
 OperationGUI_ChamferDlg::~OperationGUI_ChamferDlg()
 {  
   /* no need to delete child widgets, Qt does it all for us */
-  this->destroy(TRUE, TRUE) ;
 }
 
 
@@ -358,91 +108,77 @@ OperationGUI_ChamferDlg::~OperationGUI_ChamferDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void OperationGUI_ChamferDlg::Init( SALOME_Selection* Sel, Handle (AIS_InteractiveContext) ic )
+void OperationGUI_ChamferDlg::Init(Handle (AIS_InteractiveContext) ic)
 {
+  /* init variables */
+  myConstructorId = 0;
+  myEditCurrentArgument = Group1->LineEdit1;
+
+  myD1 = 50.0;
+  myOkD1 = true;
+  myD2 = 50.0;
+  myOkD2 = true;
+  myOkShape = false;
+  myIC = ic;
+  myLocalContextId = -1;
+  myUseLocalContext = false;
 
   /* Get setting of step value from file configuration */
-  double step ;
-  QString St = QAD_CONFIG->getSetting( "Geometry:SettingsGeomStep" ) ;
-  step = St.toDouble() ;
-  
+  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
+  step = St.toDouble();
+
   /* min, max, step and decimals for spin boxes */
-  SpinBox_C1A2->RangeStepAndValidator( 0.001, 999.999, step, 3 ) ; /* myD1 */
-  SpinBox_C1A2->SetValue( 50 ) ;
-  SpinBox_C1A3->RangeStepAndValidator( 0.001, 999.999, step, 3 ) ; /* myD2 */
-  SpinBox_C1A3->SetValue( 50 ) ;
+  Group1->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
+  Group2->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
+  Group3->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
+  Group1->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
+  Group2->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
+  Group3->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
 
-  SpinBox_C2A2->RangeStepAndValidator( 0.001, 999.999, step, 3 ) ;
-  SpinBox_C2A2->SetValue( 50 ) ;
-  SpinBox_C2A3->RangeStepAndValidator( 0.001, 999.999, step, 3 ) ;
-  SpinBox_C2A3->SetValue( 50 ) ;
-
-  SpinBox_C3A2->RangeStepAndValidator( 0.001, 999.999, step, 3 ) ;
-  SpinBox_C3A2->SetValue( 50 ) ;
-  SpinBox_C3A3->RangeStepAndValidator( 0.001, 999.999, step, 3 ) ;
-  SpinBox_C3A3->SetValue( 50 ) ;
-
-  GroupC1->show();
-  GroupC2->hide() ;
-  GroupC3->hide() ;
-  myConstructorId = 0 ;
-  Constructor1->setChecked( TRUE );
-
-  mySelection = Sel ;
-  myEditCurrentArgument = LineEditC1A1 ;	
-  myShape.Nullify() ;
-  myD1 = 50.0 ;
-  myOkD1 = true ;
-  myD2 = 50.0 ;
-  myOkD2 = true ;
-  myIC = ic ;
-  myUseLocalContext = false ;
-  myOkShape = false ;
-
-  myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
-  myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;
-
-  mySimulationTopoDs.Nullify() ;
-  
-  /* Filters definition */
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  Group1->SpinBox_DX->SetValue(myD1);
+  Group2->SpinBox_DX->SetValue(myD1);
+  Group3->SpinBox_DX->SetValue(myD1);
+  Group1->SpinBox_DY->SetValue(myD2);
+  Group2->SpinBox_DY->SetValue(myD2);
+  Group3->SpinBox_DY->SetValue(myD2);
 
   /* signals and slots connections */
-  connect( buttonOk, SIGNAL( clicked() ),     this, SLOT( ClickOnOk() ) );
-  connect( buttonApply, SIGNAL( clicked() ),     this, SLOT( ClickOnApply() ) );
-  connect( buttonCancel, SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) ) ;
-  connect( GroupConstructors, SIGNAL(clicked(int) ), SLOT( ConstructorsClicked(int) ) );
-  connect( SelectButtonC1A1, SIGNAL (clicked() ),  this, SLOT( SetEditCurrentArgument() ) ) ;
-  connect( SelectButtonC2A1, SIGNAL (clicked() ),  this, SLOT( SetEditCurrentArgument() ) ) ;
-  connect( SelectButtonC3A1, SIGNAL (clicked() ),  this, SLOT( SetEditCurrentArgument() ) ) ;
+  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
 
-  connect( SpinBox_C1A2, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
-  connect( SpinBox_C2A2, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
-  connect( SpinBox_C3A2, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
+  connect(Group1->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group2->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(Group3->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect( SpinBox_C1A3, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
-  connect( SpinBox_C2A3, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
-  connect( SpinBox_C3A3, SIGNAL ( valueChanged( double) ), this, SLOT( ValueChangedInSpinBox( double) ) ) ;
+  connect(Group1->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group2->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(Group3->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect( LineEditC1A1, SIGNAL ( returnPressed() ), this, SLOT( LineEditReturnPressed() ) ) ;
-  connect( LineEditC2A1, SIGNAL ( returnPressed() ), this, SLOT( LineEditReturnPressed() ) ) ;
-  connect( LineEditC3A1, SIGNAL ( returnPressed() ), this, SLOT( LineEditReturnPressed() ) ) ;
+  connect(Group1->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(Group2->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(Group3->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(Group1->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(Group2->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(Group3->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group1->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group2->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group3->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group1->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group2->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group3->SpinBox_DY, SLOT(SetStep(double)));
 
-  connect( mySelection, SIGNAL( currentSelectionChanged() ),     this, SLOT( SelectionIntoArgument() ) );
-  connect( myGeomGUI, SIGNAL ( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) ) ;
-  /* to close dialog if study change */
-  connect( myGeomGUI, SIGNAL ( SignalCloseAllDialogs() ), this, SLOT( ClickOnCancel() ) ) ;
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  /* Move widget on the botton right corner of main widget */
-  int x, y ;
-  myGeomGUI->DefineDlgPosition( this, x, y ) ;
-  this->move( x, y ) ;
-  this->show() ; /* Displays Dialog */ 
+  /* displays Dialog */
+  Group2->hide();
+  Group3->hide();
+  Group1->show();
+  this->show();
 
-  return ;
+  return;
 }
-
 
 
 //=================================================================================
@@ -451,71 +187,92 @@ void OperationGUI_ChamferDlg::Init( SALOME_Selection* Sel, Handle (AIS_Interacti
 //=================================================================================
 void OperationGUI_ChamferDlg::ConstructorsClicked(int constructorId)
 {
-  myGeomGUI->EraseSimulationShape() ;
-  mySimulationTopoDs.Nullify() ;
+  myConstructorId = constructorId;
+  myGeomBase->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
+  disconnect(mySelection, 0, this, 0);
+  myOkShape = false;
+  myD1 = 50.0;
+  myD2 = 50.0;
+  myOkD1 = true;
+  myOkD2 = true;
 
-  myEditCurrentArgument->setText(tr("")) ;
 
-  if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     myIC = v3d->getAISContext();
-    if(myUseLocalContext ) {
-      myIC->CloseLocalContext(this->myLocalContextId);
-      GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
-      myDisplayGUI->OnDisplayAll(true) ;
-      myUseLocalContext = false ;
+    if(myUseLocalContext) {
+      myIC->CloseLocalContext(myLocalContextId);
+      DisplayGUI* myDisplayGUI = new DisplayGUI();
+      myDisplayGUI->OnDisplayAll(true);
+      myUseLocalContext = false;
     }
   }
-    
-  myOkShape = false ;
-  myD1 = 50.0 ;
-  myD2 = 50.0 ;
-  myOkD1 = true ;
-  myOkD2 = true ;
-  myConstructorId = constructorId ;
 
   switch (constructorId)
     {
     case 0: /* Chamfer All */
       {
-	GroupC1->show();
-	GroupC2->hide() ;
-	GroupC3->hide() ;
-	myEditCurrentArgument = LineEditC1A1 ;
-	SpinBox_C1A2->SetValue( 50 ) ;
-	SpinBox_C1A3->SetValue( 50 ) ;
-	LineEditC1A1->setText(tr("")) ;
+	Group2->hide();
+	Group3->hide();
+	resize(0, 0);
+	Group1->show();
+
+	myEditCurrentArgument = Group1->LineEdit1;
+	Group1->LineEdit1->setText("");
 	myShapeType = -1;
+
+	Group1->SpinBox_DX->SetValue(myD1);
+	Group1->SpinBox_DY->SetValue(myD2);
+	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
-
     case 1: /* Chamfer edges */
       {
+	Group1->hide();
+	Group3->hide();
+	resize(0, 0);
+	Group2->show();
+
+	myEditCurrentArgument = Group2->LineEdit1;
+	Group2->LineEdit1->setText("");
 	myShapeType = 6;
-	GroupC1->hide();
-	GroupC2->show() ;
-	GroupC3->hide() ;
-	myEditCurrentArgument = LineEditC2A1 ;
-	SpinBox_C2A2->SetValue( 50 ) ;
-	SpinBox_C2A3->SetValue( 50 ) ;
-	LineEditC2A1->setText(tr("")) ;
-	break ;
+
+	Group2->SpinBox_DX->SetValue(myD1);
+	Group2->SpinBox_DY->SetValue(myD2);
+	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+	break;
       }
-      
     case 2: /* Chamfer Faces */
       {
+	Group1->hide();
+	Group2->hide();
+	resize(0, 0);
+	Group3->show();
+
+	myEditCurrentArgument = Group3->LineEdit1;
+	Group3->LineEdit1->setText("");
 	myShapeType = 4;
-	GroupC1->hide();
-	GroupC2->hide() ;
-	GroupC3->show() ;
-	myEditCurrentArgument = LineEditC3A1 ;
-	SpinBox_C3A2->SetValue( 50 ) ;
-	SpinBox_C3A3->SetValue( 50 ) ;
-	LineEditC3A1->setText(tr("")) ;
-	break ;
+
+	Group3->SpinBox_DX->SetValue(myD1);
+	Group3->SpinBox_DY->SetValue(myD2);
+	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+	break;
       }
     }
- return ;
+ return;
+}
+
+
+//=================================================================================
+// function : ClickOnOk()
+// purpose  :
+//=================================================================================
+void OperationGUI_ChamferDlg::ClickOnOk()
+{
+  this->ClickOnApply();
+  this->ClickOnCancel();
+  return;
 }
 
 
@@ -525,73 +282,44 @@ void OperationGUI_ChamferDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void OperationGUI_ChamferDlg::ClickOnApply()
 {
-  myGeomGUI->EraseSimulationShape() ;
-  mySimulationTopoDs.Nullify() ;
+  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  if (mySimulationTopoDs.IsNull())
+    return;
+  myGeomBase->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
 
-  bool testResult = false ;
-  myGeomGUI->GetDesktop()->putInfo( tr("") ) ; 
-
+  bool testResult = false;
   switch(myConstructorId)
     { 
     case 0 : /* Chamfer All */
       {	
-	if(myOkD1 && myOkD2) {
-	  if( myOkShape ) {
-	    testResult = myOperationGUI->OnChamferGetAll( myShape, myD1, myD2, myShapeType, myShapeIOR ) ;
-	  }
-	}
-	if( !testResult ) {
-	  myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT")) ;
-	}
-	else {
-	  myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE")) ;
-	}  
-	/* Reset all arguments and local context to allow user a new selection ...*/
-	this->ResetStateOfDialog() ;
-	break ;
+	if(myOkD1 && myOkD2 && myOkShape)
+	  testResult = myOperationGUI->OnChamferGetAll(myShape, myD1, myD2, myShapeType, myShapeIOR);
+	break;
       }
-      
     case 1 : /* Chamfer Edge */
       {	
-	if(myOkD1 && myOkD2) {
-	  if( myOkShape ) {
-	    testResult = myOperationGUI->OnChamferGetSelected( myShape, myShapeIOR, myD1, myD2, myShapeType, 
-							 myLocalContextId, myUseLocalContext );
-	  }
-	}
-	if( !testResult ) {
-	  myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT")) ;
-	}
-	else {
-	  myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE")) ;
-	}  
-	/* Reset all arguments and local context to allow user a new selection ...*/
-	this->ResetStateOfDialog() ;
-	break ;
+	if(myOkD1 && myOkD2 && myOkShape)
+	  testResult = myOperationGUI->OnChamferGetSelected(myShape, myShapeIOR, myD1, myD2, myShapeType, 
+							    myLocalContextId, myUseLocalContext);
+	break;
       }
-      
     case 2 :  /* Chamfer Face */
       {
-	if(myOkD1 && myOkD2) {
-	  if( myOkShape ) {
-	    testResult = myOperationGUI->OnChamferGetSelected( myShape, myShapeIOR, myD1, myD2, myShapeType, 
-							 myLocalContextId, myUseLocalContext ) ;
-	  }
-	}
-	if( !testResult ) {
-	  myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT")) ;
-	}
-	else {
-	  myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE")) ;
-	}  
-	/* Reset all arguments and local context to allow user a new selection ...*/
-	this->ResetStateOfDialog() ;
-	break ;
+	if(myOkD1 && myOkD2 && myOkShape)
+	  testResult = myOperationGUI->OnChamferGetSelected(myShape, myShapeIOR, myD1, myD2, myShapeType, 
+							    myLocalContextId, myUseLocalContext);
+	break;
       }
     }
 
-  // accept();
-  return ;
+  if(!testResult) 
+    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+  else
+    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+  /* Reset all arguments and local context to allow user a new selection ...*/
+  this->ResetStateOfDialog();
+  return;
 }
 
 
@@ -601,38 +329,21 @@ void OperationGUI_ChamferDlg::ClickOnApply()
 //=================================================================================
 void OperationGUI_ChamferDlg::ClickOnCancel()
 {
-  myGeomGUI->EraseSimulationShape() ;
-  mySimulationTopoDs.Nullify() ;
-
-  disconnect( mySelection, 0, this, 0 );
-  myGeomGUI->ResetState() ;
-  
-  if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     myIC = v3d->getAISContext();
-    if(this->myUseLocalContext ) {
-      myIC->CloseLocalContext(this->myLocalContextId) ;
-      this->myUseLocalContext = false ;
-      GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
-      myDisplayGUI->OnDisplayAll(true) ;
+
+    if(myUseLocalContext) {
+      myIC->CloseLocalContext(myLocalContextId);
+      myUseLocalContext = false;
+      DisplayGUI* myDisplayGUI = new DisplayGUI();
+      myDisplayGUI->OnDisplayAll(true);
     }
   }
-
-  reject() ;
-  return ;
+  GEOMBase_Skeleton::ClickOnCancel();
+  return;
 }
 
-//=================================================================================
-// function : ClickOnOk()
-// purpose  :
-//=================================================================================
-void OperationGUI_ChamferDlg::ClickOnOk()
-{
-  this->ClickOnApply() ;
-  this->ClickOnCancel() ;
-
-  return ;
-}
 
 //=================================================================================
 // function : SelectionIntoArgument()
@@ -640,66 +351,59 @@ void OperationGUI_ChamferDlg::ClickOnOk()
 //=================================================================================
 void OperationGUI_ChamferDlg::SelectionIntoArgument()
 {
-   myGeomGUI->EraseSimulationShape() ; 
-   mySimulationTopoDs.Nullify() ;
+  myGeomBase->EraseSimulationShape();
+  myEditCurrentArgument->setText("");
+  this->ResetStateOfDialog();
+  QString aString = ""; /* name of selection */
 
-  /* Reset all arguments and local context when selection as changed */
-  this->ResetStateOfDialog() ;
-
-  /* Future name of argument */
-  QString aString = "";
-
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString) ;
-  if ( nbSel == 1 ) {
-
-    TopoDS_Shape S ;
-    Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject() ;
-    
-    if( !myGeomGUI->GetTopoFromSelection(mySelection, S) )
-      return ;
-    
-    if( !IO->hasEntry() ) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY")) ;
-      return ;
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
+  if (nbSel == 1) {
+    TopoDS_Shape S;
+    Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
+    if(!myGeomBase->GetTopoFromSelection(mySelection, S))
+      return;
+    if(!IO->hasEntry()) {
+      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
+      return;
     }
-	
-    if ( !S.IsNull() && S.ShapeType() <= 2 ) {
-      if ( IO->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject)) ) {
-	Handle(GEOM_InteractiveObject) GIObject = Handle(GEOM_InteractiveObject)::DownCast( IO );
+
+    if(!S.IsNull() &&  S.ShapeType() <= 2) {
+      if(IO->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject))) {
+	Handle(GEOM_InteractiveObject) GIObject = Handle(GEOM_InteractiveObject)::DownCast(IO);
 	myShapeIOR = GIObject->getIOR(); /* the Geom IOR string of selection */
-	myEditCurrentArgument->setText(aString) ;
-	myShape = S ;
-	myOkShape = true ;
+	myEditCurrentArgument->setText(aString);
+	myShape = S;
+	myOkShape = true;
       }
-      
-      if ( IO->hasEntry() ) {
+	
+      if(IO->hasEntry()) {
 	SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
-	SALOMEDS::SObject_var obj = aStudy->FindObjectID( IO->getEntry() );
+	SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
         SALOMEDS::GenericAttribute_var anAttr;
-        SALOMEDS::AttributeIOR_var     anIOR;
-	if ( !obj->_is_nil() ) {
-	  if (obj->FindAttribute(anAttr, "AttributeIOR")) {
+        SALOMEDS::AttributeIOR_var anIOR;
+	if(!obj->_is_nil()) {
+	  if(obj->FindAttribute(anAttr, "AttributeIOR")) {
             anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
 	    myShapeIOR = anIOR->Value();
-	    myOkShape = true ;
-	    myShape = S ;
-	    myEditCurrentArgument->setText(aString) ;
+	    myOkShape = true;
+	    myShape = S;
+	    myEditCurrentArgument->setText(aString);
 	  }
 	}
       }
-      
-      MakePreview();
-
     }
-  } else 
+    this->MakePreview();
+
+  }
+  else 
     return;
   
-  if( myOkShape && myShapeType!=-1 && myConstructorId != 0 ) {
+  if(myOkShape && myShapeType!=-1 && myConstructorId != 0) {
     /* local context is defined into the method */
-    myGeomGUI->PrepareSubShapeSelection( this->myShapeType, this->myLocalContextId ) ;    
-    myUseLocalContext = true ;
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SELECT_EDGE")) ;
-  }  
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->PrepareSubShapeSelection(myShapeType, myLocalContextId);  
+    myUseLocalContext = true;
+  }
 }
 
 
@@ -709,25 +413,18 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
 //=================================================================================
 void OperationGUI_ChamferDlg::LineEditReturnPressed()
 {
-  QLineEdit* send = (QLineEdit*)sender();  
-  if( send == LineEditC1A1 )
-    myEditCurrentArgument = LineEditC1A1 ;
-  else if ( send == LineEditC2A1 )
-    myEditCurrentArgument = LineEditC2A1 ; 
-  else if ( send == LineEditC3A1 )
-    myEditCurrentArgument = LineEditC3A1 ; 
+  QLineEdit* send = (QLineEdit*)sender();
+  if(send == Group1->LineEdit1)
+    myEditCurrentArgument = Group1->LineEdit1;
+  else if (send == Group2->LineEdit1)
+    myEditCurrentArgument = Group2->LineEdit1;
+  else if (send == Group3->LineEdit1)
+    myEditCurrentArgument = Group3->LineEdit1;
   else
-    return ;
-  
-  /* User name of object input management                          */
-  /* If successfull the selection is changed and signal emitted... */
-  /* so SelectionIntoArgument() is automatically called.           */
-  const QString objectUserName = myEditCurrentArgument->text() ;
-  QWidget* thisWidget = (QWidget*)this ;
-  if( myGeomGUI->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
-    myEditCurrentArgument->setText( objectUserName ) ;
-  }
-  return ;
+    return;
+
+  GEOMBase_Skeleton::LineEditReturnPressed();
+  return;
 }
 
 
@@ -739,67 +436,22 @@ void OperationGUI_ChamferDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();  
 
-  switch (myConstructorId)
-    {
-    case 0:
-      {	
-	if(send == SelectButtonC1A1) {
-	  LineEditC1A1->setFocus() ;
-	  myEditCurrentArgument = LineEditC1A1;
-	  SelectionIntoArgument() ;
-	}
-	break;
-      }
-
-    case 1:
-      {	
-	if(send ==SelectButtonC2A1 ) {
-	  LineEditC2A1->setFocus() ;
-	  myEditCurrentArgument = LineEditC2A1;
-	  SelectionIntoArgument() ;
-	}
-	break;
-      }
-    
-    case 2:
-      {
-	if(send ==SelectButtonC3A1 ) {
-	  LineEditC3A1->setFocus() ;
-	  myEditCurrentArgument = LineEditC3A1;
-	  SelectionIntoArgument() ;
-	}
-	break;
-      }
-      
-    }
-  return ;
-}
-
-//=================================================================================
-// function : ValueChangedInSpinBox()
-// purpose  :
-//=================================================================================
-void OperationGUI_ChamferDlg::ValueChangedInSpinBox( double newValue )
-{
-  QObject* send = (QObject*)sender();
-
-  myGeomGUI->EraseSimulationShape() ; 
-  mySimulationTopoDs.Nullify() ;
-
-
-  if( send == SpinBox_C1A2 || send == SpinBox_C2A2 || send == SpinBox_C3A2 ) { /* D1 */
-    myD1 = newValue ;
-    myOkD1 = true ;
-    MakePreview();
-    return ;
-  } 
-  if( send == SpinBox_C1A3 || send == SpinBox_C2A3 || send == SpinBox_C3A3 ) { /* D2 */
-    myD2 = newValue ;
-    myOkD2 = true ;
-    MakePreview();
-    return ;
+  if(send == Group1->PushButton1) {
+    Group1->LineEdit1->setFocus();
+    myEditCurrentArgument = Group1->LineEdit1;
   }
+  else if(send == Group2->PushButton1) {
+    Group2->LineEdit1->setFocus();
+    myEditCurrentArgument = Group2->LineEdit1;
+  }
+  else if(send == Group3->PushButton1) {
+    Group3->LineEdit1->setFocus();
+    myEditCurrentArgument = Group3->LineEdit1;
+  }
+  this->SelectionIntoArgument();
+  return;
 }
+
 
 //=================================================================================
 // function : DeactivateActiveDialog()
@@ -807,20 +459,13 @@ void OperationGUI_ChamferDlg::ValueChangedInSpinBox( double newValue )
 //=================================================================================
 void OperationGUI_ChamferDlg::DeactivateActiveDialog()
 {
-  if ( GroupConstructors->isEnabled() ) {
-    this->ResetStateOfDialog() ;
-    GroupConstructors->setEnabled(false) ;
-    GroupC1->setEnabled(false) ;
-    GroupC2->setEnabled(false) ;
-    GroupC3->setEnabled(false) ;
-    GroupButtons->setEnabled(false) ;
-    disconnect( mySelection, 0, this, 0 );
-    myGeomGUI->ResetState() ;    
-    myGeomGUI->SetActiveDialogBox(0) ;
-    GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
-    myDisplayGUI->OnDisplayAll(true) ;
+  if(GroupConstructors->isEnabled()) {
+    GEOMBase_Skeleton::DeactivateActiveDialog();
+    this->ResetStateOfDialog();
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->OnDisplayAll(true);
   }
-  return ;
+  return;
 }
 
 
@@ -830,20 +475,11 @@ void OperationGUI_ChamferDlg::DeactivateActiveDialog()
 //=================================================================================
 void OperationGUI_ChamferDlg::ActivateThisDialog()
 {
-  /* Emit a signal to deactivate the active dialog */
-  myGeomGUI->EmitSignalDeactivateDialog() ; 
-  
-  GroupConstructors->setEnabled(true) ;
-  GroupC1->setEnabled(true) ;
-  GroupC2->setEnabled(true) ;
-  GroupC3->setEnabled(true) ;
-  GroupButtons->setEnabled(true) ;
-  connect ( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-  myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;
-
-  if( !mySimulationTopoDs.IsNull() )
-    myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
-  return ;
+  GEOMBase_Skeleton::ActivateThisDialog();
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  if(!mySimulationTopoDs.IsNull())
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
+  return;
 }
 
 
@@ -851,12 +487,12 @@ void OperationGUI_ChamferDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void OperationGUI_ChamferDlg::enterEvent( QEvent* e)
+void OperationGUI_ChamferDlg::enterEvent(QEvent* e)
 {
-  if ( GroupConstructors->isEnabled() )
-    return ;  
-  ActivateThisDialog() ;
-  return ;
+  if(GroupConstructors->isEnabled())
+    return;
+  this->ActivateThisDialog();
+  return;
 }
 
 
@@ -864,11 +500,37 @@ void OperationGUI_ChamferDlg::enterEvent( QEvent* e)
 // function : closeEvent()
 // purpose  :
 //=================================================================================
-void OperationGUI_ChamferDlg::closeEvent( QCloseEvent* e )
+void OperationGUI_ChamferDlg::closeEvent(QCloseEvent* e)
 { 
   /* same than click on cancel button */
-  this->ClickOnCancel() ;
-  return ;
+  this->ClickOnCancel();
+  return;
+}
+
+
+//=================================================================================
+// function : ValueChangedInSpinBox()
+// purpose  :
+//=================================================================================
+void OperationGUI_ChamferDlg::ValueChangedInSpinBox( double newValue )
+{
+  myGeomBase->EraseSimulationShape(); 
+  mySimulationTopoDs.Nullify();
+
+  QObject* send = (QObject*)sender();
+  if(send == Group1->SpinBox_DX || send == Group2->SpinBox_DX || send == Group3->SpinBox_DX) { /* D1 */
+    myD1 = newValue;
+    myOkD1 = true;
+    this->MakePreview();
+    return ;
+  } 
+  else if(send == Group1->SpinBox_DY || send == Group2->SpinBox_DY || send == Group3->SpinBox_DY) { /* D2 */
+    myD2 = newValue;
+    myOkD2 = true;
+    this->MakePreview();
+    return;
+  }
+  return;
 }
 
 
@@ -878,58 +540,58 @@ void OperationGUI_ChamferDlg::closeEvent( QCloseEvent* e )
 //=================================================================================
 void OperationGUI_ChamferDlg::ResetStateOfDialog()
 {
-  this->myOkShape = false ;
-  this->myEditCurrentArgument->setText("") ;
+  myOkShape = false;
+  myEditCurrentArgument->setText("");
 
   /* Close its local contact if opened */
-  if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     myIC = v3d->getAISContext();
-    if(this->myUseLocalContext) {
-      myIC->CloseLocalContext(this->myLocalContextId) ;
-      this->myUseLocalContext = false ;
-      GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
-      myDisplayGUI->OnDisplayAll(true) ;
+
+    if(myUseLocalContext) {
+      myIC->CloseLocalContext(myLocalContextId);
+      myUseLocalContext = false;
+      DisplayGUI* myDisplayGUI = new DisplayGUI();
+      myDisplayGUI->OnDisplayAll(true);
     }
   }
-  return ;
+  return;
 }
 
+
+//=================================================================================
+// function : MakePreview()
+// purpose  :
+//=================================================================================
 void OperationGUI_ChamferDlg::MakePreview()
 {
-  TopoDS_Shape tds ;
-  try
-  {
-  BRepFilletAPI_MakeChamfer MC(myShape);
-  switch (myConstructorId)
-    {
-    case 0: /* Chamfer All */
+  TopoDS_Shape tds;
+  try {
+    BRepFilletAPI_MakeChamfer MC(myShape);
+    switch (myConstructorId)
       {
-	TopTools_IndexedDataMapOfShapeListOfShape M;
-	TopExp::MapShapesAndAncestors(myShape,TopAbs_EDGE,TopAbs_FACE,M);
-	for (int i = 1;i<=M.Extent();i++) 
-	  {
+      case 0: /* Chamfer All */
+	{
+	  TopTools_IndexedDataMapOfShapeListOfShape M;
+	  TopExp::MapShapesAndAncestors(myShape,TopAbs_EDGE,TopAbs_FACE,M);
+	  for(int i = 1;i<=M.Extent();i++) {
 	    TopoDS_Edge E = TopoDS::Edge(M.FindKey(i));
 	    TopoDS_Face F = TopoDS::Face(M.FindFromIndex(i).First());
-	    if (!BRepTools::IsReallyClosed(E, F) && !BRep_Tool::Degenerated(E))
+	    if(!BRepTools::IsReallyClosed(E, F) && !BRep_Tool::Degenerated(E))
 	      MC.Add(myD1, myD2,E,F);
 	  }
-	tds = MC.Shape();
-	break;
+	  tds = MC.Shape();
+	  break;
+	}
       }
-//    case 1: /* Chamfer edges */
-//    case 2: /* Chamfer Faces */
-    }
-   if (!tds.IsNull()) 
-    {
+    if(!tds.IsNull()) {
       mySimulationTopoDs = tds;
-      myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ; 
+      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
     }
-
-  }  
-  catch(Standard_Failure)
-    {
-      myGeomGUI->EraseSimulationShape() ; 
-      mySimulationTopoDs.Nullify() ;
-    }
+  }
+  catch(Standard_Failure) {
+      myGeomBase->EraseSimulationShape(); 
+      mySimulationTopoDs.Nullify();
+  }
+  return;
 }

@@ -70,7 +70,8 @@ private:
     void EraseDistance() ;
 
     GEOM::GEOM_Gen_var myGeom ;                /* Current GeomI object */
-    GEOMBase_Context*          myGeomGUI ;             /* Current GeomGUI object */
+    GEOMContext*          myGeomGUI ;             /* Current GeomGUI object */
+    GEOMBase*          myGeomBase ;             /* Current GeomGUI object */
     SALOME_Selection*     mySelection ;           /* User shape selection */
     TopoDS_Shape          myShape1 ;              
     TopoDS_Shape          myShape2 ;              

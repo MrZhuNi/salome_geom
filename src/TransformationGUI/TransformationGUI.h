@@ -29,8 +29,7 @@
 #ifndef TRANSFORMATIONGUI_H
 #define TRANSFORMATIONGUI_H
 
-#include "GEOMBase_Display.h"
-#include "QAD_Config.h"
+#include "GEOMBase.h"
 
 //=================================================================================
 // class    : TransformationGUI
@@ -44,7 +43,6 @@ public :
   TransformationGUI();
   ~TransformationGUI();
 
-  static TransformationGUI* GetOrCreateGUI();
   static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void MakeTranslationAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Vec V);
@@ -64,7 +62,8 @@ public :
 				     const gp_Dir Dir, const gp_Pnt Loc, const double Ang,
 				     const short NbTimes1, const double Step, const short NbTimes2);
 
-  GEOMBase_Context* myGeomGUI;
+  GEOMBase* myGeomBase;
+  GEOMContext* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 
 };

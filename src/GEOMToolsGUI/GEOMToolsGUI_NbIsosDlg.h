@@ -21,48 +21,39 @@
 //
 //
 //
-//  File   : RepairGUI.h
-//  Author : Damien COQUERET
+//  File   : GEOMBase_NbIsosDlg.h
+//  Author : 
 //  Module : GEOM
 //  $Header: 
 
-#ifndef REPAIRGUI_H
-#define REPAIRGUI_H
+#ifndef GEOMBASE_NBISOSDLG_H
+#define GEOMBASE_NBISOSDLG_H
 
-#include "GEOMBase.h"
+#include <qdialog.h>
+
+class QLabel;
+class QSpinBox;
+class QPushButton;
 
 //=================================================================================
-// class    : RepairGUI
+// class    : GEOMBase_NbIsosDlg
 // purpose  :
 //=================================================================================
-class RepairGUI : public QObject
-{
-  Q_OBJECT /* for QT compatibility */
+class GEOMBase_NbIsosDlg : public QDialog
+{ 
+    Q_OBJECT
 
-public :
-  RepairGUI();
-  ~RepairGUI();
+public:
+    GEOMBase_NbIsosDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    ~GEOMBase_NbIsosDlg();
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
-
-  void MakeSewingAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR, 
-			    const Standard_Real precision);
-  void MakeOrientationChangeAndDisplay(GEOM::GEOM_Shape_ptr Shape);
-  bool OnSuppressHole(const char* ShapeTopoIOR,
-		      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdFace,
-		      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdWire,
-		      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdEndFace);
-  bool OnSuppressHolesInFaceOrShell(const char* ShapeTopoIOR,
-				    const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdWires);
-  bool OnSuppressFaces(const TopoDS_Shape& ShapeTopo,
-		       const char* ShapeTopoIOR,
-		       const Standard_Integer& aLocalContextId,
-		       bool& myUseLocalContext);
-
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
+    QPushButton* buttonOk;
+    QPushButton* buttonCancel;
+    QLabel* TextLabel1;
+    QLabel* TextLabel2;
+    QSpinBox* SpinBoxU;
+    QSpinBox* SpinBoxV;
 
 };
 
-#endif
+#endif // GEOMETRYGUI_NBISOSDLG_H

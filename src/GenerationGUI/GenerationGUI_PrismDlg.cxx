@@ -149,7 +149,7 @@ void GenerationGUI_PrismDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   gp_Pnt P1, P2;
@@ -179,12 +179,12 @@ void GenerationGUI_PrismDlg::ClickOnApply()
 //=================================================================================
 void GenerationGUI_PrismDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkBase = false;
@@ -197,13 +197,13 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
   TopoDS_Shape S; 
   Standard_Boolean testResult;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
   
   gp_Pnt aPoint1, aPoint2;
   
   if(myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myGeomShape = myGeomGUI->ConvertIOinGEOMShape(IO, testResult);
+    myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return;
     if(S.ShapeType() <= 2)
@@ -212,8 +212,8 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
     myOkBase = true;
     myBaseTopo = S;
   }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomGUI->LinearEdgeExtremities(S, aPoint1, aPoint2)) {
-    myGeomGUI->GetBipointDxDyDz(aPoint1, aPoint2, myDx, myDy, myDz);
+  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomBase->LinearEdgeExtremities(S, aPoint1, aPoint2)) {
+    myGeomBase->GetBipointDxDyDz(aPoint1, aPoint2, myDx, myDy, myDz);
     myEditCurrentArgument->setText(aString);
     myOkLine = true;
   }
@@ -289,7 +289,7 @@ void GenerationGUI_PrismDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -328,7 +328,7 @@ void GenerationGUI_PrismDlg::ReverseVector(int state)
 //=================================================================================
 void GenerationGUI_PrismDlg::MakePrismSimulationAndDisplay()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   try {
@@ -339,7 +339,7 @@ void GenerationGUI_PrismDlg::MakePrismSimulationAndDisplay()
     if(mySimulationTopoDs.IsNull())
       return;
     else
-      myGeomGUI->DisplaySimulationShape(mySimulationTopoDs); 
+      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
   }
   catch(Standard_Failure) {
     MESSAGE("Exception catched in MakePrismSimulationAndDisplay" << endl);

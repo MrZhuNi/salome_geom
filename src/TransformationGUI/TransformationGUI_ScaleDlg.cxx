@@ -29,6 +29,7 @@
 using namespace std;
 #include "TransformationGUI_ScaleDlg.h"
 
+#include "QAD_Config.h"
 #include <BRepBuilderAPI_Transform.hxx>
 
 //=================================================================================
@@ -146,7 +147,7 @@ void TransformationGUI_ScaleDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   if(myOkBaseTopo && myOkPoint1)
@@ -161,12 +162,12 @@ void TransformationGUI_ScaleDlg::ClickOnApply()
 //=================================================================================
 void TransformationGUI_ScaleDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if (nbSel != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkBaseTopo = false;
@@ -179,19 +180,19 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
   TopoDS_Shape S;
   Standard_Boolean testResult;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;  
  
   /*  gp_Pnt : not used */
   if(myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myGeomShape = myGeomGUI->ConvertIOinGEOMShape(IO, testResult);
+    myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return ;
     GroupPoints->LineEdit1->setText(aString);
     myBaseTopo = S; 
     myOkBaseTopo = true;
   }    
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomGUI->VertexToPoint(S, myPoint1)) {
+  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomBase->VertexToPoint(S, myPoint1)) {
     GroupPoints->LineEdit2->setText(aString);
     myOkPoint1 = true;
   }
@@ -254,7 +255,7 @@ void TransformationGUI_ScaleDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -291,7 +292,7 @@ void TransformationGUI_ScaleDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 void TransformationGUI_ScaleDlg::MakeScaleSimulationAndDisplay()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   
   try {
@@ -302,7 +303,7 @@ void TransformationGUI_ScaleDlg::MakeScaleSimulationAndDisplay()
     if(mySimulationTopoDs.IsNull())
       return;
     else
-      myGeomGUI->DisplaySimulationShape(mySimulationTopoDs); 
+      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
   }
   catch(Standard_Failure) {
     MESSAGE("Exception catched in MakeScaleSimulationAndDisplay");

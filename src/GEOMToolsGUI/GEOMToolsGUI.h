@@ -21,43 +21,36 @@
 //
 //
 //
-//  File   : RepairGUI.h
+//  File   : GEOMBase_Tools.h
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header: 
 
-#ifndef REPAIRGUI_H
-#define REPAIRGUI_H
+#ifndef GEOMTOOLSGUI_H
+#define GEOMTOOLSGUI_H
 
 #include "GEOMBase.h"
 
 //=================================================================================
-// class    : RepairGUI
+// class    : GEOMBase_Tools
 // purpose  :
 //=================================================================================
-class RepairGUI : public QObject
+class GEOMToolsGUI : public QObject
 {
   Q_OBJECT /* for QT compatibility */
 
 public :
-  RepairGUI();
-  ~RepairGUI();
+  GEOMToolsGUI();
+  ~GEOMToolsGUI();
 
   static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
-  void MakeSewingAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR, 
-			    const Standard_Real precision);
-  void MakeOrientationChangeAndDisplay(GEOM::GEOM_Shape_ptr Shape);
-  bool OnSuppressHole(const char* ShapeTopoIOR,
-		      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdFace,
-		      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdWire,
-		      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdEndFace);
-  bool OnSuppressHolesInFaceOrShell(const char* ShapeTopoIOR,
-				    const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdWires);
-  bool OnSuppressFaces(const TopoDS_Shape& ShapeTopo,
-		       const char* ShapeTopoIOR,
-		       const Standard_Integer& aLocalContextId,
-		       bool& myUseLocalContext);
+  /* Import and export topology methods */
+  bool Import();
+  bool Export(); 
+  
+  void OnEditCopy();
+  void OnEditDelete();
 
   GEOMBase* myGeomBase;
   GEOMContext* myGeomGUI;

@@ -29,14 +29,14 @@
 using namespace std;
 #include "TransformationGUI.h"
 
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
+
 #include "TransformationGUI_TranslationDlg.h"        // Method TRANSLATION
 #include "TransformationGUI_RotationDlg.h"           // Method ROTATION
 #include "TransformationGUI_MirrorDlg.h"             // Method MIRROR
 #include "TransformationGUI_ScaleDlg.h"              // Method SCALE
 #include "TransformationGUI_MultiTranslationDlg.h"   // Method MULTI TRANSLATION
 #include "TransformationGUI_MultiRotationDlg.h"      // Method MULTI ROTATION
-
-static TransformationGUI* myTransformationGUI = 0;
 
 //=======================================================================
 // function : TransformationGUI()
@@ -45,9 +45,11 @@ static TransformationGUI* myTransformationGUI = 0;
 TransformationGUI::TransformationGUI() :
   QObject()
 {
-  myGeomGUI = GEOMBase_Context::GetGeomGUI();
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myGeomBase = new GEOMBase();
+  myGeomGUI = GEOMContext::GetGeomGUI();
+//   Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
+//   myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myGeom = myGeomGUI->myComponentGeom;
 }
 
 
@@ -61,24 +63,12 @@ TransformationGUI::~TransformationGUI()
 
 
 //=======================================================================
-// function : GetOrCreateGUI()
-// purpose  : Gets or create an object 'GUI' with initialisations
-//          : Returns 'GUI' as a pointer
-//=======================================================================
-TransformationGUI* TransformationGUI::GetOrCreateGUI()
-{
-  myTransformationGUI = new TransformationGUI();
-  return myTransformationGUI;
-}
-
-
-//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool TransformationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  TransformationGUI::GetOrCreateGUI();
+  TransformationGUI* myTransformationGUI = new TransformationGUI();
   myTransformationGUI->myGeomGUI->EmitSignalDeactivateDialog();
   SALOME_Selection* Sel = SALOME_Selection::Selection(myTransformationGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
@@ -137,7 +127,7 @@ void TransformationGUI::MakeTranslationAndDisplay(GEOM::GEOM_Shape_ptr Shape, gp
       return;
     }
     result->NameType(Shape->NameType());
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }  
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -163,7 +153,7 @@ void TransformationGUI::MakeRotationAndDisplay(GEOM::GEOM_Shape_ptr Shape, const
       return ;
     }
     result->NameType(Shape->NameType());
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -186,7 +176,7 @@ void TransformationGUI::MakeMirrorAndDisplay(GEOM::GEOM_Shape_ptr Shape1, GEOM::
       return;
     }  
     result->NameType(Shape1->NameType());
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -207,7 +197,7 @@ void TransformationGUI::MakeScaleAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp
     GEOM::PointStruct P = myGeom->MakePointStruct(centralPoint.X(), centralPoint.Y(), centralPoint.Z());
     GEOM::GEOM_Shape_var result = myGeom->MakeScaleTransform(Shape, P, factor);
     result->NameType(Shape->NameType());
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
     else 
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
@@ -236,7 +226,7 @@ void TransformationGUI::MakeMultiTranslation1DAndDisplay(GEOM::GEOM_Shape_ptr Sh
       return;
     }
     result->NameType(tr("GEOM_COMPOUND"));
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }  
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -267,7 +257,7 @@ void TransformationGUI::MakeMultiTranslation2DAndDisplay(GEOM::GEOM_Shape_ptr Sh
       return;
     }
     result->NameType(tr("GEOM_COMPOUND"));
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }  
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -295,7 +285,7 @@ void TransformationGUI::MakeMultiRotation1DAndDisplay(GEOM::GEOM_Shape_ptr Shape
       return;
     }
     result->NameType(tr("GEOM_COMPOUND"));
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }  
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -325,7 +315,7 @@ void TransformationGUI::MakeMultiRotation2DAndDisplay(GEOM::GEOM_Shape_ptr Shape
       return;
     }
     result->NameType(tr("GEOM_COMPOUND"));
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }  
   catch(const SALOME::SALOME_Exception& S_ex) {

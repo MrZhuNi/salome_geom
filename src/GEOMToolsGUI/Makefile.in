@@ -1,4 +1,4 @@
-#  GEOM REPAIRGUI : 
+#  GEOM GEOMTOOLSGUI : 
 #
 #  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 #  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
@@ -34,24 +34,20 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 
 @COMMENCE@
 
-# header files 
-EXPORT_HEADERS=
-
 # Libraries targets
-LIB = libRepairGUI.la 
+LIB = libGEOMToolsGUI.la
 
-LIB_SRC = 	RepairGUI.cxx \
-		RepairGUI_SewingDlg.cxx \
-		RepairGUI_OrientationDlg.cxx \
-		RepairGUI_SuppressFacesDlg.cxx \
-		RepairGUI_SuppressHoleDlg.cxx
+# header files 
+EXPORT_HEADERS= 
+
+LIB_SRC = 	GEOMToolsGUI.cxx \
+		GEOMToolsGUI_NbIsosDlg.cxx \
+		GEOMToolsGUI_TransparencyDlg.cxx
 
 LIB_MOC = \
-		RepairGUI.h \
-		RepairGUI_SewingDlg.h \
-		RepairGUI_OrientationDlg.h \
-		RepairGUI_SuppressFacesDlg.h \
-		RepairGUI_SuppressHoleDlg.h
+		GEOMToolsGUI.h \
+		GEOMToolsGUI_NbIsosDlg.h \
+		GEOMToolsGUI_TransparencyDlg.h
 
 LIB_CLIENT_IDL = SALOME_Exception.idl \
 		 GEOM_Gen.idl \
@@ -68,6 +64,6 @@ LIB_SERVER_IDL =
 CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lDlgRef -lGEOMContext -lGEOMBase -lDisplayGUI -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMFiltersSelection -lGEOMContext -lGEOMBase -L${KERNEL_ROOT_DIR}/lib/salome
 
 @CONCLUDE@

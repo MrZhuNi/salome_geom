@@ -31,13 +31,12 @@ using namespace std;
 
 #include "QAD_RightFrame.h"
 #include "OCCViewer_Viewer3d.h"
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
 
 #include "RepairGUI_SewingDlg.h"        // Method SEWING
 #include "RepairGUI_OrientationDlg.h"   // Method ORIENTATION
 #include "RepairGUI_SuppressFacesDlg.h" // Method SUPPRESS FACES
 #include "RepairGUI_SuppressHoleDlg.h"  // Method SUPPRESS HOLE
-
-static RepairGUI* myRepairGUI = 0;
 
 //=======================================================================
 // function : RepairGUI()
@@ -46,9 +45,11 @@ static RepairGUI* myRepairGUI = 0;
 RepairGUI::RepairGUI() :
   QObject()
 {
-  myGeomGUI = GEOMBase_Context::GetGeomGUI();
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myGeomBase = new GEOMBase();
+  myGeomGUI = GEOMContext::GetGeomGUI();
+//   Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
+//   myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myGeom = myGeomGUI->myComponentGeom;
 }
 
 
@@ -62,24 +63,12 @@ RepairGUI::~RepairGUI()
 
 
 //=======================================================================
-// function : GetOrCreateGUI()
-// purpose  : Gets or create an object 'GUI' with initialisations
-//          : Returns 'GUI' as a pointer
-//=======================================================================
-RepairGUI* RepairGUI::GetOrCreateGUI()
-{
-  myRepairGUI = new RepairGUI();
-  return myRepairGUI;
-}
-
-
-//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool RepairGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  RepairGUI::GetOrCreateGUI();
+  RepairGUI* myRepairGUI = new RepairGUI();
   myRepairGUI->myGeomGUI->EmitSignalDeactivateDialog();
   SALOME_Selection* Sel = SALOME_Selection::Selection(myRepairGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
@@ -141,10 +130,10 @@ void RepairGUI::MakeSewingAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR,
 
     TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
     Standard_CString type;
-    myGeomGUI->GetShapeTypeString(S,type);
+    myGeomBase->GetShapeTypeString(S,type);
     result->NameType(type);
 
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
     return;
   }
@@ -168,7 +157,7 @@ void RepairGUI::MakeOrientationChangeAndDisplay(GEOM::GEOM_Shape_ptr Shape)
       return;
     }
     result->NameType(Shape->NameType());
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE")); 
     return;
   }
@@ -186,32 +175,31 @@ void RepairGUI::MakeOrientationChangeAndDisplay(GEOM::GEOM_Shape_ptr Shape)
 //          : This means that hole do not traverse ShapeTopo.
 //          : Warning : the hole to be suppressed must be defined by one or two single closed wires !
 //=====================================================================================
-bool RepairGUI::OnSuppressHole( const char* ShapeTopoIOR,
-				  const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdFace,
-				  const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdWire,
-				  const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdEndFace )
+bool RepairGUI::OnSuppressHole(const char* ShapeTopoIOR,
+			       const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdFace,
+			       const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdWire,
+			       const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdEndFace)
 {
   /* Test the type of viewer */
-  if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
+  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
     return false;
-  }
   
   try {
-    GEOM::GEOM_Shape_var aShape  = myGeom->GetIORFromString( ShapeTopoIOR );    
-    GEOM::GEOM_Shape_var aResult = myGeom->SuppressHole( aShape, ListOfIdFace, ListOfIdWire, ListOfIdEndFace ) ;
+    GEOM::GEOM_Shape_var aShape = myGeom->GetIORFromString(ShapeTopoIOR);    
+    GEOM::GEOM_Shape_var aResult = myGeom->SuppressHole(aShape, ListOfIdFace, ListOfIdWire, ListOfIdEndFace);
   
     TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, aResult);
     Standard_CString type;
-    myGeomGUI->GetShapeTypeString(S,type);
-    aResult->NameType( type );
+    myGeomBase->GetShapeTypeString(S,type);
+    aResult->NameType(type);
 
-    if ( myGeomGUI->Display( aResult) )
+    if(myGeomBase->Display(aResult))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
-  catch (const SALOME::SALOME_Exception& S_ex) {
+  catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
   }
-  return true ;
+  return true;
 }
 
 
@@ -220,30 +208,29 @@ bool RepairGUI::OnSuppressHole( const char* ShapeTopoIOR,
 // purpose  : To suppress one or more holes on a face
 //          : 'ListOfIdWires' contains indices or wires/holes.
 //=====================================================================================
-bool RepairGUI::OnSuppressHolesInFaceOrShell( const char* ShapeTopoIOR,
-						const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdWires )
+bool RepairGUI::OnSuppressHolesInFaceOrShell(const char* ShapeTopoIOR,
+					     const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdWires)
 {
   /* Test the type of viewer */
-  if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
+  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
     return false;
-  }
   
   try {
-    GEOM::GEOM_Shape_var aShape  = myGeom->GetIORFromString( ShapeTopoIOR );    
-    GEOM::GEOM_Shape_var aResult = myGeom->SuppressHolesInFaceOrShell( aShape, ListOfIdWires ) ;
+    GEOM::GEOM_Shape_var aShape = myGeom->GetIORFromString(ShapeTopoIOR);    
+    GEOM::GEOM_Shape_var aResult = myGeom->SuppressHolesInFaceOrShell(aShape, ListOfIdWires);
     
     TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, aResult);
     Standard_CString type;
-    myGeomGUI->GetShapeTypeString(S,type);
-    aResult->NameType( type );
+    myGeomBase->GetShapeTypeString(S,type);
+    aResult->NameType(type);
     
-    if ( myGeomGUI->Display( aResult) )
+    if(myGeomBase->Display(aResult))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
-  catch (const SALOME::SALOME_Exception& S_ex) {
+  catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
   }
-  return true ;
+  return true;
 }
 
 
@@ -252,30 +239,27 @@ bool RepairGUI::OnSuppressHolesInFaceOrShell( const char* ShapeTopoIOR,
 // purpose  : To suppress faces from a shape
 //          : The result is one or more shells/faces as main shapes !
 //=====================================================================================
-bool RepairGUI::OnSuppressFaces( const TopoDS_Shape& ShapeTopo,
-				   const char* ShapeTopoIOR,
-				   const Standard_Integer& aLocalContextId,
-				   bool& myUseLocalContext )
+bool RepairGUI::OnSuppressFaces(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR,
+				const Standard_Integer& aLocalContextId, bool& myUseLocalContext)
 {
   /* Test the type of viewer */
-  if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
+  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+    return false;
+  
+  SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+  SALOMEDS::SObject_var theObj = aStudy->FindObjectIOR(ShapeTopoIOR);
+  if(theObj->_is_nil()) {
+    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
     return false;
   }
   
-  SALOMEDS::Study_var   aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
-  SALOMEDS::SObject_var theObj = aStudy->FindObjectIOR( ShapeTopoIOR );
-  if ( theObj->_is_nil() ) {
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
-    return false ;
-  }
-  
   OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+  Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
   
-  if( myUseLocalContext == false ) {
+  if(myUseLocalContext == false) {
     /* local context is from DialogBox */
-    MESSAGE("Error : No local context opened for suppress faces method" << endl ) ;
-    return false ;
+    MESSAGE("Error : No local context opened for suppress faces method" << endl);
+    return false;
   }
   
   GEOM::GEOM_Shape::ListOfSubShapeID_var ListOfID = new GEOM::GEOM_Shape::ListOfSubShapeID;
@@ -285,66 +269,64 @@ bool RepairGUI::OnSuppressFaces( const TopoDS_Shape& ShapeTopo,
 
   /* Create a list of indices of faces to be suppressed */
   int i = 0;
-  const int SubShapeType = 4 ; /* GEOM::FACE type */
+  const int SubShapeType = 4; /* GEOM::FACE type */
   ic->InitSelected();          /* to repositioning at beginning */
-  while( ic->MoreSelected() ) {
-    int index = myGeomGUI->GetIndex( ic->SelectedShape(), ShapeTopo, SubShapeType );
-    ListOfID[i] = index ;
+  while(ic->MoreSelected()) {
+    int index = myGeomBase->GetIndex(ic->SelectedShape(), ShapeTopo, SubShapeType);
+    ListOfID[i] = index;
     i++;
     ic->NextSelected();
   }
   
   /* Close local context opened in DialogBox */
-  ic->CloseLocalContext(aLocalContextId) ;
-  myUseLocalContext = false ;
+  ic->CloseLocalContext(aLocalContextId);
+  myUseLocalContext = false;
   
   /* Here is the main shape */
-  GEOM::GEOM_Shape_var aShape = myGeom->GetIORFromString( ShapeTopoIOR );  
+  GEOM::GEOM_Shape_var aShape = myGeom->GetIORFromString(ShapeTopoIOR);  
   GEOM::GEOM_Gen::ListOfGeomShapes_var listGeomShapes = new GEOM::GEOM_Gen::ListOfGeomShapes;
   
   /* Call geom method that return a list of shells/faces as result of suppress */
   try {
-    listGeomShapes = myGeom->SuppressFaces( aShape, ListOfID );
+    listGeomShapes = myGeom->SuppressFaces(aShape, ListOfID);
   }
-  catch (const SALOME::SALOME_Exception& S_ex) {
+  catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
   }
   
   /* Test list of shells/faces */
-  if( listGeomShapes->length() < 1 ) {
-    return false ;
+  if(listGeomShapes->length() < 1) {
+    return false;
   }
 
   /* Loop on each object created */
-  for( int i=0; i<listGeomShapes->length(); i++ ) {
+  for(int i=0; i<listGeomShapes->length(); i++) {
+    GEOM::GEOM_Shape_var aShellOrFace = listGeomShapes[i];
+    TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, aShellOrFace);
     
-    GEOM::GEOM_Shape_var aShellOrFace = listGeomShapes[i] ;
-    TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape( myGeom, aShellOrFace );
+    if(S.IsNull())
+      return false;
     
-    if( S.IsNull() ) {
-      return false ;
-    }
-    
-    char* nameG =  (char *)malloc(20);
+    char* nameG = (char *)malloc(20);
     Standard_CString Type;
-    if ( myGeomGUI->GetShapeTypeString(S, Type) ) {
-      aShellOrFace->NameType( Type );
+    if(myGeomBase->GetShapeTypeString(S, Type)) {
+      aShellOrFace->NameType(Type);
       sprintf (nameG, "%s_%d", Type, myGeomGUI->GetNbGeom()++);
     }
     else {
-      aShellOrFace->NameType( tr("GEOM_SHAPE") );
-      sprintf (nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->GetNbGeom()++ );
+      aShellOrFace->NameType(tr("GEOM_SHAPE"));
+      sprintf (nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->GetNbGeom()++);
     }
     
     /* Display with name */
-    if( !myGeomGUI->Display( aShellOrFace, nameG) ) {
+    if(!myGeomBase->Display(aShellOrFace, nameG)) {
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-      return false ;
+      return false;
     }
   }
   
   myGeomGUI->GetDesktop()->putInfo (tr("GEOM_PRP_READY"));
-  return true ;
+  return true;
 }
 
 

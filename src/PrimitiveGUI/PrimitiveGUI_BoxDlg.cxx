@@ -30,6 +30,8 @@ using namespace std;
 #include "PrimitiveGUI_BoxDlg.h"
 
 #include <BRepPrimAPI_MakeBox.hxx>
+#include <Precision.hxx>
+#include "QAD_Config.h"
 
 //=================================================================================
 // class    : PrimitiveGUI_BoxDlg()
@@ -156,7 +158,7 @@ void PrimitiveGUI_BoxDlg::ConstructorsClicked(int constructorId)
 {
   myConstructorId = constructorId;
   mySelection->ClearFilters();
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   disconnect(mySelection, 0, this, 0);
   myOkPoint1 = myOkPoint2 = false;
 
@@ -192,7 +194,7 @@ void PrimitiveGUI_BoxDlg::ConstructorsClicked(int constructorId)
 	myPoint2.SetCoord(initValue, initValue, initValue);
 
 	mySimulationTopoDs = BRepPrimAPI_MakeBox(myPoint1, myPoint2).Shape();
-	myGeomGUI->DisplaySimulationShape(mySimulationTopoDs); 
+	myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
 	break;
       }
     }
@@ -221,7 +223,7 @@ void PrimitiveGUI_BoxDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   switch(myConstructorId)
@@ -254,11 +256,11 @@ void PrimitiveGUI_BoxDlg::ClickOnApply()
 //=================================================================================
 void PrimitiveGUI_BoxDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if (nbSel != 1) {
     if (myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkPoint1 = false;
@@ -269,21 +271,21 @@ void PrimitiveGUI_BoxDlg::SelectionIntoArgument()
 
   // nbSel == 1
   TopoDS_Shape S; 
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
 
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomGUI->VertexToPoint(S, myPoint1)) {
+  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
     myEditCurrentArgument->setText(aString);
     myOkPoint1 = true;
   }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomGUI->VertexToPoint(S, myPoint2)) {
+  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomBase->VertexToPoint(S, myPoint2)) {
     myEditCurrentArgument->setText(aString);
     myOkPoint2 = true;
   }
 
   if(myOkPoint1 && myOkPoint2 && TestBoxDimensions(myPoint1, myPoint2)) {
     mySimulationTopoDs = BRepPrimAPI_MakeBox(myPoint1, myPoint2).Shape();
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   }
   return;
 }
@@ -343,7 +345,7 @@ void PrimitiveGUI_BoxDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -367,7 +369,7 @@ void PrimitiveGUI_BoxDlg::enterEvent(QEvent* e)
 //=================================================================================
 void PrimitiveGUI_BoxDlg::ValueChangedInSpinBox(double newValue)
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   QObject* send = (QObject*)sender();
   double vx, vy, vz;
@@ -393,7 +395,7 @@ void PrimitiveGUI_BoxDlg::ValueChangedInSpinBox(double newValue)
 
   if(TestBoxDimensions(myPoint1, myPoint2)) {
     mySimulationTopoDs = BRepPrimAPI_MakeBox(myPoint1, myPoint2).Shape();
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   }
   return;
 }

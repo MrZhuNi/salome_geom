@@ -64,7 +64,8 @@ private:
     void CalculateAndDisplayBndBox(const TopoDS_Shape& S) ;
 
     GEOM::GEOM_Gen_var myGeom ;                /* Current GeomI object */
-    GEOMBase_Context*          myGeomGUI ;             /* Current GeomGUI object */
+    GEOMContext*          myGeomGUI ;             /* Current GeomGUI object */
+    GEOMBase*          myGeomBase ;             /* Current GeomGUI object */
     SALOME_Selection*     mySelection ;           /* User shape selection */
     int                   myConstructorId ;       /* Current constructor id = radio button id */
     QLineEdit*            myEditCurrentArgument;  /* Current LineEdit */

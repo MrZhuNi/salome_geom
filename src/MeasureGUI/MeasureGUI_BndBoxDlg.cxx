@@ -242,7 +242,8 @@ void MeasureGUI_BndBoxDlg::Init( SALOME_Selection* Sel )
   Constructor1->setChecked( TRUE );
   myEditCurrentArgument = LineEditC1A1 ;	
   mySelection = Sel;
-  myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
+  myGeomBase = new GEOMBase() ;
+  myGeomGUI = GEOMContext::GetGeomGUI() ;
   myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;
   
   // TODO : previous selection into argument ?
@@ -265,7 +266,7 @@ void MeasureGUI_BndBoxDlg::Init( SALOME_Selection* Sel )
 
   /* Move widget on the botton right corner of main widget */
   int x, y ;
-  myGeomGUI->DefineDlgPosition( this, x, y ) ;
+  myGeomBase->DefineDlgPosition( this, x, y ) ;
   this->move( x, y ) ;  
   this->show() ; /* displays Dialog */
 
@@ -290,7 +291,7 @@ void MeasureGUI_BndBoxDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void MeasureGUI_BndBoxDlg::ClickOnCancel()
 {
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   mySimulationTopoDs.Nullify() ;
   disconnect( mySelection, 0, this, 0 );
   myGeomGUI->ResetState() ;
@@ -316,14 +317,14 @@ void MeasureGUI_BndBoxDlg::SelectionIntoArgument()
 
   QString aString = ""; /* future the name of selection */
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString) ;
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString) ;
   if ( nbSel != 1 ) {
     return ;
   }
 
   /*  nbSel == 1  */ 
   TopoDS_Shape S;
-  if( !myGeomGUI->GetTopoFromSelection(mySelection, S) )
+  if( !myGeomBase->GetTopoFromSelection(mySelection, S) )
     return ;
   
   if( S.IsNull() ) {
@@ -379,7 +380,7 @@ void MeasureGUI_BndBoxDlg::LineEditReturnPressed()
   /* so SelectionIntoArgument() is automatically called.           */
   const QString objectUserName = myEditCurrentArgument->text() ;
   QWidget* thisWidget = (QWidget*)this ;
-  if( myGeomGUI->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
+  if( myGeomBase->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
     myEditCurrentArgument->setText( objectUserName ) ;
   }
 
@@ -473,7 +474,7 @@ void MeasureGUI_BndBoxDlg::CalculateAndDisplayBndBox(const TopoDS_Shape& S)
     
     mySimulationTopoDs = BRepPrimAPI_MakeBox( gp_Pnt(axmin,aymin,azmin),
 					      gp_Pnt(axmax,aymax,azmax) ).Shape();
-    myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ; 
+    myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ; 
   }
   catch(Standard_Failure) {
     MESSAGE("Catch intercepted in CalculateAndDisplayBndBox()" << endl ) ;

@@ -233,7 +233,8 @@ void MeasureGUI_CenterMassDlg::Init( SALOME_Selection* Sel )
   Constructor1->setChecked( TRUE );
   myEditCurrentArgument = LineEditC1A1 ;	
   mySelection = Sel;
-  myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
+  myGeomBase = new GEOMBase() ;
+  myGeomGUI = GEOMContext::GetGeomGUI() ;
   myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;
   mySimulationTopoDs.Nullify() ;
   myShape.Nullify() ;
@@ -259,7 +260,7 @@ void MeasureGUI_CenterMassDlg::Init( SALOME_Selection* Sel )
 
   /* Move widget on the botton right corner of main widget */
   int x, y ;
-  myGeomGUI->DefineDlgPosition( this, x, y ) ;
+  myGeomBase->DefineDlgPosition( this, x, y ) ;
   this->move( x, y ) ;
   this->show() ; /* displays Dialog */
   
@@ -284,7 +285,7 @@ void MeasureGUI_CenterMassDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void MeasureGUI_CenterMassDlg::ClickOnCancel()
 {
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   mySimulationTopoDs.Nullify() ;
   disconnect( mySelection, 0, this, 0 );
   myGeomGUI->ResetState() ;
@@ -310,7 +311,7 @@ void MeasureGUI_CenterMassDlg::ClickOnOk()
 //=================================================================================
 void MeasureGUI_CenterMassDlg::ClickOnApply()
 {
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   mySimulationTopoDs.Nullify() ;
   myGeomGUI->GetDesktop()->putInfo( tr("") ) ; 
   if( myOkCenterMass) {    
@@ -328,7 +329,7 @@ void MeasureGUI_CenterMassDlg::ClickOnApply()
 //=================================================================================
 void MeasureGUI_CenterMassDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   myEditCurrentArgument->setText("") ;
   myOkCenterMass = false ;
   Standard_Boolean testResult ;
@@ -339,17 +340,17 @@ void MeasureGUI_CenterMassDlg::SelectionIntoArgument()
 
   QString aString = ""; /* future the name of selection */
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString) ;
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString) ;
   if ( nbSel != 1 ) {
     return ;
   }
 
   /*  nbSel == 1  */
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject() ;
-  if( !myGeomGUI->GetTopoFromSelection(mySelection, this->myShape) )
+  if( !myGeomBase->GetTopoFromSelection(mySelection, this->myShape) )
     return ;  
 
-  myGeomShape = myGeomGUI->ConvertIOinGEOMShape(IO, testResult) ;
+  myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult) ;
   if( !testResult )
 	    return ;
   myEditCurrentArgument->setText(aString) ;
@@ -402,7 +403,7 @@ void MeasureGUI_CenterMassDlg::LineEditReturnPressed()
   /* so SelectionIntoArgument() is automatically called.           */
   const QString objectUserName = myEditCurrentArgument->text() ;
   QWidget* thisWidget = (QWidget*)this ;
-  if( myGeomGUI->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
+  if( myGeomBase->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
     myEditCurrentArgument->setText( objectUserName ) ;
   }
   return ;
@@ -416,7 +417,7 @@ void MeasureGUI_CenterMassDlg::LineEditReturnPressed()
 void MeasureGUI_CenterMassDlg::DeactivateActiveDialog()
 {
   if ( GroupConstructors->isEnabled() ) {    
-    myGeomGUI->EraseSimulationShape() ;  
+    myGeomBase->EraseSimulationShape() ;  
     disconnect( mySelection, 0, this, 0 );
     GroupConstructors->setEnabled(false) ;
     GroupC1->setEnabled(false) ;
@@ -439,7 +440,7 @@ void MeasureGUI_CenterMassDlg::ActivateThisDialog()
   GroupButtons->setEnabled(true) ;
   connect( mySelection, SIGNAL( currentSelectionChanged() ),     this, SLOT( SelectionIntoArgument() ) );
   if( !mySimulationTopoDs.IsNull() )
-    myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
+    myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ;
   return ;
 }
 
@@ -475,7 +476,7 @@ void MeasureGUI_CenterMassDlg::closeEvent( QCloseEvent* e )
 //=================================================================================
 bool MeasureGUI_CenterMassDlg::CalculateAndDisplayCenterMass()
 {
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   mySimulationTopoDs.Nullify() ;
 
   try {
@@ -484,7 +485,7 @@ bool MeasureGUI_CenterMassDlg::CalculateAndDisplayCenterMass()
     GProp_GProps System;
 
     if ( this->myShape.ShapeType() == TopAbs_VERTEX) {
-      myGeomGUI->VertexToPoint( this->myShape, this->myCenterMass  );
+      myGeomBase->VertexToPoint( this->myShape, this->myCenterMass  );
     } 
     else if ( this->myShape.ShapeType() == TopAbs_EDGE || this->myShape.ShapeType() == TopAbs_WIRE ) {
       BRepGProp::LinearProperties(this->myShape, System);
@@ -513,7 +514,7 @@ bool MeasureGUI_CenterMassDlg::CalculateAndDisplayCenterMass()
     
     
     if( !mySimulationTopoDs.IsNull() ) {
-      myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
+      myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ;
       return true ;
     }
   }

@@ -35,6 +35,7 @@
 
 #include "PrimitiveGUI.h"
 
+#include "GEOM_ShapeTypeFilter.hxx"
 #include <gp_Pnt.hxx>
 
 //=================================================================================

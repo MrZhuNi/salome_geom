@@ -29,7 +29,7 @@
 using namespace std;
 #include "RepairGUI_OrientationDlg.h"
 
-
+#include <Precision.hxx>
 #include "QAD_Config.h"
 
 #include <TopoDS_Compound.hxx>
@@ -200,7 +200,8 @@ void RepairGUI_OrientationDlg::Init( SALOME_Selection* Sel )
   CheckBoxReverse->setChecked( FALSE );
   myEditCurrentArgument = LineEditC1A1 ;	
   mySelection = Sel;
-  myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
+  myGeomBase = new GEOMBase() ;
+  myGeomGUI = GEOMContext::GetGeomGUI() ;
 
   myLength = 25.0 ;
   myOkShape = false ;
@@ -233,7 +234,7 @@ void RepairGUI_OrientationDlg::Init( SALOME_Selection* Sel )
  
   /* Move widget on the botton right corner of main widget */
   int x, y ;
-  myGeomGUI->DefineDlgPosition( this, x, y ) ;
+  myGeomBase->DefineDlgPosition( this, x, y ) ;
   this->move( x, y ) ;
   this->show() ; /* displays Dialog */
 
@@ -293,7 +294,7 @@ void RepairGUI_OrientationDlg::ClickOnApply()
 //=================================================================================
 void RepairGUI_OrientationDlg::ClickOnCancel()
 {
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   mySimulationTopoDs.Nullify() ;
   disconnect( mySelection, 0, this, 0 );
   myGeomGUI->ResetState() ;
@@ -318,7 +319,7 @@ void RepairGUI_OrientationDlg::LineEditReturnPressed()
   /* so SelectionIntoArgument() is automatically called.           */
   const QString objectUserName = myEditCurrentArgument->text() ;
   QWidget* thisWidget = (QWidget*)this ;
-  if( myGeomGUI->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
+  if( myGeomBase->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
     myEditCurrentArgument->setText( objectUserName ) ;
   }
   return ;
@@ -332,13 +333,13 @@ void RepairGUI_OrientationDlg::LineEditReturnPressed()
 //=================================================================================
 void RepairGUI_OrientationDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape() ; 
+  myGeomBase->EraseSimulationShape() ; 
   this->mySimulationTopoDs.Nullify() ;
   
   /* Name of future selection */
   QString aString = "";
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString) ;
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString) ;
   if ( nbSel != 1 ) {
     if ( myEditCurrentArgument == LineEditC1A1 ) {
       LineEditC1A1->setText("") ;
@@ -351,12 +352,12 @@ void RepairGUI_OrientationDlg::SelectionIntoArgument()
   TopoDS_Shape S;
   Standard_Boolean testResult ;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject() ;
-  if( !myGeomGUI->GetTopoFromSelection(mySelection, S) )
+  if( !myGeomBase->GetTopoFromSelection(mySelection, S) )
     return ;  
   
   /* Constructor */
   if ( myEditCurrentArgument == LineEditC1A1 ) { 
-    myGeomShape = myGeomGUI->ConvertIOinGEOMShape(IO, testResult) ;
+    myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult) ;
     if( !testResult )
       return ;
     LineEditC1A1->setText(aString) ;
@@ -400,7 +401,7 @@ void RepairGUI_OrientationDlg::SetEditCurrentArgument()
 //=================================================================================
 void RepairGUI_OrientationDlg::ValueChangedInSpinBox( double newValue )
 { 
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   mySimulationTopoDs.Nullify() ;
   
   QObject* send = (QObject*)sender() ; 
@@ -427,7 +428,7 @@ void RepairGUI_OrientationDlg::DeactivateActiveDialog()
     GroupButtons->setEnabled(false) ;
     GroupC1->setEnabled(false) ;
     disconnect( mySelection, 0, this, 0 );
-    myGeomGUI->EraseSimulationShape() ;
+    myGeomBase->EraseSimulationShape() ;
   }
   return ;
 }
@@ -447,7 +448,7 @@ void RepairGUI_OrientationDlg::ActivateThisDialog()
   
   connect ( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   if( !mySimulationTopoDs.IsNull() )
-    myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
+    myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ;
 
   return ;
 }
@@ -502,7 +503,7 @@ void RepairGUI_OrientationDlg::ReverseOrientation(int state)
 //===========================================================================================
 void RepairGUI_OrientationDlg::MakeOrientationSimulationAndDisplay(const TopoDS_Shape& aTopoDS, Standard_Real length )
 {
-  myGeomGUI->EraseSimulationShape() ; 
+  myGeomBase->EraseSimulationShape() ; 
   mySimulationTopoDs.Nullify() ;
   
   TopoDS_Compound aCompound1, aCompound2 ;
@@ -525,8 +526,8 @@ void RepairGUI_OrientationDlg::MakeOrientationSimulationAndDisplay(const TopoDS_
       else
 	tmpShape.Orientation(TopAbs_FORWARD) ;
     }
-    if( myGeomGUI->CreateArrowForLinearEdge( tmpShape, mySimulationTopoDs ) ) {
-      myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
+    if( myGeomBase->CreateArrowForLinearEdge( tmpShape, mySimulationTopoDs ) ) {
+      myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ;
     }
     return ;
   }
@@ -599,7 +600,7 @@ void RepairGUI_OrientationDlg::MakeOrientationSimulationAndDisplay(const TopoDS_
     mySimulationTopoDs = aCompound2 ;
   }
   if(!mySimulationTopoDs.IsNull() )
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs) ;
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs) ;
   
   return ;
 }

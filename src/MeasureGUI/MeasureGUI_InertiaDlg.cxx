@@ -280,7 +280,8 @@ void MeasureGUI_InertiaDlg::Init( SALOME_Selection* Sel )
   Constructor1->setChecked( TRUE );
   myEditCurrentArgument = LineEditC1A1 ;	
   mySelection = Sel;
-  myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
+  myGeomBase = new GEOMBase() ;
+  myGeomGUI = GEOMContext::GetGeomGUI() ;
   myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;
  
   // TODO : previous selection into argument ?
@@ -304,7 +305,7 @@ void MeasureGUI_InertiaDlg::Init( SALOME_Selection* Sel )
 
   /* Move widget on the botton right corner of main widget */
   int x, y ;
-  myGeomGUI->DefineDlgPosition( this, x, y ) ;
+  myGeomBase->DefineDlgPosition( this, x, y ) ;
   this->move( x, y ) ;
   this->show() ; /* displays Dialog */
   return ;
@@ -358,14 +359,14 @@ void MeasureGUI_InertiaDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText("") ;
   QString aString = ""; /* future the name of selection */
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString) ;
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString) ;
   if ( nbSel != 1 ) {
     return ;
   }
   
   /*  nbSel == 1  */ 
   TopoDS_Shape S;
-  if( !myGeomGUI->GetTopoFromSelection(mySelection, S) || S.IsNull() )
+  if( !myGeomBase->GetTopoFromSelection(mySelection, S) || S.IsNull() )
     return ;
     
   LineEditC1A1->setText(aString) ;
@@ -415,7 +416,7 @@ void MeasureGUI_InertiaDlg::LineEditReturnPressed()
   /* so SelectionIntoArgument() is automatically called.           */
   const QString objectUserName = myEditCurrentArgument->text() ;
   QWidget* thisWidget = (QWidget*)this ;
-  if( myGeomGUI->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
+  if( myGeomBase->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
     myEditCurrentArgument->setText( objectUserName ) ;
   }
   return ;

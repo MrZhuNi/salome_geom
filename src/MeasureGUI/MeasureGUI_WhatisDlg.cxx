@@ -176,7 +176,8 @@ void MeasureGUI_WhatisDlg::Init( SALOME_Selection* Sel )
   Constructor1->setChecked( TRUE );
   myEditCurrentArgument = LineEditC1A1 ;	
   mySelection = Sel;
-  myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
+  myGeomBase = new GEOMBase() ;
+  myGeomGUI = GEOMContext::GetGeomGUI() ;
   myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;
   
   // TODO : previous selection into argument ?
@@ -201,7 +202,7 @@ void MeasureGUI_WhatisDlg::Init( SALOME_Selection* Sel )
 
   /* Move widget on the botton right corner of main widget */
   int x, y ;
-  myGeomGUI->DefineDlgPosition( this, x, y ) ;
+  myGeomBase->DefineDlgPosition( this, x, y ) ;
   this->move( x, y ) ;
   this->show() ; /* displays Dialog */
 
@@ -226,7 +227,7 @@ void MeasureGUI_WhatisDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void MeasureGUI_WhatisDlg::ClickOnCancel()
 {
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   disconnect( mySelection, 0, this, 0 );
   myGeomGUI->ResetState() ;
   reject() ;
@@ -240,7 +241,7 @@ void MeasureGUI_WhatisDlg::ClickOnCancel()
 //=================================================================================
 void MeasureGUI_WhatisDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   mySimulationTopoDs.Nullify() ;
 
   Text->setText("") ;
@@ -248,14 +249,14 @@ void MeasureGUI_WhatisDlg::SelectionIntoArgument()
 
   SelectedName = ""; /* future the name of selection */
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, SelectedName) ;
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, SelectedName) ;
   if ( nbSel != 1 ) {
     return ;
   }
 
   /*  nbSel == 1  */ 
   TopoDS_Shape S;
-  if( !myGeomGUI->GetTopoFromSelection(mySelection, S) )
+  if( !myGeomBase->GetTopoFromSelection(mySelection, S) )
     return ;
   
   if( S.IsNull() ) {
@@ -264,8 +265,8 @@ void MeasureGUI_WhatisDlg::SelectionIntoArgument()
   }
   
    /* Try to display of a cone simulation shape to show direction of a linear edge only in OCC viewer */
-  if( myGeomGUI->CreateArrowForLinearEdge( S, mySimulationTopoDs ) ) {
-    myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
+  if( myGeomBase->CreateArrowForLinearEdge( S, mySimulationTopoDs ) ) {
+    myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ;
   }
   LineEditC1A1->setText(SelectedName) ;
   this->CalculateWhatis(S) ;
@@ -315,7 +316,7 @@ void MeasureGUI_WhatisDlg::LineEditReturnPressed()
   /* so SelectionIntoArgument() is automatically called.           */
   const QString objectUserName = myEditCurrentArgument->text() ;
   QWidget* thisWidget = (QWidget*)this ;
-  if( myGeomGUI->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
+  if( myGeomBase->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
     myEditCurrentArgument->setText( objectUserName ) ;
   } 
   return ;
@@ -332,7 +333,7 @@ void MeasureGUI_WhatisDlg::DeactivateActiveDialog()
     disconnect( mySelection, 0, this, 0 );
     GroupConstructors->setEnabled(false) ;
     GroupConstructor1->setEnabled(false) ;
-    myGeomGUI->EraseSimulationShape() ;
+    myGeomBase->EraseSimulationShape() ;
     GroupButtons->setEnabled(false) ;
   }
   return ;
@@ -352,7 +353,7 @@ void MeasureGUI_WhatisDlg::ActivateThisDialog()
   GroupButtons->setEnabled(true) ;
   connect( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   if( !mySimulationTopoDs.IsNull() )
-    myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
+    myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ;
   return ;
 }
 

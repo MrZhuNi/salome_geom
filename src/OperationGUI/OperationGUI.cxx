@@ -29,18 +29,20 @@
 using namespace std;
 #include "OperationGUI.h"
 
+#include "DisplayGUI.h"
+
 #include "QAD_RightFrame.h"
 #include "OCCViewer_Viewer3d.h"
 #include "OCCViewer_ViewFrame.h"
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
 
 #include <TopExp_Explorer.hxx>
+#include <Precision.hxx>
 
 #include "OperationGUI_PartitionDlg.h"   // Method PARTITION
 #include "OperationGUI_ArchimedeDlg.h"   // Method ARCHIMEDE
 #include "OperationGUI_FilletDlg.h"      // Method FILLET
 #include "OperationGUI_ChamferDlg.h"     // Method CHAMFER
-
-static OperationGUI* myOperationGUI = 0;
 
 //=======================================================================
 // function : OperationGUI()
@@ -49,9 +51,11 @@ static OperationGUI* myOperationGUI = 0;
 OperationGUI::OperationGUI() :
   QObject()
 {
-  myGeomGUI = GEOMBase_Context::GetGeomGUI();
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myGeomBase = new GEOMBase();
+  myGeomGUI = GEOMContext::GetGeomGUI();
+//   Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
+//   myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myGeom = myGeomGUI->myComponentGeom;
 }
 
 
@@ -65,24 +69,12 @@ OperationGUI::~OperationGUI()
 
 
 //=======================================================================
-// function : GetOrCreateGUI()
-// purpose  : Gets or create an object 'GUI' with initialisations
-//          : Returns 'GUI' as a pointer
-//=======================================================================
-OperationGUI* OperationGUI::GetOrCreateGUI()
-{
-  myOperationGUI = new OperationGUI();
-  return myOperationGUI;
-}
-
-
-//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool OperationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  OperationGUI::GetOrCreateGUI();
+  OperationGUI* myOperationGUI = new OperationGUI();
   myOperationGUI->myGeomGUI->EmitSignalDeactivateDialog();
   SALOME_Selection* Sel = SALOME_Selection::Selection(myOperationGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
@@ -133,10 +125,10 @@ bool OperationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 // purpose  :
 //=====================================================================================
 void OperationGUI::MakePartitionAndDisplay(const GEOM::GEOM_Gen::ListOfIOR& listShapesIOR,
-					  const GEOM::GEOM_Gen::ListOfIOR& listToolsIOR,
-					  const GEOM::GEOM_Gen::ListOfIOR& listKeepInsIOR,
-					  const GEOM::GEOM_Gen::ListOfIOR& listRemoveInsIOR,
-					  const GEOM::shape_type limit)
+					   const GEOM::GEOM_Gen::ListOfIOR& listToolsIOR,
+					   const GEOM::GEOM_Gen::ListOfIOR& listKeepInsIOR,
+					   const GEOM::GEOM_Gen::ListOfIOR& listRemoveInsIOR,
+					   const GEOM::shape_type limit)
 {
   try {
     GEOM::GEOM_Shape_var result = myGeom->Partition(listShapesIOR, listToolsIOR,
@@ -147,7 +139,7 @@ void OperationGUI::MakePartitionAndDisplay(const GEOM::GEOM_Gen::ListOfIOR& list
       return;
     }
     result->NameType(tr("GEOM_PARTITION"));
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
     return;
   }
@@ -171,7 +163,7 @@ void OperationGUI::Archimede(const Handle(SALOME_InteractiveObject)& IO, const d
       
       GEOM::GEOM_Shape_var Result = myGeom->Archimede(Shape, aWeight, aWaterDensity, aMeshingDeflection);
       Result->NameType(tr("GEOM_PLANE"));
-      if(myGeomGUI->Display(Result)) {
+      if(myGeomBase->Display(Result)) {
 	myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
       }
       return;
@@ -187,7 +179,7 @@ void OperationGUI::Archimede(const Handle(SALOME_InteractiveObject)& IO, const d
 	  GEOM::GEOM_Shape_var Shape = myGeom->GetIORFromString(anIOR->Value());
 	  GEOM::GEOM_Shape_var Result = myGeom->Archimede(Shape, aWeight, aWaterDensity, aMeshingDeflection);
 	  Result->NameType(tr("GEOM_PLANE"));
-	  if (myGeomGUI->Display(Result)) {
+	  if (myGeomBase->Display(Result)) {
 	    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
 	  }
 	}
@@ -229,10 +221,10 @@ bool OperationGUI::OnFilletGetAll(const TopoDS_Shape& ShapeTopo, const double Ra
     }
     TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
     Standard_CString type;
-    myGeomGUI->GetShapeTypeString(S,type);
+    myGeomBase->GetShapeTypeString(S,type);
     result->NameType(type);
 
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch (const SALOME::SALOME_Exception& S_ex) {
@@ -276,7 +268,7 @@ bool OperationGUI::OnFilletGetSelected(const TopoDS_Shape& ShapeTopo, const char
       while(Exp.More()) {
 	if(M.Add(Exp.Current())) { /* if a new edge : do not add doublons indices */
 	  ListOfID->length(i + 1);
-	  ListOfID[i] = myGeomGUI->GetIndex(Exp.Current(), ShapeTopo, (int)TopAbs_EDGE);
+	  ListOfID[i] = myGeomBase->GetIndex(Exp.Current(), ShapeTopo, (int)TopAbs_EDGE);
 	  i++;
 	}
 	Exp.Next(); 
@@ -284,7 +276,7 @@ bool OperationGUI::OnFilletGetSelected(const TopoDS_Shape& ShapeTopo, const char
     }
     else {
       ListOfID->length(i + 1);
-      ListOfID[i] = myGeomGUI->GetIndex(ic->SelectedShape(), ShapeTopo, SubShapeType);
+      ListOfID[i] = myGeomBase->GetIndex(ic->SelectedShape(), ShapeTopo, SubShapeType);
       i++;
     }
     ic->NextSelected();
@@ -301,10 +293,10 @@ bool OperationGUI::OnFilletGetSelected(const TopoDS_Shape& ShapeTopo, const char
 
     TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, aResult);
     Standard_CString type;
-    myGeomGUI->GetShapeTypeString(S,type);
+    myGeomBase->GetShapeTypeString(S,type);
     aResult->NameType(type);
 
-    if(myGeomGUI->Display(aResult))
+    if(myGeomBase->Display(aResult))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -317,7 +309,7 @@ bool OperationGUI::OnFilletGetSelected(const TopoDS_Shape& ShapeTopo, const char
     myUseLocalContext = false;
   }
   
-  GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+  DisplayGUI* myDisplayGUI = new DisplayGUI();
   myDisplayGUI->OnDisplayAll(true) ;
   myGeomGUI->GetActiveStudy()->updateObjBrowser();
   myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_READY"));
@@ -357,10 +349,10 @@ bool OperationGUI::OnChamferGetAll(const TopoDS_Shape& ShapeTopo, const double D
 
     TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
     Standard_CString type;
-    myGeomGUI->GetShapeTypeString(S,type);
+    myGeomBase->GetShapeTypeString(S,type);
     result->NameType(type);
 
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch (const SALOME::SALOME_Exception& S_ex) {
@@ -404,7 +396,7 @@ bool OperationGUI::OnChamferGetSelected(const TopoDS_Shape& ShapeTopo, const cha
       while(Exp.More()) {
 	if(M.Add(Exp.Current())) { /* if a new edge : do not add doublons indices */
 	  ListOfID->length(i + 1);
-	  ListOfID[i] = myGeomGUI->GetIndex(Exp.Current(), ShapeTopo, (int)TopAbs_EDGE);
+	  ListOfID[i] = myGeomBase->GetIndex(Exp.Current(), ShapeTopo, (int)TopAbs_EDGE);
 	  i++;
 	}
 	Exp.Next(); 
@@ -412,7 +404,7 @@ bool OperationGUI::OnChamferGetSelected(const TopoDS_Shape& ShapeTopo, const cha
     }
     else {
       ListOfID->length(i + 1);
-      ListOfID[i] = myGeomGUI->GetIndex(ic->SelectedShape(), ShapeTopo, SubShapeType);
+      ListOfID[i] = myGeomBase->GetIndex(ic->SelectedShape(), ShapeTopo, SubShapeType);
       i++;
     }
     ic->NextSelected();
@@ -429,10 +421,10 @@ bool OperationGUI::OnChamferGetSelected(const TopoDS_Shape& ShapeTopo, const cha
 
     TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, aResult);
     Standard_CString type;
-    myGeomGUI->GetShapeTypeString(S,type);
+    myGeomBase->GetShapeTypeString(S,type);
     aResult->NameType(type);
 
-    if(myGeomGUI->Display(aResult))
+    if(myGeomBase->Display(aResult))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -445,7 +437,7 @@ bool OperationGUI::OnChamferGetSelected(const TopoDS_Shape& ShapeTopo, const cha
     myUseLocalContext = false;
   }
 
-  GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+  DisplayGUI* myDisplayGUI = new DisplayGUI();
   myDisplayGUI->OnDisplayAll(true) ;
   myGeomGUI->GetActiveStudy()->updateObjBrowser();
   myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_READY"));

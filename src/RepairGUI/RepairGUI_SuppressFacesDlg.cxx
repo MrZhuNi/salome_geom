@@ -29,6 +29,9 @@
 using namespace std;
 #include "RepairGUI_SuppressFacesDlg.h"
 
+#include "DisplayGUI.h"
+
+
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qgroupbox.h>
@@ -194,7 +197,8 @@ void RepairGUI_SuppressFacesDlg::Init( SALOME_Selection* Sel, Handle (AIS_Intera
   myIC = ic ;
   myUseLocalContext = false ;
   myOkShape = false ;
-  myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
+  myGeomBase = new GEOMBase() ;
+  myGeomGUI = GEOMContext::GetGeomGUI() ;
 
   /* Select sub shapes mode not checked */
   CheckBox1->setChecked( FALSE );
@@ -220,7 +224,7 @@ void RepairGUI_SuppressFacesDlg::Init( SALOME_Selection* Sel, Handle (AIS_Intera
  
   /* Move widget on the botton right corner of main widget */
   int x, y ;
-  myGeomGUI->DefineDlgPosition( this, x, y ) ;
+  myGeomBase->DefineDlgPosition( this, x, y ) ;
   this->move( x, y ) ;
   this->show() ; /* display Dialog */
   return ;
@@ -293,7 +297,7 @@ void RepairGUI_SuppressFacesDlg::ClickOnClose()
   if(myUseLocalContext) {
     myIC->CloseLocalContext(myLocalContextId) ;
     this->myUseLocalContext = false ;
-    GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->OnDisplayAll(true) ;
   }
   reject() ;
@@ -314,7 +318,7 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
   
   QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString) ;
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString) ;
   if ( nbSel != 1 )
     return ;
   
@@ -322,7 +326,7 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
   TopoDS_Shape S ;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject() ;
 
-  if( !myGeomGUI->GetTopoFromSelection(mySelection, S) )
+  if( !myGeomBase->GetTopoFromSelection(mySelection, S) )
     return ;
   
   if( !IO->hasEntry() ) {
@@ -413,7 +417,7 @@ void RepairGUI_SuppressFacesDlg::DeactivateActiveDialog()
     GroupButtons->setEnabled(false) ;
     myGeomGUI->ResetState() ;    
     myGeomGUI->SetActiveDialogBox(0) ;
-    GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->OnDisplayAll(true) ;
   }
   return ;
@@ -480,13 +484,14 @@ void RepairGUI_SuppressFacesDlg::ActivateUserSelection()
     if( this->myUseLocalContext ) {
       myIC->CloseLocalContext(myLocalContextId) ;
       this->myUseLocalContext = false ;
-      GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+      DisplayGUI* myDisplayGUI = new DisplayGUI();
       myDisplayGUI->OnDisplayAll(true) ;
     }
     
     if( myOkShape && myOkSelectSubMode ) {
       /* local context is defined into the method : 4 = FACES sub selection */
-      myGeomGUI->PrepareSubShapeSelection( int(TopAbs_FACE), this->myLocalContextId ) ;    
+      DisplayGUI* myDisplayGUI = new DisplayGUI();
+      myDisplayGUI->PrepareSubShapeSelection( int(TopAbs_FACE), this->myLocalContextId ) ;    
       myUseLocalContext = true ;
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SELECT_FACE")) ;
     }
@@ -516,7 +521,7 @@ void RepairGUI_SuppressFacesDlg::ResetStateOfDialog()
   if( this->myUseLocalContext ) {
     myIC->CloseLocalContext(this->myLocalContextId) ;
     this->myUseLocalContext = false ;
-    GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->OnDisplayAll(true) ;
   }
   return ;

@@ -34,6 +34,8 @@
 
 #include "TransformationGUI.h"
 
+#include "GEOM_ShapeTypeFilter.hxx"
+
 //=================================================================================
 // class    : TransformationGUI_ScaleDlg
 // purpose  :

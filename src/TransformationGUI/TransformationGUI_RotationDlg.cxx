@@ -30,7 +30,6 @@ using namespace std;
 #include "TransformationGUI_RotationDlg.h"
 
 #include "QAD_Config.h"
-//#include <TopLoc_Location.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepAdaptor_Curve.hxx>
 
@@ -116,7 +115,7 @@ void TransformationGUI_RotationDlg::Init()
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupPoints->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ReverseVector(int)));
+  connect(GroupPoints->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ReverseAngle(int)));
   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
@@ -149,7 +148,7 @@ void TransformationGUI_RotationDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   if(myOkBase && myOkAxis)  
@@ -164,12 +163,12 @@ void TransformationGUI_RotationDlg::ClickOnApply()
 //=================================================================================
 void TransformationGUI_RotationDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkBase = false;
@@ -182,11 +181,11 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
   TopoDS_Shape S; 
   Standard_Boolean testResult;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
     
   if(myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myGeomShape = myGeomGUI->ConvertIOinGEOMShape(IO, testResult);
+    myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return;
     myEditCurrentArgument->setText(aString);
@@ -259,7 +258,7 @@ void TransformationGUI_RotationDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -296,7 +295,7 @@ void TransformationGUI_RotationDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 void TransformationGUI_RotationDlg::MakeRotationSimulationAndDisplay() 
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   try {
@@ -305,7 +304,7 @@ void TransformationGUI_RotationDlg::MakeRotationSimulationAndDisplay()
     theTransformation.SetRotation(AX, myAngle*PI180);
     BRepBuilderAPI_Transform myBRepTransformation(myBase, theTransformation, Standard_False);
     this->mySimulationTopoDs = myBRepTransformation.Shape();
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   }
   catch(Standard_Failure) {
     MESSAGE("Exception catched in MakeRotationSimulationAndDisplay");

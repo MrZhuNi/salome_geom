@@ -222,7 +222,8 @@ void OperationGUI_PartitionDlg::Init( SALOME_Selection* Sel )
 {
   myEditCurrentArgument = LineEditC1A1 ;	
   mySelection = Sel;
-  myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
+  myGeomBase = new GEOMBase() ;
+  myGeomGUI = GEOMContext::GetGeomGUI() ;
   myOkListShapes = myOkListTools = myOkKeepShape = myOkRemoveShape = false ;
 
   myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;
@@ -269,7 +270,7 @@ void OperationGUI_PartitionDlg::Init( SALOME_Selection* Sel )
  
   /* Move widget on the botton right corner of main widget */
   int x, y ;
-  myGeomGUI->DefineDlgPosition( this, x, y ) ;
+  myGeomBase->DefineDlgPosition( this, x, y ) ;
   this->move( x, y ) ;
   this->show() ; /* displays Dialog */
 
@@ -327,7 +328,7 @@ void OperationGUI_PartitionDlg::ClickOnApply()
 //=================================================================================
 void OperationGUI_PartitionDlg::ClickOnCancel()
 {
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   disconnect( mySelection, 0, this, 0 );
   myGeomGUI->ResetState() ;
   reject() ;
@@ -352,7 +353,7 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("") ;
   QString aString = ""; /* name of selection */
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString) ;
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString) ;
 
   if ( nbSel < 1 ) {
     if      ( myEditCurrentArgument == LineEditC1A1 ) {
@@ -371,22 +372,22 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
   }
 	
   if ( myEditCurrentArgument == LineEditC1A1  ) {
-    myGeomGUI->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListShapes) ;
+    myGeomBase->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListShapes) ;
     myEditCurrentArgument->setText(aString) ;
     myOkListShapes = true ;
   }
   else if ( myEditCurrentArgument == LineEditC1A2  ) {
-    myGeomGUI->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListTools)  ;
+    myGeomBase->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListTools)  ;
     myEditCurrentArgument->setText(aString) ;
     myOkListTools = true ;
   }
   else if ( myEditCurrentArgument == LineEditC2A1 ) {
-    myGeomGUI->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListRemoveInside)  ;
+    myGeomBase->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListRemoveInside)  ;
     myEditCurrentArgument->setText(aString) ;
     myOkKeepShape = true ;
   }
   else if ( myEditCurrentArgument == LineEditC2A2 ) {
-    myGeomGUI->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListKeepInside)  ;
+    myGeomBase->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListKeepInside)  ;
     myEditCurrentArgument->setText(aString) ;
     myOkRemoveShape = true ;
   }
@@ -447,7 +448,7 @@ void OperationGUI_PartitionDlg::LineEditReturnPressed()
   /* so SelectionIntoArgument() is automatically called.           */
   const QString objectUserName = myEditCurrentArgument->text() ;
   QWidget* thisWidget = (QWidget*)this ;
-  if( myGeomGUI->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
+  if( myGeomBase->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
     myEditCurrentArgument->setText( objectUserName ) ;
   }
   return ;

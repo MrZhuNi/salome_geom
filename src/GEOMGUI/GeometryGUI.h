@@ -29,7 +29,7 @@
 #ifndef GEOMETRYGUI_H
 #define GEOMETRYGUI_H
 
-#include "GEOMBase_Display.h"
+#include "GEOMContext.h"
 
 //=================================================================================
 // class    : GeometryGUI
@@ -37,18 +37,16 @@
 //=================================================================================
 class GeometryGUI : public QObject
 {
-    Q_OBJECT /* for QT compatibility */
+  Q_OBJECT /* for QT compatibility */
 
 public :
     GeometryGUI();
     ~GeometryGUI();
 
-    static GEOMBase_Context* GetOrCreateGeometryGUI(QAD_Desktop* desktop);
-
-    static bool LoadLibrary(int theCommandID, QAD_Desktop* parent, QString GUILibrary);
+    static GEOMContext* GetOrCreateGeometryGUI(QAD_Desktop* desktop);
 
     /* Managed by IAPP */
-    Standard_EXPORT static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent); 
+    Standard_EXPORT static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
     Standard_EXPORT static bool OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
     Standard_EXPORT static bool OnMouseMove(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
     Standard_EXPORT static bool OnKeyPress(QKeyEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);

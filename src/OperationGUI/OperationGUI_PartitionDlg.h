@@ -61,7 +61,8 @@ private:
     void enterEvent ( QEvent * ) ;             /* Mouse enter the QWidget */
 
     GEOM::GEOM_Gen_var myGeom ;                /* Current Geom object */
-    GEOMBase_Context*       myGeomGUI ;             /* Current GeomGUI object */
+    GEOMBase*       myGeomBase ;             /* Current GeomGUI object */
+    GEOMContext*       myGeomGUI ;             /* Current GeomGUI object */
     SALOME_Selection*  mySelection ;           /* User shape selection */
 
     GEOM::GEOM_Gen::ListOfIOR  myListShapes ;

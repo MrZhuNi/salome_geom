@@ -207,7 +207,8 @@ void MeasureGUI_DistanceDlg::Init( SALOME_Selection* Sel )
   myShape2.Nullify() ;
   myConstructorId = 0 ;
   
-  myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
+  myGeomGUI = GEOMContext::GetGeomGUI() ;
+  myGeomBase = new GEOMBase() ;
 
   GroupConstructor1->show();
   myConstructorId = 0 ;
@@ -240,7 +241,7 @@ void MeasureGUI_DistanceDlg::Init( SALOME_Selection* Sel )
 
   /* Move widget on the botton right corner of main widget */
   int x, y ;
-  myGeomGUI->DefineDlgPosition( this, x, y ) ;
+  myGeomBase->DefineDlgPosition( this, x, y ) ;
   this->move( x, y ) ; 
   this->show() ; /* Displays Dialog */ 
 
@@ -256,7 +257,7 @@ void MeasureGUI_DistanceDlg::Init( SALOME_Selection* Sel )
 void MeasureGUI_DistanceDlg::ConstructorsClicked(int constructorId)
 {
   EraseDistance();
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
 
   switch (constructorId)
     {
@@ -293,7 +294,7 @@ void MeasureGUI_DistanceDlg::ClickOnOk()
 void MeasureGUI_DistanceDlg::ClickOnApply()
 {
   EraseDistance() ;
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   mySimulationTopoDs.Nullify() ;
   myGeomGUI->GetDesktop()->putInfo( tr("") ) ; 
   switch(myConstructorId)
@@ -319,7 +320,7 @@ void MeasureGUI_DistanceDlg::ClickOnApply()
 void MeasureGUI_DistanceDlg::ClickOnCancel()
 {
   EraseDistance() ;
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   mySimulationTopoDs.Nullify() ;
   disconnect( mySelection, 0, this, 0 );
   myGeomGUI->ResetState() ;
@@ -335,14 +336,14 @@ void MeasureGUI_DistanceDlg::ClickOnCancel()
 //=================================================================================
 void MeasureGUI_DistanceDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape() ; 
+  myGeomBase->EraseSimulationShape() ; 
   mySimulationTopoDs.Nullify() ;
 
   LineEdit_Length->setText("") ;
   myEditCurrentArgument->setText("") ; /* by default */
   QString aString = ""; /* the name of selection */
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString) ;
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString) ;
   if ( nbSel != 1 ) {
     switch (myConstructorId) 
       {
@@ -365,11 +366,11 @@ void MeasureGUI_DistanceDlg::SelectionIntoArgument()
   Standard_Boolean testResult ;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject() ;
   
-  if( !myGeomGUI->GetTopoFromSelection(mySelection, S) )
+  if( !myGeomBase->GetTopoFromSelection(mySelection, S) )
     return ;
 
   if ( myEditCurrentArgument == LineEditC1A1Shape ) {
-    myGeomShape1 = myGeomGUI->ConvertIOinGEOMShape(IO, testResult) ;
+    myGeomShape1 = myGeomBase->ConvertIOinGEOMShape(IO, testResult) ;
     if( !testResult )
       return ;
     myShape1 = S ;
@@ -377,7 +378,7 @@ void MeasureGUI_DistanceDlg::SelectionIntoArgument()
     myOkShape1 = true ;
   }    
   else if ( myEditCurrentArgument == LineEditC1A2Shape ) {
-    myGeomShape2 = myGeomGUI->ConvertIOinGEOMShape(IO, testResult) ;
+    myGeomShape2 = myGeomBase->ConvertIOinGEOMShape(IO, testResult) ;
     if( !testResult )
       return ;
     myShape2 = S ;
@@ -437,7 +438,7 @@ void MeasureGUI_DistanceDlg::LineEditReturnPressed()
   /* so SelectionIntoArgument() is automatically called.           */
   const QString objectUserName = myEditCurrentArgument->text() ;
   QWidget* thisWidget = (QWidget*)this ;
-  if( myGeomGUI->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
+  if( myGeomBase->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
     myEditCurrentArgument->setText( objectUserName ) ;
   }
   return ;
@@ -501,7 +502,7 @@ void MeasureGUI_DistanceDlg::ActivateThisDialog()
   connect ( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   if( !mySimulationTopoDs.IsNull() )
-    myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
+    myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ;
 
   return ;
 }
@@ -516,7 +517,7 @@ void MeasureGUI_DistanceDlg::MakeDistanceSimulationAndDisplay(const TopoDS_Shape
 {
   LineEdit_Length->setText("") ;
   EraseDistance() ;
-  myGeomGUI->EraseSimulationShape() ;
+  myGeomBase->EraseSimulationShape() ;
   
   BRepExtrema_DistShapeShape dst( S1, S2 );
   if (dst.IsDone()) {
@@ -530,7 +531,7 @@ void MeasureGUI_DistanceDlg::MakeDistanceSimulationAndDisplay(const TopoDS_Shape
       if (Dist<=1.e-9) {
 	BRepBuilderAPI_MakeVertex MakeVertex(P1);
 	mySimulationTopoDs =  MakeVertex.Vertex();
-	myGeomGUI->DisplaySimulationShape( mySimulationTopoDs ) ;
+	myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ;
 
 	LineEdit_Length->setText("0.0") ;
       } else {

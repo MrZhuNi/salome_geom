@@ -131,7 +131,7 @@ void GenerationGUI_PipeDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   if(myOkShape1 && myOkShape2)	  
@@ -147,12 +147,12 @@ void GenerationGUI_PipeDlg::ClickOnApply()
 //=================================================================================
 void GenerationGUI_PipeDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkShape1 = false;
@@ -165,11 +165,11 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
   TopoDS_Shape S; 
   Standard_Boolean testResult;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
   
   if(myEditCurrentArgument == GroupPoints->LineEdit1 && S.ShapeType() != TopAbs_COMPSOLID && S.ShapeType() != TopAbs_COMPOUND && S.ShapeType() != TopAbs_SOLID && S.ShapeType() != TopAbs_SHAPE) {
-    myGeomShape1 = myGeomGUI->ConvertIOinGEOMShape(IO, testResult);
+    myGeomShape1 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return;
     myEditCurrentArgument->setText(aString);
@@ -177,7 +177,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     myShape1 = S;
   }
   else if(myEditCurrentArgument == GroupPoints->LineEdit2 && S.ShapeType() != TopAbs_COMPSOLID && S.ShapeType() != TopAbs_COMPOUND && S.ShapeType() != TopAbs_SOLID && S.ShapeType() != TopAbs_SHAPE) {
-    myGeomShape2 = myGeomGUI->ConvertIOinGEOMShape(IO, testResult);
+    myGeomShape2 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return;
     myEditCurrentArgument->setText(aString);
@@ -254,7 +254,7 @@ void GenerationGUI_PipeDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -265,7 +265,7 @@ void GenerationGUI_PipeDlg::ActivateThisDialog()
 //=================================================================================
 void GenerationGUI_PipeDlg::MakePipeSimulationAndDisplay()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   
   try {
@@ -282,11 +282,11 @@ void GenerationGUI_PipeDlg::MakePipeSimulationAndDisplay()
     if(BRepAlgoAPI::IsValid(tds)) {
       //Draw Pipe
       mySimulationTopoDs = tds;
-      myGeomGUI->DisplaySimulationShape(mySimulationTopoDs); 
+      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
     }
   }
   catch(Standard_Failure) {
-    MESSAGE("Exception catched in MakeMirrorSimulationAndDisplay");
+    MESSAGE("Exception catched in MakePipeSimulationAndDisplay");
     return;
   }
   return;

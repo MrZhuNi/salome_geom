@@ -34,6 +34,8 @@
 
 #include "GenerationGUI.h"
 
+#include "GEOM_ShapeTypeFilter.hxx"
+
 //=================================================================================
 // class    : GenerationGUI_FillingDlg
 // purpose  :

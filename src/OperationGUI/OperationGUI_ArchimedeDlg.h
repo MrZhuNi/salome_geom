@@ -29,97 +29,50 @@
 #ifndef DIALOGBOX_ARCHIMEDE_H
 #define DIALOGBOX_ARCHIMEDE_H
 
+#include "GEOMBase_Skeleton.h"
+#include "DlgRef_1Sel3Spin.h"
+
 #include "OperationGUI.h"
 
-#include <qvariant.h>
-#include <qdialog.h>
-#include <qvalidator.h>
-
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
-
+//#include "SALOME_InteractiveObject.hxx"
 
 //=================================================================================
 // class    : OperationGUI_ArchimedeDlg
 // purpose  :
 //=================================================================================
-class OperationGUI_ArchimedeDlg : public QDialog
+class OperationGUI_ArchimedeDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
 public:
-    OperationGUI_ArchimedeDlg( QWidget* parent = 0, const char* name = 0, OperationGUI* theOperationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    OperationGUI_ArchimedeDlg(QWidget* parent = 0, const char* name = 0, OperationGUI* theOperationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~OperationGUI_ArchimedeDlg();
 
 private:
+    void Init();
+    void enterEvent(QEvent* e);
+
+    double step;
+
     OperationGUI* myOperationGUI;
-    void Init( SALOME_Selection* Sel ) ;
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent ( QEvent * ) ;                         /* mouse enter the QWidget */
 
-    GEOM::GEOM_Gen_var         myGeom ;                 /* Current GeomI object */
-    GEOMBase_Context*                  myGeomGUI ;              /* Current GeomGUI object */
-    SALOME_Selection*             mySelection ;            /* User shape selection */
+    Handle(SALOME_InteractiveObject) myIO; 
+    Standard_Real myWeight;
+    Standard_Real myWaterDensity;
+    Standard_Real myMeshingDeflection;
+    bool myOkIO; 
 
-    Handle(SALOME_InteractiveObject)  myIO ; 
-
-    Standard_Real                 myWeight ;
-    Standard_Real                 myWaterDensity ;
-    Standard_Real                 myMeshingDeflection ;
-
-    bool                          myOkIO ; 
-    bool                          myOkWeight ; 
-    bool                          myOkWaterDensity ; 
-    bool                          myOkMeshingDeflection ;
-
-    int                           myConstructorId ;         /* Current constructor id = radio button id */
-    QLineEdit*                    myEditCurrentArgument;    /* Current LineEdit */
-
-    QDoubleValidator              *myVa ;                   /* Double validator for numeric input */
-    QDoubleValidator              *myVb ;                   /* Double validator for numeric input */
-    QDoubleValidator              *myVc ;                   /* Double validator for numeric input */
-
-    QButtonGroup* GroupConstructors;
-    QRadioButton* Constructor1;
-    QGroupBox* GroupButtons;
-    QPushButton* buttonApply;
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
-    QGroupBox* GroupC1;
-    QLineEdit* LineEditC1A1;
-    QLineEdit* LineEditC1A2;
-    QLineEdit* LineEditC1A3;
-    QLineEdit* LineEditC1A4;
-    QPushButton* SelectButtonC1A1;
-    QLabel* TextLabelC1A1;
-    QLabel* TextLabelC1A2;
-    QLabel* TextLabelC1A3;
-    QLabel* TextLabelC1A4;
+    DlgRef_1Sel3Spin* GroupPoints;
 
 private slots:
-
-    void ConstructorsClicked(int constructorId);
     void ClickOnOk();
-    void ClickOnCancel();
     void ClickOnApply();
-    void SetEditCurrentArgument() ;
-    void TextChangedInLineEdit(const QString&) ;
-    void SelectionIntoArgument() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
+    void ActivateThisDialog();
+    void LineEditReturnPressed();
+    void SelectionIntoArgument();
+    void SetEditCurrentArgument();
+    void ValueChangedInSpinBox(double newValue);
 
-protected:
-    QGridLayout* OperationGUI_ArchimedeDlgLayout;
-    QGridLayout* GroupConstructorsLayout;
-    QGridLayout* GroupButtonsLayout;
-    QGridLayout* GroupC1Layout;
 };
 
 #endif // DIALOGBOX_ARCHIMEDE_H

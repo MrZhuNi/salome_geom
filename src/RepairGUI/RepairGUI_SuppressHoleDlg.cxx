@@ -29,7 +29,7 @@
 using namespace std;
 #include "RepairGUI_SuppressHoleDlg.h"
 
-
+#include "DisplayGUI.h"
 #include "TopExp_Explorer.hxx"
 
 
@@ -294,7 +294,8 @@ void RepairGUI_SuppressHoleDlg::Init( SALOME_Selection* Sel, Handle (AIS_Interac
   myListOfIdWire->length(0) ;
   myListOfIdEndFace->length(0) ; 
   
-  myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
+  myGeomBase = new GEOMBase() ;
+  myGeomGUI = GEOMContext::GetGeomGUI() ;
   
   /* Select sub modes not checked */
   CheckBox1->setChecked( FALSE );    /* sub mode GEOM::FACE     */
@@ -334,7 +335,7 @@ void RepairGUI_SuppressHoleDlg::Init( SALOME_Selection* Sel, Handle (AIS_Interac
  
   /* Move widget on the botton right corner of main widget */
   int x, y ;
-  myGeomGUI->DefineDlgPosition( this, x, y ) ;
+  myGeomBase->DefineDlgPosition( this, x, y ) ;
   this->move( x, y ) ;
   this->show() ; /* display Dialog */
   return ;
@@ -417,9 +418,9 @@ void RepairGUI_SuppressHoleDlg::ClickOnApply()
 	  if( !CheckBox3->isChecked() ) {
 	    
 	    /* Call method to get sub shape selection of GEOM::WIRE */
-	    bool aTest = myGeomGUI->GetIndexSubShapeSelected(myFace, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
+	    bool aTest = myGeomBase->GetIndexSubShapeSelected(myFace, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
 	    
-	    GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+	    DisplayGUI* myDisplayGUI = new DisplayGUI();
 	    myDisplayGUI->OnDisplayAll(true) ;/* Display all objects so that next method using ic can memorize them */
 	    if( !aTest || myListOfIdWire->length() != 1 ) {
 	      CheckBox2->setChecked(FALSE) ;
@@ -435,9 +436,9 @@ void RepairGUI_SuppressHoleDlg::ClickOnApply()
 	  else { /* CheckBox3->isChecked() */
 	    
 	    /* Call method to get sub shape selection of END GEOM::FACE */
-	    bool aTest = myGeomGUI->GetIndexSubShapeSelected(myShape, int(TopAbs_FACE), myListOfIdEndFace, myLocalContextId, myUseLocalContext) ;
+	    bool aTest = myGeomBase->GetIndexSubShapeSelected(myShape, int(TopAbs_FACE), myListOfIdEndFace, myLocalContextId, myUseLocalContext) ;
 	    
-	    GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+	    DisplayGUI* myDisplayGUI = new DisplayGUI();
 	    myDisplayGUI->OnDisplayAll(true) ; /* Display all objects so that next method using ic can memorize them */
 	    if( !aTest || myListOfIdEndFace->length() != 1 ) {
 	      CheckBox3->setChecked(FALSE) ;
@@ -458,9 +459,9 @@ void RepairGUI_SuppressHoleDlg::ClickOnApply()
 	if( CheckBoxC2_1->isChecked() ) {
 	  
 	  /* Call method to get sub shape selection of one or more GEOM::WIRE(s) on a face or a shell */
-	  bool aTest = myGeomGUI->GetIndexSubShapeSelected(myShape, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
+	  bool aTest = myGeomBase->GetIndexSubShapeSelected(myShape, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
 	  
-	  GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+	  DisplayGUI* myDisplayGUI = new DisplayGUI();
 	  myDisplayGUI->OnDisplayAll(true) ; /* Display all objects so that next method using ic can memorize them */
 	  
 	  if( !aTest || myListOfIdWire->length() < 1 ) {
@@ -505,7 +506,7 @@ void RepairGUI_SuppressHoleDlg::ClickOnClose()
     if(myUseLocalContext) {
       myIC->CloseLocalContext(myLocalContextId) ;
       this->myUseLocalContext = false ;
-      GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+      DisplayGUI* myDisplayGUI = new DisplayGUI();
       myDisplayGUI->OnDisplayAll(true) ;
     }
   }
@@ -528,7 +529,7 @@ void RepairGUI_SuppressHoleDlg::SelectionIntoArgument()
   
   QString aString = ""; /* Name of selection */
   
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString) ;
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString) ;
   if ( nbSel != 1 )
     return ;
   
@@ -536,7 +537,7 @@ void RepairGUI_SuppressHoleDlg::SelectionIntoArgument()
   TopoDS_Shape S ;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject() ;
 
-  if( !myGeomGUI->GetTopoFromSelection(mySelection, S) )
+  if( !myGeomBase->GetTopoFromSelection(mySelection, S) )
     return ;
   
   if ( S.IsNull() || S.ShapeType() == TopAbs_VERTEX || S.ShapeType() == TopAbs_EDGE || S.ShapeType() == TopAbs_WIRE ) {
@@ -631,7 +632,7 @@ void RepairGUI_SuppressHoleDlg::LineEditReturnPressed()
   /* so SelectionIntoArgument() is automatically called.           */
   const QString objectUserName = myEditCurrentArgument->text() ;
   QWidget* thisWidget = (QWidget*)this ;
-  if( myGeomGUI->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
+  if( myGeomBase->SelectionByNameInDialogs( thisWidget, objectUserName, mySelection ) ) {
     myEditCurrentArgument->setText( objectUserName ) ;
   }
   
@@ -657,7 +658,7 @@ void RepairGUI_SuppressHoleDlg::DeactivateActiveDialog()
 
     myGeomGUI->ResetState() ;    
     myGeomGUI->SetActiveDialogBox(0) ;
-    GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->OnDisplayAll(true) ;
   }
   return ;
@@ -732,7 +733,8 @@ void RepairGUI_SuppressHoleDlg::ActivateUserFaceSelection()
   if( CheckBox1->isChecked() ) {
     
     /* local context is opened into the method : Prepare GEOM::FACE sub selection */
-    myGeomGUI->PrepareSubShapeSelection( int(TopAbs_FACE), this->myLocalContextId ) ;    
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->PrepareSubShapeSelection( int(TopAbs_FACE), this->myLocalContextId ) ;    
     myUseLocalContext = true ;
     myGeomGUI->GetDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECTFACE") ) ;
   } 
@@ -768,9 +770,9 @@ void RepairGUI_SuppressHoleDlg::ActivateUserWireSelection()
   if( CheckBox1->isChecked() ) {
     
     /* Get sub shape selection GEOM::FACE : local context is closed */    
-    bool aTest = myGeomGUI->GetIndexSubShapeSelected(myShape, int(TopAbs_FACE), myListOfIdFace, myLocalContextId, myUseLocalContext) ;
+    bool aTest = myGeomBase->GetIndexSubShapeSelected(myShape, int(TopAbs_FACE), myListOfIdFace, myLocalContextId, myUseLocalContext) ;
     
-    GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->OnDisplayAll(true) ; /* Display all objects so that next method using ic can memorize them */
     if( !aTest || myListOfIdFace->length() != 1 ) {
       CheckBox1->setChecked(FALSE) ;
@@ -792,7 +794,8 @@ void RepairGUI_SuppressHoleDlg::ActivateUserWireSelection()
     /* Get the face selection */
     this->myFace = FaceFromList(myShape, myListOfIdFace) ;    
     /* Local context is opened into the method : Prepare GEOM::WIRE sub selection into a face */
-    myGeomGUI->PrepareSubShapeSelectionArgumentShape( this->myFace, int(TopAbs_WIRE), this->myLocalContextId ) ;    
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->PrepareSubShapeSelectionArgumentShape( this->myFace, int(TopAbs_WIRE), this->myLocalContextId ) ;    
     myUseLocalContext = true ;
     myGeomGUI->GetDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECTWIRE") ) ;
   }
@@ -829,9 +832,9 @@ void RepairGUI_SuppressHoleDlg::ActivateUserEndFaceSelection()
    
   if( CheckBox2->isChecked() ) {
     /* Call method to get sub shape selection for the GEOM::WIRE into myFace : local context is closed */
-    bool aTest = myGeomGUI->GetIndexSubShapeSelected(this->myFace, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
+    bool aTest = myGeomBase->GetIndexSubShapeSelected(this->myFace, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
     
-    GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->OnDisplayAll(true) ; /* Display all objects so that next method using ic can memorize them */
     
     if( !aTest || myListOfIdWire->length() != 1 ) {
@@ -849,7 +852,8 @@ void RepairGUI_SuppressHoleDlg::ActivateUserEndFaceSelection()
   
   if( CheckBox3->isChecked() ) {    
     /* Local context is opened into the method : prepare GEOM::FACE(end) into myShape sub selection */
-    myGeomGUI->PrepareSubShapeSelectionArgumentShape( this->myShape, int(TopAbs_FACE), this->myLocalContextId ) ;    
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->PrepareSubShapeSelectionArgumentShape( this->myShape, int(TopAbs_FACE), this->myLocalContextId ) ;    
     myUseLocalContext = true ;
     myGeomGUI->GetDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECTFACE_END") ) ;
   }
@@ -886,7 +890,8 @@ void RepairGUI_SuppressHoleDlg::ActivateUserWiresOnFaceShellSelection()
   
   if( CheckBoxC2_1->isChecked() ) {    
     /* Local context is opened to prepare GEOM::WIRE(S) selection into 'myShape' that is a (main) face */
-    myGeomGUI->PrepareSubShapeSelectionArgumentShape( this->myShape, int(TopAbs_WIRE), this->myLocalContextId ) ;    
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->PrepareSubShapeSelectionArgumentShape( this->myShape, int(TopAbs_WIRE), this->myLocalContextId ) ;    
     myUseLocalContext = true ;
     myGeomGUI->GetDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECT_HOLES_ON_FACE") ) ;
   }
@@ -903,7 +908,7 @@ void RepairGUI_SuppressHoleDlg::ActivateUserWiresOnFaceShellSelection()
 // purpose  : Return the face (selected by user) that is a sub shape of 'aShape'
 //          : and which unique index is in 'ListOfSub'.
 //          : This allows opening a local context with this face loaded.
-//          : See : myGeomGUI->PrepareSubShapeSelectionArgumentShape(...)
+//          : See : myGeomBase->PrepareSubShapeSelectionArgumentShape(...)
 //=================================================================================
 TopoDS_Shape RepairGUI_SuppressHoleDlg::FaceFromList( const TopoDS_Shape& aShape,
 							const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfSub )
@@ -967,7 +972,7 @@ void RepairGUI_SuppressHoleDlg::ResetPartial()
     if( this->myUseLocalContext ) {
       myIC->CloseLocalContext(this->myLocalContextId) ;
       this->myUseLocalContext = false ;
-      GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+      DisplayGUI* myDisplayGUI = new DisplayGUI();
       myDisplayGUI->OnDisplayAll(true) ;
     }
   }

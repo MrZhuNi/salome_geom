@@ -29,8 +29,7 @@
 #ifndef PRIMITIVEGUI_H
 #define PRIMITIVEGUI_H
 
-#include "GEOMBase_Display.h"
-#include "QAD_Config.h"
+#include "GEOMBase.h"
 
 //=================================================================================
 // class    : PrimitiveGUI
@@ -44,7 +43,6 @@ public :
   PrimitiveGUI();
   ~PrimitiveGUI();
 
-  static PrimitiveGUI* GetOrCreateGUI();
   static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void MakeBoxAndDisplay(const gp_Pnt P1, const gp_Pnt P2);
@@ -56,7 +54,8 @@ public :
   void MakeConeAndDisplay(const gp_Pnt BasePoint, const gp_Dir aDir,
 			  const double Radius1, const double Radius2, const double aHeight);
 
-  GEOMBase_Context* myGeomGUI;
+  GEOMBase* myGeomBase;
+  GEOMContext* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 
 };
