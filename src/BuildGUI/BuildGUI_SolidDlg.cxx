@@ -149,7 +149,7 @@ void BuildGUI_SolidDlg::SelectionIntoArgument()
 
   aString = tr("%1_objects").arg(nbSel);
   
-  myGeomGUI->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListShapes);
+  myGeomBase->ConvertListOfIOInListOfIOR(mySelection->StoredIObjects(), myListShapes);
   myEditCurrentArgument->setText(aString);
   myOkListShapes = true;
 

@@ -41,6 +41,8 @@ LIB_SRC = 	DlgRef_Skeleton_QTD.cxx \
 		DlgRef_1Sel_QTD.cxx \
 		DlgRef_2Sel_QTD.cxx \
 		DlgRef_3Sel_QTD.cxx \
+		DlgRef_1Sel1Check_QTD.cxx \
+		DlgRef_1Sel1Check1List_QTD.cxx \
 		DlgRef_1Sel1Spin_QTD.cxx \
 		DlgRef_1Sel2Spin_QTD.cxx \
 		DlgRef_1Sel3Spin_QTD.cxx \
@@ -74,6 +76,8 @@ LIB_MOC = \
 		DlgRef_1Sel_QTD.h \
 		DlgRef_2Sel_QTD.h \
 		DlgRef_3Sel_QTD.h \
+		DlgRef_1Sel1Check_QTD.h \
+		DlgRef_1Sel1Check1List_QTD.h \
 		DlgRef_1Sel1Spin_QTD.h \
 		DlgRef_1Sel2Spin_QTD.h \
 		DlgRef_1Sel3Spin_QTD.h \
@@ -105,13 +109,19 @@ LIB_MOC = \
 # header files 
 EXPORT_HEADERS= $(LIB_MOC)
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = SALOME_Exception.idl \
+		 GEOM_Gen.idl \
+		 GEOM_Shape.idl \
+		 SALOMEDS.idl \
+		 SALOMEDS_Attributes.idl \
+		 SALOME_ModuleCatalog.idl \
+		 SALOME_Component.idl \
 
 LIB_SERVER_IDL = 
 
 # additionnal information to compil and link file
-CPPFLAGS += $(QT_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
-CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += -L${KERNEL_ROOT_DIR}/lib/salome
+CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
+CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
+LDFLAGS  += -lSalomeGUI -L${KERNEL_ROOT_DIR}/lib/salome
 
 @CONCLUDE@

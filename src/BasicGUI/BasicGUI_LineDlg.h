@@ -33,6 +33,7 @@
 #include "DlgRef_2Sel_QTD.h"
 
 #include "BasicGUI.h"
+#include "GEOM_ShapeTypeFilter.hxx"
 
 //=================================================================================
 // class    : BasicGUI_LineDlg

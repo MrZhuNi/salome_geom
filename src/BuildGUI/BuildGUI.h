@@ -29,7 +29,7 @@
 #ifndef BUILDGUI_H
 #define BUILDGUI_H
 
-#include "GEOMBase_Display.h"
+#include "GEOMBase.h"
 
 //=================================================================================
 // class    : BuildGUI
@@ -43,7 +43,6 @@ public :
   BuildGUI();
   ~BuildGUI();
 
-  static BuildGUI* GetOrCreateGUI();
   static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void MakeLinearEdgeAndDisplay(const gp_Pnt P1, const gp_Pnt P2);
@@ -54,11 +53,12 @@ public :
   void MakeCompoundAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
 
     /* Methods for sub shapes explode */
-    bool OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType);  
-    bool OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType,
-			       Standard_Integer& aLocalContextId, bool& myUseLocalContext);
+  bool OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType);  
+  bool OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType,
+			     Standard_Integer& aLocalContextId, bool& myUseLocalContext);
 
-  GEOMBase_Context* myGeomGUI;
+  GEOMBase* myGeomBase;
+  GEOMContext* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 
 };

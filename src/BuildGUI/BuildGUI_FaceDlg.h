@@ -29,82 +29,48 @@
 #ifndef DIALOGBOX_FACE_H
 #define DIALOGBOX_FACE_H
 
+#include "GEOMBase_Skeleton.h"
+#include "DlgRef_1Sel1Check_QTD.h"
+
 #include "BuildGUI.h"
 
-#include <qvariant.h>
-#include <qdialog.h>
-
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
-class QCheckBox;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
-
+#include "GEOM_ShapeTypeFilter.hxx"
 
 //=================================================================================
 // class    : BuildGUI_FaceDlg
 // purpose  :
 //=================================================================================
-class BuildGUI_FaceDlg : public QDialog
+class BuildGUI_FaceDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
 public:
-    BuildGUI_FaceDlg( QWidget* parent = 0, const char* name = 0, BuildGUI* theBuildGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    BuildGUI_FaceDlg(QWidget* parent = 0, const char* name = 0, BuildGUI* theBuildGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~BuildGUI_FaceDlg();
 
 private:
+    void Init();
+    void enterEvent(QEvent* e);
+
     BuildGUI* myBuildGUI;
-    void Init( SALOME_Selection* Sel ) ;
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent ( QEvent * ) ;                /* mouse enter the QWidget */
 
-    GEOM::GEOM_Gen_var myGeom ;                /* Current GeomI object */
-    GEOMBase_Context*          myGeomGUI ;             /* Current GeomGUI object */
-    SALOME_Selection*     mySelection ;           /* User shape selection */
+    /* Filter selection */
+    Handle(GEOM_ShapeTypeFilter) myWireFilter;
 
-    TopoDS_Shape          myShape ;               /* topology used to fuse */
-    GEOM::GEOM_Shape_var        myGeomShape ;           /* is myShape */
-    bool                  myOkShape ;             /* to check when arguments is defined */
+    TopoDS_Shape myShape;   /* topology used to fuse */
+    GEOM::GEOM_Shape_var myGeomShape;   /* is myShape */
+    bool myOkShape;   /* to check when arguments is defined */
 
-    int                   myConstructorId ;       /* Current constructor id = radio button id */
-    QLineEdit*            myEditCurrentArgument;  /* Current LineEdit */
-    Handle(GEOM_ShapeTypeFilter) myWireFilter;    /* Filter selection */
-
-    QButtonGroup* GroupConstructors;
-    QRadioButton* Constructor1;
-    QGroupBox* GroupC1;
-    QLabel* TextLabelC1A1;
-    QPushButton* SelectButtonC1A1;
-    QLineEdit* LineEditC1A1;
-    QCheckBox* CheckBox1;
-    QGroupBox* GroupButtons;
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
-    QPushButton* buttonApply;
+    DlgRef_1Sel1Check_QTD* GroupPoints;
 
 private slots:
-
-    void ConstructorsClicked(int constructorId);
     void ClickOnOk();
-    void ClickOnCancel();
     void ClickOnApply();
-    void SetEditCurrentArgument() ;
-    void SelectionIntoArgument() ;
-    void LineEditReturnPressed() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
+    void ActivateThisDialog();
+    void LineEditReturnPressed();
+    void SelectionIntoArgument();
+    void SetEditCurrentArgument();
 
-protected:
-    QGridLayout* BuildGUI_FaceDlgLayout;
-    QGridLayout* GroupConstructorsLayout;
-    QGridLayout* GroupC1Layout;
-    QGridLayout* GroupButtonsLayout;
 };
 
 #endif // DIALOGBOX_FACE_H

@@ -29,7 +29,7 @@
 #ifndef BOOLEANGUI_H
 #define BOOLEANGUI_H
 
-#include "GEOMBase_Display.h"
+#include "GEOMBase.h"
 
 //=================================================================================
 // class    : BooleanGUI
@@ -43,14 +43,14 @@ public :
   BooleanGUI();
   ~BooleanGUI();
 
-  static BooleanGUI* GetOrCreateGUI();
   static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
   void MakeBooleanAndDisplay(GEOM::GEOM_Shape_ptr Shape1,
 			     GEOM::GEOM_Shape_ptr Shape2,
 			     const short operation);
 
-  GEOMBase_Context* myGeomGUI;
+  GEOMBase* myGeomBase;
+  GEOMContext* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 
 };

@@ -29,8 +29,7 @@
 #ifndef BASICGUI_H
 #define BASICGUI_H
 
-#include "GEOMBase_Display.h"
-#include "QAD_Config.h"
+#include "GEOMBase.h"
 
 //=================================================================================
 // class    : BasicGUI
@@ -44,8 +43,8 @@ public :
   BasicGUI();
   ~BasicGUI();
 
-  static BasicGUI* GetOrCreateGUI();
   static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  static bool OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
 
   void MakePointAndDisplay(const double x, const double y, const double z);
   void MakeLineAndDisplay(const gp_Pnt InitPoint, const gp_Pnt LastPoint);
@@ -58,7 +57,8 @@ public :
 			   const Standard_Real dz, const Standard_Real TrimSize);
   void MakeWorkingPlane(const gp_Pnt P, const gp_Dir D);
 
-  GEOMBase_Context* myGeomGUI;
+  GEOMBase* myGeomBase;
+  GEOMContext* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 
 };

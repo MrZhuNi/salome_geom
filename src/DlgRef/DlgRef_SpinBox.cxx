@@ -28,6 +28,7 @@
 
 using namespace std;
 #include "DlgRef_SpinBox.h"
+
 #include <qvalidator.h>
 
 //=================================================================================
@@ -93,7 +94,8 @@ QString DlgRef_SpinBox::GetString()
 // function : RangeStepAndValidator()
 // purpose  :
 //=================================================================================
-void DlgRef_SpinBox::RangeStepAndValidator(double min, double max, double step, unsigned short decimals)
+void DlgRef_SpinBox::RangeStepAndValidator(double min, double max,double step,
+					   unsigned short decimals)
 {
   setRange(min, max);
   setLineStep(step);

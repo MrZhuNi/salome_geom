@@ -29,31 +29,16 @@
 #ifndef DIALOGBOX_SUBSHAPE_H
 #define DIALOGBOX_SUBSHAPE_H
 
+#include "GEOMBase_Skeleton.h"
+#include "DlgRef_1Sel1Check1List_QTD.h"
+
 #include "BuildGUI.h"
-
-#include <AIS_InteractiveContext.hxx>
-
-#include <qvariant.h>
-#include <qdialog.h>
-
-class QVBoxLayout;
-class QHBoxLayout;
-class QGridLayout;
-class QButtonGroup;
-class QCheckBox;
-class QComboBox;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
-
 
 //=================================================================================
 // class    : BuildGUI_SubShapeDlg
 // purpose  :
 //=================================================================================
-class BuildGUI_SubShapeDlg : public QDialog
+class BuildGUI_SubShapeDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
@@ -62,70 +47,43 @@ public:
     ~BuildGUI_SubShapeDlg();
 
 private :
+    void Init(Handle(AIS_InteractiveContext) ic);
+    void enterEvent(QEvent* e);
+    void closeEvent(QCloseEvent* e);
+
+    void ResetStateOfDialog();
+    unsigned int NumberOfSubShapes(const TopoDS_Shape& S, const int shapeType);
+
     BuildGUI* myBuildGUI;
-    void Init( SALOME_Selection* Sel, Handle (AIS_InteractiveContext) ic ) ;
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent ( QEvent * ) ;                         /* mouse enter the QWidget */
-    void ResetStateOfDialog() ;
-
-    unsigned int NumberOfSubShapes( const TopoDS_Shape& S, const int shapeType ) ;
-
 
     /* Interactive and local context management see also : bool myUseLocalContext() */
-    Handle (AIS_InteractiveContext) myIC ;                 /* Interactive context */ 
-    Standard_Integer                myLocalContextId ;     /* identify a local context used by this method */
-    bool                            myUseLocalContext ;    /* true when this method as opened a local context  */
+    Handle(AIS_InteractiveContext) myIC;   /* Interactive context */ 
+    Standard_Integer myLocalContextId;   /* identify a local context used by this method */
+    bool myUseLocalContext;   /* true when this method as opened a local context  */
 
-    GEOM::GEOM_Gen_var              myGeom ;                /* Current Geom object */
-    GEOMBase_Context*                   myGeomGUI ;             /* Current GeomGUI object */
-    SALOME_Selection*               mySelection ;           /* User shape selection */
+    TopoDS_Shape myShape;
+    bool myOkShape;
+    char* myShapeIOR;
+    int myShapeType;
 
-    TopoDS_Shape                    myShape ;
-    char*                           myShapeIOR ;
-    bool                            myOkShape ;
-    int                             myShapeType ;           /* define a type of topology mode of sub selection */
-
-    bool                            myWithShape ;           /* check if Shape item exists */
-
-    bool                            myOkSelectSubMode ;     /* true = sub mode selection activated */
-    QLineEdit*                      myEditCurrentArgument;  /* Current LineEdit */   
-    int                             myConstructorId ;       /* Current constructor id = radio button id */
-    bool                            myAbort ;               /* Indicate if sub Shape All has been aborted by user */
+    bool myWithShape;   /* check if Shape item exists */
+    bool myOkSelectSubMode;   /* true = sub mode selection activated */
+    bool myAbort;   /* Indicate if sub Shape All has been aborted by user */
     
-    QButtonGroup* GroupConstructors;
-    QRadioButton* Constructor1;
-    QGroupBox* GroupButtons;
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
-    QPushButton* buttonApply;
-    QGroupBox* GroupC1;
-    QPushButton* SelectButtonC1A1;   
-    QLineEdit* LineEditC1A1;
-    QLabel* TextLabelC1A1;
-    QLabel* TextLabelComboBox1;
-    QComboBox* ComboBox1;
-
-    QCheckBox* CheckBox1;
+    DlgRef_1Sel1Check1List_QTD* GroupPoints;
 
 private slots:
-
-    void ConstructorsClicked(int constructorId);
     void ClickOnOk();
-    void ClickOnCancel();
     void ClickOnApply();
-    void LineEditReturnPressed() ;
-    void SetEditCurrentArgument() ;
-    void SelectionIntoArgument() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
+    void ClickOnCancel();
+    void ActivateThisDialog();
+    void DeactivateActiveDialog();
+    void LineEditReturnPressed();
+    void SelectionIntoArgument();
+    void SetEditCurrentArgument();
     void AllOrNotAll() ;
     void ComboTextChanged() ;
 
-protected:
-    QGridLayout* BuildGUI_SubShapeDlgLayout;
-    QGridLayout* GroupConstructorsLayout;
-    QGridLayout* GroupButtonsLayout;
-    QGridLayout* GroupC1Layout;
 };
 
 #endif // DIALOGBOX_SUBSHAPE_H

@@ -32,6 +32,7 @@ using namespace std;
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <TopoDS_Compound.hxx>
 #include <BRep_Builder.hxx>
+#include <Precision.hxx>
 
 //=================================================================================
 // class    : BasicGUI_LineDlg()
@@ -137,7 +138,7 @@ void BasicGUI_LineDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   if(myOkPoint1 && myOkPoint2) 
@@ -152,12 +153,12 @@ void BasicGUI_LineDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_LineDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkPoint1 = false;
@@ -168,14 +169,14 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
 
   // nbSel == 1
   TopoDS_Shape S; 
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
   
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomGUI->VertexToPoint(S, myPoint1)) {
+  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
     myEditCurrentArgument->setText(aString);
     myOkPoint1 = true;
   }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomGUI->VertexToPoint(S, myPoint2)) {
+  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomBase->VertexToPoint(S, myPoint2)) {
     myEditCurrentArgument->setText(aString);
     myOkPoint2 = true;
   }
@@ -238,7 +239,7 @@ void BasicGUI_LineDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -264,13 +265,13 @@ void BasicGUI_LineDlg::enterEvent(QEvent* e)
 //=================================================================================
 void BasicGUI_LineDlg::MakeLineSimulationAndDisplay()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   
   try {
     mySimulationTopoDs = BRepBuilderAPI_MakeEdge(myPoint1, myPoint2).Shape();
     TopoDS_Shape arrow;
-    if(myGeomGUI->CreateArrowForLinearEdge(mySimulationTopoDs, arrow)) {
+    if(myGeomBase->CreateArrowForLinearEdge(mySimulationTopoDs, arrow)) {
       TopoDS_Compound Comp;
       BRep_Builder B;
       B.MakeCompound (Comp);
@@ -278,7 +279,7 @@ void BasicGUI_LineDlg::MakeLineSimulationAndDisplay()
       B.Add(Comp, arrow);
       mySimulationTopoDs = Comp;
     }
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   }
   catch(Standard_Failure) {
     MESSAGE("Exception catched in MakeLineSimulationAndDisplay");

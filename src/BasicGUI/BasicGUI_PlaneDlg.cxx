@@ -34,6 +34,8 @@ using namespace std;
 #include <gp_Pln.hxx>
 #include <gp_Ax1.hxx>
 #include <gp_Dir.hxx>
+#include <Precision.hxx>
+#include "QAD_Config.h"
 
 //=================================================================================
 // class    : BasicGUI_PlaneDlg()
@@ -193,7 +195,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked(int constructorId)
 {
   myConstructorId = constructorId;
   mySelection->ClearFilters();
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   myOkPoint1 = myOkDirection = myOkCoordinates = myOkPlanarFace = false;
@@ -273,7 +275,7 @@ void BasicGUI_PlaneDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   switch(myConstructorId)
@@ -307,11 +309,11 @@ void BasicGUI_PlaneDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_PlaneDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape(); 
+  myGeomBase->EraseSimulationShape(); 
   mySimulationTopoDs.Nullify();
   QString aString = "";
   
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel != 1) {
     switch (myConstructorId) 
       {
@@ -352,19 +354,19 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
 
   /*  nbSel == 1  */ 
   TopoDS_Shape S; 
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return ;
  
   /* FIRST CONSTRUCTOR */
-  if(myEditCurrentArgument == GroupPointDirection->LineEdit1 && myGeomGUI->VertexToPoint(S, myPoint1)) {
+  if(myEditCurrentArgument == GroupPointDirection->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
     GroupPointDirection->LineEdit1->setText(aString);
     myOkPoint1 = true;
   }
   else if( myEditCurrentArgument == GroupPointDirection->LineEdit2) {
     /* We verify if the selection is a linear edge */
     gp_Pnt Pfirst, Plast;
-    if( myGeomGUI->LinearEdgeExtremities(S, Pfirst, Plast)) {    
-      myGeomGUI->GetBipointDxDyDz(Pfirst, Plast, myDx, myDy, myDz);
+    if( myGeomBase->LinearEdgeExtremities(S, Pfirst, Plast)) {    
+      myGeomBase->GetBipointDxDyDz(Pfirst, Plast, myDx, myDy, myDz);
       GroupPointDirection->LineEdit2->setText(aString);
       myOkDirection = true;
       myTrimSize = GroupPointDirection->SpinBox_DX->GetValue();
@@ -372,7 +374,7 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
   }
   
   /* SECOND CONSTRUCTOR */
-  else if(myEditCurrentArgument == GroupPointPlusCoordinates->LineEdit1 && myGeomGUI->VertexToPoint(S, myPoint1)) {
+  else if(myEditCurrentArgument == GroupPointPlusCoordinates->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
     GroupPointPlusCoordinates->LineEdit1->setText(aString);
     /* Get arguments */
     myDx = GroupPointPlusCoordinates->SpinBox_DX->GetValue();
@@ -492,7 +494,7 @@ void BasicGUI_PlaneDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -543,7 +545,7 @@ void BasicGUI_PlaneDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 void BasicGUI_PlaneDlg::MakePlaneSimulationAndDisplay()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   try {
@@ -551,7 +553,7 @@ void BasicGUI_PlaneDlg::MakePlaneSimulationAndDisplay()
     /* We make a trimmed plane */
     gp_Pln gplane(myPoint1, aDirection);
     mySimulationTopoDs = BRepBuilderAPI_MakeFace(gplane, -myTrimSize, +myTrimSize, -myTrimSize, +myTrimSize);
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   }
   catch(Standard_Failure) {
     MESSAGE( "Exception catched in MakePlaneSimulation" << endl );

@@ -29,11 +29,14 @@
 using namespace std;
 #include "BuildGUI.h"
 
+#include "DisplayGUI.h"
+
 #include "OCCViewer_Viewer3d.h"
 #include "VTKViewer_ViewFrame.h"
 #include "QAD_RightFrame.h"
 #include "GEOM_AssemblyBuilder.h"
 #include "SALOMEGUI_ImportOperation.h"
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
 
 #include <TopExp_Explorer.hxx>
 #include <TopoDS_Compound.hxx>
@@ -47,8 +50,6 @@ using namespace std;
 #include "BuildGUI_SolidDlg.h"      // Method SOLID
 #include "BuildGUI_CompoundDlg.h"   // Method COMPOUND
 
-static BuildGUI* myBuildGUI = 0;
-
 //=======================================================================
 // function : BuildGUI()
 // purpose  : Constructor
@@ -56,9 +57,9 @@ static BuildGUI* myBuildGUI = 0;
 BuildGUI::BuildGUI() :
   QObject()
 {
-  myGeomGUI = GEOMBase_Context::GetGeomGUI();
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myGeomBase = new GEOMBase();
+  myGeomGUI = GEOMContext::GetGeomGUI();
+  myGeom = myGeomGUI->myComponentGeom;
 }
 
 
@@ -72,24 +73,12 @@ BuildGUI::~BuildGUI()
 
 
 //=======================================================================
-// function : GetOrCreateGUI()
-// purpose  : Gets or create an object 'GUI' with initialisations
-//          : Returns 'GUI' as a pointer
-//=======================================================================
-BuildGUI* BuildGUI::GetOrCreateGUI()
-{
-  myBuildGUI = new BuildGUI();
-  return myBuildGUI;
-}
-
-
-//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool BuildGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  BuildGUI::GetOrCreateGUI();
+  BuildGUI* myBuildGUI = new BuildGUI();
   myBuildGUI->myGeomGUI->EmitSignalDeactivateDialog();
   SALOME_Selection* Sel = SALOME_Selection::Selection(myBuildGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
@@ -160,7 +149,7 @@ void BuildGUI::MakeLinearEdgeAndDisplay(const gp_Pnt P1, const gp_Pnt P2)
       return;
     }
     result->NameType(tr("GEOM_EDGE"));
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -183,7 +172,7 @@ void BuildGUI::MakeWireAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR)
       return;
     }
     result->NameType(tr("GEOM_WIRE"));
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -209,7 +198,7 @@ void BuildGUI::MakeFaceAndDisplay(GEOM::GEOM_Shape_ptr aWire, const Standard_Boo
       result->NameType(tr("GEOM_PLANE"));
     else
       result->NameType(tr("GEOM_FACE"));
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -232,7 +221,7 @@ void BuildGUI::MakeShellAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR)
       return;
     }
     result->NameType(tr("GEOM_SHELL"));
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -255,7 +244,7 @@ void BuildGUI::MakeSolidAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR)
       return;
     }
     result->NameType(tr("GEOM_SOLID"));
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -278,7 +267,7 @@ void BuildGUI::MakeCompoundAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR)
       return;
     }
     result->NameType(tr("GEOM_COMPOUND"));
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -356,9 +345,9 @@ bool BuildGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* Shape
     /* Set the nameType of sub shape */
     char* nameG = (char *)malloc(20);
     Standard_CString Type;
-    if(myGeomGUI->GetShapeTypeString(S, Type)) {
+    if(myGeomBase->GetShapeTypeString(S, Type)) {
       aResult->NameType(Type);
-      sprintf(nameG, "%s_%d", Type, myGeomGUI->GetIndex(S, mainShape, SubShapeType));
+      sprintf(nameG, "%s_%d", Type, myGeomBase->GetIndex(S, mainShape, SubShapeType));
     } 
     else {
       aResult->NameType(tr("GEOM_SHAPE"));
@@ -416,7 +405,7 @@ bool BuildGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* Shape
       }
       else {
 	allreadyexist = true;
- 	if(!myGeomGUI->SObjectExist(theObj, aResult->Name())) {
+ 	if(!myGeomBase->SObjectExist(theObj, aResult->Name())) {
 	  SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(theObj);
 	  aStudyBuilder->Addreference(newObj1, SO);
 	  IO->setEntry(SO->GetID());
@@ -473,7 +462,7 @@ bool BuildGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* Shape
       }
       else {
 	allreadyexist = true;
-	if(!myGeomGUI->SObjectExist(theObj, aResult->Name())) {
+	if(!myGeomBase->SObjectExist(theObj, aResult->Name())) {
 	  SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(theObj);
 	  aStudyBuilder->Addreference(newObj1, SO);
 	  IO->setEntry(SO->GetID());
@@ -559,7 +548,7 @@ bool BuildGUI::OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* 
   /* We create a unique compound containing all the sub shapes selected by user as attribute of the main shape */
   /* the compound is homogenous by selection */
   while(ic->MoreSelected()) {
-    int index = myGeomGUI->GetIndex(ic->SelectedShape(), mainShape, SubShapeType);
+    int index = myGeomBase->GetIndex(ic->SelectedShape(), mainShape, SubShapeType);
     ListOfID[i] = index;
     B.Add(compound, ic->SelectedShape());
     i++;
@@ -591,9 +580,9 @@ bool BuildGUI::OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* 
   if(nbSelected == 1) {
     TopExp_Explorer Exp (compound, TopAbs_ShapeEnum(SubShapeType));
     if(Exp.More()) {
-      if(myGeomGUI->GetShapeTypeString(Exp.Current(),Type)) {
+      if(myGeomBase->GetShapeTypeString(Exp.Current(),Type)) {
 	aResult->NameType(Type);
-	sprintf (nameG, "%s_%d", Type, myGeomGUI->GetIndex( Exp.Current(), mainTopo, SubShapeType));
+	sprintf (nameG, "%s_%d", Type, myGeomBase->GetIndex( Exp.Current(), mainTopo, SubShapeType));
       } 
       else {
 	aResult->NameType(tr("GEOM_SHAPE"));
@@ -604,7 +593,7 @@ bool BuildGUI::OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* 
     }
   }
   else {
-    if ( myGeomGUI->GetShapeTypeString(compound,Type)) {
+    if ( myGeomBase->GetShapeTypeString(compound,Type)) {
       aResult->NameType(Type);
       sprintf (nameG, "%s_%d", Type, myGeomGUI->GetNbGeom()++);
     } else {
@@ -666,7 +655,7 @@ bool BuildGUI::OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* 
   } 
   else {
     allreadyexist = true;
-    if(!myGeomGUI->SObjectExist(theObj, aResult->Name())) {
+    if(!myGeomBase->SObjectExist(theObj, aResult->Name())) {
       SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(theObj);
       aStudyBuilder->Addreference(newObj1, SO);
     
@@ -684,7 +673,7 @@ bool BuildGUI::OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* 
   if(!allreadyexist)
     ic->Display(result);
 
-  GEOMBase_Display* myDisplayGUI = new GEOMBase_Display();
+  DisplayGUI* myDisplayGUI = new DisplayGUI();
   myDisplayGUI->OnDisplayAll(true);
 
   myGeomGUI->GetActiveStudy()->updateObjBrowser();

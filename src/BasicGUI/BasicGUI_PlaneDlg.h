@@ -37,6 +37,7 @@
 #include "BasicGUI.h"
 
 #include "GEOM_FaceFilter.hxx"
+#include "GEOM_ShapeTypeFilter.hxx"
 
 //=================================================================================
 // class    : BasicGUI_PlaneDlg

@@ -144,7 +144,7 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText("");
   QString aString = "";
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel != 1) {
     myOkPlane = false;
     return;
@@ -152,7 +152,7 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
   
   /*  nbSel == 1  */ 
   TopoDS_Shape S;
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
    
   BRepAdaptor_Surface surf(TopoDS::Face(S));

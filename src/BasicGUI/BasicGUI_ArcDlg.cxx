@@ -32,6 +32,7 @@ using namespace std;
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <GC_MakeArcOfCircle.hxx>
 #include <Geom_TrimmedCurve.hxx>
+#include <Precision.hxx>
 
 //=================================================================================
 // class    : BasicGUI_ArcDlg()
@@ -139,7 +140,7 @@ void BasicGUI_ArcDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   if(myOkPoint1 && myOkPoint2 && myOkPoint3) 
@@ -154,12 +155,12 @@ void BasicGUI_ArcDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_ArcDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if (nbSel != 1) {
     if (myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkPoint1 = false;
@@ -172,18 +173,18 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 
   // nbSel == 1
   TopoDS_Shape S; 
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
   
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomGUI->VertexToPoint(S, myPoint1)) {
+  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
     myEditCurrentArgument->setText(aString);
     myOkPoint1 = true;
   }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomGUI->VertexToPoint(S, myPoint2)) {
+  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomBase->VertexToPoint(S, myPoint2)) {
     myEditCurrentArgument->setText(aString);
     myOkPoint2 = true;
   }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit3 && myGeomGUI->VertexToPoint(S, myPoint3)) {
+  else if(myEditCurrentArgument == GroupPoints->LineEdit3 && myGeomBase->VertexToPoint(S, myPoint3)) {
     myEditCurrentArgument->setText(aString);
     myOkPoint3 = true;
   }
@@ -252,7 +253,7 @@ void BasicGUI_ArcDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -276,7 +277,7 @@ void BasicGUI_ArcDlg::enterEvent(QEvent* e)
 //=================================================================================
 void BasicGUI_ArcDlg::MakeArcSimulationAndDisplay() 
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   try {
@@ -297,7 +298,7 @@ void BasicGUI_ArcDlg::MakeArcSimulationAndDisplay()
     if(Arc.IsDone()) {
       Handle(Geom_TrimmedCurve) curve = Arc.Value();
       mySimulationTopoDs = BRepBuilderAPI_MakeEdge(curve).Shape();
-      myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+      myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
     }
   }
   catch(Standard_Failure) {

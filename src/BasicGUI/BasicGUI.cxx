@@ -32,6 +32,10 @@ using namespace std;
 #include "QAD_RightFrame.h"
 #include "OCCViewer_Viewer3d.h"
 #include "OCCViewer_ViewPort3d.h"
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
+
+#include <Precision.hxx>
+#include <BRep_Tool.hxx>
 
 #include "BasicGUI_PointDlg.h"        // Method POINT
 #include "BasicGUI_LineDlg.h"         // Method LINE
@@ -42,8 +46,6 @@ using namespace std;
 #include "BasicGUI_PlaneDlg.h"        // Method PLANE
 #include "BasicGUI_WorkingPlaneDlg.h" // Method WORKING PLANE
 
-static BasicGUI* myBasicGUI = 0;
-
 //=======================================================================
 // function : BasicGUI()
 // purpose  : Constructor
@@ -51,9 +53,9 @@ static BasicGUI* myBasicGUI = 0;
 BasicGUI::BasicGUI() :
   QObject()
 {
-  myGeomGUI = GEOMBase_Context::GetGeomGUI();
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myGeomBase = new GEOMBase();
+  myGeomGUI = GEOMContext::GetGeomGUI();
+  myGeom = myGeomGUI->myComponentGeom;
 }
 
 
@@ -67,24 +69,12 @@ BasicGUI::~BasicGUI()
 
 
 //=======================================================================
-// function : GetOrCreateGUI()
-// purpose  : Gets or create an object 'GUI' with initialisations
-//          : Returns 'GUI' as a pointer
-//=======================================================================
-BasicGUI* BasicGUI::GetOrCreateGUI()
-{
-  myBasicGUI = new BasicGUI();
-  return myBasicGUI;
-}
-
-
-//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool BasicGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  BasicGUI::GetOrCreateGUI();
+  BasicGUI* myBasicGUI = new BasicGUI();
   myBasicGUI->myGeomGUI->EmitSignalDeactivateDialog();
   SALOME_Selection* Sel = SALOME_Selection::Selection(myBasicGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
@@ -145,6 +135,51 @@ bool BasicGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 }
 
 
+//=================================================================================
+// function : 0nMousePress()
+// purpose  : [static] manage mouse events
+//=================================================================================
+bool BasicGUI::OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
+{
+  BasicGUI* myBasicGUI = new BasicGUI();
+
+  if(myBasicGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+    return false;
+
+  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myBasicGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+  OCCViewer_ViewPort* vp = ((OCCViewer_ViewFrame*)studyFrame->getRightFrame()->getViewFrame())->getViewPort();
+  
+  /* Get the clicked or selected point */
+  gp_Pnt thePoint;
+
+  myBasicGUI->myGeomBase->EraseSimulationShape();
+  BasicGUI_PointDlg *DialogPt = (BasicGUI_PointDlg*)(myBasicGUI->myGeomGUI->GetActiveDialogBox());
+
+  if(DialogPt->UseLocalContext()) {
+    ic->InitSelected();
+    if(pe->state() == Qt::ShiftButton)
+      v3d->getAISSelector()->shiftSelect();  /* Append selection */
+    else
+      v3d->getAISSelector()->select();       /* New selection    */
+      
+    if(ic->MoreSelected())
+      thePoint = BRep_Tool::Pnt(TopoDS::Vertex(ic->SelectedShape()));
+    else
+      thePoint = myBasicGUI->myGeomBase->ConvertClickToPoint(pe->x(), pe->y(), ((OCCViewer_ViewPort3d*)vp)->getView());
+  } 
+  else
+    thePoint = myBasicGUI->myGeomBase->ConvertClickToPoint(pe->x(), pe->y(), ((OCCViewer_ViewPort3d*)vp)->getView());
+
+  if(DialogPt != 0)
+    DialogPt->PointIntoCoordinates(thePoint, true);  /* display point */
+  else
+    myBasicGUI->myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+
+  return false;
+}
+
+
 //=======================================================================
 // function : MakePointAndDisplay
 // purpose  : 
@@ -154,7 +189,7 @@ void BasicGUI::MakePointAndDisplay(const double x, const double y, const double 
   try {
     GEOM::GEOM_Shape_var P = myGeom->MakeVertex(x, y, z);
     P->NameType(tr("GEOM_VERTEX"));
-    if (myGeomGUI->Display(P))
+    if (myGeomBase->Display(P))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -172,7 +207,7 @@ void BasicGUI::MakeLineAndDisplay(const gp_Pnt InitPoint, const gp_Pnt LastPoint
 {
   gp_Pnt P1, P2;  
   double dx, dy, dz;
-  myGeomGUI->GetBipointDxDyDz(InitPoint, LastPoint, dx, dy, dz);
+  myGeomBase->GetBipointDxDyDz(InitPoint, LastPoint, dx, dy, dz);
   Standard_Real length = InitPoint.Distance(LastPoint);
   if(length <= Precision::Confusion()) {
     myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
@@ -203,7 +238,7 @@ void BasicGUI::MakeLineAndDisplay(const gp_Pnt InitPoint, const gp_Pnt LastPoint
     }
     result->NameType(tr("GEOM_LINE"));
     
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_READY"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -230,7 +265,7 @@ void BasicGUI::MakeCircleAndDisplay(const gp_Pnt CenterPoint, const gp_Dir dir, 
       return;
     }
     result->NameType(tr("GEOM_CIRCLE"));
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -258,7 +293,7 @@ void BasicGUI::MakeEllipseAndDisplay(const gp_Pnt CenterPoint, const gp_Dir dir,
       return;
     }
     result->NameType(tr("GEOM_ELLIPSE"));
-    if(myGeomGUI->Display(result))
+    if(myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -289,7 +324,7 @@ void BasicGUI::MakeArcAndDisplay(gp_Pnt InitPoint, gp_Pnt CirclePoint, gp_Pnt En
       return;
     }
     result->NameType(tr("GEOM_ARC"));
-    if (myGeomGUI->Display(result))
+    if (myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -310,7 +345,7 @@ void BasicGUI::MakeVectorAndDisplay(const gp_Pnt P1, const gp_Pnt P2)
     GEOM::PointStruct pstruct2 = myGeom->MakePointStruct(P2.X(), P2.Y(), P2.Z());
     GEOM::GEOM_Shape_var Vector = myGeom->MakeVector(pstruct1, pstruct2);
     Vector->NameType(tr("GEOM_VECTOR"));
-    if(myGeomGUI->Display(Vector))
+    if(myGeomBase->Display(Vector))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -337,7 +372,7 @@ void BasicGUI::MakePlaneAndDisplay(const gp_Pnt P1, const Standard_Real dx, cons
     GEOM::DirStruct dstruct = myGeom->MakeDirection(d);
     GEOM::GEOM_Shape_ptr plane = myGeom->MakePlane(pstruct, dstruct, TrimSize);
     plane->NameType(tr("GEOM_PLANE"));
-    if(myGeomGUI->Display(plane))
+    if(myGeomBase->Display(plane))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -374,4 +409,7 @@ extern "C"
 {
   bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
   {return BasicGUI::OnGUIEvent(theCommandID, parent);}
+
+  bool OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
+  {return BasicGUI::OnMousePress(pe, parent, studyFrame);}
 }

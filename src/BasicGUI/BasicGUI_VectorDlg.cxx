@@ -29,10 +29,12 @@
 using namespace std;
 #include "BasicGUI_VectorDlg.h"
 
+#include "QAD_Config.h"
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Compound.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRep_Builder.hxx>
+#include <Precision.hxx>
 
 //=================================================================================
 // class    : BasicGUI_VectorDlg()
@@ -166,7 +168,7 @@ void BasicGUI_VectorDlg::ConstructorsClicked(int constructorId)
 {
   myConstructorId = constructorId;
   mySelection->ClearFilters();
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   disconnect(mySelection, 0, this, 0);
   myOkPoint1 = myOkPoint2 = false;
 
@@ -209,7 +211,7 @@ void BasicGUI_VectorDlg::ConstructorsClicked(int constructorId)
 	mySimulationTopoDs = BRepBuilderAPI_MakeEdge(myPoint1, myPoint2).Shape();
 	/* Add arrow in simulation */
 	bool noNeedToTest = AddArrowToSimulation(mySimulationTopoDs);
-	myGeomGUI->DisplaySimulationShape(mySimulationTopoDs); 
+	myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
 	break;
       }
     }
@@ -238,7 +240,7 @@ void BasicGUI_VectorDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   switch(myConstructorId)
@@ -271,11 +273,11 @@ void BasicGUI_VectorDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_VectorDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if (nbSel != 1) {
     if (myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkPoint1 = false;
@@ -286,14 +288,14 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
 
   // nbSel == 1
   TopoDS_Shape S; 
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
 
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomGUI->VertexToPoint(S, myPoint1)) {
+  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
     myEditCurrentArgument->setText(aString);
     myOkPoint1 = true;
   }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomGUI->VertexToPoint(S, myPoint2)) {
+  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && myGeomBase->VertexToPoint(S, myPoint2)) {
     myEditCurrentArgument->setText(aString);
     myOkPoint2 = true;
   }
@@ -302,7 +304,7 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
     mySimulationTopoDs = BRepBuilderAPI_MakeEdge(myPoint1, myPoint2).Shape();
     /* Add arrow in simulation */
     bool noNeedToTest = this->AddArrowToSimulation(mySimulationTopoDs);
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs); 
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
   }
   return;
 }
@@ -362,7 +364,7 @@ void BasicGUI_VectorDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -386,7 +388,7 @@ void BasicGUI_VectorDlg::enterEvent(QEvent* e)
 //=================================================================================
 void BasicGUI_VectorDlg::ValueChangedInSpinBox( double newValue )
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   QObject* send = (QObject*)sender();
 
@@ -411,7 +413,7 @@ void BasicGUI_VectorDlg::ValueChangedInSpinBox( double newValue )
     mySimulationTopoDs = BRepBuilderAPI_MakeEdge(myPoint1, myPoint2).Shape();
     /* Create simulation vector with an arrow */
     this->AddArrowToSimulation(mySimulationTopoDs);
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs); 
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
   }
   return;
 }
@@ -427,7 +429,7 @@ bool BasicGUI_VectorDlg::AddArrowToSimulation(TopoDS_Shape& modifiedShape)
 {
   TopoDS_Shape arrow;
   /* Try to add a cone simulation shape to show direction of a linear edge */
-  if(myGeomGUI->CreateArrowForLinearEdge(modifiedShape, arrow)) {
+  if(myGeomBase->CreateArrowForLinearEdge(modifiedShape, arrow)) {
     TopoDS_Compound Comp;
     BRep_Builder B;
     B.MakeCompound (Comp);
@@ -446,7 +448,7 @@ bool BasicGUI_VectorDlg::AddArrowToSimulation(TopoDS_Shape& modifiedShape)
 //=================================================================================
 void BasicGUI_VectorDlg::ReverseVector(int state)
 {
-  myGeomGUI->EraseSimulationShape(); 
+  myGeomBase->EraseSimulationShape(); 
   mySimulationTopoDs.Nullify();
 
   myDx = -myDx;
@@ -465,7 +467,7 @@ void BasicGUI_VectorDlg::ReverseVector(int state)
     mySimulationTopoDs = BRepBuilderAPI_MakeEdge(myPoint1, myPoint2).Shape();
     /* Add arrow in simulation */
     bool noNeedToTest = this->AddArrowToSimulation(mySimulationTopoDs);
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   }
   return;
 }

@@ -34,6 +34,8 @@
 
 #include "BuildGUI.h"
 
+#include "GEOM_ShapeTypeFilter.hxx"
+
 //=================================================================================
 // class    : BuildGUI_SolidDlg
 // purpose  :

@@ -35,6 +35,7 @@
 
 #include "BasicGUI.h"
 
+#include "GEOM_ShapeTypeFilter.hxx"
 #include <TopoDS_Edge.hxx>
 
 //=================================================================================

@@ -146,7 +146,7 @@ void BooleanGUI_CommonDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText("");
   QString aString = "";
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel != 1) {
     if(myEditCurrentArgument == GroupCommon->LineEdit1)
       myOkShape1 = false;
@@ -160,11 +160,11 @@ void BooleanGUI_CommonDlg::SelectionIntoArgument()
   Standard_Boolean testResult;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
 
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
 
   if(myEditCurrentArgument == GroupCommon->LineEdit1) {
-    myGeomShape1 = myGeomGUI->ConvertIOinGEOMShape(IO, testResult);
+    myGeomShape1 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return;
     myShape1 = S;
@@ -172,7 +172,7 @@ void BooleanGUI_CommonDlg::SelectionIntoArgument()
     myOkShape1 = true;
   }
   else if(myEditCurrentArgument == GroupCommon->LineEdit2) {
-    myGeomShape2 = myGeomGUI->ConvertIOinGEOMShape(IO, testResult);
+    myGeomShape2 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return;
     myShape2 = S;

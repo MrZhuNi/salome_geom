@@ -29,76 +29,41 @@
 #ifndef DIALOGBOX_WIRE_H
 #define DIALOGBOX_WIRE_H
 
+#include "GEOMBase_Skeleton.h"
+#include "DlgRef_1Sel_QTD.h"
+
 #include "BuildGUI.h"
-
-#include <qvariant.h>
-#include <qdialog.h>
-
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
-
 
 //=================================================================================
 // class    : BuildGUI_WireDlg
 // purpose  :
 //=================================================================================
-class BuildGUI_WireDlg : public QDialog
+class BuildGUI_WireDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
 public:
-    BuildGUI_WireDlg( QWidget* parent = 0, const char* name = 0, BuildGUI* theBuildGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    BuildGUI_WireDlg(QWidget* parent = 0, const char* name = 0, BuildGUI* theBuildGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~BuildGUI_WireDlg();
 
 private:
+    void Init();
+    void enterEvent(QEvent* e);
+
     BuildGUI* myBuildGUI;
-    void Init( SALOME_Selection* Sel ) ;
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent ( QEvent * ) ;                          /* mouse enter the QWidget */
 
-    GEOM::GEOM_Gen_var         myGeom ;                  /* Current GeomI object */
-    GEOMBase_Context*                 myGeomGUI ;               /* Current GeomGUI object */
-    SALOME_Selection*             mySelection ;             /* User shape selection */
-    GEOM::GEOM_Gen::ListOfIOR  myListShapes ;
-    bool                          myOkListShapes ;          /* to check when arguments is defined */
-    int                           myConstructorId ;         /* Current constructor id = radio button id */
-    QLineEdit*                    myEditCurrentArgument;    /* Current  LineEdit */
+    GEOM::GEOM_Gen::ListOfIOR myListShapes;
+    bool myOkListShapes;   /* to check when arguments is defined */
 
-    QButtonGroup* GroupConstructors;
-    QRadioButton* Constructor1;
-    QGroupBox* GroupButtons;
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
-    QPushButton* buttonApply;
-    QGroupBox* GroupC1;
-    QLabel* TextLabelC1A1;
-    QPushButton* SelectButtonC1A1;
-    QLineEdit* LineEditC1A1;
+    DlgRef_1Sel_QTD* GroupPoints;
 
 private slots:
-
-    void ConstructorsClicked(int constructorId);
     void ClickOnOk();
-    void ClickOnCancel();
     void ClickOnApply();
-    void SetEditCurrentArgument() ;
-    void LineEditReturnPressed() ;
-    void SelectionIntoArgument() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
+    void ActivateThisDialog();
+    void SelectionIntoArgument();
+    void SetEditCurrentArgument();
 
-protected:
-    QGridLayout* BuildGUI_WireDlgLayout;
-    QGridLayout* GroupConstructorsLayout;
-    QGridLayout* GroupButtonsLayout;
-    QGridLayout* GroupC1Layout;
 };
 
 #endif // DIALOGBOX_WIRE_H

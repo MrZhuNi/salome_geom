@@ -31,8 +31,6 @@
 
 #include "QAD_SpinBoxDbl.h" 
 
-class DlgRef ;
-
 //=================================================================================
 // class    : DlgRef_SpinBox
 // purpose  : Derivated from QSpinBox class and modified to accept floats
@@ -42,19 +40,18 @@ class DlgRef_SpinBox : public QAD_SpinBoxDbl
   Q_OBJECT
 
 public :
-  DlgRef_SpinBox( QWidget* parent, const char* name = 0 );
+  DlgRef_SpinBox(QWidget* parent, const char* name = 0);
   ~DlgRef_SpinBox();
   
-  void    RangeStepAndValidator( double         min = -1000000.0, 
-				 double         max = +1000000.0, 
-				 double         step = 100.0, 
-				 unsigned short decimals = 3 );
-  void    SetValue( double v );
-  double  GetValue();
+  void RangeStepAndValidator(double min = -1000000.0, double max = +1000000.0, 
+			     double step = 100.0, unsigned short decimals = 3);
+  void SetValue(double v);
+  double GetValue();
   QString GetString();
   
 public slots:
-  void    SetStep( double newStep );
+  void SetStep(double newStep);
 
 };
+
 #endif //  GEOMSPINBOX_H

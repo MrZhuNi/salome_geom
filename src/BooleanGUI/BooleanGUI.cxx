@@ -29,12 +29,12 @@
 using namespace std;
 #include "BooleanGUI.h"
 
+#include "SALOMEGUI_QtCatchCorbaException.hxx"
+
 #include "BooleanGUI_FuseDlg.h"    // Method FUSE
 #include "BooleanGUI_CommonDlg.h"  // Method COMMON
 #include "BooleanGUI_CutDlg.h"     // Method CUT
 #include "BooleanGUI_SectionDlg.h" // Method SECTION
-
-static BooleanGUI* myBooleanGUI = 0;
 
 //=======================================================================
 // function : BooleanGUI()
@@ -43,9 +43,9 @@ static BooleanGUI* myBooleanGUI = 0;
 BooleanGUI::BooleanGUI() :
   QObject()
 {
-  myGeomGUI = GEOMBase_Context::GetGeomGUI();
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myGeomBase = new GEOMBase();
+  myGeomGUI = GEOMContext::GetGeomGUI();
+  myGeom = myGeomGUI->myComponentGeom;
 }
 
 
@@ -59,24 +59,12 @@ BooleanGUI::~BooleanGUI()
 
 
 //=======================================================================
-// function : GetOrCreateGUI()
-// purpose  : Gets or create an object 'GUI' with initialisations
-//          : Returns 'GUI' as a pointer
-//=======================================================================
-BooleanGUI* BooleanGUI::GetOrCreateGUI()
-{
-  myBooleanGUI = new BooleanGUI();
-  return myBooleanGUI;
-}
-
-
-//=======================================================================
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
 bool BooleanGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
-  BooleanGUI::GetOrCreateGUI();
+  BooleanGUI* myBooleanGUI = new BooleanGUI();
   myBooleanGUI->myGeomGUI->EmitSignalDeactivateDialog();
   SALOME_Selection* Sel = SALOME_Selection::Selection(myBooleanGUI->myGeomGUI->GetActiveStudy()->getSelection());
 
@@ -127,10 +115,10 @@ void BooleanGUI::MakeBooleanAndDisplay(GEOM::GEOM_Shape_ptr Shape1, GEOM::GEOM_S
 
     TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
     Standard_CString type;
-    myGeomGUI->GetShapeTypeString(S,type);
+    myGeomBase->GetShapeTypeString(S,type);
     result->NameType(type);
 
-    if (myGeomGUI->Display(result, ""))
+    if (myGeomBase->Display(result))
       myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch (const SALOME::SALOME_Exception& S_ex) {

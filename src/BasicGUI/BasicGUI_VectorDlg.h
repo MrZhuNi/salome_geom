@@ -34,6 +34,7 @@
 #include "DlgRef_3Spin1Check.h"
 
 #include "BasicGUI.h"
+#include "GEOM_ShapeTypeFilter.hxx"
 
 //=================================================================================
 // class    : BasicGUI_VectorDlg

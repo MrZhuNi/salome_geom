@@ -34,6 +34,8 @@ using namespace std;
 #include <BRepAlgoAPI.hxx>
 #include <Geom_Curve.hxx>
 
+#include "QAD_Config.h"
+
 //=================================================================================
 // class    : BasicGUI_PointDlg()
 // purpose  : Constructs a BasicGUI_PointDlg which is a child of 'parent', with the 
@@ -126,7 +128,7 @@ void BasicGUI_PointDlg::Init(const Handle(AIS_InteractiveContext)& ic)
 
   if (myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     myLocalContextId = myIC->OpenLocalContext();
-    myGeomGUI->SetDisplayedObjectList();
+    myGeomBase->SetDisplayedObjectList();
     /* sub shapes selection */
     myLocalContextMode = TopAbs_VERTEX;
     myIC->ActivateStandardMode(myLocalContextMode);
@@ -137,9 +139,9 @@ void BasicGUI_PointDlg::Init(const Handle(AIS_InteractiveContext)& ic)
 
   TopoDS_Shape S;
   bool displayPoint = true;
-  if(myGeomGUI->GetTopoFromSelection(mySelection, S)) {
+  if(myGeomBase->GetTopoFromSelection(mySelection, S)) {
     /* Filter a possibly previous selection and try to put it into coordinates */
-    if(myGeomGUI->VertexToPoint(S, myPoint))
+    if(myGeomBase->VertexToPoint(S, myPoint))
       displayPoint = false;
   }
     
@@ -180,7 +182,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
 {
   myConstructorId = constructorId;
   mySelection->ClearFilters();
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   disconnect(mySelection, 0, this, 0);
 
@@ -210,7 +212,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       {
 	if(myUseLocalContext == false && myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
 	  myLocalContextId = myIC->OpenLocalContext();
-	  myGeomGUI->SetDisplayedObjectList();
+	  myGeomBase->SetDisplayedObjectList();
 	  /* sub shapes selection */
 	  myLocalContextMode = TopAbs_VERTEX;
 	  myIC->ActivateStandardMode(myLocalContextMode);
@@ -251,7 +253,7 @@ void BasicGUI_PointDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if(mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   /* Close local context */
@@ -281,7 +283,7 @@ void BasicGUI_PointDlg::ClickOnApply()
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
 	  /* no display if a local context is opened */
 	  myLocalContextId = myIC->OpenLocalContext();
-	  myGeomGUI->SetDisplayedObjectList();
+	  myGeomBase->SetDisplayedObjectList();
 	  /* sub shapes selection */
 	  myLocalContextMode = TopAbs_VERTEX;
 	  myIC->ActivateStandardMode(myLocalContextMode);
@@ -300,12 +302,12 @@ void BasicGUI_PointDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_PointDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
 
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if(nbSel != 1) {
     myOkEdge = false;
     return;
@@ -313,15 +315,15 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
 
   // nbSel == 1
   TopoDS_Shape S; 
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
 
   if(S.ShapeType() == TopAbs_EDGE) {
     if(CalculateVertexOnCurve(TopoDS::Edge(S), myParameter, mySimulationTopoDs)) {
-      if(myGeomGUI->VertexToPoint(mySimulationTopoDs, myPoint)) {
+      if(myGeomBase->VertexToPoint(mySimulationTopoDs, myPoint)) {
 	GroupPoints->LineEdit1->setText(aString);
 	myOkEdge = true;
-	myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+	myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
       }
     }
   }
@@ -391,7 +393,7 @@ void BasicGUI_PointDlg::ActivateThisDialog( )
 //     OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 //     myIC = v3d->getAISContext();
 //     myLocalContextId = myIC->OpenLocalContext();
-//     myGeomGUI->SetDisplayedObjectList();
+//     myGeomBase->SetDisplayedObjectList();
 //     /* sub shapes selection */
 //     myLocalContextMode = TopAbs_VERTEX ;
 //     myIC->ActivateStandardMode(myLocalContextMode);
@@ -399,7 +401,7 @@ void BasicGUI_PointDlg::ActivateThisDialog( )
 //   }
 
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -441,7 +443,7 @@ void BasicGUI_PointDlg::ValueChangedInSpinBox(double newValue)
       {
 	myPoint.SetCoord(vx, vy, vz);
 	mySimulationTopoDs = BRepBuilderAPI_MakeVertex (myPoint).Shape();
-	myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+	myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
 	break;
       }
     }
@@ -494,7 +496,7 @@ void BasicGUI_PointDlg::PointIntoCoordinates(gp_Pnt P, bool displayPoint)
   this->myPoint.SetCoord(P.X(), P.Y(), P.Z());
   if(displayPoint) {
     mySimulationTopoDs = BRepBuilderAPI_MakeVertex(P).Shape();
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   }
   return;
 }

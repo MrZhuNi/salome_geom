@@ -29,6 +29,7 @@ using namespace std;
 #include "BasicGUI_EllipseDlg.h"
 
 #include "gp_Elips.hxx"
+#include "QAD_Config.h"
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepAdaptor_Curve.hxx>
@@ -155,7 +156,7 @@ void BasicGUI_EllipseDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   if(myOkPoint && myOkDir)
@@ -169,12 +170,12 @@ void BasicGUI_EllipseDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_EllipseDlg::SelectionIntoArgument()
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
   
-  int nbSel = myGeomGUI->GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
   if (nbSel != 1) {
     if(myEditCurrentArgument == GroupPoints->LineEdit1)
       myOkPoint = false;
@@ -185,11 +186,11 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
 
   /* nbSel == 1 */
   TopoDS_Shape S;  
-  if(!myGeomGUI->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;  
  
   /*  gp_Pnt : not used */
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomGUI->VertexToPoint(S, myPoint)) {
+  if(myEditCurrentArgument == GroupPoints->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint)) {
     GroupPoints->LineEdit1->setText(aString);
     myOkPoint = true;
   }    
@@ -258,7 +259,7 @@ void BasicGUI_EllipseDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   if(!mySimulationTopoDs.IsNull())
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -301,7 +302,7 @@ void BasicGUI_EllipseDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 void BasicGUI_EllipseDlg::MakeEllipseSimulationAndDisplay() 
 {
-  myGeomGUI->EraseSimulationShape();
+  myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   if(myMajorRadius < myMinorRadius)
@@ -312,7 +313,7 @@ void BasicGUI_EllipseDlg::MakeEllipseSimulationAndDisplay()
     gp_Elips ellipse(anAxis, myMajorRadius, myMinorRadius);
     BRepBuilderAPI_MakeEdge MakeEdge(ellipse);
     mySimulationTopoDs = MakeEdge.Shape();
-    myGeomGUI->DisplaySimulationShape(mySimulationTopoDs);
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   }
   catch(Standard_Failure) {
     MESSAGE("Exception catched in MakeEllipseSimulationAndDisplay");
