@@ -1151,9 +1151,9 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIOinGEOMAISShape(const Handle(SALOME_Inte
 //=======================================================================
 GEOM::GEOM_Shape_ptr GEOMBase::ConvertIOinGEOMShape(const Handle(SALOME_InteractiveObject)& IO, Standard_Boolean& testResult)
 {
-  GEOM::GEOM_Shape_ptr aShape;
+  GEOM::GEOM_Shape_var aShape;
   testResult = false;
-
+  
   /* case SObject */
   if(IO->hasEntry()) {
     SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
@@ -1164,8 +1164,9 @@ GEOM::GEOM_Shape_ptr GEOMBase::ConvertIOinGEOMShape(const Handle(SALOME_Interact
       if(obj->FindAttribute(anAttr, "AttributeIOR")) {
 	anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
 	aShape = myGeom->GetIORFromString(anIOR->Value());
-	testResult = true;
-	return aShape;
+	if(!CORBA::is_nil(aShape))
+	  testResult = true;
+	return aShape._retn();
       }
     }
   }
@@ -1173,11 +1174,13 @@ GEOM::GEOM_Shape_ptr GEOMBase::ConvertIOinGEOMShape(const Handle(SALOME_Interact
   if(IO->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject))) {
     Handle(GEOM_InteractiveObject) GIObject = Handle(GEOM_InteractiveObject)::DownCast(IO);
     Standard_CString ior = GIObject->getIOR();
-    testResult = true;
+
     aShape = myGeom->GetIORFromString(ior);
-    return aShape;
-  } 
-  return aShape;
+    if(!CORBA::is_nil(aShape))
+      testResult = true;
+    return aShape._retn();
+  }
+  return aShape._retn();
 }
 
 

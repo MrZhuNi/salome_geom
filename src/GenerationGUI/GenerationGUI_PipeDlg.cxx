@@ -32,7 +32,11 @@ using namespace std;
 #include <TopoDS_Edge.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
+#if OCC_VERSION_MAJOR >= 5
+#include <BRepAlgo.hxx>
+#else
 #include <BRepAlgoAPI.hxx>
+#endif
 
 //=================================================================================
 // class    : GenerationGUI_PipeDlg()
@@ -287,7 +291,12 @@ void GenerationGUI_PipeDlg::MakePipeSimulationAndDisplay()
     }
 
     TopoDS_Shape tds = BRepOffsetAPI_MakePipe(aWire,myShape1);
-    if(BRepAlgoAPI::IsValid(tds)) {
+#if OCC_VERSION_MAJOR >= 5
+    if(BRepAlgo::IsValid(tds)) 
+#else
+    if(BRepAlgoAPI::IsValid(tds)) 
+#endif
+    {
       //Draw Pipe
       mySimulationTopoDs = tds;
       myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
