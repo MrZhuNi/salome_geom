@@ -30,7 +30,6 @@ bounding.png \
 box.png \
 box2points.png \
 boxdxyz.png \
-bspline.png \
 build_compound.png \
 build_edge.png \
 build_face.png \
@@ -65,6 +64,7 @@ filletface.png \
 filling.png \
 fuse.png \
 geometry.png \
+interpol.png \
 line.png \
 line2points.png \
 lineedge.png \
