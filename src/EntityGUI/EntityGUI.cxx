@@ -185,17 +185,21 @@ void EntityGUI::DisplaySimulationShape(const TopoDS_Shape& S1, const TopoDS_Shap
 // function : EraseSimulationShape()
 // purpose  : Clears the display of 'mySimulationShape' a pure graphical shape
 //==================================================================================
-void EntityGUI::EraseSimulationShape()
+void EntityGUI::EraseSimulationShape(int Sh)
 {
   int count = QAD_Application::getDesktop()->getActiveStudy()->getStudyFramesCount();
   for(int i = 0; i < count; i++) {
     if(QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i)->getTypeView() == VIEW_OCC) {
       OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i)->getRightFrame()->getViewFrame())->getViewer();
       Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
-      ic->Erase(mySimulationShape1, Standard_True, Standard_False);
-      ic->ClearPrs(mySimulationShape1);
-      ic->Erase(mySimulationShape2, Standard_True, Standard_False);
-      ic->ClearPrs(mySimulationShape2);
+      if(Sh < 1) {
+	ic->Erase(mySimulationShape1, Standard_True, Standard_False);
+	ic->ClearPrs(mySimulationShape1);
+      }
+      if(Sh <= 1) {
+	ic->Erase(mySimulationShape2, Standard_True, Standard_False);
+	ic->ClearPrs(mySimulationShape2);
+      }
       ic->UpdateCurrentViewer();
     } 
   }

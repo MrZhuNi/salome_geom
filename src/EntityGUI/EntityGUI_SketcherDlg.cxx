@@ -694,7 +694,7 @@ void EntityGUI_SketcherDlg::ClickOnUndo()
 //=================================================================================
 void EntityGUI_SketcherDlg::SelectionIntoArgument()
 {
-  myEntityGUI->EraseSimulationShape();
+  myEntityGUI->EraseSimulationShape(1); //Juste Shape2!!
 
   Group1Sel->buttonApply->setEnabled(false);
   Group1Sel->buttonApply->setFocus();
@@ -706,19 +706,16 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
   myY = 0.0;
 
   int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel != 1) {
+  if(nbSel != 1)
     return;
-  }
 
   /*  nbSel == 1  */
   TopoDS_Shape S;
   gp_Pnt myPoint1;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
 
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S)) {
-    //    this->MakeSimulationAndDisplay();
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
-  }
 
   if(myEditCurrentArgument == Group1Sel->LineEdit1 && myGeomBase->VertexToPoint(S, myPoint1)) {
     myX = myPoint1.X();
@@ -729,7 +726,6 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
     Group1Sel->buttonApply->setFocus();
     this->MakeSimulationAndDisplay();
   }
-
 
   return;
 }

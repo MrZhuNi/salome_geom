@@ -48,7 +48,7 @@ public :
   void OnSketchEnd(const char *Cmd);
 
   void DisplaySimulationShape(const TopoDS_Shape& S1, const TopoDS_Shape& S2); 
-  void EraseSimulationShape();
+  void EraseSimulationShape(int Sh = 0);
 
     /* Methods for sub shapes explode */
   bool SObjectExist(SALOMEDS::SObject_ptr theFatherObject, const char* IOR);
