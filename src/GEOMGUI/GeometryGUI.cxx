@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "GeometryGUI.h"
 
 // Open CASCADE Includes
@@ -40,8 +39,11 @@ using namespace std;
 #include "OCCViewer_Viewer3d.h"
 #include "OCCViewer_ViewPort3d.h"
 #include "VTKViewer_ViewFrame.h"
+#include "VTKViewer_InteractorStyleSALOME.h"
 
 #include "SALOME_Selection.h"
+
+using namespace std;
 
 /* The object itself created in the static method 'GetOrCreateGEOMBase()' */
 static GEOMContext* GeomGUI = 0;
@@ -336,6 +338,30 @@ bool GeometryGUI::OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFr
   return false;
 }
 
+static void UpdateVtkSelection(QAD_Desktop* parent)
+{
+  if (!parent->getActiveStudy()) return;
+
+  QList<QAD_StudyFrame> aFrameList = parent->getActiveStudy()->getStudyFrames();
+
+  for (QAD_StudyFrame* aStudyFrame = aFrameList.first(); aStudyFrame; aStudyFrame = aFrameList.next()) {
+    if (aStudyFrame->getTypeView() == VIEW_VTK) {
+      QAD_ViewFrame* aViewFrame = aStudyFrame->getRightFrame()->getViewFrame();
+      VTKViewer_ViewFrame* aVtkViewFrame = dynamic_cast<VTKViewer_ViewFrame*>(aViewFrame);
+      if (!aVtkViewFrame) continue;
+      VTKViewer_RenderWindowInteractor* anInteractor = aVtkViewFrame->getRWInteractor();
+      if (anInteractor) {
+	anInteractor->SetSelectionProp();
+	anInteractor->SetSelectionTolerance();
+	VTKViewer_InteractorStyleSALOME* aStyle = anInteractor->GetInteractorStyleSALOME();
+	if (aStyle) {
+	  aStyle->setPreselectionProp();
+	}
+      }
+    }
+  }
+}
+
 
 //=================================================================================
 // function : SetSettings()
@@ -408,6 +434,9 @@ bool GeometryGUI::SetSettings(QAD_Desktop* parent)
   
   Mb->setItemEnabled(413, ViewOCC);// ShadingColor Settings
   Mb->setItemEnabled(414, ViewOCC);// Isos Settings
+
+  // PAL5356: update VTK selection
+  ::UpdateVtkSelection(parent);
 
   return true;
 }
@@ -530,6 +559,10 @@ void GeometryGUI::activeStudyChanged(QAD_Desktop* parent)
     GeomGUI->EmitSignalCloseAllDialogs();
     GeomGUI = 0;
   }
+
+  // PAL5356: update VTK selection
+  ::UpdateVtkSelection(parent);
+
   return;
 }
 
@@ -594,5 +627,11 @@ extern "C"
     if(!buffer || !bufferSize) return;
     buffer[0] = (int)VIEW_OCC;
     if (--bufferSize) buffer[1] = (int)VIEW_VTK;
+  }
+
+  void deactivate()
+  {
+    if ( GeomGUI )
+      GeomGUI->EmitSignalCloseAllDialogs();
   }
 }

@@ -448,8 +448,7 @@ void OperationGUI_FilletDlg::MakePreview()
 	  
 	  for(int i = 1; i <= fill.NbContours(); i++) {
 	    try {
-	      //fill.SetRadius(myRadius,i,i);
-	      fill.SetRadius(myRadius,i);
+	      fill.SetRadius(myRadius,i,i);
 	    }  
 	    catch(Standard_Failure) {
 	      QApplication::restoreOverrideCursor();

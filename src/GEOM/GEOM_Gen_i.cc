@@ -159,6 +159,8 @@ using namespace std;
 
 #include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
 
+#include "Utils_ExceptHandlers.hxx"
+
 Standard_EXPORT static Standard_Boolean IsValid(const TopoDS_Shape& S) {
 #if OCC_VERSION_MAJOR >= 5
   return BRepAlgo::IsValid(S);
@@ -363,6 +365,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
 						 CORBA::Object_ptr theObject,
 						 const char* theName) throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   SALOMEDS::SObject_var aResultSO;
   if(CORBA::is_nil(theObject)) return aResultSO;
 
@@ -1023,6 +1026,7 @@ int GEOM_Gen_i::SuppressFacesGlue( const TopoDS_Shape& S,
 				   TopoDS_Shape& aCompoundOfShells )
   throw (SALOME::SALOME_Exception)
 {  
+  Unexpect aCatch(SALOME_SalomeException);
   BRepTools_Quilt Glue;
   aCompoundOfShells.Nullify() ;
   
@@ -1111,6 +1115,7 @@ GEOM::GEOM_Shape::ListOfSubShapeID* GEOM_Gen_i::IndexOfFacesOfSubShell( const To
   throw (SALOME::SALOME_Exception)
 {
 
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape::ListOfSubShapeID_var ListOfID = new GEOM::GEOM_Shape::ListOfSubShapeID;
   ListOfID->length(0) ;
   if( subShell.IsNull() || subShell.ShapeType() != TopAbs_SHELL ) {
@@ -1227,6 +1232,7 @@ GEOM::GEOM_Gen::ListOfGeomShapes* GEOM_Gen_i::SuppressFaces( GEOM::GEOM_Shape_pt
 								const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID ) 
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Gen::ListOfGeomShapes_var listOfGeomShapes = new GEOM::GEOM_Gen::ListOfGeomShapes;
   listOfGeomShapes->length(0) ;
 
@@ -1375,6 +1381,7 @@ void GEOM_Gen_i::SuppressHoleSubRoutine( const TopoDS_Shape& mainShape,
 					 TopTools_MapOfShape& MSwireEndEdges )
   throw (SALOME::SALOME_Exception)
 {  
+  Unexpect aCatch(SALOME_SalomeException);
   TopTools_MapOfShape MS ;
   TopTools_SequenceOfShape SU ;
   FreeEdgesFromMapOfFace(MSfaces, MS) ;        /* MS = free edges of MSfaces */
@@ -1475,6 +1482,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::SuppressHolesInFaceOrShell( GEOM::GEOM_Shape_pt
 						       const GEOM::GEOM_Shape::ListOfSubShapeID& ListIdWires )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result;
 
   if( ListIdWires.length() < 1 )
@@ -1637,6 +1645,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::SuppressHole( GEOM::GEOM_Shape_ptr shape,
 					 const GEOM::GEOM_Shape::ListOfSubShapeID& ListIdEndFace )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result;
   TopoDS_Face aFace ;
   TopoDS_Wire aWire ;  
@@ -1926,6 +1935,7 @@ bool GEOM_Gen_i::BuildShapeHoleNotTraversing( const TopoDS_Shape& aShape,
 					      TopoDS_Shape& resultTds )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   BRep_Builder B;
   TopExp_Explorer exp ;
   TopoDS_Face newFace ;
@@ -1984,6 +1994,7 @@ bool GEOM_Gen_i::BuildShapeHoleTraversing( const TopoDS_Shape& aShape,
 					   TopoDS_Shape& resultTds )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   BRep_Builder B;
   TopExp_Explorer exp ;
   TopoDS_Face newFace ;
@@ -2123,6 +2134,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::SubShape(GEOM::GEOM_Shape_ptr shape,
 					  const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID)
      throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   return SubShapesOne(shape, (TopAbs_ShapeEnum) ShapeType, ListOfID);
 }
 
@@ -2136,6 +2148,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::SubShapeSorted(GEOM::GEOM_Shape_ptr shape,
 						const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID)
      throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   return SubShapesOne(shape, (TopAbs_ShapeEnum) ShapeType, ListOfID, Standard_True);
 }
 
@@ -2150,6 +2163,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::SubShapesOne( GEOM::GEOM_Shape_ptr shape,
 					      const Standard_Boolean Sort)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result;
   TopoDS_Shape mainShape;
   TopoDS_Shape mainTopo = GetTopoShape(shape);
@@ -2230,6 +2244,7 @@ GEOM::GEOM_Gen::ListOfGeomShapes* GEOM_Gen_i::SubShapeAll(GEOM::GEOM_Shape_ptr s
 							  CORBA::Short ShapeType)
      throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   return SubShapesAll(shape, (TopAbs_ShapeEnum) ShapeType);
 }
 
@@ -2242,6 +2257,7 @@ GEOM::GEOM_Gen::ListOfGeomShapes* GEOM_Gen_i::SubShapeAllSorted(GEOM::GEOM_Shape
 								CORBA::Short ShapeType)
      throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   return SubShapesAll(shape, (TopAbs_ShapeEnum) ShapeType, Standard_True);
 }
 
@@ -2256,6 +2272,7 @@ GEOM::GEOM_Gen::ListOfGeomShapes* GEOM_Gen_i::SubShapesAll(GEOM::GEOM_Shape_ptr 
   throw (SALOME::SALOME_Exception)
 {
   /* List of sub shapes returned */
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Gen::ListOfGeomShapes_var listOfGeomShapes = new GEOM::GEOM_Gen::ListOfGeomShapes;
   listOfGeomShapes->length(0) ;
   
@@ -2347,10 +2364,11 @@ GEOM::GEOM_Gen::ListOfGeomShapes* GEOM_Gen_i::SubShapesAll(GEOM::GEOM_Shape_ptr 
 // purpose  : Boolean operation according to the type 'operation'
 //=================================================================================
 GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeBoolean(GEOM::GEOM_Shape_ptr shape1,
-				       GEOM::GEOM_Shape_ptr shape2,
-				       CORBA::Long operation) 
+					     GEOM::GEOM_Shape_ptr shape2,
+					     CORBA::Long operation) 
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result;
   TopoDS_Shape shape ;
   TopoDS_Shape aShape1  ;
@@ -2427,6 +2445,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFuse(GEOM::GEOM_Shape_ptr shape1,
 				    GEOM::GEOM_Shape_ptr shape2)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result;
   TopoDS_Shape aShape1 = GetTopoShape(shape1) ;
   TopoDS_Shape aShape2 = GetTopoShape(shape2) ;
@@ -2513,9 +2532,9 @@ GEOM::PointStruct GEOM_Gen_i::MakePointStruct(CORBA::Double x,
 GEOM::DirStruct GEOM_Gen_i::MakeDirection(const GEOM::PointStruct& p)
 { 
   GEOM::DirStruct d ;
-    d.PS.x = p.x ;  d.PS.y = p.y ;  d.PS.z = p.z ;
-    return d ;
-  }
+  d.PS.x = p.x ;  d.PS.y = p.y ;  d.PS.z = p.z ;
+  return d ;
+}
 
 //=================================================================================
 // function : MakeBox()
@@ -2529,6 +2548,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeBox(CORBA::Double x1,
 					 CORBA::Double z2) 
      throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   gp_Pnt P1(x1,y1,z1);
   gp_Pnt P2(x2,y2,z2);
   GEOM::GEOM_Shape_var result ;
@@ -2561,6 +2581,7 @@ GEOM::GEOM_Shape_ptr  GEOM_Gen_i::MakeCylinder(const GEOM::PointStruct& pstruct,
 					       CORBA::Double height) 
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result;
   TopoDS_Shape tds ;
   gp_Pnt p(pstruct.x, pstruct.y, pstruct.z) ;
@@ -2593,6 +2614,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeSphere(CORBA::Double x1,
 				      CORBA::Double radius) 
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
   try {
@@ -2621,6 +2643,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeTorus( const GEOM::PointStruct& pstruct,
 				      CORBA::Double minor_radius )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result;
   TopoDS_Shape tds ;
   gp_Pnt p(pstruct.x, pstruct.y, pstruct.z) ;
@@ -2655,6 +2678,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeCone(const GEOM::PointStruct& pstruct,
 				    CORBA::Double height)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result;
   TopoDS_Shape tds ;
   gp_Pnt p(pstruct.x, pstruct.y, pstruct.z) ;
@@ -2693,6 +2717,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeCone(const GEOM::PointStruct& pstruct,
 GEOM::GEOM_Shape_ptr GEOM_Gen_i::ImportIGES(const char* filename)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   //VRV: OCC 4.0 migration
   IGESControl_Reader aReader;  
@@ -2703,8 +2728,11 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::ImportIGES(const char* filename)
       THROW_SALOME_CORBA_EXCEPTION("Error in reading import file", SALOME::BAD_PARAM);    }
     
     MESSAGE("ImportIGES : all Geometry Transfer" << endl ) ;
-    aReader.Clear();
-    aReader.TransferRoots(false);
+    //OCC 5.1.2 porting
+//     aReader.Clear();
+//     aReader.TransferRoots(false);
+    aReader.ClearShapes();
+    aReader.TransferRoots();
 
     MESSAGE("ImportIGES : count of shapes produced = " << aReader.NbShapes() << endl );    
     TopoDS_Shape shape = aReader.OneShape();
@@ -2734,6 +2762,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::ImportIGES(const char* filename)
 GEOM::GEOM_Shape_ptr GEOM_Gen_i::ImportSTEP(const char* filename)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   //VRV: OCC 4.0 migration
   STEPControl_Reader aReader;
@@ -2809,6 +2838,7 @@ GEOM::GEOM_Shape_ptr
                         const CORBA::Short               Limit)
 throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var aResult;  
   TopoDS_Shape tds ;
   //MESSAGE ("In Partition");
@@ -2978,6 +3008,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFilling(GEOM::GEOM_Shape_ptr myShape,
 				       CORBA::Short nbiter)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Face tds ;
   TopoDS_Shape aShape = GetTopoShape(myShape) ;
@@ -3174,6 +3205,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeGlueFaces(GEOM::GEOM_Shape_ptr myShape,
   // appliquer BRepTools_SameParameter au compshell
   // (rendre parametres 2D des edges identiques aux parametres 3D)
 
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
   TopoDS_Shape aShape = GetTopoShape(myShape) ;
@@ -3312,6 +3344,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeSewing( const GEOM::GEOM_Gen::ListOfIOR& Li
 				       CORBA::Double precision )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
   BRepOffsetAPI_Sewing aMethod ;
@@ -3350,6 +3383,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeSewingShape( GEOM::GEOM_Shape_ptr aShape,
 					    CORBA::Double precision )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds, S ;
   BRepOffsetAPI_Sewing aMethod ;
@@ -3393,6 +3427,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeSewingShape( GEOM::GEOM_Shape_ptr aShape,
 GEOM::GEOM_Shape_ptr GEOM_Gen_i::OrientationChange(GEOM::GEOM_Shape_ptr aShape)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;  
   BRep_Builder aBuilder;  
 
@@ -3535,6 +3570,7 @@ GEOM::GEOM_Gen::ListOfIOR* GEOM_Gen_i::GetObjects(GEOM::GEOM_Shape_ptr shape)
 GEOM::GEOM_Shape_ptr GEOM_Gen_i::ImportBREP(const char* filename)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   TopoDS_Shape tds ;
   GEOM::GEOM_Shape_var result ;
   
@@ -3565,6 +3601,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakePlane(const GEOM::PointStruct& pstruct,
 				     CORBA::Double trimsize) 
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
 
@@ -3598,7 +3635,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeVertex(CORBA::Double x,
 				      CORBA::Double z) 
   throw (SALOME::SALOME_Exception)
 {
-
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ; 
   gp_Pnt P(x,y,z);
   TopoDS_Shape tds = BRepBuilderAPI_MakeVertex(P).Shape();
@@ -3621,6 +3658,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFace( GEOM::GEOM_Shape_ptr wire,
 				     CORBA::Boolean wantplanarface ) 
   throw (SALOME::SALOME_Exception) 
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape aShape;
   TopoDS_Shape tds;
@@ -3717,6 +3755,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFaces(const GEOM::GEOM_Gen::ListOfIOR& List
 GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeShell( const GEOM::GEOM_Gen::ListOfIOR& ListShapes )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   BRepTools_Quilt Glue;
   TopoDS_Shape C;
@@ -3758,6 +3797,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeShell( const GEOM::GEOM_Gen::ListOfIOR& Lis
 GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeSolid( const GEOM::GEOM_Gen::ListOfIOR& ListShapes )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   Standard_Integer ish = 0;
   TopoDS_Compound  Res;
@@ -3806,6 +3846,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeLine(const GEOM::PointStruct& pstruct,
 				    const GEOM::DirStruct& dstruct)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result  ;
   gp_Pnt P1(pstruct.x, pstruct.y, pstruct.z);
   gp_Pnt P2(dstruct.PS.x, dstruct.PS.y, dstruct.PS.z) ;  
@@ -3839,6 +3880,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeVector(const GEOM::PointStruct& pstruct1,
 				      const GEOM::PointStruct& pstruct2)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result  ;
   TopoDS_Shape tds ;
   
@@ -3872,6 +3914,7 @@ GEOM::GEOM_Shape_ptr  GEOM_Gen_i::MakeCircle(const GEOM::PointStruct& pstruct,
 				       CORBA::Double radius)
   throw (SALOME::SALOME_Exception) 
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result;
   TopoDS_Shape tds ;
 
@@ -3905,6 +3948,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeEllipse( const GEOM::PointStruct& pstruct,
 					      CORBA::Double radius_minor )
   throw (SALOME::SALOME_Exception) 
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result;
   TopoDS_Shape tds ;
   
@@ -3939,6 +3983,7 @@ GEOM::GEOM_Shape_ptr  GEOM_Gen_i::MakeArc(const GEOM::PointStruct& pInit,
 				    const GEOM::PointStruct& pEnd)
   throw (SALOME::SALOME_Exception) 
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result;
   try {
     gp_Pnt pI(pInit.x, pInit.y, pInit.z) ;
@@ -3978,6 +4023,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeTranslation( GEOM::GEOM_Shape_ptr myShape,
 					    CORBA::Double z)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape aShape = GetTopoShape(myShape) ;
   if( aShape.IsNull() ) {
@@ -4008,6 +4054,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeMultiTranslation1D( GEOM::GEOM_Shape_ptr my
 						   CORBA::Short nbtimes )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
 
@@ -4063,6 +4110,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeMultiTranslation2D( GEOM::GEOM_Shape_ptr my
 						   CORBA::Short nbtimes2 )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
   
@@ -4120,6 +4168,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeMultiRotation1D( GEOM::GEOM_Shape_ptr mySha
 						CORBA::Short nbtimes)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
   TopoDS_Shape aShape = GetTopoShape(myShape) ;
@@ -4173,6 +4222,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeMultiRotation2D( GEOM::GEOM_Shape_ptr mySha
 						CORBA::Short nbtimes2 )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
   TopoDS_Shape aShape = GetTopoShape(myShape) ;
@@ -4257,6 +4307,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeMultiRotation2D( GEOM::GEOM_Shape_ptr mySha
 GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeCopy( GEOM::GEOM_Shape_ptr Shape)
   throw (SALOME::SALOME_Exception) 
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
   TopoDS_Shape aShape = GetTopoShape(Shape) ;
@@ -4282,6 +4333,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeMirrorByPlane(GEOM::GEOM_Shape_ptr myShape,
 					     GEOM::GEOM_Shape_ptr shapePlane) 
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ; 
   TopoDS_Shape tds ;
   TopoDS_Shape aShape      = GetTopoShape(myShape) ;
@@ -4334,6 +4386,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeRotation( GEOM::GEOM_Shape_ptr myShape,
 					 CORBA::Double angle)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
   TopoDS_Shape aShape = GetTopoShape(myShape) ;
@@ -4372,6 +4425,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeScaleTransform(GEOM::GEOM_Shape_ptr myShape
 					      CORBA::Double factor)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
   TopoDS_Shape aShape = GetTopoShape(myShape) ;
@@ -4405,6 +4459,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeScaleTransform(GEOM::GEOM_Shape_ptr myShape
 GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeCompound( const GEOM::GEOM_Gen::ListOfIOR& ListShapes )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Compound C;
   BRep_Builder aBuilder;
@@ -4438,6 +4493,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeEdge(const GEOM::PointStruct& pstruct1,
 				    const GEOM::PointStruct& pstruct2)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result  ;
   TopoDS_Shape tds ;
   
@@ -4468,6 +4524,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeEdge(const GEOM::PointStruct& pstruct1,
 GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeWire( const GEOM::GEOM_Gen::ListOfIOR& ListShapes )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   BRepBuilderAPI_MakeWire MW ;
   TopoDS_Shape tds, Shape ; 
@@ -4511,6 +4568,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeRevolution(GEOM::GEOM_Shape_ptr myShape,
 					  double angle)
   throw (SALOME::SALOME_Exception)
 { 
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
   TopoDS_Shape aShape = GetTopoShape(myShape) ;
@@ -4544,6 +4602,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakePipe( GEOM::GEOM_Shape_ptr pathShape,
 				     GEOM::GEOM_Shape_ptr baseShape )
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
   TopoDS_Wire aWire ;
@@ -4600,6 +4659,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakePrism( GEOM::GEOM_Shape_ptr myShape,
 					   const GEOM::PointStruct& P2 )
   throw (SALOME::SALOME_Exception)
 {		
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
   TopoDS_Shape aShape = GetTopoShape(myShape) ;
@@ -4633,6 +4693,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakePrism( GEOM::GEOM_Shape_ptr myShape,
 GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeCDG(GEOM::GEOM_Shape_ptr aShape) 
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
   TopoDS_Shape shape = GetTopoShape(aShape) ;
@@ -4687,6 +4748,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::Archimede(GEOM::GEOM_Shape_ptr aShape,
 				     CORBA::Double aMeshingDeflection)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result;
 
   double cste = -1;
@@ -4760,6 +4822,7 @@ GEOM::GEOM_Shape_ptr  GEOM_Gen_i::MakeFillet( GEOM::GEOM_Shape_ptr shape,
 					      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID ) 
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result;
   TopoDS_Shape tds ;
 
@@ -4779,7 +4842,7 @@ GEOM::GEOM_Shape_ptr  GEOM_Gen_i::MakeFillet( GEOM::GEOM_Shape_ptr shape,
 	fill.Add(E);
       }
       for (int i = 1;i<=fill.NbContours();i++) {
-	fill.SetRadius(radius,i);
+	fill.SetRadius(radius,i,i);
       }
       tds = fill.Shape();
       
@@ -4794,7 +4857,7 @@ GEOM::GEOM_Shape_ptr  GEOM_Gen_i::MakeFillet( GEOM::GEOM_Shape_ptr shape,
 	}
       }
       for (int i = 1;i<=fill.NbContours();i++) {
-	fill.SetRadius(radius,i);
+	fill.SetRadius(radius,i,i);
       }
       tds = fill.Shape();
     }
@@ -4824,6 +4887,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeChamfer( GEOM::GEOM_Shape_ptr shape,
 					      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID ) 
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result;
   TopoDS_Shape tds ;
 
@@ -4882,6 +4946,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeChamfer( GEOM::GEOM_Shape_ptr shape,
 CORBA::Boolean GEOM_Gen_i::CheckShape(GEOM::GEOM_Shape_ptr shape) 
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   TopoDS_Shape S = GetTopoShape(shape) ;
   if( S.IsNull() ) {
     THROW_SALOME_CORBA_EXCEPTION("Shape is null", SALOME::BAD_PARAM);
@@ -4902,6 +4967,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakePlacedBox(CORBA::Double x1,  CORBA::Double 
 					 CORBA::Double delta1, CORBA::Double delta2, CORBA::Double delta3)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
 
@@ -4941,6 +5007,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakePanel(GEOM::GEOM_Shape_ptr shape,
 				     CORBA::Double delta)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   GEOM::GEOM_Shape_var result ;
   TopoDS_Shape tds ;
   TopoDS_Shape aShape = GetTopoShape(shape) ;
@@ -5017,6 +5084,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakePanel(GEOM::GEOM_Shape_ptr shape,
 void GEOM_Gen_i::ExportIGES(const char* filename,GEOM::GEOM_Shape_ptr theShape) 
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   if (theShape->_is_nil()) 
     {
       THROW_SALOME_CORBA_EXCEPTION("Export IGES aborted", SALOME::BAD_PARAM);
@@ -5049,6 +5117,7 @@ void GEOM_Gen_i::ExportIGES(const char* filename,GEOM::GEOM_Shape_ptr theShape)
 void GEOM_Gen_i::ExportBREP(const char* filename,GEOM::GEOM_Shape_ptr theShape)
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   if (theShape->_is_nil()) 
     {
       THROW_SALOME_CORBA_EXCEPTION("Export BRep aborted", SALOME::BAD_PARAM);
@@ -5073,6 +5142,7 @@ void GEOM_Gen_i::ExportBREP(const char* filename,GEOM::GEOM_Shape_ptr theShape)
 void GEOM_Gen_i::ExportSTEP(const char* filename,GEOM::GEOM_Shape_ptr theShape) 
   throw (SALOME::SALOME_Exception)
 {
+  Unexpect aCatch(SALOME_SalomeException);
   if (theShape->_is_nil()) 
     {
       THROW_SALOME_CORBA_EXCEPTION("Export STEP aborted", SALOME::BAD_PARAM);

@@ -227,6 +227,7 @@ bool GEOMBase::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QString
 	  needDisplay = true;
 	SALOMEDS::SObject_var obj = ActiveStudy->getStudyDocument()->FindObjectID(anIObject->getEntry());
 	if(!obj->_is_nil()) {
+	  if (strcmp(obj->GetFatherComponent()->GetName(), "GEOM")) continue;
 	  GEOM::GEOM_Shape_var aShape;
 	  if(obj->FindAttribute(aTmpAttr, "AttributeIOR")) {
 	    char *str = SALOMEDS::AttributeIOR::_narrow(aTmpAttr)->Value();
@@ -370,6 +371,7 @@ bool GEOMBase::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QString
 
 	SALOMEDS::SObject_var obj = ActiveStudy->getStudyDocument()->FindObjectID(anIObject->getEntry());
 	if(!obj->_is_nil()) {
+	  if (strcmp(obj->GetFatherComponent()->GetName(), "GEOM")) continue;
 	  GEOM::GEOM_Shape_var aShape;
 	  if(obj->FindAttribute(aTmpAttr, "AttributeIOR")) {
 	    char *str = SALOMEDS::AttributeIOR::_narrow(aTmpAttr)->Value();
