@@ -59,7 +59,12 @@ LIB_SRC = \
 	BlockFix_PeriodicSurfaceModifier.cxx \
 	BlockFix_SphereSpaceModifier.cxx \
 	BlockFix_UnionEdges.cxx \
-	BlockFix_UnionFaces.cxx
+	BlockFix_UnionFaces.cxx \
+	GEOMAlgo_FinderShapeOn.cxx \
+	GEOMAlgo_ShapeSolid.cxx \
+	GEOMAlgo_ShellSolid.cxx \
+	GEOMAlgo_VertexSolid.cxx \
+	GEOMAlgo_WireSolid.cxx
 
 LIB_CLIENT_IDL = 
 LIB_SERVER_IDL = 
@@ -75,9 +80,11 @@ EXPORT_HEADERS = \
 	GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx \
 	Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx \
 	BlockFix_BlockFixAPI.hxx \
+	BlockFix_BlockFixAPI.lxx \
 	BlockFix_CheckTool.hxx \
 	Handle_BlockFix_BlockFixAPI.hxx \
-	BlockFix_BlockFixAPI.lxx
+	GEOMAlgo_State.hxx \
+	GEOMAlgo_FinderShapeOn.hxx
 
 # idl files
 EXPORT_IDLS=
