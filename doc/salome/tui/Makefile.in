@@ -36,7 +36,7 @@ docs:
 	  fi ; \
 	done
 	cd INPUT; \
-	python $(KERNEL_ROOT_DIR)/doc/salome/tui/pythfilter.py ./py1 ./py2; \
+	python $(KERNEL_ROOT_DIR)/doc/salome/tui/KERNEL/pythfilter.py ./py1 ./py2; \
 	sed 's|list_py_files_to_process|$(PYTHON_SCRIPTS)|' ./doxyfile_py > py2/doxyfile_py; \
 	cd py2; \
 	$(doxygen) ./doxyfile_py; \
