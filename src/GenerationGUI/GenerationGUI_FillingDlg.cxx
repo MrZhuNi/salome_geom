@@ -111,9 +111,9 @@ void GenerationGUI_FillingDlg::Init()
   mySelection->AddFilter(myCompoundFilter);
 
   double SpecificStep1 = 1;
-  double SpecificStep2 = 0.00001;
+  double SpecificStep2 = 0.0001;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_1->RangeStepAndValidator(1.0, 999.999, SpecificStep1, 3);
+  GroupPoints->SpinBox_1->RangeStepAndValidator(2.0, 999.999, SpecificStep1, 3);
   GroupPoints->SpinBox_2->RangeStepAndValidator(0.00001, 10000.0, SpecificStep2, 5);
   GroupPoints->SpinBox_3->RangeStepAndValidator(1.0, 999.999, SpecificStep1, 3);
   GroupPoints->SpinBox_4->RangeStepAndValidator(1.0, 999.999, SpecificStep1, 3);
@@ -293,11 +293,18 @@ void GenerationGUI_FillingDlg::enterEvent(QEvent* e)
 //=================================================================================
 void GenerationGUI_FillingDlg::ValueChangedInSpinBox(double newValue)
 {
-  myMinDeg = GroupPoints->SpinBox_1->value();
-  myTol2D = GroupPoints->SpinBox_2->value(); 
-  myNbIter = GroupPoints->SpinBox_3->value();
-  myMaxDeg = GroupPoints->SpinBox_4->value();
-  myTol3D = GroupPoints->SpinBox_5->value();
+  QObject* send = (QObject*)sender();
+
+  if(send == GroupPoints->SpinBox_1)
+    myMinDeg = int(newValue);
+  else if(send == GroupPoints->SpinBox_2)
+    myTol2D = newValue;
+  else if(send == GroupPoints->SpinBox_3)
+    myNbIter = int(newValue);
+  else if(send == GroupPoints->SpinBox_4)
+    myMaxDeg = int(newValue);
+  else if(send == GroupPoints->SpinBox_5)
+    myTol3D = newValue;
 
   if(myOkSectionShape)
     this->MakeFillingSimulationAndDisplay();
