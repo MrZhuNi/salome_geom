@@ -1984,7 +1984,13 @@ module GEOM
      *  \param theObject is a GEOM object which IOR is requested
      */
     string GetStringFromIOR (in GEOM_Object theObject);
-  };
+
+      /*!
+     *  Returns a name with which a GEOM object was dumped into python script
+     *  \param theStudyEntry is an entry of the GEOM object in the study
+     */
+    string GetDumpName (in string theStudyEntry);
+};
 };
 
 #endif
