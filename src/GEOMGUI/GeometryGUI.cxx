@@ -58,10 +58,9 @@ typedef bool CP(QAD_Desktop*, QPopupMenu*, const QString&,
 // function : GeometryGUI()
 // purpose  : Constructor
 //=======================================================================
-GeometryGUI::GeometryGUI() :
-  QObject()
-{
-}
+GeometryGUI::GeometryGUI( const QString& theName, QObject* theParent ) :
+  SALOMEGUI( theName, theParent )
+{}
 
 
 //=======================================================================
@@ -530,7 +529,7 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
 // function : activeStudyChanged()
 // purpose  : static
 //=================================================================================
-void GeometryGUI::activeStudyChanged(QAD_Desktop* parent)
+bool GeometryGUI::ActiveStudyChanged(QAD_Desktop* parent)
 {
   GeometryGUI::GetOrCreateGeometryGUI(parent); 
 
@@ -563,7 +562,7 @@ void GeometryGUI::activeStudyChanged(QAD_Desktop* parent)
   // PAL5356: update VTK selection
   ::UpdateVtkSelection(parent);
 
-  return;
+  return true;
 }
 
 
@@ -589,49 +588,23 @@ void GeometryGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theI
 }
 
 
-//=================================================================================
-// EXPORTED METHODS
-//=================================================================================
+void GeometryGUI::SupportedViewType(int* buffer, int bufferSize)
+{
+  if(!buffer || !bufferSize) return;
+  buffer[0] = (int)VIEW_OCC;
+  if (--bufferSize) buffer[1] = (int)VIEW_VTK;
+}
+
+void GeometryGUI::Deactivate()
+{
+  if ( GeomGUI )
+    GeomGUI->EmitSignalCloseAllDialogs();
+}
+
+static GeometryGUI aGUI("");
 extern "C"
 {
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
-  {return GeometryGUI::OnGUIEvent(theCommandID, parent);}
-
-  bool OnKeyPress(QKeyEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
-  {return GeometryGUI::OnKeyPress(pe, parent, studyFrame);}
-
-  bool OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
-  {return GeometryGUI::OnMousePress(pe, parent, studyFrame);}
-
-  bool OnMouseMove(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
-  {return GeometryGUI::OnMouseMove(pe, parent, studyFrame);}
-
-  bool SetSettings(QAD_Desktop* parent)
-  {return GeometryGUI::SetSettings(parent);}
-
-  bool customPopup(QAD_Desktop* parent, QPopupMenu* popup, const QString & theContext,
-		     const QString & theParent, const QString & theObject)
-  {return GeometryGUI::CustomPopup(parent, popup, theContext, theParent, theObject);}
-
-  void definePopup(QString & theContext, QString & parent, QString & theObject)
-  {GeometryGUI::DefinePopup(theContext, parent, theObject);}
-  
-  bool activeStudyChanged(QAD_Desktop* parent)
-  {GeometryGUI::activeStudyChanged(parent);}
-
-  void buildPresentation(const Handle(SALOME_InteractiveObject)& theIO)
-  {GeometryGUI::BuildPresentation(theIO);}
-
-  void supportedViewType(int* buffer, int bufferSize)
-  {
-    if(!buffer || !bufferSize) return;
-    buffer[0] = (int)VIEW_OCC;
-    if (--bufferSize) buffer[1] = (int)VIEW_VTK;
-  }
-
-  void deactivate()
-  {
-    if ( GeomGUI )
-      GeomGUI->EmitSignalCloseAllDialogs();
+  Standard_EXPORT SALOMEGUI* GetComponentGUI() {
+    return &aGUI;
   }
 }
