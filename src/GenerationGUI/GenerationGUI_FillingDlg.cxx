@@ -31,6 +31,16 @@ using namespace std;
 
 #include "QAD_Config.h"
 
+#include <GeomFill_SectionGenerator.hxx>
+#include <GeomFill_Line.hxx>
+#include <GeomFill_AppSurf.hxx>
+#include <Geom_BSplineSurface.hxx>
+#include <Geom_TrimmedCurve.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
+#include <TopExp_Explorer.hxx>
+#include <BRep_Tool.hxx>
+#include <Precision.hxx>
+
 //=================================================================================
 // class    : GenerationGUI_FillingDlg()
 // purpose  : Constructs a GenerationGUI_FillingDlg which is a child of 'parent', with the 
@@ -122,6 +132,18 @@ void GenerationGUI_FillingDlg::Init()
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   
+  connect(GroupPoints->SpinBox_1, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_3, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_4, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_5, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_1, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_2, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_3, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_4, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_5, SLOT(SetStep(double)));
+
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   /* displays Dialog */
@@ -151,12 +173,10 @@ void GenerationGUI_FillingDlg::ClickOnOk()
 void GenerationGUI_FillingDlg::ClickOnApply()
 {
   QAD_Application::getDesktop()->putInfo(tr(""));
-
-  myMinDeg = GroupPoints->SpinBox_1->value();
-  myTol2D = GroupPoints->SpinBox_2->value(); 
-  myNbIter = GroupPoints->SpinBox_3->value();
-  myMaxDeg = GroupPoints->SpinBox_4->value();
-  myTol3D = GroupPoints->SpinBox_5->value(); 
+  if (mySimulationTopoDs.IsNull())
+    return;
+  myGeomBase->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
 
   if(myOkSectionShape)	  
     myGenerationGUI->MakeFillingAndDisplay(myGeomShape, myMinDeg, myMaxDeg, myTol3D, myTol2D, myNbIter);
@@ -170,6 +190,8 @@ void GenerationGUI_FillingDlg::ClickOnApply()
 //=================================================================================
 void GenerationGUI_FillingDlg::SelectionIntoArgument()
 {
+  myGeomBase->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   QString aString = ""; /* name of selection */
   
@@ -181,20 +203,21 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
   }
   
   // nbSel == 1
-  TopoDS_Shape S; 
   Standard_Boolean testResult;
   Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
-  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
+  if(!myGeomBase->GetTopoFromSelection(mySelection, mySectionShape))
     return;
   
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && S.ShapeType() == TopAbs_COMPOUND) {
+  if(myEditCurrentArgument == GroupPoints->LineEdit1 && mySectionShape.ShapeType() == TopAbs_COMPOUND) {
     myEditCurrentArgument->setText(aString);
     myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return;
     myOkSectionShape = true;
   }
-  /* no simulation */
+
+  if(myOkSectionShape)
+    this->MakeFillingSimulationAndDisplay();
   return;
 }
 
@@ -245,6 +268,8 @@ void GenerationGUI_FillingDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   mySelection->AddFilter(myCompoundFilter);
+  if(!mySimulationTopoDs.IsNull())
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
 }
 
@@ -258,5 +283,83 @@ void GenerationGUI_FillingDlg::enterEvent(QEvent* e)
   if (GroupConstructors->isEnabled())
     return;
   this->ActivateThisDialog();
+  return;
+}
+
+
+//=================================================================================
+// function : ValueChangedInSpinBox()
+// purpose  :
+//=================================================================================
+void GenerationGUI_FillingDlg::ValueChangedInSpinBox(double newValue)
+{
+  myMinDeg = GroupPoints->SpinBox_1->value();
+  myTol2D = GroupPoints->SpinBox_2->value(); 
+  myNbIter = GroupPoints->SpinBox_3->value();
+  myMaxDeg = GroupPoints->SpinBox_4->value();
+  myTol3D = GroupPoints->SpinBox_5->value();
+
+  if(myOkSectionShape)
+    this->MakeFillingSimulationAndDisplay();
+  return;
+}
+
+
+//=================================================================================
+// function : MakeFillingSimulationAndDisplay()
+// purpose  :
+//=================================================================================
+void GenerationGUI_FillingDlg::MakeFillingSimulationAndDisplay()
+{
+  myGeomBase->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
+
+  try {
+    /* we verify the contents of the shape */
+    TopExp_Explorer Ex;
+    TopoDS_Shape Scurrent;	
+    Standard_Real First, Last;
+    Handle(Geom_Curve) C;
+    GeomFill_SectionGenerator Section;
+    
+    Standard_Integer i = 0;
+    for(Ex.Init(mySectionShape, TopAbs_EDGE); Ex.More(); Ex.Next()) {
+      Scurrent = Ex.Current();
+      if( Scurrent.IsNull() || Scurrent.ShapeType() != TopAbs_EDGE)
+	return;
+      C = BRep_Tool::Curve(TopoDS::Edge(Scurrent), First, Last);
+      C = new Geom_TrimmedCurve(C, First, Last);
+      Section.AddCurve(C) ;
+      i++ ;
+    }
+    
+    /* a 'tolerance' is used to compare 2 knots : see GeomFill_Generator.cdl */
+    /* We set 'tolerance' = tol3d                                            */
+    // Section.Perform( tol3d ) ; NRI */
+    Section.Perform(Precision::Confusion());
+    Handle(GeomFill_Line) Line = new GeomFill_Line(i);
+
+    GeomFill_AppSurf App(myMinDeg, myMaxDeg, myTol3D, myTol2D, myNbIter) ; /* user parameters */
+    App.Perform(Line, Section);
+    
+    if(!App.IsDone())
+      return;
+
+    Standard_Integer UDegree, VDegree, NbUPoles, NbVPoles, NbUKnots, NbVKnots;
+    App.SurfShape(UDegree, VDegree, NbUPoles, NbVPoles, NbUKnots, NbVKnots);	
+    Handle(Geom_BSplineSurface) GBS = new Geom_BSplineSurface(App.SurfPoles(), App.SurfWeights(), App.SurfUKnots(), App.SurfVKnots(), App.SurfUMults(), App.SurfVMults(), App.UDegree(), App.VDegree());
+    
+    if(GBS.IsNull())
+      return;
+    mySimulationTopoDs  = BRepBuilderAPI_MakeFace(GBS);    
+    if(mySimulationTopoDs.IsNull())
+      return;
+    else
+      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
+  }
+  catch(Standard_Failure) {
+    MESSAGE("Exception catched in MakePrismSimulationAndDisplay" << endl);
+    return;
+  }
   return;
 }

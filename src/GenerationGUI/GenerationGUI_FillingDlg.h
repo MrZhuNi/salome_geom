@@ -51,6 +51,7 @@ public:
 private:
     void Init();
     void enterEvent(QEvent* e);
+    void MakeFillingSimulationAndDisplay();
 
     GenerationGUI* myGenerationGUI;
 
@@ -74,6 +75,7 @@ private slots:
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
+    void ValueChangedInSpinBox(double newValue);
 
 };
 
