@@ -91,6 +91,7 @@ void BlocksGUI_PropagateDlg::Init()
   /* init variables */
 
   myObject = GEOM::GEOM_Object::_nil();
+  ResultName->setText( "" );
 
   myGeomGUI->SetState( 0 );
 
@@ -270,6 +271,7 @@ bool BlocksGUI_PropagateDlg::execute( ObjectList& objects )
 {
 
   GEOM::ListOfGO_var aList = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->Propagate( myObject );
+  ResultName->setText( "" );
 
   if ( !aList->length() )
     return false;
