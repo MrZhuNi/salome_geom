@@ -1,0 +1,31 @@
+#!/bin/sh
+
+#uic -o SketcherGUI_Skeleton_QTD.h SketcherGUI_Skeleton_QTD.ui
+#uic -o SketcherGUI_Skeleton_QTD.cxx -impl SketcherGUI_Skeleton_QTD.h SketcherGUI_Skeleton_QTD.ui
+
+#uic -o SketcherGUI_Point_QTD.h SketcherGUI_Point_QTD.ui
+#uic -o SketcherGUI_Point_QTD.cxx -impl SketcherGUI_Point_QTD.h SketcherGUI_Point_QTD.ui
+
+#uic -o SketcherGUI_Dir1_QTD.h SketcherGUI_Dir1_QTD.ui
+#uic -o SketcherGUI_Dir1_QTD.cxx -impl SketcherGUI_Dir1_QTD.h SketcherGUI_Dir1_QTD.ui
+
+#uic -o SketcherGUI_Dir2_QTD.h SketcherGUI_Dir2_QTD.ui
+#uic -o SketcherGUI_Dir2_QTD.cxx -impl SketcherGUI_Dir2_QTD.h SketcherGUI_Dir2_QTD.ui
+
+#uic -o SketcherGUI_1Spin_QTD.h SketcherGUI_1Spin_QTD.ui
+#uic -o SketcherGUI_1Spin_QTD.cxx -impl SketcherGUI_1Spin_QTD.h SketcherGUI_1Spin_QTD.ui
+
+#uic -o SketcherGUI_2Spin_QTD.h SketcherGUI_2Spin_QTD.ui
+#uic -o SketcherGUI_2Spin_QTD.cxx -impl SketcherGUI_2Spin_QTD.h SketcherGUI_2Spin_QTD.ui
+
+#uic -o SketcherGUI_3Spin_QTD.h SketcherGUI_3Spin_QTD.ui
+#uic -o SketcherGUI_3Spin_QTD.cxx -impl SketcherGUI_3Spin_QTD.h SketcherGUI_3Spin_QTD.ui
+
+uic -o SketcherGUI_4Spin_QTD.h SketcherGUI_4Spin_QTD.ui
+uic -o SketcherGUI_4Spin_QTD.cxx -impl SketcherGUI_4Spin_QTD.h SketcherGUI_4Spin_QTD.ui
+
+#uic -o SketcherGUI_1Sel_QTD.h SketcherGUI_1Sel_QTD.ui
+#uic -o SketcherGUI_1Sel_QTD.cxx -impl SketcherGUI_1Sel_QTD.h SketcherGUI_1Sel_QTD.ui
+
+#uic -o SketcherGUI_1Sel1Spin_QTD.h SketcherGUI_1Sel1Spin_QTD.ui
+#uic -o SketcherGUI_1Sel1Spin_QTD.cxx -impl SketcherGUI_1Sel1Spin_QTD.h SketcherGUI_1Sel1Spin_QTD.ui
