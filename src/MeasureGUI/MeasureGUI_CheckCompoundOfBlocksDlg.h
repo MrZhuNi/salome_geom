@@ -44,8 +44,8 @@ class MeasureGUI_CheckCompoundOfBlocksDlg : public MeasureGUI_Skeleton
     Q_OBJECT
 
 public:
-                                        MeasureGUI_CheckCompoundOfBlocksDlg( QWidget* parent,
-                                                                  SALOME_Selection* Sel );
+                                        MeasureGUI_CheckCompoundOfBlocksDlg( QWidget* theParent,
+                                                                             SALOME_Selection* theSel );
                                         ~MeasureGUI_CheckCompoundOfBlocksDlg();
 protected:
 
@@ -53,11 +53,17 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr  createOperation();
     virtual void                        processObject();
 
+private slots:
+
+    void onErrorsListSelectionChanged();
+    void onSubShapesListSelectionChanged();
+
 private:
 
-    void                                Init( SALOME_Selection* Sel );
+    void                                Init( SALOME_Selection* theSel );
     bool                                getBCErrors( bool& theIsCompoundOfBlocks,
 						     GEOM::GEOM_IBlocksOperations::BCErrors& theErrors);
+    void                                activateSelection();
 
 private:
 

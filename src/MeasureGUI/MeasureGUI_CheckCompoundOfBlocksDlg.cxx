@@ -32,6 +32,10 @@
 
 #include "utilities.h"
 #include "QAD_Desktop.h"
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopExp.hxx>
+#include "GEOMBase.h"
+#include "GEOMImpl_Types.hxx"
 
 #include <qtextedit.h>
 #include <qlineedit.h>
@@ -42,7 +46,7 @@
 // QT Includes
 #include <qgroupbox.h>
 #include <qlabel.h>
-
+#include <qvaluelist.h>
 
 //VRV: porting on Qt 3.0.5
 #if QT_VERSION >= 0x030005
@@ -98,15 +102,19 @@ MeasureGUI_CheckCompoundOfBlocksDlg::MeasureGUI_CheckCompoundOfBlocksDlg( QWidge
   myErrorsLBox->setMinimumSize( 100, 100 );
   Layout2->addWidget( myErrorsLBox, 1, 0 );
 
+
   mySubShapesLbl = new QLabel( tr( "GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES" ), myGrp, "BlockCompoundSubShapes" );
   Layout2->addWidget( mySubShapesLbl, 0, 1 );
 
   mySubShapesLBox = new QListBox( myGrp, "ListSubShapes" );
   mySubShapesLBox->setMinimumSize( 100, 100 );
+  mySubShapesLBox->setSelectionMode(QListBox::Extended);
   Layout2->addWidget( mySubShapesLBox, 1, 1 );
   aGBLayout->addLayout( Layout2, 1, 0 );
 
   Layout1->addWidget( myGrp, 1, 0 );
+  connect( myErrorsLBox, SIGNAL( selectionChanged() ), SLOT( onErrorsListSelectionChanged() ) );
+  connect( mySubShapesLBox, SIGNAL( selectionChanged() ), SLOT( onSubShapesListSelectionChanged() ) );
   /* Initialisation */
   Init( Sel );
 }
@@ -127,6 +135,7 @@ MeasureGUI_CheckCompoundOfBlocksDlg::~MeasureGUI_CheckCompoundOfBlocksDlg()
 //=================================================================================
 void MeasureGUI_CheckCompoundOfBlocksDlg::Init( SALOME_Selection* Sel )
 {
+  activateSelection();
   mySelBtn = myGrp->PushButton1;
   mySelEdit = myGrp->LineEdit1;
   MeasureGUI_Skeleton::Init( Sel );
@@ -172,6 +181,9 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
   if ( !getBCErrors( isCompoundOfBlocks, aErrs ) )
   {
     myGrp->TextEdit1->setText( aMsg );
+    myErrorsLBox->clear();
+    mySubShapesLBox->clear();
+    erasePreview();
     return;
   }
 
@@ -183,8 +195,13 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
   myGrp->TextEdit1->setText(aMsg);
   QStringList aErrList;
   QString aErrStr( "" );
+  QString aConSfx( " # " );
+  QString aGluedSfx( " # " );
+  int aConNum = 1;
+  int aGluedNum = 1;
   for ( int i = 0, n = aErrs.length(); i < n; i++ )
   {
+    aErrStr = "";
     switch ( aErrs[i].error )
     {
       case GEOM::GEOM_IBlocksOperations::NOT_BLOCK :
@@ -195,12 +212,18 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
         break;
       case GEOM::GEOM_IBlocksOperations::INVALID_CONNECTION :
 	aErrStr = "Invalid Connection";
+	aErrStr += aConSfx;
+	aErrStr += QString::number(aConNum);
+	aConNum++;
         break;
       case GEOM::GEOM_IBlocksOperations::NOT_CONNECTED :
 	aErrStr = "Not Connected";
         break;
       case GEOM::GEOM_IBlocksOperations::NOT_GLUED :
 	aErrStr = "Not Glued";
+	aErrStr += aGluedSfx;
+	aErrStr += QString::number(aGluedNum);
+	aGluedNum++;
         break;
       default :
 	aErrStr = "";
@@ -210,6 +233,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
       aErrList.append(aErrStr);
   }
   myErrorsLBox->clear();
+  mySubShapesLBox->clear();
   myErrorsLBox->insertStringList(aErrList);
   return;
 }
@@ -221,4 +245,125 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
 GEOM::GEOM_IOperations_ptr MeasureGUI_CheckCompoundOfBlocksDlg::createOperation()
 {
   return getGeomEngine()->GetIBlocksOperations(getStudyId());
+}
+
+//=================================================================================
+// function : onErrorsListSelectionChanged
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckCompoundOfBlocksDlg::onErrorsListSelectionChanged()
+{
+  erasePreview();
+  int aCurItem = myErrorsLBox->currentItem();
+  if ( aCurItem < 0 )
+    return;
+  bool isCompoundOfBlocks;
+  GEOM::GEOM_IBlocksOperations::BCErrors aErrs;
+  if ( !getBCErrors( isCompoundOfBlocks, aErrs ) )
+  {
+    myGrp->TextEdit1->setText( "" );
+    myErrorsLBox->clear();
+    mySubShapesLBox->clear();
+    return;
+  }
+  
+  GEOM::GEOM_IBlocksOperations::BCError aErr = aErrs[aCurItem];
+  GEOM::ListOfLong aObjLst = aErr.incriminated;
+  TopoDS_Shape aSelShape;
+  TopoDS_Shape aSubShape; 
+  TopTools_IndexedMapOfShape anIndices;
+  QStringList aSubShapeList;
+  QString aSubShapeName("");
+  Standard_CString aTypeString;
+  if ( !myObj->_is_nil() && GEOMBase::GetShape( myObj, aSelShape ) )
+  {
+    TopExp::MapShapes( aSelShape, anIndices);
+    for ( int i = 0, n = aObjLst.length(); i < n; i++ )
+    {
+      aSubShapeName = "";
+      aSubShape = anIndices.FindKey(aObjLst[i]);
+      if ( GEOMBase::GetShapeTypeString( aSubShape, aTypeString ) )	
+	aSubShapeName = QString(aTypeString) + QString("_") + QString::number(aObjLst[i]);	
+      if ( !aSubShapeName.isEmpty() )
+      aSubShapeList.append(aSubShapeName);
+    }
+  }
+  mySubShapesLBox->clear();
+  mySubShapesLBox->insertStringList(aSubShapeList);
+  return;
+}
+
+//=================================================================================
+// function : onSubShapesListSelectionChanged
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
+{
+  erasePreview();
+  int aErrCurItem = myErrorsLBox->currentItem();
+  if ( aErrCurItem < 0 )
+    return;
+  QValueList<int> aIds;
+  for ( int i = 0, n = mySubShapesLBox->count(); i < n; i++ )
+  {
+    if ( mySubShapesLBox->isSelected( i ) ) 
+      aIds.append( i );
+  }
+  if ( aIds.count() < 1 )
+    return;
+  bool isCompoundOfBlocks;
+  GEOM::GEOM_IBlocksOperations::BCErrors aErrs;
+  if ( !getBCErrors( isCompoundOfBlocks, aErrs ) )
+  {
+    myGrp->TextEdit1->setText( "" );
+    myErrorsLBox->clear();
+    mySubShapesLBox->clear();
+    return;
+  }
+  
+  GEOM::GEOM_IBlocksOperations::BCError aErr = aErrs[aErrCurItem];
+  GEOM::ListOfLong aObjLst = aErr.incriminated;
+  TopoDS_Shape aSelShape;
+  TopoDS_Shape aSubShape; 
+  TopTools_IndexedMapOfShape anIndices;
+  if ( !myObj->_is_nil() && GEOMBase::GetShape( myObj, aSelShape ) )
+  {
+    QString aMess;
+    if ( !isValid( aMess ) )
+    {
+      return;
+    }
+    SALOME_Prs* aPrs = 0;
+    TopExp::MapShapes( aSelShape, anIndices);
+    QValueList<int>::iterator it;
+    for ( it = aIds.begin(); it != aIds.end(); ++it )
+    {
+      aSubShape = anIndices.FindKey(aObjLst[(*it)]);
+      try
+      {
+        getDisplayer()->SetColor( Quantity_NOC_RED );
+        getDisplayer()->SetToActivate( false );
+        aPrs = !aSubShape.IsNull() ? getDisplayer()->BuildPrs( aSubShape ) : 0;
+        if ( aPrs )
+	  displayPreview( aPrs, true );
+      }
+      catch( const SALOME::SALOME_Exception& e )
+      {
+        QtCatchCorbaException( e );
+      }
+    }
+  }
+  return;
+}
+
+//=================================================================================
+// function : activateSelection
+// purpose  : activate selection of faces, shells, and solids
+//=================================================================================
+void MeasureGUI_CheckCompoundOfBlocksDlg::activateSelection()
+{
+  TColStd_MapOfInteger aMap;
+  aMap.Add( GEOM_SOLID );
+  aMap.Add( GEOM_COMPOUND );
+  globalSelection( aMap );
 }
