@@ -179,6 +179,8 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen, public Engines_Component_i
 				       CORBA::Boolean isPublished, 
 				       CORBA::Boolean& isValidScript);
 
+  char* GetDumpName (const char* theStudyEntry);
+
   //********************************************************************************************************//
   //     Internal methods
   //********************************************************************************************************//
@@ -189,7 +191,6 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen, public Engines_Component_i
    ::GEOMImpl_Gen* _impl;
    SALOME_NamingService * name_service;
    char * _name; 
-
 };
 
 #endif 

@@ -53,3 +53,18 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 
   return aStreamFile._retn(); 
 }
+
+//=======================================================================
+//function : GetDumpName
+//purpose  : 
+//=======================================================================
+
+char* GEOM_Gen_i::GetDumpName (const char* theStudyEntry)
+{
+  const char* name = _impl->GetDumpName( theStudyEntry );
+  if ( name && strlen( name ) > 0 )
+    return strdup( name );
+
+  return NULL;
+}
+
