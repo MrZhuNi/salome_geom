@@ -52,7 +52,14 @@ LIB_SRC = \
 	GEOMAlgo_PassKey.cxx \
 	GEOMAlgo_PassKeyMapHasher.cxx \
 	GEOMAlgo_ShapeAlgo.cxx \
-	GEOMAlgo_Tools.cxx
+	GEOMAlgo_Tools.cxx \
+	BlockFix.cxx \
+	BlockFix_BlockFixAPI.cxx \
+	BlockFix_CheckTool.cxx \
+	BlockFix_PeriodicSurfaceModifier.cxx \
+	BlockFix_SphereSpaceModifier.cxx \
+	BlockFix_UnionEdges.cxx \
+	BlockFix_UnionFaces.cxx
 
 LIB_CLIENT_IDL = 
 LIB_SERVER_IDL = 
@@ -66,7 +73,11 @@ EXPORT_HEADERS = \
 	GEOMAlgo_CoupleOfShapes.hxx \
 	GEOMAlgo_ListOfCoupleOfShapes.hxx \
 	GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx \
-	Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx
+	Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx \
+	BlockFix_BlockFixAPI.hxx \
+	BlockFix_CheckTool.hxx \
+	Handle_BlockFix_BlockFixAPI.hxx \
+	BlockFix_BlockFixAPI.lxx
 
 # idl files
 EXPORT_IDLS=
