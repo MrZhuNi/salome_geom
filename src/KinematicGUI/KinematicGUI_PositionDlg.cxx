@@ -185,7 +185,30 @@ void KinematicGUI_PositionDlg::SetEnabledValues()
 {
   int type = myGeomContact->GetType();
 
-  if(type == 1 || type == 3 || type == 5 || type == 9) { //PIVOT || SLIDING PIVOT || PLANE || HELICOIDAL
+  if(type == 0) { //EMBEDDING
+    Group1->SpinBox_21->setEnabled(false);
+    Group1->SpinBox_22->setEnabled(false);
+    Group1->SpinBox_23->setEnabled(false);
+    Group1->SpinBox_31->setEnabled(false);
+    Group1->SpinBox_32->setEnabled(false);
+    Group1->SpinBox_33->setEnabled(false);
+    Group1->SpinBox_41->setEnabled(false);
+    Group1->SpinBox_42->setEnabled(false);
+    Group1->SpinBox_43->setEnabled(false);
+    Group1->TextLabel5->setEnabled(false);
+    Group1->TextLabel6->setEnabled(false);
+    Group1->TextLabel7->setEnabled(false);
+    Group1->TextLabel8->setEnabled(false);
+    Group1->TextLabel9->setEnabled(false);
+    Group1->TextLabel10->setEnabled(false);
+    Group1->TextLabel11->setEnabled(false);
+    Group1->TextLabel12->setEnabled(false);
+    Group1->TextLabel13->setEnabled(false);
+    Group1->TextLabel14->setEnabled(false);
+    Group1->TextLabel15->setEnabled(false);
+    Group1->TextLabel16->setEnabled(false);
+  }
+  else if(type == 1 || type == 3 || type == 5 || type == 9) { //PIVOT || SLIDING PIVOT || PLANE || HELICOIDAL
     Group1->SpinBox_31->setEnabled(false);
     Group1->SpinBox_32->setEnabled(false);
     Group1->SpinBox_33->setEnabled(false);

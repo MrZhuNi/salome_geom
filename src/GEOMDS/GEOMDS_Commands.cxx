@@ -271,9 +271,10 @@ Standard_Boolean GEOMDS_Commands::ClearAllIOR(const TDF_Label& aLabel)
     TDF_Label L = it.Value() ;
     if( L.FindAttribute(TDataStd_Name::GetID(), anAttName) ) {
       notTested = L.ForgetAttribute(TDataStd_Name::GetID()) ;
+      if(notTested)
+	MESSAGE("in GEOMDS_Commands::ClearAllIOR : IOR CLEARED" )
+    ClearAllIOR(L);
     }
-    if(notTested)
-      MESSAGE("in GEOMDS_Commands::ClearAllIOR : IOR CLEARED" )
   }
   return true ;
 }
@@ -318,6 +319,10 @@ TDF_Label GEOMDS_Commands::AddAssembly(Kinematic_Assembly& KAss,
 {
   TDF_Label LabAssembly = myLab.NewChild();
   TDataStd_Name::Set(LabAssembly, Name);
+
+  TDF_Label LabType = LabAssembly.NewChild();
+  TDataStd_Integer::Set(LabType, 1);
+
   return LabAssembly;
 }
 
@@ -333,20 +338,24 @@ TDF_Label GEOMDS_Commands::AddContact(Kinematic_Contact& KContact,
   TDF_Label LabContact = mainRefLab.NewChild();
   TDataStd_Name::Set(LabContact, Name);
 
+  TDF_Label LabContactType = LabContact.NewChild();
+  TDataStd_Integer::Set(LabContactType, 2);
+
   TDF_Label LabType = LabContact.NewChild();
   TDataStd_Integer::Set(LabType, KContact.Type());
   
+  int ret;
   TDF_Label NewLab1 = LabContact.NewChild();
   TNaming_Builder B1(NewLab1);
   B1.Select(KContact.Shape1(), KContact.Shape1());
-//   TDF_Label RefLab1 = TNaming_Tool::Label(myLab, KContact.Shape1());
-//   TDF_Reference::Set(NewLab1, RefLab1);
+  TDF_Label RefLab1 = TNaming_Tool::Label(myLab, KContact.Shape1(), ret);
+  TDF_Reference::Set(NewLab1, RefLab1);
 
   TDF_Label NewLab2 = LabContact.NewChild();
   TNaming_Builder B2(NewLab2);
   B2.Select(KContact.Shape2(), KContact.Shape2());
-//   TDF_Label RefLab2 = TNaming_Tool::Label(myLab, KContact.Shape2());
-//   TDF_Reference::Set(NewLab2, RefLab2);
+  TDF_Label RefLab2 = TNaming_Tool::Label(myLab, KContact.Shape2(), ret);
+  TDF_Reference::Set(NewLab2, RefLab2);
 
   TDF_Label LabPosition = LabContact.NewChild();
   Handle(TDataStd_RealArray) RealArrayP = TDataStd_RealArray::Set(LabPosition, 1, 12);
@@ -393,14 +402,27 @@ TDF_Label GEOMDS_Commands::AddContact(Kinematic_Contact& KContact,
 // purpose  :
 //=======================================================================
 TDF_Label GEOMDS_Commands::AddAnimation(Kinematic_Animation& KAnimation,
+					const TDF_Label& AssLab,
 					const TCollection_ExtendedString& Name)
 {
   TDF_Label LabAnimation = myLab.NewChild();
   TDataStd_Name::Set(LabAnimation, Name);
 
-  Standard_Real duration = double(KAnimation.Duration());
+  TDF_Label LabType = LabAnimation.NewChild();
+  TDataStd_Integer::Set(LabType, 3);
+
+  TDF_Label LabAssembly = LabAnimation.NewChild();
+  TDF_Reference::Set(LabAssembly, AssLab);
+
+  int ret;
+  TDF_Label LabFrame = LabAnimation.NewChild();
+  TNaming_Builder B1(LabFrame);
+  B1.Select(KAnimation.Frame(), KAnimation.Frame());
+  TDF_Label RefLab = TNaming_Tool::Label(myLab, KAnimation.Frame(), ret);
+  TDF_Reference::Set(LabFrame, RefLab);
 
   TDF_Label LabDuration = LabAnimation.NewChild();
+  Standard_Real duration = double(KAnimation.Duration());
   TDataStd_Real::Set(LabDuration, duration);
 
   TDF_Label LabNbSeq = LabAnimation.NewChild();
@@ -421,20 +443,25 @@ Standard_Boolean GEOMDS_Commands::GetAssembly(const TDF_Label& aLabel,
 					      Kinematic_Assembly& returnAss)
 {
   Kinematic_Assembly* Ass = new Kinematic_Assembly();
-  Handle(TDataStd_Name) anAttName;
-  if(!aLabel.FindAttribute(TDataStd_Name::GetID(), anAttName))
-    return false;
-  else {
-    TDF_ChildIterator it;
-    for(it.Initialize(aLabel, Standard_False); it.More(); it.Next()) {
-      TDF_Label L = it.Value();
-      Kinematic_Contact* aContact = new Kinematic_Contact();
-      Standard_Boolean test = GetContact(L, *aContact);
-      Ass->AddContact(aContact);
+
+  TDF_ChildIterator it;
+  for(it.Initialize(aLabel, Standard_False); it.More(); it.Next()) {
+    TDF_Label L = it.Value();
+    Handle(TDataStd_Integer) anAttInteger;
+    if(L.FindAttribute(TDataStd_Integer::GetID(), anAttInteger)) {
+      if(anAttInteger->Get() != 1) {
+	returnAss = *Ass;
+	return false;
+      }
     }
-    returnAss = *Ass;
-    return true;
+    else {
+      Kinematic_Contact* aContact = new Kinematic_Contact();
+      if(GetContact(L, *aContact))
+	Ass->AddContact(aContact);
+    }
   }
+  returnAss = *Ass;
+  return true;
 }
 
 
@@ -446,63 +473,209 @@ Standard_Boolean GEOMDS_Commands::GetContact(const TDF_Label& aLabel,
 					     Kinematic_Contact& returnContact)
 {
   Kinematic_Contact* Contact = new Kinematic_Contact();
-  Handle(TDataStd_Name) anAttName;
-  if(!aLabel.FindAttribute(TDataStd_Name::GetID(), anAttName))
-    return false;
-  else {
-    TDF_ChildIterator it;
-    int i = 1;
-    for(it.Initialize(aLabel, Standard_False); it.More(); it.Next()) {
-      TDF_Label L = it.Value();
-      Handle(TNaming_NamedShape) anAttTopo1;
-      Handle(TNaming_NamedShape) anAttTopo2;
-      Handle(TDataStd_Integer) anAttInteger;
-      Handle(TDataStd_Real) anAttReal;
-      Handle(TDataStd_IntegerArray) anAttIntegerArrayR;
-      Handle(TDataStd_RealArray) anAttRealArrayP;
-      Handle(TDataStd_RealArray) anAttRealArrayR;
-      Handle(TDataStd_RealArray) anAttRealArrayT;
 
-      if(i == 1 && L.FindAttribute(TDataStd_Integer::GetID(), anAttInteger)) {
-	Contact->Type(anAttInteger->Get());
+  TDF_ChildIterator it;
+  int i = 1;
+  for(it.Initialize(aLabel, Standard_False); it.More(); it.Next()) {
+    TDF_Label L = it.Value();
+    Handle(TNaming_NamedShape) anAttTopo1;
+    Handle(TNaming_NamedShape) anAttTopo2;
+    Handle(TDataStd_Integer) anAttInteger1;
+    Handle(TDataStd_Integer) anAttInteger2;
+    Handle(TDataStd_Real) anAttReal;
+    Handle(TDataStd_IntegerArray) anAttIntegerArrayR;
+    Handle(TDataStd_RealArray) anAttRealArrayP;
+    Handle(TDataStd_RealArray) anAttRealArrayR;
+    Handle(TDataStd_RealArray) anAttRealArrayT;
+
+    if(i == 1 && L.FindAttribute(TDataStd_Integer::GetID(), anAttInteger1)) {
+      if(anAttInteger1->Get() != 2) {
+	returnContact = *Contact;
+	return false;
       }
-      if(i == 2 && L.FindAttribute(TNaming_NamedShape::GetID(), anAttTopo1)) {
-	Contact->Shape1(TNaming_Tool::GetShape(anAttTopo1));
-      }
-      if(i == 3 && L.FindAttribute(TNaming_NamedShape::GetID(), anAttTopo2)) {
-	Contact->Shape2(TNaming_Tool::GetShape(anAttTopo2));
-      }
-      if(i == 4 && L.FindAttribute(TDataStd_RealArray::GetID(), anAttRealArrayP)) {
-	gp_Pnt Center(anAttRealArrayP->Value(1), anAttRealArrayP->Value(2), anAttRealArrayP->Value(3));
-	gp_Dir aDirX(anAttRealArrayP->Value(4), anAttRealArrayP->Value(5), anAttRealArrayP->Value(6));
-	gp_Dir aDirY(anAttRealArrayP->Value(7), anAttRealArrayP->Value(8), anAttRealArrayP->Value(9));
-	gp_Dir aDirZ(anAttRealArrayP->Value(10), anAttRealArrayP->Value(11), anAttRealArrayP->Value(12));
-	Contact->Position().Origin(Center);
-	Contact->Position().DirX(aDirX);
-	Contact->Position().DirY(aDirY);
-	Contact->Position().DirZ(aDirZ);
-      }
-      if(i == 5 && L.FindAttribute(TDataStd_IntegerArray::GetID(), anAttIntegerArrayR)) {
-	Contact->Rotation().Rot1(anAttIntegerArrayR->Value(1));
-	Contact->Rotation().Rot2(anAttIntegerArrayR->Value(2));
-	Contact->Rotation().Rot3(anAttIntegerArrayR->Value(3));
-      }
-      if(i == 6 && L.FindAttribute(TDataStd_RealArray::GetID(), anAttRealArrayR)) {
-	Contact->Rotation().ValX(anAttRealArrayR->Value(1));
-	Contact->Rotation().ValY(anAttRealArrayR->Value(2));
-	Contact->Rotation().ValZ(anAttRealArrayR->Value(3));
-      }
-      if(i == 7 && L.FindAttribute(TDataStd_RealArray::GetID(), anAttRealArrayT)) {
-	Contact->Translation().ValX(anAttRealArrayT->Value(1));
-	Contact->Translation().ValY(anAttRealArrayT->Value(2));
-	Contact->Translation().ValZ(anAttRealArrayT->Value(3));
-      }
-      if(i == 8 && L.FindAttribute(TDataStd_Real::GetID(), anAttReal)) {
-	Contact->Step(anAttReal->Get());
-      }
-      i++;
     }
-    returnContact = *Contact;
-    return true;
+    if(i == 2 && L.FindAttribute(TDataStd_Integer::GetID(), anAttInteger2)) {
+      Contact->Type(anAttInteger2->Get());
+    }
+    if(i == 3 && L.FindAttribute(TNaming_NamedShape::GetID(), anAttTopo1)) {
+      Contact->Shape1(TNaming_Tool::GetShape(anAttTopo1));
+    }
+    if(i == 4 && L.FindAttribute(TNaming_NamedShape::GetID(), anAttTopo2)) {
+      Contact->Shape2(TNaming_Tool::GetShape(anAttTopo2));
+    }
+    if(i == 5 && L.FindAttribute(TDataStd_RealArray::GetID(), anAttRealArrayP)) {
+      gp_Pnt Center(anAttRealArrayP->Value(1), anAttRealArrayP->Value(2), anAttRealArrayP->Value(3));
+      gp_Dir aDirX(anAttRealArrayP->Value(4), anAttRealArrayP->Value(5), anAttRealArrayP->Value(6));
+      gp_Dir aDirY(anAttRealArrayP->Value(7), anAttRealArrayP->Value(8), anAttRealArrayP->Value(9));
+      gp_Dir aDirZ(anAttRealArrayP->Value(10), anAttRealArrayP->Value(11), anAttRealArrayP->Value(12));
+      Contact->Position().Origin(Center);
+      Contact->Position().DirX(aDirX);
+      Contact->Position().DirY(aDirY);
+      Contact->Position().DirZ(aDirZ);
+    }
+    if(i == 6 && L.FindAttribute(TDataStd_IntegerArray::GetID(), anAttIntegerArrayR)) {
+      Contact->Rotation().Rot1(anAttIntegerArrayR->Value(1));
+      Contact->Rotation().Rot2(anAttIntegerArrayR->Value(2));
+      Contact->Rotation().Rot3(anAttIntegerArrayR->Value(3));
+    }
+    if(i == 7 && L.FindAttribute(TDataStd_RealArray::GetID(), anAttRealArrayR)) {
+      Contact->Rotation().ValX(anAttRealArrayR->Value(1));
+      Contact->Rotation().ValY(anAttRealArrayR->Value(2));
+      Contact->Rotation().ValZ(anAttRealArrayR->Value(3));
+    }
+    if(i == 8 && L.FindAttribute(TDataStd_RealArray::GetID(), anAttRealArrayT)) {
+      Contact->Translation().ValX(anAttRealArrayT->Value(1));
+      Contact->Translation().ValY(anAttRealArrayT->Value(2));
+      Contact->Translation().ValZ(anAttRealArrayT->Value(3));
+    }
+    if(i == 9 && L.FindAttribute(TDataStd_Real::GetID(), anAttReal)) {
+      Contact->Step(anAttReal->Get());
+    }
+    i++;
   }
+  returnContact = *Contact;
+  return true;
+}
+
+
+//=======================================================================
+// function : GetAnimation()
+// purpose  : 
+//=======================================================================
+Standard_Boolean GEOMDS_Commands::GetAnimation(const TDF_Label& aLabel,
+					       Kinematic_Animation& returnAnim)
+{
+  Kinematic_Animation* Anim = new Kinematic_Animation();
+
+  TDF_ChildIterator it;
+  int i = 1;
+  for(it.Initialize(aLabel, Standard_False); it.More(); it.Next()) {
+    TDF_Label L = it.Value();
+    Handle(TNaming_NamedShape) anAttTopo;
+    Handle(TDataStd_Real) anAttReal;
+    Handle(TDataStd_Integer) anAttInteger;
+    Handle(TDataStd_Integer) anAttInteger1;
+    Handle(TDataStd_Integer) anAttInteger2;
+
+    if(i == 1 && L.FindAttribute(TDataStd_Integer::GetID(), anAttInteger)) {
+      if(anAttInteger->Get() != 3) {
+	returnAnim = *Anim;
+	return false;
+      }
+    }
+    if(i == 2) {
+      Kinematic_Assembly aAss;
+      Standard_Boolean test = GetAssembly(L, aAss);
+      Anim->Assembly(aAss);
+    }
+    if(i == 3 && L.FindAttribute(TNaming_NamedShape::GetID(), anAttTopo)) {
+      Anim->Frame(TNaming_Tool::GetShape(anAttTopo));
+    }
+    if(i == 4 && L.FindAttribute(TDataStd_Real::GetID(), anAttReal)) {
+      Anim->Duration(anAttReal->Get());
+    }
+    if(i == 5 && L.FindAttribute(TDataStd_Integer::GetID(), anAttInteger1)) {
+      Anim->NbSeq(anAttInteger1->Get());
+    }
+    if(i == 6 && L.FindAttribute(TDataStd_Integer::GetID(), anAttInteger2)) {
+      Anim->IsInLoop(anAttInteger2->Get());
+    }
+    i++;
+  }
+  returnAnim = *Anim;
+  return true;
+}
+
+
+//=======================================================================
+// function : SetPosition()
+// purpose  : 
+//=======================================================================
+void GEOMDS_Commands::SetPosition(const TDF_Label& aLabel,
+				  double P0x, double P0y, double P0z,
+				  double VXx, double VXy, double VXz,
+				  double VYx, double VYy, double VYz,
+				  double VZx, double VZy, double VZz)
+{
+  TDF_ChildIterator it;
+  int i = 1;
+  for(it.Initialize(aLabel, Standard_False); it.More(); it.Next()) {
+    TDF_Label L = it.Value();
+    Handle(TDataStd_RealArray) anAttRealArrayP;
+
+    if(i == 5 && L.FindAttribute(TDataStd_RealArray::GetID(), anAttRealArrayP)) {
+      anAttRealArrayP->SetValue(1, P0x);
+      anAttRealArrayP->SetValue(2, P0y);
+      anAttRealArrayP->SetValue(3, P0z);
+      anAttRealArrayP->SetValue(4, VXx);
+      anAttRealArrayP->SetValue(5, VXy);
+      anAttRealArrayP->SetValue(6, VXz);
+      anAttRealArrayP->SetValue(7, VYx);
+      anAttRealArrayP->SetValue(8, VYy);
+      anAttRealArrayP->SetValue(9, VYz);
+      anAttRealArrayP->SetValue(10, VZx);
+      anAttRealArrayP->SetValue(11, VZy);
+      anAttRealArrayP->SetValue(12, VZz);
+      return;
+    }
+    i++;
+  }
+  return;
+}
+
+
+//=======================================================================
+// function : SetRotation()
+// purpose  : 
+//=======================================================================
+void GEOMDS_Commands::SetRotation(const TDF_Label& aLabel,
+				  int Rot1, int Rot2, int Rot3, 
+				  double Val1, double Val2, double Val3)
+{
+  TDF_ChildIterator it;
+  int i = 1;
+  for(it.Initialize(aLabel, Standard_False); it.More(); it.Next()) {
+    TDF_Label L = it.Value();
+    Handle(TDataStd_IntegerArray) anAttIntegerArrayR;
+    Handle(TDataStd_RealArray) anAttRealArrayR;
+
+    if(i == 6 && L.FindAttribute(TDataStd_IntegerArray::GetID(), anAttIntegerArrayR)) {
+      anAttIntegerArrayR->SetValue(1, Rot1);
+      anAttIntegerArrayR->SetValue(2, Rot2);
+      anAttIntegerArrayR->SetValue(3, Rot3);
+    }
+    if(i == 7 && L.FindAttribute(TDataStd_RealArray::GetID(), anAttRealArrayR)) {
+      anAttRealArrayR->SetValue(1, Val1);
+      anAttRealArrayR->SetValue(2, Val2);
+      anAttRealArrayR->SetValue(3, Val3);
+      return;
+    }
+    i++;
+  }
+  return;
+}
+
+
+//=======================================================================
+// function : SetTranslation()
+// purpose  : 
+//=======================================================================
+void GEOMDS_Commands::SetTranslation(const TDF_Label& aLabel, 
+				     double Val1, double Val2, double Val3)
+{
+  TDF_ChildIterator it;
+  int i = 1;
+  for(it.Initialize(aLabel, Standard_False); it.More(); it.Next()) {
+    TDF_Label L = it.Value();
+    Handle(TDataStd_RealArray) anAttRealArrayT;
+
+    if(i == 8 && L.FindAttribute(TDataStd_RealArray::GetID(), anAttRealArrayT)) {
+      anAttRealArrayT->SetValue(1, Val1);
+      anAttRealArrayT->SetValue(2, Val2);
+      anAttRealArrayT->SetValue(3, Val3);
+      return;
+    }
+    i++;
+  }
+  return;
 }

@@ -484,6 +484,8 @@ void KinematicGUI::SetPosition(GEOM::GEOM_Contact_ptr aContact, GEOM::PointStruc
     myGeomPosition->SetVX(VX);
     myGeomPosition->SetVY(VY);
     myGeomPosition->SetVZ(VZ);
+
+    myGeom->SetPosition(aContact);
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -512,6 +514,7 @@ void KinematicGUI::SetRotation(GEOM::GEOM_Contact_ptr aContact,
       double aVal1 = aStep * Val1 / 360;
       myGeomTranslation->SetTranslation(aVal1, aVal2, aVal3);
     }
+    myGeom->SetRotation(aContact);
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -542,6 +545,7 @@ void KinematicGUI::SetTranslation(GEOM::GEOM_Contact_ptr aContact,
       double aVal1 = 360 * Val1 / aStep;
       myGeomRotation->SetRotation(aRot1, aRot2, aRot3, aVal1, aVal2, aVal3);
     }
+    myGeom->SetTranslation(aContact);
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);

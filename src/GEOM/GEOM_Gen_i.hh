@@ -622,6 +622,12 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen,
 					const short NbSeq,
 					CORBA::Boolean IsInLoop) 
     throw (SALOME::SALOME_Exception) ;
+  void SetPosition(GEOM::GEOM_Contact_ptr Contact) 
+    throw (SALOME::SALOME_Exception) ;
+  void SetRotation(GEOM::GEOM_Contact_ptr Contact) 
+    throw (SALOME::SALOME_Exception) ;
+  void SetTranslation(GEOM::GEOM_Contact_ptr Contact) 
+    throw (SALOME::SALOME_Exception) ;
 
 };
 

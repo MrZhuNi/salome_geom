@@ -70,6 +70,13 @@ public:
 		 gp_Trsf& aLoc, Kinematic_Contact* aContact,
 		 double Step);
 
+  void Assembly(Kinematic_Assembly& Assembly){myAss = &Assembly;};
+  void Frame(TopoDS_Shape Frame){myFrame = Frame;};
+  void Duration(double Duration){myDuration = Duration;};
+  void NbSeq(int NbSeq){myNbSeq = NbSeq;};
+  void IsInLoop(bool IsInLoop){myIsInLoop = IsInLoop;};
+
+  Kinematic_Assembly* Assembly(){return myAss;};
   TopoDS_Shape& Frame(){return myFrame;};
   double& Duration(){return myDuration;};
   int& NbSeq(){return myNbSeq;};

@@ -55,17 +55,30 @@ GEOM_Contact_i::GEOM_Contact_i(Kinematic_Contact* Contact,
   _Shape1 = GEOM::GEOM_Shape::_duplicate(Shape1);
   _Shape2 = GEOM::GEOM_Shape::_duplicate(Shape2);
 
-  GEOM::PointStruct p0 = engine->MakePointStruct(0, 0, 0);
-  GEOM::PointStruct pX = engine->MakePointStruct(1, 0, 0);
-  GEOM::PointStruct pY = engine->MakePointStruct(0, 1, 0);
-  GEOM::PointStruct pZ = engine->MakePointStruct(0, 0, 1);
+  GEOM::PointStruct p0 = engine->MakePointStruct(Contact->Position().Origin().X(),
+						 Contact->Position().Origin().Y(),
+						 Contact->Position().Origin().Z());
+  GEOM::PointStruct pX = engine->MakePointStruct(Contact->Position().DirX().X(),
+						 Contact->Position().DirX().Y(),
+						 Contact->Position().DirX().Z());
+  GEOM::PointStruct pY = engine->MakePointStruct(Contact->Position().DirY().X(),
+						 Contact->Position().DirY().Y(),
+						 Contact->Position().DirY().Z());
+  GEOM::PointStruct pZ = engine->MakePointStruct(Contact->Position().DirZ().X(),
+						 Contact->Position().DirZ().Y(),
+						 Contact->Position().DirZ().Z());
   GEOM::DirStruct VX = engine->MakeDirection(pX);
   GEOM::DirStruct VY = engine->MakeDirection(pY);
   GEOM::DirStruct VZ = engine->MakeDirection(pZ);
   GEOM_Position_i * Position_servant = new GEOM_Position_i(p0, VX, VY, VZ);
   _Position = GEOM::GEOM_Position::_narrow(Position_servant->_this());
 
-  GEOM_Rotation_i * Rotation_servant = new GEOM_Rotation_i(1, 2, 3, 0, 0, 0);
+  GEOM_Rotation_i * Rotation_servant = new GEOM_Rotation_i(Contact->Rotation().Rot1(),
+							   Contact->Rotation().Rot2(),
+							   Contact->Rotation().Rot3(),
+							   Contact->Rotation().ValX(),
+							   Contact->Rotation().ValY(),
+							   Contact->Rotation().ValZ());
   _Rotation = GEOM::GEOM_Rotation::_narrow(Rotation_servant->_this());
   GEOM_Translation_i * Translation_servant = new GEOM_Translation_i(0, 0, 0);
   _Translation = GEOM::GEOM_Translation::_narrow(Translation_servant->_this());

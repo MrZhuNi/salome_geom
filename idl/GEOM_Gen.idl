@@ -339,6 +339,12 @@ module GEOM
 				in short NbSeq,
 				in boolean IsInLoop) raises (SALOME::SALOME_Exception) ;
 
+    void SetPosition(in GEOM_Contact Contact) raises (SALOME::SALOME_Exception) ;
+
+    void SetRotation(in GEOM_Contact Contact) raises (SALOME::SALOME_Exception) ;
+
+    void SetTranslation(in GEOM_Contact Contact) raises (SALOME::SALOME_Exception) ;
+
   };
 };
 

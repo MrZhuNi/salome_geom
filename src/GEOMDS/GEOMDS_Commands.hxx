@@ -133,11 +133,23 @@ public:
 				       const TDF_Label& mainRefLab,
 				       const TCollection_ExtendedString& Name) ;
   Standard_EXPORT TDF_Label AddAnimation(Kinematic_Animation& KAnimation,
-					const TCollection_ExtendedString& Name) ;
+					 const TDF_Label& AssLab,
+					 const TCollection_ExtendedString& Name) ;
   Standard_EXPORT Standard_Boolean GetAssembly(const TDF_Label& aLabel,
 					       Kinematic_Assembly& returnAss) ;
   Standard_EXPORT Standard_Boolean GetContact(const TDF_Label& aLabel,
 					       Kinematic_Contact& returnContact) ;
+  Standard_EXPORT Standard_Boolean GetAnimation(const TDF_Label& aLabel,
+						Kinematic_Animation& returnAnimation) ;
+  Standard_EXPORT void SetPosition(const TDF_Label& aLabel,
+				   double P0x, double P0y, double P0z,
+				   double VXx, double VXy, double VXz,
+				   double VYx, double VYy, double VYz,
+				   double VZx, double VZy, double VZz) ;
+  Standard_EXPORT void SetRotation(const TDF_Label& aLabel, int Rot1, int Rot2, int Rot3, 
+				   double Val1, double Val2, double Val3) ;
+  Standard_EXPORT void SetTranslation(const TDF_Label& aLabel, 
+				      double Val1, double Val2, double Val3) ;
 
 protected:
   
