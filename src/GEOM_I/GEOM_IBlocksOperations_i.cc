@@ -657,11 +657,8 @@ CORBA::Boolean GEOM_IBlocksOperations_i::CheckCompoundOfBlocks
     case GEOMImpl_IBlocksOperations::NOT_BLOCK:
       anError->error = GEOM::GEOM_IBlocksOperations::NOT_BLOCK;
       break;
-    case GEOMImpl_IBlocksOperations::DEGENERATED_EDGE:
-      anError->error = GEOM::GEOM_IBlocksOperations::DEGENERATED_EDGE;
-      break;
-    case GEOMImpl_IBlocksOperations::SEAM_EDGE:
-      anError->error = GEOM::GEOM_IBlocksOperations::SEAM_EDGE;
+    case GEOMImpl_IBlocksOperations::EXTRA_EDGE:
+      anError->error = GEOM::GEOM_IBlocksOperations::EXTRA_EDGE;
       break;
     case GEOMImpl_IBlocksOperations::INVALID_CONNECTION:
       anError->error = GEOM::GEOM_IBlocksOperations::INVALID_CONNECTION;
@@ -726,11 +723,8 @@ char* GEOM_IBlocksOperations_i::PrintBCErrors
     case GEOM::GEOM_IBlocksOperations::NOT_BLOCK:
       errStruct.error = GEOMImpl_IBlocksOperations::NOT_BLOCK;
       break;
-    case GEOM::GEOM_IBlocksOperations::DEGENERATED_EDGE:
-      errStruct.error = GEOMImpl_IBlocksOperations::DEGENERATED_EDGE;
-      break;
-    case GEOM::GEOM_IBlocksOperations::SEAM_EDGE:
-      errStruct.error = GEOMImpl_IBlocksOperations::SEAM_EDGE;
+    case GEOM::GEOM_IBlocksOperations::EXTRA_EDGE:
+      errStruct.error = GEOMImpl_IBlocksOperations::EXTRA_EDGE;
       break;
     case GEOM::GEOM_IBlocksOperations::INVALID_CONNECTION:
       errStruct.error = GEOMImpl_IBlocksOperations::INVALID_CONNECTION;
@@ -756,6 +750,64 @@ char* GEOM_IBlocksOperations_i::PrintBCErrors
 
   TCollection_AsciiString aDescr = GetOperations()->PrintBCErrors(aCompound, anErrors);
   return CORBA::string_dup(aDescr.ToCString());    
+}
+
+//=============================================================================
+/*!
+ *  RemoveExtraEdges
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::RemoveExtraEdges (GEOM::GEOM_Object_ptr theShape)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape == NULL) return aGEOMObject._retn();
+
+  //Get the reference Objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+
+  if (aShape.IsNull()) return aGEOMObject._retn();
+
+  //Get the result
+  Handle(GEOM_Object) anObject =
+    GetOperations()->RemoveExtraEdges(aShape);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  CheckAndImprove
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::CheckAndImprove (GEOM::GEOM_Object_ptr theCompound)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theCompound == NULL) return aGEOMObject._retn();
+
+  //Get the reference Objects
+  Handle(GEOM_Object) aCompound = GetOperations()->GetEngine()->GetObject
+    (theCompound->GetStudyID(), theCompound->GetEntry());
+
+  if (aCompound.IsNull()) return aGEOMObject._retn();
+
+  //Get the result
+  Handle(GEOM_Object) anObject =
+    GetOperations()->CheckAndImprove(aCompound);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
 }
 
 //=============================================================================

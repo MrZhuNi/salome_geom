@@ -16,6 +16,7 @@ using namespace std;
 #include "GEOMAlgo_CoupleOfShapes.hxx"
 #include "GEOMAlgo_ListOfCoupleOfShapes.hxx"
 #include "GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx"
+#include "BlockFix_CheckTool.hxx"
 
 #include "utilities.h"
 #include "OpUtil.hxx"
@@ -1662,8 +1663,7 @@ Standard_Boolean GEOMImpl_IBlocksOperations::IsCompoundOfBlocks
 void AddBlocksFrom (const TopoDS_Shape&  theShape,
                     TopTools_ListOfShape& BLO,
                     TopTools_ListOfShape& NOT,
-                    TopTools_ListOfShape& DEG,
-                    TopTools_ListOfShape& SEA)
+                    TopTools_ListOfShape& EXT)
 {
   TopAbs_ShapeEnum aType = theShape.ShapeType();
   switch (aType) {
@@ -1672,7 +1672,89 @@ void AddBlocksFrom (const TopoDS_Shape&  theShape,
     {
       TopoDS_Iterator It (theShape);
       for (; It.More(); It.Next()) {
-        AddBlocksFrom(It.Value(), BLO, NOT, DEG, SEA);
+        AddBlocksFrom(It.Value(), BLO, NOT, EXT);
+      }
+    }
+    break;
+  case TopAbs_SOLID:
+    {
+      // Check, if there are seam or degenerated edges
+      BlockFix_CheckTool aTool;
+      aTool.SetShape(theShape);
+      aTool.Perform();
+      if (aTool.NbPossibleBlocks() > 0) {
+        EXT.Append(theShape);
+      } else {
+        // Count faces and edges in each face to recognize blocks
+        TopTools_MapOfShape mapFaces;
+        Standard_Integer nbFaces = 0;
+        Standard_Boolean hasNonQuadr = Standard_False;
+        TopExp_Explorer expF (theShape, TopAbs_FACE);
+
+        for (; expF.More(); expF.Next()) {
+          if (mapFaces.Add(expF.Current())) {
+            nbFaces++;
+            if (nbFaces > 6) break;
+
+            // get wire
+            TopoDS_Shape aF = expF.Current();
+            TopExp_Explorer wires (aF, TopAbs_WIRE);
+            if (!wires.More()) {
+              // no wire in the face
+              hasNonQuadr = Standard_True;
+              break;
+            }
+            TopoDS_Shape aWire = wires.Current();
+            wires.Next();
+            if (wires.More()) {
+              // multiple wires in the face
+              hasNonQuadr = Standard_True;
+              break;
+            }
+
+            // Check number of edges in the face
+            Standard_Integer nbEdges = 0;
+            TopTools_MapOfShape mapEdges;
+            TopExp_Explorer expW (aWire, TopAbs_EDGE);
+            for (; expW.More(); expW.Next()) {
+              if (mapEdges.Add(expW.Current())) {
+                nbEdges++;
+                if (nbEdges > 4) break;
+              }
+            }
+            if (nbEdges != 4) {
+              hasNonQuadr = Standard_True;
+            }
+          }
+        }
+
+        if (nbFaces == 6 && !hasNonQuadr) {
+          BLO.Append(theShape);
+        } else {
+          NOT.Append(theShape);
+        }
+      }
+    }
+    break;
+  default:
+    NOT.Append(theShape);
+  }
+}
+
+void AddBlocksFromOld (const TopoDS_Shape&   theShape,
+                       TopTools_ListOfShape& BLO,
+                       TopTools_ListOfShape& NOT,
+                       TopTools_ListOfShape& DEG,
+                       TopTools_ListOfShape& SEA)
+{
+  TopAbs_ShapeEnum aType = theShape.ShapeType();
+  switch (aType) {
+  case TopAbs_COMPOUND:
+  case TopAbs_COMPSOLID:
+    {
+      TopoDS_Iterator It (theShape);
+      for (; It.More(); It.Next()) {
+        AddBlocksFromOld(It.Value(), BLO, NOT, DEG, SEA);
       }
     }
     break;
@@ -1999,7 +2081,7 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocksOld
   TopTools_ListOfShape DEG; // Hexahedral solids, having degenerated edges
   TopTools_ListOfShape SEA; // Hexahedral solids, having seam edges
   TopTools_ListOfShape BLO; // All blocks from the given compound
-  AddBlocksFrom(aBlockOrComp, BLO, NOT, DEG, SEA);
+  AddBlocksFromOld(aBlockOrComp, BLO, NOT, DEG, SEA);
 
   if (NOT.Extent() > 0) {
     isCompOfBlocks = Standard_False;
@@ -2012,25 +2094,21 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocksOld
     theErrors.push_back(anErr);
   }
 
-  if (DEG.Extent() > 0) {
+  if (DEG.Extent() > 0 || SEA.Extent() > 0) {
     isCompOfBlocks = Standard_False;
     BCError anErr;
-    anErr.error = DEGENERATED_EDGE;
-    TopTools_ListIteratorOfListOfShape it (DEG);
-    for (; it.More(); it.Next()) {
-      anErr.incriminated.push_back(anIndices.FindIndex(it.Value()));
-    }
-    theErrors.push_back(anErr);
-  }
+    anErr.error = EXTRA_EDGE;
 
-  if (SEA.Extent() > 0) {
-    isCompOfBlocks = Standard_False;
-    BCError anErr;
-    anErr.error = SEAM_EDGE;
-    TopTools_ListIteratorOfListOfShape it (SEA);
-    for (; it.More(); it.Next()) {
-      anErr.incriminated.push_back(anIndices.FindIndex(it.Value()));
+    TopTools_ListIteratorOfListOfShape itDEG (DEG);
+    for (; itDEG.More(); itDEG.Next()) {
+      anErr.incriminated.push_back(anIndices.FindIndex(itDEG.Value()));
     }
+
+    TopTools_ListIteratorOfListOfShape itSEA (SEA);
+    for (; itSEA.More(); itSEA.Next()) {
+      anErr.incriminated.push_back(anIndices.FindIndex(itSEA.Value()));
+    }
+
     theErrors.push_back(anErr);
   }
 
@@ -2149,11 +2227,8 @@ TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
     case NOT_BLOCK:
       aDescr += "\nNot a Blocks: ";
       break;
-    case DEGENERATED_EDGE:
-      aDescr += "\nHexahedral solids with degenerated edges: ";
-      break;
-    case SEAM_EDGE:
-      aDescr += "\nHexahedral solids with seam edges: ";
+    case EXTRA_EDGE:
+      aDescr += "\nHexahedral solids with degenerated and/or seam edges: ";
       break;
     case INVALID_CONNECTION:
       aDescr += "\nInvalid connection between two blocks: ";
@@ -2203,10 +2278,9 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
 
   // 1. Separate blocks from non-blocks
   TopTools_ListOfShape NOT; // Not blocks
-  TopTools_ListOfShape DEG; // Hexahedral solids, having degenerated edges
-  TopTools_ListOfShape SEA; // Hexahedral solids, having seam edges
+  TopTools_ListOfShape EXT; // Hexahedral solids, having degenerated and/or seam edges
   TopTools_ListOfShape BLO; // All blocks from the given compound
-  AddBlocksFrom(aBlockOrComp, BLO, NOT, DEG, SEA);
+  AddBlocksFrom(aBlockOrComp, BLO, NOT, EXT);
 
   // Report non-blocks
   if (NOT.Extent() > 0) {
@@ -2220,24 +2294,12 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
     theErrors.push_back(anErr);
   }
 
-  // Report solids, having degenerated edges
-  if (DEG.Extent() > 0) {
+  // Report solids, having degenerated and/or seam edges
+  if (EXT.Extent() > 0) {
     isCompOfBlocks = Standard_False;
     BCError anErr;
-    anErr.error = DEGENERATED_EDGE;
-    TopTools_ListIteratorOfListOfShape it (DEG);
-    for (; it.More(); it.Next()) {
-      anErr.incriminated.push_back(anIndices.FindIndex(it.Value()));
-    }
-    theErrors.push_back(anErr);
-  }
-
-  // Report solids, having seam edges
-  if (SEA.Extent() > 0) {
-    isCompOfBlocks = Standard_False;
-    BCError anErr;
-    anErr.error = SEAM_EDGE;
-    TopTools_ListIteratorOfListOfShape it (SEA);
+    anErr.error = EXTRA_EDGE;
+    TopTools_ListIteratorOfListOfShape it (EXT);
     for (; it.More(); it.Next()) {
       anErr.incriminated.push_back(anIndices.FindIndex(it.Value()));
     }
@@ -2375,6 +2437,114 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
 
   SetErrorCode(OK);
   return isCompOfBlocks;
+}
+
+//=============================================================================
+/*!
+ *  RemoveExtraEdges
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
+                                             (Handle(GEOM_Object) theObject)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be fixed
+
+  //Add a new Copy object
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+
+  //Add a function
+  Handle(GEOM_Function) aFunction =
+    aCopy->AddFunction(GEOMImpl_BlockDriver::GetID(), BLOCK_REMOVE_EXTRA);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_BlockDriver::GetID()) return NULL;
+
+  GEOMImpl_IBlockTrsf aTI (aFunction);
+  aTI.SetOriginal(aLastFunction);
+
+  //Compute the fixed shape
+  try {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Block driver failed to remove extra edges of the given shape");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
+  aDescr += anEntry + " = IBlocksOperations.RemoveExtraEdges(";
+  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
+  aDescr += anEntry + ")";
+
+  aFunction->SetDescription(aDescr);
+
+  SetErrorCode(OK);
+  return aCopy;
+}
+
+//=============================================================================
+/*!
+ *  CheckAndImprove
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::CheckAndImprove
+                                             (Handle(GEOM_Object) theObject)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be fixed
+
+  //Add a new Copy object
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+
+  //Add a function
+  Handle(GEOM_Function) aFunction =
+    aCopy->AddFunction(GEOMImpl_BlockDriver::GetID(), BLOCK_COMPOUND_IMPROVE);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_BlockDriver::GetID()) return NULL;
+
+  GEOMImpl_IBlockTrsf aTI (aFunction);
+  aTI.SetOriginal(aLastFunction);
+
+  //Compute the fixed shape
+  try {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Block driver failed to improve the given blocks compound");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
+  aDescr += anEntry + " = IBlocksOperations.CheckAndImprove(";
+  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
+  aDescr += anEntry + ")";
+
+  aFunction->SetDescription(aDescr);
+
+  SetErrorCode(OK);
+  return aCopy;
 }
 
 //=============================================================================

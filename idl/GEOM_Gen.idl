@@ -1104,11 +1104,8 @@ module GEOM
       /* Each element of the compound should be a Block */
       NOT_BLOCK,
 
-      /* An element is a potential block, but has degenerated edge(s). */
-      DEGENERATED_EDGE,
-
-      /* An element is a potential block, but has seam edge(s). */
-      SEAM_EDGE,
+      /* An element is a potential block, but has degenerated and/or seam edge(s). */
+      EXTRA_EDGE,
 
       /* A connection between two Blocks should be an entire face or an entire edge */
       INVALID_CONNECTION,
@@ -1142,6 +1139,7 @@ module GEOM
      *  - A connection between two Blocks should be an entire quadrangle face or an entire edge.
      *  - The compound should be connexe.
      *  - The glue between two quadrangle faces should be applied.
+     *    \note Single block is also accepted as a valid compound of blocks.
      *  \param theCompound The compound to check.
      *  \return TRUE, if the given shape is a compound of blocks.
      *  \return theErrors Structure, containing discovered errors and incriminated sub-shapes.
@@ -1158,6 +1156,23 @@ module GEOM
      */
     string PrintBCErrors (in GEOM_Object theCompound,
 			  in BCErrors    theErrors);
+
+    /*!
+     *  Remove all seam and degenerated edges from \a theShape.
+     *  Unite faces and edges, sharing one surface.
+     *  \param theShape The compound or single solid to remove irregular edges from.
+     *  \return Improved shape.
+     */
+    GEOM_Object RemoveExtraEdges (in GEOM_Object theShape);
+
+    /*!
+     *  Check, if the given shape is a blocks compound.
+     *  Fix all detected errors.
+     *    \note Single block can be also fixed by this method.
+     *  \param theCompound The compound to check and improve.
+     *  \return Improved compound.
+     */
+    GEOM_Object CheckAndImprove (in GEOM_Object theCompound);
 
     /*!
      *  Get all the blocks, contained in the given compound.

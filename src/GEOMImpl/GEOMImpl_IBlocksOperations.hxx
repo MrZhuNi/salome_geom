@@ -85,8 +85,7 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
 
   enum BCErrorType {
     NOT_BLOCK,
-    DEGENERATED_EDGE,
-    SEAM_EDGE,
+    EXTRA_EDGE,
     INVALID_CONNECTION,
     NOT_CONNECTED,
     NOT_GLUED
@@ -105,6 +104,10 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
 
   TCollection_AsciiString PrintBCErrors (Handle(GEOM_Object)  theCompound,
                                          const list<BCError>& theErrors);
+
+  Handle(GEOM_Object) RemoveExtraEdges (Handle(GEOM_Object) theShape);
+
+  Handle(GEOM_Object) CheckAndImprove (Handle(GEOM_Object) theCompound);
 
   // Extract blocks from blocks compounds
   Handle(TColStd_HSequenceOfTransient) ExplodeCompoundOfBlocks
