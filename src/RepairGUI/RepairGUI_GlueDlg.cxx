@@ -411,6 +411,7 @@ bool RepairGUI_GlueDlg::onAcceptLocal( const bool publish, const bool useTransac
         // JFA 28.12.2004 BEGIN // To enable warnings
         if ( !getOperation()->_is_nil() ) {
           if ( !getOperation()->IsDone() ) {
+            wc.stop();
             QString msgw = QObject::tr( getOperation()->GetErrorCode() );
             QAD_MessageBox::warn1(QAD_Application::getDesktop(), 
                                   QObject::tr( "WRN_WARNING" ), 
