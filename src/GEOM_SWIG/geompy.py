@@ -733,6 +733,30 @@ def MakeCompound(theShapes):
       print "MakeCompound : ", ShapesOp.GetErrorCode()
     return anObj
 
+#     *  Gives quantity of faces in the given shape.
+#     *  \param theShape Shape to count faces of.
+#     *  \return Quantity of faces.
+#
+#     *  Example: see ???
+#
+def NumberOfFaces(theShape):
+    nb_faces = ShapesOp.NumberOfFaces(theShape)
+    if ShapesOp.IsDone() == 0:
+      print "NumberOfFaces : ", ShapesOp.GetErrorCode()
+    return nb_faces
+
+#     *  Gives quantity of edges in the given shape.
+#     *  \param theShape Shape to count edges of.
+#     *  \return Quantity of edges.
+#
+#     *  Example: see ???
+#
+def NumberOfEdges(theShape):
+    nb_edges = ShapesOp.NumberOfEdges(theShape)
+    if ShapesOp.IsDone() == 0:
+      print "NumberOfEdges : ", ShapesOp.GetErrorCode()
+    return nb_edges
+
 #     *  Reverses an orientation the given shape.
 #     *  \param theShape Shape to be reversed.
 #     *  \return The reversed copy of theShape.
@@ -752,6 +776,95 @@ def ChangeOrientation(theShape):
 def OrientationChange(theShape):
     anObj = ChangeOrientation(theShape)
     return anObj
+
+#     *  Retrieve all free faces from the given shape.
+#     *  Free face is a face, which is not shared between two shells of the shape.
+#     *  \param theShape Shape to find free faces in.
+#     *  \return List of IDs of all free faces, contained in theShape.
+#
+#     *  Example: see ???
+#
+def GetFreeFacesIDs(theShape):
+    anIDs = ShapesOp.GetFreeFacesIDs(theShape)
+    if ShapesOp.IsDone() == 0:
+      print "GetFreeFacesIDs : ", ShapesOp.GetErrorCode()
+    return anIDs
+
+#     *  Get all sub-shapes of theShape1 of the given type, shared with theShape2.
+#     *  \param theShape1 Shape to find sub-shapes in.
+#     *  \param theShape2 Shape to find shared sub-shapes with.
+#     *  \param theShapeType Type of sub-shapes to be retrieved.
+#     *  \return List of sub-shapes of theShape1, shared with theShape2.
+#
+#     *  Example: see ???
+#
+def GetSharedShapes(theShape1, theShape2, theShapeType):
+    anObj = ShapesOp.GetSharedShapes(theShape1, theShape2, theShapeType)
+    if ShapesOp.IsDone() == 0:
+      print "GetSharedShapes : ", ShapesOp.GetErrorCode()
+    return anObj
+
+#     *  Get sub-shapes of theShape of the given type,
+#     *  laying on the specified plane.
+#     *  \param theShape Shape to find sub-shapes of.
+#     *  \param theShapeType Type of sub-shapes to be retrieved.
+#     *  \param thePlane Face, specifying the plane to find shapes on.
+#     *  \return Group of all found sub-shapes.
+#
+#     *  Example: see ???
+#
+#def GetShapesOnPlane(theShape, theShapeType, thePlane):
+#    anObj = ShapesOp.GetShapesOnPlane(theShape, theShapeType, thePlane)
+#    if ShapesOp.IsDone() == 0:
+#      print "GetShapesOnPlane : ", ShapesOp.GetErrorCode()
+#    return anObj
+
+#     *  Get sub-shape of theShape of the given type,
+#     *  laying on the specified cylinder.
+#     *  \param theShape Shape to find sub-shapes of.
+#     *  \param theShapeType Type of sub-shapes to be retrieved.
+#     *  \param theAxis Vector (or line, or linear edge), specifying
+#     *                 axis of the cylinder to find shapes on.
+#     *  \param theRadius Radius of the cylinder to find shapes on.
+#     *  \return Group of all found sub-shapes.
+#
+#     *  Example: see ???
+#
+#def GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius):
+#    anObj = ShapesOp.GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius)
+#    if ShapesOp.IsDone() == 0:
+#      print "GetShapesOnCylinder : ", ShapesOp.GetErrorCode()
+#    return anObj
+
+#     *  Get sub-shape of theShape of the given type,
+#     *  laying on the specified sphere.
+#     *  \param theShape Shape to find sub-shapes of.
+#     *  \param theShapeType Type of sub-shapes to be retrieved.
+#     *  \param theCenter Point, specifying center of the sphere to find shapes on.
+#     *  \param theRadius Radius of the sphere to find shapes on.
+#     *  \return Group of all found sub-shapes.
+#
+#     *  Example: see ???
+#
+#def GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius):
+#    anObj = ShapesOp.GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius)
+#    if ShapesOp.IsDone() == 0:
+#      print "GetShapesOnSphere : ", ShapesOp.GetErrorCode()
+#    return anObj
+
+#     *  Get sub-shape(s) of theShapeWhere, which are
+#     *  coincident with \a theShapeWhat or could be a part of it.
+#     *  \param theShapeWhere Shape to find sub-shapes of.
+#     *  \param theShapeWhat Shape, specifying what to find.
+#     *  \return Group of all found sub-shapes or a single found sub-shape.
+#
+#     *  Example: see ???
+#
+#def GetInPlace(theShapeWhere, theShapeWhat):
+#    anObj = ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
+#    if ShapesOp.IsDone() == 0:
+#      print "GetInPlace : ", ShapesOp.GetErrorCode()
+#    return anObj
 
 # -----------------------------------------------------------------------------
 # Access to sub-shapes by their unique IDs inside the main shape.
@@ -1106,6 +1219,19 @@ def Partition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                           Limit, RemoveWebs, ListMaterials);
     return anObj
 
+#     *  Perform partition of the Shape with the Plane
+#     *  \param theShape Shape to be intersected.
+#     *  \param thePlane Tool shape, to intersect theShape.
+#     *  \return New GEOM_Object, containing the result shape.
+#
+#     *  Example: see ???
+#
+def MakeHalfPartition(theShape):
+    anObj = BoolOp.MakeHalfPartition(theShape)
+    if BoolOp.IsDone() == 0:
+      print "MakeHalfPartition : ", BoolOp.GetErrorCode()
+    return anObj
+
 # -----------------------------------------------------------------------------
 # Transform objects
 # -----------------------------------------------------------------------------
@@ -1137,6 +1263,20 @@ def MakeTranslation(theObject, theDX, theDY, theDZ):
     anObj = TrsfOp.TranslateDXDYDZCopy(theObject, theDX, theDY, theDZ)
     if TrsfOp.IsDone() == 0:
       print "TranslateDXDYDZCopy : ", TrsfOp.GetErrorCode()
+    return anObj
+
+#     *  Translate the given object along the given vector,
+#     *  creating its copy before the translation.
+#     *  \param theObject The object to be translated.
+#     *  \param theVector The translation vector.
+#     *  \return New GEOM_Object, containing the translated object.
+#
+#     *  Example: see ???
+#
+def MakeTranslationVector(theObject, theVector):
+    anObj = TrsfOp.TranslateVectorCopy(theObject, theVector)
+    if TrsfOp.IsDone() == 0:
+      print "TranslateVectorCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
 #     *  Rotate the given object around the given axis
@@ -1180,6 +1320,34 @@ def MakeMirrorByPlane(theObject, thePlane):
     anObj = TrsfOp.MirrorPlaneCopy(theObject, thePlane)
     if TrsfOp.IsDone() == 0:
       print "MirrorPlaneCopy : ", TrsfOp.GetErrorCode()
+    return anObj
+
+#     *  Create an object, symmetrical
+#     *  to the given one relatively the given axis.
+#     *  \param theObject The object to be mirrored.
+#     *  \param theAxis Axis of symmetry.
+#     *  \return New GEOM_Object, containing the mirrored shape.
+#
+#     *  Example: see ???
+#
+def MakeMirrorByAxis(theObject, theAxis):
+    anObj = TrsfOp.MirrorAxisCopy(theObject, theAxis)
+    if TrsfOp.IsDone() == 0:
+      print "MirrorAxisCopy : ", TrsfOp.GetErrorCode()
+    return anObj
+
+#     *  Create an object, symmetrical
+#     *  to the given one relatively the given point.
+#     *  \param theObject The object to be mirrored.
+#     *  \param thePoint Point of symmetry.
+#     *  \return New GEOM_Object, containing the mirrored shape.
+#
+#     *  Example: see ???
+#
+def MakeMirrorByPoint(theObject, thePoint):
+    anObj = TrsfOp.MirrorPointCopy(theObject, thePoint)
+    if TrsfOp.IsDone() == 0:
+      print "MirrorPointCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
 #     *  Modify the Location of the given object by LCS
@@ -1378,7 +1546,7 @@ def MakeChamferEdge(theShape, theD1, theD2, theFace1, theFace2):
 #     *               will be get along face, which is nearer to \a theFaces beginning.
 #     *  \param theD2 Chamfer size along another of two faces, connected to the edge.
 #     *  \param theFaces Sequence of global indices of faces of \a theShape.
-#     *    \note Global index of sub-shape can be obtained, using method geompy.GetSubShapeIndex().
+#     *    \note Global index of sub-shape can be obtained, using method geompy.GetSubShapeID().
 #     *  \return New GEOM_Object, containing the result shape.
 #
 #     *  Example: see GEOM_TestAll.py
@@ -1672,6 +1840,203 @@ def MakeHexa2Faces(F1, F2):
       print "MakeHexa2Faces : ", BlocksOp.GetErrorCode()
     return anObj
 
+#     *  Get a vertex, found in the given shape by its coordinates.
+#     *  \param theShape Block or a compound of blocks.
+#     *  \param theX,theY,theZ Coordinates of the sought vertex.
+#     *  \param theEpsilon Maximum allowed distance between the resulting
+#     *                    vertex and point with the given coordinates.
+#     *  \return New GEOM_Object, containing the found vertex.
+#
+#     *  Example: see ???
+#
+def GetPoint(theShape, theX, theY, theZ, theEpsilon):
+    anObj = BlocksOp.GetPoint(theShape, theX, theY, theZ, theEpsilon)
+    if BlocksOp.IsDone() == 0:
+      print "GetPoint : ", BlocksOp.GetErrorCode()
+    return anObj
+
+#     *  Get an edge, found in the given shape by two given vertices.
+#     *  \param theShape Block or a compound of blocks.
+#     *  \param thePoint1,thePoint2 Points, close to the ends of the desired edge.
+#     *  \return New GEOM_Object, containing the found edge.
+#
+#     *  Example: see ???
+#
+def GetEdge(theShape, thePoint1, thePoint2):
+    anObj = BlocksOp.GetEdge(theShape, thePoint1, thePoint2)
+    if BlocksOp.IsDone() == 0:
+      print "GetEdge : ", BlocksOp.GetErrorCode()
+    return anObj
+
+#     *  Find an edge of the given shape, which has minimal distance to the given point.
+#     *  \param theShape Block or a compound of blocks.
+#     *  \param thePoint Point, close to the desired edge.
+#     *  \return New GEOM_Object, containing the found edge.
+#
+#     *  Example: see ???
+#
+def GetEdgeNearPoint(theShape, thePoint):
+    anObj = BlocksOp.GetEdgeNearPoint(theShape, thePoint)
+    if BlocksOp.IsDone() == 0:
+      print "GetEdgeNearPoint : ", BlocksOp.GetErrorCode()
+    return anObj
+
+#     *  Returns a face, found in the given shape by four given corner vertices.
+#     *  \param theShape Block or a compound of blocks.
+#     *  \param thePoint1-thePoint4 Points, close to the corners of the desired face.
+#     *  \return New GEOM_Object, containing the found face.
+#
+#     *  Example: see ???
+#
+def GetFaceByPoints(theShape, thePoint1, thePoint2, thePoint3, thePoint4):
+    anObj = BlocksOp.GetFaceByPoints(theShape, thePoint1, thePoint2, thePoint3, thePoint4)
+    if BlocksOp.IsDone() == 0:
+      print "GetFaceByPoints : ", BlocksOp.GetErrorCode()
+    return anObj
+
+#     *  Get a face of block, found in the given shape by two given edges.
+#     *  \param theShape Block or a compound of blocks.
+#     *  \param theEdge1,theEdge2 Edges, close to the edges of the desired face.
+#     *  \return New GEOM_Object, containing the found face.
+#
+#     *  Example: see ???
+#
+def GetFaceByEdges(theShape, theEdge1, theEdge2):
+    anObj = BlocksOp.GetFaceByEdges(theShape, theEdge1, theEdge2)
+    if BlocksOp.IsDone() == 0:
+      print "GetFaceByEdges : ", BlocksOp.GetErrorCode()
+    return anObj
+
+#     *  Find a face, opposite to the given one in the given block.
+#     *  \param theBlock Must be a hexahedral solid.
+#     *  \param theFace Face of \a theBlock, opposite to the desired face.
+#     *  \return New GEOM_Object, containing the found face.
+#
+#     *  Example: see ???
+#
+def GetOppositeFace(theBlock, theFace):
+    anObj = BlocksOp.GetOppositeFace(theBlock, theFace)
+    if BlocksOp.IsDone() == 0:
+      print "GetOppositeFace : ", BlocksOp.GetErrorCode()
+    return anObj
+
+#     *  Find a face of the given shape, which has minimal distance to the given point.
+#     *  \param theShape Block or a compound of blocks.
+#     *  \param thePoint Point, close to the desired face.
+#     *  \return New GEOM_Object, containing the found face.
+#
+#     *  Example: see ???
+#
+def GetFaceNearPoint(theShape, thePoint):
+    anObj = BlocksOp.GetFaceNearPoint(theShape, thePoint)
+    if BlocksOp.IsDone() == 0:
+      print "GetFaceNearPoint : ", BlocksOp.GetErrorCode()
+    return anObj
+
+#     *  Find a face of block, whose outside normale has minimal angle with the given vector.
+#     *  \param theShape Block or a compound of blocks.
+#     *  \param theVector Vector, close to the normale of the desired face.
+#     *  \return New GEOM_Object, containing the found face.
+#
+#     *  Example: see ???
+#
+def GetFaceByNormale(theBlock, theVector):
+    anObj = BlocksOp.GetFaceByNormale(theBlock, theVector)
+    if BlocksOp.IsDone() == 0:
+      print "GetFaceByNormale : ", BlocksOp.GetErrorCode()
+    return anObj
+
+#     *  Check, if the compound of blocks is given.
+#     *  To be considered as a compound of blocks, the
+#     *  given shape must satisfy the following conditions:
+#     *  - Each element of the compound should be a Block (6 faces and 12 edges).
+#     *  - A connection between two Blocks should be an entire quadrangle face or an entire edge.
+#     *  - The compound should be connexe.
+#     *  - The glue between two quadrangle faces should be applied.
+#     *  \param theCompound The compound to check.
+#     *  \return TRUE, if the given shape is a compound of blocks.
+#     *  If theCompound is not valid, prints all discovered errors.
+#
+#     *  Example: see GEOM_TestOthers.py
+#
+def CheckCompoundOfBlocks(theCompound):
+    (IsValid, BCErrors) = BlocksOp.CheckCompoundOfBlocks(theCompound)
+    if BlocksOp.IsDone() == 0:
+      print "CheckCompoundOfBlocks : ", BlocksOp.GetErrorCode()
+    else:
+      if IsValid == 0:
+        Descr = BlocksOp.PrintBCErrors(theCompound, BCErrors)
+        print Descr
+    return IsValid
+
+#     *  Remove all seam and degenerated edges from \a theShape.
+#     *  Unite faces and edges, sharing one surface.
+#     *  \param theShape The compound or single solid to remove irregular edges from.
+#     *  \return Improved shape.
+#
+#     *  Example: see ???
+#
+def RemoveExtraEdges(theShape):
+    anObj = BlocksOp.RemoveExtraEdges(theShape)
+    if BlocksOp.IsDone() == 0:
+      print "RemoveExtraEdges : ", BlocksOp.GetErrorCode()
+    return anObj
+
+#     *  Check, if the given shape is a blocks compound.
+#     *  Fix all detected errors.
+#     *    \note Single block can be also fixed by this method.
+#     *  \param theCompound The compound to check and improve.
+#     *  \return Improved compound.
+#
+#     *  Example: see ???
+#
+def CheckAndImprove(theShape):
+    anObj = BlocksOp.CheckAndImprove(theShape)
+    if BlocksOp.IsDone() == 0:
+      print "CheckAndImprove : ", BlocksOp.GetErrorCode()
+    return anObj
+
+#     *  Get all the blocks, contained in the given compound.
+#     *  \param theCompound The compound to explode.
+#     *  \param theMinNbFaces If solid has lower number of faces, it is not a block.
+#     *  \param theMaxNbFaces If solid has higher number of faces, it is not a block.
+#     *    \note If theMaxNbFaces = 0, the maximum number of faces is not restricted.
+#     *  \return List of GEOM_Objects, containing the retrieved blocks.
+#
+#     *  Example: see GEOM_TestOthers.py
+#
+def MakeBlockExplode(theCompound, theMinNbFaces, theMaxNbFaces):
+    aList = BlocksOp.ExplodeCompoundOfBlocks(theCompound, theMinNbFaces, theMaxNbFaces)
+    if BlocksOp.IsDone() == 0:
+      print "MakeBlockExplode : ", BlocksOp.GetErrorCode()
+    return aList
+
+#     *  Find block, containing all the elements, passed as the parts, or maximum quantity of them.
+#     *  \param theCompound Compound, to find block in.
+#     *  \param theParts List of faces and/or edges and/or vertices to be parts of the found block.
+#     *  \return New GEOM_Object, containing the found block.
+#
+#     *  Example: see ???
+#
+def GetBlockByParts(theCompound, theParts):
+    anObj = BlocksOp.GetBlockByParts(theCompound, theParts)
+    if BlocksOp.IsDone() == 0:
+      print "GetBlockByParts : ", BlocksOp.GetErrorCode()
+    return anObj
+
+#     *  Return all blocks, containing all the elements, passed as the parts.
+#     *  \param theCompound Compound, to find blocks in.
+#     *  \param theParts List of faces and/or edges and/or vertices to be parts of the found blocks.
+#     *  \return List of GEOM_Objects, containing the found blocks.
+#
+#     *  Example: see ???
+#
+def GetBlocksByParts(theCompound, theParts):
+    anObj = BlocksOp.GetBlocksByParts(theCompound, theParts)
+    if BlocksOp.IsDone() == 0:
+      print "GetBlocksByParts : ", BlocksOp.GetErrorCode()
+    return anObj
+
 #     *  Multi-transformate block and glue the result.
 #     *  Transformation is defined so, as to superpose direction faces.
 #     *  \param Block Hexahedral solid to be multi-transformed.
@@ -1706,43 +2071,20 @@ def MakeMultiTransformation2D(Block, DirFace1U, DirFace2U, NbTimesU,
       print "MakeMultiTransformation2D : ", BlocksOp.GetErrorCode()
     return anObj
 
-#     *  Get all the blocks, contained in the given compound.
-#     *  \param theCompound The compound to explode.
-#     *  \param theMinNbFaces If solid has lower number of faces, it is not a block.
-#     *  \param theMaxNbFaces If solid has higher number of faces, it is not a block.
-#     *    \note If theMaxNbFaces = 0, the maximum number of faces is not restricted.
-#     *  \return List of GEOM_Objects, containing the retrieved blocks.
+#     *  Build all possible propagation groups.
+#     *  Propagation group is a set of all edges, opposite to one (main)
+#     *  edge of this group directly or through other opposite edges.
+#     *  Notion of Opposite Edge make sence only on quadrangle face.
+#     *  \param theShape Shape to build propagation groups on.
+#     *  \return List of GEOM_Objects, each of them is a propagation group.
 #
-#     *  Example: see GEOM_TestOthers.py
+#     *  Example: see ???
 #
-def MakeBlockExplode(theCompound, theMinNbFaces, theMaxNbFaces):
-    aList = BlocksOp.ExplodeCompoundOfBlocks(theCompound, theMinNbFaces, theMaxNbFaces)
+def Propagate(theShape):
+    anObj = BlocksOp.Propagate(theShape)
     if BlocksOp.IsDone() == 0:
-      print "MakeBlockExplode : ", BlocksOp.GetErrorCode()
-    return aList
-
-#     *  Check, if the compound of blocks is given.
-#     *  To be considered as a compound of blocks, the
-#     *  given shape must satisfy the following conditions:
-#     *  - Each element of the compound should be a Block (6 faces and 12 edges).
-#     *  - A connection between two Blocks should be an entire quadrangle face or an entire edge.
-#     *  - The compound should be connexe.
-#     *  - The glue between two quadrangle faces should be applied.
-#     *  \param theCompound The compound to check.
-#     *  \return TRUE, if the given shape is a compound of blocks.
-#     *  If theCompound is not valid, prints all discovered errors.
-#
-#     *  Example: see GEOM_TestOthers.py
-#
-def CheckCompoundOfBlocks(theCompound):
-    (IsValid, BCErrors) = BlocksOp.CheckCompoundOfBlocks(theCompound)
-    if BlocksOp.IsDone() == 0:
-      print "CheckCompoundOfBlocks : ", BlocksOp.GetErrorCode()
-    else:
-      if IsValid == 0:
-        Descr = BlocksOp.PrintBCErrors(theCompound, BCErrors)
-        print Descr
-    return IsValid
+      print "Propagate : ", BlocksOp.GetErrorCode()
+    return anObj
 
 # -----------------------------------------------------------------------------
 # Group operations
@@ -1795,6 +2137,29 @@ def GetObjectIDs(theGroup):
     if GroupOp.IsDone() == 0:
       print "GetObjectIDs : ", GroupOp.GetErrorCode()
     return ListIDs
+
+#     *  Returns a type of sub objects stored in the group
+#     *  \param theGroup is a GEOM group which type is returned.
+#
+#     *  Example: see ???
+#
+def GetType(theGroup):
+    aType = GroupOp.GetType(theGroup)
+    if GroupOp.IsDone() == 0:
+      print "GetType : ", GroupOp.GetErrorCode()
+    return aType
+
+#     *  Returns a main shape associated with the group
+#     *  \param theGroup is a GEOM group for which a main shape object is requested
+#     *  \return a GEOM object which is a main shape for theGroup
+#
+#     *  Example: see ???
+#
+def GetMainShape(theGroup):
+    anObj = GroupOp.GetMainShape(theGroup)
+    if GroupOp.IsDone() == 0:
+      print "GetMainShape : ", GroupOp.GetErrorCode()
+    return anObj
 
 # Add Path to the system path
 #
