@@ -30,6 +30,11 @@
 #include <TColStd_MapOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 
+#include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
+
+#include <map>
+#include <string>
+
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 static GEOM_Engine* TheEngine = NULL;
@@ -379,13 +384,33 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     }
   }
 
-  aScript += "\n\tpass\n";
-  aValidScript = true;
+  Resource_DataMapOfAsciiStringAsciiString aEntry2StEntry, aStEntry2Entry;
+  Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString anEntryToNameIt;
+  if ( isPublished )
+  {
+    // build maps entry <-> studyEntry
+    for (anEntryToNameIt.Initialize( theObjectNames );
+         anEntryToNameIt.More();
+         anEntryToNameIt.Next())
+    {
+      const TCollection_AsciiString& aEntry = anEntryToNameIt.Key();
+      // look for an object by entry
+      TDF_Label L;
+      TDF_Tool::Label( aDoc->GetData(), aEntry, L );
+      if ( L.IsNull() ) continue;
+      Handle(GEOM_Object) obj = GEOM_Object::GetObject( L );
+      // fill maps
+      if ( !obj.IsNull() ) {
+        TCollection_AsciiString aStudyEntry (obj->GetAuxData());
+        aEntry2StEntry.Bind( aEntry,  aStudyEntry);
+        aStEntry2Entry.Bind( aStudyEntry, aEntry );
+      }
+    }
+  }
 
-  
   Handle(TColStd_HSequenceOfInteger) aSeq = FindEntries(aScript);
   Standard_Integer aLen = aSeq->Length(), objectCounter = 0, aStart = 1, aScriptLength = aScript.Length();
-  Resource_DataMapOfAsciiStringAsciiString aNames;
+  Resource_DataMapOfAsciiStringAsciiString aNameToEntry;
 
   //Replace entries by the names
   TCollection_AsciiString anUpdatedScript, anEntry, aName, aBaseName("geomObj_");
@@ -396,13 +421,13 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     anEntry = aScript.SubString(aSeq->Value(i), aSeq->Value(i+1));
     if(theObjectNames.IsBound(anEntry)) {
       aName = theObjectNames.Find(anEntry);
-      if ( theObjectNames.IsBound( aName ) && anEntry != theObjectNames( aName ))
+      if ( aNameToEntry.IsBound( aName ) && anEntry != aNameToEntry( aName ))
       {  // diff objects have same name - make a new name
         TCollection_AsciiString aName2;
         Standard_Integer i = 0;
         do {
           aName2 = aName + "_" + ++i;
-        } while ( theObjectNames.IsBound( aName2 ) && anEntry != theObjectNames( aName2 ));
+        } while ( aNameToEntry.IsBound( aName2 ) && anEntry != aNameToEntry( aName2 ));
         aName = aName2;
         theObjectNames( anEntry ) = aName;
       }
@@ -410,19 +435,62 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     else {
       do {
         aName = aBaseName + TCollection_AsciiString(++objectCounter);
-      } while(theObjectNames.IsBound(aName));
+      } while(aNameToEntry.IsBound(aName));
       theObjectNames.Bind(anEntry, aName);
     }
-    theObjectNames.Bind(aName, anEntry); // to detect same name of diff objects
+    aNameToEntry.Bind(aName, anEntry); // to detect same name of diff objects
 
     anUpdatedScript += aName;
-    aNames.Bind(aName, "1");
     aStart = aSeq->Value(i+1) + 1;
   }
 
   //Add final part of the script
   if(aSeq->Value(aLen) < aScriptLength)  anUpdatedScript += aScript.SubString(aSeq->Value(aLen)+1, aScriptLength);
  
+  // Make script to publish in study
+  if ( isPublished )
+  {
+    map< int, string > anEntryToCommandMap; // sort publishing commands by object entry
+    for (anEntryToNameIt.Initialize( theObjectNames );
+         anEntryToNameIt.More();
+         anEntryToNameIt.Next())
+    {
+      const TCollection_AsciiString& aEntry = anEntryToNameIt.Key();
+      const TCollection_AsciiString& aName = anEntryToNameIt.Value();
+      if ( !aEntry2StEntry.IsBound( aEntry ))
+        continue; // was not published
+      TCollection_AsciiString aCommand("\n\tgeompy."), aFatherEntry;
+      // find a father entry
+      const TCollection_AsciiString& aStudyEntry = aEntry2StEntry( aEntry );
+      TCollection_AsciiString aFatherStudyEntry =
+        aStudyEntry.SubString( 1, aStudyEntry.SearchFromEnd(":") - 1 );
+      if ( aStEntry2Entry.IsBound( aFatherStudyEntry ))
+        aFatherEntry = aStEntry2Entry( aFatherStudyEntry );
+      // make a command
+      if ( !aFatherEntry.IsEmpty() && theObjectNames.IsBound( aFatherEntry )) {
+        aCommand += "addToStudyInFather( ";
+        aCommand += theObjectNames( aFatherEntry ) + ", ";
+      }
+      else
+        aCommand += "addToStudy( ";
+      aCommand += aName + ", \"" + aName + "\" )";
+      // bind a command to the last digit of the entry
+      int tag =
+        aEntry.SubString( aEntry.SearchFromEnd(":")+1, aEntry.Length() ).IntegerValue();
+      anEntryToCommandMap.insert( make_pair( tag, aCommand.ToCString() ));
+    }
+
+    // add publishing commands to the script
+    map< int, string >::iterator anEntryToCommand = anEntryToCommandMap.begin();
+    for ( ; anEntryToCommand != anEntryToCommandMap.end(); ++anEntryToCommand ) {
+      //cout << anEntryToCommand->first << endl;
+      anUpdatedScript += (char*)anEntryToCommand->second.c_str();
+    }
+  }
+
+  anUpdatedScript += "\n\tpass\n";
+  aValidScript = true;
+  
   return anUpdatedScript;
 }
 
