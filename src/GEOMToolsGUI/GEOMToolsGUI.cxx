@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
 #include "GEOMToolsGUI.h"
 
 #include "QAD_Config.h"
@@ -60,6 +59,10 @@ using namespace std;
 
 #include "GEOMToolsGUI_NbIsosDlg.h"        // Method ISOS adjustement
 #include "GEOMToolsGUI_TransparencyDlg.h"  // Method TRANSPARENCY adjustement
+
+#include "utilities.h"
+
+using namespace std;
 
 //=======================================================================
 // function : GEOMToolsGUI()
@@ -151,7 +154,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       {
 	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
 	  break;
-
+	
 	OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
 
@@ -792,7 +795,7 @@ bool GEOMToolsGUI::Import(int aState)
 
     QString nameShape = QAD_Tools::getFileNameFromPath(file,false) +  QString("_%1").arg(myGeomGUI->myNbGeom++);
 
-    if(myGeomBase->Display(aShape, strdup(nameShape.latin1()))) {
+    if(myGeomBase->Display(aShape, (char*)nameShape.latin1())) {
       QAD_Application::getDesktop()->getActiveStudy()->setMessage( tr("GEOM_INF_LOADED").arg(QAD_Tools::getFileNameFromPath( file )) );
       QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_READY"));
     }
@@ -840,7 +843,7 @@ bool GEOMToolsGUI::Export(int aState)
 	      QApplication::setOverrideCursor( Qt::waitCursor );
 	      //      Standard_Boolean result = BRepTools::Write(Shape->Shape(), strdup(file.latin1()) );
 	      try {
-		myGeom->ExportBREP(strdup( file.latin1()), aShape);
+		myGeom->ExportBREP((char*)file.latin1(), aShape);
 	      }  
 	      catch (const SALOME::SALOME_Exception& S_ex) {
 		QtCatchCorbaException(S_ex);
@@ -867,7 +870,7 @@ bool GEOMToolsGUI::Export(int aState)
 	    if ( !file.isEmpty() && !aShape->_is_nil() ) {
 	      QApplication::setOverrideCursor( Qt::waitCursor );
 	      try {
-		myGeom->ExportIGES(strdup( file.latin1()), aShape);
+		myGeom->ExportIGES((char*)file.latin1(), aShape);
 	      }  
 	      catch (const SALOME::SALOME_Exception& S_ex) {
 		QtCatchCorbaException(S_ex);
@@ -913,7 +916,7 @@ bool GEOMToolsGUI::Export(int aState)
 
 	      QApplication::setOverrideCursor( Qt::waitCursor ) ;	
 	      try {   
-		myGeom->ExportSTEP(strdup( file.latin1()), aShape);   
+		myGeom->ExportSTEP((char*)file.latin1(), aShape);   
 	      }  
 	      catch (const SALOME::SALOME_Exception& S_ex) {
 		QtCatchCorbaException(S_ex);
@@ -939,6 +942,7 @@ bool GEOMToolsGUI::Export(int aState)
 
     }
   QApplication::restoreOverrideCursor() ;
+  return true;
 }
 
 

@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "TransformationGUI_MultiRotationDlg.h"
 
 #include <gp_Lin.hxx>
@@ -41,6 +40,10 @@ using namespace std;
 #include <Geom_Line.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include "QAD_Config.h"
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_MultiRotationDlg()

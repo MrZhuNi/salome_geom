@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "GenerationGUI_PipeDlg.h"
 
 #include <TopoDS_Edge.hxx>
@@ -37,6 +36,10 @@ using namespace std;
 #else
 #include <BRepAlgoAPI.hxx>
 #endif
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : GenerationGUI_PipeDlg()

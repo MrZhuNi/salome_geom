@@ -264,6 +264,7 @@ const char* GEOM_Swig::getShapeTypeString(const char* IOR)
   case TopAbs_SHAPE:
     { return "Shape" ;}
   }
+  return 0;
 }
 
 

@@ -26,10 +26,13 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "TransformationGUI_ScaleDlg.h"
 
 #include <BRepBuilderAPI_Transform.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_ScaleDlg()

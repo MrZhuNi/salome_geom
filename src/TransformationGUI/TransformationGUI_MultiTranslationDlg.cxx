@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "TransformationGUI_MultiTranslationDlg.h"
 
 #include <gp_Lin.hxx>
@@ -38,6 +37,10 @@ using namespace std;
 #include <GProp_GProps.hxx>
 #include <TopoDS_Compound.hxx>
 #include "QAD_Config.h"
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_MultiTranslationDlg()

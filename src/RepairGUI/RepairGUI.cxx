@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
 #include "RepairGUI.h"
 
 #include "QAD_RightFrame.h"
@@ -37,6 +36,10 @@ using namespace std;
 #include "RepairGUI_OrientationDlg.h"   // Method ORIENTATION
 #include "RepairGUI_SuppressFacesDlg.h" // Method SUPPRESS FACES
 #include "RepairGUI_SuppressHoleDlg.h"  // Method SUPPRESS HOLE
+
+#include "utilities.h"
+
+using namespace std;
 
 //=======================================================================
 // function : RepairGUI()

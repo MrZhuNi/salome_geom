@@ -26,13 +26,16 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "PrimitiveGUI_TorusDlg.h"
 
 #include <gp_Lin.hxx>
 #include <BRepPrimAPI_MakeTorus.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include "QAD_Config.h"
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : PrimitiveGUI_TorusDlg()

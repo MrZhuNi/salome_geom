@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "MeasureGUI_WhatisDlg.h"
 
 #include <TopTools_MapOfShape.hxx>
@@ -38,6 +37,10 @@ using namespace std;
 #include <qtextedit.h>
 
 #include <BRep_Tool.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : MeasureGUI_WhatisDlg()
@@ -216,11 +219,11 @@ void MeasureGUI_WhatisDlg::CalculateWhatis(const TopoDS_Shape& S)
 
   if ( S.ShapeType() == TopAbs_EDGE ) {
     if( BRep_Tool::Degenerated(TopoDS::Edge(S)) ) {
-      Astr = Astr + " " + strdup(SelectedName.latin1()) + " is a degenerated edge \n";
+      Astr = Astr + " " + CORBA::string_dup(SelectedName.latin1()) + " is a degenerated edge \n";
     }
   }
   
-  Astr = Astr + " Number of shapes in " + strdup(SelectedName.latin1()) + " : \n";
+  Astr = Astr + " Number of shapes in " + CORBA::string_dup(SelectedName.latin1()) + " : \n";
   
   try {
     int iType, nbTypes [TopAbs_SHAPE];

@@ -26,9 +26,9 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "GenerationGUI_FillingDlg.h"
 
+#include "QAD_WaitCursor.h"
 #include "QAD_Config.h"
 
 #include <GeomFill_SectionGenerator.hxx>
@@ -38,8 +38,14 @@ using namespace std;
 #include <Geom_TrimmedCurve.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <TopExp_Explorer.hxx>
+#include <TopoDS_Iterator.hxx>
 #include <BRep_Tool.hxx>
 #include <Precision.hxx>
+#include <Standard_ErrorHandler.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : GenerationGUI_FillingDlg()
@@ -210,10 +216,14 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
     return;
   
   if(myEditCurrentArgument == GroupPoints->LineEdit1 && mySectionShape.ShapeType() == TopAbs_COMPOUND) {
-    myEditCurrentArgument->setText(aString);
     myGeomShape = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
     if(!testResult)
       return;
+    // mySectionShape should be a compound of edges
+    for ( TopoDS_Iterator it( mySectionShape ); it.More(); it.Next() )
+      if ( it.Value().ShapeType() != TopAbs_EDGE )
+        return;
+    myEditCurrentArgument->setText(aString);
     myOkSectionShape = true;
   }
 
@@ -319,6 +329,8 @@ void GenerationGUI_FillingDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 void GenerationGUI_FillingDlg::MakeFillingSimulationAndDisplay()
 {
+  QAD_WaitCursor wc;
+
   myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
@@ -336,6 +348,7 @@ void GenerationGUI_FillingDlg::MakeFillingSimulationAndDisplay()
       if( Scurrent.IsNull() || Scurrent.ShapeType() != TopAbs_EDGE)
 	return;
       C = BRep_Tool::Curve(TopoDS::Edge(Scurrent), First, Last);
+      if (C.IsNull()) continue;
       C = new Geom_TrimmedCurve(C, First, Last);
       Section.AddCurve(C) ;
       i++ ;
