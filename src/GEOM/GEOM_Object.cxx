@@ -220,7 +220,7 @@ void GEOM_Object::SetAuxData(const char* theData)
  *  GetAuxData
  */
 //=============================================================================
-char* GEOM_Object::GetAuxData()
+TCollection_AsciiString GEOM_Object::GetAuxData()
 {
   Handle(TDataStd_Comment) aCommentAttr;
   if(!_label.FindAttribute(TDataStd_Comment::GetID(), aCommentAttr)) return NULL;
