@@ -3,16 +3,14 @@
 #define _GEOM_Engine_HXX_
 
 #include "GEOM_Application.hxx"
+#include "GEOM_Object.hxx"
+#include "GEOM_DataMapOfAsciiStringTransient.hxx"
+
 #include <Interface_DataMapOfIntegerTransient.hxx> 
 #include <Resource_DataMapOfAsciiStringAsciiString.hxx>
-#include <TDF_Label.hxx>
 #include <TDocStd_Document.hxx>
-#include "GEOM_Object.hxx"
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HSequenceOfAsciiString.hxx>
-#include <TopAbs.hxx>
-
-#include "GEOM_DataMapOfAsciiStringTransient.hxx"
 
 class GEOM_Engine
 {
@@ -70,6 +68,8 @@ class GEOM_Engine
 				     bool& aValidScript);
 
   const char* GetDumpName (const char* theStudyEntry) const;
+
+  Handle(TColStd_HSequenceOfAsciiString) GetAllDumpNames() const;
 
  protected:
   static void SetEngine(GEOM_Engine* theEngine);       

@@ -6,6 +6,7 @@ using namespace std;
 
 #include "GEOM_Function.hxx"
 #include "GEOM_ISubShape.hxx"
+#include "GEOM_PythonDump.hxx"
 
 #include "utilities.h"
 #include "OpUtil.hxx"
@@ -54,14 +55,15 @@ GEOMImpl_IGroupOperations::~GEOMImpl_IGroupOperations()
  *  CreateGroup
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IGroupOperations::CreateGroup(Handle(GEOM_Object) theMainShape, TopAbs_ShapeEnum  theShapeType)
+Handle(GEOM_Object) GEOMImpl_IGroupOperations::CreateGroup
+       (Handle(GEOM_Object) theMainShape, TopAbs_ShapeEnum  theShapeType)
 {
   SetErrorCode(KO);
 
   Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
   anArray->SetValue(1, -1);
 
-  //Add a new Fillet object  
+  //Add a new Fillet object
   Handle(GEOM_Object) aGroup = GetEngine()->AddSubShape(theMainShape, anArray);
 
   //Set a GROUP type
@@ -70,17 +72,14 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::CreateGroup(Handle(GEOM_Object) t
   //Set a sub shape type
   TDF_Label aFreeLabel = aGroup->GetFreeLabel();
   TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)theShapeType);
- 
-  //Make a Python command 
-  TCollection_AsciiString anEntry, aDescr("");
-  TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
-  aDescr = anEntry + " = geompy.CreateGroup(";
-  TDF_Tool::Entry(theMainShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString((int)theShapeType)+")");
 
+  //Make a Python command
   Handle(GEOM_Function) aFunction = aGroup->GetFunction(1);
-  aFunction->SetDescription(aDescr);
+  //TCollection_AsciiString anOldDescr = aFunction->GetDescription();
+
+  //GEOM::TPythonDump(aFunction) << anOldDescr.ToCString() << "\n\t" << aGroup
+  GEOM::TPythonDump(aFunction) << aGroup
+    << " = geompy.CreateGroup(" << theMainShape << ", " << (int)theShapeType << ")";
 
   SetErrorCode(OK);
   return aGroup; 
@@ -120,13 +119,10 @@ void GEOMImpl_IGroupOperations::AddObject(Handle(GEOM_Object) theGroup, int theS
   }
 
   //Make a Python command 
-  TCollection_AsciiString anEntry, aDescr("geompy.AddObject( ");
-  TDF_Tool::Entry(theGroup->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theSubShapeID)+" )");
+  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
-  aDescr = aFunction->GetDescription() + "\n\t" + aDescr;
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << anOldDescr.ToCString() << "\n\t"
+    << "geompy.AddObject(" << theGroup << ", " << theSubShapeID << ")";
 
   SetErrorCode(OK);
   return; 
@@ -137,7 +133,7 @@ void GEOMImpl_IGroupOperations::AddObject(Handle(GEOM_Object) theGroup, int theS
  *  RemoveObject
  */
 //=============================================================================
-void GEOMImpl_IGroupOperations::RemoveObject(Handle(GEOM_Object) theGroup, int theSubShapeID)
+void GEOMImpl_IGroupOperations::RemoveObject (Handle(GEOM_Object) theGroup, int theSubShapeID)
 {
   SetErrorCode(KO);
   if(theGroup.IsNull()) return;
@@ -189,12 +185,10 @@ void GEOMImpl_IGroupOperations::RemoveObject(Handle(GEOM_Object) theGroup, int t
   }
 
   //Make a Python command 
-  TCollection_AsciiString anEntry, aDescr("geompy.RemoveObject( ");
-  TDF_Tool::Entry(theGroup->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theSubShapeID)+" )");
+  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
-  aFunction->SetDescription(aDescr);
+  GEOM::TPythonDump(aFunction) << anOldDescr.ToCString() << "\n\t"
+    << "geompy.RemoveObject(" << theGroup << ", " << theSubShapeID << ")";
 
   SetErrorCode(OK);
   return; 
@@ -330,18 +324,17 @@ void GEOMImpl_IGroupOperations::UnionList (Handle(GEOM_Object) theGroup,
     }
 
     aSSI.SetIndices(aNewSeq);
+  }
 
-    //Make a Python command 
-    TCollection_AsciiString anEntry, aDescr("geompy.UnionList( ");
-    TDF_Tool::Entry(theGroup->GetEntry(), anEntry);
-    aDescr += (anEntry+", [ ");
-    for (i = 1; i <= aLen; i++) {
-      Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theSubShapes->Value(i));
-      TDF_Tool::Entry(anObj_i->GetEntry(), anEntry);
-      aDescr += anEntry + (char*)(( i < aLen ) ? ", " : " ])");
-    }
-    
-    aFunction->SetDescription(aDescr);
+  //Make a Python command 
+  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
+
+  GEOM::TPythonDump pd (aFunction);
+  pd << anOldDescr.ToCString() << "\n\t" << "geompy.UnionList(" << theGroup << ", [";
+
+  for (i = 1; i <= aLen; i++) {
+    Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theSubShapes->Value(i));
+    pd << anObj_i << (( i < aLen ) ? ", " : "])");
   }
 
   SetErrorCode(OK);
@@ -481,19 +474,17 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
     }
 
     aSSI.SetIndices(aNewSeq);
+  }
 
+  //Make a Python command
+  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
 
-    //Make a Python command 
-    TCollection_AsciiString anEntry, aDescr("geompy.DifferenceList( ");
-    TDF_Tool::Entry(theGroup->GetEntry(), anEntry);
-    aDescr += (anEntry+", [ ");
-    for (i = 1; i <= aLen; i++) {
-      Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theSubShapes->Value(i));
-      TDF_Tool::Entry(anObj_i->GetEntry(), anEntry);
-      aDescr += anEntry + (char*)(( i < aLen ) ? ", " : " ])");;
-    }
+  GEOM::TPythonDump pd (aFunction);
+  pd << anOldDescr.ToCString() << "\n\t" << "geompy.DifferenceList(" << theGroup << ", [";
 
-    aFunction->SetDescription(aDescr);
+  for (i = 1; i <= aLen; i++) {
+    Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theSubShapes->Value(i));
+    pd << anObj_i << (( i < aLen ) ? ", " : "])");
   }
 
   SetErrorCode(OK);
@@ -521,33 +512,28 @@ TopAbs_ShapeEnum GEOMImpl_IGroupOperations::GetType(Handle(GEOM_Object) theGroup
  *  GetMainShape
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IGroupOperations::GetMainShape(Handle(GEOM_Object) theGroup)
+Handle(GEOM_Object) GEOMImpl_IGroupOperations::GetMainShape (Handle(GEOM_Object) theGroup)
 {
   SetErrorCode(KO);
 
   if(theGroup.IsNull()) return NULL;
 
-  Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
-  if(aFunction.IsNull()) return NULL;
-  
-  GEOM_ISubShape aSSI(aFunction);
-  aFunction = aSSI.GetMainShape();
-  if(aFunction.IsNull()) return NULL;
+  Handle(GEOM_Function) aGroupFunction = theGroup->GetFunction(1);
+  if (aGroupFunction.IsNull()) return NULL;
 
-  TDF_Label aLabel = aFunction->GetOwnerEntry();
+  GEOM_ISubShape aSSI (aGroupFunction);
+  Handle(GEOM_Function) aMainShapeFunction = aSSI.GetMainShape();
+  if (aMainShapeFunction.IsNull()) return NULL;
+
+  TDF_Label aLabel = aMainShapeFunction->GetOwnerEntry();
   Handle(GEOM_Object) aMainShape = GEOM_Object::GetObject(aLabel);
-  if(aMainShape.IsNull()) return NULL;
-  
-  //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aMainShape->GetEntry(), aDescr);
-  aDescr += " = geompy.GetMainShape( ";
-  TDF_Tool::Entry(theGroup->GetEntry(), anEntry);
-  aDescr += (anEntry+" )");
+  if (aMainShape.IsNull()) return NULL;
 
-  aFunction = theGroup->GetFunction(1);
-  aDescr = aFunction->GetDescription() + "\n\t" + aDescr;
-  aFunction->SetDescription(aDescr);
+  //Make a Python command
+  TCollection_AsciiString anOldDescr = aGroupFunction->GetDescription();
+
+  GEOM::TPythonDump(aGroupFunction) << anOldDescr.ToCString() << "\n\t"
+    << aMainShape << " = geompy.GetMainShape(" << theGroup << ")";
 
   SetErrorCode(OK);
   return aMainShape; 

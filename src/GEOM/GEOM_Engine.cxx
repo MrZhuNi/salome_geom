@@ -5,10 +5,9 @@
 #include "GEOM_ISubShape.hxx"
 #include "GEOM_SubShapeDriver.hxx"
 #include "GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient.hxx"
+#include "GEOM_PythonDump.hxx"
 
 #include "utilities.h"
-
-#include <Interface_DataMapIteratorOfDataMapOfIntegerTransient.hxx>
 
 #include <TDF_Tool.hxx>
 #include <TDF_Data.hxx>
@@ -24,12 +23,10 @@
 #include <TCollection_AsciiString.hxx>
 #include <TCollection_ExtendedString.hxx>
 #include <TColStd_SequenceOfAsciiString.hxx>
-#include <TColStd_SequenceOfTransient.hxx>
-#include <TColStd_HSequenceOfTransient.hxx>
-#include <TColStd_ListOfTransient.hxx>
 #include <TColStd_MapOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 
+#include <Interface_DataMapIteratorOfDataMapOfIntegerTransient.hxx>
 #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
 
 #include <map>
@@ -211,26 +208,18 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   if(_objects.IsBound(anID)) _objects.UnBind(anID);
   _objects.Bind(anID, anObject);
 
-  TCollection_AsciiString aDescr("");
+  GEOM::TPythonDump pd (aFunction);
  
-  if(isStandaloneOperation) {
-    TCollection_AsciiString anEntry;
-    TDF_Tool::Entry(anObject->GetEntry(), anEntry);
-    aDescr += anEntry;
-    aDescr += " = geom.AddSubShape(";
-    TDF_Tool::Entry(theMainShape->GetEntry(), anEntry);
-    aDescr += (anEntry+", ");
-    aDescr += (", [");
-    for(Standard_Integer i=theIndices->Lower(); i<=theIndices->Upper(); i++) {
-      aDescr += (TCollection_AsciiString(theIndices->Value(i))+", ");
+  if (isStandaloneOperation) {
+    pd << anObject << " = geompy.GetSubShape(" << theMainShape << ", [";
+    Standard_Integer i = theIndices->Lower(), up = theIndices->Upper();
+    for (; i <= up - 1; i++) {
+      pd << theIndices->Value(i) << ", ";
     }
-    aDescr.Trunc(aDescr.Length()-1);
-    aDescr += "])";  
+    pd << theIndices->Value(up) << "])";
   }
-  else 
-    TCollection_AsciiString aDescr("None");
- 
-  aFunction->SetDescription(aDescr);
+  else
+    pd << "None";
 
   return anObject;
 }
@@ -364,7 +353,8 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   
   if(aDoc.IsNull()) return TCollection_AsciiString("def RebuildData(theStudy): pass\n");
  
-  aScript = "import geompy\n\n";
+  aScript = "import geompy\n";
+  aScript += "import math\n\n";
   aScript += "def RebuildData(theStudy):";
   aScript += "\n\tgeompy.init_geom(theStudy)";
   
@@ -524,6 +514,23 @@ const char* GEOM_Engine::GetDumpName (const char* theStudyEntry) const
     return _studyEntry2NameMap( (char*)theStudyEntry ).ToCString();
 
   return NULL;
+}
+
+//=======================================================================
+//function : GetAllDumpNames
+//purpose  : 
+//=======================================================================
+
+Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
+{
+  Handle(TColStd_HSequenceOfAsciiString) aRetSeq = new TColStd_HSequenceOfAsciiString;
+
+  Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString it (_studyEntry2NameMap);
+  for (; it.More(); it.Next()) {
+    aRetSeq->Append(it.Value());
+  }
+
+  return aRetSeq;
 }
 
 
