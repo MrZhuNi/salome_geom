@@ -1,4 +1,4 @@
-#  GEOM GEOMBASE : 
+#  GEOM ENTITYGUI : 
 #
 #  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 #  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
@@ -35,19 +35,57 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 @COMMENCE@
 
 # Libraries targets
-LIB = libGEOMSketcher.la 
-LIB_SRC = Sketcher_Profile.cxx
-LIB_CLIENT_IDL = SALOME_Exception.idl \
-		 SALOMEDS.idl \
-		 SALOMEDS_Attributes.idl
+LIB = libEntityGUI.la
 
 # header files 
-EXPORT_HEADERS = Sketcher_Profile.hxx
+EXPORT_HEADERS= 
+
+LIB_SRC = 	EntityGUI.cxx \
+		EntityGUI_Skeleton_QTD.cxx \
+		EntityGUI_Point_QTD.cxx \
+		EntityGUI_Dir1_QTD.cxx \
+		EntityGUI_Dir2_QTD.cxx \
+		EntityGUI_1Sel_QTD.cxx \
+		EntityGUI_1Spin_QTD.cxx \
+		EntityGUI_2Spin_QTD.cxx \
+		EntityGUI_3Spin_QTD.cxx \
+		EntityGUI_4Spin_QTD.cxx \
+		EntityGUI_1Spin.cxx \
+		EntityGUI_2Spin.cxx \
+		EntityGUI_3Spin.cxx \
+		EntityGUI_4Spin.cxx \
+		EntityGUI_SketcherDlg.cxx \
+		EntityGUI_SplineDlg.cxx \
+		EntityGUI_SubShapeDlg.cxx
+
+LIB_MOC = \
+		EntityGUI.h \
+		EntityGUI_Skeleton_QTD.h \
+		EntityGUI_Point_QTD.h \
+		EntityGUI_Dir1_QTD.h \
+		EntityGUI_Dir2_QTD.h \
+		EntityGUI_1Sel_QTD.h \
+		EntityGUI_1Spin_QTD.h \
+		EntityGUI_2Spin_QTD.h \
+		EntityGUI_3Spin_QTD.h \
+		EntityGUI_4Spin_QTD.h \
+		EntityGUI_1Spin.h \
+		EntityGUI_2Spin.h \
+		EntityGUI_3Spin.h \
+		EntityGUI_4Spin.h \
+		EntityGUI_SketcherDlg.h \
+		EntityGUI_SplineDlg.h \
+		EntityGUI_SubShapeDlg.h
+
+LIB_CLIENT_IDL = 
+
+LIB_SERVER_IDL = 
 
 # additionnal information to compil and link file
-CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
+
+CPPFLAGS += $(QT_INCLUDES) $(OCC_INCLUDES) $(VTK_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += $(OCC_KERNEL_LIBS) $(OCC_MODELER_LIBS) -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS += -lGEOMSketcher -lGEOMFiltersSelection -lDisplayGUI
 
 @CONCLUDE@

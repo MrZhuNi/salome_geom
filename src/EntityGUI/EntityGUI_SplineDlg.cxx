@@ -21,13 +21,13 @@
 //
 //
 //
-//  File   : BuildGUI_SplineDlg.cxx
+//  File   : EntityGUI_SplineDlg.cxx
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
 //  $Header$
 
 using namespace std;
-#include "BuildGUI_SplineDlg.h"
+#include "EntityGUI_SplineDlg.h"
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <TColgp_Array1OfPnt.hxx>
@@ -37,17 +37,17 @@ using namespace std;
 #include <SALOME_ListIteratorOfListIO.hxx>
 
 //=================================================================================
-// class    : BuildGUI_SplineDlg()
-// purpose  : Constructs a BuildGUI_SplineDlg which is a child of 'parent', with the 
+// class    : EntityGUI_SplineDlg()
+// purpose  : Constructs a EntityGUI_SplineDlg which is a child of 'parent', with the 
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_SplineDlg::BuildGUI_SplineDlg(QWidget* parent, const char* name, BuildGUI* theBuildGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
+EntityGUI_SplineDlg::EntityGUI_SplineDlg(QWidget* parent, const char* name, EntityGUI* theEntityGUI, SALOME_Selection* Sel, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_BEZIER")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_BSPLINE")));
+  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_INTERPOL")));
   QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_SPLINE_TITLE"));
@@ -63,26 +63,26 @@ BuildGUI_SplineDlg::BuildGUI_SplineDlg(QWidget* parent, const char* name, BuildG
   GroupBezier->TextLabel1->setText(tr("GEOM_POINTS"));
   GroupBezier->PushButton1->setPixmap(image2);
 
-  GroupBSpline = new DlgRef_1Sel_QTD(this, "GroupBSpline");
-  GroupBSpline->GroupBox1->setTitle(tr("GEOM_BSPLINE"));
-  GroupBSpline->TextLabel1->setText(tr("GEOM_POINTS"));
-  GroupBSpline->PushButton1->setPixmap(image2);
+  GroupInterpol = new DlgRef_1Sel_QTD(this, "GroupInterpol");
+  GroupInterpol->GroupBox1->setTitle(tr("GEOM_INTERPOL"));
+  GroupInterpol->TextLabel1->setText(tr("GEOM_POINTS"));
+  GroupInterpol->PushButton1->setPixmap(image2);
 
   Layout1->addWidget(GroupBezier, 1, 0);
-  Layout1->addWidget(GroupBSpline, 1, 0);
+  Layout1->addWidget(GroupInterpol, 1, 0);
   /***************************************************************/
 
   /* Initialisations */
-  myBuildGUI = theBuildGUI;
+  myEntityGUI = theEntityGUI;
   Init();
 }
 
 
 //=================================================================================
-// function : ~BuildGUI_SplineDlg()
+// function : ~EntityGUI_SplineDlg()
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
-BuildGUI_SplineDlg::~BuildGUI_SplineDlg()
+EntityGUI_SplineDlg::~EntityGUI_SplineDlg()
 {
   // no need to delete child widgets, Qt does it all for us
 }
@@ -92,7 +92,7 @@ BuildGUI_SplineDlg::~BuildGUI_SplineDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void BuildGUI_SplineDlg::Init()
+void EntityGUI_SplineDlg::Init()
 {
   /* init variables */
   myConstructorId = 0;
@@ -109,12 +109,12 @@ void BuildGUI_SplineDlg::Init()
   connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
 
   connect(GroupBezier->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupBSpline->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupInterpol->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   /* displays Dialog */
-  GroupBSpline->hide();
+  GroupInterpol->hide();
   GroupBezier->show();
   this->show();
 
@@ -126,7 +126,7 @@ void BuildGUI_SplineDlg::Init()
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
-void BuildGUI_SplineDlg::ConstructorsClicked(int constructorId)
+void EntityGUI_SplineDlg::ConstructorsClicked(int constructorId)
 {
   myConstructorId = constructorId;
   mySelection->ClearFilters();
@@ -139,7 +139,7 @@ void BuildGUI_SplineDlg::ConstructorsClicked(int constructorId)
     {
     case 0:
       {
-	GroupBSpline->hide();
+	GroupInterpol->hide();
 	resize(0, 0);
 	GroupBezier->show();
 
@@ -151,10 +151,10 @@ void BuildGUI_SplineDlg::ConstructorsClicked(int constructorId)
       {
 	GroupBezier->hide();
 	resize(0, 0);
-	GroupBSpline->show();
+	GroupInterpol->show();
 
-	myEditCurrentArgument = GroupBSpline->LineEdit1;
-	GroupBSpline->LineEdit1->setText("");
+	myEditCurrentArgument = GroupInterpol->LineEdit1;
+	GroupInterpol->LineEdit1->setText("");
 	break;
       }
     }
@@ -169,7 +169,7 @@ void BuildGUI_SplineDlg::ConstructorsClicked(int constructorId)
 // function : ClickOnOk()
 // purpose  :
 //=================================================================================
-void BuildGUI_SplineDlg::ClickOnOk()
+void EntityGUI_SplineDlg::ClickOnOk()
 {
   this->ClickOnApply();
   ClickOnCancel();
@@ -181,7 +181,7 @@ void BuildGUI_SplineDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void BuildGUI_SplineDlg::ClickOnApply()
+void EntityGUI_SplineDlg::ClickOnApply()
 {
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
@@ -194,13 +194,13 @@ void BuildGUI_SplineDlg::ClickOnApply()
     case 0 :
       {
 	if(myOkListShapes)
-	  myBuildGUI->MakeBezierAndDisplay(myListShapes);
+	  myEntityGUI->MakeBezierAndDisplay(myListShapes);
 	break;
       }
     case 1 :
       {
 	if(myOkListShapes)
-	  myBuildGUI->MakeBSplineAndDisplay(myListShapes);
+	  myEntityGUI->MakeInterpolAndDisplay(myListShapes);
 	break;
       }
     }
@@ -212,7 +212,7 @@ void BuildGUI_SplineDlg::ClickOnApply()
 // function : SelectionIntoArgument()
 // purpose  : Called when selection as changed or other case
 //=================================================================================
-void BuildGUI_SplineDlg::SelectionIntoArgument()
+void EntityGUI_SplineDlg::SelectionIntoArgument()
 {
   myGeomBase->EraseSimulationShape();
   myEditCurrentArgument->setText("");
@@ -237,7 +237,7 @@ void BuildGUI_SplineDlg::SelectionIntoArgument()
 // function : SetEditCurrentArgument()
 // purpose  :
 //=================================================================================
-void BuildGUI_SplineDlg::SetEditCurrentArgument()
+void EntityGUI_SplineDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
 
@@ -245,9 +245,9 @@ void BuildGUI_SplineDlg::SetEditCurrentArgument()
     GroupBezier->LineEdit1->setFocus();
     myEditCurrentArgument = GroupBezier->LineEdit1;
   }
-  else if(send == GroupBSpline->PushButton1) {
-    GroupBSpline->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupBSpline->LineEdit1;
+  else if(send == GroupInterpol->PushButton1) {
+    GroupInterpol->LineEdit1->setFocus();
+    myEditCurrentArgument = GroupInterpol->LineEdit1;
   }
   mySelection->AddFilter(myVertexFilter);
   this->SelectionIntoArgument();
@@ -260,7 +260,7 @@ void BuildGUI_SplineDlg::SetEditCurrentArgument()
 // function : ActivateThisDialog()
 // purpose  :
 //=================================================================================
-void BuildGUI_SplineDlg::ActivateThisDialog()
+void EntityGUI_SplineDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
@@ -275,7 +275,7 @@ void BuildGUI_SplineDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void BuildGUI_SplineDlg::enterEvent(QEvent* e)
+void EntityGUI_SplineDlg::enterEvent(QEvent* e)
 {
   if (GroupConstructors->isEnabled())
     return;
@@ -288,7 +288,7 @@ void BuildGUI_SplineDlg::enterEvent(QEvent* e)
 // function : MakeSplineSimulationAndDisplay()
 // purpose  :
 //=================================================================================
-void BuildGUI_SplineDlg::MakeSplineSimulationAndDisplay() 
+void EntityGUI_SplineDlg::MakeSplineSimulationAndDisplay() 
 {
   myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();

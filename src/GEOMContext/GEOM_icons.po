@@ -355,8 +355,8 @@ msgid "ICON_DLG_BEZIER"
 msgstr "bezier.png"
 
 #SplineDlg
-msgid "ICON_DLG_BSPLINE"
-msgstr "bspline.png"
+msgid "ICON_DLG_INTERPOL"
+msgstr "interpol.png"
 
 
 

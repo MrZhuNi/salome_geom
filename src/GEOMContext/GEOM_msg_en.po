@@ -1188,5 +1188,114 @@ msgid "GEOM_SPLINE"
 msgstr "Spline"
 msgid "GEOM_BEZIER"
 msgstr "Bezier"
-msgid "GEOM_BSPLINE"
-msgstr "BSpline"
+msgid "GEOM_INTERPOL"
+msgstr "Interpolation"
+
+#
+#==============================================================================
+#
+
+msgid "GEOM_SKETCHER_EL"
+msgstr "Element Type"
+
+msgid "GEOM_BUT_CLOSE_SKETCH"
+msgstr "Close Sketcher"
+
+msgid "GEOM_BUT_END_SKETCH"
+msgstr "End Sketcher"
+
+msgid "GEOM_SKETCHER_TITLE"
+msgstr "Spline Construction"
+
+msgid "GEOM_SKETCHER_POINT"
+msgstr "Point"
+
+msgid "GEOM_SKETCHER_SEGMENT"
+msgstr "Segment"
+
+msgid "GEOM_SKETCHER_ARC"
+msgstr "Arc"
+
+msgid "GEOM_SKETCHER_DIR"
+msgstr "Direction"
+
+msgid "GEOM_SKETCHER_POINT2"
+msgstr "Point :"
+
+msgid "GEOM_SKETCHER_DEST"
+msgstr "Destination"
+
+msgid "GEOM_SKETCHER_ABS"
+msgstr "Absolute"
+
+msgid "GEOM_SKETCHER_REL"
+msgstr "Relative"
+
+msgid "GEOM_SKETCHER_SEL"
+msgstr "Selection"
+
+msgid "GEOM_SKETCHER_ANGLE"
+msgstr "Angle"
+
+msgid "GEOM_SKETCHER_PER"
+msgstr "Perpendicular"
+
+msgid "GEOM_SKETCHER_TAN"
+msgstr "Tangent"
+
+msgid "GEOM_SKETCHER_VXVY"
+msgstr "VX-VY"
+
+msgid "GEOM_SKETCHER_LENGTH"
+msgstr "Length"
+
+msgid "GEOM_SKETCHER_X"
+msgstr "X"
+
+msgid "GEOM_SKETCHER_Y"
+msgstr "Y"
+
+msgid "GEOM_SKETCHER_X2"
+msgstr "X :"
+
+msgid "GEOM_SKETCHER_Y2"
+msgstr "Y :"
+
+msgid "GEOM_SKETCHER_X3"
+msgstr "Abs. X :"
+
+msgid "GEOM_SKETCHER_Y3"
+msgstr "Abs. Y :"
+
+msgid "GEOM_SKETCHER_DX2"
+msgstr "DX :"
+
+msgid "GEOM_SKETCHER_DY2"
+msgstr "DY :"
+
+msgid "GEOM_SKETCHER_VX2"
+msgstr "VX :"
+
+msgid "GEOM_SKETCHER_VY2"
+msgstr "VY :"
+
+msgid "GEOM_SKETCHER_LENGTH2"
+msgstr "Length :"
+
+msgid "GEOM_SKETCHER_ANGLE2"
+msgstr "Angle :"
+
+msgid "GEOM_SKETCHER_RADIUS2"
+msgstr "Radius :"
+
+msgid "GEOM_SKETCHER_UNDO"
+msgstr "Undo"
+
+msgid "GEOM_SKETCHER_APPLY"
+msgstr "Apply"
+
+msgid "GEOM_SKETCHER_VALUES"
+msgstr "Values"
+
+msgid "GEOM_SKETCHER_TYPE"
+msgstr "Type"

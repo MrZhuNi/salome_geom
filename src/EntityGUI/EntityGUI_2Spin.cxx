@@ -21,42 +21,40 @@
 //
 //
 //
-//  File   : BuildGUI.h
+//  File   : EntityGUI_2Spin.cxx
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header: 
 
-#ifndef BUILDGUI_H
-#define BUILDGUI_H
+#include "EntityGUI_2Spin.h"
 
-#include "GEOMBase.h"
-#include <gp_Pnt.hxx>
+#include <qlayout.h>
+#include <qspinbox.h>
+#include <qgroupbox.h>
 
-//=================================================================================
-// class    : BuildGUI
-// purpose  :
-//=================================================================================
-class BuildGUI : public QObject
+/* 
+ *  Constructs a EntityGUI_2Spin which is a child of 'parent', with the 
+ *  name 'name' and widget flags set to 'f' 
+ */
+EntityGUI_2Spin::EntityGUI_2Spin(QWidget* parent, const char* name, WFlags fl)
+  :EntityGUI_2Spin_QTD(parent, name, fl)
 {
-  Q_OBJECT /* for QT compatibility */
+  SpinBox1->close(TRUE);
+  SpinBox2->close(TRUE);
 
-public :
-  BuildGUI();
-  ~BuildGUI();
+  SpinBox_DX = new DlgRef_SpinBox(GroupBox1, "SpinBox_DX");
+  Layout1->addWidget(SpinBox_DX, 0, 1);
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
+  SpinBox_DY = new DlgRef_SpinBox(GroupBox1, "SpinBox_DY");
+  Layout1->addWidget(SpinBox_DY, 1, 1);
 
-  void MakeLinearEdgeAndDisplay(const gp_Pnt P1, const gp_Pnt P2);
-  void MakeWireAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
-  void MakeFaceAndDisplay(GEOM::GEOM_Shape_ptr aWire, const Standard_Boolean wantPlanar);
-  void MakeShellAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
-  void MakeSolidAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
-  void MakeCompoundAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
+}
 
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
 
-};
-
-#endif
+/*  
+ *  Destroys the object and frees any allocated resources
+ */
+EntityGUI_2Spin::~EntityGUI_2Spin()
+{
+    // no need to delete child widgets, Qt does it all for us
+}

@@ -21,13 +21,13 @@
 //
 //
 //
-//  File   : BuildGUI_SubShapeDlg.cxx
+//  File   : EntityGUI_SubShapeDlg.cxx
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
 //  $Header$
 
 using namespace std;
-#include "BuildGUI_SubShapeDlg.h"
+#include "EntityGUI_SubShapeDlg.h"
 
 #include "DisplayGUI.h"
 #include "QAD_RightFrame.h"
@@ -39,13 +39,13 @@ using namespace std;
 #include <qmessagebox.h>
 
 //=================================================================================
-// class    : BuildGUI_SubShapeDlg()
-// purpose  : Constructs a BuildGUI_SubShapeDlg which is a child of 'parent', with the
+// class    : EntityGUI_SubShapeDlg()
+// purpose  : Constructs a EntityGUI_SubShapeDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_SubShapeDlg::BuildGUI_SubShapeDlg(QWidget* parent, const char* name, BuildGUI* theBuildGUI, SALOME_Selection* Sel, Handle(AIS_InteractiveContext) ic, bool modal, WFlags fl)
+EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(QWidget* parent, const char* name, EntityGUI* theEntityGUI, SALOME_Selection* Sel, Handle(AIS_InteractiveContext) ic, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SUBSHAPE")));
@@ -70,16 +70,16 @@ BuildGUI_SubShapeDlg::BuildGUI_SubShapeDlg(QWidget* parent, const char* name, Bu
   /***************************************************************/
 
   /* Initialisations */
-  myBuildGUI = theBuildGUI;
+  myEntityGUI = theEntityGUI;
   Init(ic);
 }
 
 
 //=================================================================================
-// function : ~BuildGUI_SubShapeDlg()
+// function : ~EntityGUI_SubShapeDlg()
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
-BuildGUI_SubShapeDlg::~BuildGUI_SubShapeDlg()
+EntityGUI_SubShapeDlg::~EntityGUI_SubShapeDlg()
 {
   // no need to delete child widgets, Qt does it all for us
 }
@@ -89,7 +89,7 @@ BuildGUI_SubShapeDlg::~BuildGUI_SubShapeDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void BuildGUI_SubShapeDlg::Init(Handle(AIS_InteractiveContext) ic)
+void EntityGUI_SubShapeDlg::Init(Handle(AIS_InteractiveContext) ic)
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -144,7 +144,7 @@ void BuildGUI_SubShapeDlg::Init(Handle(AIS_InteractiveContext) ic)
 // function : ClickOnOk()
 // purpose  :
 //=================================================================================
-void BuildGUI_SubShapeDlg::ClickOnOk()
+void EntityGUI_SubShapeDlg::ClickOnOk()
 {
   this->ClickOnApply();
 
@@ -162,7 +162,7 @@ void BuildGUI_SubShapeDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-void BuildGUI_SubShapeDlg::ClickOnApply()
+void EntityGUI_SubShapeDlg::ClickOnApply()
 {
   QAD_Application::getDesktop()->putInfo(tr(""));
   bool testResult = false;
@@ -179,16 +179,16 @@ void BuildGUI_SubShapeDlg::ClickOnApply()
       const QString button1 = tr("GEOM_BUT_CANCEL");
 	    
       if(QMessageBox::warning(this, caption, text, button0, button1) == 0)
-	testResult = myBuildGUI->OnSubShapeGetAll(myShape, myShapeIOR, myShapeType);
+	testResult = myEntityGUI->OnSubShapeGetAll(myShape, myShapeIOR, myShapeType);
       else
 	myAbort = true;  /* aborted */
     }
     else
-      testResult = myBuildGUI->OnSubShapeGetAll(myShape, myShapeIOR, myShapeType);
+      testResult = myEntityGUI->OnSubShapeGetAll(myShape, myShapeIOR, myShapeType);
   }
   /* explode only selected sub shapes */
   else if(myOkShape && myOkSelectSubMode)
-    testResult = myBuildGUI->OnSubShapeGetSelected(myShape, myShapeIOR, myShapeType, myLocalContextId, myUseLocalContext); 
+    testResult = myEntityGUI->OnSubShapeGetSelected(myShape, myShapeIOR, myShapeType, myLocalContextId, myUseLocalContext); 
 
   if(!testResult) {
     QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
@@ -207,7 +207,7 @@ void BuildGUI_SubShapeDlg::ClickOnApply()
 // function : ClickOnCancel()
 // purpose  :
 //=================================================================================
-void BuildGUI_SubShapeDlg::ClickOnCancel()
+void EntityGUI_SubShapeDlg::ClickOnCancel()
 {
   if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
@@ -229,7 +229,7 @@ void BuildGUI_SubShapeDlg::ClickOnCancel()
 // purpose  : Called when selection as changed or other case
 //          : used only by SelectButtonC1A1 (LineEditC1A1)
 //=================================================================================
-void BuildGUI_SubShapeDlg::SelectionIntoArgument()
+void EntityGUI_SubShapeDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
   this->ResetStateOfDialog();
@@ -330,7 +330,7 @@ void BuildGUI_SubShapeDlg::SelectionIntoArgument()
 // function : SetEditCurrentArgument()
 // purpose  :
 //=================================================================================
-void BuildGUI_SubShapeDlg::SetEditCurrentArgument()
+void EntityGUI_SubShapeDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
 
@@ -348,7 +348,7 @@ void BuildGUI_SubShapeDlg::SetEditCurrentArgument()
 // function : LineEditReturnPressed()
 // purpose  :
 //=================================================================================
-void BuildGUI_SubShapeDlg::LineEditReturnPressed()
+void EntityGUI_SubShapeDlg::LineEditReturnPressed()
 {  
   QLineEdit* send = (QLineEdit*)sender();
   if(send == GroupPoints->LineEdit1)
@@ -365,7 +365,7 @@ void BuildGUI_SubShapeDlg::LineEditReturnPressed()
 // function : DeactivateActiveDialog()
 // purpose  :
 //=================================================================================
-void BuildGUI_SubShapeDlg::DeactivateActiveDialog()
+void EntityGUI_SubShapeDlg::DeactivateActiveDialog()
 {
   if(GroupConstructors->isEnabled()) {
     this->ResetStateOfDialog();
@@ -379,7 +379,7 @@ void BuildGUI_SubShapeDlg::DeactivateActiveDialog()
 // function : ActivateThisDialog()
 // purpose  :
 //=================================================================================
-void BuildGUI_SubShapeDlg::ActivateThisDialog()
+void EntityGUI_SubShapeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
@@ -395,7 +395,7 @@ void BuildGUI_SubShapeDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void BuildGUI_SubShapeDlg::enterEvent(QEvent* e)
+void EntityGUI_SubShapeDlg::enterEvent(QEvent* e)
 {
   if(GroupConstructors->isEnabled())
     return;
@@ -408,7 +408,7 @@ void BuildGUI_SubShapeDlg::enterEvent(QEvent* e)
 // function : closeEvent()
 // purpose  :
 //=================================================================================
-void BuildGUI_SubShapeDlg::closeEvent(QCloseEvent* e)
+void EntityGUI_SubShapeDlg::closeEvent(QCloseEvent* e)
 {
   /* same than click on cancel button */
   this->ClickOnCancel();
@@ -420,7 +420,7 @@ void BuildGUI_SubShapeDlg::closeEvent(QCloseEvent* e)
 // function : ResetStateOfDialog()
 // purpose  : Completely reset the state of method including local context
 //=================================================================================
-void BuildGUI_SubShapeDlg::ResetStateOfDialog()
+void EntityGUI_SubShapeDlg::ResetStateOfDialog()
 {
   if(myAbort == true) {
     myOkShape = false;
@@ -472,7 +472,7 @@ void BuildGUI_SubShapeDlg::ResetStateOfDialog()
 // purpose  : Allow user selection of all or only selected sub shapes
 //          : Called when 'CheckButton1' state change
 //=================================================================================
-void BuildGUI_SubShapeDlg::AllOrNotAll()
+void EntityGUI_SubShapeDlg::AllOrNotAll()
 {
   /* No sub shape selection if main shape not selected */
   if(!myOkShape) {
@@ -524,7 +524,7 @@ void BuildGUI_SubShapeDlg::AllOrNotAll()
 // function : ComboTextChanged()
 // purpose  : 
 //=================================================================================
-void BuildGUI_SubShapeDlg::ComboTextChanged()
+void EntityGUI_SubShapeDlg::ComboTextChanged()
 {
   if(myOkShape)
     myShapeType = GroupPoints->ComboBox1->currentItem() + myShape.ShapeType() + 1;
@@ -554,7 +554,7 @@ void BuildGUI_SubShapeDlg::ComboTextChanged()
 // function : NumberOfSubShapes()
 // purpose  :
 //=================================================================================
-unsigned int BuildGUI_SubShapeDlg::NumberOfSubShapes(const TopoDS_Shape& S, const int shapeType)
+unsigned int EntityGUI_SubShapeDlg::NumberOfSubShapes(const TopoDS_Shape& S, const int shapeType)
 {
   if(S.IsNull())
     return 0;

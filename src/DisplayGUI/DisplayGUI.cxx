@@ -125,9 +125,6 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       }
     case 212: // MENU VIEW - DISPLAY ALL
       {
-// 	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
-// 	  ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->DisplayAll();
-// 	else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
 	myDisplayGUI->OnDisplayAll();
 	break;
       }
@@ -189,10 +186,8 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	      if(mode == -1)
 	        mode = (AIS_DisplayMode)ic->DisplayMode();
 
-	      QApplication::setOverrideCursor(Qt::waitCursor);
 	      ic->SetDisplayMode(Shape, mode == AIS_WireFrame ? AIS_Shaded : AIS_WireFrame, false);
 	    }
-	    QApplication::restoreOverrideCursor();
 	  }
 	  ic->UpdateCurrentViewer();
 	}
@@ -517,22 +512,6 @@ void DisplayGUI::OnDisplayAll(bool onlyPreviousDisplayedObject)
 	  }
 	}
       }
-//     AIS_ListOfInteractive List1;
-//     myContext->ObjectsInCollector(List1);
-//     AIS_ListIteratorOfListOfInteractive ite1(List1);
-//     while(ite1.More()) {
-//       cout<<"DCQ 1"<<endl;
-//       if(ite1.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
-// 	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite1.Value());
-// 	if(aSh->hasIO()) {
-// 	  Handle(GEOM_InteractiveObject) GIO = Handle(GEOM_InteractiveObject)::DownCast(aSh->getIO());
-// 	  if(v3d->isInViewer(GIO, true)) {
-// 	    myContext->Display(aSh);
-// 	  }
-// 	}
-//       }
-//       ite1.Next();
-//     }
     }
     else {
       AIS_ListOfInteractive aListDisplayedObject;
@@ -565,9 +544,7 @@ void DisplayGUI::OnDisplayAll(bool onlyPreviousDisplayedObject)
 	GEOM_Actor* aSh = myGeomBase->ConvertIORinGEOMActor(anIOR->Value(), testResult);
 	if(testResult) {
 	  Handle(SALOME_InteractiveObject) IObject = aSh->getIO();
-	  //	  if(myRenderInter->isInViewer(IObject)) {
 	  ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->Display(IObject);
-	  //}
 	}
 	else {
 	  GEOM::GEOM_Shape_ptr aShape = myGeom->GetIORFromString(anIOR->Value());
@@ -578,7 +555,6 @@ void DisplayGUI::OnDisplayAll(bool onlyPreviousDisplayedObject)
 	}
       }
     }
-//       ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->DisplayAll();
   }
   return;
 }

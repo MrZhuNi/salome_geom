@@ -166,13 +166,13 @@ bool GeometryGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
     if(!GeomGUI->LoadLibrary("libGenerationGUI.so")) 
       return false;
   }
-  else if(theCommandID == 404) { // SKETCHER
-    if(!GeomGUI->LoadLibrary("libSketcherGUI.so")) 
+  else if(theCommandID == 404 ||  // MENU ENTITY - SKETCHER
+	  theCommandID == 406 ||  // MENU ENTITY - SPLINE
+	  theCommandID == 407) {  // MENU ENTITY - EXPLODE
+    if(!GeomGUI->LoadLibrary("libEntityGUI.so")) 
       return false;
   }
-  else if(theCommandID == 406 ||  // MENU BUILD - SPLINE
-	  theCommandID == 407 ||  // MENU BUILD - EXPLODE
-	  theCommandID == 4081 || // MENU BUILD - EDGE
+  else if(theCommandID == 4081 || // MENU BUILD - EDGE
 	  theCommandID == 4082 || // MENU BUILD - WIRE
 	  theCommandID == 4083 || // MENU BUILD - FACE
 	  theCommandID == 4084 || // MENU BUILD - SHELL

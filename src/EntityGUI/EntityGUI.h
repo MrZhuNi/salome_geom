@@ -21,37 +21,47 @@
 //
 //
 //
-//  File   : BuildGUI.h
+//  File   : EntityGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header: 
 
-#ifndef BUILDGUI_H
-#define BUILDGUI_H
+#ifndef ENTITYGUI_H
+#define ENTITYGUI_H
 
 #include "GEOMBase.h"
-#include <gp_Pnt.hxx>
 
 //=================================================================================
-// class    : BuildGUI
+// class    : EntityGUI
 // purpose  :
 //=================================================================================
-class BuildGUI : public QObject
+class EntityGUI : public QObject
 {
   Q_OBJECT /* for QT compatibility */
 
 public :
-  BuildGUI();
-  ~BuildGUI();
+  EntityGUI();
+  ~EntityGUI();
 
   static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
-  void MakeLinearEdgeAndDisplay(const gp_Pnt P1, const gp_Pnt P2);
-  void MakeWireAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
-  void MakeFaceAndDisplay(GEOM::GEOM_Shape_ptr aWire, const Standard_Boolean wantPlanar);
-  void MakeShellAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
-  void MakeSolidAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
-  void MakeCompoundAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
+  void OnSketchEnd(TopoDS_Shape myShape);
+
+  void DisplaySimulationShape(const TopoDS_Shape& S1, const TopoDS_Shape& S2); 
+  void EraseSimulationShape();
+
+  void MakeInterpolAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
+  void MakeBezierAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
+
+    /* Methods for sub shapes explode */
+  bool SObjectExist(SALOMEDS::SObject_ptr theFatherObject, const char* IOR);
+  bool OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType);  
+  bool OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType,
+			     Standard_Integer& aLocalContextId, bool& myUseLocalContext);
+
+  /* AIS shape used only during topo/geom simulations */
+  Handle(AIS_Shape) mySimulationShape1;
+  Handle(AIS_Shape) mySimulationShape2;
 
   GEOMBase* myGeomBase;
   GEOMContext* myGeomGUI;

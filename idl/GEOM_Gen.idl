@@ -233,7 +233,12 @@ module GEOM
     // Splines                                                   //
     //-----------------------------------------------------------//  
     GEOM_Shape MakeBezier (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
-    GEOM_Shape MakeBSpline(in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeInterpol(in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
+
+    //-----------------------------------------------------------//
+    // Sketcher                                                  //
+    //-----------------------------------------------------------//  
+    GEOM_Shape MakeSketcher (in string Cmd) raises (SALOME::SALOME_Exception) ;
 
     //-----------------------------------------------------------//
     // Build                                                     //

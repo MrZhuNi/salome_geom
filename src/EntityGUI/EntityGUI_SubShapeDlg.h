@@ -21,7 +21,7 @@
 //
 //
 //
-//  File   : BuildGUI_SubShapeDlg.h
+//  File   : EntityGUI_SubShapeDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
 //  $Header$
@@ -32,19 +32,19 @@
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel1Check1List_QTD.h"
 
-#include "BuildGUI.h"
+#include "EntityGUI.h"
 
 //=================================================================================
-// class    : BuildGUI_SubShapeDlg
+// class    : EntityGUI_SubShapeDlg
 // purpose  :
 //=================================================================================
-class BuildGUI_SubShapeDlg : public GEOMBase_Skeleton
+class EntityGUI_SubShapeDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
 public:
-    BuildGUI_SubShapeDlg(QWidget* parent = 0, const char* name = 0, BuildGUI* theBuildGUI = 0, SALOME_Selection* Sel = 0, Handle(AIS_InteractiveContext) ic = 0, bool modal = FALSE, WFlags fl = 0);
-    ~BuildGUI_SubShapeDlg();
+    EntityGUI_SubShapeDlg(QWidget* parent = 0, const char* name = 0, EntityGUI* theEntityGUI = 0, SALOME_Selection* Sel = 0, Handle(AIS_InteractiveContext) ic = 0, bool modal = FALSE, WFlags fl = 0);
+    ~EntityGUI_SubShapeDlg();
 
 private :
     void Init(Handle(AIS_InteractiveContext) ic);
@@ -54,7 +54,7 @@ private :
     void ResetStateOfDialog();
     unsigned int NumberOfSubShapes(const TopoDS_Shape& S, const int shapeType);
 
-    BuildGUI* myBuildGUI;
+    EntityGUI* myEntityGUI;
 
     /* Interactive and local context management see also : bool myUseLocalContext() */
     Handle(AIS_InteractiveContext) myIC;   /* Interactive context */ 

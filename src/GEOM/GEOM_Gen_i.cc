@@ -31,6 +31,7 @@ using namespace std;
 
 #include "Partition_Spliter.hxx"
 #include "Archimede_VolumeSection.hxx"
+#include "Sketcher_Profile.hxx"
 
 #include "Utils_CorbaException.hxx"
 #include "utilities.h"
@@ -4425,6 +4426,36 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeWire( const GEOM::GEOM_Gen::ListOfIOR& List
 
 
 //=================================================================================
+// function : MakeSketcher()
+// purpose  : Make a wire from a list containing many points
+//=================================================================================
+GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeSketcher( const char *Cmd )
+  throw (SALOME::SALOME_Exception)
+{
+  GEOM::GEOM_Shape_var result ;
+  TopoDS_Shape tds ;
+  try {
+    Sketcher_Profile aProfile (Cmd);
+    if(aProfile.IsDone())
+      tds = aProfile.GetShape();
+  }
+  catch(Standard_Failure) {
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakeBox", SALOME::BAD_PARAM);
+  }
+
+  if (tds.IsNull()) {
+    THROW_SALOME_CORBA_EXCEPTION("Make Box aborted : null shape", SALOME::BAD_PARAM);
+  } 
+  else {
+    result = CreateObject(tds);
+    const char *entry = InsertInLabel(tds, result->Name(), myCurrentOCAFDoc) ;
+    result->ShapeId(entry) ;
+  }
+  return result;
+}
+
+
+//=================================================================================
 // function : MakeBezier()
 // purpose  : Make a wire from a list containing many points
 //=================================================================================
@@ -4466,10 +4497,10 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeBezier( const GEOM::GEOM_Gen::ListOfIOR& Li
 
 
 //=================================================================================
-// function : MakeBSpline()
+// function : MakeInterpol()
 // purpose  : Make a wire from a list containing many points
 //=================================================================================
-GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeBSpline( const GEOM::GEOM_Gen::ListOfIOR& ListShapes )
+GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeInterpol( const GEOM::GEOM_Gen::ListOfIOR& ListShapes )
   throw (SALOME::SALOME_Exception)
 {
   GEOM::GEOM_Shape_var result;

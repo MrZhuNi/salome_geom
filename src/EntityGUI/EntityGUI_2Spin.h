@@ -21,42 +21,28 @@
 //
 //
 //
-//  File   : BuildGUI.h
+//  File   : EntityGUI_2Spin.h
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header: 
 
-#ifndef BUILDGUI_H
-#define BUILDGUI_H
+#ifndef ENTITYGUI_2SPIN_H
+#define ENTITYGUI_2SPIN_H
 
-#include "GEOMBase.h"
-#include <gp_Pnt.hxx>
+#include "EntityGUI_2Spin_QTD.h"
+#include "DlgRef_SpinBox.h"
 
-//=================================================================================
-// class    : BuildGUI
-// purpose  :
-//=================================================================================
-class BuildGUI : public QObject
-{
-  Q_OBJECT /* for QT compatibility */
+class EntityGUI_2Spin : public EntityGUI_2Spin_QTD
+{ 
+    Q_OBJECT
 
-public :
-  BuildGUI();
-  ~BuildGUI();
+public:
+    EntityGUI_2Spin(QWidget* parent = 0, const char* name = 0, WFlags fl = 0);
+    ~EntityGUI_2Spin();
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
-
-  void MakeLinearEdgeAndDisplay(const gp_Pnt P1, const gp_Pnt P2);
-  void MakeWireAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
-  void MakeFaceAndDisplay(GEOM::GEOM_Shape_ptr aWire, const Standard_Boolean wantPlanar);
-  void MakeShellAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
-  void MakeSolidAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
-  void MakeCompoundAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
-
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
+    DlgRef_SpinBox* SpinBox_DX;
+    DlgRef_SpinBox* SpinBox_DY;
 
 };
 
-#endif
+#endif // ENTITYGUI_2SPIN_H

@@ -21,7 +21,7 @@
 //
 //
 //
-//  File   : BuildGUI_SplineDlg.h
+//  File   : EntityGUI_SplineDlg.h
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header: 
@@ -32,28 +32,28 @@
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel_QTD.h"
 
-#include "BuildGUI.h"
+#include "EntityGUI.h"
 
 #include "GEOM_ShapeTypeFilter.hxx"
 
 //=================================================================================
-// class    : BuildGUI_WireDlg
+// class    : EntityGUI_WireDlg
 // purpose  :
 //=================================================================================
-class BuildGUI_SplineDlg : public GEOMBase_Skeleton
+class EntityGUI_SplineDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
 public:
-    BuildGUI_SplineDlg(QWidget* parent = 0, const char* name = 0, BuildGUI* theBuildGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
-    ~BuildGUI_SplineDlg();
+    EntityGUI_SplineDlg(QWidget* parent = 0, const char* name = 0, EntityGUI* theEntityGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    ~EntityGUI_SplineDlg();
 
 private:
     void Init();
     void enterEvent(QEvent* e);
     void MakeSplineSimulationAndDisplay();
 
-    BuildGUI* myBuildGUI;
+    EntityGUI* myEntityGUI;
 
     int myConstructorId;
     Handle(GEOM_ShapeTypeFilter) myVertexFilter;  /* filter for selection */
@@ -62,7 +62,7 @@ private:
     bool myOkListShapes;   /* to check when arguments is defined */
 
     DlgRef_1Sel_QTD* GroupBezier;
-    DlgRef_1Sel_QTD* GroupBSpline;
+    DlgRef_1Sel_QTD* GroupInterpol;
 
 private slots:
     void ClickOnOk();
