@@ -26,27 +26,22 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
 #include "Kinematic_Assembly.hxx"
 
+using namespace std;
 
 //=======================================================================
 // profile
 // command to build a profile
 //=======================================================================
-Kinematic_Assembly::Kinematic_Assembly()
-{
-
-}
+Kinematic_Assembly::Kinematic_Assembly() {}
 
 
 //=================================================================================
 // function : ~Kinematic_Assembly()
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
-Kinematic_Assembly::~Kinematic_Assembly()
-{  
-}
+Kinematic_Assembly::~Kinematic_Assembly() {}
 
 
 //=================================================================================

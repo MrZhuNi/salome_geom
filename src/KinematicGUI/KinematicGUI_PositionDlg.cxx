@@ -118,12 +118,20 @@ void KinematicGUI_PositionDlg::Init()
   if(!testResult)
     ClickOnCancel();
 
-  myGeomPosition = GEOM::GEOM_Position::_narrow(myGeomContact->GetPosition());
+  GEOM::ListOfDouble_var aList = myGeomContact->GetPosition();
 
-  P0 = myGeomPosition->GetOrigin();
-  VX = myGeomPosition->GetVX();
-  VY = myGeomPosition->GetVY();
-  VZ = myGeomPosition->GetVZ();
+  P0.x = aList[0];
+  P0.y = aList[1];
+  P0.z = aList[2];
+  VX.PS.x = aList[3];
+  VX.PS.y = aList[4];
+  VX.PS.z = aList[5];
+  VY.PS.x = aList[6];
+  VY.PS.y = aList[7];
+  VY.PS.z = aList[8];
+  VZ.PS.x = aList[9];
+  VZ.PS.y = aList[10];
+  VZ.PS.z = aList[11];
 
   Group1->SpinBox_11->SetValue(P0.x);
   Group1->SpinBox_12->SetValue(P0.y);
@@ -177,7 +185,7 @@ void KinematicGUI_PositionDlg::Init()
 
 
 //=================================================================================
-// function : InitValues()
+// function : SetEnabledValues()
 // purpose  :
 //=================================================================================
 void KinematicGUI_PositionDlg::SetEnabledValues()
@@ -185,52 +193,33 @@ void KinematicGUI_PositionDlg::SetEnabledValues()
   int type = myGeomContact->GetType();
 
   if(type == 0) { //EMBEDDING
-    Group1->SpinBox_21->setEnabled(false);
-    Group1->SpinBox_22->setEnabled(false);
-    Group1->SpinBox_23->setEnabled(false);
-    Group1->SpinBox_31->setEnabled(false);
-    Group1->SpinBox_32->setEnabled(false);
-    Group1->SpinBox_33->setEnabled(false);
-    Group1->SpinBox_41->setEnabled(false);
-    Group1->SpinBox_42->setEnabled(false);
-    Group1->SpinBox_43->setEnabled(false);
-    Group1->TextLabel5->setEnabled(false);
-    Group1->TextLabel6->setEnabled(false);
-    Group1->TextLabel7->setEnabled(false);
-    Group1->TextLabel8->setEnabled(false);
-    Group1->TextLabel9->setEnabled(false);
-    Group1->TextLabel10->setEnabled(false);
-    Group1->TextLabel11->setEnabled(false);
-    Group1->TextLabel12->setEnabled(false);
-    Group1->TextLabel13->setEnabled(false);
-    Group1->TextLabel14->setEnabled(false);
-    Group1->TextLabel15->setEnabled(false);
-    Group1->TextLabel16->setEnabled(false);
+    Group1->SpinBox_21->hide();
+    Group1->SpinBox_22->hide();
+    Group1->SpinBox_23->hide();
+    Group1->TextLabel5->hide();
+    Group1->TextLabel6->hide();
+    Group1->TextLabel7->hide();
+    Group1->TextLabel8->hide();
   }
-  else if(type == 1 || type == 3 || type == 5 || type == 9) { //PIVOT || SLIDING PIVOT || PLANE || HELICOIDAL
-    Group1->SpinBox_31->setEnabled(false);
-    Group1->SpinBox_32->setEnabled(false);
-    Group1->SpinBox_33->setEnabled(false);
-    Group1->SpinBox_41->setEnabled(false);
-    Group1->SpinBox_42->setEnabled(false);
-    Group1->SpinBox_43->setEnabled(false);
-    Group1->TextLabel9->setEnabled(false);
-    Group1->TextLabel10->setEnabled(false);
-    Group1->TextLabel11->setEnabled(false);
-    Group1->TextLabel12->setEnabled(false);
-    Group1->TextLabel13->setEnabled(false);
-    Group1->TextLabel14->setEnabled(false);
-    Group1->TextLabel15->setEnabled(false);
-    Group1->TextLabel16->setEnabled(false);
+
+  if(type == 0 || type == 1 || type == 3 || type == 5 || type == 9) { //EMBEDDING || PIVOT || SLIDING PIVOT || PLANE || HELICOIDAL
+    Group1->SpinBox_31->hide();
+    Group1->SpinBox_32->hide();
+    Group1->SpinBox_33->hide();
+    Group1->TextLabel9->hide();
+    Group1->TextLabel10->hide();
+    Group1->TextLabel11->hide();
+    Group1->TextLabel12->hide();
   }
-  else if(type == 7) { //RECTILINEAR
-    Group1->SpinBox_41->setEnabled(false);
-    Group1->SpinBox_42->setEnabled(false);
-    Group1->SpinBox_43->setEnabled(false);
-    Group1->TextLabel13->setEnabled(false);
-    Group1->TextLabel14->setEnabled(false);
-    Group1->TextLabel15->setEnabled(false);
-    Group1->TextLabel16->setEnabled(false);
+
+  if(type == 0 || type == 1 || type == 3 || type == 5 || type == 7 || type == 9) { //EMBEDDING  || PIVOT || SLIDING PIVOT || PLANE || RECTILINEAR || HELICOIDAL
+    Group1->SpinBox_41->hide();
+    Group1->SpinBox_42->hide();
+    Group1->SpinBox_43->hide();
+    Group1->TextLabel13->hide();
+    Group1->TextLabel14->hide();
+    Group1->TextLabel15->hide();
+    Group1->TextLabel16->hide();
   }
 
   return;

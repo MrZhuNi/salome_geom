@@ -57,7 +57,7 @@ private:
     bool myOkAssembly;
     bool myOkShape1;            /* to check when arguments are defined */
     double myDuration;
-    int  myNbSeq;
+    int myNbSeq;
 
     DlgRef_2Sel2Spin* Group1;
 

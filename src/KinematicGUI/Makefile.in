@@ -41,41 +41,27 @@ EXPORT_HEADERS=
 LIB = libKinematicGUI.la 
 
 LIB_SRC = 	KinematicGUI.cxx \
-		KinematicGUI_3Sel1List_QTD.cxx \
-		KinematicGUI_3Sel1Spin_QTD.cxx \
-		KinematicGUI_3List3Spin_QTD.cxx \
-		KinematicGUI_12Spin_QTD.cxx \
 		KinematicGUI_Skeleton_QTD.cxx \
-		KinematicGUI_Anim_QTD.cxx \
-		KinematicGUI_3Sel1Spin.cxx \
-		KinematicGUI_3List3Spin.cxx \
+		KinematicGUI_12Spin_QTD.cxx \
 		KinematicGUI_12Spin.cxx \
 		KinematicGUI_ContactDlg.cxx \
-		KinematicGUI_ContactHDlg.cxx \
 		KinematicGUI_PositionDlg.cxx \
-		KinematicGUI_RotationDlg.cxx \
-		KinematicGUI_TranslationDlg.cxx \
-		KinematicGUI_AnimDlg.cxx \
-		KinematicGUI_AnimationDlg.cxx
+		KinematicGUI_RangeDlg.cxx \
+		KinematicGUI_AnimationDlg.cxx \
+		KinematicGUI_AnimValuesDlg.cxx \
+		KinematicGUI_AnimDlg.cxx
 
 LIB_MOC = \
 		KinematicGUI.h \
-		KinematicGUI_3Sel1List_QTD.h \
-		KinematicGUI_3Sel1Spin_QTD.h \
-		KinematicGUI_3List3Spin_QTD.h \
-		KinematicGUI_12Spin_QTD.h \
 		KinematicGUI_Skeleton_QTD.h \
-		KinematicGUI_Anim_QTD.h \
-		KinematicGUI_3Sel1Spin.h \
-		KinematicGUI_3List3Spin.h \
+		KinematicGUI_12Spin_QTD.h \
 		KinematicGUI_12Spin.h \
 		KinematicGUI_ContactDlg.h \
-		KinematicGUI_ContactHDlg.h \
 		KinematicGUI_PositionDlg.h \
-		KinematicGUI_RotationDlg.h \
-		KinematicGUI_TranslationDlg.h \
-		KinematicGUI_AnimDlg.h \
-		KinematicGUI_AnimationDlg.h
+		KinematicGUI_RangeDlg.h \
+		KinematicGUI_AnimationDlg.h \
+		KinematicGUI_AnimValuesDlg.h \
+		KinematicGUI_AnimDlg.h
 
 LIB_CLIENT_IDL = GEOM_Kinematic.idl
 

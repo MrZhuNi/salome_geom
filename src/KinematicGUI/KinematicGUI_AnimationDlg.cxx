@@ -26,8 +26,9 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
 #include "KinematicGUI_AnimationDlg.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : KinematicGUI_AnimationDlg()
@@ -141,6 +142,7 @@ void KinematicGUI_AnimationDlg::ClickOnOk()
 //=================================================================================
 void KinematicGUI_AnimationDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
 
   if(myOkAssembly && myOkShape1)
@@ -274,7 +276,7 @@ void KinematicGUI_AnimationDlg::ValueChangedInSpinBox(double newValue)
   if(send == Group1->SpinBox_DX)
     myDuration = newValue;
   else if(send == Group1->SpinBox_DY)
-    myNbSeq = newValue;
+    myNbSeq = int(newValue);
 
   return;
 }

@@ -26,16 +26,15 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "GEOM_Assembly_i.hh"
+
+using namespace std;
 
 //=================================================================================
 // function : GEOM_Assembly_i() constructor (no arguments)
 // purpose  : for what now ?
 //=================================================================================
-GEOM_Assembly_i::GEOM_Assembly_i()
-{
-}
+GEOM_Assembly_i::GEOM_Assembly_i() {}
 
 
 //=================================================================================
@@ -64,6 +63,34 @@ GEOM_Assembly_i::~GEOM_Assembly_i() { delete &_Ass; }
 
 
 //=================================================================================
+// function : Name (set method)
+// purpose  : to set the attribute 'name'.
+//          : WARNING : Register to naming service actually removed !
+//=================================================================================
+void GEOM_Assembly_i::Name(const char* name)
+{
+  _name = strdup(name);
+  GEOM::GEOM_Assembly_ptr g = GEOM::GEOM_Assembly::_narrow(_this());
+}
+
+
+//=================================================================================
+// function : ShapeId (set method) 
+// purpose  : to set the id of this shape in GEOM/OCAF doc
+//=================================================================================
+void GEOM_Assembly_i::ShapeId(const char * shapeid)
+{ _shapeid = strdup(shapeid); }
+
+
+//=================================================================================
+// function : StudyShapeId (set method) 
+// purpose  : to set the id of this shape in the Study document (OCAF entry)
+//=================================================================================
+void GEOM_Assembly_i::StudyShapeId(const char * studyshapeid)
+{ _studyshapeid = strdup(studyshapeid); }
+
+
+//=================================================================================
 // function : AddContact()
 // purpose  : 
 //=================================================================================
@@ -84,66 +111,8 @@ GEOM::ListOfContact* GEOM_Assembly_i::GetContactList() throw(SALOME::SALOME_Exce
 {
   GEOM::ListOfContact_var aContactList = new GEOM::ListOfContact;
   aContactList->length(_aContactList.length());
-  for(int i = 0; i < _NbContact; i++) {
+  for(int i = 0; i < _NbContact; i++)
     aContactList[i] = GEOM::GEOM_Contact::_duplicate(_aContactList[i]);
-  }
+  
   return aContactList._retn();
 }
-
-
-//=================================================================================
-// function : NbContacts()
-// purpose  : 
-//=================================================================================
-CORBA::Long GEOM_Assembly_i::NbContacts() throw(SALOME::SALOME_Exception)
-{
-  return _NbContact;
-}
-
-
-//=================================================================================
-// function : Name (set method)
-// purpose  : to set the attribute 'name'.
-//          : WARNING : Register to naming service actually removed !
-//=================================================================================
-void GEOM_Assembly_i::Name(const char* name)
-{
-  _name = strdup(name);
-  GEOM::GEOM_Assembly_ptr g = GEOM::GEOM_Assembly::_narrow(_this());
-}
-
-
-//=================================================================================
-// function : Name (get method)
-// purpose  : to get the attribute 'name' of this shape
-//=================================================================================
-char* GEOM_Assembly_i::Name() { return strdup(_name); }
-
-
-//=================================================================================
-// function : ShapeId
-// purpose  : to get the id of this shape from GEOM (OCAF entry)
-//=================================================================================
-char* GEOM_Assembly_i::ShapeId() { return strdup(_shapeid); }
-
-
-//=================================================================================
-// function : ShapeId (set method) 
-// purpose  : to set the id of this shape in GEOM/OCAF doc
-//=================================================================================
-void GEOM_Assembly_i::ShapeId(const char * shapeid) { _shapeid = strdup(shapeid); }
-
-
-//=================================================================================
-// function : StudyShapeId (get method)
-// purpose  : to get the id of this shape from the study document (OCAF entry)
-//=================================================================================
-char* GEOM_Assembly_i::StudyShapeId() { return strdup(_studyshapeid) ; }
-
-
-//=================================================================================
-// function : StudyShapeId (set method) 
-// purpose  : to set the id of this shape in the Study document (OCAF entry)
-//=================================================================================
-void GEOM_Assembly_i::StudyShapeId(const char * studyshapeid)
-{ _studyshapeid = strdup(studyshapeid); }

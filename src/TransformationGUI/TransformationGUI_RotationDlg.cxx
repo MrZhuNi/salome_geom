@@ -26,12 +26,15 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "TransformationGUI_RotationDlg.h"
 
 #include <gp_Lin.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepAdaptor_Curve.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_RotationDlg()

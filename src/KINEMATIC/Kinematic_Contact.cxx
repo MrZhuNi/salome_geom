@@ -26,14 +26,15 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
 #include "Kinematic_Contact.hxx"
+
+using namespace std;
 
 //=======================================================================
 // profile
 // command to build a profile
 //=======================================================================
-Kinematic_Contact::Kinematic_Contact(){}
+Kinematic_Contact::Kinematic_Contact() {}
 
 
 //=======================================================================
@@ -43,23 +44,25 @@ Kinematic_Contact::Kinematic_Contact(){}
 Kinematic_Contact::Kinematic_Contact(TopoDS_Shape Shape1, TopoDS_Shape Shape2,
 				     int type, double step)
 {
-  myType = type;
-  myShape1 = Shape1;
-  myShape2 = Shape2;
-  myStep = step;
+  SetType(type);
+  SetStep(step);
+  SetShape1(Shape1);
+  SetShape2(Shape2);
 
   gp_Pnt Origin(0, 0, 0);
-  gp_Dir DirX(1, 0, 0);
-  gp_Dir DirY(0, 1, 0);
-  gp_Dir DirZ(0, 0, 1);
+  gp_Vec DirX(1, 0, 0);
+  gp_Vec DirY(0, 1, 0);
+  gp_Vec DirZ(0, 0, 1);
 
   Kinematic_Position Pos(Origin, DirX, DirY, DirZ);
-  Kinematic_Rotation Rot(1, 2, 3, 0, 0, 0);
-  Kinematic_Translation Trans(0, 0, 0);
+  Kinematic_Range AngularRange(0, 0, 0, 0, 0, 0);
+  Kinematic_Range LinearRange(0, 0, 0, 0, 0, 0);
 
-  myPosition = Pos;
-  myRotation = Rot;
-  myTranslation = Trans;
+  SetPosition(Pos);
+  SetAngularRange(AngularRange);
+  SetLinearRange(LinearRange);
+
+  return;
 }
 
 
@@ -71,6 +74,21 @@ Kinematic_Contact::~Kinematic_Contact() {}
 
 
 //=================================================================================
+// function : GetLocation()
+// purpose  : 
+//=================================================================================
+TopLoc_Location Kinematic_Contact::GetLocation()
+{
+  gp_Trsf aTrans;
+
+  aTrans.SetTransformation(myPosition.GetAxe3());
+  TopLoc_Location aLoc(aTrans);
+
+  return aLoc;
+}
+
+
+//=================================================================================
 // function : GetTransformation()
 // purpose  : 
 //=================================================================================
@@ -79,55 +97,25 @@ gp_Trsf Kinematic_Contact::GetTransformation(double Step)
   gp_Vec aVect;
   gp_Trsf aTransformation, aRot, aRot1, aRot2, aRot3;
 
-  aVect.SetCoord(Step * myTranslation.ValX(), Step * myTranslation.ValY(), Step * myTranslation.ValZ());
+  double aMinVal = myAngularRange.GetMinValX();
+  double aMaxVal = myAngularRange.GetMaxValX();
+  aRot1.SetRotation(myPosition.GetAxeX(), (Step * (aMaxVal - aMinVal) + aMinVal) * PI / 180);
+
+  aMinVal = myAngularRange.GetMinValY();
+  aMaxVal = myAngularRange.GetMaxValY();
+  aRot2.SetRotation(myPosition.GetAxeY(), (Step * (aMaxVal - aMinVal) + aMinVal) * PI / 180);
+
+  aMinVal = myAngularRange.GetMinValZ();
+  aMaxVal = myAngularRange.GetMaxValZ();
+  aRot3.SetRotation(myPosition.GetAxeZ(), (Step * (aMaxVal - aMinVal) + aMinVal) * PI / 180);
+
+  aVect.SetCoord(Step * (myLinearRange.GetMaxValX() - myLinearRange.GetMinValX()) + myLinearRange.GetMinValX(),
+		 Step * (myLinearRange.GetMaxValY() - myLinearRange.GetMinValY()) + myLinearRange.GetMinValY(),
+		 Step * (myLinearRange.GetMaxValZ() - myLinearRange.GetMinValZ()) + myLinearRange.GetMinValZ());
+
   aTransformation.SetTranslation(aVect);
-
-  if(myRotation.Rot1() == 1) { //Axe X
-    aRot1.SetRotation(myPosition.AxeX(), Step * myRotation.ValX() * PI / 180);
-    if(myRotation.Rot2() == 2) {
-      aRot2.SetRotation(myPosition.AxeY(), Step * myRotation.ValY() * PI / 180);
-      aRot3.SetRotation(myPosition.AxeZ(), Step * myRotation.ValZ() * PI / 180);
-    } else {
-      aRot2.SetRotation(myPosition.AxeZ(), Step * myRotation.ValZ() * PI / 180);
-      aRot3.SetRotation(myPosition.AxeY(), Step * myRotation.ValY() * PI / 180);
-    }
-  } else if(myRotation.Rot1() == 2) { //Axe Y
-    aRot1.SetRotation(myPosition.AxeY(), Step * myRotation.ValY() * PI / 180);
-    if(myRotation.Rot2() == 1) {
-      aRot2.SetRotation(myPosition.AxeX(), Step * myRotation.ValX() * PI / 180);
-      aRot3.SetRotation(myPosition.AxeZ(), Step * myRotation.ValZ() * PI / 180);
-    } else {
-      aRot2.SetRotation(myPosition.AxeZ(), Step * myRotation.ValZ() * PI / 180);
-      aRot3.SetRotation(myPosition.AxeX(), Step * myRotation.ValX() * PI / 180);
-    }
-  } else if(myRotation.Rot1() == 3) { //Axe Z
-    aRot1.SetRotation(myPosition.AxeZ(), Step * myRotation.ValZ() * PI / 180);
-    if(myRotation.Rot2() == 1) {
-      aRot2.SetRotation(myPosition.AxeX(), Step * myRotation.ValX() * PI / 180);
-      aRot3.SetRotation(myPosition.AxeY(), Step * myRotation.ValY() * PI / 180);
-    } else {
-      aRot2.SetRotation(myPosition.AxeY(), Step * myRotation.ValY() * PI / 180);
-      aRot3.SetRotation(myPosition.AxeX(), Step * myRotation.ValX() * PI / 180);
-    }
-  }
-
   aRot = aRot1 * aRot2 * aRot3;
   aTransformation = aTransformation * aRot;
 
   return aTransformation;
-}
-
-
-//=================================================================================
-// function : GetLocation()
-// purpose  : 
-//=================================================================================
-TopLoc_Location Kinematic_Contact::GetLocation()
-{
-  gp_Trsf aTrans;
-
-  aTrans.SetTransformation(myPosition.Axe3());
-  TopLoc_Location aLoc(aTrans);
-
-  return aLoc;
 }

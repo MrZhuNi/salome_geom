@@ -26,27 +26,29 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
 #include "Kinematic_Position.hxx"
 
+using namespace std;
 
 //=======================================================================
 // profile
 // command to build a profile
 //=======================================================================
-Kinematic_Position::Kinematic_Position(){}
+Kinematic_Position::Kinematic_Position() {}
 
 
 //=======================================================================
 // profile
 // command to build a profile
 //=======================================================================
-Kinematic_Position::Kinematic_Position(gp_Pnt Origin, gp_Dir DirX, gp_Dir DirY, gp_Dir DirZ)
+Kinematic_Position::Kinematic_Position(gp_Pnt Origin, gp_Vec DirX, gp_Vec DirY, gp_Vec DirZ)
 {
-  myOrigin = Origin;
-  myDirX = DirX;
-  myDirY = DirY;
-  myDirZ = DirZ;
+  SetOrigin(Origin);
+  SetDirX(DirX);
+  SetDirY(DirY);
+  SetDirZ(DirZ);
+
+  return;
 }
 
 
@@ -58,10 +60,54 @@ Kinematic_Position::~Kinematic_Position() {}
 
 
 //=================================================================================
-// function : AxeX()
+// function : SetOrigin()
 // purpose  : 
 //=================================================================================
-gp_Ax1 Kinematic_Position::AxeX()
+void Kinematic_Position::SetOrigin(const gp_Pnt& aPnt)
+{
+  myOrigin = aPnt;
+  return;
+}
+
+
+//=================================================================================
+// function : SetDirX()
+// purpose  : 
+//=================================================================================
+void Kinematic_Position::SetDirX(const gp_Vec& aDir)
+{
+  myDirX = aDir;
+  return;
+}
+
+
+//=================================================================================
+// function : SetDirY()
+// purpose  : 
+//=================================================================================
+void Kinematic_Position::SetDirY(const gp_Vec& aDir)
+{
+  myDirY = aDir;
+  return;
+}
+
+
+//=================================================================================
+// function : SetDirZ()
+// purpose  : 
+//=================================================================================
+void Kinematic_Position::SetDirZ(const gp_Vec& aDir)
+{
+  myDirZ = aDir;
+  return;
+}
+
+
+//=================================================================================
+// function : GetAxeX()
+// purpose  : 
+//=================================================================================
+gp_Ax1 Kinematic_Position::GetAxeX()
 {
   gp_Ax1 anAxe;
   anAxe.SetLocation(myOrigin);
@@ -71,10 +117,10 @@ gp_Ax1 Kinematic_Position::AxeX()
 
 
 //=================================================================================
-// function : AxeY()
+// function : GetAxeY()
 // purpose  : 
 //=================================================================================
-gp_Ax1 Kinematic_Position::AxeY()
+gp_Ax1 Kinematic_Position::GetAxeY()
 {
   gp_Ax1 anAxe;
   anAxe.SetLocation(myOrigin);
@@ -84,10 +130,10 @@ gp_Ax1 Kinematic_Position::AxeY()
 
 
 //=================================================================================
-// function : AxeZ()
+// function : GetAxeZ()
 // purpose  : 
 //=================================================================================
-gp_Ax1 Kinematic_Position::AxeZ()
+gp_Ax1 Kinematic_Position::GetAxeZ()
 {
   gp_Ax1 anAxe;
   anAxe.SetLocation(myOrigin);
@@ -97,10 +143,10 @@ gp_Ax1 Kinematic_Position::AxeZ()
 
 
 //=================================================================================
-// function : Axe3()
+// function : GetAxe3()
 // purpose  : 
 //=================================================================================
-gp_Ax3 Kinematic_Position::Axe3()
+gp_Ax3 Kinematic_Position::GetAxe3()
 {
   gp_Ax3 anAxe3(myOrigin, myDirZ, myDirX);
   return anAxe3;

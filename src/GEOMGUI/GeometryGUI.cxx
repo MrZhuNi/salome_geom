@@ -63,10 +63,9 @@ typedef bool CP(QAD_Desktop*, QPopupMenu*, const QString&,
 // function : GeometryGUI()
 // purpose  : Constructor
 //=======================================================================
-GeometryGUI::GeometryGUI() :
-  QObject()
-{
-}
+GeometryGUI::GeometryGUI( const QString& theName, QObject* theParent ) :
+  SALOMEGUI( theName, theParent )
+{}
 
 
 //=======================================================================
@@ -109,7 +108,6 @@ bool GeometryGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
     return false;
 
   Mb->setItemEnabled(404, ViewOCC);//SKETCHER
-  Mb->setItemEnabled(406, ViewOCC);//SKETCHER
 
   Mb->setItemEnabled(603, ViewOCC);//SuppressFace
   Mb->setItemEnabled(604, ViewOCC);//SuppressHole
@@ -117,169 +115,134 @@ bool GeometryGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
   Mb->setItemEnabled(413, ViewOCC);// ShadingColor Settings
   Mb->setItemEnabled(414, ViewOCC);// Isos Settings
 
-  if(theCommandID == 4041 || // SKETCHER - POPUP VIEWER - SEGMENT
-     theCommandID == 4042 || // SKETCHER - POPUP VIEWER - ARC
-     theCommandID == 4043 || // SKETCHER - POPUP VIEWER - SET ANGLE
-     theCommandID == 4044 || // SKETCHER - POPUP VIEWER - SET X
-     theCommandID == 4045 || // SKETCHER - POPUP VIEWER - SET Y
-     theCommandID == 4046 || // SKETCHER - POPUP VIEWER - DELETE
-     theCommandID == 4047 || // SKETCHER - POPUP VIEWER - END
-     theCommandID == 4048 || // SKETCHER - POPUP VIEWER - CLOSE
-     theCommandID == 4051 || // SKETCHER - MENU - SET PLANE
-     theCommandID == 4052 || // SKETCHER - MENU - TANGENT
-     theCommandID == 4053 || // SKETCHER - MENU - PERPENDICULAR
-     theCommandID == 4061 || // SKETCHER - MENU - LENGTH
-     theCommandID == 4062 || // SKETCHER - MENU - ANGLE
-     theCommandID == 4063 || // SKETCHER - MENU - RADIUS
-     theCommandID == 4064 || // SKETCHER - MENU - X
-     theCommandID == 4065) {  // SKETCHER - MENU - Y
+  if(theCommandID == 111 ||  // MENU FILE - IMPORT BREP
+     theCommandID == 112 ||  // MENU FILE - IMPORT IGES
+     theCommandID == 113 ||  // MENU FILE - IMPORT STEP
+     theCommandID == 121 ||  // MENU FILE - EXPORT BREP
+     theCommandID == 122 ||  // MENU FILE - EXPORT IGES
+     theCommandID == 123 ||  // MENU FILE - EXPORT STEP
+     theCommandID == 31 ||   // MENU EDIT - COPY
+     theCommandID == 33 ||   // MENU EDIT - DELETE
+     theCommandID == 411 ||  // MENU SETTINGS - ADD IN STUDY
+     theCommandID == 412 ||  // MENU SETTINGS - SHADING COLOR
+     theCommandID == 413 ||  // MENU SETTINGS - ISOS
+     theCommandID == 414 ||  // MENU SETTINGS - STEP VALUE FOR SPIN BOXES
+     theCommandID == 5103 || // MENU TOOLS - CHECK GEOMETRY
+     theCommandID == 5104 || // MENU TOOLS - LOAD SCRIPT
+     theCommandID == 8032 || // POPUP VIEWER - COLOR
+     theCommandID == 8033 || // POPUP VIEWER - TRANSPARENCY
+     theCommandID == 8034 || // POPUP VIEWER - ISOS
+     theCommandID == 804 ||  // POPUP VIEWER - ADD IN STUDY
+     theCommandID == 901 ||  // OBJECT BROWSER - RENAME
+     theCommandID == 9024) { // OBJECT BROWSER - OPEN
+    if(!GeomGUI->LoadLibrary("libGEOMToolsGUI.so")) 
+      return false;
+  }
+  else if(theCommandID == 211 ||  // MENU VIEW - WIREFRAME/SHADING
+	  theCommandID == 212 ||  // MENU VIEW - DISPLAY ALL
+	  theCommandID == 213 ||  // MENU VIEW - DISPLAY ONLY
+	  theCommandID == 214 ||  // MENU VIEW - ERASE ALL
+	  theCommandID == 215 ||  // MENU VIEW - ERASE ONLY
+	  theCommandID == 8031) { // POPUP VIEWER - WIREFRAME/SHADING
+    if(!GeomGUI->LoadLibrary("libDisplayGUI.so")) 
+      return false;
+  }
+  else if(theCommandID == 4011 || // MENU BASIC - POINT
+	  theCommandID == 4012 || // MENU BASIC - LINE
+	  theCommandID == 4013 || // MENU BASIC - CIRCLE
+	  theCommandID == 4014 || // MENU BASIC - ELLIPSE
+	  theCommandID == 4015 || // MENU BASIC - ARC
+	  theCommandID == 4016 || // MENU BASIC - VECTOR
+	  theCommandID == 4017 || // MENU BASIC - PLANE
+	  theCommandID == 4018) { // MENU BASIC - WPLANE
+    if(!GeomGUI->LoadLibrary("libBasicGUI.so")) 
+      return false;
+  }
+  else if(theCommandID == 4021 || // MENU PRIMITIVE - BOX
+	  theCommandID == 4022 || // MENU PRIMITIVE - CYLINDER
+	  theCommandID == 4023 || // MENU PRIMITIVE - SPHERE
+	  theCommandID == 4024 || // MENU PRIMITIVE - TORUS
+	  theCommandID == 4025) { // MENU PRIMITIVE - CONE
+    if(!GeomGUI->LoadLibrary("libPrimitiveGUI.so"))
+      return false;
+  }
+  else if(theCommandID == 4031 || // MENU GENERATION - PRISM
+	  theCommandID == 4032 || // MENU GENERATION - REVOLUTION
+	  theCommandID == 4033 || // MENU GENERATION - FILLING
+	  theCommandID == 4034) { // MENU GENERATION - PIPE
+    if(!GeomGUI->LoadLibrary("libGenerationGUI.so")) 
+      return false;
+  }
+  else if(theCommandID == 404 ||  // MENU ENTITY - SKETCHER
+	  theCommandID == 407) {  // MENU ENTITY - EXPLODE
     if(!GeomGUI->LoadLibrary("libEntityGUI.so")) 
       return false;
   }
-  else {
-    if(GeomGUI->myState == 2) {
-      Mb->setItemEnabled(405, false);//SKETCHER
-      GeomGUI->GetSketcher().Clear();
-      GeomGUI->myState = -1;
-    }
-
-    if(theCommandID == 111 ||  // MENU FILE - IMPORT BREP
-       theCommandID == 112 ||  // MENU FILE - IMPORT IGES
-       theCommandID == 113 ||  // MENU FILE - IMPORT STEP
-       theCommandID == 121 ||  // MENU FILE - EXPORT BREP
-       theCommandID == 122 ||  // MENU FILE - EXPORT IGES
-       theCommandID == 123 ||  // MENU FILE - EXPORT STEP
-       theCommandID == 31 ||   // MENU EDIT - COPY
-       theCommandID == 33 ||   // MENU EDIT - DELETE
-       theCommandID == 411 ||  // MENU SETTINGS - ADD IN STUDY
-       theCommandID == 412 ||  // MENU SETTINGS - SHADING COLOR
-       theCommandID == 413 ||  // MENU SETTINGS - ISOS
-       theCommandID == 414 ||  // MENU SETTINGS - STEP VALUE FOR SPIN BOXES
-       theCommandID == 5103 || // MENU TOOLS - CHECK GEOMETRY
-       theCommandID == 5104 || // MENU TOOLS - LOAD SCRIPT
-       theCommandID == 8032 || // POPUP VIEWER - COLOR
-       theCommandID == 8033 || // POPUP VIEWER - TRANSPARENCY
-       theCommandID == 8034 || // POPUP VIEWER - ISOS
-       theCommandID == 804 ||  // POPUP VIEWER - ADD IN STUDY
-       theCommandID == 901 ||  // OBJECT BROWSER - RENAME
-       theCommandID == 9024) { // OBJECT BROWSER - OPEN
-      if(!GeomGUI->LoadLibrary("libGEOMToolsGUI.so")) 
-	return false;
-    }
-    else if(theCommandID == 211 ||  // MENU VIEW - WIREFRAME/SHADING
-	    theCommandID == 212 ||  // MENU VIEW - DISPLAY ALL
-	    theCommandID == 213 ||  // MENU VIEW - DISPLAY ONLY
-	    theCommandID == 214 ||  // MENU VIEW - ERASE ALL
-	    theCommandID == 215 ||  // MENU VIEW - ERASE ONLY
-	    theCommandID == 8031) { // POPUP VIEWER - WIREFRAME/SHADING
-      if(!GeomGUI->LoadLibrary("libDisplayGUI.so")) 
-	return false;
-    }
-    else if(theCommandID == 4011 || // MENU BASIC - POINT
-	    theCommandID == 4012 || // MENU BASIC - LINE
-	    theCommandID == 4013 || // MENU BASIC - CIRCLE
-	    theCommandID == 4014 || // MENU BASIC - ELLIPSE
-	    theCommandID == 4015 || // MENU BASIC - ARC
-	    theCommandID == 4016 || // MENU BASIC - VECTOR
-	    theCommandID == 4017 || // MENU BASIC - PLANE
-	    theCommandID == 4018) { // MENU BASIC - WPLANE
-      if(!GeomGUI->LoadLibrary("libBasicGUI.so")) 
-	return false;
-    }
-    else if(theCommandID == 4021 || // MENU PRIMITIVE - BOX
-	    theCommandID == 4022 || // MENU PRIMITIVE - CYLINDER
-	    theCommandID == 4023 || // MENU PRIMITIVE - SPHERE
-	    theCommandID == 4024 || // MENU PRIMITIVE - TORUS
-	    theCommandID == 4025) { // MENU PRIMITIVE - CONE
-      if(!GeomGUI->LoadLibrary("libPrimitiveGUI.so"))
-	return false;
-    }
-    else if(theCommandID == 4031 || // MENU GENERATION - PRISM
-	    theCommandID == 4032 || // MENU GENERATION - REVOLUTION
-	    theCommandID == 4033 || // MENU GENERATION - FILLING
-	    theCommandID == 4034) { // MENU GENERATION - PIPE
-      if(!GeomGUI->LoadLibrary("libGenerationGUI.so")) 
-	return false;
-    }
-    else if(theCommandID == 404 ||  // SKETCHER
-	    theCommandID == 407) {  // MENU ENTITY - EXPLODE
-      if(!GeomGUI->LoadLibrary("libEntityGUI.so")) 
-	return false;
-    }
-    else if(theCommandID == 4081 || // MENU BUILD - EDGE
-	    theCommandID == 4082 || // MENU BUILD - WIRE
-	    theCommandID == 4083 || // MENU BUILD - FACE
-	    theCommandID == 4084 || // MENU BUILD - SHELL
-	    theCommandID == 4085 || // MENU BUILD - SOLID
-	    theCommandID == 4086) { // MENU BUILD - COMPUND
-      if(!GeomGUI->LoadLibrary("libBuildGUI.so")) 
-	return false;
-    }
-    else if(theCommandID == 5011 || // MENU BOOLEAN - FUSE
-	    theCommandID == 5012 || // MENU BOOLEAN - COMMON
-	    theCommandID == 5013 || // MENU BOOLEAN - CUT
-	    theCommandID == 5014) { // MENU BOOLEAN - SECTION
-      if(!GeomGUI->LoadLibrary("libBooleanGUI.so")) 
-	return false;
-    }
-    else if(theCommandID == 5021 || // MENU TRANSFORMATION - TRANSLATION
-	    theCommandID == 5022 || // MENU TRANSFORMATION - ROTATION
-	    theCommandID == 5023 || // MENU TRANSFORMATION - POSITION
-	    theCommandID == 5024 || // MENU TRANSFORMATION - MIRROR
-	    theCommandID == 5025 || // MENU TRANSFORMATION - SCALE
-	    theCommandID == 5026 || // MENU TRANSFORMATION - MULTI-TRANSLATION
-	    theCommandID == 5027) { // MENU TRANSFORMATION - MULTI-ROTATION
-      if(!GeomGUI->LoadLibrary("libTransformationGUI.so")) 
-	return false;
-    }
-    else if(theCommandID == 503 ||  // MENU OPERATION - PARTITION
-	    theCommandID == 504 ||  // MENU OPERATION - ARCHIMEDE
-	    theCommandID == 505 ||  // MENU OPERATION - FILLET
-	    theCommandID == 506) {  // MENU OPERATION - CHAMFER
-      if(!GeomGUI->LoadLibrary("libOperationGUI.so")) 
-	return false;
-    }
-    else if(theCommandID == 601 ||  // MENU REPAIR - SEWING
-	    theCommandID == 602 ||  // MENU REPAIR - ORIENTATION
-	    theCommandID == 603 ||  // MENU REPAIR - SUPPRESS FACES
-	    theCommandID == 604) {  // MENU REPAIR - SUPPRESS HOLE
-      if(!GeomGUI->LoadLibrary("libRepairGUI.so")) 
-	return false;
-    }
-    else if(theCommandID == 611 ||  // MENU KINEMATIC - ASSEMBLY
-	    theCommandID == 61201 ||  // MENU KINEMATIC - EMBEDDING
-	    theCommandID == 61202 ||  // MENU KINEMATIC - PIVOT
-	    theCommandID == 61203 ||  // MENU KINEMATIC - SLIDE
-	    theCommandID == 61204 ||  // MENU KINEMATIC - SLIDING PIVOT
-	    theCommandID == 61205 ||  // MENU KINEMATIC - SPHERICAL
-	    theCommandID == 61206 ||  // MENU KINEMATIC - PLANE
-	    theCommandID == 61207 ||  // MENU KINEMATIC - ANNULAR
-	    theCommandID == 61208 ||  // MENU KINEMATIC - RECTILINEAR
-	    theCommandID == 61209 ||  // MENU KINEMATIC - PONCTUAL
-	    theCommandID == 61210 ||  // MENU KINEMATIC - HELICOIDAL
-	    theCommandID == 6131 ||  // MENU KINEMATIC - POSITION
-	    theCommandID == 6132 ||  // MENU KINEMATIC - ROTATION
-	    theCommandID == 6133 ||  // MENU KINEMATIC - TRANSLATION
-	    theCommandID == 614 ||  // MENU KINEMATIC - ANIMATION
-	    theCommandID == 6141) {  // MENU KINEMATIC - RUN ANIMATION
-      if(!GeomGUI->LoadLibrary("libKinematicGUI.so")) 
-	return false;
-    }
-    else if(theCommandID == 701 ||  // MENU MEASURE - PROPERTIES
-	    theCommandID == 702 ||  // MENU MEASURE - CDG
-	    theCommandID == 703 ||  // MENU MEASURE - INERTIA
-	    theCommandID == 7041 || // MENU MEASURE - BOUNDING BOX
-	    theCommandID == 7042 || // MENU MEASURE - MIN DISTANCE
-	    theCommandID == 705 ||  // MENU MEASURE - TOLERANCE
-	    theCommandID == 706 ||  // MENU MEASURE - WHATIS
-	    theCommandID == 707) {  // MENU MEASURE - CHECK
-      if(!GeomGUI->LoadLibrary("libMeasureGUI.so")) 
-	return false;
-    }
-    else
+  else if(theCommandID == 4081 || // MENU BUILD - EDGE
+	  theCommandID == 4082 || // MENU BUILD - WIRE
+	  theCommandID == 4083 || // MENU BUILD - FACE
+	  theCommandID == 4084 || // MENU BUILD - SHELL
+	  theCommandID == 4085 || // MENU BUILD - SOLID
+	  theCommandID == 4086) { // MENU BUILD - COMPUND
+    if(!GeomGUI->LoadLibrary("libBuildGUI.so")) 
       return false;
   }
-  
+  else if(theCommandID == 5011 || // MENU BOOLEAN - FUSE
+	  theCommandID == 5012 || // MENU BOOLEAN - COMMON
+	  theCommandID == 5013 || // MENU BOOLEAN - CUT
+	  theCommandID == 5014) { // MENU BOOLEAN - SECTION
+    if(!GeomGUI->LoadLibrary("libBooleanGUI.so")) 
+      return false;
+  }
+  else if(theCommandID == 5021 || // MENU TRANSFORMATION - TRANSLATION
+	  theCommandID == 5022 || // MENU TRANSFORMATION - ROTATION
+	  theCommandID == 5023 || // MENU TRANSFORMATION - POSITION
+	  theCommandID == 5024 || // MENU TRANSFORMATION - MIRROR
+	  theCommandID == 5025 || // MENU TRANSFORMATION - SCALE
+	  theCommandID == 5026 || // MENU TRANSFORMATION - MULTI-TRANSLATION
+	  theCommandID == 5027) { // MENU TRANSFORMATION - MULTI-ROTATION
+    if(!GeomGUI->LoadLibrary("libTransformationGUI.so")) 
+      return false;
+  }
+  else if(theCommandID == 503 ||  // MENU OPERATION - PARTITION
+	  theCommandID == 504 ||  // MENU OPERATION - ARCHIMEDE
+	  theCommandID == 505 ||  // MENU OPERATION - FILLET
+	  theCommandID == 506) {  // MENU OPERATION - CHAMFER
+    if(!GeomGUI->LoadLibrary("libOperationGUI.so")) 
+      return false;
+  }
+  else if(theCommandID == 601 ||  // MENU REPAIR - SEWING
+	  theCommandID == 602 ||  // MENU REPAIR - ORIENTATION
+	  theCommandID == 603 ||  // MENU REPAIR - SUPPRESS FACES
+	  theCommandID == 604) {  // MENU REPAIR - SUPPRESS HOLE
+    if(!GeomGUI->LoadLibrary("libRepairGUI.so")) 
+      return false;
+  }
+  else if(theCommandID == 611 ||  // MENU KINEMATIC - ASSEMBLY
+	  theCommandID == 6121 || // MENU KINEMATIC - CONTACT
+	  theCommandID == 6122 || // MENU KINEMATIC - POSITION
+	  theCommandID == 6123 || // MENU KINEMATIC - ROTATION
+	  theCommandID == 6124 || // MENU KINEMATIC - TRANSLATION
+	  theCommandID == 613 ||  // MENU KINEMATIC - ANIMATION
+	  theCommandID == 6131 || // MENU KINEMATIC - SET VALUES
+	  theCommandID == 6132) { // MENU KINEMATIC - RUN ANIMATION
+    if(!GeomGUI->LoadLibrary("libKinematicGUI.so")) 
+      return false;
+  }
+  else if(theCommandID == 701 ||  // MENU MEASURE - PROPERTIES
+	  theCommandID == 702 ||  // MENU MEASURE - CDG
+	  theCommandID == 703 ||  // MENU MEASURE - INERTIA
+	  theCommandID == 7041 || // MENU MEASURE - BOUNDING BOX
+	  theCommandID == 7042 || // MENU MEASURE - MIN DISTANCE
+	  theCommandID == 705 ||  // MENU MEASURE - TOLERANCE
+	  theCommandID == 706 ||  // MENU MEASURE - WHATIS
+	  theCommandID == 707) {  // MENU MEASURE - CHECK
+    if(!GeomGUI->LoadLibrary("libMeasureGUI.so")) 
+      return false;
+  }
+  else
+    return false;
+
   //Load Function OnGUIEvent
   OSD_Function osdF = GeomGUI->myGUILibrary.DlSymb("OnGUIEvent");
   OGE (*f1) = NULL;
@@ -319,12 +282,7 @@ bool GeometryGUI::OnMouseMove(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFra
 
   if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
     return false;
-
-  if(GeomGUI->myState == 2) {
-    OCCViewer_ViewPort* vp = ((OCCViewer_ViewFrame*)studyFrame->getRightFrame()->getViewFrame())->getViewPort();
-    GeomGUI->GetSketcher().MakeCurrentEdge(pe->x(), pe->y(), ((OCCViewer_ViewPort3d*)vp)->getView());
-  }
-
+  else
   return true;
 }
 
@@ -340,14 +298,7 @@ bool GeometryGUI::OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFr
   if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
     return false;
 
-  if(GeomGUI->myState == 2) {
-    GeomGUI->GetSketcher().ValidateEdge();
-    if(GeomGUI->GetSketcher().GetmyEdgesNumber() == 1) {
-      QMenuBar* Mb = QAD_Application::getDesktop()->getMainMenuBar();
-      Mb->setItemEnabled(405, true);  // SKETCH CONTRAINTS
-    }
-  }
-  else if(GeomGUI->myState == 0) {
+  if(GeomGUI->myState == 0) {
     if(!GeomGUI->LoadLibrary("libBasicGUI.so")) 
       return false;
 
@@ -451,8 +402,6 @@ bool GeometryGUI::SetSettings(QAD_Desktop* parent)
   }
 
   Mb->setItemEnabled(404, ViewOCC);//SKETCHER
-  Mb->setItemEnabled(405, false);//SKETCHER
-  Mb->setItemEnabled(406, ViewOCC);//SKETCHER
 
   Mb->setItemEnabled(603, ViewOCC);//SuppressFace
   Mb->setItemEnabled(604, ViewOCC);//SuppressHole
@@ -480,11 +429,8 @@ void GeometryGUI::DefinePopup(QString & theContext, QString & theParent, QString
   theObject = "";
   theContext = "";
 
-
   if((theParent.compare("Viewer") == 0)) {
-    if(GeomGUI->myState == 2) 
-      theContext = "Sketch";
-    else if(Sel->IObjectCount() == 0)
+    if(Sel->IObjectCount() == 0)
       theContext = "NothingSelected";
   }
 
@@ -531,24 +477,6 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
 {
   GeometryGUI::GetOrCreateGeometryGUI(parent);
 
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    if(theParent.compare("Viewer") == 0) {
-      if(theContext.compare("Sketch") == 0) {
-	SketchStatus myCS = GeomGUI->GetSketcher().GetCurrentStatus();
-	popup->setCheckable(TRUE);
-	if(myCS == SEGMENT) {
-	  popup->setItemChecked(4041, true);  //Sketch Segment Menu
-	  popup->setItemChecked(4042, false); //Sketch Arc Menu
-	}
-	else if(myCS == ARC_CHORD) {
-	  popup->setItemChecked(4041, false); //Sketch Segment Menu
-	  popup->setItemChecked(4042, true);  //Sketch Arc Menu
-	}   
-	return true;
-      }
-    }
-  }
-
   if(!GeomGUI->LoadLibrary("libGEOMBase.so")) 
     return false;
 
@@ -571,25 +499,17 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
 // function : activeStudyChanged()
 // purpose  : static
 //=================================================================================
-void GeometryGUI::activeStudyChanged(QAD_Desktop* parent)
+bool GeometryGUI::ActiveStudyChanged(QAD_Desktop* parent)
 {
   GeometryGUI::GetOrCreateGeometryGUI(parent); 
 
   if(GeomGUI != 0) {
     QMenuBar* Mb = QAD_Application::getDesktop()->getMainMenuBar();
-    GeomGUI->myNbGeom = GeomGUI->myComponentGeom->NbLabels();
-    if(GeomGUI->myState == 2) {
-      Mb->setItemEnabled(405, false);//SKETCHER
-      GeomGUI->GetSketcher().Clear();
-      GeomGUI->myState = -1;
-    }
-
     bool ViewOCC = false;
     if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) 
       ViewOCC = true;
 
     Mb->setItemEnabled(404, ViewOCC);//SKETCHER
-    Mb->setItemEnabled(406, ViewOCC);//SKETCHER
 
     Mb->setItemEnabled(603, ViewOCC);//SuppressFace
     Mb->setItemEnabled(604, ViewOCC);//SuppressHole
@@ -604,7 +524,7 @@ void GeometryGUI::activeStudyChanged(QAD_Desktop* parent)
   // PAL5356: update VTK selection
   ::UpdateVtkSelection(parent);
 
-  return;
+  return true;
 }
 
 
@@ -630,49 +550,23 @@ void GeometryGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theI
 }
 
 
-//=================================================================================
-// EXPORTED METHODS
-//=================================================================================
+void GeometryGUI::SupportedViewType(int* buffer, int bufferSize)
+{
+  if(!buffer || !bufferSize) return;
+  buffer[0] = (int)VIEW_OCC;
+  if (--bufferSize) buffer[1] = (int)VIEW_VTK;
+}
+
+void GeometryGUI::Deactivate()
+{
+  if ( GeomGUI )
+    GeomGUI->EmitSignalCloseAllDialogs();
+}
+
+static GeometryGUI aGUI("");
 extern "C"
 {
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
-  {return GeometryGUI::OnGUIEvent(theCommandID, parent);}
-
-  bool OnKeyPress(QKeyEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
-  {return GeometryGUI::OnKeyPress(pe, parent, studyFrame);}
-
-  bool OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
-  {return GeometryGUI::OnMousePress(pe, parent, studyFrame);}
-
-  bool OnMouseMove(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame)
-  {return GeometryGUI::OnMouseMove(pe, parent, studyFrame);}
-
-  bool SetSettings(QAD_Desktop* parent)
-  {return GeometryGUI::SetSettings(parent);}
-
-  bool customPopup(QAD_Desktop* parent, QPopupMenu* popup, const QString & theContext,
-		     const QString & theParent, const QString & theObject)
-  {return GeometryGUI::CustomPopup(parent, popup, theContext, theParent, theObject);}
-
-  void definePopup(QString & theContext, QString & parent, QString & theObject)
-  {GeometryGUI::DefinePopup(theContext, parent, theObject);}
-  
-  bool activeStudyChanged(QAD_Desktop* parent)
-  {GeometryGUI::activeStudyChanged(parent);}
-
-  void buildPresentation(const Handle(SALOME_InteractiveObject)& theIO)
-  {GeometryGUI::BuildPresentation(theIO);}
-
-  void supportedViewType(int* buffer, int bufferSize)
-  {
-    if(!buffer || !bufferSize) return;
-    buffer[0] = (int)VIEW_OCC;
-    if (--bufferSize) buffer[1] = (int)VIEW_VTK;
-  }
-
-  void deactivate()
-  {
-    if ( GeomGUI )
-      GeomGUI->EmitSignalCloseAllDialogs();
+  Standard_EXPORT SALOMEGUI* GetComponentGUI() {
+    return &aGUI;
   }
 }

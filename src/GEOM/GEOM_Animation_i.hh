@@ -62,25 +62,32 @@ private:
   char* _studyshapeid; // exists only if added in the study document
 
 public:
-  GEOM::GEOM_Assembly_ptr GetAssembly()
+  GEOM::GEOM_Assembly_ptr GetAssembly() throw (SALOME::SALOME_Exception)
+    {return GEOM::GEOM_Assembly::_duplicate(_Ass);};
+
+  GEOM::GEOM_Shape_ptr GetFrame() throw (SALOME::SALOME_Exception)
+    {return GEOM::GEOM_Shape::_duplicate(_Frame);};
+
+  CORBA::Double GetDuration() throw (SALOME::SALOME_Exception)
+    {return _Animation->GetDuration();};
+
+  CORBA::Long GetNbSeq() throw (SALOME::SALOME_Exception)
+    {return _Animation->GetNbSeq();};
+
+  GEOM::ListOfDouble* GetDisplacement(GEOM::GEOM_Contact_ptr aContact)
     throw (SALOME::SALOME_Exception);
 
-  GEOM::GEOM_Shape_ptr GetFrame()
+  void SetDisplacement(GEOM::GEOM_Contact_ptr aContact,
+		       const GEOM::ListOfDouble& aList)
     throw (SALOME::SALOME_Exception);
 
-  CORBA::Double GetDuration()
-    throw (SALOME::SALOME_Exception);
-
-  CORBA::Long GetNbSeq()
-    throw (SALOME::SALOME_Exception);
-
-  char* Name();
+  char* Name() {return strdup(_name);};
   void  Name(const char* name);
 
-  char* ShapeId(); 
+  char* ShapeId() {return strdup(_shapeid);}; 
   void  ShapeId(const char* shapeid);
 
-  char* StudyShapeId();
+  char* StudyShapeId() {return strdup(_studyshapeid);};
   void  StudyShapeId(const char* studyshapeid);
 
 };

@@ -411,10 +411,6 @@ msgid "ICON_ANIM_PLAY"
 msgstr "anim_play.png"
 
 #: 
-msgid "ICON_ANIM_STOP"
-msgstr "anim_stop.png"
-
-#: 
 msgid "ICON_ANIM_NEXT"
 msgstr "anim_next.png"
 

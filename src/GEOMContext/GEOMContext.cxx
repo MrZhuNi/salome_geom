@@ -81,6 +81,7 @@ GEOMContext* GEOMContext::GetOrCreateGeomGUI(QAD_Desktop* desktop)
     /* GetCurrentStudy */
     int studyId = desktop->getActiveStudy()->getStudyId();
     GeomGUI->myComponentGeom->GetCurrentStudy(studyId);
+
     GeomGUI->myNbGeom = GeomGUI->myComponentGeom->NbLabels();
   }
 
@@ -88,7 +89,7 @@ GEOMContext* GEOMContext::GetOrCreateGeomGUI(QAD_Desktop* desktop)
   int studyId = desktop->getActiveStudy()->getStudyId();
   GeomGUI->myComponentGeom->GetCurrentStudy(studyId);
 
-  //GeomGUI->myNbGeom = GeomGUI->myComponentGeom->NbLabels();
+  GeomGUI->myNbGeom = GeomGUI->myComponentGeom->NbLabels();
 
   return GeomGUI;
 }

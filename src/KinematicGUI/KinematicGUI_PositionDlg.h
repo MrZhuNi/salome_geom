@@ -53,7 +53,6 @@ private:
     KinematicGUI* myKinematicGUI;
 
     GEOM::GEOM_Contact_var myGeomContact;
-    GEOM::GEOM_Position_var myGeomPosition;
 
     GEOM::PointStruct P0;
     GEOM::DirStruct VX;

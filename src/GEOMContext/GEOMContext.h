@@ -31,7 +31,6 @@
 
 #include "QAD_Desktop.h"
 #include "GEOM_Client.hxx"
-#include "GEOM_Sketcher.h"
 #include <OSD_SharedLibrary.hxx>
 #include <qapplication.h>
 
@@ -51,7 +50,6 @@ private :
   QDialog* myActiveDialogBox; /* Unique active dialog box */
   GEOM_Client myShapeReader;
   Standard_CString myFatherior;
-  Sketch mySketcher;
 
 public :
   int myNbGeom; /* Unique name for a geom entity */
@@ -68,7 +66,6 @@ public :
   int& GetNbGeom(){return myNbGeom;};
   GEOM_Client& GetShapeReader(){return myShapeReader;};
   Standard_CString& GetFatherior(){return myFatherior;};
-  Sketch& GetSketcher(){return mySketcher;};
 
   bool LoadLibrary(QString GUILibrary);
 

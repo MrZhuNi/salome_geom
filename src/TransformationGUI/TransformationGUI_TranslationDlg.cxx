@@ -26,11 +26,14 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "TransformationGUI_TranslationDlg.h"
 
 #include <BRepBuilderAPI_Transform.hxx>
 #include "QAD_Config.h"
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_TranslationDlg()

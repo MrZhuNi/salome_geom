@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
 #include "KinematicGUI.h"
 
 #include "QAD_RightFrame.h"
@@ -38,12 +37,13 @@ using namespace std;
 #include <map>
 
 #include "KinematicGUI_ContactDlg.h"     // Method CONTACT
-#include "KinematicGUI_ContactHDlg.h"    // Method CONTACT HELICOIDAL
 #include "KinematicGUI_PositionDlg.h"    // Method POSITION
-#include "KinematicGUI_RotationDlg.h"    // Method ROTATION
-#include "KinematicGUI_TranslationDlg.h" // Method TRANSLATION
-#include "KinematicGUI_AnimationDlg.h"   // Method Create ANIMATION
+#include "KinematicGUI_RangeDlg.h"       // Method RANGE
+#include "KinematicGUI_AnimationDlg.h"   // Method ANIMATION
+#include "KinematicGUI_AnimValuesDlg.h"  // Method SET VALUES
 #include "KinematicGUI_AnimDlg.h"        // Method Play ANIMATION
+
+using namespace std;
 
 //=======================================================================
 // function : KinematicGUI()
@@ -84,83 +84,43 @@ bool KinematicGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	myKinematicGUI->AddNewAssembly();
 	break;
       }
-    case 61201: // EMBEDDING
+    case 6121: // CONTACT
       {
-	KinematicGUI_ContactDlg *aDlg = new KinematicGUI_ContactDlg(parent, "", myKinematicGUI, Sel, 0);
+	KinematicGUI_ContactDlg *aDlg = new KinematicGUI_ContactDlg(parent, "", myKinematicGUI, Sel);
 	break;
       }
-    case 61202: // PIVOT
-      {
-	KinematicGUI_ContactDlg *aDlg = new KinematicGUI_ContactDlg(parent, "", myKinematicGUI, Sel, 1);
-	break;
-      }
-    case 61203: // SLIDE
-      {
-	KinematicGUI_ContactDlg *aDlg = new KinematicGUI_ContactDlg(parent, "", myKinematicGUI, Sel, 2);
-	break;
-      }
-    case 61204: // SLIDING PIVOT
-      {
-	KinematicGUI_ContactDlg *aDlg = new KinematicGUI_ContactDlg(parent, "", myKinematicGUI, Sel, 3);
-	break;
-      }
-    case 61205: // SPHERICAL
-      {
-	KinematicGUI_ContactDlg *aDlg = new KinematicGUI_ContactDlg(parent, "", myKinematicGUI, Sel, 4);
-	break;
-      }
-    case 61206: // PLANE
-      {
-	KinematicGUI_ContactDlg *aDlg = new KinematicGUI_ContactDlg(parent, "", myKinematicGUI, Sel, 5);
-	break;
-      }
-    case 61207: // ANNULAR
-      {
-	KinematicGUI_ContactDlg *aDlg = new KinematicGUI_ContactDlg(parent, "", myKinematicGUI, Sel, 6);
-	break;
-      }
-    case 61208: // RECTILINEAR
-      {
-	KinematicGUI_ContactDlg *aDlg = new KinematicGUI_ContactDlg(parent, "", myKinematicGUI, Sel, 7);
-	break;
-      }
-    case 61209: // PONCTUAL
-      {
-	KinematicGUI_ContactDlg *aDlg = new KinematicGUI_ContactDlg(parent, "", myKinematicGUI, Sel, 8);
-	break;
-      }
-    case 61210: // HELICOIDAL
-      {
-	KinematicGUI_ContactHDlg *aDlg = new KinematicGUI_ContactHDlg(parent, "", myKinematicGUI, Sel);
-	break;
-      }
-    case 6131: // ROTATION
+    case 6122: // POSITION
       {
 	KinematicGUI_PositionDlg *aDlg = new KinematicGUI_PositionDlg(parent, "", myKinematicGUI, Sel, true);
 	break;
       }
-    case 6132: // ROTATION
+    case 6123: // ANGULAR RANGE
       {
-	KinematicGUI_RotationDlg *aDlg = new KinematicGUI_RotationDlg(parent, "", myKinematicGUI, Sel, true);
+	KinematicGUI_RangeDlg *aDlg = new KinematicGUI_RangeDlg(parent, "", myKinematicGUI, Sel, 0);
 	break;
       }
-    case 6133: // TRANSLATION
+    case 6124: // LINEAR RANGE
       {
-	KinematicGUI_TranslationDlg *aDlg = new KinematicGUI_TranslationDlg(parent, "", myKinematicGUI, Sel, true);
+	KinematicGUI_RangeDlg *aDlg = new KinematicGUI_RangeDlg(parent, "", myKinematicGUI, Sel, 1);
 	break;
       }
-    case 614: // ANIMATION
+    case 613: // ANIMATION
       {
 	KinematicGUI_AnimationDlg *aDlg = new KinematicGUI_AnimationDlg(parent, "", myKinematicGUI, Sel);
 	break;
       }
-    case 6141: // RUN ANIMATION
+    case 6131: // SET VALUES
+      {
+	KinematicGUI_AnimValuesDlg *aDlg = new KinematicGUI_AnimValuesDlg(parent, "", myKinematicGUI, Sel);
+	break;
+      }
+    case 6132: // RUN ANIMATION
       {
 	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
 	  Handle(AIS_InteractiveContext) ic;
 	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  ic = v3d->getAISContext();
-	  KinematicGUI_AnimDlg *aDlg = new KinematicGUI_AnimDlg(parent, "", myKinematicGUI, Sel, ic, true);
+	  KinematicGUI_AnimDlg *aDlg = new KinematicGUI_AnimDlg(parent, "", myKinematicGUI, Sel, ic);
 	}
 	break;
       }
@@ -285,7 +245,7 @@ bool KinematicGUI::AddAssemblyInStudy(GEOM::GEOM_Assembly_ptr aAssembly)
   SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->entry());
   
   TCollection_AsciiString nameG("Assembly_");
-  nameG += TCollection_AsciiString(myGeomGUI->GetNbGeom()++) + TCollection_AsciiString("\0");
+  nameG += TCollection_AsciiString(myGeomGUI->myNbGeom++) + TCollection_AsciiString("\0");
 
   // open transaction
   QAD_Operation* op = new SALOMEGUI_ImportOperation(QAD_Application::getDesktop()->getActiveStudy());
@@ -341,7 +301,7 @@ bool KinematicGUI::AddContactInStudy(GEOM::GEOM_Assembly_ptr Ass, GEOM::GEOM_Con
   SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->entry());
 
   TCollection_AsciiString nameG("Contact_");
-  nameG += TCollection_AsciiString(myGeomGUI->GetNbGeom()++) + TCollection_AsciiString("\0");
+  nameG += TCollection_AsciiString(myGeomGUI->myNbGeom++) + TCollection_AsciiString("\0");
 
   // open transaction
   QAD_Operation* op = new SALOMEGUI_ImportOperation(QAD_Application::getDesktop()->getActiveStudy());
@@ -423,7 +383,7 @@ bool KinematicGUI::AddAnimationInStudy(GEOM::GEOM_Animation_ptr aAnimation)
   SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->entry());
   
   TCollection_AsciiString nameG("Animation_");
-  nameG += TCollection_AsciiString(myGeomGUI->GetNbGeom()++) + TCollection_AsciiString("\0");
+  nameG += TCollection_AsciiString(myGeomGUI->myNbGeom++) + TCollection_AsciiString("\0");
 
   // open transaction
   QAD_Operation* op = new SALOMEGUI_ImportOperation(QAD_Application::getDesktop()->getActiveStudy());
@@ -482,12 +442,8 @@ void KinematicGUI::SetPosition(GEOM::GEOM_Contact_ptr aContact, GEOM::PointStruc
 			       GEOM::DirStruct VX, GEOM::DirStruct VY, GEOM::DirStruct VZ)
 {
   try {
-    GEOM::GEOM_Position_var myGeomPosition = GEOM::GEOM_Position::_narrow(aContact->GetPosition());
-    myGeomPosition->SetOrigin(P0);
-    myGeomPosition->SetVX(VX);
-    myGeomPosition->SetVY(VY);
-    myGeomPosition->SetVZ(VZ);
-
+    aContact->SetPosition(P0.x, P0.y, P0.z, VX.PS.x, VX.PS.y, VX.PS.z,
+			  VY.PS.x, VY.PS.y, VY.PS.z, VZ.PS.x, VZ.PS.y, VZ.PS.z);
     myGeom->SetPosition(aContact);
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -498,26 +454,16 @@ void KinematicGUI::SetPosition(GEOM::GEOM_Contact_ptr aContact, GEOM::PointStruc
 
 
 //=======================================================================
-// function : SetRotation()
+// function : SetAngularRange()
 // purpose  : 
 //=======================================================================
-void KinematicGUI::SetRotation(GEOM::GEOM_Contact_ptr aContact,
-			       int Rot1, int Rot2, int Rot3,
-			       double Val1, double Val2, double Val3)
+void KinematicGUI::SetAngularRange(GEOM::GEOM_Contact_ptr aContact,
+				   double MinValX, double MaxValX, double MinValY,
+				   double MaxValY, double MinValZ, double MaxValZ)
 {
   try {
-    GEOM::GEOM_Rotation_var myGeomRotation = GEOM::GEOM_Rotation::_narrow(aContact->GetRotation());
-    myGeomRotation->SetRotation(Rot1, Rot2, Rot3, Val1, Val2, Val3);
-    int type = aContact->GetType();
-    if(type == 9) { //HELICOIDAL
-      GEOM::GEOM_Translation_var myGeomTranslation = GEOM::GEOM_Translation::_narrow(aContact->GetTranslation());
-      double aValY = myGeomTranslation->GetValY();
-      double aValZ = myGeomTranslation->GetValZ();
-      double aStep = aContact->GetStep();
-      double aValX = aStep * Val1 / 360;
-      myGeomTranslation->SetTranslation(aValX, aValY, aValZ);
-    }
-    myGeom->SetRotation(aContact);
+    aContact->SetAngularRange(MinValX, MaxValX, MinValY, MaxValY, MinValZ, MaxValZ);
+    myGeom->SetAngularRange(aContact);
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -527,28 +473,35 @@ void KinematicGUI::SetRotation(GEOM::GEOM_Contact_ptr aContact,
 
 
 //=======================================================================
-// function : SetTranslation()
+// function : SetLinearRange()
 // purpose  : 
 //=======================================================================
-void KinematicGUI::SetTranslation(GEOM::GEOM_Contact_ptr aContact,
-				  double ValX, double ValY, double ValZ)
+void KinematicGUI::SetLinearRange(GEOM::GEOM_Contact_ptr aContact,
+				  double MinValX, double MaxValX, double MinValY,
+				  double MaxValY, double MinValZ, double MaxValZ)
 {
   try {
-    GEOM::GEOM_Translation_var myGeomTranslation = GEOM::GEOM_Translation::_narrow(aContact->GetTranslation());
-    myGeomTranslation->SetTranslation(ValX, ValY, ValZ);
-    int type = aContact->GetType();
-    if(type == 9) { //HELICOIDAL
-      GEOM::GEOM_Rotation_var myGeomRotation = GEOM::GEOM_Rotation::_narrow(aContact->GetRotation());
-      int aRot1 = myGeomRotation->GetRot1();
-      int aRot2 = myGeomRotation->GetRot2();
-      int aRot3 = myGeomRotation->GetRot3();
-      double aVal2 = myGeomRotation->GetVal2();
-      double aVal3 = myGeomRotation->GetVal3();
-      double aStep = aContact->GetStep();
-      double aVal1 = 360 * ValX / aStep;
-      myGeomRotation->SetRotation(aRot1, aRot2, aRot3, aVal1, aVal2, aVal3);
-    }
-    myGeom->SetTranslation(aContact);
+    aContact->SetLinearRange(MinValX, MaxValX, MinValY, MaxValY, MinValZ, MaxValZ);
+    myGeom->SetLinearRange(aContact);
+  }
+  catch(const SALOME::SALOME_Exception& S_ex) {
+    QtCatchCorbaException(S_ex);
+  }
+  return;
+}
+
+
+//=======================================================================
+// function : SetDisplacement()
+// purpose  : 
+//=======================================================================
+void KinematicGUI::SetDisplacement(GEOM::GEOM_Animation_ptr anAnimation,
+				   GEOM::GEOM_Contact_ptr aContact,
+				   const GEOM::ListOfDouble& aList)
+{
+  try {
+    anAnimation->SetDisplacement(aContact, aList);
+    myGeom->SetDisplacement(anAnimation, aContact);
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -558,7 +511,7 @@ void KinematicGUI::SetTranslation(GEOM::GEOM_Contact_ptr aContact,
 
 
 //=====================================================================================
-// function : AddContactInStudy()
+// function : GetNameFromType()
 // purpose  : 
 //=====================================================================================
 TCollection_AsciiString KinematicGUI::GetNameFromType(int type)
@@ -601,38 +554,33 @@ Kinematic_Contact* KinematicGUI::CreateContact(GEOM::GEOM_Contact_ptr aContact)
 {
   GEOM::GEOM_Shape_var myShape1 = aContact->GetShape1();
   GEOM::GEOM_Shape_var myShape2 = aContact->GetShape2();
-  GEOM::GEOM_Position_var myPosition = aContact->GetPosition();
-  GEOM::GEOM_Rotation_var myRotation = aContact->GetRotation();
-  GEOM::GEOM_Translation_var myTranslation = aContact->GetTranslation();
   int Type = aContact->GetType();
   double Step = aContact->GetStep();
 
+  GEOM::ListOfDouble_var aPosList = aContact->GetPosition();
+  GEOM::ListOfDouble_var aARList = aContact->GetAngularRange();
+  GEOM::ListOfDouble_var aLRList = aContact->GetLinearRange();
 
   TopoDS_Shape aShape1 = myGeomGUI->GetShapeReader().GetShape(myGeom, myShape1);
   TopoDS_Shape aShape2 = myGeomGUI->GetShapeReader().GetShape(myGeom, myShape2);
   Kinematic_Contact* KContact = new Kinematic_Contact(aShape1, aShape2, Type, Step);
 
-  gp_Pnt Origin(myPosition->GetOrigin().x, myPosition->GetOrigin().y, myPosition->GetOrigin().z);
-  gp_Dir aDirX(myPosition->GetVX().PS.x, myPosition->GetVX().PS.y, myPosition->GetVX().PS.z);
-  gp_Dir aDirY(myPosition->GetVY().PS.x, myPosition->GetVY().PS.y, myPosition->GetVY().PS.z);
-  gp_Dir aDirZ(myPosition->GetVZ().PS.x, myPosition->GetVZ().PS.y, myPosition->GetVZ().PS.z);
+  gp_Pnt Center(aPosList[0], aPosList[1], aPosList[2]);
+  gp_Dir aDirX(aPosList[3], aPosList[4], aPosList[5]);
+  gp_Dir aDirY(aPosList[6], aPosList[7], aPosList[8]);
+  gp_Dir aDirZ(aPosList[9], aPosList[10], aPosList[11]);
+  KContact->GetPosition().SetOrigin(Center);
+  KContact->GetPosition().SetDirX(aDirX);
+  KContact->GetPosition().SetDirY(aDirY);
+  KContact->GetPosition().SetDirZ(aDirZ);
 
-  KContact->Position().Origin(Origin);
-  KContact->Position().DirX(aDirX);
-  KContact->Position().DirY(aDirY);
-  KContact->Position().DirZ(aDirZ);
+  KContact->GetAngularRange().SetRangeX(aARList[0], aARList[1]);
+  KContact->GetAngularRange().SetRangeY(aARList[2], aARList[3]);
+  KContact->GetAngularRange().SetRangeZ(aARList[4], aARList[5]);
 
-  KContact->Rotation().Rot1(myRotation->GetRot1());
-  KContact->Rotation().Rot2(myRotation->GetRot2());
-  KContact->Rotation().Rot3(myRotation->GetRot3());
-
-  KContact->Rotation().ValX(myRotation->GetVal1());
-  KContact->Rotation().ValY(myRotation->GetVal2());
-  KContact->Rotation().ValZ(myRotation->GetVal3());
-
-  KContact->Translation().ValX(myTranslation->GetValX());
-  KContact->Translation().ValY(myTranslation->GetValY());
-  KContact->Translation().ValZ(myTranslation->GetValZ());
+  KContact->GetLinearRange().SetRangeX(aLRList[0], aLRList[1]);
+  KContact->GetLinearRange().SetRangeY(aLRList[2], aLRList[3]);
+  KContact->GetLinearRange().SetRangeZ(aLRList[4], aLRList[5]);
 
   return KContact;
 }
@@ -658,7 +606,7 @@ Kinematic_Assembly* KinematicGUI::CreateAssembly(GEOM::GEOM_Assembly_ptr aAssemb
 
 
 //=======================================================================
-// function : ()
+// function : CreateAnimation()
 // purpose  : 
 //=======================================================================
 Kinematic_Animation* KinematicGUI::CreateAnimation(GEOM::GEOM_Animation_ptr aAnimation)
@@ -672,6 +620,17 @@ Kinematic_Animation* KinematicGUI::CreateAnimation(GEOM::GEOM_Animation_ptr aAni
   TopoDS_Shape myFrame = myGeomGUI->GetShapeReader().GetShape(myGeom, aFrame);
 
   Kinematic_Animation* KAnimation = new Kinematic_Animation(KAssembly, myFrame, Duration, NbSeq);
+  
+  GEOM::ListOfContact_var aContactList = myAssembly->GetContactList();
+  for(int i = 0; i < myAssembly->NbContacts(); i++) {
+    GEOM::GEOM_Contact_var aContact = aContactList[i];
+    GEOM::ListOfDouble_var aList = aAnimation->GetDisplacement(aContact);
+    list <double> aKList;
+    for(int k = 0; k < 12; k++)
+      aKList.push_back(aList[k]);
+    KAnimation->SetDisplacement(i, aKList);
+  }
+
   return KAnimation;
 }
 

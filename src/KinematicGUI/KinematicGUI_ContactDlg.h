@@ -30,7 +30,7 @@
 #define DIALOGBOX_CONTACT_H
 
 #include "GEOMBase_Skeleton.h"
-#include "KinematicGUI_3Sel1List_QTD.h"
+#include "DlgRef_SpinBox.h"
 
 #include "KinematicGUI.h"
 
@@ -43,7 +43,7 @@ class KinematicGUI_ContactDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    KinematicGUI_ContactDlg(QWidget* parent = 0, const char* name = 0, KinematicGUI* theKinematicGUI = 0, SALOME_Selection* Sel = 0, int type = 0, bool modal = FALSE, WFlags fl = 0);
+    KinematicGUI_ContactDlg(QWidget* parent = 0, const char* name = 0, KinematicGUI* theKinematicGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~KinematicGUI_ContactDlg();
 
 private:
@@ -59,8 +59,23 @@ private:
     bool myOkShape1;
     bool myOkShape2;            /* to check when arguments are defined */
     int myType;
+    double myStep;
 
-    KinematicGUI_3Sel1List_QTD* Group1;
+    QGroupBox* GroupBox1;
+    QLabel* TextLabel1;
+    QLabel* TextLabel3;
+    QLabel* TextLabel2;
+    QLabel* TextLabel4;
+    QLabel* TextLabel5;
+    QPushButton* PushButton1;
+    QPushButton* PushButton2;
+    QPushButton* PushButton3;
+    QLineEdit* LineEdit1;
+    QLineEdit* LineEdit2;
+    QLineEdit* LineEdit3;
+    QComboBox* ComboBox1;
+    DlgRef_SpinBox* SpinBox_DX;
+
 
 private slots:
     void ClickOnOk();
@@ -70,6 +85,13 @@ private slots:
     void LineEditReturnPressed();
     void ActivateThisDialog();
     void ComboTextChanged();
+    void ValueChangedInSpinBox(double newValue);
+
+protected:
+    QGridLayout* GroupBox1Layout;
+    QGridLayout* LayoutA;
+    QGridLayout* LayoutB;
+    QGridLayout* LayoutC;
 
 };
 

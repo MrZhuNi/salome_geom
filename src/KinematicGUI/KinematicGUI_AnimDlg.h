@@ -30,50 +30,15 @@
 #define KINEMATICGUI_ANIMDLG_H
 
 #include "KinematicGUI_Skeleton_QTD.h"
-#include "KinematicGUI_Anim_QTD.h"
 
 #include "KinematicGUI.h"
 
-#include <qwidget.h>
+#include <qslider.h>
 #include <qgroupbox.h>
-#include <qlineedit.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
+#include <qlineedit.h>
 #include <qbuttongroup.h>
-#include <qslider.h>
-#include <qthread.h>
-
-class MyThread : public QObject, public QThread
-{
-    Q_OBJECT
-
-public:
-    MyThread(Kinematic_Animation* KAnimation = 0, Handle(AIS_InteractiveContext) ic = 0);
-    ~MyThread();
-
-private:
-    bool myIsActive;
-    Handle(AIS_Shape) myAISFrame;
-    Handle(AIS_InteractiveContext) myIC;   /* Interactive context */
-    gp_Trsf myLoc;
-
-public:
-    Kinematic_Animation* myKAnimation;
-
-    int myValue;
-    virtual void run();
-    void startAnimation();
-    void stopAnimation();
-    void InitAnim();
-    void ClearAnim(int ClearPrs);
-    void NextFrame();
-
-signals:
-    void frameChanged();
-    void stopped();
-
-};
-
 
 class KinematicGUI_AnimDlg : public KinematicGUI_Skeleton_QTD
 { 
@@ -84,35 +49,67 @@ public:
     ~KinematicGUI_AnimDlg();
 
 private :
-    void Init(SALOME_Selection* Sel, Handle(AIS_InteractiveContext) ic);
+    void Init();
     void enterEvent(QEvent * e);
     void closeEvent(QCloseEvent* e);
 
     KinematicGUI* myKinematicGUI;
 
-    MyThread* myAnimator;
-
     SALOME_Selection* mySelection;      /* User shape selection */
-    GEOM::GEOM_Gen_var myGeom;          /* Current GeomI object */
     GEOMBase* myGeomBase;
     GEOMContext* myGeomGUI;  /* Current GeomGUI object */
 
-    KinematicGUI_Anim_QTD* Group1;
+    GEOM::GEOM_Animation_var myGeomAnimation;
+    GEOM::GEOM_Contact_var myGeomContact;
+    Handle(AIS_InteractiveContext) myIC;   /* Interactive context */
+    Handle(AIS_Shape) myAISFrame;
+    Handle(AIS_Shape) myAISShape;
+
+    Kinematic_Animation* myKAnimation;
+    Kinematic_Contact* myKContact;
+    int myType, myValue, myNbSeq;
+    double myDuration;
+    gp_Trsf myLoc;
+    bool myIsActive;
+    void NextFrame();
+    void InitAnim();
+    void ClearAnim(int ClearPrs);
+
+    QGroupBox* GroupBox1;
+    QPushButton* PushButton8;
+    QRadioButton* CheckButton1;
+    QSlider* Slider1;
+    QLabel* TextLabel1;
+    QPushButton* PushButton1;
+    QLineEdit* LineEdit1;
+    QPushButton* PushButton4;
+    QPushButton* PushButton6;
+    QPushButton* PushButton3;
+    QPushButton* PushButton5;
+    QPushButton* PushButton7;
+    QPushButton* PushButton2;
 
 private slots:
     void ClickOnCancel();
+    void SetEditCurrentArgument();
+    void SelectionIntoArgument();
     void DeactivateActiveDialog();
     void ActivateThisDialog();
     void ClickOnSlider(int newValue);
     void ClickOnFirst();
     void ClickOnPrevious();
-    void ClickOnStop();
     void ClickOnPlay();
-    void OnNext();
     void ClickOnNext();
     void ClickOnLast();
     void ClickOnShading();
     void ClickOnExport();
+
+protected:
+    QGridLayout* GroupBox1Layout;
+    QGridLayout* LayoutA;
+    QGridLayout* LayoutB;
+    QGridLayout* LayoutC;
+    QGridLayout* LayoutD;
 
 };
 

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'KinematicGUI_Skeleton_QTD.ui'
 **
-** Created: mer mar 3 16:54:07 2004
+** Created: mer avr 28 10:43:40 2004
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!

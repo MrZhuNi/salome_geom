@@ -26,16 +26,16 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
+
 #include "GEOM_Animation_i.hh"
+
+using namespace std;
 
 //=================================================================================
 // function : GEOM_Animation_i() constructor (no arguments)
 // purpose  : for what now ?
 //=================================================================================
-GEOM_Animation_i::GEOM_Animation_i()
-{
-}
+GEOM_Animation_i::GEOM_Animation_i() {}
 
 
 //=================================================================================
@@ -65,46 +65,6 @@ GEOM_Animation_i::~GEOM_Animation_i() { delete &_Animation; }
 
 
 //=================================================================================
-// function : GetAssembly()
-// purpose  : 
-//=================================================================================
-GEOM::GEOM_Assembly_ptr GEOM_Animation_i::GetAssembly() throw(SALOME::SALOME_Exception)
-{
-  return GEOM::GEOM_Assembly::_duplicate(_Ass);
-}
-
-
-//=================================================================================
-// function : GetFrame()
-// purpose  : 
-//=================================================================================
-GEOM::GEOM_Shape_ptr GEOM_Animation_i::GetFrame() throw(SALOME::SALOME_Exception)
-{
-  return GEOM::GEOM_Shape::_duplicate(_Frame);
-}
-
-
-//=================================================================================
-// function : GetDuration()
-// purpose  : 
-//=================================================================================
-CORBA::Double GEOM_Animation_i::GetDuration() throw(SALOME::SALOME_Exception)
-{
-  return _Animation->Duration();
-}
-
-
-//=================================================================================
-// function : GetNbSeq()
-// purpose  : 
-//=================================================================================
-CORBA::Long GEOM_Animation_i::GetNbSeq() throw(SALOME::SALOME_Exception)
-{
-  return _Animation->NbSeq();
-}
-
-
-//=================================================================================
 // function : Name (set method)
 // purpose  : to set the attribute 'name'.
 //          : WARNING : Register to naming service actually removed !
@@ -117,31 +77,11 @@ void GEOM_Animation_i::Name(const char* name)
 
 
 //=================================================================================
-// function : Name (get method)
-// purpose  : to get the attribute 'name' of this shape
-//=================================================================================
-char* GEOM_Animation_i::Name() { return strdup(_name); }
-
-
-//=================================================================================
-// function : ShapeId
-// purpose  : to get the id of this shape from GEOM (OCAF entry)
-//=================================================================================
-char* GEOM_Animation_i::ShapeId() { return strdup(_shapeid); }
-
-
-//=================================================================================
 // function : ShapeId (set method) 
 // purpose  : to set the id of this shape in GEOM/OCAF doc
 //=================================================================================
-void GEOM_Animation_i::ShapeId(const char * shapeid) { _shapeid = strdup(shapeid); }
-
-
-//=================================================================================
-// function : StudyShapeId (get method)
-// purpose  : to get the id of this shape from the study document (OCAF entry)
-//=================================================================================
-char* GEOM_Animation_i::StudyShapeId() { return strdup(_studyshapeid) ; }
+void GEOM_Animation_i::ShapeId(const char * shapeid)
+{ _shapeid = strdup(shapeid); }
 
 
 //=================================================================================
@@ -150,3 +90,61 @@ char* GEOM_Animation_i::StudyShapeId() { return strdup(_studyshapeid) ; }
 //=================================================================================
 void GEOM_Animation_i::StudyShapeId(const char * studyshapeid)
 { _studyshapeid = strdup(studyshapeid); }
+
+
+//=================================================================================
+// function : GetDisplacement()
+// purpose  : 
+//=================================================================================
+GEOM::ListOfDouble* GEOM_Animation_i::GetDisplacement(GEOM::GEOM_Contact_ptr aContact)
+  throw(SALOME::SALOME_Exception)
+{
+  cout<<"GEOM_Animation_i::GetDisplacement"<<endl;
+  GEOM::ListOfDouble_var aDisplacementList = new GEOM::ListOfDouble;
+  aDisplacementList->length(12);
+
+  GEOM::ListOfContact_var aContactList = _Ass->GetContactList();
+  int aKContact = 0;
+  for(int i = 0; i < _Ass->NbContacts(); i++) {
+    if(aContact == aContactList[i])
+      aKContact = i;
+  }
+
+  cout<<"GEOM_Animation_i::GetDisplacement : Contact = "<<aKContact<<endl;
+  list <double> aList = _Animation->GetDisplacement(aKContact);
+  list <double>::const_iterator it = aList.begin();
+  int k = 0;
+  while(it != aList.end()) {
+    cout<<"GEOM_Animation_i::GetDisplacement : k = "<<k<<endl;
+    aDisplacementList[k] = *it;
+    k++;
+    it++;
+  }
+
+  return aDisplacementList._retn();
+}
+
+
+//=================================================================================
+// function : SetDisplacement()
+// purpose  : 
+//=================================================================================
+void GEOM_Animation_i::SetDisplacement(GEOM::GEOM_Contact_ptr aContact,
+				       const GEOM::ListOfDouble& aList)
+  throw (SALOME::SALOME_Exception)
+{
+  GEOM::ListOfContact_var aContactList = _Ass->GetContactList();
+  int aKContact = 0;
+  for(int i = 0; i < _Ass->NbContacts(); i++) {
+    if(aContact == aContactList[i])
+      aKContact = i;
+  }
+
+  list <double> aKList;
+  for(int j = 0; j < 12; j++)
+    aKList.push_back(aList[j]);
+
+  _Animation->SetDisplacement(aKContact, aKList);
+
+  return;
+}

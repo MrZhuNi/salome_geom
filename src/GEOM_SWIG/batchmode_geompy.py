@@ -164,6 +164,12 @@ def MakePlane(p1,d1,trimsize):
     anObj._set_Name(ior)
     return anObj
 
+def MakeSketcher(Cmd): 
+    anObj = geom.MakeSketcher(Cmd)
+    ior = orb.object_to_string(anObj)
+    anObj._set_Name(ior)
+    return anObj
+
 # -----------------------------------------------------------------------------
 # Create Geometry 3D
 # -----------------------------------------------------------------------------
@@ -487,11 +493,14 @@ def AddAnimation(Ass,Frame,Duration,NbSeq):
 def SetPosition(aContact):
     geom.SetPosition(aContact)
 
-def SetRotation(aContact):
-    geom.SetRotation(aContact)
+def SetAngularRange(aContact):
+    geom.SetAngularRange(aContact)
 
-def SetTranslation(aContact):
-    geom.SetTranslation(aContact)
+def SetLinearRange(aContact):
+    geom.SetLinearRange(aContact)
+
+def SetDisplacement(anAnim,aContact):
+    geom.SetDisplacement(anAnim,aContact)
 
 def addAssemblyToStudy(anAss, aName):
     myBuilder.NewCommand()

@@ -26,12 +26,15 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "TransformationGUI_MirrorDlg.h"
 
 #include <BRepBuilderAPI_Transform.hxx>
 #include <Geom_Plane.hxx>
 #include <BRep_Tool.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : TransformationGUI_MirrorDlg()

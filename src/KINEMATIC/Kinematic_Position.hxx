@@ -30,7 +30,7 @@
 #define _KINEMATIC_POSITION_HXX
 
 #include <TopoDS_Shape.hxx>
-#include <gp_Dir.hxx>
+#include <gp_Vec.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Ax1.hxx>
 #include <gp_Ax3.hxx>
@@ -39,31 +39,31 @@ class Kinematic_Position
 {
 public:
   Kinematic_Position();
-  Kinematic_Position(gp_Pnt Origin, gp_Dir DirX, gp_Dir DirY, gp_Dir DirZ);
+  Kinematic_Position(gp_Pnt Origin, gp_Vec DirX, gp_Vec DirY, gp_Vec DirZ);
   ~Kinematic_Position();
 
 private:
   gp_Pnt myOrigin;
-  gp_Dir myDirX;
-  gp_Dir myDirY;
-  gp_Dir myDirZ;
+  gp_Vec myDirX;
+  gp_Vec myDirY;
+  gp_Vec myDirZ;
 
 public:
-  void Origin(const gp_Pnt& Origin){myOrigin = Origin;};
-  void DirX(const gp_Dir& DirX){myDirX = DirX;};
-  void DirY(const gp_Dir& DirY){myDirY = DirY;};
-  void DirZ(const gp_Dir& DirZ){myDirZ = DirZ;};
+  void SetOrigin(const gp_Pnt& aPnt);
+  void SetDirX(const gp_Vec& aDir);
+  void SetDirY(const gp_Vec& aDir);
+  void SetDirZ(const gp_Vec& aDir);
 
-  gp_Pnt& Origin(){return myOrigin;};
-  gp_Dir& DirX(){return myDirX;};
-  gp_Dir& DirY(){return myDirY;};
-  gp_Dir& DirZ(){return myDirZ;};
+  gp_Pnt& GetOrigin(){return myOrigin;};
+  gp_Vec& GetDirX(){return myDirX;};
+  gp_Vec& GetDirY(){return myDirY;};
+  gp_Vec& GetDirZ(){return myDirZ;};
 
-  gp_Ax1 AxeX();
-  gp_Ax1 AxeY();
-  gp_Ax1 AxeZ();
+  gp_Ax1 GetAxeX();
+  gp_Ax1 GetAxeY();
+  gp_Ax1 GetAxeZ();
 
-  gp_Ax3 Axe3();
+  gp_Ax3 GetAxe3();
 
 };
 

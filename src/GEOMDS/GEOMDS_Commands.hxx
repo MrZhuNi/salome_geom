@@ -146,10 +146,21 @@ public:
 				   double VXx, double VXy, double VXz,
 				   double VYx, double VYy, double VYz,
 				   double VZx, double VZy, double VZz) ;
-  Standard_EXPORT void SetRotation(const TDF_Label& aLabel, int Rot1, int Rot2, int Rot3, 
-				   double Val1, double Val2, double Val3) ;
-  Standard_EXPORT void SetTranslation(const TDF_Label& aLabel, 
-				      double Val1, double Val2, double Val3) ;
+  Standard_EXPORT void SetAngularRange(const TDF_Label& aLabel,
+				       double MinValX, double MaxValX,
+				       double MinValY, double MaxValY,
+				       double MinValZ, double MaxValZ) ;
+  Standard_EXPORT void SetLinearRange(const TDF_Label& aLabel, 
+				      double MinValX, double MaxValX,
+				      double MinValY, double MaxValY,
+				      double MinValZ, double MaxValZ) ;
+  Standard_EXPORT void SetDisplacement(const TDF_Label& aLabel, int aContact,
+				       double MinValRX, double MaxValRX,
+				       double MinValRY, double MaxValRY,
+				       double MinValRZ, double MaxValRZ,
+				       double MinValTX, double MaxValTX,
+				       double MinValTY, double MaxValTY,
+				       double MinValTZ, double MaxValTZ) ;
 
 protected:
   

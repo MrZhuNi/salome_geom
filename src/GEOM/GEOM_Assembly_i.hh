@@ -66,16 +66,16 @@ public:
   GEOM::ListOfContact* GetContactList()
     throw (SALOME::SALOME_Exception);
 
-  CORBA::Long NbContacts()
-    throw (SALOME::SALOME_Exception);
+  CORBA::Long NbContacts() throw (SALOME::SALOME_Exception)
+    {return _NbContact;};
 
-  char* Name();
+  char* Name() {return strdup(_name);};
   void  Name(const char* name);
 
-  char* ShapeId(); 
+  char* ShapeId() {return strdup(_shapeid);}; 
   void  ShapeId(const char* shapeid);
 
-  char* StudyShapeId();
+  char* StudyShapeId() {return strdup(_studyshapeid);};
   void  StudyShapeId(const char* studyshapeid);
 
 };

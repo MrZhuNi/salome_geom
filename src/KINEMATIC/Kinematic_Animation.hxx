@@ -36,6 +36,7 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <AIS_InteractiveContext.hxx>
 #include <AIS_SequenceOfInteractive.hxx>
+#include <gp_Trsf.hxx>
 
 #include <list>
 #include <map>
@@ -50,13 +51,14 @@ public:
 
 private:
   map <int, list <Kinematic_Contact *> > myStlMapofShapeListOfContact;
+  map <Kinematic_Contact *, list <double> > myStlMapofContactListOfValue;
   Kinematic_Assembly* myAss;
   TopoDS_Shape myFrame;
   double myDuration;
   int myNbSeq;
 
 public:
-  AIS_SequenceOfInteractive ListOfAIS;
+  AIS_SequenceOfInteractive myListOfAIS;
   TopTools_IndexedMapOfShape myIndexToShape;
   TopTools_IndexedMapOfShape myMovedShape;
   bool IsCreated;
@@ -64,21 +66,26 @@ public:
   bool myIsShading;
 
   void SetMap();
+  void InitValues();
+  void InitValuesOnContact(Kinematic_Contact* aContact);
   void GetNextShape(const Handle (AIS_InteractiveContext)& ic, 
 		    gp_Trsf& aLoc, TopoDS_Shape Shape1, double Step);
   void MoveShape(const Handle(AIS_InteractiveContext)& ic,
 		 gp_Trsf& aLoc, Kinematic_Contact* aContact,
 		 double Step);
 
-  void Assembly(Kinematic_Assembly* Assembly){myAss = Assembly;};
-  void Frame(TopoDS_Shape Frame){myFrame = Frame;};
-  void Duration(double Duration){myDuration = Duration;};
-  void NbSeq(int NbSeq){myNbSeq = NbSeq;};
+  void SetAssembly(Kinematic_Assembly* Assembly){myAss = Assembly;};
+  void SetFrame(TopoDS_Shape Frame){myFrame = Frame;};
+  void SetDuration(double Duration){myDuration = Duration;};
+  void SetNbSeq(int NbSeq){myNbSeq = NbSeq;};
+  void SetDisplacement(int aContact, list <double> aList);
 
-  Kinematic_Assembly* Assembly(){return myAss;};
-  TopoDS_Shape& Frame(){return myFrame;};
-  double& Duration(){return myDuration;};
-  int& NbSeq(){return myNbSeq;};
+  Kinematic_Assembly* GetAssembly(){return myAss;};
+  TopoDS_Shape& GetFrame(){return myFrame;};
+  double& GetDuration(){return myDuration;};
+  int& GetNbSeq(){return myNbSeq;};
+  list <double> GetDisplacement(int aContact);
+  gp_Trsf GetTransformation(Kinematic_Contact* aContact, double Step = 1);
 
 };
 

@@ -48,8 +48,7 @@ public:
   GEOM_Contact_i();
   GEOM_Contact_i(Kinematic_Contact* Contact,
 		 GEOM::GEOM_Shape_ptr Shape1,
-		 GEOM::GEOM_Shape_ptr Shape2,
-		 GEOM::GEOM_Gen_ptr engine);
+		 GEOM::GEOM_Shape_ptr Shape2);
 
   ~GEOM_Contact_i();
 
@@ -57,43 +56,51 @@ private:
   Kinematic_Contact* _Contact;
   GEOM::GEOM_Shape_ptr _Shape1;
   GEOM::GEOM_Shape_ptr _Shape2;
-  GEOM::GEOM_Position_ptr _Position;
-  GEOM::GEOM_Rotation_ptr _Rotation;
-  GEOM::GEOM_Translation_ptr _Translation;
   
   char* _name;
   char* _shapeid;
   char* _studyshapeid; // exists only if added in the study document
 
 public:
-  CORBA::Long GetType()
+  CORBA::Long GetType() throw (SALOME::SALOME_Exception)
+    {return _Contact->GetType();};
+  CORBA::Double GetStep() throw (SALOME::SALOME_Exception)
+    {return _Contact->GetStep();};
+  GEOM::GEOM_Shape_ptr GetShape1() throw (SALOME::SALOME_Exception)
+    {return GEOM::GEOM_Shape::_duplicate(_Shape1);};
+  GEOM::GEOM_Shape_ptr GetShape2() throw (SALOME::SALOME_Exception)
+    {return GEOM::GEOM_Shape::_duplicate(_Shape2);};
+
+  GEOM::ListOfDouble* GetPosition()
+    throw (SALOME::SALOME_Exception);
+  GEOM::ListOfDouble* GetAngularRange()
+    throw (SALOME::SALOME_Exception);
+  GEOM::ListOfDouble* GetLinearRange()
     throw (SALOME::SALOME_Exception);
 
-  GEOM::GEOM_Shape_ptr GetShape1()
+  void SetPosition(double P0x, double P0y, double P0z,
+		   double VXx, double VXy, double VXz,
+		   double VYx, double VYy, double VYz,
+		   double VZx, double VZy, double VZz)
     throw (SALOME::SALOME_Exception);
 
-  GEOM::GEOM_Shape_ptr GetShape2()
+  void SetAngularRange(double MinValX, double MaxValX,
+		       double MinValY, double MaxValY,
+		       double MinValZ, double MaxValZ)
     throw (SALOME::SALOME_Exception);
 
-  GEOM::GEOM_Position_ptr GetPosition()
+  void SetLinearRange(double MinValX, double MaxValX,
+		      double MinValY, double MaxValY,
+		      double MinValZ, double MaxValZ)
     throw (SALOME::SALOME_Exception);
 
-  GEOM::GEOM_Rotation_ptr GetRotation()
-    throw (SALOME::SALOME_Exception);
-
-  GEOM::GEOM_Translation_ptr GetTranslation()
-    throw (SALOME::SALOME_Exception);
-
-  CORBA::Double GetStep()
-    throw (SALOME::SALOME_Exception);
-
-  char* Name();
+  char* Name() {return strdup(_name);};
   void  Name(const char* name);
 
-  char* ShapeId(); 
+  char* ShapeId() {return strdup(_shapeid);}; 
   void  ShapeId(const char* shapeid);
 
-  char* StudyShapeId();
+  char* StudyShapeId() {return strdup(_studyshapeid) ;};
   void  StudyShapeId(const char* studyshapeid);
 
 };

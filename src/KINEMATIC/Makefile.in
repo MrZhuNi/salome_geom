@@ -37,8 +37,7 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 # Libraries targets
 LIB = libGEOMKinematic.la 
 LIB_SRC =	Kinematic_Position.cxx \
-		Kinematic_Rotation.cxx \
-		Kinematic_Translation.cxx \
+		Kinematic_Range.cxx \
 		Kinematic_Contact.cxx \
 	  	Kinematic_Assembly.cxx \
 		Kinematic_Animation.cxx
@@ -46,12 +45,11 @@ LIB_SRC =	Kinematic_Position.cxx \
 LIB_CLIENT_IDL = 
 
 # header files 
-EXPORT_HEADERS = 	Kinematic_Position.hxx \
-			Kinematic_Rotation.hxx \
-			Kinematic_Translation.hxx \
-			Kinematic_Contact.hxx \
-		 	Kinematic_Assembly.hxx \
-			Kinematic_Animation.hxx
+EXPORT_HEADERS = Kinematic_Position.hxx \
+		 Kinematic_Range.hxx \
+		 Kinematic_Contact.hxx \
+		 Kinematic_Assembly.hxx \
+		 Kinematic_Animation.hxx
 
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome

@@ -31,6 +31,7 @@ using namespace std;
 
 #include "Partition_Spliter.hxx"
 #include "Archimede_VolumeSection.hxx"
+#include "Sketcher_Profile.hxx"
 
 #include "Utils_CorbaException.hxx"
 #include "utilities.h"
@@ -215,7 +216,7 @@ char* GEOM_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
 {
   GEOM::GEOM_Shape_var aShape = GEOM::GEOM_Shape::_narrow(_orb->string_to_object(IORString));
   if (!CORBA::is_nil(aShape)) {
-    return strdup(aShape->ShapeId());
+    return CORBA::string_dup(aShape->ShapeId());
   }
   GEOM::GEOM_Assembly_var aAssembly = GEOM::GEOM_Assembly::_narrow(_orb->string_to_object(IORString));
   if (!CORBA::is_nil(aAssembly)) {
@@ -407,8 +408,7 @@ char* GEOM_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
     }
 
     /* Create the CORBA servant holding the TopoDS_Shape */
-    GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this();
-    GEOM_Contact_i * Contact_servant = new GEOM_Contact_i(Contact, aShape1, aShape2, engine);
+    GEOM_Contact_i * Contact_servant = new GEOM_Contact_i(Contact, aShape1, aShape2);
     GEOM::GEOM_Contact_var result = GEOM::GEOM_Contact::_narrow(Contact_servant->_this()); 
 
     /* Create and set the name (IOR of shape converted into a string) */
@@ -476,6 +476,7 @@ char* GEOM_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
     result->ShapeId(aPersRefString);
     return result->Name();
   }
+  return 0 ;
 }
 
 //============================================================================
@@ -562,7 +563,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     aShapeName = "Vertex_";
   }                                          
   if (strlen(theName) == 0) aShapeName += TCollection_AsciiString(aResultSO->Tag());
-  else aShapeName = TCollection_AsciiString(strdup(theName));
+  else aShapeName = TCollection_AsciiString((char*)theName);
 
   //Set a name of the added shape
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeName");
@@ -645,7 +646,7 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
   if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.ToCString(), aSeq.in(), true);
 
   SALOMEDS::Study_var Study = theComponent->GetStudy();
-  TCollection_AsciiString name( strdup(Study->Name()) );
+  TCollection_AsciiString name( Study->Name() );
 
   int StudyID = Study->StudyId();
   myStudyIDToDoc.Bind( StudyID, myCurrentOCAFDoc );  
@@ -673,7 +674,7 @@ CORBA::Boolean GEOM_Gen_i::LoadASCII(SALOMEDS::SComponent_ptr theComponent,
 //  void GEOM_Gen_i::Save(const char *IORSComponent, const char *aUrlOfFile) 
 //  {
 
-//    TCollection_ExtendedString path(strdup(aUrlOfFile));
+//    TCollection_ExtendedString path((char*)aUrlOfFile);
 //    TCollection_ExtendedString pathWithExt = path + TCollection_ExtendedString(".sgd");
 //    myOCAFApp->SaveAs(myCurrentOCAFDoc,pathWithExt);
 //  }
@@ -686,14 +687,14 @@ CORBA::Boolean GEOM_Gen_i::LoadASCII(SALOMEDS::SComponent_ptr theComponent,
 //  void GEOM_Gen_i::Load(const char *IORSComponent, const char *aUrlOfFile) 
 //  {
 
-//    TCollection_ExtendedString path(strdup(aUrlOfFile));
+//    TCollection_ExtendedString path((char*)aUrlOfFile);
 //    TCollection_ExtendedString pathWithExt = path + TCollection_ExtendedString(".sgd");
 
 //    myOCAFApp->Open(pathWithExt,myCurrentOCAFDoc);
 
 //    SALOMEDS::SComponent_var SC = SALOMEDS::SComponent::_narrow(_orb->string_to_object(IORSComponent));
 //    SALOMEDS::Study_var Study = SC->GetStudy();
-//    TCollection_AsciiString name( strdup(Study->Name()) );
+//    TCollection_AsciiString name( Study->Name() );
 
 //    int StudyID = Study->StudyId();
 //    myStudyIDToDoc.Bind( StudyID, myCurrentOCAFDoc );  
@@ -840,7 +841,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
 //============================================================================
 char* GEOM_Gen_i::ComponentDataType()
 {
-  return strdup("GEOM");
+  return CORBA::string_dup("GEOM");
 }
 
 //============================================================================
@@ -850,7 +851,7 @@ char* GEOM_Gen_i::ComponentDataType()
 void GEOM_Gen_i::register_name(char * name)
 {
   GEOM::GEOM_Gen_ptr g = GEOM::GEOM_Gen::_narrow(POA_GEOM::GEOM_Gen::_this());
-  name_service->Register(g, strdup(name)); 
+  name_service->Register(g, name); 
 }
 
 
@@ -889,7 +890,7 @@ TopoDS_Shape GEOM_Gen_i::GetTopoShape(GEOM::GEOM_Shape_ptr shape_ptr)
 
   TDF_Label lab ;
   Handle(TDF_Data) D = myCurrentOCAFDoc->GetData() ;
-  TDF_Tool::Label( D, strdup(shape_ptr->ShapeId()), lab, true ) ;
+  TDF_Tool::Label( D, shape_ptr->ShapeId(), lab, true ) ;
   Handle(TNaming_NamedShape) NamedShape ;  
   bool res = lab.FindAttribute(TNaming_NamedShape::GetID(), NamedShape) ;
 
@@ -939,7 +940,7 @@ const char * GEOM_Gen_i::InsertInLabel(TopoDS_Shape S, const char *mystr, Handle
 {
   GEOMDS_Commands GC(OCAFDoc->Main());
   /* add attributs S and mystr in a new label */
-  TDF_Label Lab = GC.AddShape (S, strdup(mystr));
+  TDF_Label Lab = GC.AddShape (S, (char*)mystr);
 
   TCollection_AsciiString entry;
   TDF_Tool::Entry(Lab,entry);
@@ -967,7 +968,7 @@ const char * GEOM_Gen_i::InsertInLabelDependentShape( TopoDS_Shape S,
   TDF_Tool::Label(OCAFDoc->GetData(), mainshape_ptr->ShapeId(), mainRefLab);
 
   /* add attributs : S, nameIor and ref to main */
-  TDF_Label Lab = GC.AddDependentShape(S, strdup(nameIor), mainRefLab);
+  TDF_Label Lab = GC.AddDependentShape(S, (char*)nameIor, mainRefLab);
 
   TCollection_AsciiString entry;
   TDF_Tool::Entry(Lab, entry);
@@ -3003,7 +3004,6 @@ throw (SALOME::SALOME_Exception)
       GEOM::GEOM_Shape_var aShape = GetIORFromString( ListTools[ind] );
       TopoDS_Shape Shape = GetTopoShape(aShape);
       if(Shape.IsNull() ) {
-        //MESSAGE ( "In Partition a tool shape is null" );
 	THROW_SALOME_CORBA_EXCEPTION("In Partition a shape is null", SALOME::BAD_PARAM);
       }
       if ( !ShapesMap.Contains( Shape ) && ToolsMap.Add( Shape ))
@@ -3038,7 +3038,9 @@ throw (SALOME::SALOME_Exception)
         PS.AddShape(Shape);
     }
     
+    //MESSAGE ( "Partition::Compute() " );
     PS.Compute ((TopAbs_ShapeEnum) Limit);
+    //MESSAGE ( "Partition::Compute() - END" );
 
     // suppress result outside of shapes in KInsideMap
     for (ind = 0; ind < ListKeepInside.length(); ind++) {
@@ -3164,6 +3166,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFilling(GEOM::GEOM_Shape_ptr myShape,
 	THROW_SALOME_CORBA_EXCEPTION("Initial shape doesn't contain only edges !", SALOME::BAD_PARAM);
       }
       C = BRep_Tool::Curve(TopoDS::Edge(Scurrent), First, Last);
+      if (C.IsNull()) continue;
       C = new Geom_TrimmedCurve(C, First, Last);
       Section.AddCurve(C) ;
       i++ ;
@@ -3637,7 +3640,7 @@ GEOM::GEOM_Gen::ListOfIOR* GEOM_Gen_i::GetReferencedObjects(GEOM::GEOM_Shape_ptr
 	  Handle(TDataStd_Name) Att;
 	  L.FindAttribute(TDataStd_Name::GetID(),Att);
 	  TCollection_AsciiString nameIOR (Att->Get()) ;
-	  aList[i] = strdup( nameIOR.ToCString() );
+	  aList[i] = CORBA::string_dup( nameIOR.ToCString() );
 	  i++;
 	}
    
@@ -3687,7 +3690,7 @@ GEOM::GEOM_Gen::ListOfIOR* GEOM_Gen_i::GetObjects(GEOM::GEOM_Shape_ptr shape)
 
     if (!Att->Get().IsEqual(TCollection_ExtendedString("Arguments")) ) {
       TCollection_AsciiString nameIOR (Att->Get());
-      aList[i] = strdup( nameIOR.ToCString() );
+      aList[i] = CORBA::string_dup( nameIOR.ToCString() );
       i++;
     }
     ChildIterator1.Next();
@@ -3708,8 +3711,10 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::ImportBREP(const char* filename)
   GEOM::GEOM_Shape_var result ;
   
   try {
-    BRep_Builder aBuilder;  
-    BRepTools::Read(tds, strdup(filename), aBuilder) ;    
+    BRep_Builder aBuilder;
+    char* aCopyfilename = strdup(filename);
+    BRepTools::Read(tds, aCopyfilename, aBuilder) ;
+    free(aCopyfilename);
     if (tds.IsNull()) {
       THROW_SALOME_CORBA_EXCEPTION("Import BRep aborted", SALOME::BAD_PARAM);
     } 
@@ -3863,10 +3868,21 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFaces(const GEOM::GEOM_Gen::ListOfIOR& List
 	FR.Perform();
     
 	if(FR.IsDone()) {
-	  for(; FR.More(); FR.Next())
-	    aBuilder.Add(C, FR.Current().Oriented(OriF));
-	  result = CreateObject(C);
-	  InsertInLabelMoreArguments(C, result, ListShapes, myCurrentOCAFDoc);
+	  int k = 0;
+	  TopoDS_Shape aFace;
+	  for(; FR.More(); FR.Next()) {
+	    aFace = FR.Current().Oriented(OriF);
+	    aBuilder.Add(C, aFace);
+	    k++;
+	  }
+	  if(k == 1) {
+	    result = CreateObject(aFace);
+	    InsertInLabelMoreArguments(aFace, result, ListShapes, myCurrentOCAFDoc);
+	  }
+	  else {
+	    result = CreateObject(C);
+	    InsertInLabelMoreArguments(C, result, ListShapes, myCurrentOCAFDoc);
+	  }
 	}
       }
     }
@@ -4144,7 +4160,34 @@ GEOM::GEOM_Shape_ptr  GEOM_Gen_i::MakeArc(const GEOM::PointStruct& pInit,
   return result ;
 }
 
-
+//=================================================================================
+ // function : MakeSketcher()
+ // purpose  : Make a wire from a list containing many points
+ //=================================================================================
+ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeSketcher( const char *Cmd )
+   throw (SALOME::SALOME_Exception)
+ {
+   GEOM::GEOM_Shape_var result ;
+   TopoDS_Shape tds ;
+   try {
+     Sketcher_Profile aProfile (Cmd);
+     if(aProfile.IsDone())
+       tds = aProfile.GetShape();
+   }
+   catch(Standard_Failure) {
+     THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakeSketcher", SALOME::BAD_PARAM);
+   }
+ 
+   if (tds.IsNull()) {
+     THROW_SALOME_CORBA_EXCEPTION("MakeSketcher aborted : null shape", SALOME::BAD_PARAM);
+   } 
+   else {
+     result = CreateObject(tds);
+     const char *entry = InsertInLabel(tds, result->Name(), myCurrentOCAFDoc) ;
+     result->ShapeId(entry) ;
+   }
+   return result;
+ }
 
 //=================================================================================
 // function : MakeTranslation()
@@ -5303,10 +5346,10 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakePanel(GEOM::GEOM_Shape_ptr shape,
     
     GEOM::GEOM_Gen::ListOfIOR_var aList = new GEOM::GEOM_Gen::ListOfIOR;
     aList->length(4);
-    aList[0]=strdup(Edge1->Name());
-    aList[1]=strdup(Edge2->Name());
-    aList[2]=strdup(Edge3->Name());
-    aList[3]=strdup(Edge4->Name());
+    aList[0]=CORBA::string_dup(Edge1->Name());
+    aList[1]=CORBA::string_dup(Edge2->Name());
+    aList[2]=CORBA::string_dup(Edge3->Name());
+    aList[3]=CORBA::string_dup(Edge4->Name());
     
     GEOM::GEOM_Shape_ptr aWire = MakeWire( aList );
     GEOM::GEOM_Shape_ptr aFace = MakeFace( aWire, true ) ;
@@ -5467,6 +5510,7 @@ GEOM::GEOM_Contact_ptr GEOM_Gen_i::AddContact(GEOM::GEOM_Assembly_ptr Ass,
 					      CORBA::Double step)
   throw (SALOME::SALOME_Exception)
 {
+  cout<<"GEOM_Gen_i::AddContact"<<endl;
   Kinematic_Contact* tds;
   TDF_Label mainRefLab;
   TDF_Tool::Label(myCurrentOCAFDoc->GetData(), Ass->ShapeId(), mainRefLab);
@@ -5480,8 +5524,7 @@ GEOM::GEOM_Contact_ptr GEOM_Gen_i::AddContact(GEOM::GEOM_Assembly_ptr Ass,
     THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::AddContact", SALOME::BAD_PARAM);
 
   /* Create the CORBA servant holding the TopoDS_Shape */
-  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this();
-  GEOM_Contact_i * Contact_servant = new GEOM_Contact_i(tds, Shape1, Shape2, engine);
+  GEOM_Contact_i * Contact_servant = new GEOM_Contact_i(tds, Shape1, Shape2);
   GEOM::GEOM_Contact_var Contact = GEOM::GEOM_Contact::_narrow(Contact_servant->_this());
 
   /* Create and set the name (IOR of shape converted into a string) */
@@ -5511,6 +5554,7 @@ GEOM::GEOM_Animation_ptr GEOM_Gen_i::AddAnimation(GEOM::GEOM_Assembly_ptr Ass,
 						  const short NbSeq)
   throw (SALOME::SALOME_Exception)
 {
+  cout<<"GEOM_Gen_i::AddAnimation"<<endl;
   Kinematic_Animation* tds;
   TDF_Label mainRefLab;
   TDF_Tool::Label(myCurrentOCAFDoc->GetData(), Ass->ShapeId(), mainRefLab);
@@ -5538,9 +5582,8 @@ GEOM::GEOM_Animation_ptr GEOM_Gen_i::AddAnimation(GEOM::GEOM_Assembly_ptr Ass,
 
   TCollection_AsciiString entry;
   TDF_Tool::Entry(Lab, entry);
-  const char *ent = entry.ToCString();
+  Animation->ShapeId(entry.ToCString());
 
-  Animation->ShapeId(ent);
   return Animation;  
 }
 
@@ -5557,16 +5600,12 @@ void GEOM_Gen_i::SetPosition(GEOM::GEOM_Contact_ptr Contact)
     TDF_Tool::Label(myCurrentOCAFDoc->GetData(), Contact->ShapeId(), mainRefLab);
     GEOMDS_Commands GC(myCurrentOCAFDoc->Main());
     
-    GEOM::GEOM_Position_var myGeomPosition = GEOM::GEOM_Position::_narrow(Contact->GetPosition());
-    GEOM::PointStruct P0 = myGeomPosition->GetOrigin();
-    GEOM::DirStruct VX = myGeomPosition->GetVX();
-    GEOM::DirStruct VY = myGeomPosition->GetVY();
-    GEOM::DirStruct VZ = myGeomPosition->GetVZ();
+    GEOM::ListOfDouble_var aList = Contact->GetPosition();
 
-    GC.SetPosition(mainRefLab, P0.x, P0.y, P0.z,
-		   VX.PS.x, VX.PS.y, VX.PS.z,
-		   VY.PS.x, VY.PS.y, VY.PS.z,
-		   VZ.PS.x, VZ.PS.y, VZ.PS.z);
+    GC.SetPosition(mainRefLab, aList[0], aList[1], aList[2],
+		   aList[3], aList[4], aList[5],
+		   aList[6], aList[7], aList[8],
+		   aList[9], aList[10], aList[11]);
   }
   catch(Standard_Failure)
     THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::SetPosition", SALOME::BAD_PARAM);
@@ -5576,10 +5615,10 @@ void GEOM_Gen_i::SetPosition(GEOM::GEOM_Contact_ptr Contact)
 
 
 //=================================================================================
-// function : SetRotation()
+// function : SetAngularRange()
 // purpose  :
 //=================================================================================
-void GEOM_Gen_i::SetRotation(GEOM::GEOM_Contact_ptr Contact)
+void GEOM_Gen_i::SetAngularRange(GEOM::GEOM_Contact_ptr Contact)
   throw (SALOME::SALOME_Exception)
 {
   try {
@@ -5587,28 +5626,23 @@ void GEOM_Gen_i::SetRotation(GEOM::GEOM_Contact_ptr Contact)
     TDF_Tool::Label(myCurrentOCAFDoc->GetData(), Contact->ShapeId(), mainRefLab);
     GEOMDS_Commands GC(myCurrentOCAFDoc->Main());
 
-    GEOM::GEOM_Rotation_var myGeomRotation = GEOM::GEOM_Rotation::_narrow(Contact->GetRotation());
-    int aRot1 = myGeomRotation->GetRot1();
-    int aRot2 = myGeomRotation->GetRot2();
-    int aRot3 = myGeomRotation->GetRot3();
-    double aVal1 = myGeomRotation->GetVal1();
-    double aVal2 = myGeomRotation->GetVal2();
-    double aVal3 = myGeomRotation->GetVal3();
+    GEOM::ListOfDouble_var aList = Contact->GetAngularRange();
 
-    GC.SetRotation(mainRefLab, aRot1, aRot2, aRot3, aVal1, aVal2, aVal3);
+    GC.SetAngularRange(mainRefLab, aList[0], aList[1], aList[2],
+		       aList[3], aList[4], aList[5]);
   }
   catch(Standard_Failure)
-    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::SetRotation", SALOME::BAD_PARAM);
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::SetAngularRange", SALOME::BAD_PARAM);
 
   return;
 }
 
 
 //=================================================================================
-// function : SetTranslation()
+// function : SetLinearRange()
 // purpose  :
 //=================================================================================
-void GEOM_Gen_i::SetTranslation(GEOM::GEOM_Contact_ptr Contact)
+void GEOM_Gen_i::SetLinearRange(GEOM::GEOM_Contact_ptr Contact)
   throw (SALOME::SALOME_Exception)
 {
   try {
@@ -5616,15 +5650,46 @@ void GEOM_Gen_i::SetTranslation(GEOM::GEOM_Contact_ptr Contact)
     TDF_Tool::Label(myCurrentOCAFDoc->GetData(), Contact->ShapeId(), mainRefLab);
     GEOMDS_Commands GC(myCurrentOCAFDoc->Main());
 
-    GEOM::GEOM_Translation_var myGeomTranslation = GEOM::GEOM_Translation::_narrow(Contact->GetTranslation());
-    double aValX = myGeomTranslation->GetValX();
-    double aValY = myGeomTranslation->GetValY();
-    double aValZ = myGeomTranslation->GetValZ();
+    GEOM::ListOfDouble_var aList = Contact->GetLinearRange();
 
-    GC.SetTranslation(mainRefLab, aValX, aValY, aValZ);
+    GC.SetLinearRange(mainRefLab, aList[0], aList[1], aList[2],
+		       aList[3], aList[4], aList[5]);
   }
   catch(Standard_Failure)
-    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::SetTranslation", SALOME::BAD_PARAM);
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::SetLinearRange", SALOME::BAD_PARAM);
+
+  return;
+}
+
+
+//=================================================================================
+// function : SetDisplacement()
+// purpose  :
+//=================================================================================
+void GEOM_Gen_i::SetDisplacement(GEOM::GEOM_Animation_ptr Animation, GEOM::GEOM_Contact_ptr Contact)
+  throw (SALOME::SALOME_Exception)
+{
+  cout<<"GEOM_Gen_i::SetDisplacement"<<endl;
+  try {
+    TDF_Label mainRefLab;
+    TDF_Tool::Label(myCurrentOCAFDoc->GetData(), Animation->ShapeId(), mainRefLab);
+    GEOMDS_Commands GC(myCurrentOCAFDoc->Main());
+
+    GEOM::GEOM_Assembly_var anAss = Animation->GetAssembly();
+    GEOM::ListOfContact_var aContactList = anAss->GetContactList();
+    int aKContact;
+    for(int i = 0; i < anAss->NbContacts(); i++) {
+      if(Contact == aContactList[i])
+	aKContact = i;
+    }
+
+    GEOM::ListOfDouble_var aList = Animation->GetDisplacement(Contact);
+    GC.SetDisplacement(mainRefLab, aKContact,
+		       aList[0], aList[1], aList[2], aList[3], aList[4], aList[5],
+		       aList[6], aList[7], aList[8], aList[9], aList[10], aList[11]);
+  }
+  catch(Standard_Failure)
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::SetDisplacement", SALOME::BAD_PARAM);
 
   return;
 }

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>334</width>
-            <height>121</height>
+            <width>349</width>
+            <height>250</height>
         </rect>
     </property>
     <property name="caption">
@@ -44,7 +44,7 @@
                 </property>
                 <widget class="QLayoutWidget" row="0" column="0">
                     <property name="name">
-                        <cstring>Layout1</cstring>
+                        <cstring>LayoutA</cstring>
                     </property>
                     <grid>
                         <property name="name">
@@ -56,7 +56,108 @@
                         <property name="spacing">
                             <number>6</number>
                         </property>
-                        <spacer row="3" column="0">
+                        <widget class="QLayoutWidget" row="3" column="0">
+                            <property name="name">
+                                <cstring>LayoutD</cstring>
+                            </property>
+                            <grid>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <widget class="QPushButton" row="0" column="1">
+                                    <property name="name">
+                                        <cstring>PushButton7</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>0</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="text">
+                                        <string></string>
+                                    </property>
+                                </widget>
+                                <widget class="QRadioButton" row="0" column="0">
+                                    <property name="name">
+                                        <cstring>CheckButton1</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string></string>
+                                    </property>
+                                </widget>
+                            </grid>
+                        </widget>
+                        <widget class="QSlider" row="1" column="0">
+                            <property name="name">
+                                <cstring>Slider1</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                        </widget>
+                        <widget class="QLayoutWidget" row="0" column="0">
+                            <property name="name">
+                                <cstring>LayoutB</cstring>
+                            </property>
+                            <grid>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <widget class="QLabel" row="0" column="0">
+                                    <property name="name">
+                                        <cstring>TextLabel1</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>0</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="text">
+                                        <string>TL1</string>
+                                    </property>
+                                </widget>
+                                <widget class="QPushButton" row="0" column="1">
+                                    <property name="name">
+                                        <cstring>PushButton1</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>0</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="text">
+                                        <string></string>
+                                    </property>
+                                </widget>
+                                <widget class="QLineEdit" row="0" column="2">
+                                    <property name="name">
+                                        <cstring>LineEdit1</cstring>
+                                    </property>
+                                </widget>
+                            </grid>
+                        </widget>
+                        <spacer row="4" column="0">
                             <property name="name">
                                 <cstring>Spacer5</cstring>
                             </property>
@@ -69,13 +170,13 @@
                             <property name="sizeHint">
                                 <size>
                                     <width>0</width>
-                                    <height>156</height>
+                                    <height>212</height>
                                 </size>
                             </property>
                         </spacer>
-                        <widget class="QLayoutWidget" row="1" column="0">
+                        <widget class="QLayoutWidget" row="2" column="0">
                             <property name="name">
-                                <cstring>Layout2</cstring>
+                                <cstring>LayoutC</cstring>
                             </property>
                             <grid>
                                 <property name="name">
@@ -88,54 +189,6 @@
                                     <number>6</number>
                                 </property>
                                 <widget class="QPushButton" row="0" column="2">
-                                    <property name="name">
-                                        <cstring>PushButton3</cstring>
-                                    </property>
-                                    <property name="sizePolicy">
-                                        <sizepolicy>
-                                            <hsizetype>0</hsizetype>
-                                            <vsizetype>0</vsizetype>
-                                            <horstretch>0</horstretch>
-                                            <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                    </property>
-                                    <property name="text">
-                                        <string></string>
-                                    </property>
-                                </widget>
-                                <widget class="QPushButton" row="0" column="4">
-                                    <property name="name">
-                                        <cstring>PushButton5</cstring>
-                                    </property>
-                                    <property name="sizePolicy">
-                                        <sizepolicy>
-                                            <hsizetype>0</hsizetype>
-                                            <vsizetype>0</vsizetype>
-                                            <horstretch>0</horstretch>
-                                            <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                    </property>
-                                    <property name="text">
-                                        <string></string>
-                                    </property>
-                                </widget>
-                                <widget class="QPushButton" row="0" column="1">
-                                    <property name="name">
-                                        <cstring>PushButton2</cstring>
-                                    </property>
-                                    <property name="sizePolicy">
-                                        <sizepolicy>
-                                            <hsizetype>0</hsizetype>
-                                            <vsizetype>0</vsizetype>
-                                            <horstretch>0</horstretch>
-                                            <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                    </property>
-                                    <property name="text">
-                                        <string></string>
-                                    </property>
-                                </widget>
-                                <widget class="QPushButton" row="0" column="3">
                                     <property name="name">
                                         <cstring>PushButton4</cstring>
                                     </property>
@@ -151,7 +204,7 @@
                                         <string></string>
                                     </property>
                                 </widget>
-                                <widget class="QPushButton" row="0" column="5">
+                                <widget class="QPushButton" row="0" column="4">
                                     <property name="name">
                                         <cstring>PushButton6</cstring>
                                     </property>
@@ -169,7 +222,7 @@
                                 </widget>
                                 <widget class="QPushButton" row="0" column="0">
                                     <property name="name">
-                                        <cstring>PushButton1</cstring>
+                                        <cstring>PushButton2</cstring>
                                     </property>
                                     <property name="sizePolicy">
                                         <sizepolicy>
@@ -183,41 +236,9 @@
                                         <string></string>
                                     </property>
                                 </widget>
-                            </grid>
-                        </widget>
-                        <widget class="QSlider" row="0" column="0">
-                            <property name="name">
-                                <cstring>Slider1</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                        </widget>
-                        <widget class="QLayoutWidget" row="2" column="0">
-                            <property name="name">
-                                <cstring>Layout3</cstring>
-                            </property>
-                            <grid>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <property name="margin">
-                                    <number>0</number>
-                                </property>
-                                <property name="spacing">
-                                    <number>6</number>
-                                </property>
-                                <widget class="QRadioButton" row="0" column="0">
+                                <widget class="QPushButton" row="0" column="3">
                                     <property name="name">
-                                        <cstring>CheckButton1</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string></string>
-                                    </property>
-                                </widget>
-                                <widget class="QPushButton" row="0" column="2">
-                                    <property name="name">
-                                        <cstring>PushButton7</cstring>
+                                        <cstring>PushButton5</cstring>
                                     </property>
                                     <property name="sizePolicy">
                                         <sizepolicy>
@@ -231,9 +252,17 @@
                                         <string></string>
                                     </property>
                                 </widget>
-                                <widget class="QRadioButton" row="0" column="1">
+                                <widget class="QPushButton" row="0" column="1">
                                     <property name="name">
-                                        <cstring>CheckButton2</cstring>
+                                        <cstring>PushButton3</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>0</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
                                     </property>
                                     <property name="text">
                                         <string></string>

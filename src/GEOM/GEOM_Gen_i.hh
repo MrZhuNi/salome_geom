@@ -392,6 +392,7 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen,
   GEOM::GEOM_Shape_ptr MakePlacedBox(CORBA::Double x1,  CORBA::Double y1,  CORBA::Double z1,
 				     CORBA::Double delta1, CORBA::Double delta2, CORBA::Double delta3)
     throw (SALOME::SALOME_Exception) ;
+
   GEOM::GEOM_Shape_ptr MakePanel(GEOM::GEOM_Shape_ptr shape,
 				 CORBA::Short directiontype,
 				 CORBA::Double delta)
@@ -400,18 +401,18 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen,
   //---------------------------------------------------------------------//
   // Transformations Operations                                          //
   //---------------------------------------------------------------------//
-  // Copy
-  GEOM::GEOM_Shape_ptr MakeCopy(GEOM::GEOM_Shape_ptr shape)
+  // Copy 
+  GEOM::GEOM_Shape_ptr MakeCopy( GEOM::GEOM_Shape_ptr shape)
     throw (SALOME::SALOME_Exception) ;
 
   // Translation
-  GEOM::GEOM_Shape_ptr MakeTranslation(GEOM::GEOM_Shape_ptr shape,
+  GEOM::GEOM_Shape_ptr MakeTranslation( GEOM::GEOM_Shape_ptr shape,
 				       CORBA::Double x,
 				       CORBA::Double y,
 				       CORBA::Double z)
     throw (SALOME::SALOME_Exception) ;
   // Rotation
-  GEOM::GEOM_Shape_ptr MakeRotation(GEOM::GEOM_Shape_ptr shape,
+  GEOM::GEOM_Shape_ptr MakeRotation( GEOM::GEOM_Shape_ptr shape,
 				    const GEOM::AxisStruct& axis,
 				    CORBA::Double angle)
     throw (SALOME::SALOME_Exception) ;
@@ -587,6 +588,14 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen,
 				  const  GEOM::PointStruct& pEnd)
     throw (SALOME::SALOME_Exception) ;
 
+  //-------------------------------------------------------------------//
+  // Specific method Sketcher                                           //
+  //-------------------------------------------------------------------//
+  GEOM::GEOM_Shape_ptr MakeSketcher   (const char* Cmd)
+    throw (SALOME::SALOME_Exception) ;
+  
+  //-------------------------------------------------------------------//
+
   GEOM::GEOM_Shape_ptr MakeCompound (const GEOM::GEOM_Gen::ListOfIOR& ListShapes)
     throw (SALOME::SALOME_Exception) ;
   GEOM::GEOM_Shape_ptr MakeWire     (const GEOM::GEOM_Gen::ListOfIOR& ListShapes)
@@ -632,9 +641,12 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen,
     throw (SALOME::SALOME_Exception) ;
   void SetPosition(GEOM::GEOM_Contact_ptr Contact) 
     throw (SALOME::SALOME_Exception) ;
-  void SetRotation(GEOM::GEOM_Contact_ptr Contact) 
+  void SetAngularRange(GEOM::GEOM_Contact_ptr Contact) 
     throw (SALOME::SALOME_Exception) ;
-  void SetTranslation(GEOM::GEOM_Contact_ptr Contact) 
+  void SetLinearRange(GEOM::GEOM_Contact_ptr Contact) 
+    throw (SALOME::SALOME_Exception) ;
+  void SetDisplacement(GEOM::GEOM_Animation_ptr Animation,
+		       GEOM::GEOM_Contact_ptr Contact) 
     throw (SALOME::SALOME_Exception) ;
 
 };

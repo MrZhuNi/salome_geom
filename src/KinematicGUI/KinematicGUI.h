@@ -67,12 +67,16 @@ public :
   TCollection_AsciiString GetNameFromType(int type);
 
   void SetPosition(GEOM::GEOM_Contact_ptr aContact, GEOM::PointStruct P0,
-			       GEOM::DirStruct VX, GEOM::DirStruct VY, GEOM::DirStruct VZ);
-  void SetRotation(GEOM::GEOM_Contact_ptr aContact,
-		   int Rot1, int Rot2, int Rot3,
-		   double Val1, double Val2, double Val3);
-  void SetTranslation(GEOM::GEOM_Contact_ptr aContact,
-		      double ValX, double ValY, double ValZ);
+		   GEOM::DirStruct VX, GEOM::DirStruct VY, GEOM::DirStruct VZ);
+  void SetAngularRange(GEOM::GEOM_Contact_ptr aContact,
+		       double MinValX, double MaxValX, double MinValY,
+		       double MaxValY, double MinValZ, double MaxValZ);
+  void SetLinearRange(GEOM::GEOM_Contact_ptr aContact,
+		      double MinValX, double MaxValX, double MinValY,
+		      double MaxValY, double MinValZ, double MaxValZ);
+  void SetDisplacement(GEOM::GEOM_Animation_ptr anAnimation,
+		       GEOM::GEOM_Contact_ptr aContact,
+		       const GEOM::ListOfDouble& aList);
 
   Kinematic_Contact* CreateContact(GEOM::GEOM_Contact_ptr aContact);
   Kinematic_Assembly* CreateAssembly(GEOM::GEOM_Assembly_ptr aAssembly);

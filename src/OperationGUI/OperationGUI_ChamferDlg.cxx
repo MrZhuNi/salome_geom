@@ -32,6 +32,8 @@ using namespace std;
 #include "DisplayGUI.h"
 #include "QAD_MessageBox.h"
 
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Face.hxx>
 #include <AIS_InteractiveContext.hxx>
 #include <BRepFilletAPI_MakeChamfer.hxx>
 #include <BRepTools.hxx>

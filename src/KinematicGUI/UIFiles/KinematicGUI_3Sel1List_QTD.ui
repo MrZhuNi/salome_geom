@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>129</width>
-            <height>145</height>
+            <width>329</width>
+            <height>226</height>
         </rect>
     </property>
     <property name="caption">
@@ -56,26 +56,96 @@
                         <property name="spacing">
                             <number>6</number>
                         </property>
-                        <spacer row="4" column="2">
+                        <widget class="QLineEdit" row="3" column="2">
                             <property name="name">
-                                <cstring>Spacer5</cstring>
+                                <cstring>LineEdit3</cstring>
                             </property>
-                            <property name="orientation">
-                                <enum>Vertical</enum>
+                        </widget>
+                        <widget class="QLabel" row="3" column="0">
+                            <property name="name">
+                                <cstring>TextLabel4</cstring>
                             </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
                             </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>0</width>
-                                    <height>90</height>
-                                </size>
+                            <property name="text">
+                                <string>TL4</string>
                             </property>
-                        </spacer>
+                        </widget>
+                        <widget class="QLayoutWidget" row="4" column="0" rowspan="1" colspan="3">
+                            <property name="name">
+                                <cstring>Layout3</cstring>
+                            </property>
+                            <grid>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <widget class="QLabel" row="0" column="0">
+                                    <property name="name">
+                                        <cstring>TextLabel5</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>0</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="text">
+                                        <string>TL5</string>
+                                    </property>
+                                </widget>
+                                <widget class="QSpinBox" row="0" column="1">
+                                    <property name="name">
+                                        <cstring>SpinBox1</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>7</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                </widget>
+                            </grid>
+                        </widget>
                         <widget class="QPushButton" row="2" column="1">
                             <property name="name">
                                 <cstring>PushButton2</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit" row="0" column="2">
+                            <property name="name">
+                                <cstring>LineEdit1</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton" row="0" column="1">
+                            <property name="name">
+                                <cstring>PushButton1</cstring>
                             </property>
                             <property name="sizePolicy">
                                 <sizepolicy>
@@ -105,41 +175,9 @@
                                 <string>TL1</string>
                             </property>
                         </widget>
-                        <widget class="QLabel" row="3" column="0">
+                        <widget class="QLineEdit" row="2" column="2">
                             <property name="name">
-                                <cstring>TextLabel4</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>0</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>TL4</string>
-                            </property>
-                        </widget>
-                        <widget class="QLineEdit" row="0" column="2">
-                            <property name="name">
-                                <cstring>LineEdit1</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton" row="0" column="1">
-                            <property name="name">
-                                <cstring>PushButton1</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>0</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string></string>
+                                <cstring>LineEdit2</cstring>
                             </property>
                         </widget>
                         <widget class="QLabel" row="2" column="0">
@@ -158,6 +196,68 @@
                                 <string>TL3</string>
                             </property>
                         </widget>
+                        <widget class="QLayoutWidget" row="1" column="0" rowspan="1" colspan="3">
+                            <property name="name">
+                                <cstring>Layout2</cstring>
+                            </property>
+                            <grid>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <widget class="QLabel" row="0" column="0">
+                                    <property name="name">
+                                        <cstring>TextLabel2</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>0</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="text">
+                                        <string>TL2</string>
+                                    </property>
+                                </widget>
+                                <widget class="QComboBox" row="0" column="1">
+                                    <property name="name">
+                                        <cstring>ComboBox1</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>7</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                </widget>
+                            </grid>
+                        </widget>
+                        <spacer row="5" column="2">
+                            <property name="name">
+                                <cstring>Spacer5</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Vertical</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>0</width>
+                                    <height>90</height>
+                                </size>
+                            </property>
+                        </spacer>
                         <widget class="QPushButton" row="3" column="1">
                             <property name="name">
                                 <cstring>PushButton3</cstring>
@@ -172,45 +272,6 @@
                             </property>
                             <property name="text">
                                 <string></string>
-                            </property>
-                        </widget>
-                        <widget class="QComboBox" row="1" column="2">
-                            <property name="name">
-                                <cstring>ComboBox1</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>7</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                        </widget>
-                        <widget class="QLineEdit" row="2" column="2">
-                            <property name="name">
-                                <cstring>LineEdit2</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QLineEdit" row="3" column="2">
-                            <property name="name">
-                                <cstring>LineEdit3</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QLabel" row="1" column="0">
-                            <property name="name">
-                                <cstring>TextLabel2</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>0</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>TL2</string>
                             </property>
                         </widget>
                     </grid>

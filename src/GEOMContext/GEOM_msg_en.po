@@ -1314,6 +1314,24 @@ msgstr "Fillet can't be computed with radius %1"
 msgid "GEOM_CHAMFER_ABORT"
 msgstr "Chamfer can't be computed with %1 and %2"
 
+msgid "GEOM_RANGE_X"
+msgstr "X"
+
+msgid "GEOM_RANGE_Y"
+msgstr "Y"
+
+msgid "GEOM_RANGE_Z"
+msgstr "Z"
+
+msgid "GEOM_RANGE_TITLE"
+msgstr "Define Contact Range"
+
+msgid "GEOM_LIN_RANGE"
+msgstr "Linear Range"
+
+msgid "GEOM_ANG_RANGE"
+msgstr "Angular Range"
+
 msgid "GEOM_CONTACT_TITLE"
 msgstr "Add Contact"
 
@@ -1397,6 +1415,36 @@ msgstr "Animation"
 
 msgid "GEOM_ANIM_INLOOP"
 msgstr "In Loop"
+
+msgid "GEOM_ANIMVALUES_TITLE"
+msgstr "Set Values of Animation"
+
+msgid "GEOM_ANIMVALUES"
+msgstr "Animation Values"
+
+msgid "GEOM_BEGIN"
+msgstr "Begin"
+
+msgid "GEOM_END"
+msgstr "End"
+
+msgid "GEOM_RX"
+msgstr "RX"
+
+msgid "GEOM_RY"
+msgstr "RY"
+
+msgid "GEOM_RZ"
+msgstr "RZ"
+
+msgid "GEOM_TX"
+msgstr "TX"
+
+msgid "GEOM_TY"
+msgstr "TY"
+
+msgid "GEOM_TZ"
+msgstr "TZ"
 
 msgid "GEOM_POSITION"
 msgstr "Position"
