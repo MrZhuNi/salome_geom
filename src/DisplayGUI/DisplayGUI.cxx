@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header: 
 
-using namespace std;
 #include "DisplayGUI.h"
 
 #include "QAD_RightFrame.h"
@@ -38,6 +37,10 @@ using namespace std;
 #include "SALOME_ListIteratorOfListIO.hxx"
 
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
+
+#include "utilities.h"
+
+using namespace std;
 
 //=======================================================================
 // function : DisplayGUI()
