@@ -1207,13 +1207,13 @@ msgid "GEOM_SKETCHER_EL"
 msgstr "Element Type"
 
 msgid "GEOM_BUT_CLOSE_SKETCH"
-msgstr "Close Sketcher"
+msgstr "Close Sketch"
 
 msgid "GEOM_BUT_END_SKETCH"
-msgstr "End Sketcher"
+msgstr "End Sketch"
 
 msgid "GEOM_SKETCHER_TITLE"
-msgstr "Spline Construction"
+msgstr "Sketch Construction"
 
 msgid "GEOM_SKETCHER_POINT"
 msgstr "Point"
