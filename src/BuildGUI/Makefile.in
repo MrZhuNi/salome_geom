@@ -1,4 +1,4 @@
-#  GEOM GEOMGUI : GUI for Geometry component
+#  GEOM BUILDGUI : 
 #
 #  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 #  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
@@ -22,9 +22,9 @@
 #
 #
 #  File   : Makefile.in
-#  Author : Marc Tajchman (CEA)
+#  Author : Damien COQUERET (OCC)
 #  Module : GEOM
-#  $Header$
+#  $Header: 
 
 top_srcdir=@top_srcdir@
 top_builddir=../..
@@ -35,16 +35,29 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 @COMMENCE@
 
 # header files 
-EXPORT_HEADERS= GeometryGUI_Swig.hxx \
-		GeometryGUI_Swig.i
+EXPORT_HEADERS= BuildGUI.h
 
-# Libraries targets 
-LIB = libGEOMGUI.la
-LIB_SRC =	GeometryGUI.cxx \
-		GeometryGUI_Swig.cxx
+# Libraries targets
+LIB = libBuildGUI.la 
+
+LIB_SRC = 	BuildGUI.cxx \
+		BuildGUI_SubShapeDlg.cxx \
+		BuildGUI_EdgeDlg.cxx \
+		BuildGUI_WireDlg.cxx \
+		BuildGUI_FaceDlg.cxx \
+		BuildGUI_ShellDlg.cxx \
+		BuildGUI_SolidDlg.cxx \
+		BuildGUI_CompoundDlg.cxx
 
 LIB_MOC = \
-                GeometryGUI.h \
+		BuildGUI.h \
+		BuildGUI_SubShapeDlg.h \
+		BuildGUI_EdgeDlg.h \
+		BuildGUI_WireDlg.h \
+		BuildGUI_FaceDlg.h \
+		BuildGUI_ShellDlg.h \
+		BuildGUI_SolidDlg.h \
+		BuildGUI_CompoundDlg.h
 
 LIB_CLIENT_IDL = SALOME_Exception.idl \
 		 GEOM_Gen.idl \
@@ -61,6 +74,6 @@ LIB_SERVER_IDL =
 CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMFiltersSelection -lGEOMBase -lBasicGUI -lPrimitiveGUI -lGenerationGUI -lBuildGUI -lBooleanGUI -lTransformationGUI -lOperationGUI -lRepairGUI -lMeasureGUI $(OCC_KERNEL_LIBS) $(OCC_MODELER_LIBS) -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMFiltersSelection -lDlgRef -lGEOMBase $(OCC_KERNEL_LIBS) $(OCC_MODELER_LIBS) -L${KERNEL_ROOT_DIR}/lib/salome
 
 @CONCLUDE@

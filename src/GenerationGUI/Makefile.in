@@ -1,4 +1,4 @@
-#  GEOM GEOMGUI : GUI for Geometry component
+#  GEOM GENERATIONGUI : 
 #
 #  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 #  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
@@ -22,9 +22,9 @@
 #
 #
 #  File   : Makefile.in
-#  Author : Marc Tajchman (CEA)
+#  Author : Damien COQUERET (OCC)
 #  Module : GEOM
-#  $Header$
+#  $Header: 
 
 top_srcdir=@top_srcdir@
 top_builddir=../..
@@ -35,16 +35,23 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 @COMMENCE@
 
 # header files 
-EXPORT_HEADERS= GeometryGUI_Swig.hxx \
-		GeometryGUI_Swig.i
+EXPORT_HEADERS= GenerationGUI.h
 
-# Libraries targets 
-LIB = libGEOMGUI.la
-LIB_SRC =	GeometryGUI.cxx \
-		GeometryGUI_Swig.cxx
+# Libraries targets
+LIB = libGenerationGUI.la 
+
+LIB_SRC = 	GenerationGUI.cxx \
+		GenerationGUI_PrismDlg.cxx \
+		GenerationGUI_RevolDlg.cxx \
+		GenerationGUI_FillingDlg.cxx \
+		GenerationGUI_PipeDlg.cxx
 
 LIB_MOC = \
-                GeometryGUI.h \
+		GenerationGUI.h \
+		GenerationGUI_PrismDlg.h \
+		GenerationGUI_RevolDlg.h \
+		GenerationGUI_FillingDlg.h \
+		GenerationGUI_PipeDlg.h
 
 LIB_CLIENT_IDL = SALOME_Exception.idl \
 		 GEOM_Gen.idl \
@@ -61,6 +68,6 @@ LIB_SERVER_IDL =
 CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMFiltersSelection -lGEOMBase -lBasicGUI -lPrimitiveGUI -lGenerationGUI -lBuildGUI -lBooleanGUI -lTransformationGUI -lOperationGUI -lRepairGUI -lMeasureGUI $(OCC_KERNEL_LIBS) $(OCC_MODELER_LIBS) -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMFiltersSelection -lDlgRef -lGEOMBase $(OCC_KERNEL_LIBS) $(OCC_MODELER_LIBS) -L${KERNEL_ROOT_DIR}/lib/salome
 
 @CONCLUDE@

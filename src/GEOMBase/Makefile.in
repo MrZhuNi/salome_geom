@@ -1,4 +1,4 @@
-#  GEOM GEOMGUI : GUI for Geometry component
+#  GEOM GEOMBASE : 
 #
 #  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 #  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
@@ -22,9 +22,9 @@
 #
 #
 #  File   : Makefile.in
-#  Author : Marc Tajchman (CEA)
+#  Author : Damien COQUERET (OCC)
 #  Module : GEOM
-#  $Header$
+#  $Header: 
 
 top_srcdir=@top_srcdir@
 top_builddir=../..
@@ -34,17 +34,40 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 
 @COMMENCE@
 
-# header files 
-EXPORT_HEADERS= GeometryGUI_Swig.hxx \
-		GeometryGUI_Swig.i
+# Libraries targets
+LIB = libGEOMBase.la
 
-# Libraries targets 
-LIB = libGEOMGUI.la
-LIB_SRC =	GeometryGUI.cxx \
-		GeometryGUI_Swig.cxx
+# ressources files
+PO_FILES = \
+	GEOM_icons.po \
+	GEOM_msg_en.po \
+	GEOM_msg_fr.po
+
+# header files 
+EXPORT_HEADERS= GEOMBase_Context.h \
+		GEOMBase_Skeleton.h \
+		GEOMBase_Tools.h \
+		GEOMBase_Display.h \
+		GEOMBase_Sketcher.h
+
+LIB_SRC = 	GEOMBase_Context.cxx \
+		GEOMBase_Skeleton.cxx \
+		GEOMBase_Tools.cxx \
+		GEOMBase_Display.cxx \
+		GEOMBase_aParameterDlg.cxx \
+		GEOMBase_NbIsosDlg.cxx \
+		GEOMBase_TransparencyDlg.cxx \
+		GEOMBase_Sketcher.cxx
 
 LIB_MOC = \
-                GeometryGUI.h \
+		GEOMBase_Context.h \
+		GEOMBase_Skeleton.h \
+		GEOMBase_Tools.h \
+		GEOMBase_Display.h \
+		GEOMBase_aParameterDlg.h \
+		GEOMBase_NbIsosDlg.h \
+		GEOMBase_TransparencyDlg.h \
+		GEOMBase_Sketcher.h
 
 LIB_CLIENT_IDL = SALOME_Exception.idl \
 		 GEOM_Gen.idl \
@@ -61,6 +84,6 @@ LIB_SERVER_IDL =
 CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMFiltersSelection -lGEOMBase -lBasicGUI -lPrimitiveGUI -lGenerationGUI -lBuildGUI -lBooleanGUI -lTransformationGUI -lOperationGUI -lRepairGUI -lMeasureGUI $(OCC_KERNEL_LIBS) $(OCC_MODELER_LIBS) -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMFiltersSelection -lGEOMSketcher -lDlgRef $(OCC_KERNEL_LIBS) $(OCC_MODELER_LIBS) -L${KERNEL_ROOT_DIR}/lib/salome
 
 @CONCLUDE@
