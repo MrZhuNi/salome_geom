@@ -87,7 +87,7 @@ void BuildGUI_ShellDlg::Init()
   myEditCurrentArgument = GroupShell->LineEdit1;
   myOkListShapes = false;
 
-  myFaceFilter = new GEOM_FaceFilter(StdSelect_Plane, myGeom);
+  myFaceFilter = new GEOM_ShapeTypeFilter(TopAbs_FACE, myGeom);
   /* Filter for the next selection */
   mySelection->AddFilter(myFaceFilter) ;
 

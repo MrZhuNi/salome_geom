@@ -34,7 +34,7 @@
 
 #include "BuildGUI.h"
 
-#include "GEOM_FaceFilter.hxx"
+#include "GEOM_ShapeTypeFilter.hxx"
 
 //=================================================================================
 // class    : BuildGUI_ShellDlg
@@ -54,7 +54,7 @@ private:
 
     BuildGUI* myBuildGUI;
 
-    Handle(GEOM_FaceFilter) myFaceFilter;    /* Filters selection */
+    Handle(GEOM_ShapeTypeFilter) myFaceFilter;    /* Filters selection */
     GEOM::GEOM_Gen::ListOfIOR myListShapes;
     bool myOkListShapes;          /* to check when arguments is defined */
 
