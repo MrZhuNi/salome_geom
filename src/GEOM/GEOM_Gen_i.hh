@@ -577,6 +577,14 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen,
 				  const  GEOM::PointStruct& pEnd)
     throw (SALOME::SALOME_Exception) ;
 
+  //-------------------------------------------------------------------//
+  // Specific method Sketcher                                           //
+  //-------------------------------------------------------------------//
+  GEOM::GEOM_Shape_ptr MakeSketcher   (const char* Cmd)
+    throw (SALOME::SALOME_Exception) ;
+  
+  //-------------------------------------------------------------------//
+
   GEOM::GEOM_Shape_ptr MakeCompound (const GEOM::GEOM_Gen::ListOfIOR& ListShapes)
     throw (SALOME::SALOME_Exception) ;
   GEOM::GEOM_Shape_ptr MakeWire     (const GEOM::GEOM_Gen::ListOfIOR& ListShapes)
