@@ -408,10 +408,22 @@ def SubShapeAll(aShape, aType):
       print "MakeExplode : ", ShapesOp.GetErrorCode()
     return ListObj
 
+def SubShapeAllIDs(aShape, aType):
+    ListObj = ShapesOp.SubShapeAllIDs(aShape,aType,0)
+    if ShapesOp.IsDone() == 0:
+      print "SubShapeAllIDs : ", ShapesOp.GetErrorCode()
+    return ListObj
+
 def SubShapeAllSorted(aShape,aType):
     ListObj = ShapesOp.MakeExplode(aShape,aType,1)
     if ShapesOp.IsDone() == 0:
       print "MakeExplode : ", ShapesOp.GetErrorCode()
+    return ListObj
+
+def SubShapeAllSortedIDs(aShape, aType):
+    ListIDs = ShapesOp.SubShapeAllIDs(aShape,aType,1)
+    if ShapesOp.IsDone() == 0:
+      print "SubShapeAllSortedIDs : ", ShapesOp.GetErrorCode()
     return ListObj
 
 # Obtain a compound of sub-shapes of <aShape>,

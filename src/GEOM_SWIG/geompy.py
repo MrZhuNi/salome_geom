@@ -794,6 +794,17 @@ def SubShapeAll(aShape, aType):
     return ListObj
 
 #     *  Explode a shape on subshapes of a given type.
+#     *  \param theShape Shape to be exploded.
+#     *  \param theShapeType Type of sub-shapes to be retrieved.
+#     *  \return List of IDs of sub-shapes.
+#
+def SubShapeAllIDs(aShape, aType):
+    ListObj = ShapesOp.SubShapeAllIDs(aShape,aType,0)
+    if ShapesOp.IsDone() == 0:
+      print "SubShapeAllIDs : ", ShapesOp.GetErrorCode()
+    return ListObj
+
+#     *  Explode a shape on subshapes of a given type.
 #     *  Sub-shapes will be sorted by coordinates of their gravity centers.
 #     *  \param theShape Shape to be exploded.
 #     *  \param theShapeType Type of sub-shapes to be retrieved.
@@ -805,6 +816,18 @@ def SubShapeAllSorted(aShape, aType):
     ListObj = ShapesOp.MakeExplode(aShape,aType,1)
     if ShapesOp.IsDone() == 0:
       print "MakeExplode : ", ShapesOp.GetErrorCode()
+    return ListObj
+
+#     *  Explode a shape on subshapes of a given type.
+#     *  Sub-shapes will be sorted by coordinates of their gravity centers.
+#     *  \param theShape Shape to be exploded.
+#     *  \param theShapeType Type of sub-shapes to be retrieved.
+#     *  \return List of IDs of sub-shapes.
+#
+def SubShapeAllSortedIDs(aShape, aType):
+    ListIDs = ShapesOp.SubShapeAllIDs(aShape,aType,1)
+    if ShapesOp.IsDone() == 0:
+      print "SubShapeAllSortedIDs : ", ShapesOp.GetErrorCode()
     return ListObj
 
 #     *  Obtain a compound of sub-shapes of <aShape>,

@@ -85,6 +85,8 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
 
   enum BCErrorType {
     NOT_BLOCK,
+    DEGENERATED_EDGE,
+    SEAM_EDGE,
     INVALID_CONNECTION,
     NOT_CONNECTED,
     NOT_GLUED
@@ -94,6 +96,9 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
     BCErrorType error;
     list<int>   incriminated;
   };
+
+  Standard_Boolean CheckCompoundOfBlocksOld (Handle(GEOM_Object) theCompound,
+                                             list<BCError>&      theErrors);
 
   Standard_Boolean CheckCompoundOfBlocks (Handle(GEOM_Object) theCompound,
                                           list<BCError>&      theErrors);
@@ -131,6 +136,9 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
                                                  const Standard_Integer theDirFace1V,
                                                  const Standard_Integer theDirFace2V,
                                                  const Standard_Integer theNbTimesV);
+
+  // Build groups for Propagation of 1D hypotheses
+  Handle(TColStd_HSequenceOfTransient) Propagate (Handle(GEOM_Object) theShape);
 };
 
 #endif

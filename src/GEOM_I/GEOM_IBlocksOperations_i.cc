@@ -657,6 +657,12 @@ CORBA::Boolean GEOM_IBlocksOperations_i::CheckCompoundOfBlocks
     case GEOMImpl_IBlocksOperations::NOT_BLOCK:
       anError->error = GEOM::GEOM_IBlocksOperations::NOT_BLOCK;
       break;
+    case GEOMImpl_IBlocksOperations::DEGENERATED_EDGE:
+      anError->error = GEOM::GEOM_IBlocksOperations::DEGENERATED_EDGE;
+      break;
+    case GEOMImpl_IBlocksOperations::SEAM_EDGE:
+      anError->error = GEOM::GEOM_IBlocksOperations::SEAM_EDGE;
+      break;
     case GEOMImpl_IBlocksOperations::INVALID_CONNECTION:
       anError->error = GEOM::GEOM_IBlocksOperations::INVALID_CONNECTION;
       break;
@@ -719,6 +725,12 @@ char* GEOM_IBlocksOperations_i::PrintBCErrors
     switch (typ) {
     case GEOM::GEOM_IBlocksOperations::NOT_BLOCK:
       errStruct.error = GEOMImpl_IBlocksOperations::NOT_BLOCK;
+      break;
+    case GEOM::GEOM_IBlocksOperations::DEGENERATED_EDGE:
+      errStruct.error = GEOMImpl_IBlocksOperations::DEGENERATED_EDGE;
+      break;
+    case GEOM::GEOM_IBlocksOperations::SEAM_EDGE:
+      errStruct.error = GEOMImpl_IBlocksOperations::SEAM_EDGE;
       break;
     case GEOM::GEOM_IBlocksOperations::INVALID_CONNECTION:
       errStruct.error = GEOMImpl_IBlocksOperations::INVALID_CONNECTION;
@@ -936,4 +948,38 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeMultiTransformation2D
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  Propagate
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IBlocksOperations_i::Propagate (GEOM::GEOM_Object_ptr theShape)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theShape == NULL) return aSeq._retn();
+
+  //Get the reference Shape
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+
+  if (aShape.IsNull()) return aSeq._retn();
+
+  //Get the Propagation chains
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->Propagate(aShape);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
 }

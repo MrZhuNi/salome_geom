@@ -119,6 +119,9 @@ class GEOM_IBlocksOperations_i :
 						   const CORBA::Long     theDirFace2V,
 						   const CORBA::Long     theNbTimesV);
 
+  // Build groups for Propagation of 1D hypotheses
+  GEOM::ListOfGO* Propagate (GEOM::GEOM_Object_ptr theShape);
+
   ::GEOMImpl_IBlocksOperations* GetOperations()
   { return (::GEOMImpl_IBlocksOperations*)GetImpl(); }
 };
