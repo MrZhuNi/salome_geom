@@ -52,7 +52,7 @@ DlgRef_1Sel5Spin::DlgRef_1Sel5Spin(QWidget* parent,  const char* name, WFlags fl
   Layout2->addWidget(SpinBox_2, 0, 3);
 
   SpinBox_3 = new DlgRef_SpinBox(GroupBox1, "SpinBox_3");
-  Layout2->addWidget(SpinBox_3, 0, 5);
+  Layout2->addWidget(SpinBox_3, 2, 1);
 
   SpinBox_4 = new DlgRef_SpinBox(GroupBox1, "SpinBox_4");
   Layout2->addWidget(SpinBox_4, 1, 1);
