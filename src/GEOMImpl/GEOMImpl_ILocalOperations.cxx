@@ -96,7 +96,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletAll
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aFillet->GetEntry(), anEntry);
-  aDescr = anEntry + " = ILocalOperations.MakeFilletAll(";
+  aDescr = anEntry + " = geompy.MakeFilletAll(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   aDescr += (TCollection_AsciiString(theR)+")");
@@ -160,12 +160,12 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aFillet->GetEntry(), anEntry);
-  aDescr = anEntry + " = ILocalOperations.MakeFilletEdges(";
+  aDescr = anEntry + " = geompy.MakeFillet(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theR)+", [");
+  aDescr += (TCollection_AsciiString(theR)+", geompy.ShapeType[\"EDGE\"], [");
   it = theEdges.begin();
-  aDescr += (TCollection_AsciiString(*it)+", ");
+  aDescr += TCollection_AsciiString(*it);
   it++;
   for (; it != theEdges.end(); it++) {
     aDescr += ", ";
@@ -232,12 +232,12 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aFillet->GetEntry(), anEntry);
-  aDescr = anEntry + " = ILocalOperations.MakeFilletFaces(";
+  aDescr = anEntry + " = geompy.MakeFillet(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theR)+", [");
+  aDescr += (TCollection_AsciiString(theR)+", geompy.ShapeType[\"FACE\"], [");
   it = theFaces.begin();
-  aDescr += (TCollection_AsciiString(*it)+", ");
+  aDescr += TCollection_AsciiString(*it);
   it++;
   for (; it != theFaces.end(); it++) {
     aDescr += ", ";
@@ -296,7 +296,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferAll (Handle(GEOM_Objec
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aChamfer->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ILocalOperations.MakeChamferAll(";
+  aDescr += " = geompy.MakeChamferAll(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   aDescr += (TCollection_AsciiString(theD)+")");
@@ -357,7 +357,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdge
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aChamfer->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ILocalOperations.MakeChamferEdge(";
+  aDescr += " = geompy.MakeChamferEdge(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   aDescr += (TCollection_AsciiString(theD1)+", ");
@@ -427,13 +427,13 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aChamfer->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ILocalOperations.MakeChamferFaces(";
+  aDescr += " = geompy.MakeChamferFaces(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   aDescr += (TCollection_AsciiString(theD1)+", ");
   aDescr += (TCollection_AsciiString(theD2)+", [");
   it = theFaces.begin();
-  aDescr += (TCollection_AsciiString(*it)+", ");
+  aDescr += TCollection_AsciiString(*it);
   it++;
   for (; it != theFaces.end(); it++) {
     aDescr += ", ";
@@ -496,7 +496,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeArchimede (Handle(GEOM_Object
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aChamfer->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ILocalOperations.MakeArchimede(";
+  aDescr += " = geompy.Archimede(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   aDescr += (TCollection_AsciiString(theWeight)+", ");

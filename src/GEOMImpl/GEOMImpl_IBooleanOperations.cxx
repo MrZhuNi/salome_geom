@@ -99,7 +99,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean (Handle(GEOM_Object
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aBool->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = IBooleanOperations.MakeBoolean(";
+  aDescr += " = geompy.MakeBoolean(";
   TDF_Tool::Entry(theShape1->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theShape2->GetEntry(), anEntry);
@@ -256,7 +256,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
   TCollection_AsciiString aDescr;
   TDF_Tool::Entry(aPartition->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = IBooleanOperations.MakePartition([";
+  aDescr += " = geompy.MakePartition([";
   // Shapes
   aDescr += aShapesDescr + "], [";
   // Tools
@@ -338,7 +338,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aPart->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = IBooleanOperations.MakePartition(";
+  aDescr += " = geompy.MakeHalfPartition(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(thePlane->GetEntry(), anEntry);

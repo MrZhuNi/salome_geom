@@ -141,7 +141,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdge
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(anEdge->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IShapesOperations.MakeEdge(");
+  aDescr += (anEntry+" = geompy.MakeEdge(");
   TDF_Tool::Entry(thePnt1->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(thePnt2->GetEntry(), anEntry);
@@ -213,12 +213,11 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFace (Handle(GEOM_Object) th
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aFace->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = IShapesOperations.MakeFace(";
+  aDescr += " = geompy.MakeFace(";
   TDF_Tool::Entry(theWire->GetEntry(), anEntry);
   aDescr += anEntry;
   if (isPlanarWanted)
     aDescr += ", 1)";
-
   else
     aDescr += ", 0)";
 
@@ -284,13 +283,13 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aShape->GetEntry(), anEntry);
-  aDescr += (anEntry + " = IShapesOperations.MakeFaceWires([");
+  aDescr += (anEntry + " = geompy.MakeFaceWires([");
   // Shapes
   it = theShapes.begin();
   if (it != theShapes.end()) {
     TDF_Tool::Entry((*it)->GetEntry(), anEntry);
+    aDescr += anEntry;
     it++;
-    aDescr += (anEntry+", ");
     for (; it != theShapes.end(); it++) {
       aDescr += ", ";
       TDF_Tool::Entry((*it)->GetEntry(), anEntry);
@@ -328,7 +327,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShell
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidShells
                              (list<Handle(GEOM_Object)> theShapes)
 {
-  return MakeShape(theShapes, GEOM_SOLID, SOLID_SHELLS, "MakeSolidShells");
+  return MakeShape(theShapes, GEOM_SOLID, SOLID_SHELLS, "MakeSolid");
 }
 
 //=============================================================================
@@ -378,7 +377,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidShell (Handle(GEOM_Obje
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aSolid->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = IShapesOperations.MakeSolidShell(";
+  aDescr += " = geompy.MakeSolid(";
   TDF_Tool::Entry(theShell->GetEntry(), anEntry);
   aDescr += (anEntry+")");
 
@@ -455,14 +454,14 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aShape->GetEntry(), anEntry);
-  aDescr += (anEntry + " = IShapesOperations.");
+  aDescr += (anEntry + " = geompy.");
   aDescr += (theMethodName + "([");
   // Shapes
   it = theShapes.begin();
   if (it != theShapes.end()) {
     TDF_Tool::Entry((*it)->GetEntry(), anEntry);
+    aDescr += anEntry;
     it++;
-    aDescr += (anEntry+", ");
     for (; it != theShapes.end(); it++) {
       aDescr += ", ";
       TDF_Tool::Entry((*it)->GetEntry(), anEntry);
@@ -532,7 +531,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aGlued->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = IShapesOperations.MakeGlueFaces(";
+  aDescr += " = geompy.MakeGlueFaces(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += anEntry + ", ";
   aDescr += TCollection_AsciiString(theTolerance) + ")";
@@ -627,7 +626,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   anAsciiList.Trunc(anAsciiList.Length() - 1);
   anAsciiList += "]";
 
-  anAsciiList = TCollection_AsciiString("\n") + anAsciiList;
+  anAsciiList = TCollection_AsciiString("\n\t") + anAsciiList;
 
   //The explode doesn't change object so no new function is requiered.
   aFunction = theShape->GetLastFunction();
@@ -635,12 +634,13 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   //Make a Python command
   TCollection_AsciiString aDescr(anAsciiList);
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += " = IShapesOperations.MakeExplode(";
-  aDescr += (anEntry + ",");
   if (isSorted)
-    aDescr += (TCollection_AsciiString(theShapeType) + ", 1)");
+    aDescr += " = geompy.SubShapeAllSorted( ";
   else
-    aDescr += (TCollection_AsciiString(theShapeType) + ", 0)");
+    aDescr += " = geompy.SubShapeAll( ";
+  aDescr += (anEntry + ", ");
+  aDescr += theShapeType;
+  aDescr += " )";
 
   TCollection_AsciiString anOldDescr = aFunction->GetDescription();
   anOldDescr = anOldDescr + aDescr;
@@ -725,7 +725,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
 
   //Make a Python command
   TCollection_AsciiString aDescr
-    ("\nlistSubShapeAllIDs = IShapesOperations.SubShapeAllIDs(");
+    ("\n\tlistSubShapeAllIDs = geompy.SubShapeAllIDs(");
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += (anEntry + ",");
@@ -757,7 +757,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSubShape
 
   Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
   anArray->SetValue(1, theID);
-  Handle(GEOM_Object) anObj = GetEngine()->AddSubShape(theMainShape, anArray);
+  Handle(GEOM_Object) anObj = GetEngine()->AddSubShape(theMainShape, anArray,true);
   if (anObj.IsNull()) {
     SetErrorCode("Can not get a sub-shape with the given ID");
     return NULL;
@@ -767,13 +767,12 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSubShape
   Handle(GEOM_Function) aFunction = theMainShape->GetLastFunction();
 
   //Make a Python command
-  TCollection_AsciiString aDescr ("\n");
+  TCollection_AsciiString aDescr ("\n\t");
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-  aDescr += anEntry + " = IShapesOperations.GetSubShape(";
+  aDescr += anEntry + " = geompy.GetSubShape(";
   TDF_Tool::Entry(theMainShape->GetEntry(), anEntry);
-  aDescr += anEntry + ", ";
-  aDescr += TCollection_AsciiString(theID) + ")";
+  aDescr += anEntry + ", [" + theID + "])";
 
   TCollection_AsciiString anOldDescr = aFunction->GetDescription();
   anOldDescr = anOldDescr + aDescr;
@@ -882,7 +881,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ReverseShape(Handle(GEOM_Object)
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aReversed->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = IShapesOperations.ReverseShape(";
+  aDescr += " = geompy.ChangeOrientation(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += anEntry + ")";
 
@@ -934,7 +933,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetFreeFacesIDs
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
 
   //Make a Python command
-  TCollection_AsciiString aDescr ("\nlistFreeFacesIDs = IShapesOperations.GetFreeFacesIDs(");
+  TCollection_AsciiString aDescr ("\n\tlistFreeFacesIDs = geompy.GetFreeFacesIDs(");
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += (anEntry + ")");
@@ -998,7 +997,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
 
   //Make a Python command
   TCollection_AsciiString aDescr
-    ("\nlistSharedShapes = IShapesOperations.GetSharedShapes(");
+    ("\n\tlistSharedShapes = geompy.GetSharedShapes(");
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theShape1->GetEntry(), anEntry);
   aDescr += (anEntry + ",");
@@ -1118,7 +1117,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
 
   // Make a Python command
   TCollection_AsciiString anEntry, aDescr
-    ("\nlistShapesOnPlane = IShapesOperations.GetShapesOnPlane(");
+    ("\n\tlistShapesOnPlane = geompy.GetShapesOnPlane(");
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += anEntry + TCollection_AsciiString(theShapeType) + ",";
   TDF_Tool::Entry(theAx1->GetEntry(), anEntry);
@@ -1243,7 +1242,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnCyli
 
   // Make a Python command
   TCollection_AsciiString anEntry, aDescr
-    ("\nlistShapesOnCylinder = IShapesOperations.GetShapesOnCylinder(");
+    ("\n\tlistShapesOnCylinder = geompy.GetShapesOnCylinder(");
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += anEntry + TCollection_AsciiString(theShapeType) + ",";
   TDF_Tool::Entry(theAxis->GetEntry(), anEntry);
@@ -1354,7 +1353,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnSphe
 
   // Make a Python command
   TCollection_AsciiString anEntry, aDescr
-    ("\nlistShapesOnSphere = IShapesOperations.GetShapesOnSphere(");
+    ("\n\tlistShapesOnSphere = geompy.GetShapesOnSphere(");
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += anEntry + TCollection_AsciiString(theShapeType) + ",";
   TDF_Tool::Entry(theCenter->GetEntry(), anEntry);
@@ -1485,7 +1484,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aResult->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = IShapesOperations.GetInPlace(";
+  aDescr += " = geompy.GetInPlace(";
   TDF_Tool::Entry(theShapeWhere->GetEntry(), anEntry);
   aDescr += anEntry + ",";
   TDF_Tool::Entry(theShapeWhat->GetEntry(), anEntry);

@@ -92,7 +92,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::MakeCopy(Handle(GEOM_Object) the
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IInsertOperations.MakeCopy(");
+  aDescr += (anEntry+" = geompy.MakeCopy(");
   TDF_Tool::Entry(theOriginal->GetEntry(), anEntry);
   aDescr += (anEntry+")");
 
@@ -155,11 +155,11 @@ void GEOMImpl_IInsertOperations::Export
 
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
-  aDescr = "IInsertOperations.Export(";
+  aDescr = "geompy.Export(";
   TDF_Tool::Entry(theOriginal->GetEntry(), anEntry);
-  aDescr += (anEntry + ", ");
-  aDescr += (TCollection_AsciiString(aFileName) + ", ");
-  aDescr += (TCollection_AsciiString(aFormatName) + ")");
+  aDescr += (anEntry + ", \"");
+  aDescr += (TCollection_AsciiString(aFileName) + "\", \"");
+  aDescr += (TCollection_AsciiString(aFormatName) + "\")");
 
   aFunction->SetDescription(aDescr);
 
@@ -218,9 +218,9 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(result->GetEntry(), anEntry);
-  aDescr += (anEntry + " = IInsertOperations.Import(");
-  aDescr += (TCollection_AsciiString(aFileName) + ", ");
-  aDescr += (TCollection_AsciiString(aFormatName) + ")");
+  aDescr += (anEntry + " = geompy.Import(\"");
+  aDescr += (TCollection_AsciiString(aFileName) + "\", \"");
+  aDescr += (TCollection_AsciiString(aFormatName) + "\")");
 
   aFunction->SetDescription(aDescr);
 

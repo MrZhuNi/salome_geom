@@ -175,6 +175,10 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen, public Engines_Component_i
 
   virtual GEOM::GEOM_Object_ptr GetIORFromString(const char* stringIOR);
 
+  virtual Engines::TMPFile* DumpPython(CORBA::Object_ptr theStudy, 
+				       CORBA::Boolean isPublished, 
+				       CORBA::Boolean& isValidScript);
+
   //********************************************************************************************************//
   //     Internal methods
   //********************************************************************************************************//

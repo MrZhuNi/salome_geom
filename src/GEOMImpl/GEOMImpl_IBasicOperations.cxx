@@ -94,7 +94,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointXYZ
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aPoint->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBasicOperations.MakePointXYZ(");
+  aDescr += (anEntry+" = geompy.MakeVertex(");
   aDescr += (TCollection_AsciiString(theX)+", ");
   aDescr += (TCollection_AsciiString(theY)+", ");
   aDescr += (TCollection_AsciiString(theZ)+")");
@@ -152,7 +152,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointWithReference
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aPoint->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBasicOperations.MakePointReference(");
+  aDescr += (anEntry+" = geompy.MakeVertexWithRef(");
   TDF_Tool::Entry(theReference->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   aDescr += (TCollection_AsciiString(theX)+", ");
@@ -210,7 +210,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurve
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aPoint->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBasicOperations.MakePointReference(");
+  aDescr += (anEntry+" = geompy.MakeVertexOnCurve(");
   TDF_Tool::Entry(theCurve->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   aDescr += (TCollection_AsciiString(theParameter)+")");
@@ -265,7 +265,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeVectorDXDYDZ
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aVector->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBasicOperations.MakeVectorDXDYDZ(");
+  aDescr += (anEntry+" = geompy.MakeVectorDXDYDZ(");
   aDescr += (TCollection_AsciiString(theDX)+", ");
   aDescr += (TCollection_AsciiString(theDY)+", ");
   aDescr += (TCollection_AsciiString(theDZ)+")");
@@ -323,7 +323,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeVectorTwoPnt
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aVector->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBasicOperations.MakeVectorTwoPnt(");
+  aDescr += (anEntry+" = geompy.MakeVector(");
   TDF_Tool::Entry(thePnt1->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(thePnt2->GetEntry(), anEntry);
@@ -383,7 +383,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLine
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aLine->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBasicOperations.MakeLine(");
+  aDescr += (anEntry+" = geompy.MakeLine(");
   TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theDir->GetEntry(), anEntry);
@@ -442,7 +442,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLineTwoPnt
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aLine->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBasicOperations.MakeLineTwoPnt(");
+  aDescr += (anEntry+" = geompy.MakeLineTwoPnt(");
   TDF_Tool::Entry(thePnt1->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(thePnt2->GetEntry(), anEntry);
@@ -506,7 +506,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneThreePnt
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aPlane->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBasicOperations.MakePlaneThreePnt(");
+  aDescr += (anEntry+" = geompy.MakePlaneThreePnt(");
   TDF_Tool::Entry(thePnt1->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(thePnt2->GetEntry(), anEntry);
@@ -570,7 +570,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlanePntVec
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aPlane->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBasicOperations.MakePlanePntVec(");
+  aDescr += (anEntry+" = geompy.MakePlane(");
   TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theVec->GetEntry(), anEntry);
@@ -629,7 +629,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneFace
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aPlane->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBasicOperations.MakePlaneFace(");
+  aDescr += (anEntry+" = geompy.MakePlaneFace(");
   TDF_Tool::Entry(theFace->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   aDescr += TCollection_AsciiString(theSize) + ")";
@@ -686,7 +686,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarker
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aMarker->GetEntry(), anEntry);
-  aDescr += anEntry + " = IBasicOperations.MakeMarker(";
+  aDescr += anEntry + " = geompy.MakeMarker(";
   aDescr += TCollection_AsciiString(theOX) + ", ";
   aDescr += TCollection_AsciiString(theOY) + ", ";
   aDescr += TCollection_AsciiString(theOZ) + ", ";

@@ -22,6 +22,8 @@ using namespace std;
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TCollection_AsciiString.hxx>
 
+#include <TDF_Tool.hxx>
+
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 
@@ -122,9 +124,35 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ShapeProcess (Handle(GEOM_Objec
     return NULL;
   }
 
-  //Make a Python command
-  // ...
-  // ... missing ...
+  //Make a Python command 
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aNewObject->GetEntry(), aDescr);
+  aDescr += " = geompy.ProcessShape( ";
+  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
+  aDescr += (anEntry+", [ ");
+  // list of operators
+  int i = theOperators->Lower(), nb = theOperators->Upper();
+  for ( ; i <= nb; i++) {
+    aDescr += "\"";
+    aDescr += theOperators->Value( i );
+    aDescr += "\"";
+    aDescr += (char*)(( i < nb ) ? ", " : " ], [ ");
+  }
+  // list of parameters
+  i = theParams->Lower(); nb = theParams->Upper();
+  for ( ; i <= nb; i++) {
+    aDescr += "\"";
+    aDescr += TCollection_AsciiString(theParams->Value( i ));
+    aDescr += "\"";
+    aDescr += (char*)(( i < nb ) ? ", " : " ], [ ");
+  }
+  // list of values
+  i = theValues->Lower(); nb = theValues->Upper();
+  for ( ; i <= nb; i++)
+    aDescr += TCollection_AsciiString(theValues->Value( i ))
+      + (char*)(( i < nb ) ? ", " : " ])");
+
+  aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
   return aNewObject;
@@ -308,8 +336,19 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces (Handle(GEOM_Obje
   }
 
   //Make a Python command
-  // ...
-  // ... missing ...
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aNewObject->GetEntry(), aDescr);
+  aDescr += " = geompy.SuppressFaces( ";
+  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
+  aDescr += (anEntry+", [ ");
+  // list of face ids
+  int i = theFaces->Lower(), nb = theFaces->Upper();
+  for ( ; i <= nb; i++)
+    aDescr +=
+      TCollection_AsciiString(theFaces->Value( i ))
+        + (char*)(( i < nb ) ? ", " : " ])");
+
+  aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
   return aNewObject;
@@ -368,8 +407,19 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour (Handle(GEOM_Objec
   }
 
   //Make a Python command
-  // ...
-  // ... missing ...
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aNewObject->GetEntry(), aDescr);
+  aDescr += " = geompy.CloseContour( ";
+  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
+  aDescr += (anEntry+", [ ");
+  // list of wire ids
+  int i = theWires->Lower(), nb = theWires->Upper();
+  for ( ; i <= nb; i++)
+    aDescr += TCollection_AsciiString(theWires->Value( i ))
+      + (char*)(( i < nb ) ? ", " : " ], ");
+  aDescr += (char*)( isCommonVertex ? "1 )" : "0 )" );
+
+  aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
   return aNewObject;
@@ -425,8 +475,18 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveIntWires (Handle(GEOM_Obj
   }
 
   //Make a Python command
-  // ...
-  // ... missing ...
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aNewObject->GetEntry(), aDescr);
+  aDescr += " = geompy.SuppressInternalWires( ";
+  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
+  aDescr += (anEntry+", [ ");
+  // list of wire ids
+  int i = theWires->Lower(), nb = theWires->Upper();
+  for ( ; i <= nb; i++)
+    aDescr += TCollection_AsciiString(theWires->Value( i ))
+      + (char*)(( i < nb ) ? ", " : " ])");
+
+  aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
   return aNewObject;
@@ -482,8 +542,18 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FillHoles (Handle(GEOM_Object) 
   }
 
   //Make a Python command
-  // ...
-  // ... missing ...
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aNewObject->GetEntry(), aDescr);
+  aDescr += " = geompy.SuppressHoles( ";
+  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
+  aDescr += (anEntry+", [ ");
+  // list of wire ids
+  int i = theWires->Lower(), nb = theWires->Upper();
+  for ( ; i <= nb; i++)
+    aDescr += TCollection_AsciiString(theWires->Value( i ))
+      + (char*)(( i < nb ) ? ", " : " ])");
+
+  aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
   return aNewObject;
@@ -539,8 +609,13 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
   }
 
   //Make a Python command
-  // ...
-  // ... missing ...
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aNewObject->GetEntry(), aDescr);
+  aDescr += " = geompy.Sew( ";
+  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
+  aDescr += anEntry+", " + theTolerance + " )";
+
+  aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
   return aNewObject;
@@ -600,8 +675,12 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
   }
 
   //Make a Python command
-  // ...
-  // ... missing ...
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aNewObject->GetEntry(), aDescr);
+  aDescr += " = geompy.DivideEdge( ";
+  TDF_Tool::Entry(theObject->GetEntry(), anEntry);
+  aDescr += anEntry + ", " + theIndex + ", " + theValue + ", ";
+  aDescr += (char*)( isByParameter ? "1 )" : "0 )" );
 
   SetErrorCode(OK);
   return aNewObject;

@@ -4,10 +4,12 @@
 
 #include "GEOM_Application.hxx"
 #include <Interface_DataMapOfIntegerTransient.hxx> 
+#include <Resource_DataMapOfAsciiStringAsciiString.hxx>
 #include <TDF_Label.hxx>
 #include <TDocStd_Document.hxx>
 #include "GEOM_Object.hxx"
 #include <TColStd_HArray1OfInteger.hxx>
+#include <TColStd_HSequenceOfAsciiString.hxx>
 #include <TopAbs.hxx>
 
 #include "GEOM_DataMapOfAsciiStringTransient.hxx"
@@ -58,8 +60,15 @@ class GEOM_Engine
   void Redo(int theDocID);
 
   //Adds a new sub shape object of the MainShape object
-  Handle(GEOM_Object) AddSubShape(Handle(GEOM_Object) theMainShape, Handle(TColStd_HArray1OfInteger) theIndices);
+  Handle(GEOM_Object) AddSubShape(Handle(GEOM_Object) theMainShape, 
+				  Handle(TColStd_HArray1OfInteger) theIndices,
+				  bool isStandaloneOperation = false);
 
+  TCollection_AsciiString DumpPython(int theDocID, 
+				     Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+				     bool isPublished, 
+				     bool& aValidScript);
+  
  protected:
   static void SetEngine(GEOM_Engine* theEngine);       
 

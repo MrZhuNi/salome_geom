@@ -51,7 +51,8 @@ LIB_SRC = \
 	GEOM_ITransformOperations_i.cc \
 	GEOM_IMeasureOperations_i.cc \
 	GEOM_IGroupOperations_i.cc \
-	GEOM_Gen_i.cc
+	GEOM_Gen_i.cc \
+	GEOM_DumpPython.cc
 
 LIB_SERVER_IDL = SALOME_Component.idl SALOMEDS.idl SALOME_Exception.idl \
 		 GEOM_Gen.idl SALOME_GenericObj.idl

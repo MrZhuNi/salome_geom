@@ -103,7 +103,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateTwoPoints
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.TranslateTwoPoints(");
+  aDescr += (anEntry+" = geompy.TrsfOp.TranslateTwoPoints(");
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(thePoint1->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
@@ -160,7 +160,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateDXDYDZ
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.TranslateDXDXYDZ(");
+  aDescr += (anEntry+" = geompy.TrsfOp.TranslateDXDYDZ(");
   aDescr += (anEntry+", ");
   aDescr += (TCollection_AsciiString(theX)+", ");
   aDescr += (TCollection_AsciiString(theY)+", ");
@@ -219,7 +219,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateTwoPointsCopy
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.TranslateTwoPointsCopy(");
+  aDescr += (anEntry+" = geompy.MakeTranslationTwoPoints(");
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(thePoint1->GetEntry(), anEntry);
@@ -279,7 +279,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateDXDYDZCopy
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.TranslateDXDXYDZCopy(");
+  aDescr += (anEntry+" = geompy.MakeTranslation(");
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   aDescr += (TCollection_AsciiString(theX)+", ");
@@ -338,7 +338,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVector
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.TranslateVector(");
+  aDescr += (anEntry+" = geompy.TrsfOp.TranslateVector(");
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theVector->GetEntry(), anEntry);
   aDescr += (anEntry+") ");
@@ -394,7 +394,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVectorCopy
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.TranslateVectorCopy(");
+  aDescr += (anEntry+" = geompy.MakeTranslationVector(");
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theVector->GetEntry(), anEntry);
@@ -453,7 +453,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Translate1D
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.Translate1D(");
+  aDescr += (anEntry+" = geompy.MakeMultiTranslation1D(");
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theVector->GetEntry(), anEntry);
@@ -522,7 +522,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Translate2D (Handle(GEOM_Obje
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.Translate2D(");
+  aDescr += (anEntry+" = geompy.MakeMultiTranslation2D(");
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theVector->GetEntry(), anEntry);
@@ -587,7 +587,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPlane
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry + " = ITransformOperations.MirrorPlane(");
+  aDescr += (anEntry + " = geompy.TrsfOp.MirrorPlane(");
   aDescr += (anEntry + ", ");
   TDF_Tool::Entry(thePlane->GetEntry(), anEntry);
   aDescr += (anEntry + ") ");
@@ -642,7 +642,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPlaneCopy
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry + " = ITransformOperations.MirrorPlaneCopy(");
+  aDescr += (anEntry + " = geompy.MakeMirrorByPlane(");
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
   aDescr += (anEntry + ", ");
   TDF_Tool::Entry(thePlane->GetEntry(), anEntry);
@@ -699,7 +699,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPoint
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry + " = ITransformOperations.MirrorPoint(");
+  aDescr += (anEntry + " = geompy.TrsfOp.MirrorPoint(");
   aDescr += (anEntry + ", ");
   TDF_Tool::Entry(thePoint->GetEntry(), anEntry);
   aDescr += (anEntry + ") ");
@@ -754,7 +754,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPointCopy
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry + " = ITransformOperations.MirrorPointCopy(");
+  aDescr += (anEntry + " = geompy.MakeMirrorByPoint(");
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
   aDescr += (anEntry + ", ");
   TDF_Tool::Entry(thePoint->GetEntry(), anEntry);
@@ -811,7 +811,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorAxis
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry + " = ITransformOperations.MirrorAxis(");
+  aDescr += (anEntry + " = geompy.TrsfOp.MirrorAxis(");
   aDescr += (anEntry + ", ");
   TDF_Tool::Entry(theAxis->GetEntry(), anEntry);
   aDescr += (anEntry + ") ");
@@ -866,7 +866,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorAxisCopy
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry + " = ITransformOperations.MirrorAxisCopy(");
+  aDescr += (anEntry + " = geompy.MakeMirrorByAxis(");
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
   aDescr += (anEntry + ", ");
   TDF_Tool::Entry(theAxis->GetEntry(), anEntry);
@@ -921,7 +921,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShape
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.OffsetShape(");
+  aDescr += (anEntry+" = geompy.TrsfOp.OffsetShape(");
   aDescr += (anEntry+", ");
   aDescr += TCollection_AsciiString(theOffset)+")";
   aFunction->SetDescription(aDescr);
@@ -976,7 +976,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.OffsetShapeCopy(");
+  aDescr += (anEntry+" = geompy.MakeOffset(");
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   aDescr += TCollection_AsciiString(theOffset)+")";
@@ -1034,7 +1034,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShape
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.ScaleShape(");
+  aDescr += (anEntry+" = geompy.TrsfOp.ScaleShape(");
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(thePoint->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
@@ -1092,7 +1092,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeCopy
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.ScaleShapeCopy(");
+  aDescr += (anEntry+" = geompy.MakeScaleTransform(");
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(thePoint->GetEntry(), anEntry);
@@ -1152,7 +1152,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShape
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.PositionShape(");
+  aDescr += (anEntry+" = geompy.TrsfOp.PositionShape(");
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theStartLCS->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
@@ -1211,7 +1211,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShapeCopy
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.PositionShapeCopy(");
+  aDescr += (anEntry+" = geompy.MakePosition(");
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theStartLCS->GetEntry(), anEntry);
@@ -1272,7 +1272,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate (Handle(GEOM_Object) t
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.Rotate(");
+  aDescr += (anEntry+" = geompy.TrsfOp.Rotate(");
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theAxis->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
@@ -1327,8 +1327,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateCopy (Handle(GEOM_Objec
 
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aCopy->GetEntry(), aDescr);
+  aDescr += " = geompy.MakeRotation(";
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.RotateCopy(");
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theAxis->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
@@ -1386,7 +1387,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate1D (Handle(GEOM_Object)
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.Rotate1D(");
+  aDescr += (anEntry+" = geompy.MultiRotate1D(");
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theAxis->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
@@ -1450,7 +1451,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate2D (Handle(GEOM_Object)
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry+" = ITransformOperations.Rotate2D(");
+  aDescr += (anEntry+" = geompy.MultiRotate2D(");
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theAxis->GetEntry(), anEntry);
   aDescr += (anEntry+", ");

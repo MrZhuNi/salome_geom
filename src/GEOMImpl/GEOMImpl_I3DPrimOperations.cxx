@@ -102,7 +102,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeBoxDXDYDZ (double theDX, dou
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aBox->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeBoxDXDYDZ(";
+  aDescr += " = geompy.MakeBoxDXDYDZ(";
   aDescr += (TCollection_AsciiString(theDX)+", ");
   aDescr += (TCollection_AsciiString(theDY)+", ");
   aDescr += (TCollection_AsciiString(theDZ)+")");
@@ -163,7 +163,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeBoxTwoPnt (Handle(GEOM_Objec
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aBox->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeBoxTwoPnt(";
+  aDescr += " = geompy.MakeBoxTwoPnt(";
   TDF_Tool::Entry(thePnt1->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(thePnt2->GetEntry(), anEntry);
@@ -217,7 +217,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, dou
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aCylinder->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeCylinderRH(";
+  aDescr += " = geompy.MakeCylinderRH(";
   aDescr += (TCollection_AsciiString(theR)+", ");
   aDescr += (TCollection_AsciiString(theH)+")");
 
@@ -281,7 +281,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aCylinder->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeCylinderPntVecRH(";
+  aDescr += " = geompy.MakeCylinder(";
   TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theVec->GetEntry(), anEntry);
@@ -340,7 +340,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeConeR1R2H (double theR1, dou
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aCone->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeConeR1R2H(";
+  aDescr += " = geompy.MakeConeR1R2H(";
   aDescr += (TCollection_AsciiString(theR1)+", ");
   aDescr += (TCollection_AsciiString(theR2)+", ");
   aDescr += (TCollection_AsciiString(theH)+")");
@@ -407,7 +407,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeConePntVecR1R2H (Handle(GEOM
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aCone->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeConePntVecR1R2H(";
+  aDescr += " = geompy.MakeCone(";
   TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theVec->GetEntry(), anEntry);
@@ -463,7 +463,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSphereR (double theR)
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aSphere->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeSphereR(";
+  aDescr += " = geompy.MakeSphereR(";
   aDescr += (TCollection_AsciiString(theR)+")");
 
   aFunction->SetDescription(aDescr);
@@ -521,7 +521,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSpherePntR (Handle(GEOM_Obje
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aSphere->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeSpherePntR(";
+  aDescr += " = geompy.MakeSpherePntR(";
   TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   aDescr += (TCollection_AsciiString(theR)+")");
@@ -576,7 +576,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeTorusRR
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(anEll->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeTorusRR(";
+  aDescr += " = geompy.MakeTorusRR(";
   aDescr += (TCollection_AsciiString(theRMajor)+", ");
   aDescr += (TCollection_AsciiString(theRMinor)+")");
 
@@ -639,7 +639,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeTorusPntVecRR
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(anEll->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeTorusPntVecRR(";
+  aDescr += " = geompy.MakeTorus(";
   TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theVec->GetEntry(), anEntry);
@@ -706,7 +706,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH (Handle(GEOM_Objec
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aPrism->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakePrismVecH(";
+  aDescr += " = geompy.MakePrismVecH(";
   TDF_Tool::Entry(theBase->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theVec->GetEntry(), anEntry);
@@ -772,7 +772,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aPrism->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakePrismVecH(";
+  aDescr += " = geompy.MakePrism(";
   TDF_Tool::Entry(theBase->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(thePoint1->GetEntry(), anEntry);
@@ -836,7 +836,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipe (Handle(GEOM_Object) th
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aPipe->GetEntry(), anEntry);
-  aDescr += (anEntry + " = I3DPrimOperations.MakePipe(");
+  aDescr += (anEntry + " = geompy.MakePipe(");
   TDF_Tool::Entry(theBase->GetEntry(), anEntry);
   aDescr += (anEntry + ", ");
   TDF_Tool::Entry(thePath->GetEntry(), anEntry);
@@ -901,7 +901,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle (Handle(
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aRevolution->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeRevolutionAxisAngle(";
+  aDescr += " = geompy.MakeRevolution(";
   TDF_Tool::Entry(theBase->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theAxis->GetEntry(), anEntry);
@@ -962,7 +962,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSolidShell (Handle(GEOM_Obje
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aSolid->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = I3DPrimOperations.MakeSolidShell(";
+  aDescr += " = geompy.MakeSolid(";
   TDF_Tool::Entry(theShell->GetEntry(), anEntry);
   aDescr += (anEntry+")");
 
@@ -1023,7 +1023,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling (Handle(GEOM_Object)
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aFilling->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeFilling(";
+  aDescr += " = geompy.MakeFilling(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   aDescr += (TCollection_AsciiString(theMinDeg)+", ");

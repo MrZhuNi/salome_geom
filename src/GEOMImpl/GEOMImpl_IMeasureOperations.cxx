@@ -112,7 +112,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetCentreOfMass
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCDG->GetEntry(), anEntry);
-  aDescr += anEntry + " = IMeasureOperations.MakeCentreOfMass(";
+  aDescr += anEntry + " = geompy.MakeCDG(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
   aDescr += anEntry + ")";
 

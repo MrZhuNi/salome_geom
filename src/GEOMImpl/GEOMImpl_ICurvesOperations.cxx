@@ -100,11 +100,11 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline (list<Handle(GEOM_O
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aPolyline->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakePolyline([";
+  aDescr += " = geompy.MakePolyline([";
   it = thePoints.begin();
   TDF_Tool::Entry((*it)->GetEntry(), anEntry);
+  aDescr += anEntry;
   it++;
-  aDescr += (anEntry+", ");
   for (; it != thePoints.end(); it++) {
     aDescr += ", ";
     TDF_Tool::Entry((*it)->GetEntry(), anEntry);
@@ -171,7 +171,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleThreePnt (Handle(GEOM_
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aCircle->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeCircleThreePnt(";
+  aDescr += " = geompy.MakeCircleThreePnt(";
   TDF_Tool::Entry(thePnt1->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(thePnt2->GetEntry(), anEntry);
@@ -236,7 +236,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aCircle->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeCirclePntVecR(";
+  aDescr += " = geompy.MakeCircle(";
   TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theVec->GetEntry(), anEntry);
@@ -302,7 +302,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(anEll->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeEllipse(";
+  aDescr += " = geompy.MakeEllipse(";
   TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theVec->GetEntry(), anEntry);
@@ -369,7 +369,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArc (Handle(GEOM_Object) the
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(anArc->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeArc(";
+  aDescr += " = geompy.MakeArc(";
   TDF_Tool::Entry(thePnt1->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(thePnt2->GetEntry(), anEntry);
@@ -436,11 +436,11 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aSpline->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeSplineBezier([";
+  aDescr += " = geompy.MakeBezier([";
   it = thePoints.begin();
   TDF_Tool::Entry((*it)->GetEntry(), anEntry);
+  aDescr += anEntry;
   it++;
-  aDescr += (anEntry+", ");
   for (; it != thePoints.end(); it++) {
     aDescr += ", ";
     TDF_Tool::Entry((*it)->GetEntry(), anEntry);
@@ -507,11 +507,11 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aSpline->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeSplineInterpolation([";
+  aDescr += " = geompy.MakeInterpol([";
   it = thePoints.begin();
   TDF_Tool::Entry((*it)->GetEntry(), anEntry);
+  aDescr += anEntry;
   it++;
-  aDescr += (anEntry+", ");
   for (; it != thePoints.end(); it++) {
     aDescr += ", ";
     TDF_Tool::Entry((*it)->GetEntry(), anEntry);
@@ -576,8 +576,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aSketcher->GetEntry(), anEntry);
   aDescr += anEntry;
-  aDescr += " = ICurvesOperations.MakeSketcher(";
-  aDescr += aCommand+", [";
+  aDescr += " = geompy.MakeSketcher( \"";
+  aDescr += aCommand+"\", [";
 
   it = theWorkingPlane.begin();
   aDescr += TCollection_AsciiString(*it);
