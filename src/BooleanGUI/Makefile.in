@@ -53,7 +53,7 @@ LIB_MOC = \
 		BooleanGUI_CutDlg.h \
 		BooleanGUI_SectionDlg.h
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = GEOM_Kinematic.idl
 
 LIB_SERVER_IDL = 
 

@@ -75,7 +75,7 @@ LIB_MOC = \
 		MeasureGUI_WhatisDlg.h \
 		MeasureGUI_CheckShapeDlg.h
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = GEOM_Kinematic.idl
 
 LIB_SERVER_IDL = 
 

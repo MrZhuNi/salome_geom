@@ -58,6 +58,7 @@ LIB_CLIENT_IDL = SALOMEDS.idl \
 		 SALOME_Exception.idl \
 		 GEOM_Gen.idl \
 		 GEOM_Shape.idl \
+		 GEOM_Kinematic.idl \
 		 SALOME_Component.idl 
 
 EXPORT_SHAREDPYSCRIPTS=\

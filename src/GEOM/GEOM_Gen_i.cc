@@ -145,6 +145,8 @@ using namespace std;
 #include <TDF_Label.hxx>
 #include <TDataStd_Name.hxx>
 #include <TDataStd_Comment.hxx>
+#include <TDataStd_Integer.hxx>
+#include <TDataStd_Real.hxx>
 #include <TDF_Reference.hxx>
 #include <TDF_Data.hxx>
 #include <TNaming_Builder.hxx>
@@ -452,7 +454,9 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
   SALOMEDS::ListOfFileNames_var aSeq = new SALOMEDS::ListOfFileNames;
   aSeq->length(1);
   // Prepare a file name to open
-  TCollection_AsciiString aNameWithExt(SALOMEDS_Tool::GetNameFromPath(theComponent->GetStudy()->URL()));
+  TCollection_AsciiString aNameWithExt("");
+  if (isMultiFile)
+    aNameWithExt = TCollection_AsciiString(SALOMEDS_Tool::GetNameFromPath(theComponent->GetStudy()->URL()));
   aNameWithExt += TCollection_AsciiString("_GEOM.sgd");
   aSeq[0] = CORBA::string_dup(aNameWithExt.ToCString());
   // Build a full file name of temporary file
@@ -493,7 +497,10 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
 								       isMultiFile);
 
   // Prepare a file name to open
-  TCollection_AsciiString aNameWithExt(aSeq[0]);
+  TCollection_AsciiString aNameWithExt("");
+  if (isMultiFile)
+    aNameWithExt = TCollection_AsciiString(SALOMEDS_Tool::GetNameFromPath(theComponent->GetStudy()->URL()));
+  aNameWithExt += TCollection_AsciiString("_GEOM.sgd");
   TCollection_AsciiString aFullName = aTmpDir + aNameWithExt;
 
   // Open document
@@ -5022,6 +5029,132 @@ void GEOM_Gen_i::ExportSTEP(const char* filename,GEOM::GEOM_Shape_ptr theShape)
     {
       THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::ExportBREP", SALOME::BAD_PARAM);
     }
+}
+
+
+//=================================================================================
+// function : InitAssembly()
+// purpose  :
+//=================================================================================
+GEOM::GEOM_Assembly_ptr GEOM_Gen_i::InitAssembly() throw (SALOME::SALOME_Exception)
+{
+  Kinematic_Assembly* tds;
+
+  try {
+    tds = new Kinematic_Assembly();
+  }
+  catch(Standard_Failure)
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::InitAssembly", SALOME::BAD_PARAM);
+
+  /* Create the CORBA servant holding the TopoDS_Shape */
+  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this();
+  GEOM_Assembly_i * Assembly_servant = new GEOM_Assembly_i(tds, _orb, engine);
+  GEOM::GEOM_Assembly_var Assembly = GEOM::GEOM_Assembly::_narrow(Assembly_servant->_this()); 
+  
+  /* Create and set the name (IOR of shape converted into a string) */
+  string name_ior = _orb->object_to_string(Assembly);
+  Assembly->Name(name_ior.c_str());
+
+  GEOMDS_Commands GC(myCurrentOCAFDoc->Main());
+  /* add attributs S and mystr in a new label */
+  TDF_Label Lab = GC.AddAssembly(*tds, Assembly->Name());
+
+  TCollection_AsciiString entry;
+  TDF_Tool::Entry(Lab, entry);
+  const char *ent = entry.ToCString();
+
+  Assembly->ShapeId(ent);
+  return Assembly;  
+}
+
+
+//=================================================================================
+// function : AddContact()
+// purpose  :
+//=================================================================================
+GEOM::GEOM_Contact_ptr GEOM_Gen_i::AddContact(GEOM::GEOM_Assembly_ptr Ass,
+					      GEOM::GEOM_Shape_ptr Shape1,
+					      GEOM::GEOM_Shape_ptr Shape2, 
+					      const short type,
+					      CORBA::Double step)
+  throw (SALOME::SALOME_Exception)
+{
+  Kinematic_Contact* tds;
+  TDF_Label mainRefLab;
+  TDF_Tool::Label(myCurrentOCAFDoc->GetData(), Ass->ShapeId(), mainRefLab);
+
+  try {
+    TopoDS_Shape aShape1 = GetTopoShape(Shape1);
+    TopoDS_Shape aShape2 = GetTopoShape(Shape2);
+    tds = new Kinematic_Contact(aShape1, aShape2, type, step);
+  }
+  catch(Standard_Failure)
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::AddContact", SALOME::BAD_PARAM);
+
+  /* Create the CORBA servant holding the TopoDS_Shape */
+  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this();
+  GEOM_Contact_i * Contact_servant = new GEOM_Contact_i(tds, Shape1, Shape2, _orb, engine);
+  GEOM::GEOM_Contact_var Contact = GEOM::GEOM_Contact::_narrow(Contact_servant->_this());
+
+  /* Create and set the name (IOR of shape converted into a string) */
+  string name_ior = _orb->object_to_string(Contact);
+  Contact->Name(name_ior.c_str());
+
+  GEOMDS_Commands GC(myCurrentOCAFDoc->Main());
+  /* add attributs S and mystr in a new label */
+  TDF_Label LabContact = GC.AddContact(*tds, mainRefLab, Contact->Name());
+
+  TCollection_AsciiString entry;
+  TDF_Tool::Entry(LabContact, entry);
+  Contact->ShapeId(entry.ToCString());
+
+  return Contact;
+}
+
+
+//=================================================================================
+// function : AddAnimation()
+// purpose  :
+//=================================================================================
+GEOM::GEOM_Animation_ptr GEOM_Gen_i::AddAnimation(GEOM::GEOM_Assembly_ptr Ass, 
+						  GEOM::GEOM_Shape_ptr Shape1,
+						  CORBA::Double Duration,
+						  const short NbSeq,
+						  CORBA::Boolean IsInLoop)
+  throw (SALOME::SALOME_Exception)
+{
+  Kinematic_Animation* tds;
+  TDF_Label mainRefLab;
+  TDF_Tool::Label(myCurrentOCAFDoc->GetData(), Ass->ShapeId(), mainRefLab);
+  GEOMDS_Commands GC(myCurrentOCAFDoc->Main());
+
+  try {
+    Kinematic_Assembly* aAss = new Kinematic_Assembly();
+    Standard_Boolean test = GC.GetAssembly(mainRefLab, *aAss);
+    TopoDS_Shape aShape1 = GetTopoShape(Shape1);
+    tds = new Kinematic_Animation(aAss, aShape1, Duration, NbSeq, IsInLoop);
+  }
+  catch(Standard_Failure)
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::AddAnimation", SALOME::BAD_PARAM);
+
+  /* Create the CORBA servant holding the TopoDS_Shape */
+  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this();
+  GEOM_Animation_i * Animation_servant = new GEOM_Animation_i(tds, Ass, Shape1, _orb, engine);
+  GEOM::GEOM_Animation_var Animation = GEOM::GEOM_Animation::_narrow(Animation_servant->_this()); 
+  
+  /* Create and set the name (IOR of shape converted into a string) */
+  string name_ior = _orb->object_to_string(Animation);
+  Animation->Name(name_ior.c_str());
+
+  /* add attributs S and mystr in a new label */
+  TDF_Label Lab = GC.AddAnimation(*tds, Animation->Name());
+
+  TCollection_AsciiString entry;
+  TDF_Tool::Entry(Lab, entry);
+  const char *ent = entry.ToCString();
+
+  Animation->ShapeId(ent);
+  return Animation;  
 }
 
 

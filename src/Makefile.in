@@ -32,6 +32,6 @@ VPATH=.:@srcdir@
 
 @COMMENCE@
 
-SUBDIRS = OBJECT ARCHIMEDE PARTITION SKETCHER GEOMDS GEOM GEOMClient GEOMFiltersSelection DlgRef GEOMContext GEOMBase DisplayGUI GEOMToolsGUI BasicGUI PrimitiveGUI GenerationGUI EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI RepairGUI MeasureGUI GEOMGUI GEOM_SWIG
+SUBDIRS = OBJECT ARCHIMEDE PARTITION SKETCHER KINEMATIC GEOMDS GEOM GEOMClient GEOMFiltersSelection DlgRef GEOMContext GEOMBase DisplayGUI GEOMToolsGUI BasicGUI PrimitiveGUI GenerationGUI EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI RepairGUI KinematicGUI MeasureGUI GEOMGUI GEOM_SWIG
 
 @MODULE@

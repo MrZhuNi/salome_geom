@@ -49,7 +49,7 @@ LIB_MOC = \
 		GEOMToolsGUI_NbIsosDlg.h \
 		GEOMToolsGUI_TransparencyDlg.h
 
-LIB_CLIENT_IDL = SALOMEDS_Attributes.idl
+LIB_CLIENT_IDL = SALOMEDS_Attributes.idl GEOM_Kinematic.idl
 
 LIB_SERVER_IDL = 
 

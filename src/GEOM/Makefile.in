@@ -37,8 +37,8 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 # Libraries targets
 
 LIB = libGEOMEngine.la
-LIB_SRC = GEOM_Shape_i.cc GEOM_Gen_i.cc
-LIB_SERVER_IDL = SALOME_Component.idl SALOMEDS.idl SALOME_Exception.idl GEOM_Gen.idl GEOM_Shape.idl
+LIB_SRC = GEOM_Shape_i.cc GEOM_Position_i.cc GEOM_Rotation_i.cc GEOM_Translation_i.cc GEOM_Contact_i.cc GEOM_Assembly_i.cc GEOM_Animation_i.cc GEOM_Gen_i.cc
+LIB_SERVER_IDL = SALOME_Component.idl SALOMEDS.idl SALOME_Exception.idl GEOM_Gen.idl GEOM_Shape.idl GEOM_Kinematic.idl
 
 # Executables targets
 BIN = 
@@ -46,12 +46,12 @@ BIN_SRC =
 BIN_CLIENT_IDL = 
 BIN_SERVER_IDL =
 
-EXPORT_HEADERS =
+EXPORT_HEADERS = 
 
 # additionnal information to compil and link file
 CPPFLAGS += $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
-LDFLAGS  += -lGEOMDS -lTOOLSDS -lSalomeNS -lSalomeContainer -lGEOMPartition -lGEOMArchimede $(CAS_LDPATH) -lTKIGES -lTKSTEP -lTKFillet -lTKOffset -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS  += -lGEOMDS -lTOOLSDS -lSalomeNS -lSalomeContainer -lGEOMPartition -lGEOMArchimede -lGEOMKinematic $(CAS_LDPATH) -lTKIGES -lTKSTEP -lTKFillet -lTKOffset -L${KERNEL_ROOT_DIR}/lib/salome
 
 # additional file to be cleaned
 MOSTLYCLEAN =

@@ -18,6 +18,30 @@ msgstr "select1.png"
 msgid "ICON_OBJBROWSER_Geometry"
 msgstr "geometry.png"
 
+#: 
+msgid "ICON_ANIMATION"
+msgstr "animation.png"
+
+#: 
+msgid "ICON_ASSEMBLY"
+msgstr "assembly.png"
+
+#: 
+msgid "ICON_CONTACT"
+msgstr "contact.png"
+
+#: 
+msgid "ICON_OBJBROWSER_ANIMATION"
+msgstr "tree_animation.png"
+
+#: 
+msgid "ICON_OBJBROWSER_ASSEMBLY"
+msgstr "tree_assembly.png"
+
+#: 
+msgid "ICON_OBJBROWSER_CONTACT"
+msgstr "tree_contact.png"
+
 #: QAD_ObjectBrowser.cxx:140
 msgid "ICON_OBJBROWSER_COMPOUND"
 msgstr "tree_compound.png"

@@ -21,7 +21,7 @@
 //
 //
 //
-//  File   : GEOMBase_Tools.cxx
+//  File   : GEOMToolsGUI.cxx
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header: 
@@ -213,7 +213,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	else
 	  IsoV = "1";
 	
-	GEOMBase_NbIsosDlg* NbIsosDlg = new GEOMBase_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE);	
+	GEOMToolsGUI_NbIsosDlg* NbIsosDlg = new GEOMToolsGUI_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE);	
 	int UIso = IsoU.toInt();
 	int VIso = IsoV.toInt();
 	
@@ -313,7 +313,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       {
 	QAD_PyEditor* PyEditor = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getPyEditor();
 	PyEditor->setText("from GEOM_usinggeom import *\n");
-	PyEditor->setText(">>> ");
+	//PyEditor->setText(">>> ");
 	PyEditor->handleReturn();
 	break;
       }
@@ -396,13 +396,12 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       }
     case 8033: // TRANSPARENCY - POPUP VIEWER
       {
-	OCCViewer_Viewer3d* v3d;
 	Handle(AIS_InteractiveContext) ic;
-	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC) {
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
 	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-	  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+	  ic = v3d->getAISContext();
 	}
-	GEOMBase_TransparencyDlg *aDlg = new GEOMBase_TransparencyDlg(parent, "", Sel, ic);
+	GEOMToolsGUI_TransparencyDlg *aDlg = new GEOMToolsGUI_TransparencyDlg(parent, "", Sel, ic);
 	break;
       }
     case 8034: // ISOS - POPUP VIEWER
@@ -428,8 +427,8 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	  else
 	    IsoV = "1";
 	    
-	  GEOMBase_NbIsosDlg * NbIsosDlg =
-	    new GEOMBase_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE);
+	  GEOMToolsGUI_NbIsosDlg * NbIsosDlg =
+	    new GEOMToolsGUI_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE);
     
 	  NbIsosDlg->SpinBoxU->setValue(IsoU.toInt());
 	  NbIsosDlg->SpinBoxV->setValue(IsoV.toInt());
@@ -533,6 +532,9 @@ void GEOMToolsGUI::OnEditDelete()
   SALOMEDS::AttributeIOR_var anIOR;
   
   SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
+  QAD_Operation* op = new SALOMEGUI_ImportOperation( QAD_Application::getDesktop()->getActiveStudy() );
+  op->start();
+  Standard_Boolean deleted = false;
   for(;It.More();It.Next()) {
     Handle(SALOME_InteractiveObject) IObject = It.Value();
     if(IObject->hasEntry()) {
@@ -598,14 +600,15 @@ void GEOMToolsGUI::OnEditDelete()
       /* Erase objects in Study */
       SALOMEDS::SObject_var obj = aStudy->FindObjectID(IObject->getEntry());
       if(!obj->_is_nil()) {
-	QAD_Operation* op = new SALOMEGUI_ImportOperation(QAD_Application::getDesktop()->getActiveStudy());
-	op->start();
 	aStudyBuilder->RemoveObject(obj);
-	op->finish();
+	deleted = true;
       }
 
     } /* IObject->hasEntry() */
   }   /* more/next           */
+
+  if (deleted) op->finish();
+  else op->abort();
 
   /* Clear any previous selection */
   Sel->ClearIObjects(); 
@@ -742,11 +745,11 @@ bool GEOMToolsGUI::Import(int aState)
       anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributePixMap");
       aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
       aPixmap->SetPixMap( "ICON_OBJBROWSER_Geometry" );
+      aStudyBuilder->DefineComponentInstance( father, myGeom );
       if (aLocked) aStudy->GetProperties()->SetLocked(true);
       op->finish();
     }
 //      if (aLocked) return false;
-    aStudyBuilder->DefineComponentInstance( father, myGeom );
     father->ComponentIOR(myGeomGUI->GetFatherior());
 
     QString nameShape = QAD_Tools::getFileNameFromPath(file,false) +  QString("_%1").arg(myGeomGUI->GetNbGeom()++);

@@ -72,6 +72,12 @@ public :
   bool GetShapeTypeString(const TopoDS_Shape& aShape, Standard_CString& aTypeString);
 
   /* Convertions */
+  GEOM::GEOM_Assembly_ptr ConvertIOinAssembly(const Handle(SALOME_InteractiveObject)& IO,
+					      Standard_Boolean& testResult);
+  GEOM::GEOM_Contact_ptr ConvertIOinContact(const Handle(SALOME_InteractiveObject)& IO,
+					    Standard_Boolean& testResult);
+  GEOM::GEOM_Animation_ptr ConvertIOinAnimation(const Handle(SALOME_InteractiveObject)& IO,
+						Standard_Boolean& testResult);
   GEOM::GEOM_Shape_ptr ConvertIOinGEOMShape(const Handle(SALOME_InteractiveObject)& IO, 
 					    Standard_Boolean& testResult);
   Handle(GEOM_AISShape) ConvertIOinGEOMAISShape(const Handle(SALOME_InteractiveObject)& IO,

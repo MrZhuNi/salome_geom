@@ -57,7 +57,7 @@ LIB_MOC = \
 		TransformationGUI_MirrorDlg.h \
 		TransformationGUI_ScaleDlg.h
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = GEOM_Kinematic.idl
 
 LIB_SERVER_IDL = 
 

@@ -44,10 +44,14 @@
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 #include CORBA_SERVER_HEADER(GEOM_Shape)
+#include CORBA_SERVER_HEADER(GEOM_Kinematic)
 #include CORBA_SERVER_HEADER(SALOMEDS)
 
 #include "SALOME_Component_i.hxx"
 #include "GEOM_Shape_i.hh"
+#include "GEOM_Assembly_i.hh"
+#include "GEOM_Contact_i.hh"
+#include "GEOM_Animation_i.hh"
 
 #include "SALOME_NamingService.hxx"
 #include <iostream.h>
@@ -599,6 +603,24 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen,
                                  CORBA::Double aWeight,
                                  CORBA::Double aWaterDensity,
                                  CORBA::Double aMeshingDeflection)
+    throw (SALOME::SALOME_Exception) ;
+
+  //-------------------------------------------------------------------//
+  // Specific method Kinematic                                         //
+  //-------------------------------------------------------------------//
+  GEOM::GEOM_Assembly_ptr InitAssembly() 
+    throw (SALOME::SALOME_Exception) ;
+  GEOM::GEOM_Contact_ptr AddContact(GEOM::GEOM_Assembly_ptr Ass, 
+				    GEOM::GEOM_Shape_ptr Shape1,
+				    GEOM::GEOM_Shape_ptr Shape2, 
+				    const short type,
+				    CORBA::Double step) 
+    throw (SALOME::SALOME_Exception) ;
+  GEOM::GEOM_Animation_ptr AddAnimation(GEOM::GEOM_Assembly_ptr Ass, 
+					GEOM::GEOM_Shape_ptr Shape1,
+					CORBA::Double Duration,
+					const short NbSeq,
+					CORBA::Boolean IsInLoop) 
     throw (SALOME::SALOME_Exception) ;
 
 };

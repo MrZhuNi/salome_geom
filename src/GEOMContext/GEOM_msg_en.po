@@ -1299,3 +1299,75 @@ msgstr "Values"
 
 msgid "GEOM_SKETCHER_TYPE"
 msgstr "Type"
+
+msgid "GEOM_CONTACT_TITLE"
+msgstr "Add Contact"
+
+msgid "GEOM_ASSEMBLY"
+msgstr "Assembly"
+
+msgid "GEOM_CONTACT"
+msgstr "Contact"
+
+msgid "GEOM_TYPE"
+msgstr "Type"
+
+msgid "GEOM_KROTATION_TITLE"
+msgstr "Edit Rotation"
+
+msgid "GEOM_KTRANSLATION_TITLE"
+msgstr "Edit Translation"
+
+msgid "GEOM_KROTATION"
+msgstr "Rotation"
+
+msgid "GEOM_KTRANSLATION"
+msgstr "Translation"
+
+msgid "GEOM_VALUE"
+msgstr "Value"
+
+msgid "GEOM_1ROT"
+msgstr "1st Rot."
+
+msgid "GEOM_2ROT"
+msgstr "2nd Rot."
+
+msgid "GEOM_3ROT"
+msgstr "3rd Rot."
+
+msgid "GEOM_KPOSITION_TITLE"
+msgstr "Set Position"
+
+msgid "GEOM_KPOSITION"
+msgstr "Position"
+
+msgid "GEOM_POS"
+msgstr "Position :"
+
+msgid "GEOM_VX"
+msgstr "VX :"
+
+msgid "GEOM_VY"
+msgstr "VY :"
+
+msgid "GEOM_VZ"
+msgstr "VZ :"
+
+msgid "GEOM_ANIMATION_TITLE"
+msgstr "Add Animation"
+
+msgid "GEOM_ANIMATION"
+msgstr "Animation"
+
+msgid "GEOM_FRAME"
+msgstr "Frame"
+
+msgid "GEOM_DURATION"
+msgstr "Duration"
+
+msgid "GEOM_NBSEQ"
+msgstr "Nb. Sequences"
+
+msgid "GEOM_IS_IN_LOOP"
+msgstr "In Loop"

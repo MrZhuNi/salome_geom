@@ -21,8 +21,10 @@ GEOM_en.xml \
 GEOM_fr.xml \
 GEOMCatalog.xml \
 GEOMDS_Resources \
+animation.png \
 arc.png \
 archimede.png \
+assembly.png \
 axisinertia.png \
 basicproperties.png \
 bounding.png \
@@ -47,6 +49,7 @@ common.png \
 cone.png \
 conedxyz.png \
 conepointvector.png \
+contact.png \
 cut.png \
 cylinder.png \
 cylinderdxyz.png \
@@ -109,8 +112,11 @@ torus.png \
 torusdxyz.png \
 toruspointvector.png \
 translation.png \
+tree_animation.png \
+tree_assembly.png \
 tree_compound.png \
 tree_compsolid.png \
+tree_contact.png \
 tree_edge.png \
 tree_face.png \
 tree_shape.png \

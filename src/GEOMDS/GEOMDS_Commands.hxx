@@ -34,6 +34,9 @@
 #endif
 class TDF_Label;
 class TopoDS_Shape;
+class Kinematic_Assembly;
+class Kinematic_Contact;
+class Kinematic_Animation;
 class TCollection_ExtendedString;
 
 
@@ -123,6 +126,19 @@ public:
   Standard_EXPORT Standard_Boolean ReturnNameIOR(const TDF_Label& aLabel,
 						 TCollection_ExtendedString& returnNameIOR) ;
   
+  /* Kinematic */
+  Standard_EXPORT TDF_Label AddAssembly(Kinematic_Assembly& KAss,
+					const TCollection_ExtendedString& Name) ;
+  Standard_EXPORT TDF_Label AddContact(Kinematic_Contact& KContact,
+				       const TDF_Label& mainRefLab,
+				       const TCollection_ExtendedString& Name) ;
+  Standard_EXPORT TDF_Label AddAnimation(Kinematic_Animation& KAnimation,
+					const TCollection_ExtendedString& Name) ;
+  Standard_EXPORT Standard_Boolean GetAssembly(const TDF_Label& aLabel,
+					       Kinematic_Assembly& returnAss) ;
+  Standard_EXPORT Standard_Boolean GetContact(const TDF_Label& aLabel,
+					       Kinematic_Contact& returnContact) ;
+
 protected:
   
   // Methods PROTECTED

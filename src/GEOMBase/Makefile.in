@@ -52,7 +52,8 @@ LIB_MOC = \
 
 LIB_CLIENT_IDL = SALOME_Exception.idl \
 		 SALOMEDS.idl \
-		 SALOMEDS_Attributes.idl
+		 SALOMEDS_Attributes.idl \
+		 GEOM_Kinematic.idl
 
 LIB_SERVER_IDL = 
 

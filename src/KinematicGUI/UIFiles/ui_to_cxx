@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#uic -o KinematicGUI_3Sel1List_QTD.h KinematicGUI_3Sel1List_QTD.ui
+#uic -o KinematicGUI_3Sel1List_QTD.cxx -impl KinematicGUI_3Sel1List_QTD.h KinematicGUI_3Sel1List_QTD.ui
+
+#uic -o KinematicGUI_3Sel1Spin_QTD.h KinematicGUI_3Sel1Spin_QTD.ui
+#uic -o KinematicGUI_3Sel1Spin_QTD.cxx -impl KinematicGUI_3Sel1Spin_QTD.h KinematicGUI_3Sel1Spin_QTD.ui
+
+#uic -o KinematicGUI_3List3Spin_QTD.h KinematicGUI_3List3Spin_QTD.ui
+#uic -o KinematicGUI_3List3Spin_QTD.cxx -impl KinematicGUI_3List3Spin_QTD.h KinematicGUI_3List3Spin_QTD.ui
+
+#uic -o KinematicGUI_12Spin_QTD.h KinematicGUI_12Spin_QTD.ui
+#uic -o KinematicGUI_12Spin_QTD.cxx -impl KinematicGUI_12Spin_QTD.h KinematicGUI_12Spin_QTD.ui
+
+uic -o KinematicGUI_2Sel2Spin1Check_QTD.h KinematicGUI_2Sel2Spin1Check_QTD.ui
+uic -o KinematicGUI_2Sel2Spin1Check_QTD.cxx -impl KinematicGUI_2Sel2Spin1Check_QTD.h KinematicGUI_2Sel2Spin1Check_QTD.ui

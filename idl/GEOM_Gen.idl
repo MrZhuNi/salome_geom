@@ -29,6 +29,7 @@
 #include "SALOME_Component.idl"
 #include "SALOMEDS.idl"
 #include "GEOM_Shape.idl"
+#include "GEOM_Kinematic.idl"
 
 module GEOM
 {
@@ -315,10 +316,28 @@ module GEOM
     void ExportIGES(in string filename,in GEOM_Shape theShape) raises (SALOME::SALOME_Exception) ;
     void ExportBREP(in string filename,in GEOM_Shape theShape) raises (SALOME::SALOME_Exception) ;
     void ExportSTEP(in string filename,in GEOM_Shape theShape) raises (SALOME::SALOME_Exception) ;
+
     //-----------------------------------------------------------//
     // Check Shape                                               //
     //-----------------------------------------------------------//
     boolean CheckShape(in GEOM_Shape shape) raises (SALOME::SALOME_Exception) ;
+
+    //-----------------------------------------------------------//
+    // Kinematic                                                 //
+    //-----------------------------------------------------------//
+    GEOM_Assembly InitAssembly() raises (SALOME::SALOME_Exception) ;
+
+    GEOM_Contact AddContact(in GEOM_Assembly Ass,
+			    in GEOM_Shape Shape1,
+			    in GEOM_Shape Shape2,
+			    in short type,
+			    in double step) raises (SALOME::SALOME_Exception) ;
+
+    GEOM_Animation AddAnimation(in GEOM_Assembly Ass,
+				in GEOM_Shape Shape1,
+				in double Duration,
+				in short NbSeq,
+				in boolean IsInLoop) raises (SALOME::SALOME_Exception) ;
 
   };
 };
