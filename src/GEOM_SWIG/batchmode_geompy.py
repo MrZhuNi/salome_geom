@@ -220,6 +220,12 @@ def MakeFace(aShapeWire,WantPlanarFace):
     anObj._set_Name(ior)
     return anObj
 
+def MakeFaces(ListShape,WantPlanarFace):
+    anObj = geom.MakeFaces(ListShape,WantPlanarFace)
+    ior = salome.orb.object_to_string(anObj)
+    anObj._set_Name(ior)
+    return anObj
+
 def MakeCompound(ListShape):
     anObj = geom.MakeCompound(ListShape)
     ior = orb.object_to_string(anObj)
