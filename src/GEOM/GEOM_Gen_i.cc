@@ -3741,10 +3741,21 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeFaces(const GEOM::GEOM_Gen::ListOfIOR& List
 	FR.Perform();
     
 	if(FR.IsDone()) {
-	  for(; FR.More(); FR.Next())
-	    aBuilder.Add(C, FR.Current().Oriented(OriF));
-	  result = CreateObject(C);
-	  InsertInLabelMoreArguments(C, result, ListShapes, myCurrentOCAFDoc);
+	  int k = 0;
+	  TopoDS_Shape aFace;
+	  for(; FR.More(); FR.Next()) {
+	    aFace = FR.Current().Oriented(OriF);
+	    aBuilder.Add(C, aFace);
+	    k++;
+	  }
+	  if(k == 1) {
+	    result = CreateObject(aFace);
+	    InsertInLabelMoreArguments(aFace, result, ListShapes, myCurrentOCAFDoc);
+	  }
+	  else {
+	    result = CreateObject(C);
+	    InsertInLabelMoreArguments(C, result, ListShapes, myCurrentOCAFDoc);
+	  }
 	}
       }
     }
