@@ -12,6 +12,7 @@ package GEOMAlgo
 uses  
     TCollection, 
     TColStd, 
+    Geom,     
     Bnd, 
     gp,	 
     TopAbs,
@@ -23,6 +24,8 @@ is
     deferred class Algo;
     deferred class ShapeAlgo;
     class Gluer; 
+    class GlueAnalyser; 
+    class CoupleOfShapes; 
     class PassKey; 
     class PassKeyMapHasher; 
     class Tools; 
@@ -39,6 +42,9 @@ is
     class IndexedDataMapOfIntegerShape  
     	instantiates IndexedDataMap from TCollection   	(Integer from Standard,
 	    		    		         	 Shape from TopoDS,
-	    		    		         	 MapIntegerHasher from TColStd);
+	    		    		         	 MapIntegerHasher from TColStd); 
+							  
+    class ListOfCoupleOfShapes  
+    	instantiates List from TCollection  (CoupleOfShapes from GEOMAlgo);
 
 end GEOMAlgo;

@@ -19,12 +19,26 @@
 // the specific terms and conditions governing rights and limitations under the
 // License.
 
-#ifndef _GEOMAlgo_Algo_HeaderFile
-#define _GEOMAlgo_Algo_HeaderFile
+#ifndef _GEOMAlgo_GlueAnalyser_HeaderFile
+#define _GEOMAlgo_GlueAnalyser_HeaderFile
 
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
+#ifndef _GEOMAlgo_ListOfCoupleOfShapes_HeaderFile
+#include <GEOMAlgo_ListOfCoupleOfShapes.hxx>
 #endif
+#ifndef _TopTools_ListOfShape_HeaderFile
+#include <TopTools_ListOfShape.hxx>
+#endif
+#ifndef _GEOMAlgo_Gluer_HeaderFile
+#include <GEOMAlgo_Gluer.hxx>
+#endif
+#ifndef _Standard_Boolean_HeaderFile
+#include <Standard_Boolean.hxx>
+#endif
+#ifndef _TopAbs_ShapeEnum_HeaderFile
+#include <TopAbs_ShapeEnum.hxx>
+#endif
+class GEOMAlgo_ListOfCoupleOfShapes;
+class TopTools_ListOfShape;
 
 
 #ifndef _Standard_HeaderFile
@@ -34,7 +48,7 @@
 #include <Standard_Macro.hxx>
 #endif
 
-class GEOMAlgo_Algo  {
+class GEOMAlgo_GlueAnalyser  : public GEOMAlgo_Gluer {
 
 public:
 
@@ -52,9 +66,13 @@ public:
       }
  // Methods PUBLIC
  // 
-Standard_EXPORT virtual  void Perform()  = 0;
-Standard_EXPORT   Standard_Integer ErrorStatus() const;
-Standard_EXPORT   Standard_Integer WarningStatus() const;
+Standard_EXPORT GEOMAlgo_GlueAnalyser();
+Standard_EXPORT virtual ~GEOMAlgo_GlueAnalyser();
+Standard_EXPORT virtual  void Perform() ;
+Standard_EXPORT   Standard_Boolean HasSolidsToGlue() const;
+Standard_EXPORT  const GEOMAlgo_ListOfCoupleOfShapes& SolidsToGlue() const;
+Standard_EXPORT   Standard_Boolean HasSolidsAlone() const;
+Standard_EXPORT  const TopTools_ListOfShape& SolidsAlone() const;
 
 
 
@@ -64,16 +82,17 @@ protected:
 
  // Methods PROTECTED
  // 
-Standard_EXPORT GEOMAlgo_Algo();
-Standard_EXPORT virtual ~GEOMAlgo_Algo();
-Standard_EXPORT virtual  void CheckData() ;
-Standard_EXPORT virtual  void CheckResult() ;
+Standard_EXPORT   void DetectVertices() ;
+Standard_EXPORT   void DetectEdges() ;
+Standard_EXPORT   void DetectFaces() ;
+Standard_EXPORT   void DetectShapes(const TopAbs_ShapeEnum aType) ;
+Standard_EXPORT   void DetectSolids() ;
 
 
  // Fields PROTECTED
  //
-Standard_Integer myErrorStatus;
-Standard_Integer myWarningStatus;
+GEOMAlgo_ListOfCoupleOfShapes mySolidsToGlue;
+TopTools_ListOfShape mySolidsAlone;
 
 
 private: 

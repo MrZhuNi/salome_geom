@@ -19,12 +19,13 @@
 // the specific terms and conditions governing rights and limitations under the
 // License.
 
-#ifndef _GEOMAlgo_Algo_HeaderFile
-#define _GEOMAlgo_Algo_HeaderFile
+#ifndef _GEOMAlgo_CoupleOfShapes_HeaderFile
+#define _GEOMAlgo_CoupleOfShapes_HeaderFile
 
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
+#ifndef _TopoDS_Shape_HeaderFile
+#include <TopoDS_Shape.hxx>
 #endif
+class TopoDS_Shape;
 
 
 #ifndef _Standard_HeaderFile
@@ -34,7 +35,7 @@
 #include <Standard_Macro.hxx>
 #endif
 
-class GEOMAlgo_Algo  {
+class GEOMAlgo_CoupleOfShapes  {
 
 public:
 
@@ -52,9 +53,13 @@ public:
       }
  // Methods PUBLIC
  // 
-Standard_EXPORT virtual  void Perform()  = 0;
-Standard_EXPORT   Standard_Integer ErrorStatus() const;
-Standard_EXPORT   Standard_Integer WarningStatus() const;
+Standard_EXPORT GEOMAlgo_CoupleOfShapes();
+Standard_EXPORT   void SetShapes(const TopoDS_Shape& aS1,const TopoDS_Shape& aS2) ;
+Standard_EXPORT   void SetShape1(const TopoDS_Shape& aS1) ;
+Standard_EXPORT   void SetShape2(const TopoDS_Shape& aS2) ;
+Standard_EXPORT   void Shapes(TopoDS_Shape& aS1,TopoDS_Shape& aS2) const;
+Standard_EXPORT  const TopoDS_Shape& Shape1() const;
+Standard_EXPORT  const TopoDS_Shape& Shape2() const;
 
 
 
@@ -64,16 +69,12 @@ protected:
 
  // Methods PROTECTED
  // 
-Standard_EXPORT GEOMAlgo_Algo();
-Standard_EXPORT virtual ~GEOMAlgo_Algo();
-Standard_EXPORT virtual  void CheckData() ;
-Standard_EXPORT virtual  void CheckResult() ;
 
 
  // Fields PROTECTED
  //
-Standard_Integer myErrorStatus;
-Standard_Integer myWarningStatus;
+TopoDS_Shape myShape1;
+TopoDS_Shape myShape2;
 
 
 private: 
