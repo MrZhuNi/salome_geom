@@ -1,0 +1,186 @@
+//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// 
+//  This library is free software; you can redistribute it and/or 
+//  modify it under the terms of the GNU Lesser General Public 
+//  License as published by the Free Software Foundation; either 
+//  version 2.1 of the License. 
+// 
+//  This library is distributed in the hope that it will be useful, 
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//  Lesser General Public License for more details. 
+// 
+//  You should have received a copy of the GNU Lesser General Public 
+//  License along with this library; if not, write to the Free Software 
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// 
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//
+//
+//
+//  File   : GEOM_Kinematic.idl
+//  Author : Damien COQUERET
+
+#ifndef __GEOM_Kinematic__
+#define __GEOM_Kinematic__
+
+#include "SALOME_Exception.idl"
+#include "GEOM_Shape.idl"
+
+module GEOM
+{
+
+  interface GEOM_Contact;
+  typedef sequence<GEOM_Contact> ListOfContact;
+
+  //-----------------------------------------------------------------//
+  //  interface GEOM_Position methods                                //
+  //-----------------------------------------------------------------//
+  interface GEOM_Position {
+
+    void SetOrigin(in GEOM::PointStruct P0)
+      raises (SALOME::SALOME_Exception);
+
+    void SetVX(in GEOM::DirStruct Vect)
+      raises (SALOME::SALOME_Exception);
+
+    void SetVY(in GEOM::DirStruct Vect)
+      raises (SALOME::SALOME_Exception);
+
+    void SetVZ(in GEOM::DirStruct Vect)
+      raises (SALOME::SALOME_Exception);
+
+    GEOM::PointStruct GetOrigin()
+      raises (SALOME::SALOME_Exception);
+
+    GEOM::DirStruct GetVX()
+      raises (SALOME::SALOME_Exception);
+
+    GEOM::DirStruct GetVY()
+      raises (SALOME::SALOME_Exception);
+
+    GEOM::DirStruct GetVZ()
+      raises (SALOME::SALOME_Exception);
+
+  };
+
+  //-----------------------------------------------------------------//
+  //  interface GEOM_Rotation methods                                //
+  //-----------------------------------------------------------------//
+  interface GEOM_Rotation {
+
+    void SetRotation(in long Rot1, in long Rot2, in long Rot3,
+		     in double Val1, in double Val2, in double Val3)
+      raises (SALOME::SALOME_Exception);
+
+    long GetRot1()
+      raises (SALOME::SALOME_Exception);
+    long GetRot2()
+      raises (SALOME::SALOME_Exception);
+    long GetRot3()
+      raises (SALOME::SALOME_Exception);
+
+    double GetVal1()
+      raises (SALOME::SALOME_Exception);
+    double GetVal2()
+      raises (SALOME::SALOME_Exception);
+    double GetVal3()
+      raises (SALOME::SALOME_Exception);
+
+  };
+
+  //-----------------------------------------------------------------//
+  //  interface GEOM_Translation methods                             //
+  //-----------------------------------------------------------------//
+  interface GEOM_Translation {
+
+    void SetTranslation(in double ValX, in double ValY, in double ValZ)
+      raises (SALOME::SALOME_Exception);
+
+    double GetValX()
+      raises (SALOME::SALOME_Exception);
+    double GetValY()
+      raises (SALOME::SALOME_Exception);
+    double GetValZ()
+      raises (SALOME::SALOME_Exception);
+
+  };
+
+  //-----------------------------------------------------------------//
+  //  interface GEOM_Assembly methods                                //
+  //-----------------------------------------------------------------//
+  interface GEOM_Assembly {
+
+    void AddContact(in GEOM::GEOM_Contact aContact)
+      raises (SALOME::SALOME_Exception);
+
+    GEOM::ListOfContact GetContactList()
+      raises (SALOME::SALOME_Exception);
+
+    long NbContacts()
+      raises (SALOME::SALOME_Exception);
+
+    attribute string Name;
+    attribute string ShapeId;
+    attribute string StudyShapeId;
+
+  };
+
+  //-----------------------------------------------------------------//
+  //   interface GEOM_Contact methods                                //
+  //-----------------------------------------------------------------//
+  interface GEOM_Contact {
+
+    long GetType()
+      raises (SALOME::SALOME_Exception);
+
+    GEOM::GEOM_Shape GetShape1()
+      raises (SALOME::SALOME_Exception);
+
+    GEOM::GEOM_Shape GetShape2()
+      raises (SALOME::SALOME_Exception);
+
+    double GetStep()
+      raises (SALOME::SALOME_Exception);
+
+    GEOM::GEOM_Position GetPosition()
+      raises (SALOME::SALOME_Exception);
+
+    GEOM::GEOM_Rotation GetRotation()
+      raises (SALOME::SALOME_Exception);
+
+    GEOM::GEOM_Translation GetTranslation()
+      raises (SALOME::SALOME_Exception);
+
+    attribute string Name;
+    attribute string ShapeId;
+    attribute string StudyShapeId;
+
+  };
+
+  //-----------------------------------------------------------------//
+  //   interface GEOM_Animation methods                              //
+  //-----------------------------------------------------------------//
+  interface GEOM_Animation {
+
+    GEOM::GEOM_Assembly GetAssembly()
+      raises (SALOME::SALOME_Exception);
+
+    GEOM::GEOM_Shape GetFrame()
+      raises (SALOME::SALOME_Exception);
+
+    double GetDuration()
+      raises (SALOME::SALOME_Exception);
+
+    long GetNbSeq()
+      raises (SALOME::SALOME_Exception);
+
+    attribute string Name;
+    attribute string ShapeId;
+    attribute string StudyShapeId;
+
+  };
+
+};
+#endif

@@ -21,7 +21,7 @@
 //
 //
 //
-//  File   : GEOMBase_Tools.cxx
+//  File   : GEOMToolsGUI.cxx
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header: 
@@ -213,7 +213,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	else
 	  IsoV = "1";
 	
-	GEOMBase_NbIsosDlg* NbIsosDlg = new GEOMBase_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE);	
+	GEOMToolsGUI_NbIsosDlg* NbIsosDlg = new GEOMToolsGUI_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE);	
 	int UIso = IsoU.toInt();
 	int VIso = IsoV.toInt();
 	
@@ -401,7 +401,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  ic = v3d->getAISContext();
 	}
-	GEOMBase_TransparencyDlg *aDlg = new GEOMBase_TransparencyDlg(parent, "", Sel, ic);
+	GEOMToolsGUI_TransparencyDlg *aDlg = new GEOMToolsGUI_TransparencyDlg(parent, "", Sel, ic);
 	break;
       }
     case 8034: // ISOS - POPUP VIEWER
@@ -427,8 +427,8 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	  else
 	    IsoV = "1";
 	    
-	  GEOMBase_NbIsosDlg * NbIsosDlg =
-	    new GEOMBase_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE);
+	  GEOMToolsGUI_NbIsosDlg * NbIsosDlg =
+	    new GEOMToolsGUI_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE);
     
 	  NbIsosDlg->SpinBoxU->setValue(IsoU.toInt());
 	  NbIsosDlg->SpinBoxV->setValue(IsoV.toInt());

@@ -1207,13 +1207,13 @@ msgid "GEOM_SKETCHER_EL"
 msgstr "Element Type"
 
 msgid "GEOM_BUT_CLOSE_SKETCH"
-msgstr "Close Sketcher"
+msgstr "Close Sketch"
 
 msgid "GEOM_BUT_END_SKETCH"
-msgstr "End Sketcher"
+msgstr "End Sketch"
 
 msgid "GEOM_SKETCHER_TITLE"
-msgstr "Spline Construction"
+msgstr "Sketch Construction"
 
 msgid "GEOM_SKETCHER_POINT"
 msgstr "Point"
@@ -1314,3 +1314,101 @@ msgstr "Fillet can't be computed with radius %1"
 msgid "GEOM_CHAMFER_ABORT"
 msgstr "Chamfer can't be computed with %1 and %2"
 
+msgid "GEOM_CONTACT_TITLE"
+msgstr "Add Contact"
+
+msgid "GEOM_ASSEMBLY"
+msgstr "Assembly"
+
+msgid "GEOM_CONTACT"
+msgstr "Contact"
+
+msgid "GEOM_TYPE"
+msgstr "Type"
+
+msgid "GEOM_KROTATION_TITLE"
+msgstr "Edit Rotation"
+
+msgid "GEOM_KTRANSLATION_TITLE"
+msgstr "Edit Translation"
+
+msgid "GEOM_KROTATION"
+msgstr "Rotation"
+
+msgid "GEOM_KTRANSLATION"
+msgstr "Translation"
+
+msgid "GEOM_VALUE"
+msgstr "Value"
+
+msgid "GEOM_1ROT"
+msgstr "1st Rot."
+
+msgid "GEOM_2ROT"
+msgstr "2nd Rot."
+
+msgid "GEOM_3ROT"
+msgstr "3rd Rot."
+
+msgid "GEOM_KPOSITION_TITLE"
+msgstr "Set Position"
+
+msgid "GEOM_KPOSITION"
+msgstr "Position"
+
+msgid "GEOM_POS"
+msgstr "Position :"
+
+msgid "GEOM_VX"
+msgstr "VX :"
+
+msgid "GEOM_VY"
+msgstr "VY :"
+
+msgid "GEOM_VZ"
+msgstr "VZ :"
+
+msgid "GEOM_ANIMATION_TITLE"
+msgstr "Add Animation"
+
+msgid "GEOM_ANIMATION"
+msgstr "Animation"
+
+msgid "GEOM_FRAME"
+msgstr "Frame"
+
+msgid "GEOM_DURATION"
+msgstr "Duration"
+
+msgid "GEOM_NBSEQ"
+msgstr "Nb. Sequences"
+
+msgid "GEOM_ANIM_EXPORT"
+msgstr "Export Animation"
+
+msgid "GEOM_ANIM_SHADING"
+msgstr "In Shading"
+
+msgid "GEOM_ANIM_TITLE"
+msgstr "Animate an Assembly"
+
+msgid "GEOM_ANIM"
+msgstr "Animation"
+
+msgid "GEOM_ANIM_INLOOP"
+msgstr "In Loop"
+
+msgid "GEOM_POSITION"
+msgstr "Position"
+
+msgid "GEOM_POSITION_TITLE"
+msgstr "Position Of An Object"
+
+msgid "GEOM_POS_VERTEX"
+msgstr "Position by Points"
+
+msgid "GEOM_POS_EDGE"
+msgstr "Position by Edges"
+
+msgid "GEOM_POS_FACE"
+msgstr "Position by Faces"

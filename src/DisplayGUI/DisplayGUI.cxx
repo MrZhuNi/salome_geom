@@ -232,6 +232,11 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
   if(theIO.IsNull())
     MESSAGE("BuildPresentation(): null SALOME_InteractiveObject passed")
 
+  Standard_Boolean testResult;
+  GEOM::GEOM_Shape_var myGeomShape = myDisplayGUI->myGeomBase->ConvertIOinGEOMShape(theIO, testResult);
+  if(!testResult)
+    return;
+
   if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
     // VTK
 	  

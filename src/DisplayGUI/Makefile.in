@@ -45,7 +45,7 @@ LIB_SRC = 	DisplayGUI.cxx
 LIB_MOC = \
 		DisplayGUI.h
 
-LIB_CLIENT_IDL = SALOME_Exception.idl
+LIB_CLIENT_IDL = SALOME_Exception.idl GEOM_Kinematic.idl
 
 LIB_SERVER_IDL = 
 

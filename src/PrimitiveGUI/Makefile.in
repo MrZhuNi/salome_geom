@@ -55,7 +55,7 @@ LIB_MOC = \
 		PrimitiveGUI_TorusDlg.h \
 		PrimitiveGUI_ConeDlg.h
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = GEOM_Kinematic.idl
 
 LIB_SERVER_IDL = 
 

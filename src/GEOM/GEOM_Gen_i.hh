@@ -44,10 +44,14 @@
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 #include CORBA_SERVER_HEADER(GEOM_Shape)
+#include CORBA_SERVER_HEADER(GEOM_Kinematic)
 #include CORBA_SERVER_HEADER(SALOMEDS)
 
 #include "SALOME_Component_i.hxx"
 #include "GEOM_Shape_i.hh"
+#include "GEOM_Assembly_i.hh"
+#include "GEOM_Contact_i.hh"
+#include "GEOM_Animation_i.hh"
 
 #include "SALOME_NamingService.hxx"
 #include <iostream.h>
@@ -396,20 +400,27 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen,
   //---------------------------------------------------------------------//
   // Transformations Operations                                          //
   //---------------------------------------------------------------------//
-  // Copy 
-  GEOM::GEOM_Shape_ptr MakeCopy( GEOM::GEOM_Shape_ptr shape)
+  // Copy
+  GEOM::GEOM_Shape_ptr MakeCopy(GEOM::GEOM_Shape_ptr shape)
     throw (SALOME::SALOME_Exception) ;
 
   // Translation
-  GEOM::GEOM_Shape_ptr MakeTranslation( GEOM::GEOM_Shape_ptr shape,
+  GEOM::GEOM_Shape_ptr MakeTranslation(GEOM::GEOM_Shape_ptr shape,
 				       CORBA::Double x,
 				       CORBA::Double y,
 				       CORBA::Double z)
     throw (SALOME::SALOME_Exception) ;
   // Rotation
-  GEOM::GEOM_Shape_ptr MakeRotation( GEOM::GEOM_Shape_ptr shape,
+  GEOM::GEOM_Shape_ptr MakeRotation(GEOM::GEOM_Shape_ptr shape,
 				    const GEOM::AxisStruct& axis,
 				    CORBA::Double angle)
+    throw (SALOME::SALOME_Exception) ;
+  // Position
+  GEOM::GEOM_Shape_ptr MakePosition(GEOM::GEOM_Shape_ptr shape1,
+				    GEOM::GEOM_Shape_ptr shape2,
+				    const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID1,
+				    const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID2,
+				    const CORBA::Short typeofshape)
     throw (SALOME::SALOME_Exception) ;
   // Create a shape using a scale factor
   GEOM::GEOM_Shape_ptr MakeScaleTransform(GEOM::GEOM_Shape_ptr shape,
@@ -601,6 +612,29 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen,
                                  CORBA::Double aWeight,
                                  CORBA::Double aWaterDensity,
                                  CORBA::Double aMeshingDeflection)
+    throw (SALOME::SALOME_Exception) ;
+
+  //-------------------------------------------------------------------//
+  // Specific method Kinematic                                         //
+  //-------------------------------------------------------------------//
+  GEOM::GEOM_Assembly_ptr InitAssembly() 
+    throw (SALOME::SALOME_Exception) ;
+  GEOM::GEOM_Contact_ptr AddContact(GEOM::GEOM_Assembly_ptr Ass, 
+				    GEOM::GEOM_Shape_ptr Shape1,
+				    GEOM::GEOM_Shape_ptr Shape2, 
+				    const short type,
+				    CORBA::Double step) 
+    throw (SALOME::SALOME_Exception) ;
+  GEOM::GEOM_Animation_ptr AddAnimation(GEOM::GEOM_Assembly_ptr Ass, 
+					GEOM::GEOM_Shape_ptr Shape1,
+					CORBA::Double Duration,
+					const short NbSeq) 
+    throw (SALOME::SALOME_Exception) ;
+  void SetPosition(GEOM::GEOM_Contact_ptr Contact) 
+    throw (SALOME::SALOME_Exception) ;
+  void SetRotation(GEOM::GEOM_Contact_ptr Contact) 
+    throw (SALOME::SALOME_Exception) ;
+  void SetTranslation(GEOM::GEOM_Contact_ptr Contact) 
     throw (SALOME::SALOME_Exception) ;
 
 };

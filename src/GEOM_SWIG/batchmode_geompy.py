@@ -222,7 +222,7 @@ def MakeFace(aShapeWire,WantPlanarFace):
 
 def MakeFaces(ListShape,WantPlanarFace):
     anObj = geom.MakeFaces(ListShape,WantPlanarFace)
-    ior = salome.orb.object_to_string(anObj)
+    ior = orb.object_to_string(anObj)
     anObj._set_Name(ior)
     return anObj
 
@@ -368,10 +368,11 @@ def Partition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[], 
     return anObj
 
 def SuppressFaces(aShape,ListOfId):
-    anObj = geom.SuppressFaces(aShape,ListOfId)
-    ior = orb.object_to_string(anObj)
-    anObj._set_Name(ior)
-    return anObj
+    ListObj = geom.SuppressFaces(aShape,ListOfId)
+    for anObj in ListObj :
+	    ior = orb.object_to_string(anObj)
+	    anObj._set_Name(ior)
+    return ListObj
 
 def SuppressHole(aShape,ListOfFace,ListOfWire,ListOfEndFace):
     anObj = geom.SuppressHole(aShape,ListOfFace,ListOfWire,ListOfEndFace)
@@ -460,3 +461,166 @@ def Archimede(aShape,weight,WaterDensity,MeshingDeflection):
 def CheckShape(aShape):	
     Status = geom.CheckShape(aShape)
     return Status
+
+# -----------------------------------------------------------------------------
+# Kinematic objects
+# -----------------------------------------------------------------------------
+
+def InitAssembly():
+    anObj = geom.InitAssembly()
+    ior = orb.object_to_string(anObj)
+    anObj._set_Name(ior)
+    return anObj
+
+def AddContact(Ass,Shape1,Shape2,Type,Step):
+    anObj = geom.AddContact(Ass,Shape1,Shape2,Type,Step)
+    ior = orb.object_to_string(anObj)
+    anObj._set_Name(ior)
+    return anObj
+
+def AddAnimation(Ass,Frame,Duration,NbSeq):
+    anObj = geom.AddAnimation(Ass,Frame,Duration,NbSeq)
+    ior = orb.object_to_string(anObj)
+    anObj._set_Name(ior)
+    return anObj
+
+def SetPosition(aContact):
+    geom.SetPosition(aContact)
+
+def SetRotation(aContact):
+    geom.SetRotation(aContact)
+
+def SetTranslation(aContact):
+    geom.SetTranslation(aContact)
+
+def addAssemblyToStudy(anAss, aName):
+    myBuilder.NewCommand()
+    newObj = myBuilder.NewObject(father)
+    ior = orb.object_to_string(anAss)
+    A1 = myBuilder.FindOrCreateAttribute(newObj, "AttributeIOR");
+    ObjIOR = A1._narrow(SALOMEDS.AttributeIOR)
+    ObjIOR.SetValue(ior)
+    A2 = myBuilder.FindOrCreateAttribute(newObj, "AttributeName");
+    ObjName = A2._narrow(SALOMEDS.AttributeName)
+    ObjName.SetValue(aName)
+    A3 = myBuilder.FindOrCreateAttribute(newObj, "AttributeComment");
+    ObjType = A3._narrow(SALOMEDS.AttributeComment)
+    ObjType.SetValue("Kinematic_Assembly")
+    A4 = myBuilder.FindOrCreateAttribute(newObj, "AttributePixMap");
+    ObjPixmap = A4._narrow(SALOMEDS.AttributePixMap)
+    ObjPixmap.SetPixMap("ICON_OBJBROWSER_ASSEMBLY")
+    
+    id = newObj.GetID()
+    anAss._set_StudyShapeId(id)
+    myBuilder.CommitCommand()
+    return id
+
+def addContactToStudy(anAss, aContact, aName):
+    myBuilder.NewCommand()
+    newObj = myBuilder.NewObject(salome.IDToSObject(anAss._get_StudyShapeId()))
+    ior = orb.object_to_string(aContact)
+    A1 = myBuilder.FindOrCreateAttribute(newObj, "AttributeIOR");
+    ObjIOR = A1._narrow(SALOMEDS.AttributeIOR)
+    ObjIOR.SetValue(ior)
+    A2 = myBuilder.FindOrCreateAttribute(newObj, "AttributeName");
+    ObjName = A2._narrow(SALOMEDS.AttributeName)
+    ObjName.SetValue(aName)
+    A3 = myBuilder.FindOrCreateAttribute(newObj, "AttributeComment");
+    ObjType = A3._narrow(SALOMEDS.AttributeComment)
+    ObjType.SetValue("Kinematic_Contact")
+    A4 = myBuilder.FindOrCreateAttribute(newObj, "AttributePixMap");
+    ObjPixmap = A4._narrow(SALOMEDS.AttributePixMap)
+    ObjPixmap.SetPixMap("ICON_OBJBROWSER_CONTACT")
+
+    aTypeName = GetContactName(aContact.GetType())
+    ObjRef = myBuilder.NewObject(newObj)
+    A5 = myBuilder.FindOrCreateAttribute(ObjRef, "AttributeName");
+    ObjRefName = A5._narrow(SALOMEDS.AttributeName)
+    ObjRefName.SetValue(aTypeName)
+    A6 = myBuilder.FindOrCreateAttribute(ObjRef, "AttributeSelectable");
+    ObjRefSel = A6._narrow(SALOMEDS.AttributeSelectable)
+    ObjRefSel.SetSelectable(0)
+
+    aShape = aContact.GetShape1()
+    if aShape is not None:
+	    if aShape._get_StudyShapeId()!="":
+		    Obj = salome.IDToSObject(aShape._get_StudyShapeId())
+		    if Obj is not None:
+			    Obj1 = myBuilder.NewObject(newObj)
+			    myBuilder.Addreference(Obj1, Obj)
+
+    aShape = aContact.GetShape2()
+    if aShape is not None:
+	    if aShape._get_StudyShapeId()!="":
+		    Obj = salome.IDToSObject(aShape._get_StudyShapeId())
+		    if Obj is not None:
+			    Obj1 = myBuilder.NewObject(newObj)
+			    myBuilder.Addreference(Obj1, Obj)
+    
+    id = newObj.GetID()
+    aContact._set_StudyShapeId(id)
+    myBuilder.CommitCommand()
+    return id
+
+def addAnimationToStudy(anAnim, aName):
+    myBuilder.NewCommand()
+    newObj = myBuilder.NewObject(father)
+    ior = orb.object_to_string(anAnim)
+    A1 = myBuilder.FindOrCreateAttribute(newObj, "AttributeIOR");
+    ObjIOR = A1._narrow(SALOMEDS.AttributeIOR)
+    ObjIOR.SetValue(ior)
+    A2 = myBuilder.FindOrCreateAttribute(newObj, "AttributeName");
+    ObjName = A2._narrow(SALOMEDS.AttributeName)
+    ObjName.SetValue(aName)
+    A3 = myBuilder.FindOrCreateAttribute(newObj, "AttributeComment");
+    ObjType = A3._narrow(SALOMEDS.AttributeComment)
+    ObjType.SetValue("Kinematic_Animation")
+    A4 = myBuilder.FindOrCreateAttribute(newObj, "AttributePixMap");
+    ObjPixmap = A4._narrow(SALOMEDS.AttributePixMap)
+    ObjPixmap.SetPixMap("ICON_OBJBROWSER_ANIMATION")
+
+    anAss = anAnim.GetAssembly()
+    if anAss is not None:
+	    if anAss._get_StudyShapeId()!="":
+		    Obj = salome.IDToSObject(anAss._get_StudyShapeId())
+		    if Obj is not None:
+			    Obj1 = myBuilder.NewObject(newObj)
+			    myBuilder.Addreference(Obj1, Obj)
+
+    aFrame = anAnim.GetFrame()
+    if aFrame is not None:
+	    if aFrame._get_StudyShapeId()!="":
+		    Obj = salome.IDToSObject(aFrame._get_StudyShapeId())
+		    if Obj is not None:
+			    Obj1 = myBuilder.NewObject(newObj)
+			    myBuilder.Addreference(Obj1, Obj)
+    
+    id = newObj.GetID()
+    anAnim._set_StudyShapeId(id)
+    myBuilder.CommitCommand()
+    return id
+
+def GetContactName(aType):
+    if aType == 0:
+	    aName = "Embedding"
+    elif aType == 1:
+	    aName = "Pivot"
+    elif aType == 2:
+	    aName = "Slide"
+    elif aType == 3:
+	    aName = "Sliding Pivot"
+    elif aType == 4:
+	    aName = "Spherical"
+    elif aType == 5:
+	    aName = "Plane"
+    elif aType == 6:
+	    aName = "Annular"
+    elif aType == 7:
+	    aName = "Rectilinear"
+    elif aType == 8:
+	    aName = "Ponctual"
+    elif aType == 9:
+	    aName = "Helicoidal"
+    else:
+	    aName = "Contact"
+    return aName

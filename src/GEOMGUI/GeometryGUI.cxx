@@ -43,6 +43,11 @@
 
 #include "SALOME_Selection.h"
 
+// IDL Headers
+#include <SALOMEconfig.h>
+#include CORBA_SERVER_HEADER(SALOMEDS)
+#include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
+
 using namespace std;
 
 /* The object itself created in the static method 'GetOrCreateGEOMBase()' */
@@ -219,10 +224,11 @@ bool GeometryGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
     }
     else if(theCommandID == 5021 || // MENU TRANSFORMATION - TRANSLATION
 	    theCommandID == 5022 || // MENU TRANSFORMATION - ROTATION
-	    theCommandID == 5023 || // MENU TRANSFORMATION - MIRROR
-	    theCommandID == 5024 || // MENU TRANSFORMATION - SCALE
-	    theCommandID == 5025 || // MENU TRANSFORMATION - MULTI-TRANSLATION
-	    theCommandID == 5026) { // MENU TRANSFORMATION - MULTI-ROTATION
+	    theCommandID == 5023 || // MENU TRANSFORMATION - POSITION
+	    theCommandID == 5024 || // MENU TRANSFORMATION - MIRROR
+	    theCommandID == 5025 || // MENU TRANSFORMATION - SCALE
+	    theCommandID == 5026 || // MENU TRANSFORMATION - MULTI-TRANSLATION
+	    theCommandID == 5027) { // MENU TRANSFORMATION - MULTI-ROTATION
       if(!GeomGUI->LoadLibrary("libTransformationGUI.so")) 
 	return false;
     }
@@ -238,6 +244,25 @@ bool GeometryGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	    theCommandID == 603 ||  // MENU REPAIR - SUPPRESS FACES
 	    theCommandID == 604) {  // MENU REPAIR - SUPPRESS HOLE
       if(!GeomGUI->LoadLibrary("libRepairGUI.so")) 
+	return false;
+    }
+    else if(theCommandID == 611 ||  // MENU KINEMATIC - ASSEMBLY
+	    theCommandID == 61201 ||  // MENU KINEMATIC - EMBEDDING
+	    theCommandID == 61202 ||  // MENU KINEMATIC - PIVOT
+	    theCommandID == 61203 ||  // MENU KINEMATIC - SLIDE
+	    theCommandID == 61204 ||  // MENU KINEMATIC - SLIDING PIVOT
+	    theCommandID == 61205 ||  // MENU KINEMATIC - SPHERICAL
+	    theCommandID == 61206 ||  // MENU KINEMATIC - PLANE
+	    theCommandID == 61207 ||  // MENU KINEMATIC - ANNULAR
+	    theCommandID == 61208 ||  // MENU KINEMATIC - RECTILINEAR
+	    theCommandID == 61209 ||  // MENU KINEMATIC - PONCTUAL
+	    theCommandID == 61210 ||  // MENU KINEMATIC - HELICOIDAL
+	    theCommandID == 6131 ||  // MENU KINEMATIC - POSITION
+	    theCommandID == 6132 ||  // MENU KINEMATIC - ROTATION
+	    theCommandID == 6133 ||  // MENU KINEMATIC - TRANSLATION
+	    theCommandID == 614 ||  // MENU KINEMATIC - ANIMATION
+	    theCommandID == 6141) {  // MENU KINEMATIC - RUN ANIMATION
+      if(!GeomGUI->LoadLibrary("libKinematicGUI.so")) 
 	return false;
     }
     else if(theCommandID == 701 ||  // MENU MEASURE - PROPERTIES
@@ -472,7 +497,23 @@ void GeometryGUI::DefinePopup(QString & theContext, QString & theParent, QString
 	if(strcmp(scomp->GetID(), IO->getEntry()) == 0) {
 	  // component is selected
 	  theObject = "Component";
+	  return;
 	}
+
+	SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+	SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
+	SALOMEDS::GenericAttribute_var anAttr;
+	SALOMEDS::AttributeComment_var aType;
+	anAttr = aStudyBuilder->FindOrCreateAttribute(sobj, "AttributeComment");
+	aType = SALOMEDS::AttributeComment::_narrow(anAttr);
+	QString val = QString(strdup(aType->Value()));
+	if(val == "Kinematic_Assembly")
+	  theObject = "Assembly";
+	else if(val == "Kinematic_Contact")
+	  theObject = "Contact";
+	else if(val == "Kinematic_Animation")
+	  theObject = "Animation";
+	return;
       }
     }
   }

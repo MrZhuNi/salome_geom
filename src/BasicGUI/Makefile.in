@@ -61,7 +61,7 @@ LIB_MOC = \
 		BasicGUI_PlaneDlg.h \
 		BasicGUI_WorkingPlaneDlg.h
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = GEOM_Kinematic.idl
 
 LIB_SERVER_IDL = 
 

@@ -51,7 +51,7 @@ LIB_SRC = 	GEOMContext.cxx
 LIB_MOC = \
 		GEOMContext.h
 
-LIB_CLIENT_IDL = SALOME_Exception.idl
+LIB_CLIENT_IDL = SALOME_Exception.idl GEOM_Kinematic.idl
 
 LIB_SERVER_IDL = 
 

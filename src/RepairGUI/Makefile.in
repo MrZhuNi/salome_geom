@@ -53,7 +53,7 @@ LIB_MOC = \
 		RepairGUI_SuppressFacesDlg.h \
 		RepairGUI_SuppressHoleDlg.h
 
-LIB_CLIENT_IDL = 
+LIB_CLIENT_IDL = GEOM_Kinematic.idl
 
 LIB_SERVER_IDL = 
 

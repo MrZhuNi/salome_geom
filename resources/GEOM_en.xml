@@ -112,11 +112,12 @@
    <submenu label-id="Transformation" item-id="502" pos-id="2">
        <popup-item item-id="5021" pos-id="" label-id="Translation" icon-id="translation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
        <popup-item item-id="5022" pos-id="" label-id="Rotation" icon-id="rotate.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="5023" pos-id="" label-id="Mirror by plane" icon-id="mirrorPlane.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="5024" pos-id="" label-id="Scale transform" icon-id="scale.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5023" pos-id="" label-id="Position" icon-id="position.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5024" pos-id="" label-id="Mirror by plane" icon-id="mirrorPlane.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5025" pos-id="" label-id="Scale transform" icon-id="scale.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
        <separator pos-id=""/>	
-       <popup-item item-id="5025" pos-id="" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="5026" pos-id="" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5026" pos-id="" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5027" pos-id="" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
    <popup-item item-id="503" pos-id="" label-id="Partition" icon-id="partition.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>  
@@ -136,8 +137,29 @@
 </menu-item>
 
 
+<!-- ************************** Kinematic  (menubar)  ************************************ -->
+<menu-item label-id="Kinematic" item-id="61" pos-id="6">
+   <popup-item item-id="611" pos-id="" label-id="Add Assembly" icon-id="assembly.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <submenu label-id="Add Contact" item-id="612" icon-id="" pos-id="">
+	<popup-item item-id="61201" pos-id="" label-id="Embedding" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="61202" pos-id="" label-id="Pivot" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="61203" pos-id="" label-id="Slide" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="61204" pos-id="" label-id="Sliding Pivot" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="61205" pos-id="" label-id="Spherical" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="61206" pos-id="" label-id="Plane" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="61207" pos-id="" label-id="Annular" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="61208" pos-id="" label-id="Rectilinear" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="61209" pos-id="" label-id="Ponctual" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+        <separator pos-id=""/>
+        <popup-item item-id="61210" pos-id="" label-id="Helicoïdal" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   </submenu>
+   <endsubmenu />
+   <popup-item item-id="614" pos-id="" label-id="Add Animation" icon-id="animation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+</menu-item>
+
+
 <!-- ************************** Mesures  (menubar)  ************************************ -->
-<menu-item label-id="Measures" item-id="70" pos-id="6">
+<menu-item label-id="Measures" item-id="70" pos-id="7">
    <popup-item item-id="701" pos-id="" label-id="Basic properties" icon-id="basicproperties.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <separator pos-id="4"/>
    <popup-item item-id="702" pos-id="" label-id="Center of gravity" icon-id="centergravity.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
@@ -229,11 +251,12 @@
 <toolbar label-id="Transformation">
    <toolbutton-item item-id="5021" label-id="Translation" icon-id="translation.png" tooltip-id="Translate a shape"accel-id="" toggle-id="" execute-action=""/>
    <toolbutton-item item-id="5022" label-id="Rotation" icon-id="rotate.png" tooltip-id="Rotate a shape" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="5023" label-id="Mirror by plane" icon-id="mirrorPlane.png" tooltip-id="Mirror a shape" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="5024" label-id="Scale transform" icon-id="scale.png" tooltip-id="Scale a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5023" label-id="Position" icon-id="position.png" tooltip-id="Position a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5024" label-id="Mirror by plane" icon-id="mirrorPlane.png" tooltip-id="Mirror a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5025" label-id="Scale transform" icon-id="scale.png" tooltip-id="Scale a shape" accel-id="" toggle-id="" execute-action=""/>
    <separatorTB/>
-   <toolbutton-item item-id="5025" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="Multi-translate a shape" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="5026" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="Multi-rotate a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5026" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="Multi-translate a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5027" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="Multi-rotate a shape" accel-id="" toggle-id="" execute-action=""/>
 </toolbar>
 
 
@@ -255,6 +278,26 @@
    <popup-item item-id="9024" pos-id="" label-id="Open" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <separator pos-id=""/>
    <popup-item item-id="901" pos-id="" label-id="Rename" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+</popupmenu>
+
+<popupmenu label-id="Popup for ObjectBrowser" context-id="" parent-id="ObjectBrowser" object-id="Assembly">
+   <popup-item item-id="901" pos-id="" label-id="Rename" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <separator pos-id=""/>
+   <popup-item item-id="61201" pos-id="" label-id="Add Contact" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+</popupmenu>
+
+<popupmenu label-id="Popup for ObjectBrowser" context-id="" parent-id="ObjectBrowser" object-id="Contact">
+   <popup-item item-id="901" pos-id="" label-id="Rename" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <separator pos-id=""/>
+   <popup-item item-id="6131" pos-id="" label-id="Position" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="6132" pos-id="" label-id="Rotation" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="6133" pos-id="" label-id="Translation" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+</popupmenu>
+
+<popupmenu label-id="Popup for ObjectBrowser" context-id="" parent-id="ObjectBrowser" object-id="Animation">
+   <popup-item item-id="901" pos-id="" label-id="Rename" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <separator pos-id=""/>
+   <popup-item item-id="6141" pos-id="" label-id="Run Animation" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 </popupmenu>
 
 <popupmenu label-id="Sketch" context-id="Sketch" parent-id="Viewer" object-id="">

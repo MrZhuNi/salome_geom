@@ -41,7 +41,7 @@ LIB_SRC = GEOM_ShapeTypeFilter.cxx \
 	  GEOM_FaceFilter.cxx \
 	  GEOM_EdgeFilter.cxx
 
-LIB_CLIENT_IDL = SALOME_Component.idl SALOMEDS.idl SALOMEDS_Attributes.idl SALOME_Exception.idl GEOM_Shape.idl GEOM_Gen.idl
+LIB_CLIENT_IDL = SALOME_Component.idl SALOMEDS.idl SALOMEDS_Attributes.idl SALOME_Exception.idl GEOM_Shape.idl GEOM_Gen.idl GEOM_Kinematic.idl
 
 # header files 
 EXPORT_HEADERS= GEOM_ShapeTypeFilter.hxx \

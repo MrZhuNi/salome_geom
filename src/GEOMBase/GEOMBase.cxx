@@ -206,7 +206,28 @@ bool GEOMBase::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QString
       int id = popup->idAt(0); // separator
       if(id < 0)
 	popup->removeItem(id);
-	    
+      
+      if(theObject.compare("Assembly") == 0 || theObject.compare("Animation") == 0) {
+	popup->removeItem(QAD_DisplayOnly_Popup_ID);
+	popup->removeItem(QAD_Display_Popup_ID);
+	popup->removeItem(QAD_Erase_Popup_ID);
+	return true;
+      }
+      else if(theObject.compare("Contact") == 0) {
+	Standard_Boolean testResult;
+	Handle(SALOME_InteractiveObject) IO = Sel->firstIObject();
+	GEOM::GEOM_Contact_ptr myGeomContact = myGeomBase->ConvertIOinContact(IO, testResult);
+	int type = myGeomContact->GetType();
+	if(type == 0 || type == 2) //EMBEDDING || SLIDE
+	  popup->removeItem(6132); //ROTATION
+	if(type == 0 || type == 1 || type == 4) //EMBEDDING || PIVOT || SPHERICAL
+	  popup->removeItem(6133); //TRANSLATION
+	popup->removeItem(QAD_DisplayOnly_Popup_ID);
+	popup->removeItem(QAD_Display_Popup_ID);
+	popup->removeItem(QAD_Erase_Popup_ID);
+	return true;
+      }
+
       // checking for GEOM label in the selected list
       SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
       Handle(SALOME_InteractiveObject) anIObject;
@@ -348,6 +369,27 @@ bool GEOMBase::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QString
       int id = popup->idAt(0); // separator
       if(id < 0)
 	popup->removeItem(id);
+
+      if(theObject.compare("Assembly") == 0 || theObject.compare("Animation") == 0) {
+	popup->removeItem(QAD_DisplayOnly_Popup_ID);
+	popup->removeItem(QAD_Display_Popup_ID);
+	popup->removeItem(QAD_Erase_Popup_ID);
+	return true;
+      }
+      else if(theObject.compare("Contact") == 0) {
+	Standard_Boolean testResult;
+	Handle(SALOME_InteractiveObject) IO = Sel->firstIObject();
+	GEOM::GEOM_Contact_ptr myGeomContact = myGeomBase->ConvertIOinContact(IO, testResult);
+	int type = myGeomContact->GetType();
+	if(type == 0 || type == 2) //EMBEDDING || SLIDE
+	  popup->removeItem(6132); //ROTATION
+	if(type == 0 || type == 1 || type == 4) //EMBEDDING || PIVOT || SPHERICAL
+	  popup->removeItem(6133); //TRANSLATION
+	popup->removeItem(QAD_DisplayOnly_Popup_ID);
+	popup->removeItem(QAD_Display_Popup_ID);
+	popup->removeItem(QAD_Erase_Popup_ID);
+	return true;
+      }
 
       // checking for GEOM label in the selected list
       SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
@@ -1184,6 +1226,102 @@ GEOM::GEOM_Shape_ptr GEOMBase::ConvertIOinGEOMShape(const Handle(SALOME_Interact
     return aShape._retn();
   }
   return aShape._retn();
+}
+
+
+//=======================================================================
+// function : ConvertIOinAssembly()
+// purpose  : 
+//=======================================================================
+GEOM::GEOM_Assembly_ptr GEOMBase::ConvertIOinAssembly(const Handle(SALOME_InteractiveObject)& IO, Standard_Boolean& testResult)
+{
+  GEOM::GEOM_Assembly_var aAss;
+  testResult = false;
+  
+  /* case SObject */
+  if(IO->hasEntry()) {
+    SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+    SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
+    SALOMEDS::GenericAttribute_var anAttr;
+    SALOMEDS::AttributeIOR_var anIOR;
+    if(!obj->_is_nil()) {
+      if(obj->FindAttribute(anAttr, "AttributeIOR")) {
+	anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+	if(strcmp(anIOR->Value(),"") != 0){
+	  CORBA::Object_var anObject = aStudy->ConvertIORToObject(anIOR->Value());
+	  if(!CORBA::is_nil(anObject))
+	    aAss = GEOM::GEOM_Assembly::_narrow(anObject.in());
+	}
+	if(!CORBA::is_nil(aAss))
+	  testResult = true;
+      }
+    }
+  }
+  return aAss._retn();
+}
+
+
+//=======================================================================
+// function : ConvertIOinContact()
+// purpose  : 
+//=======================================================================
+GEOM::GEOM_Contact_ptr GEOMBase::ConvertIOinContact(const Handle(SALOME_InteractiveObject)& IO, Standard_Boolean& testResult)
+{
+  GEOM::GEOM_Contact_var aContact;
+  testResult = false;
+  
+  /* case SObject */
+  if(IO->hasEntry()) {
+    SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+    SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
+    SALOMEDS::GenericAttribute_var anAttr;
+    SALOMEDS::AttributeIOR_var anIOR;
+    if(!obj->_is_nil()) {
+      if(obj->FindAttribute(anAttr, "AttributeIOR")) {
+	anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+	if(strcmp(anIOR->Value(),"") != 0){
+	  CORBA::Object_var anObject = aStudy->ConvertIORToObject(anIOR->Value());
+	  if(!CORBA::is_nil(anObject))
+	    aContact = GEOM::GEOM_Contact::_narrow(anObject.in());
+	}
+	if(!CORBA::is_nil(aContact))
+	  testResult = true;
+      }
+    }
+  }
+  return aContact._retn();
+}
+
+
+//=======================================================================
+// function : ConvertIOinContact()
+// purpose  : 
+//=======================================================================
+GEOM::GEOM_Animation_ptr GEOMBase::ConvertIOinAnimation(const Handle(SALOME_InteractiveObject)& IO, Standard_Boolean& testResult)
+{
+  GEOM::GEOM_Animation_var aAnimation;
+  testResult = false;
+  
+  /* case SObject */
+  if(IO->hasEntry()) {
+    SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+    SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
+    SALOMEDS::GenericAttribute_var anAttr;
+    SALOMEDS::AttributeIOR_var anIOR;
+    if(!obj->_is_nil()) {
+      if(obj->FindAttribute(anAttr, "AttributeIOR")) {
+	anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+	if(strcmp(anIOR->Value(),"") != 0){
+	  CORBA::Object_var anObject = aStudy->ConvertIORToObject(anIOR->Value());
+	  if(!CORBA::is_nil(anObject))
+	    aAnimation = GEOM::GEOM_Animation::_narrow(anObject.in());
+	}
+	if(!CORBA::is_nil(aAnimation))
+	  testResult = true;
+      }
+    }
+  }
+  return aAnimation._retn();
 }
 
 

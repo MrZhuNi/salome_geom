@@ -46,6 +46,7 @@ using namespace std;
 #include <gp_Elips.hxx>
 #include <Geom_Plane.hxx>
 #include <Geom_Line.hxx>
+#include <Geom2d_Curve.hxx>
 #include <Geom_BezierCurve.hxx>
 #include <Geom_BSplineCurve.hxx>
 #include <GeomFill_Line.hxx>
@@ -65,6 +66,7 @@ using namespace std;
 #endif
 #include <BRepAlgo_FaceRestrictor.hxx>
 #include <BRepAdaptor_Surface.hxx>
+#include <BRepAdaptor_Curve.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepAlgoAPI_Common.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
@@ -146,6 +148,8 @@ using namespace std;
 #include <TDF_Label.hxx>
 #include <TDataStd_Name.hxx>
 #include <TDataStd_Comment.hxx>
+#include <TDataStd_Integer.hxx>
+#include <TDataStd_Real.hxx>
 #include <TDF_Reference.hxx>
 #include <TDF_Data.hxx>
 #include <TNaming_Builder.hxx>
@@ -213,6 +217,18 @@ char* GEOM_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
   if (!CORBA::is_nil(aShape)) {
     return strdup(aShape->ShapeId());
   }
+  GEOM::GEOM_Assembly_var aAssembly = GEOM::GEOM_Assembly::_narrow(_orb->string_to_object(IORString));
+  if (!CORBA::is_nil(aAssembly)) {
+    return strdup(aAssembly->ShapeId());
+  }
+  GEOM::GEOM_Contact_var aContact = GEOM::GEOM_Contact::_narrow(_orb->string_to_object(IORString));
+  if (!CORBA::is_nil(aContact)) {
+    return strdup(aContact->ShapeId());
+  }
+  GEOM::GEOM_Animation_var aAnimation = GEOM::GEOM_Animation::_narrow(_orb->string_to_object(IORString));
+  if (!CORBA::is_nil(aAnimation)) {
+    return strdup(aAnimation->ShapeId());
+  }
   return 0;
 }
 
@@ -238,110 +254,227 @@ char* GEOM_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
   TDF_Label Lab;
   TDF_Tool::Label(aDoc->GetData(), aPersRefString, Lab );
   
-  Handle(TNaming_NamedShape) NS;
-  Lab.FindAttribute( TNaming_NamedShape::GetID(), NS );
-  TopoDS_Shape S = TNaming_Tool::GetShape(NS);
-
   /* shapetype, index=0, topo, orb, shapetype, ismain=true and name are setted and modified later ? */
-  GEOM::GEOM_Shape_var result = CreateObject(S);
   GEOMDS_Commands GC( aDoc->Main() ) ;
-  
   if ( GC.HasIOR(Lab) ) { /* shape already created/loaded */
     return 0 ;
   }
 
-  /******************* Dependent object (not a main shape) *********************/
-  if( GC.IsDependentShape(Lab) ) {
-    
-    TDF_Label mainLabel ;
-    Standard_Boolean mainShapeOk = GC.GetMainShapeLabel(Lab, mainLabel) ;
-    
-    /* Main object not yet loaded we load/create it */
-    if( !GC.HasIOR(mainLabel) ) {
-      
-      TCollection_AsciiString entry;
-      TDF_Tool::Entry(mainLabel,entry);
-      CORBA::String_var ent = strdup(entry.ToCString());
-      
-      /* Create the main object recursively */
-      MainIOR = LocalPersistentIDToIOR(theSObject, ent, isMultiFile, isASCII) ;
-    } else {
-      GC.ReturnNameIOR( mainLabel, MainIOR ); 
-    }
-    
-    result->MainName( TCollection_AsciiString(MainIOR).ToCString() ) ;      
-    result->IsMainShape(false) ;
-    result->ShapeId(aPersRefString);
-    
-    Handle(TDF_Reference) aRef;
-    Lab.FindAttribute( TDF_Reference::GetID(), aRef );
-    TDF_Label myL = aRef->Get() ;
-    Handle(TNaming_NamedShape) NN;
-    myL.FindAttribute( TNaming_NamedShape::GetID(), NN );
-    TopoDS_Shape mainTopo = TNaming_Tool::GetShape(NN);
+  Handle(TNaming_NamedShape) NS;
+  Lab.FindAttribute( TNaming_NamedShape::GetID(), NS );
+  TopoDS_Shape S;
 
-    GEOM::GEOM_Shape::ListOfSubShapeID_var ListOfID = new GEOM::GEOM_Shape::ListOfSubShapeID;
-    
-    if(S.ShapeType() != TopAbs_COMPOUND) {
-      /* to set the index of a unique sub shape (Explode All ONLY for the moment !) */
-      ListOfID->length(1);
-      int index = 1;
-      TopTools_MapOfShape M;
-      TopExp_Explorer Exp ;
-      for( Exp.Init(mainTopo, TopAbs_ShapeEnum( result->ShapeType() )) ; Exp.More(); Exp.Next() )  {
-	if ( M.Add(Exp.Current()) ) {
-	  if(Exp.Current().IsSame(S) ) {
-	    ListOfID[0] = index;
-	    break;
-	  }
-	  index++ ;
-	}	
+  Kinematic_Assembly* Assembly = new Kinematic_Assembly();
+  Kinematic_Contact* Contact = new Kinematic_Contact();
+  Kinematic_Animation* Animation = new Kinematic_Animation();
+
+  if(GC.GetShape(Lab, S)) {
+    S = TNaming_Tool::GetShape(NS);
+    GEOM::GEOM_Shape_var result = CreateObject(S);
+
+  /******************* Dependent object (not a main shape) *********************/
+    if( GC.IsDependentShape(Lab) ) {
+      
+      TDF_Label mainLabel ;
+      Standard_Boolean mainShapeOk = GC.GetMainShapeLabel(Lab, mainLabel) ;
+      
+      /* Main object not yet loaded we load/create it */
+      if( !GC.HasIOR(mainLabel) ) {
+	
+	TCollection_AsciiString entry;
+	TDF_Tool::Entry(mainLabel,entry);
+	CORBA::String_var ent = strdup(entry.ToCString());
+	
+	/* Create the main object recursively */
+	MainIOR = LocalPersistentIDToIOR(theSObject, ent, isMultiFile, isASCII) ;
+      } else {
+	GC.ReturnNameIOR( mainLabel, MainIOR ); 
       }
-      result->Index(ListOfID) ;
+      
+      result->MainName( TCollection_AsciiString(MainIOR).ToCString() ) ;      
+      result->IsMainShape(false) ;
+      result->ShapeId(aPersRefString);
+      
+      Handle(TDF_Reference) aRef;
+      Lab.FindAttribute( TDF_Reference::GetID(), aRef );
+      TDF_Label myL = aRef->Get() ;
+      Handle(TNaming_NamedShape) NN;
+      myL.FindAttribute( TNaming_NamedShape::GetID(), NN );
+      TopoDS_Shape mainTopo = TNaming_Tool::GetShape(NN);
+      
+      GEOM::GEOM_Shape::ListOfSubShapeID_var ListOfID = new GEOM::GEOM_Shape::ListOfSubShapeID;
+      
+      if(S.ShapeType() != TopAbs_COMPOUND) {
+	/* to set the index of a unique sub shape (Explode All ONLY for the moment !) */
+	ListOfID->length(1);
+	int index = 1;
+	TopTools_MapOfShape M;
+	TopExp_Explorer Exp ;
+	for( Exp.Init(mainTopo, TopAbs_ShapeEnum( result->ShapeType() )) ; Exp.More(); Exp.Next() )  {
+	  if ( M.Add(Exp.Current()) ) {
+	    if(Exp.Current().IsSame(S) ) {
+	      ListOfID[0] = index;
+	      break;
+	    }
+	    index++ ;
+	  }	
+	}
+	result->Index(ListOfID) ;
+	return result->Name(); 
+      }
+      else {
+	/* Here is a TopAbs_COMPOUND : we set the list/index for a compound : containing two or more sub shapes  */
+	/* Warning : the Corba shape has a shapetype Compound : in GEOMDS_Client we have to retrieve the kind of */
+	/* subshapes contained in this compound !                                                                */
+	TopTools_SequenceOfShape SS;
+	TopoDS_Iterator it ;
+	TopExp_Explorer exp ;
+	TopAbs_ShapeEnum subType ;
+	
+	/* Set all sub shapes in a sequence of shapes  */
+	for ( it.Initialize( S, true, true ) ; it.More(); it.Next() ) {
+	  subType = it.Value().ShapeType() ;
+	  SS.Append( it.Value() ) ;
+	}
+	
+	ListOfID->length( SS.Length() ) ;
+	int j, k ;  /* in TopTools_SequenceOfShape index start at 1 */
+	
+	for( k=1; k<=SS.Length(); k++ ) {
+	  j = 1 ;
+	  for( exp.Init( mainTopo, subType ); exp.More(); exp.Next() ) {
+	    if( exp.Current().IsSame( SS.Value(k) ) ) {
+	      ListOfID[k-1] = j ;
+	    }
+	    j++ ;
+	  }
+	}
+	result->Index(ListOfID) ;
+	return result->Name();
+      }
+    
+    }
+  /******************* Independent object (not a sub shape) *********************/
+    else {
+      result->IsMainShape(true) ;
+      if( !GC.AddIORNameAttribute(Lab, result->Name() ) )  {
+	MESSAGE("in LocalPersistentIDToIOR, NAME/IOR attribute already exist." << endl ) ;
+      }
+      Handle(TNaming_NamedShape) NamedShape ;  
+      bool notTested = Lab.FindAttribute(TNaming_NamedShape::GetID(), NamedShape) ;
+      result->ShapeId(aPersRefString);
       return result->Name(); 
     }
-    else {
-      /* Here is a TopAbs_COMPOUND : we set the list/index for a compound : containing two or more sub shapes  */
-      /* Warning : the Corba shape has a shapetype Compound : in GEOMDS_Client we have to retrieve the kind of */
-      /* subshapes contained in this compound !                                                                */
-      TopTools_SequenceOfShape SS;
-      TopoDS_Iterator it ;
-      TopExp_Explorer exp ;
-      TopAbs_ShapeEnum subType ;
-      
-      /* Set all sub shapes in a sequence of shapes  */
-      for ( it.Initialize( S, true, true ) ; it.More(); it.Next() ) {
-	subType = it.Value().ShapeType() ;
-	SS.Append( it.Value() ) ;
-      }
-      
-      ListOfID->length( SS.Length() ) ;
-      int j, k ;  /* in TopTools_SequenceOfShape index start at 1 */
-      
-      for( k=1; k<=SS.Length(); k++ ) {
-	j = 1 ;
-	for( exp.Init( mainTopo, subType ); exp.More(); exp.Next() ) {	
-	  if( exp.Current().IsSame( SS.Value(k) ) ) {
-	    ListOfID[k-1] = j ;
-	  }
-	  j++ ;
-	}
-      }
-      result->Index(ListOfID) ;
-      return result->Name();
-    }
-    
   }
-  /******************* Independent object (not a sub shape) *********************/
-  else {
-    result->IsMainShape(true) ;
-    if( !GC.AddIORNameAttribute(Lab, result->Name() ) )  {
+  else if(GC.GetAssembly(Lab, *Assembly)) {
+    /* Create the CORBA servant holding the TopoDS_Shape */
+    GEOM_Assembly_i * Assembly_servant = new GEOM_Assembly_i(Assembly);
+    GEOM::GEOM_Assembly_var result = GEOM::GEOM_Assembly::_narrow(Assembly_servant->_this()); 
+  
+    /* Create and set the name (IOR of shape converted into a string) */
+    string name_ior = _orb->object_to_string(result);
+    result->Name(name_ior.c_str());
+
+    if( !GC.AddIORNameAttribute(Lab, result->Name()))  {
       MESSAGE("in LocalPersistentIDToIOR, NAME/IOR attribute already exist." << endl ) ;
     }
-    Handle(TNaming_NamedShape) NamedShape ;  
-    bool notTested = Lab.FindAttribute(TNaming_NamedShape::GetID(), NamedShape) ;
+
     result->ShapeId(aPersRefString);
-    return result->Name(); 
+    return result->Name();
+  }
+  else if(GC.GetContact(Lab, *Contact)) {
+    TDF_ChildIterator it;
+    int i = 1;
+    GEOM::GEOM_Shape_var aShape1;
+    GEOM::GEOM_Shape_var aShape2;
+    TCollection_ExtendedString str;
+    Handle(TDF_Reference) aRef;
+    for(it.Initialize(Lab, Standard_False); it.More(); it.Next()) {
+      TDF_Label L = it.Value();
+      if(i == 3) {
+	L.FindAttribute(TDF_Reference::GetID(), aRef);
+	TDF_Label myL = aRef->Get();
+	GC.ReturnNameIOR(myL, str);
+	aShape1 = GetIORFromString(TCollection_AsciiString(str).ToCString());
+      }
+      if(i == 4) {
+	L.FindAttribute(TDF_Reference::GetID(), aRef);
+	TDF_Label myL = aRef->Get();
+	GC.ReturnNameIOR(myL, str);
+	aShape2 = GetIORFromString(TCollection_AsciiString(str).ToCString());
+      }
+      i++;
+    }
+
+    /* Create the CORBA servant holding the TopoDS_Shape */
+    GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this();
+    GEOM_Contact_i * Contact_servant = new GEOM_Contact_i(Contact, aShape1, aShape2, engine);
+    GEOM::GEOM_Contact_var result = GEOM::GEOM_Contact::_narrow(Contact_servant->_this()); 
+
+    /* Create and set the name (IOR of shape converted into a string) */
+    string name_ior = _orb->object_to_string(result);
+    result->Name(name_ior.c_str());
+
+    if( !GC.AddIORNameAttribute(Lab, result->Name()))  {
+      MESSAGE("in LocalPersistentIDToIOR, NAME/IOR attribute already exist." << endl ) ;
+    }
+
+    result->ShapeId(aPersRefString);
+
+    GEOM::GEOM_Assembly_var aAssPtr;
+    TDF_Label AssLab = Lab.Father();
+    GC.ReturnNameIOR(AssLab, str);
+    if(strcmp(TCollection_AsciiString(str).ToCString(),"") != 0) {
+      CORBA::Object_var anObject = _orb->string_to_object(TCollection_AsciiString(str).ToCString());
+      if(!CORBA::is_nil(anObject))
+	aAssPtr = GEOM::GEOM_Assembly::_narrow(anObject.in());
+    }
+    aAssPtr->AddContact(result);
+
+    return result->Name();
+  }
+  else if(GC.GetAnimation(Lab, *Animation)) {
+    TDF_ChildIterator it;
+    int i = 1;
+    GEOM::GEOM_Assembly_var aAssPtr;
+    GEOM::GEOM_Shape_var aFramePtr;
+    TCollection_ExtendedString str;
+    Handle(TDF_Reference) aRef;
+    for(it.Initialize(Lab, Standard_False); it.More(); it.Next()) {
+      TDF_Label L = it.Value();
+      if(i == 2) {
+	L.FindAttribute(TDF_Reference::GetID(), aRef);
+	TDF_Label myL = aRef->Get();
+	GC.ReturnNameIOR(myL, str);
+	if(strcmp(TCollection_AsciiString(str).ToCString(),"") != 0) {
+	  CORBA::Object_var anObject = _orb->string_to_object(TCollection_AsciiString(str).ToCString());
+	  if(!CORBA::is_nil(anObject))
+	    aAssPtr = GEOM::GEOM_Assembly::_narrow(anObject.in());
+	}
+      }
+      if(i == 3) {
+	L.FindAttribute(TDF_Reference::GetID(), aRef);
+	TDF_Label myL = aRef->Get();
+	GC.ReturnNameIOR(myL, str);
+	aFramePtr = GetIORFromString(TCollection_AsciiString(str).ToCString());
+      }
+      i++;
+    }
+
+    /* Create the CORBA servant holding the TopoDS_Shape */
+    GEOM_Animation_i * Animation_servant = new GEOM_Animation_i(Animation, aAssPtr, aFramePtr);
+    GEOM::GEOM_Animation_var result = GEOM::GEOM_Animation::_narrow(Animation_servant->_this()); 
+  
+    /* Create and set the name (IOR of shape converted into a string) */
+    string name_ior = _orb->object_to_string(result);
+    result->Name(name_ior.c_str());
+
+    if( !GC.AddIORNameAttribute(Lab, result->Name()))  {
+      MESSAGE("in LocalPersistentIDToIOR, NAME/IOR attribute already exist." << endl ) ;
+    }
+
+    result->ShapeId(aPersRefString);
+    return result->Name();
   }
 }
 
@@ -4417,6 +4550,121 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeRotation( GEOM::GEOM_Shape_ptr myShape,
 
 
 //=================================================================================
+// function : MakePosition()
+// purpose  : 
+//=================================================================================
+GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakePosition(GEOM::GEOM_Shape_ptr shape1,
+					      GEOM::GEOM_Shape_ptr shape2,
+					      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID1,
+					      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID2,
+					      const CORBA::Short typeofshape)
+  throw (SALOME::SALOME_Exception)
+{
+  GEOM::GEOM_Shape_var result;
+  TopoDS_Shape tds;
+  TopoDS_Shape aShape1 = GetTopoShape(shape1);
+  TopoDS_Shape aShape2 = GetTopoShape(shape2);
+  if(aShape1.IsNull() || aShape2.IsNull()) {
+    THROW_SALOME_CORBA_EXCEPTION("MakePosition aborted : null shape during operation", SALOME::BAD_PARAM);
+  }
+  
+  try {
+    gp_Trsf theTransformation;
+    TopoDS_Shape S1, S2;
+
+    GetShapeFromIndex(aShape1, (TopAbs_ShapeEnum)typeofshape, ListOfID1[0], S1);
+    GetShapeFromIndex(aShape2, (TopAbs_ShapeEnum)typeofshape, ListOfID2[0], S2);
+
+    if(S1.ShapeType() == TopAbs_VERTEX && S2.ShapeType() == TopAbs_VERTEX) {
+      gp_Pnt Pt1 = BRep_Tool::Pnt(TopoDS::Vertex(S1));
+      gp_Pnt Pt2 = BRep_Tool::Pnt(TopoDS::Vertex(S2));
+
+      gp_Vec theVector(Pt1, Pt2);
+      theTransformation.SetTranslation(theVector);
+    }
+    else if(S1.ShapeType() == TopAbs_EDGE && S2.ShapeType() == TopAbs_EDGE) {
+      Standard_Real f, l;
+      gp_Pnt Pt1, Pt2;
+      gp_Vec V1, V2;
+
+      Handle(Geom_Curve) C = BRep_Tool::Curve(TopoDS::Edge(S1), f, l);
+      C->D1(f, Pt1, V1);
+      C = BRep_Tool::Curve(TopoDS::Edge(S2), f, l);
+      C->D1(f, Pt2, V2);
+
+      gp_Vec theVector(Pt1, Pt2);
+      theTransformation.SetTranslation(theVector);
+
+      if(!V1.IsParallel(V2, Precision::Angular())) {
+	gp_Vec VN = V1.Crossed(V2);
+	double Angle = V1.Angle(V2);
+	
+	gp_Dir D(VN.X(), VN.Y(), VN.Z());
+	gp_Ax1 AX(Pt1, D);
+	
+	gp_Trsf TheRot;
+	TheRot.SetRotation(AX, Angle);
+	theTransformation = theTransformation * TheRot;
+      }
+    }
+    else if(S1.ShapeType() == TopAbs_FACE && S2.ShapeType() == TopAbs_FACE) {
+      TopoDS_Edge E1, E2;
+      Standard_Real f, l;
+      gp_Pnt P1, P2;
+      gp_Vec D1, D2, N1, N2, V1, V2;
+
+      TopExp_Explorer Exp1(S1, TopAbs_EDGE);
+      TopExp_Explorer Exp2(S2, TopAbs_EDGE);
+
+      for(; Exp1.More(); Exp1.Next()) {
+	E1 = TopoDS::Edge(Exp1.Current());
+	if(!BRep_Tool::Degenerated(E1))
+	  break;
+      }
+      for(; Exp2.More(); Exp2.Next()) {
+	E2 = TopoDS::Edge(Exp2.Current());
+	if(!BRep_Tool::Degenerated(E2))
+	  break;
+      }
+
+      Handle(Geom_Curve) C = BRep_Tool::Curve(E1, f, l);
+      C->D1(f, P1, D1);
+      Handle(Geom2d_Curve) C2 = BRep_Tool::CurveOnSurface(E1, TopoDS::Face(S1), f, l);
+      gp_Pnt2d P2d = C2->Value(f);
+      Handle(Geom_Surface) S = BRep_Tool::Surface(TopoDS::Face(S1));
+      S->D1(P2d.X(), P2d.Y(), P1, V1, V2);
+      N1 = V1^V2;
+
+      C = BRep_Tool::Curve(E2, f, l);
+      C->D1(f, P2, D2);
+      C2 = BRep_Tool::CurveOnSurface(E2, TopoDS::Face(S2), f, l);
+      P2d = C2->Value(f);
+      S = BRep_Tool::Surface(TopoDS::Face(S2));
+      S->D1(P2d.X(), P2d.Y(), P2, V1, V2);
+      N2 = V1^V2;
+
+      gp_Ax3 Ax1(P1, N1, D1);
+      gp_Ax3 Ax2(P2, N2, D2);
+
+      theTransformation.SetDisplacement(Ax1, Ax2);
+    }
+
+    BRepBuilderAPI_Transform myBRepTransformation(aShape1, theTransformation, Standard_False);
+    tds = myBRepTransformation.Shape();
+  }
+  catch(Standard_Failure) {
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakePosition", SALOME::BAD_PARAM);
+  }
+  
+  if(!tds.IsNull()) {
+    result = CreateObject(tds);
+    InsertInLabelOneArgument(aShape1, shape1, tds, result, myCurrentOCAFDoc);
+  }
+  return result;
+}
+
+
+//=================================================================================
 // function : MakeScaleTransform()
 // purpose  : Make a shape multipling another by a scale factor
 //=================================================================================
@@ -5170,6 +5418,215 @@ void GEOM_Gen_i::ExportSTEP(const char* filename,GEOM::GEOM_Shape_ptr theShape)
     {
       THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::ExportBREP", SALOME::BAD_PARAM);
     }
+}
+
+
+//=================================================================================
+// function : InitAssembly()
+// purpose  :
+//=================================================================================
+GEOM::GEOM_Assembly_ptr GEOM_Gen_i::InitAssembly() throw (SALOME::SALOME_Exception)
+{
+  Kinematic_Assembly* tds;
+
+  try {
+    tds = new Kinematic_Assembly();
+  }
+  catch(Standard_Failure)
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::InitAssembly", SALOME::BAD_PARAM);
+
+  /* Create the CORBA servant holding the TopoDS_Shape */
+  GEOM_Assembly_i * Assembly_servant = new GEOM_Assembly_i(tds);
+  GEOM::GEOM_Assembly_var Assembly = GEOM::GEOM_Assembly::_narrow(Assembly_servant->_this()); 
+  
+  /* Create and set the name (IOR of shape converted into a string) */
+  string name_ior = _orb->object_to_string(Assembly);
+  Assembly->Name(name_ior.c_str());
+
+  GEOMDS_Commands GC(myCurrentOCAFDoc->Main());
+  /* add attributs S and mystr in a new label */
+  TDF_Label Lab = GC.AddAssembly(*tds, Assembly->Name());
+
+  TCollection_AsciiString entry;
+  TDF_Tool::Entry(Lab, entry);
+  const char *ent = entry.ToCString();
+
+  Assembly->ShapeId(ent);
+  return Assembly;  
+}
+
+
+//=================================================================================
+// function : AddContact()
+// purpose  :
+//=================================================================================
+GEOM::GEOM_Contact_ptr GEOM_Gen_i::AddContact(GEOM::GEOM_Assembly_ptr Ass,
+					      GEOM::GEOM_Shape_ptr Shape1,
+					      GEOM::GEOM_Shape_ptr Shape2, 
+					      const short type,
+					      CORBA::Double step)
+  throw (SALOME::SALOME_Exception)
+{
+  Kinematic_Contact* tds;
+  TDF_Label mainRefLab;
+  TDF_Tool::Label(myCurrentOCAFDoc->GetData(), Ass->ShapeId(), mainRefLab);
+
+  try {
+    TopoDS_Shape aShape1 = GetTopoShape(Shape1);
+    TopoDS_Shape aShape2 = GetTopoShape(Shape2);
+    tds = new Kinematic_Contact(aShape1, aShape2, type, step);
+  }
+  catch(Standard_Failure)
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::AddContact", SALOME::BAD_PARAM);
+
+  /* Create the CORBA servant holding the TopoDS_Shape */
+  GEOM::GEOM_Gen_ptr engine = POA_GEOM::GEOM_Gen::_this();
+  GEOM_Contact_i * Contact_servant = new GEOM_Contact_i(tds, Shape1, Shape2, engine);
+  GEOM::GEOM_Contact_var Contact = GEOM::GEOM_Contact::_narrow(Contact_servant->_this());
+
+  /* Create and set the name (IOR of shape converted into a string) */
+  string name_ior = _orb->object_to_string(Contact);
+  Contact->Name(name_ior.c_str());
+
+  GEOMDS_Commands GC(myCurrentOCAFDoc->Main());
+  /* add attributs S and mystr in a new label */
+  TDF_Label LabContact = GC.AddContact(*tds, mainRefLab, Contact->Name());
+
+  TCollection_AsciiString entry;
+  TDF_Tool::Entry(LabContact, entry);
+  Contact->ShapeId(entry.ToCString());
+
+  Ass->AddContact(Contact);
+  return Contact;
+}
+
+
+//=================================================================================
+// function : AddAnimation()
+// purpose  :
+//=================================================================================
+GEOM::GEOM_Animation_ptr GEOM_Gen_i::AddAnimation(GEOM::GEOM_Assembly_ptr Ass, 
+						  GEOM::GEOM_Shape_ptr Shape1,
+						  CORBA::Double Duration,
+						  const short NbSeq)
+  throw (SALOME::SALOME_Exception)
+{
+  Kinematic_Animation* tds;
+  TDF_Label mainRefLab;
+  TDF_Tool::Label(myCurrentOCAFDoc->GetData(), Ass->ShapeId(), mainRefLab);
+  GEOMDS_Commands GC(myCurrentOCAFDoc->Main());
+
+  try {
+    Kinematic_Assembly* aAss = new Kinematic_Assembly();
+    Standard_Boolean test = GC.GetAssembly(mainRefLab, *aAss);
+    TopoDS_Shape aShape1 = GetTopoShape(Shape1);
+    tds = new Kinematic_Animation(aAss, aShape1, Duration, NbSeq);
+  }
+  catch(Standard_Failure)
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::AddAnimation", SALOME::BAD_PARAM);
+
+  /* Create the CORBA servant holding the TopoDS_Shape */
+  GEOM_Animation_i * Animation_servant = new GEOM_Animation_i(tds, Ass, Shape1);
+  GEOM::GEOM_Animation_var Animation = GEOM::GEOM_Animation::_narrow(Animation_servant->_this());
+  
+  /* Create and set the name (IOR of shape converted into a string) */
+  string name_ior = _orb->object_to_string(Animation);
+  Animation->Name(name_ior.c_str());
+
+  /* add attributs S and mystr in a new label */
+  TDF_Label Lab = GC.AddAnimation(*tds, mainRefLab, Animation->Name());
+
+  TCollection_AsciiString entry;
+  TDF_Tool::Entry(Lab, entry);
+  const char *ent = entry.ToCString();
+
+  Animation->ShapeId(ent);
+  return Animation;  
+}
+
+
+//=================================================================================
+// function : SetPosition()
+// purpose  :
+//=================================================================================
+void GEOM_Gen_i::SetPosition(GEOM::GEOM_Contact_ptr Contact)
+  throw (SALOME::SALOME_Exception)
+{
+  try {
+    TDF_Label mainRefLab;
+    TDF_Tool::Label(myCurrentOCAFDoc->GetData(), Contact->ShapeId(), mainRefLab);
+    GEOMDS_Commands GC(myCurrentOCAFDoc->Main());
+    
+    GEOM::GEOM_Position_var myGeomPosition = GEOM::GEOM_Position::_narrow(Contact->GetPosition());
+    GEOM::PointStruct P0 = myGeomPosition->GetOrigin();
+    GEOM::DirStruct VX = myGeomPosition->GetVX();
+    GEOM::DirStruct VY = myGeomPosition->GetVY();
+    GEOM::DirStruct VZ = myGeomPosition->GetVZ();
+
+    GC.SetPosition(mainRefLab, P0.x, P0.y, P0.z,
+		   VX.PS.x, VX.PS.y, VX.PS.z,
+		   VY.PS.x, VY.PS.y, VY.PS.z,
+		   VZ.PS.x, VZ.PS.y, VZ.PS.z);
+  }
+  catch(Standard_Failure)
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::SetPosition", SALOME::BAD_PARAM);
+
+  return;
+}
+
+
+//=================================================================================
+// function : SetRotation()
+// purpose  :
+//=================================================================================
+void GEOM_Gen_i::SetRotation(GEOM::GEOM_Contact_ptr Contact)
+  throw (SALOME::SALOME_Exception)
+{
+  try {
+    TDF_Label mainRefLab;
+    TDF_Tool::Label(myCurrentOCAFDoc->GetData(), Contact->ShapeId(), mainRefLab);
+    GEOMDS_Commands GC(myCurrentOCAFDoc->Main());
+
+    GEOM::GEOM_Rotation_var myGeomRotation = GEOM::GEOM_Rotation::_narrow(Contact->GetRotation());
+    int aRot1 = myGeomRotation->GetRot1();
+    int aRot2 = myGeomRotation->GetRot2();
+    int aRot3 = myGeomRotation->GetRot3();
+    double aVal1 = myGeomRotation->GetVal1();
+    double aVal2 = myGeomRotation->GetVal2();
+    double aVal3 = myGeomRotation->GetVal3();
+
+    GC.SetRotation(mainRefLab, aRot1, aRot2, aRot3, aVal1, aVal2, aVal3);
+  }
+  catch(Standard_Failure)
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::SetRotation", SALOME::BAD_PARAM);
+
+  return;
+}
+
+
+//=================================================================================
+// function : SetTranslation()
+// purpose  :
+//=================================================================================
+void GEOM_Gen_i::SetTranslation(GEOM::GEOM_Contact_ptr Contact)
+  throw (SALOME::SALOME_Exception)
+{
+  try {
+    TDF_Label mainRefLab;
+    TDF_Tool::Label(myCurrentOCAFDoc->GetData(), Contact->ShapeId(), mainRefLab);
+    GEOMDS_Commands GC(myCurrentOCAFDoc->Main());
+
+    GEOM::GEOM_Translation_var myGeomTranslation = GEOM::GEOM_Translation::_narrow(Contact->GetTranslation());
+    double aValX = myGeomTranslation->GetValX();
+    double aValY = myGeomTranslation->GetValY();
+    double aValZ = myGeomTranslation->GetValZ();
+
+    GC.SetTranslation(mainRefLab, aValX, aValY, aValZ);
+  }
+  catch(Standard_Failure)
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::SetTranslation", SALOME::BAD_PARAM);
+
+  return;
 }
 
 
