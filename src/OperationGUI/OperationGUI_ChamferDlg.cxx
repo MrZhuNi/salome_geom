@@ -72,23 +72,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(QWidget* parent, const char* na
   Group1->TextLabel3->setText(tr("GEOM_D2"));
   Group1->PushButton1->setPixmap(image3);
 
-  Group2 = new DlgRef_1Sel2Spin(this, "Group2");
-  Group2->GroupBox1->setTitle(tr("GEOM_CHAMFER_EDGES"));
-  Group2->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
-  Group2->TextLabel2->setText(tr("GEOM_D1"));
-  Group2->TextLabel3->setText(tr("GEOM_D2"));
-  Group2->PushButton1->setPixmap(image3);
-
-  Group3 = new DlgRef_1Sel2Spin(this, "Group3");
-  Group3->GroupBox1->setTitle(tr("GEOM_CHAMFER_FACES"));
-  Group3->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
-  Group3->TextLabel2->setText(tr("GEOM_D1"));
-  Group3->TextLabel3->setText(tr("GEOM_D2"));
-  Group3->PushButton1->setPixmap(image3);
-
   Layout1->addWidget(Group1, 1, 0);
-  Layout1->addWidget(Group2, 1, 0);
-  Layout1->addWidget(Group3, 1, 0);
   /***************************************************************/
 
   /* Initialisations */
@@ -127,18 +111,10 @@ void OperationGUI_ChamferDlg::Init(Handle (AIS_InteractiveContext) ic)
   double SpecificStep = 10.0;
   /* min, max, step and decimals for spin boxes */
   Group1->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
-  Group2->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
-  Group3->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
   Group1->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
-  Group2->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
-  Group3->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
 
   Group1->SpinBox_DX->SetValue(myD1);
-  Group2->SpinBox_DX->SetValue(myD1);
-  Group3->SpinBox_DX->SetValue(myD1);
   Group1->SpinBox_DY->SetValue(myD2);
-  Group2->SpinBox_DY->SetValue(myD2);
-  Group3->SpinBox_DY->SetValue(myD2);
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
@@ -150,32 +126,16 @@ void OperationGUI_ChamferDlg::Init(Handle (AIS_InteractiveContext) ic)
   connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
 
   connect(Group1->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(Group2->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(Group3->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-
   connect(Group1->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(Group2->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(Group3->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(Group1->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group2->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group3->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(Group1->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group2->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group3->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group1->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group2->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group3->SpinBox_DX, SLOT(SetStep(double)));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group1->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group2->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group3->SpinBox_DY, SLOT(SetStep(double)));
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   /* displays Dialog */
-  Group2->hide();
-  Group3->hide();
   Group1->show();
   this->show();
 
@@ -210,51 +170,27 @@ void OperationGUI_ChamferDlg::ConstructorsClicked(int constructorId)
   }
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  Group1->LineEdit1->setText("");
+  Group1->SpinBox_DX->SetValue(myD1);
+  Group1->SpinBox_DY->SetValue(myD2);
   switch (constructorId)
     {
     case 0: /* Chamfer All */
       {
-	Group2->hide();
-	Group3->hide();
-	resize(0, 0);
-	Group1->show();
-
-	myEditCurrentArgument = Group1->LineEdit1;
-	Group1->LineEdit1->setText("");
+	Group1->GroupBox1->setTitle(tr("GEOM_CHAMFER_ALL"));
 	myShapeType = -1;
-
-	Group1->SpinBox_DX->SetValue(myD1);
-	Group1->SpinBox_DY->SetValue(myD2);
 	break;
       }
     case 1: /* Chamfer edges */
       {
-	Group1->hide();
-	Group3->hide();
-	resize(0, 0);
-	Group2->show();
-
-	myEditCurrentArgument = Group2->LineEdit1;
-	Group2->LineEdit1->setText("");
+	Group1->GroupBox1->setTitle(tr("GEOM_CHAMFER_EDGES"));
 	myShapeType = 6;
-
-	Group2->SpinBox_DX->SetValue(myD1);
-	Group2->SpinBox_DY->SetValue(myD2);
 	break;
       }
     case 2: /* Chamfer Faces */
       {
-	Group1->hide();
-	Group2->hide();
-	resize(0, 0);
-	Group3->show();
-
-	myEditCurrentArgument = Group3->LineEdit1;
-	Group3->LineEdit1->setText("");
+	Group1->GroupBox1->setTitle(tr("GEOM_CHAMFER_FACES"));
 	myShapeType = 4;
-
-	Group3->SpinBox_DX->SetValue(myD1);
-	Group3->SpinBox_DY->SetValue(myD2);
 	break;
       }
     }
@@ -382,7 +318,7 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
 	}
       }
     }
-    if(myConstructorId == 0)
+    if(myOkShape && QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myConstructorId == 0)
       this->MakePreview();
 
   }
@@ -399,27 +335,6 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
 
 
 //=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void OperationGUI_ChamferDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if(send == Group1->LineEdit1)
-    myEditCurrentArgument = Group1->LineEdit1;
-  else if (send == Group2->LineEdit1)
-    myEditCurrentArgument = Group2->LineEdit1;
-  else if (send == Group3->LineEdit1)
-    myEditCurrentArgument = Group3->LineEdit1;
-  else
-    return;
-
-  GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
-}
-
-
-//=================================================================================
 // function : SetEditCurrentArgument()
 // purpose  :
 //=================================================================================
@@ -427,18 +342,9 @@ void OperationGUI_ChamferDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();  
 
-  if(send == Group1->PushButton1) {
+  if(send == Group1->PushButton1)
     Group1->LineEdit1->setFocus();
-    myEditCurrentArgument = Group1->LineEdit1;
-  }
-  else if(send == Group2->PushButton1) {
-    Group2->LineEdit1->setFocus();
-    myEditCurrentArgument = Group2->LineEdit1;
-  }
-  else if(send == Group3->PushButton1) {
-    Group3->LineEdit1->setFocus();
-    myEditCurrentArgument = Group3->LineEdit1;
-  }
+
   this->SelectionIntoArgument();
   return;
 }
@@ -499,24 +405,20 @@ void OperationGUI_ChamferDlg::closeEvent(QCloseEvent* e)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void OperationGUI_ChamferDlg::ValueChangedInSpinBox( double newValue )
+void OperationGUI_ChamferDlg::ValueChangedInSpinBox(double newValue)
 {
   myGeomBase->EraseSimulationShape(); 
   mySimulationTopoDs.Nullify();
 
   QObject* send = (QObject*)sender();
-  if(send == Group1->SpinBox_DX || send == Group2->SpinBox_DX || send == Group3->SpinBox_DX) { /* D1 */
+  if(send == Group1->SpinBox_DX)  /* D1 */
     myD1 = newValue;
-    if(myConstructorId == 0)
-      this->MakePreview();
-    return ;
-  } 
-  else if(send == Group1->SpinBox_DY || send == Group2->SpinBox_DY || send == Group3->SpinBox_DY) { /* D2 */
+  else if(send == Group1->SpinBox_DY)  /* D2 */
     myD2 = newValue;
-    if(myConstructorId == 0)
-      this->MakePreview();
-    return;
-  }
+
+  if(myOkShape && QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myConstructorId == 0)
+    this->MakePreview();
+
   return;
 }
 
@@ -548,45 +450,45 @@ void OperationGUI_ChamferDlg::ResetStateOfDialog()
 //=================================================================================
 void OperationGUI_ChamferDlg::MakePreview()
 {
-  QApplication::setOverrideCursor( Qt::waitCursor );
-  TopoDS_Shape tds ;
-  try
-  {
-  BRepFilletAPI_MakeChamfer MC(myShape);
-  switch (myConstructorId)
-    {
-    case 0: /* Chamfer All */
+  QApplication::setOverrideCursor(Qt::waitCursor);
+  TopoDS_Shape tds;
+
+  try {
+    BRepFilletAPI_MakeChamfer MC(myShape);
+    switch(myConstructorId)
       {
-	TopTools_IndexedDataMapOfShapeListOfShape M;
-	TopExp::MapShapesAndAncestors(myShape,TopAbs_EDGE,TopAbs_FACE,M);
-	for (int i = 1;i<=M.Extent();i++) 
-	  {
+      case 0: /* Chamfer All */
+	{
+	  TopTools_IndexedDataMapOfShapeListOfShape M;
+	  TopExp::MapShapesAndAncestors(myShape, TopAbs_EDGE, TopAbs_FACE, M);
+	  for(int i = 1; i <= M.Extent(); i++) {
 	    TopoDS_Edge E = TopoDS::Edge(M.FindKey(i));
 	    TopoDS_Face F = TopoDS::Face(M.FindFromIndex(i).First());
-	    if (!BRepTools::IsReallyClosed(E, F) && !BRep_Tool::Degenerated(E))
-	      MC.Add(myD1, myD2,E,F);
+	    if(!BRepTools::IsReallyClosed(E, F) && !BRep_Tool::Degenerated(E))
+	      MC.Add(myD1, myD2, E, F);
 	  }
-	tds = MC.Shape();
-	break;
+	  tds = MC.Shape();
+	  break;
+	}
+      //    case 1: /* Chamfer edges */
+      //    case 2: /* Chamfer Faces */
       }
-//    case 1: /* Chamfer edges */
-//    case 2: /* Chamfer Faces */
-    }
-   if (!tds.IsNull()) 
-    {
-      mySimulationTopoDs = tds;
-      myGeomBase->DisplaySimulationShape( mySimulationTopoDs ) ; 
-    }
 
-  }  
-  catch(Standard_Failure)
-    {
-      QAD_MessageBox::warn1 (QAD_Application::getDesktop(), tr("GEOM_WRN_WARNING"), tr("GEOM_CHAMFER_ABORT").arg(myD1).arg(myD2), tr("GEOM_BUT_OK"));
-      Group1->SpinBox_DX->SetValue(5.0);
-      Group1->SpinBox_DY->SetValue(5.0);
-      myGeomBase->EraseSimulationShape() ; 
-      mySimulationTopoDs.Nullify() ;
-      QApplication::restoreOverrideCursor();
+    if(!tds.IsNull()) {
+      mySimulationTopoDs = tds;
+      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
     }
+  }
+  catch(Standard_Failure) {
+    QApplication::restoreOverrideCursor();
+    QAD_MessageBox::warn1 (QAD_Application::getDesktop(), tr("GEOM_WRN_WARNING"), tr("GEOM_CHAMFER_ABORT").arg(myD1).arg(myD2), tr("GEOM_BUT_OK"));
+    QApplication::setOverrideCursor(Qt::waitCursor);
+    myGeomBase->EraseSimulationShape(); 
+    mySimulationTopoDs.Nullify();
+    Group1->SpinBox_DX->SetValue(5.0);
+    Group1->SpinBox_DY->SetValue(5.0);
+  }
+
   QApplication::restoreOverrideCursor();
+  return;
 }
