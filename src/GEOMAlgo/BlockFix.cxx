@@ -60,7 +60,8 @@ static void FixResult(const TopoDS_Shape& result,
     TopLoc_Location L;
     Handle(Geom_Surface) Surf = BRep_Tool::Surface(aFace,L);
     
-    if(Surf->IsKind(STANDARD_TYPE(Geom_SphericalSurface))) {
+    if (Surf->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
+        Surf->IsKind(STANDARD_TYPE(Geom_CylindricalSurface))) {
     
       Standard_Integer nbWires = 0;
       for (TopExp_Explorer ex_w(aFace,TopAbs_WIRE); ex_w.More(); ex_w.Next()) {
