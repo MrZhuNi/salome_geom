@@ -529,7 +529,7 @@ bool GeometryGUI::CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QStr
 // function : activeStudyChanged()
 // purpose  : static
 //=================================================================================
-void GeometryGUI::activeStudyChanged(QAD_Desktop* parent)
+bool GeometryGUI::ActiveStudyChanged(QAD_Desktop* parent)
 {
   GeometryGUI::GetOrCreateGeometryGUI(parent); 
 
@@ -562,7 +562,7 @@ void GeometryGUI::activeStudyChanged(QAD_Desktop* parent)
   // PAL5356: update VTK selection
   ::UpdateVtkSelection(parent);
 
-  return;
+  return true;
 }
 
 
@@ -599,4 +599,12 @@ void GeometryGUI::Deactivate()
 {
   if ( GeomGUI )
     GeomGUI->EmitSignalCloseAllDialogs();
+}
+
+static GeometryGUI aGUI("");
+extern "C"
+{
+  Standard_EXPORT SALOMEGUI* GetComponentGUI() {
+    return &aGUI;
+  }
 }

@@ -41,7 +41,7 @@ class GeometryGUI : public SALOMEGUI
   Q_OBJECT /* for QT compatibility */
 
 public :
-  GeometryGUI( const QString& name, QObject* parent = 0 );
+  GeometryGUI( const QString& name = "", QObject* parent = 0 );
   ~GeometryGUI();
   
   static GEOMContext* GetOrCreateGeometryGUI(QAD_Desktop* desktop);
@@ -52,7 +52,7 @@ public :
   virtual bool OnMouseMove(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
   virtual bool OnKeyPress(QKeyEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
   virtual bool SetSettings(QAD_Desktop* parent);
-  virtual void activeStudyChanged(QAD_Desktop* parent);
+  virtual bool ActiveStudyChanged(QAD_Desktop* parent);
   virtual void BuildPresentation(const Handle(SALOME_InteractiveObject)&);
   virtual void DefinePopup(QString & theContext, QString & theParent, QString & theObject);
   virtual bool CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QString& theContext,
