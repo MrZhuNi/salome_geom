@@ -25,10 +25,12 @@ arc.png \
 archimede.png \
 axisinertia.png \
 basicproperties.png \
+bezier.png \
 bounding.png \
 box.png \
 box2points.png \
 boxdxyz.png \
+bspline.png \
 build_compound.png \
 build_edge.png \
 build_face.png \
@@ -100,6 +102,7 @@ sketch.png \
 sphere.png \
 spheredxyz.png \
 spherepoint.png \
+spline.png \
 subshape.png \
 supressHolesOnFaceShell.png \
 supressface.png \

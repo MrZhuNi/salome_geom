@@ -68,8 +68,8 @@ PrimitiveGUI_CylinderDlg::PrimitiveGUI_CylinderDlg(QWidget* parent, const char* 
 
   GroupDimensions = new DlgRef_2Spin(this, "GroupDimensions");
   GroupDimensions->GroupBox1->setTitle(tr("GEOM_BOX_OBJ"));
-  GroupDimensions->TextLabel1->setText(tr("GEOM_HEIGHT"));
-  GroupDimensions->TextLabel2->setText(tr("GEOM_RADIUS"));
+  GroupDimensions->TextLabel1->setText(tr("GEOM_RADIUS"));
+  GroupDimensions->TextLabel2->setText(tr("GEOM_HEIGHT"));
 
   Layout1->addWidget(GroupPoints, 1, 0);
   Layout1->addWidget(GroupDimensions, 1, 0);

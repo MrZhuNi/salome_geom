@@ -28,6 +28,7 @@
 
 import salome
 import SALOMEDS
+import sys
 #import SALOMEDS_Attributes_idl
 
 #NRI : BugID 1682 : from libSALOME_Swig import *
@@ -474,3 +475,8 @@ def Archimede(aShape,weight,WaterDensity,MeshingDeflection):
 def CheckShape(aShape):	
     Status = geom.CheckShape(aShape)
     return Status
+
+def Path(aPath):
+    paths = sys.path
+    if not aPath in paths:
+       sys.path.append(aPath)

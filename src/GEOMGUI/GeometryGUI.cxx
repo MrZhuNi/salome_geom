@@ -121,6 +121,7 @@ bool GeometryGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
      theCommandID == 413 ||  // MENU SETTINGS - ISOS
      theCommandID == 414 ||  // MENU SETTINGS - STEP VALUE FOR SPIN BOXES
      theCommandID == 5103 || // MENU TOOLS - CHECK GEOMETRY
+     theCommandID == 5104 || // MENU TOOLS - LOAD SCRIPT
      theCommandID == 8032 || // POPUP VIEWER - COLOR
      theCommandID == 8033 || // POPUP VIEWER - TRANSPARENCY
      theCommandID == 8034 || // POPUP VIEWER - ISOS
@@ -169,7 +170,8 @@ bool GeometryGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
     if(!GeomGUI->LoadLibrary("libSketcherGUI.so")) 
       return false;
   }
-  else if(theCommandID == 407 ||  // MENU BUILD - EXPLODE
+  else if(theCommandID == 406 ||  // MENU BUILD - SPLINE
+	  theCommandID == 407 ||  // MENU BUILD - EXPLODE
 	  theCommandID == 4081 || // MENU BUILD - EDGE
 	  theCommandID == 4082 || // MENU BUILD - WIRE
 	  theCommandID == 4083 || // MENU BUILD - FACE

@@ -21,66 +21,57 @@
 //
 //
 //
-//  File   : BasicGUI_VectorDlg.h
-//  Author : Lucien PIGNOLONI
+//  File   : BuildGUI_SplineDlg.h
+//  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header$
+//  $Header: 
 
-#ifndef DIALOGBOX_VECTOR_H
-#define DIALOGBOX_VECTOR_H
+#ifndef DIALOGBOX_SPLINE_H
+#define DIALOGBOX_SPLINE_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel_QTD.h"
-#include "DlgRef_3Spin1Check.h"
+#include "DlgRef_1Sel_QTD.h"
 
-#include "BasicGUI.h"
+#include "BuildGUI.h"
+
 #include "GEOM_ShapeTypeFilter.hxx"
 
 //=================================================================================
-// class    : BasicGUI_VectorDlg
+// class    : BuildGUI_WireDlg
 // purpose  :
 //=================================================================================
-class BasicGUI_VectorDlg : public GEOMBase_Skeleton
+class BuildGUI_SplineDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
 public:
-    BasicGUI_VectorDlg(QWidget* parent = 0, const char* name = 0, BasicGUI* theBasicGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
-    ~BasicGUI_VectorDlg();
+    BuildGUI_SplineDlg(QWidget* parent = 0, const char* name = 0, BuildGUI* theBuildGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
+    ~BuildGUI_SplineDlg();
 
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
-    bool AddArrowToSimulation(TopoDS_Shape& modifiedShape);
+    void MakeSplineSimulationAndDisplay();
 
-    BasicGUI* myBasicGUI;
+    BuildGUI* myBuildGUI;
 
-    double step;
     int myConstructorId;
-    Handle(GEOM_ShapeTypeFilter) myVertexFilter;   /* Filter selection */
+    Handle(GEOM_ShapeTypeFilter) myVertexFilter;  /* filter for selection */
 
-    gp_Pnt myPoint1;   /* Points containing the vector */   
-    gp_Pnt myPoint2;
-    bool myOkPoint1;   /* Are true when myPoint is defined */    
-    bool myOkPoint2; 
-    double myDx;
-    double myDy;
-    double myDz;
+    GEOM::GEOM_Gen::ListOfIOR myListShapes;
+    bool myOkListShapes;   /* to check when arguments is defined */
 
-    DlgRef_2Sel_QTD* GroupPoints;
-    DlgRef_3Spin1Check* GroupDimensions;
+    DlgRef_1Sel_QTD* GroupBezier;
+    DlgRef_1Sel_QTD* GroupBSpline;
 
 private slots:
     void ClickOnOk();
     void ClickOnApply();
     void ActivateThisDialog();
-    void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
     void ConstructorsClicked(int constructorId);
-    void ValueChangedInSpinBox(double newValue);
-    void ReverseVector(int state);
 
 };
 
-#endif // DIALOGBOX_VECTOR_H
+#endif // DIALOGBOX_SPLINE_H

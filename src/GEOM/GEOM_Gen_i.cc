@@ -46,12 +46,15 @@ using namespace std;
 #include <gp_Elips.hxx>
 #include <Geom_Plane.hxx>
 #include <Geom_Line.hxx>
+#include <Geom_BezierCurve.hxx>
+#include <Geom_BSplineCurve.hxx>
 #include <GeomFill_Line.hxx>
 #include <GeomFill_AppSurf.hxx>
 #include <GeomFill_SectionGenerator.hxx>
 #include <Geom_BSplineSurface.hxx>
 #include <Geom_TrimmedCurve.hxx>
 #include <GC_MakeArcOfCircle.hxx>
+#include <GeomAPI_PointsToBSpline.hxx>
 #include <GC_Root.hxx>
 
 #include <BRepCheck_Analyzer.hxx>
@@ -129,6 +132,7 @@ using namespace std;
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TCollection_ExtendedString.hxx>
+#include <TColgp_Array1OfPnt.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
@@ -4419,6 +4423,87 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeWire( const GEOM::GEOM_Gen::ListOfIOR& List
   return result;
 }
 
+
+//=================================================================================
+// function : MakeBezier()
+// purpose  : Make a wire from a list containing many points
+//=================================================================================
+GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeBezier( const GEOM::GEOM_Gen::ListOfIOR& ListShapes )
+  throw (SALOME::SALOME_Exception)
+{
+  GEOM::GEOM_Shape_var result;
+  TopoDS_Shape tds, Shape;
+  TColgp_Array1OfPnt CurvePoints(1, ListShapes.length());
+  
+  try {
+    for(unsigned int i = 0; i < ListShapes.length(); i++) {
+      GEOM::GEOM_Shape_var aShape = GetIORFromString(ListShapes[i]);    
+      Shape = GetTopoShape(aShape);
+      if(Shape.IsNull()) {
+	THROW_SALOME_CORBA_EXCEPTION("MakeBezier aborted : null shape during operation", SALOME::BAD_PARAM);
+      }
+      if(Shape.ShapeType() == TopAbs_VERTEX) {
+	const gp_Pnt& P = BRep_Tool::Pnt(TopoDS::Vertex(Shape));
+	CurvePoints.SetValue(i + 1, P);
+      }
+    }
+    Handle(Geom_BezierCurve) GBC = new Geom_BezierCurve(CurvePoints);
+    tds = BRepBuilderAPI_MakeEdge(GBC);
+  }
+  catch(Standard_Failure) {
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakeBezier", SALOME::BAD_PARAM);
+  }
+  
+  if( tds.IsNull() ) {
+    THROW_SALOME_CORBA_EXCEPTION("Make Bezier operation aborted : null result", SALOME::BAD_PARAM);
+  }
+  else {
+    result = CreateObject(tds);
+    InsertInLabelMoreArguments(tds, result, ListShapes, myCurrentOCAFDoc);   
+  }
+  return result;
+}
+
+
+//=================================================================================
+// function : MakeBSpline()
+// purpose  : Make a wire from a list containing many points
+//=================================================================================
+GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeBSpline( const GEOM::GEOM_Gen::ListOfIOR& ListShapes )
+  throw (SALOME::SALOME_Exception)
+{
+  GEOM::GEOM_Shape_var result;
+  TopoDS_Shape tds, Shape;
+  TColgp_Array1OfPnt CurvePoints(1, ListShapes.length());
+  
+  try {
+    for(unsigned int i = 0; i < ListShapes.length(); i++) {
+      GEOM::GEOM_Shape_var aShape = GetIORFromString(ListShapes[i]);    
+      Shape = GetTopoShape(aShape);
+      if(Shape.IsNull()) {
+	THROW_SALOME_CORBA_EXCEPTION("MakeBSpline aborted : null shape during operation", SALOME::BAD_PARAM);
+      }
+      if(Shape.ShapeType() == TopAbs_VERTEX) {
+	const gp_Pnt& P = BRep_Tool::Pnt(TopoDS::Vertex(Shape));
+ 	CurvePoints.SetValue(i + 1, P);
+      }
+    }
+    GeomAPI_PointsToBSpline GBC(CurvePoints);
+    tds = BRepBuilderAPI_MakeEdge(GBC);
+  }
+  catch(Standard_Failure) {
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakeBSpline", SALOME::BAD_PARAM);
+  }
+  
+  if( tds.IsNull() ) {
+    THROW_SALOME_CORBA_EXCEPTION("Make BSpline operation aborted : null result", SALOME::BAD_PARAM);
+  }
+  else {
+    result = CreateObject(tds) ;
+    InsertInLabelMoreArguments(tds, result, ListShapes, myCurrentOCAFDoc) ;   
+  }
+  return result;
+}
 
 
 //=================================================================================

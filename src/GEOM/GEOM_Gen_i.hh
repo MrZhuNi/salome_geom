@@ -591,6 +591,11 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen,
   GEOM::GEOM_Shape_ptr MakeSolid    (const GEOM::GEOM_Gen::ListOfIOR& ListShapes)
     throw (SALOME::SALOME_Exception) ;
 
+  GEOM::GEOM_Shape_ptr MakeBezier   (const GEOM::GEOM_Gen::ListOfIOR& ListShapes)
+    throw (SALOME::SALOME_Exception) ;
+  GEOM::GEOM_Shape_ptr MakeBSpline  (const GEOM::GEOM_Gen::ListOfIOR& ListShapes)
+    throw (SALOME::SALOME_Exception) ;
+
 
   //-------------------------------------------------------------------//
   // Speciic method Archimede                                          //

@@ -71,6 +71,7 @@
    <endsubmenu />
    <separator pos-id=""/>
    <popup-item item-id="404" pos-id="" label-id="Sketch" icon-id="sketch.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="406" pos-id="" label-id="Spline" icon-id="spline.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <separator pos-id=""/>
    <popup-item item-id="407" pos-id="" label-id="Explode" icon-id="subshape.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <submenu label-id="Build" item-id="408" pos-id="">
@@ -144,6 +145,7 @@
 <menu-item label-id="Tools" item-id="5" pos-id="">
    <separator pos-id=""/>
    <popup-item item-id="5103" pos-id="" label-id="Check Geometry" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="5104" pos-id="" label-id="Load Script" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 </menu-item>
 
 <!-- ********************************* Settings  (menubar) ********************************* -->
@@ -224,7 +226,7 @@
 <!-- ################################# POPUP MENU #################################  -->
 <popupmenu label-id="Popup for Viewer" context-id="" parent-id="Viewer" object-id="">
    <submenu label-id="Properties" item-id="803" pos-id="6">
-      <popup-item item-id="8031" pos-id="" label-id="Wireframe - Shading" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+      <popup-item item-id="8031" pos-id="" label-id="Wireframe - Shading" icon-id="" tooltip-id="" accel-id="Ctrl+D" toggle-id="" execute-action=""/>
       <separator pos-id=""/>
       <popup-item item-id="8032" pos-id="" label-id="Color" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
       <popup-item item-id="8033" pos-id="" label-id="Transparency" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>

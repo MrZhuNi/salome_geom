@@ -47,6 +47,13 @@ using namespace std;
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <Prs3d_IsoAspect.hxx>
 
+#include <vtkBMPReader.h>
+#include <vtkTexture.h>
+#include <vtkTextureMapToPlane.h>
+#include <vtkTransformTextureCoords.h>
+#include <vtkDataSetMapper.h>
+
+#include <qfileinfo.h>
 #include <qcolordialog.h>
 #include <qspinbox.h>
 
@@ -310,6 +317,31 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	PyEditor->handleReturn();
 	break;
       }
+    case 5104: // LOAD SCRIPT
+      {
+	QStringList filtersList;
+	filtersList.append(tr("GEOM_MEN_LOAD_SCRIPT"));
+	filtersList.append(tr("GEOM_MEN_ALL_FILES"));
+
+	QString aFile = QAD_FileDlg::getFileName(QAD_Application::getDesktop(), "", filtersList, tr("GEOM_MEN_IMPORT"), true);
+	if(!aFile.isEmpty()) {
+	  QFileInfo file = aFile;
+	  QApplication::setOverrideCursor(Qt::waitCursor);
+	  QAD_PyEditor* PyEditor = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getPyEditor();
+
+	  PyEditor->setText("import geompy\n");
+	  PyEditor->handleReturn();
+
+	  QStringList aTextList = QStringList::split(".", file.fileName());
+	  PyEditor->setText("geompy.Path('" + file.dirPath() + "')\n");
+	  PyEditor->handleReturn();
+
+	  PyEditor->setText("from " + aTextList.first() + " import *\n");
+	  PyEditor->handleReturn();
+	}
+	QApplication::restoreOverrideCursor();
+	break;
+      }
     case 8032: // COLOR - POPUP VIEWER
       {
 	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
@@ -398,7 +430,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	    
 	  GEOMBase_NbIsosDlg * NbIsosDlg =
 	    new GEOMBase_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE);
-	    
+    
 	  NbIsosDlg->SpinBoxU->setValue(IsoU.toInt());
 	  NbIsosDlg->SpinBoxV->setValue(IsoV.toInt());
 
@@ -406,7 +438,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	    QApplication::setOverrideCursor(Qt::waitCursor);
 	    for(; ic->MoreCurrent(); ic->NextCurrent()) {
 	      Handle(AIS_Drawer) CurDrawer;
-
+	      
 	      CurDrawer = ic->Current()->Attributes();
 	      CurDrawer->UIsoAspect()->SetNumber(NbIsosDlg->SpinBoxU->text().toInt());
 	      CurDrawer->VIsoAspect()->SetNumber(NbIsosDlg->SpinBoxV->text().toInt());
@@ -485,11 +517,11 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 //===============================================================================
 void GEOMToolsGUI::OnEditDelete()
 {
-  if ( QAD_MessageBox::warn2 
-       ( QAD_Application::getDesktop(),
-	 tr ("GEOM_WRN_WARNING"),
-	 tr ("GEOM_REALLY_DELETE"),
-	 tr ("GEOM_BUT_YES"), tr ("GEOM_BUT_NO"), 1, 0, 0) != 1 )
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
+  if(Sel->IObjectCount() == 0)
+    return;
+
+  if(QAD_MessageBox::warn2(QAD_Application::getDesktop(), tr("GEOM_WRN_WARNING"), tr("GEOM_REALLY_DELETE"), tr("GEOM_BUT_YES"), tr("GEOM_BUT_NO"), 1, 0, 0) != 1)
     return;
        
   int nbSf = QAD_Application::getDesktop()->getActiveStudy()->getStudyFramesCount();
@@ -498,42 +530,42 @@ void GEOMToolsGUI::OnEditDelete()
   SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
   SALOMEDS::GenericAttribute_var anAttr;
-  SALOMEDS::AttributeIOR_var     anIOR;
+  SALOMEDS::AttributeIOR_var anIOR;
   
-  SALOME_Selection* Sel = SALOME_Selection::Selection( QAD_Application::getDesktop()->getActiveStudy()->getSelection() );
-  SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
+  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
   for(;It.More();It.Next()) {
     Handle(SALOME_InteractiveObject) IObject = It.Value();
-    if ( IObject->hasEntry() ) {
+    if(IObject->hasEntry()) {
       SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-      SALOMEDS::SObject_var SO = aStudy->FindObjectID( IObject->getEntry() );
+      SALOMEDS::SObject_var SO = aStudy->FindObjectID(IObject->getEntry());
       
       /* Erase child graphical objects */
       SALOMEDS::ChildIterator_var it = aStudy->NewChildIterator(SO);
-      for (; it->More();it->Next()) {
+      for(; it->More();it->Next()) {
 	SALOMEDS::SObject_var CSO= it->Value();
-	if (CSO->FindAttribute(anAttr, "AttributeIOR") ) {
+	if(CSO->FindAttribute(anAttr, "AttributeIOR") ) {
           anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
 	  /* Delete child(s) shape in Client : */
 	  const TCollection_AsciiString ASCior(anIOR->Value()) ;
-	  myGeomGUI->GetShapeReader().RemoveShapeFromBuffer( ASCior ) ;
+	  myGeomGUI->GetShapeReader().RemoveShapeFromBuffer(ASCior);
 
-	  for ( int i = 0; i < nbSf; i++ ) {
+	  for(int i = 0; i < nbSf; i++) {
 	    QAD_StudyFrame* sf = QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i);
-	    if ( sf->getTypeView() == VIEW_OCC ) {
+	    if(sf->getTypeView() == VIEW_OCC) {
 	      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getViewer();
 	      Handle (AIS_InteractiveContext) myContext = v3d->getAISContext();
 	      Handle(GEOM_AISShape) Result = myGeomBase->ConvertIORinGEOMAISShape(anIOR->Value(), found);
-	      if ( found )
-		myContext->Erase( Result, true, false );
-	    } else if ( sf->getTypeView() == VIEW_VTK ) {
+	      if(found)
+		myContext->Erase(Result, true, false);
+	    }
+	    else if(sf->getTypeView() == VIEW_VTK) {
 	      //vtkRenderer* Renderer = ((VTKViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getRenderer();
-	      VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getRWInteractor();
+	      VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getRWInteractor();
 	      GEOM_Actor* ac = myGeomBase->ConvertIORinGEOMActor(anIOR->Value(), found);
-	      if ( found ) {
+	      if(found) {
 		//Renderer->RemoveActor(ac);
-		if ( ac->hasIO() ) 
-		  myRenderInter->Remove( ac->getIO() );
+		if(ac->hasIO()) 
+		  myRenderInter->Remove(ac->getIO());
 	      }
 	    }
 	  }
@@ -541,30 +573,31 @@ void GEOMToolsGUI::OnEditDelete()
       }
       
       /* Erase main graphical object */
-      for ( int i = 0; i < nbSf; i++ ) {
+      for(int i = 0; i < nbSf; i++) {
 	QAD_StudyFrame* sf = QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i);
-	if ( sf->getTypeView() == VIEW_OCC ) {
+	if(sf->getTypeView() == VIEW_OCC) {
 	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getViewer();
-	  Handle (AIS_InteractiveContext) myContext = v3d->getAISContext();
-	  Handle(GEOM_AISShape) Result = myGeomBase->ConvertIOinGEOMAISShape( IObject, found );
-	  if ( found )
-	    myContext->Erase( Result, true, false );
-	} else if ( sf->getTypeView() == VIEW_VTK ) {
+	  Handle(AIS_InteractiveContext) myContext = v3d->getAISContext();
+	  Handle(GEOM_AISShape) Result = myGeomBase->ConvertIOinGEOMAISShape(IObject, found );
+	  if(found)
+	    myContext->Erase(Result, true, false);
+	}
+	else if(sf->getTypeView() == VIEW_VTK) {
 	  VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getRWInteractor();
 	  myRenderInter->Remove( IObject );
 	}
       }
       
       /* Delete main shape in Client : */
-      if (SO->FindAttribute(anAttr, "AttributeIOR") ) {
+      if(SO->FindAttribute(anAttr, "AttributeIOR")) {
         anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
 	const TCollection_AsciiString ASCIor(anIOR->Value()) ;
-	myGeomGUI->GetShapeReader().RemoveShapeFromBuffer( ASCIor ) ;
+	myGeomGUI->GetShapeReader().RemoveShapeFromBuffer(ASCIor);
       }
 
       /* Erase objects in Study */
-      SALOMEDS::SObject_var obj = aStudy->FindObjectID( IObject->getEntry() );
-      if ( !obj->_is_nil() ) {
+      SALOMEDS::SObject_var obj = aStudy->FindObjectID(IObject->getEntry());
+      if(!obj->_is_nil()) {
 	QAD_Operation* op = new SALOMEGUI_ImportOperation(QAD_Application::getDesktop()->getActiveStudy());
 	op->start();
 	aStudyBuilder->RemoveObject(obj);
@@ -575,7 +608,7 @@ void GEOMToolsGUI::OnEditDelete()
   }   /* more/next           */
 
   /* Clear any previous selection */
-  Sel->ClearIObjects() ; 
+  Sel->ClearIObjects(); 
   QAD_Application::getDesktop()->getActiveStudy()->updateObjBrowser();
 }
 

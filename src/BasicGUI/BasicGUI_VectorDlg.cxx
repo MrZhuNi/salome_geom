@@ -99,6 +99,7 @@ BasicGUI_VectorDlg::~BasicGUI_VectorDlg()
 void BasicGUI_VectorDlg::Init()
 {
     /* init variables */
+  myConstructorId = 0;
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
   myDx = 0.0;
@@ -110,7 +111,6 @@ void BasicGUI_VectorDlg::Init()
 
   /*  Vertices Filter for all arguments */
   myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
-  myEdgeFilter = new GEOM_ShapeTypeFilter(TopAbs_EDGE, myGeom);
   mySelection->AddFilter(myVertexFilter);
 
   /* Get setting of step value from file configuration */

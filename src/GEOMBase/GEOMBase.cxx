@@ -552,7 +552,7 @@ bool GEOMBase::Display(GEOM::GEOM_Shape_ptr aShape, Standard_CString name)
     ic->Display(theResult);
   }
 
-  Sel->AddIObject(IO, false);
+  // DCQ Sel->AddIObject(IO, false);
   QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame()->Repaint();
   if(mySettings_AddInStudy)
     AddInStudy(false, IO);
@@ -768,7 +768,7 @@ bool GEOMBase::AddInStudy(bool selection, const Handle(SALOME_InteractiveObject)
     QAD_Application::getDesktop()->getActiveStudy()->updateObjBrowser();
   else {
     QAD_Application::getDesktop()->getActiveStudy()->updateObjBrowser(false);
-    Sel->AddIObject(GIO);
+    // DCQ Sel->AddIObject(GIO);
   }
   return true;
 }

@@ -125,10 +125,10 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       }
     case 212: // MENU VIEW - DISPLAY ALL
       {
-	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
-	  ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->DisplayAll();
-	else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
-	  myDisplayGUI->OnDisplayAll();
+// 	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
+// 	  ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->DisplayAll();
+// 	else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
+	myDisplayGUI->OnDisplayAll();
 	break;
       }
     case 213: // MENU VIEW - DISPLAY ONLY
@@ -488,47 +488,97 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
 //=====================================================================================
 void DisplayGUI::OnDisplayAll(bool onlyPreviousDisplayedObject)
 {
-  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
-    return;
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+    Handle (AIS_InteractiveContext) myContext = v3d->getAISContext();
 
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-  Handle (AIS_InteractiveContext) myContext = v3d->getAISContext();
+    //myContext->Display(v3d->getTrihedron());
 
-  myContext->Display(v3d->getTrihedron());
-
-  if(!onlyPreviousDisplayedObject) {
-    AIS_ListOfInteractive List1;
-    myContext->ObjectsInCollector(List1);
-    AIS_ListIteratorOfListOfInteractive ite1(List1);
-    while(ite1.More()) {
-      if(ite1.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
-	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite1.Value());
-	if(aSh->hasIO()) {
-	  Handle(GEOM_InteractiveObject) GIO = Handle(GEOM_InteractiveObject)::DownCast(aSh->getIO());
-	  if(v3d->isInViewer(GIO, true)) {
+    if(!onlyPreviousDisplayedObject) {
+      SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+      SALOMEDS::SComponent_var SC = aStudy->FindComponent("GEOM");
+      SALOMEDS::ChildIterator_var it = aStudy->NewChildIterator(SC);
+      for(; it->More();it->Next()) {
+	SALOMEDS::SObject_var CSO = it->Value();
+	SALOMEDS::AttributeIOR_var anIOR;
+	SALOMEDS::GenericAttribute_var anAttr;
+	if(CSO->FindAttribute(anAttr, "AttributeIOR")) {
+	  anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+	  Standard_Boolean testResult;
+	  Handle(GEOM_AISShape) aSh = myGeomBase->ConvertIORinGEOMAISShape(anIOR->Value(), testResult);
+	  if(testResult)
 	    myContext->Display(aSh);
+	  else {
+	    GEOM::GEOM_Shape_ptr aShape = myGeom->GetIORFromString(anIOR->Value());
+	    bool AddInSt = myGeomBase->mySettings_AddInStudy;
+	    myGeomBase->mySettings_AddInStudy = false;
+	    myGeomBase->Display(aShape);
+	    myGeomBase->mySettings_AddInStudy = AddInSt;
 	  }
 	}
       }
-      ite1.Next();
+//     AIS_ListOfInteractive List1;
+//     myContext->ObjectsInCollector(List1);
+//     AIS_ListIteratorOfListOfInteractive ite1(List1);
+//     while(ite1.More()) {
+//       cout<<"DCQ 1"<<endl;
+//       if(ite1.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
+// 	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite1.Value());
+// 	if(aSh->hasIO()) {
+// 	  Handle(GEOM_InteractiveObject) GIO = Handle(GEOM_InteractiveObject)::DownCast(aSh->getIO());
+// 	  if(v3d->isInViewer(GIO, true)) {
+// 	    myContext->Display(aSh);
+// 	  }
+// 	}
+//       }
+//       ite1.Next();
+//     }
+    }
+    else {
+      AIS_ListOfInteractive aListDisplayedObject;
+      myContext->DisplayedObjects(aListDisplayedObject);
+      AIS_ListIteratorOfListOfInteractive ite(aListDisplayedObject);
+      while(ite.More()) {
+	if(ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
+	  Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
+	  if (aSh->hasIO()) {
+	    Handle(GEOM_InteractiveObject) GIO = Handle(GEOM_InteractiveObject)::DownCast(aSh->getIO());
+	    if (v3d->isInViewer(GIO,true))
+	      myContext->Display(aSh);
+	  }
+	}
+	ite.Next();
+      }
     }
   }
-  else {
-    AIS_ListOfInteractive aListDisplayedObject;
-    myContext->DisplayedObjects(aListDisplayedObject);
-    AIS_ListIteratorOfListOfInteractive ite(aListDisplayedObject);
-    while(ite.More()) {
-      if(ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
-	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
-	if (aSh->hasIO()) {
-	  Handle(GEOM_InteractiveObject) GIO = Handle(GEOM_InteractiveObject)::DownCast(aSh->getIO());
-	  if (v3d->isInViewer(GIO,true)) {
-	    myContext->Display(aSh);
-	  }
+  else if (QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
+    SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+    SALOMEDS::SComponent_var SC = aStudy->FindComponent("GEOM");
+    SALOMEDS::ChildIterator_var it = aStudy->NewChildIterator(SC);
+    for(; it->More();it->Next()) {
+      SALOMEDS::SObject_var CSO = it->Value();
+      SALOMEDS::AttributeIOR_var anIOR;
+      SALOMEDS::GenericAttribute_var anAttr;
+      if(CSO->FindAttribute(anAttr, "AttributeIOR")) {
+	anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+	Standard_Boolean testResult;
+	GEOM_Actor* aSh = myGeomBase->ConvertIORinGEOMActor(anIOR->Value(), testResult);
+	if(testResult) {
+	  Handle(SALOME_InteractiveObject) IObject = aSh->getIO();
+	  //	  if(myRenderInter->isInViewer(IObject)) {
+	  ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->Display(IObject);
+	  //}
+	}
+	else {
+	  GEOM::GEOM_Shape_ptr aShape = myGeom->GetIORFromString(anIOR->Value());
+	  bool AddInSt = myGeomBase->mySettings_AddInStudy;
+	  myGeomBase->mySettings_AddInStudy = false;
+	  myGeomBase->Display(aShape);
+	  myGeomBase->mySettings_AddInStudy = AddInSt;
 	}
       }
-      ite.Next();
     }
+//       ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->DisplayAll();
   }
   return;
 }

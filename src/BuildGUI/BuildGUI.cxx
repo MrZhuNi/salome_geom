@@ -43,6 +43,7 @@ using namespace std;
 #include <BRep_Builder.hxx>
 
 #include "BuildGUI_SubShapeDlg.h"   // Method SUBSHAPE
+#include "BuildGUI_SplineDlg.h"     // Method SPLINE
 #include "BuildGUI_EdgeDlg.h"       // Method EDGE
 #include "BuildGUI_WireDlg.h"       // Method WIRE
 #include "BuildGUI_FaceDlg.h"       // Method FACE
@@ -84,6 +85,11 @@ bool BuildGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 
   switch (theCommandID)
     {
+    case 406: // GEOM::SPLINE
+      {
+	BuildGUI_SplineDlg *aDlg = new BuildGUI_SplineDlg(parent, "", myBuildGUI, Sel);
+	break;
+      }
     case 407: // EXPLODE : use ic
       {
 	Handle(AIS_InteractiveContext) ic;
@@ -131,6 +137,52 @@ bool BuildGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       }
     }
   return true;
+}
+
+
+//=====================================================================================
+// function : MakeBSplineAndDisplay()
+// purpose  :
+//=====================================================================================
+void BuildGUI::MakeBSplineAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR)
+{
+  try {
+    GEOM::GEOM_Shape_var result = myGeom->MakeBSpline(listShapesIOR);
+    if(result->_is_nil()) {
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
+      return;
+    }
+    result->NameType(tr("GEOM_WIRE"));
+    if(myGeomBase->Display(result))
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+  }
+  catch(const SALOME::SALOME_Exception& S_ex) {
+    QtCatchCorbaException(S_ex);
+  }
+  return;
+}
+
+
+//=====================================================================================
+// function : MakeBSplineAndDisplay()
+// purpose  :
+//=====================================================================================
+void BuildGUI::MakeBezierAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR)
+{
+  try {
+    GEOM::GEOM_Shape_var result = myGeom->MakeBezier(listShapesIOR);
+    if(result->_is_nil()) {
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
+      return;
+    }
+    result->NameType(tr("GEOM_WIRE"));
+    if(myGeomBase->Display(result))
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+  }
+  catch(const SALOME::SALOME_Exception& S_ex) {
+    QtCatchCorbaException(S_ex);
+  }
+  return;
 }
 
 

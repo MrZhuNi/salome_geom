@@ -53,6 +53,9 @@ public :
   void MakeSolidAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
   void MakeCompoundAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
 
+  void MakeBSplineAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
+  void MakeBezierAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
+
     /* Methods for sub shapes explode */
   bool SObjectExist(SALOMEDS::SObject_ptr theFatherObject, const char* IOR);
   bool OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType);  

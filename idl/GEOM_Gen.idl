@@ -230,6 +230,12 @@ module GEOM
 			 in double MeshingDeflection) raises (SALOME::SALOME_Exception);
 
     //-----------------------------------------------------------//
+    // Splines                                                   //
+    //-----------------------------------------------------------//  
+    GEOM_Shape MakeBezier (in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakeBSpline(in ListOfIOR ListShape) raises (SALOME::SALOME_Exception) ;
+
+    //-----------------------------------------------------------//
     // Build                                                     //
     //-----------------------------------------------------------//  
     GEOM_Shape MakeEdge     (in PointStruct pstruct1,

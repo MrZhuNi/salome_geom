@@ -42,6 +42,7 @@ LIB = libBuildGUI.la
 
 LIB_SRC = 	BuildGUI.cxx \
 		BuildGUI_SubShapeDlg.cxx \
+		BuildGUI_SplineDlg.cxx \
 		BuildGUI_EdgeDlg.cxx \
 		BuildGUI_WireDlg.cxx \
 		BuildGUI_FaceDlg.cxx \
@@ -52,6 +53,7 @@ LIB_SRC = 	BuildGUI.cxx \
 LIB_MOC = \
 		BuildGUI.h \
 		BuildGUI_SubShapeDlg.h \
+		BuildGUI_SplineDlg.h \
 		BuildGUI_EdgeDlg.h \
 		BuildGUI_WireDlg.h \
 		BuildGUI_FaceDlg.h \
