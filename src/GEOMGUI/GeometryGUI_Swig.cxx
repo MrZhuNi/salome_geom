@@ -37,6 +37,7 @@
 #include "SALOMEGUI_ImportOperation.h"
 
 #include "OCCViewer_Viewer3d.h"
+#include "OCCViewer_ViewFrame.h"
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>

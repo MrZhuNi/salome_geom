@@ -11,7 +11,7 @@
 
 #include "GEOMImpl_IShapesOperations.hxx"
 
-class GEOM_IShapesOperations_i : 
+class GEOM_IShapesOperations_i :
     public virtual POA_GEOM::GEOM_IShapesOperations,
     public virtual GEOM_IOperations_i
 {
@@ -45,6 +45,9 @@ class GEOM_IShapesOperations_i :
   GEOM::ListOfGO* MakeExplode (GEOM::GEOM_Object_ptr theShape,
 			       const CORBA::Long theShapeType,
 			       const CORBA::Boolean isSorted);
+
+  GEOM::GEOM_Object_ptr GetSubShape (GEOM::GEOM_Object_ptr theMainShape,
+				     const CORBA::Long     theID);
 
   CORBA::Long NumberOfFaces (GEOM::GEOM_Object_ptr theShape);
   CORBA::Long NumberOfEdges (GEOM::GEOM_Object_ptr theShape);

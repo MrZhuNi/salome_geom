@@ -564,23 +564,23 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   Handle(TColStd_HArray1OfInteger) anArray;
 
   TopTools_ListIteratorOfListOfShape itSub (listShape);
-  TCollection_AsciiString anAsciiList="[", anEntry;
+  TCollection_AsciiString anAsciiList = "[", anEntry;
   for (int index = 1; itSub.More(); itSub.Next(), ++index) {
     TopoDS_Shape aValue = itSub.Value();
     anArray = new TColStd_HArray1OfInteger(1,1);
     anArray->SetValue(1, anIndices.FindIndex(aValue));
-    anObj  = GetEngine()->AddSubShape(theShape, anArray);
+    anObj = GetEngine()->AddSubShape(theShape, anArray);
     aSeq->Append(anObj);
 
     TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-    anAsciiList+=anEntry;
-    anAsciiList+=",";
+    anAsciiList += anEntry;
+    anAsciiList += ",";
   }
 
-  anAsciiList.Trunc(anAsciiList.Length()-1);
-  anAsciiList+="]";
+  anAsciiList.Trunc(anAsciiList.Length() - 1);
+  anAsciiList += "]";
 
-  anAsciiList = (TCollection_AsciiString("\n")+anAsciiList);
+  anAsciiList = TCollection_AsciiString("\n") + anAsciiList;
 
   //The explode doesn't change object so no new function is requiered.
   aFunction = theShape->GetLastFunction();
@@ -602,6 +602,47 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   SetErrorCode(OK);
 
   return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  GetSubShape
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSubShape
+                                          (Handle(GEOM_Object)    theMainShape,
+                                           const Standard_Integer theID)
+{
+  SetErrorCode(KO);
+
+  if (theMainShape.IsNull()) return NULL;
+
+  Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
+  anArray->SetValue(1, theID);
+  Handle(GEOM_Object) anObj = GetEngine()->AddSubShape(theMainShape, anArray);
+  if (anObj.IsNull()) {
+    SetErrorCode("Can not get a sub-shape with the given ID");
+    return NULL;
+  }
+
+  //The GetSubShape() doesn't change object so no new function is requiered.
+  Handle(GEOM_Function) aFunction = theMainShape->GetLastFunction();
+
+  //Make a Python command
+  TCollection_AsciiString aDescr ("\n");
+  TCollection_AsciiString anEntry;
+  TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+  aDescr += anEntry + " = IShapesOperations.GetSubShape(";
+  TDF_Tool::Entry(theMainShape->GetEntry(), anEntry);
+  aDescr += anEntry + ", ";
+  aDescr += TCollection_AsciiString(theID) + ")";
+
+  TCollection_AsciiString anOldDescr = aFunction->GetDescription();
+  anOldDescr = anOldDescr + aDescr;
+  aFunction->SetDescription(anOldDescr);
+
+  SetErrorCode(OK);
+  return anObj;
 }
 
 

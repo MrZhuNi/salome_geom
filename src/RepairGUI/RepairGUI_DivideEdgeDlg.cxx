@@ -80,9 +80,9 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg(QWidget* parent, const char* na
   aLay->addWidget( aLbl1, 0, 0 );
   aLay->addWidget( myValEdt, 0, 1 );
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
   GroupPoints->getGroupBoxLayout()->addMultiCellWidget(myIsParameterGr, 1, 1, 0, 2);
-	GroupPoints->getGroupBoxLayout()->addLayout( aLay, 2, 0 );
+  GroupPoints->getGroupBoxLayout()->addLayout( aLay, 2, 0 );
   /***************************************************************/
 
   Init();
@@ -125,6 +125,8 @@ void RepairGUI_DivideEdgeDlg::Init()
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+
+  initName( tr( "DEVIDE_EDGE_NEW_OBJECT_NAME" ) );
 }
 
 
@@ -148,6 +150,8 @@ bool RepairGUI_DivideEdgeDlg::ClickOnApply()
 {
   if ( !onAccept() )
   	return false;
+
+  initName();
 
   myEditCurrentArgument->setText("");
   myObject = GEOM::GEOM_Object::_nil();

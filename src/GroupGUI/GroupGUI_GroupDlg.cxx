@@ -279,7 +279,7 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
       GEOM::GEOM_Object_var anObj =
         GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aResult );
 
-      if ( aResult && !anObj->_is_nil() ) {
+      if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
         myMainObj = anObj;
         myEditCurrentArgument->setText( GEOMBase::GetName( anObj ) );
         updateState();
@@ -467,7 +467,7 @@ void GroupGUI_GroupDlg::setShapeType( const TopAbs_ShapeEnum theType )
 //=================================================================================
 void GroupGUI_GroupDlg::activateSelection()
 {
-  globalSelection();
+  globalSelection( GEOM_ALLSHAPES );
 
   if ( !myMainObj->_is_nil() && !myEditCurrentArgument ) {
     localSelection( myMainObj, getShapeType() );

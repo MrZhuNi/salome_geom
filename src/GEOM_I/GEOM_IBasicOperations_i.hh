@@ -40,6 +40,9 @@ class GEOM_IBasicOperations_i :
    GEOM::GEOM_Object_ptr MakeVectorTwoPnt (GEOM::GEOM_Object_ptr thePnt1,
 					   GEOM::GEOM_Object_ptr thePnt2);
 
+   GEOM::GEOM_Object_ptr MakeLine (GEOM::GEOM_Object_ptr thePnt,
+				   GEOM::GEOM_Object_ptr theDir);
+
    GEOM::GEOM_Object_ptr MakeLineTwoPnt (GEOM::GEOM_Object_ptr thePnt1,
 					 GEOM::GEOM_Object_ptr thePnt2);
 

@@ -231,7 +231,7 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
 void GenerationGUI_FillingDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  globalSelection();
+  globalSelection( GEOM_ALLSHAPES );
 
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();

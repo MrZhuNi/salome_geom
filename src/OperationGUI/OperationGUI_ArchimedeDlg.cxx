@@ -123,6 +123,8 @@ void OperationGUI_ArchimedeDlg::Init( SALOME_Selection* Sel )
 
   initName( tr( "GEOM_ARCHIMEDE" ) );
 
+  globalSelection( GEOM_ALLSHAPES );
+
   SelectionIntoArgument();
   
   /* displays Dialog */
@@ -171,8 +173,11 @@ void OperationGUI_ArchimedeDlg::SelectionIntoArgument()
   Standard_Boolean testResult = Standard_False;
   myShape = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), testResult );
 
-  if ( !testResult || myShape->_is_nil() )
+  if ( !testResult || myShape->_is_nil() || !GEOMBase::IsShape( myShape ) )
+  {
+    myShape = GEOM::GEOM_Object::_nil();
     return;
+  }
 
   myEditCurrentArgument->setText( GEOMBase::GetName( myShape ) );
 }
@@ -201,6 +206,7 @@ void OperationGUI_ArchimedeDlg::LineEditReturnPressed()
 void OperationGUI_ArchimedeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  globalSelection( GEOM_ALLSHAPES );
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   return;
 }

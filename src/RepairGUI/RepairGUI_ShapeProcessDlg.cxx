@@ -69,10 +69,10 @@ RepairGUI_ShapeProcessDlg::~RepairGUI_ShapeProcessDlg()
 //=================================================================================
 void RepairGUI_ShapeProcessDlg::init()
 {
-	myGeomGUI->SetState( 0 );
+  myGeomGUI->SetState( 0 );
 
-	initParamsValues();
-	initSelection();
+  initParamsValues();
+  initSelection();
 	
   setCaption(tr("GEOM_SHAPEPROCESS_TITLE"));
 
@@ -98,10 +98,10 @@ void RepairGUI_ShapeProcessDlg::init()
   myOpList->addColumn( "Operations" );
   myOpList->header()->hide();
   aOperLay->addWidget( myOpList );
-	QStringList::ConstIterator it = myOpLst.end();
-	do // iterating from end to begin so to keep the order of items in the listview.	
-		new QCheckListItem ( myOpList, *(--it), QCheckListItem::CheckBox );
-	while ( it != myOpLst.begin() );
+  QStringList::ConstIterator it = myOpLst.end();
+  do // iterating from end to begin so to keep the order of items in the listview.	
+    new QCheckListItem ( myOpList, *(--it), QCheckListItem::CheckBox );
+  while ( it != myOpLst.begin() );
 
   QGroupBox* aParamsGr = new QGroupBox( tr("GEOM_PARAMETERS"), aMidFrame );
   aMidLay->addWidget( anOperGr, 0, 0 );
@@ -109,7 +109,7 @@ void RepairGUI_ShapeProcessDlg::init()
   aMidLay->setColStretch( 0, 1 );
   aMidLay->setColStretch( 1, 2 );
 
-  Layout1->addWidget( aMidFrame, 1, 0 );
+  Layout1->addWidget( aMidFrame, 2, 0 );
   Layout1->setRowStretch( 0, 0 );
   Layout1->setRowStretch( 1, 1 );
 
@@ -223,6 +223,10 @@ void RepairGUI_ShapeProcessDlg::init()
   myBSpline3DCont = new QComboBox( aFrame );
   myBSpline3DCont->insertStringList( aContinueties );
 
+  myBSplineSurfModeChk->setChecked( true );
+  myBSpline3DCurveChk->setChecked( true );
+  myBSpline2DCurveChk->setChecked( true );
+
   aLay->addWidget( myBSplineSurfModeChk, 0, 0 );
   aLay->addWidget( myBSpline3DCurveChk, 1, 0 );
   aLay->addWidget( myBSpline2DCurveChk, 2, 0 );
@@ -290,6 +294,8 @@ void RepairGUI_ShapeProcessDlg::init()
   loadDefaults(); // init dialog fields with values from resource file
   myOpList->setSelected( myOpList->findItem( "FixShape", 0 ), true );
   reset();
+
+  initName( tr( "PROCESS_SHAPE_NEW_OBJ_NAME" ) );
 }
 
 //=================================================================================
@@ -327,6 +333,8 @@ bool RepairGUI_ShapeProcessDlg::onApply()
 {
   if ( !onAccept() )
     return false;
+
+  initName();
 
   reset();
   initSelection();
@@ -412,9 +420,9 @@ void RepairGUI_ShapeProcessDlg::activate()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(selectionChanged()));
 	
-	reset();
-	myGeomGUI->SetState( 0 );
-	initSelection();
+  reset();
+  myGeomGUI->SetState( 0 );
+  initSelection();
 }
 
 
@@ -424,8 +432,8 @@ void RepairGUI_ShapeProcessDlg::activate()
 //=================================================================================
 void RepairGUI_ShapeProcessDlg::enterEvent(QEvent* e)
 {
-	if ( !GroupConstructors->isEnabled() )
-  	activate();
+  if ( !GroupConstructors->isEnabled() )
+    activate();
 }
 
 
@@ -498,10 +506,10 @@ void RepairGUI_ShapeProcessDlg::loadDefaults()
   int i;
   for ( i = 0; i < anOperators->length(); i++ )
   {
-  	//MESSAGE("-->"<<(const char*)anOperators[i]);
-		QListViewItem* anItem = myOpList->findItem( (const char*)anOperators[i], 0 );
-		if ( anItem /*&& anItem->inherits( "QCheckListItem" )*/ )
-			((QCheckListItem*) anItem)->setOn( true );
+    //MESSAGE("-->"<<(const char*)anOperators[i]);
+    QListViewItem* anItem = myOpList->findItem( (const char*)anOperators[i], 0 );
+    if ( anItem /*&& anItem->inherits( "QCheckListItem" )*/ )
+      ((QCheckListItem*) anItem)->setOn( true );
   }
 
   // set default values of parameters
@@ -521,17 +529,17 @@ void RepairGUI_ShapeProcessDlg::loadDefaults()
 //=================================================================================
 void RepairGUI_ShapeProcessDlg::setValue( QWidget* theControl, const char* theValue )
 {
-	if ( theControl == NULL || theValue == NULL )
-		return;
+  if ( theControl == NULL || theValue == NULL )
+    return;
 
-	if ( theControl->isA( "QAD_SpinBoxDbl" ) )
-		((QAD_SpinBoxDbl*)theControl)->setValue( QString( theValue ).toDouble() );
-	else if ( theControl->isA( "QSpinBox" ) )
-		((QSpinBox*)theControl)->setValue( QString( theValue ).toInt() );
-	else if ( theControl->isA( "QComboBox" ) )
-		((QComboBox*)theControl)->setCurrentText( QString( theValue ) );
-	else if ( theControl->isA( "QCheckBox" ) )
-		((QCheckBox*)theControl)->setChecked( QString( theValue ).toInt() != 0 );
+  if ( theControl->isA( "QAD_SpinBoxDbl" ) )
+    ((QAD_SpinBoxDbl*)theControl)->setValue( QString( theValue ).toDouble() );
+  else if ( theControl->isA( "QSpinBox" ) )
+    ((QSpinBox*)theControl)->setValue( QString( theValue ).toInt() );
+  else if ( theControl->isA( "QComboBox" ) )
+    ((QComboBox*)theControl)->setCurrentText( QString( theValue ) );
+  else if ( theControl->isA( "QCheckBox" ) )
+    ((QCheckBox*)theControl)->setChecked( QString( theValue ).toInt() != 0 );
 }
 
 //=================================================================================
@@ -540,19 +548,19 @@ void RepairGUI_ShapeProcessDlg::setValue( QWidget* theControl, const char* theVa
 //=================================================================================
 const char* RepairGUI_ShapeProcessDlg::getValue( QWidget* theControl ) const
 {
-	if ( theControl == NULL )
-		return "";
+  if ( theControl == NULL )
+    return "";
 
-	if ( theControl->isA( "QAD_SpinBoxDbl" ) )
-		return ((QAD_SpinBoxDbl*)theControl)->text().latin1();
-	else if ( theControl->isA( "QSpinBox" ) )
-		return ((QSpinBox*)theControl)->text().latin1();
-	else if ( theControl->isA( "QComboBox" ) )
-		return ((QComboBox*)theControl)->currentText().latin1();
-	else if ( theControl->isA( "QCheckBox" ) )
-		return ((QCheckBox*)theControl)->isChecked() ? "1" : "0";
-
-	return "";
+  if ( theControl->isA( "QAD_SpinBoxDbl" ) )
+    return ((QAD_SpinBoxDbl*)theControl)->text().latin1();
+  else if ( theControl->isA( "QSpinBox" ) )
+    return ((QSpinBox*)theControl)->text().latin1();
+  else if ( theControl->isA( "QComboBox" ) )
+    return ((QComboBox*)theControl)->currentText().latin1();
+  else if ( theControl->isA( "QCheckBox" ) )
+    return ((QCheckBox*)theControl)->isChecked() ? "1" : "0";
+  
+  return "";
 }
 
 //=================================================================================
@@ -615,21 +623,21 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
   */// -----------
 
   QStringList anErrorObjNames;
-	for ( int i = 0; i < myObjects->length(); i++ )
-	{
-		GEOM::GEOM_Object_var obj = myObjects[i];
-		GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->ProcessShape(
-			obj, anOperators, aParams, aValues );
-		if ( anObj->_is_nil() )
-			anErrorObjNames << GEOMBase::GetName( obj );
-		else
-			objects.push_back( anObj._retn() );
-	}
+  for ( int i = 0; i < myObjects->length(); i++ )
+  {
+    GEOM::GEOM_Object_var obj = myObjects[i];
+    GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->ProcessShape(
+	obj, anOperators, aParams, aValues );
+    if ( anObj->_is_nil() )
+      anErrorObjNames << GEOMBase::GetName( obj );
+    else
+      objects.push_back( anObj._retn() );
+  }
 
-	if ( !anErrorObjNames.empty() )
-		MESSAGE("ERRORS occured while processing the following objects: " << anErrorObjNames.join( " " ));
-
-	return anErrorObjNames.size() < myObjects->length(); // true if at least one object was OK, false if ALL objects were nil after Healing.
+  if ( !anErrorObjNames.empty() )
+    MESSAGE("ERRORS occured while processing the following objects: " << anErrorObjNames.join( " " ));
+    
+  return anErrorObjNames.size() < myObjects->length(); // true if at least one object was OK, false if ALL objects were nil after Healing.
 }
 
 //=================================================================================
@@ -638,18 +646,18 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
 //=================================================================================
 GEOM::string_array* RepairGUI_ShapeProcessDlg::getActiveOperators()
 {
-	GEOM::string_array_var anOperators = new GEOM::string_array();
-	QStringList aCheckedList;
+  GEOM::string_array_var anOperators = new GEOM::string_array();
+    QStringList aCheckedList;
   QStringList::Iterator it;
   for ( it = myOpLst.begin(); it != myOpLst.end(); ++it )
-  	if ( ((QCheckListItem*)myOpList->findItem( *it, 0 ))->isOn() )
-   		aCheckedList << *it;
+    if ( ((QCheckListItem*)myOpList->findItem( *it, 0 ))->isOn() )
+      aCheckedList << *it;
   anOperators->length( aCheckedList.size() );
   int i = 0;
-	for ( it = aCheckedList.begin(); it != aCheckedList.end(); ++it )
-		anOperators[i++] = CORBA::string_dup( (*it).latin1() );		
+  for ( it = aCheckedList.begin(); it != aCheckedList.end(); ++it )
+    anOperators[i++] = CORBA::string_dup( (*it).latin1() );		
 	 	 
-	return anOperators._retn();
+  return anOperators._retn();
 }
 
 //=================================================================================
@@ -706,15 +714,15 @@ void RepairGUI_ShapeProcessDlg::initParamsValues()
   myValMap["SplitAngle"] << "SplitAngle.Angle";
   myValMap["SplitAngle"] << "SplitAngle.MaxTolerance";
 
-	myOpLst << "SplitClosedFaces";
-	myValMap["SplitClosedFaces"] << "SplitClosedFaces.NbSplitPoints";
+  myOpLst << "SplitClosedFaces";
+  myValMap["SplitClosedFaces"] << "SplitClosedFaces.NbSplitPoints";
 
-	myOpLst << "SplitContinuity";
+  myOpLst << "SplitContinuity";
   myValMap["SplitContinuity"] << "SplitContinuity.Tolerance3d";
   myValMap["SplitContinuity"] << "SplitContinuity.SurfaceContinuity";
   myValMap["SplitContinuity"] << "SplitContinuity.CurveContinuity";
 
-	myOpLst << "BSplineRestriction";
+  myOpLst << "BSplineRestriction";
   myValMap["BSplineRestriction"] << "BSplineRestriction.SurfaceMode";
   myValMap["BSplineRestriction"] << "BSplineRestriction.Curve3dMode";
   myValMap["BSplineRestriction"] << "BSplineRestriction.Curve2dMode";
@@ -788,13 +796,12 @@ GEOM::string_array* RepairGUI_ShapeProcessDlg::getValues( const GEOM::string_arr
 //=================================================================================
 void RepairGUI_ShapeProcessDlg::initSelection()
 {
-	TColStd_MapOfInteger aTypes;
+  TColStd_MapOfInteger aTypes;
   aTypes.Add( GEOM_COMPOUND );
   aTypes.Add( GEOM_SOLID );
   aTypes.Add( GEOM_SHELL );
   aTypes.Add( GEOM_FACE );
   aTypes.Add( GEOM_WIRE );
   aTypes.Add( GEOM_EDGE );
-	globalSelection( aTypes );
+  globalSelection( aTypes );
 }
-

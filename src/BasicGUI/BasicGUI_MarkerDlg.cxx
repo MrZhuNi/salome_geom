@@ -236,7 +236,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
 	resize(0, 0);
 	Group1->show();
 
-	globalSelection();
+	globalSelection( GEOM_ALLGEOM );
 	myEditCurrentArgument = Group1->LineEdit1;
 	Group1->LineEdit1->setText("");
 	break;
@@ -505,7 +505,7 @@ void BasicGUI_MarkerDlg::SetEditCurrentArgument()
   
   if(send == Group1->PushButton1) {
     myEditCurrentArgument = Group1->LineEdit1;
-    globalSelection();
+    globalSelection( GEOM_ALLGEOM );
   }
   else if(send == Group2->PushButton1) {
     myEditCurrentArgument = Group2->LineEdit1;
@@ -582,7 +582,22 @@ GEOM::GEOM_IOperations_ptr BasicGUI_MarkerDlg::createOperation()
 //=================================================================================
 bool BasicGUI_MarkerDlg::isValid( QString& msg )
 {
-  return true;
+  const int id = getConstructorId();
+  gp_Vec v1( myData[ DX1 ]->GetValue(), myData[ DY1 ]->GetValue(), myData[ DZ1 ]->GetValue() ),
+         v2( myData[ DX2 ]->GetValue(), myData[ DY2 ]->GetValue(), myData[ DZ2 ]->GetValue() );
+  bool isOrthogonal = v1.IsNormal( v2, Precision::Confusion() );
+  switch ( id )
+  {
+    case 0:
+      return isOrthogonal;
+    case 1:
+      return !Group1->LineEdit1->text().isEmpty() && isOrthogonal;
+    case 2:
+      return !Group2->LineEdit1->text().isEmpty() && 
+	     !Group2->LineEdit2->text().isEmpty() && 
+	     !Group2->LineEdit3->text().isEmpty() && isOrthogonal;
+  }
+  return false;
 }
 
 //=================================================================================

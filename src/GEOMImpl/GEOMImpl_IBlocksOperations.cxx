@@ -21,17 +21,20 @@ using namespace std;
 #include <TFunction_Logbook.hxx>
 #include <TDF_Tool.hxx>
 
-#include <BRepTools.hxx>
 #include <BRep_Tool.hxx>
-#include <BRepClass3d_SolidClassifier.hxx>
-#include <BRepClass_FaceClassifier.hxx>
-#include <BRepAdaptor_Surface.hxx>
-#include <BRepExtrema_DistShapeShape.hxx>
+#include <BRepTools.hxx>
 #include <BRepGProp.hxx>
+#include <BRepBndLib.hxx>
+#include <BRepAdaptor_Surface.hxx>
+#include <BRepClass_FaceClassifier.hxx>
+#include <BRepClass3d_SolidClassifier.hxx>
+#include <BRepExtrema_DistShapeShape.hxx>
 
+#include <TopAbs.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Vertex.hxx>
+#include <TopoDS_Iterator.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
@@ -40,9 +43,13 @@ using namespace std;
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
+#include <Bnd_Box.hxx>
 #include <Precision.hxx>
 #include <GProp_GProps.hxx>
+#include <TColStd_MapOfInteger.hxx>
+#include <TColStd_Array1OfReal.hxx>
 #include <TColStd_Array1OfInteger.hxx>
+#include <TColStd_Array2OfInteger.hxx>
 
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
@@ -70,83 +77,10 @@ GEOMImpl_IBlocksOperations::~GEOMImpl_IBlocksOperations()
 
 //=============================================================================
 /*!
- *  MakeQuadFaceFourVertices
+ *  MakeQuad
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuadFaceFourVertices
-                     (Handle(GEOM_Object) thePnt1, Handle(GEOM_Object) thePnt2,
-                      Handle(GEOM_Object) thePnt3, Handle(GEOM_Object) thePnt4)
-{
-  SetErrorCode(KO);
-
-  if (thePnt1.IsNull() || thePnt2.IsNull() ||
-      thePnt3.IsNull() || thePnt4.IsNull()) return NULL;
-
-  //Add a new Face object
-  Handle(GEOM_Object) aFace = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
-
-  //Add a new Face function
-  Handle(GEOM_Function) aFunction =
-    aFace->AddFunction(GEOMImpl_BlockDriver::GetID(), BLOCK_FACE_FOUR_PNT);
-
-  //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_BlockDriver::GetID()) return NULL;
-
-  GEOMImpl_IBlocks aPI (aFunction);
-
-  Handle(GEOM_Function) aRef1 = thePnt1->GetLastFunction();
-  Handle(GEOM_Function) aRef2 = thePnt2->GetLastFunction();
-  Handle(GEOM_Function) aRef3 = thePnt3->GetLastFunction();
-  Handle(GEOM_Function) aRef4 = thePnt4->GetLastFunction();
-  if (aRef1.IsNull() || aRef2.IsNull() ||
-      aRef3.IsNull() || aRef4.IsNull()) return NULL;
-
-  Handle(TColStd_HSequenceOfTransient) aShapesSeq = new TColStd_HSequenceOfTransient;
-  aShapesSeq->Append(aRef1);
-  aShapesSeq->Append(aRef2);
-  aShapesSeq->Append(aRef3);
-  aShapesSeq->Append(aRef4);
-
-  aPI.SetShapes(aShapesSeq);
-
-  //Compute the Face value
-  try {
-    if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Block driver failed to compute a face");
-      return NULL;
-    }
-  }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
-    return NULL;
-  }
-
-  //Make a Python command
-  TCollection_AsciiString anEntry, aDescr;
-  TDF_Tool::Entry(aFace->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBlocksOperations.MakeQuadFaceFourVertices(");
-  TDF_Tool::Entry(thePnt1->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(thePnt2->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(thePnt3->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  TDF_Tool::Entry(thePnt4->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
-
-  aFunction->SetDescription(aDescr);
-
-  SetErrorCode(OK);
-  return aFace;
-}
-
-//=============================================================================
-/*!
- *  MakeQuadFaceFourEdges
- */
-//=============================================================================
-Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuadFaceFourEdges
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad
                      (Handle(GEOM_Object) theEdge1, Handle(GEOM_Object) theEdge2,
                       Handle(GEOM_Object) theEdge3, Handle(GEOM_Object) theEdge4)
 {
@@ -198,15 +132,15 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuadFaceFourEdges
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aFace->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBlocksOperations.MakeQuadFaceFourEdges(");
+  aDescr += anEntry + " = IBlocksOperations.MakeQuad(";
   TDF_Tool::Entry(theEdge1->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(theEdge2->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(theEdge3->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(theEdge4->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
+  aDescr += anEntry + ")";
 
   aFunction->SetDescription(aDescr);
 
@@ -216,10 +150,10 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuadFaceFourEdges
 
 //=============================================================================
 /*!
- *  MakeQuadFaceTwoEdges
+ *  MakeQuad2Edges
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuadFaceTwoEdges
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad2Edges
                      (Handle(GEOM_Object) theEdge1, Handle(GEOM_Object) theEdge2)
 {
   SetErrorCode(KO);
@@ -264,11 +198,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuadFaceTwoEdges
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aFace->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBlocksOperations.MakeQuadFaceTwoEdges(");
+  aDescr += anEntry + " = IBlocksOperations.MakeQuad2Edges(";
   TDF_Tool::Entry(theEdge1->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(theEdge2->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
+  aDescr += anEntry + ")";
 
   aFunction->SetDescription(aDescr);
 
@@ -278,10 +212,83 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuadFaceTwoEdges
 
 //=============================================================================
 /*!
- *  MakeHexaSolidSixFaces
+ *  MakeQuad4Vertices
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexaSolidSixFaces
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad4Vertices
+                     (Handle(GEOM_Object) thePnt1, Handle(GEOM_Object) thePnt2,
+                      Handle(GEOM_Object) thePnt3, Handle(GEOM_Object) thePnt4)
+{
+  SetErrorCode(KO);
+
+  if (thePnt1.IsNull() || thePnt2.IsNull() ||
+      thePnt3.IsNull() || thePnt4.IsNull()) return NULL;
+
+  //Add a new Face object
+  Handle(GEOM_Object) aFace = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+
+  //Add a new Face function
+  Handle(GEOM_Function) aFunction =
+    aFace->AddFunction(GEOMImpl_BlockDriver::GetID(), BLOCK_FACE_FOUR_PNT);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_BlockDriver::GetID()) return NULL;
+
+  GEOMImpl_IBlocks aPI (aFunction);
+
+  Handle(GEOM_Function) aRef1 = thePnt1->GetLastFunction();
+  Handle(GEOM_Function) aRef2 = thePnt2->GetLastFunction();
+  Handle(GEOM_Function) aRef3 = thePnt3->GetLastFunction();
+  Handle(GEOM_Function) aRef4 = thePnt4->GetLastFunction();
+  if (aRef1.IsNull() || aRef2.IsNull() ||
+      aRef3.IsNull() || aRef4.IsNull()) return NULL;
+
+  Handle(TColStd_HSequenceOfTransient) aShapesSeq = new TColStd_HSequenceOfTransient;
+  aShapesSeq->Append(aRef1);
+  aShapesSeq->Append(aRef2);
+  aShapesSeq->Append(aRef3);
+  aShapesSeq->Append(aRef4);
+
+  aPI.SetShapes(aShapesSeq);
+
+  //Compute the Face value
+  try {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Block driver failed to compute a face");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aFace->GetEntry(), anEntry);
+  aDescr += anEntry + " = IBlocksOperations.MakeQuad4Vertices(";
+  TDF_Tool::Entry(thePnt1->GetEntry(), anEntry);
+  aDescr += anEntry + ", ";
+  TDF_Tool::Entry(thePnt2->GetEntry(), anEntry);
+  aDescr += anEntry + ", ";
+  TDF_Tool::Entry(thePnt3->GetEntry(), anEntry);
+  aDescr += anEntry + ", ";
+  TDF_Tool::Entry(thePnt4->GetEntry(), anEntry);
+  aDescr += anEntry + ")";
+
+  aFunction->SetDescription(aDescr);
+
+  SetErrorCode(OK);
+  return aFace;
+}
+
+//=============================================================================
+/*!
+ *  MakeHexa
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexa
                      (Handle(GEOM_Object) theFace1, Handle(GEOM_Object) theFace2,
                       Handle(GEOM_Object) theFace3, Handle(GEOM_Object) theFace4,
                       Handle(GEOM_Object) theFace5, Handle(GEOM_Object) theFace6)
@@ -340,19 +347,19 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexaSolidSixFaces
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aBlock->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBlocksOperations.MakeHexaSolidSixFaces(");
+  aDescr += anEntry + " = IBlocksOperations.MakeHexa(";
   TDF_Tool::Entry(theFace1->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(theFace2->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(theFace3->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(theFace4->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(theFace5->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(theFace6->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
+  aDescr += anEntry + ")";
 
   aFunction->SetDescription(aDescr);
 
@@ -362,10 +369,10 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexaSolidSixFaces
 
 //=============================================================================
 /*!
- *  MakeHexaSolidTwoFaces
+ *  MakeHexa2Faces
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexaSolidTwoFaces
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexa2Faces
                    (Handle(GEOM_Object) theFace1, Handle(GEOM_Object) theFace2)
 {
   SetErrorCode(KO);
@@ -410,16 +417,162 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexaSolidTwoFaces
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aBlock->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBlocksOperations.MakeHexaSolidTwoFaces(");
+  aDescr += anEntry + " = IBlocksOperations.MakeHexa2Faces(";
   TDF_Tool::Entry(theFace1->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(theFace2->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
+  aDescr += anEntry + ")";
 
   aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
   return aBlock;
+}
+
+//=============================================================================
+/*!
+ *  MakeBlockCompound
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeBlockCompound
+                                              (Handle(GEOM_Object) theCompound)
+{
+  SetErrorCode(KO);
+
+  if (theCompound.IsNull()) return NULL;
+
+  //Add a new object
+  Handle(GEOM_Object) aBlockComp = GetEngine()->AddObject(GetDocID(), GEOM_COMPOUND);
+
+  //Add a new BlocksComp function
+  Handle(GEOM_Function) aFunction =
+    aBlockComp->AddFunction(GEOMImpl_BlockDriver::GetID(), BLOCK_COMPOUND_GLUE);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_BlockDriver::GetID()) return NULL;
+
+  GEOMImpl_IBlocks aPI (aFunction);
+
+  Handle(GEOM_Function) aRef1 = theCompound->GetLastFunction();
+  if (aRef1.IsNull()) return NULL;
+
+  Handle(TColStd_HSequenceOfTransient) aShapesSeq = new TColStd_HSequenceOfTransient;
+  aShapesSeq->Append(aRef1);
+
+  aPI.SetShapes(aShapesSeq);
+
+  //Compute the Blocks Compound value
+  try {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Block driver failed to compute a blocks compound");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aBlockComp->GetEntry(), anEntry);
+  aDescr += anEntry + " = IBlocksOperations.MakeBlockCompound(";
+  TDF_Tool::Entry(theCompound->GetEntry(), anEntry);
+  aDescr += anEntry + ")";
+
+  aFunction->SetDescription(aDescr);
+
+  SetErrorCode(OK);
+  return aBlockComp;
+}
+
+//=============================================================================
+/*!
+ *  GetEdge
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetPoint
+                                               (Handle(GEOM_Object) theShape,
+                                                const Standard_Real theX,
+                                                const Standard_Real theY,
+                                                const Standard_Real theZ,
+                                                const Standard_Real theEpsilon)
+{
+  SetErrorCode(KO);
+
+  //New Point object
+  Handle(GEOM_Object) aResult;
+
+  // Arguments
+  if (theShape.IsNull()) return NULL;
+
+  TopoDS_Shape aBlockOrComp = theShape->GetValue();
+  if (aBlockOrComp.IsNull()) {
+    SetErrorCode("Block or compound is null");
+    return NULL;
+  }
+  if (aBlockOrComp.ShapeType() != TopAbs_SOLID &&
+      aBlockOrComp.ShapeType() != TopAbs_COMPOUND &&
+      aBlockOrComp.ShapeType() != TopAbs_COMPSOLID) {
+    SetErrorCode("Shape is neither a block, nor a compound of blocks");
+    return NULL;
+  }
+
+  //Compute the Vertex value
+  gp_Pnt P (theX, theY, theZ);
+  Standard_Real eps = Max(theEpsilon, Precision::Confusion());
+
+  TopoDS_Shape V;
+  Standard_Integer isFound = 0;
+  TopTools_MapOfShape mapShape;
+  TopExp_Explorer exp (aBlockOrComp, TopAbs_VERTEX);
+
+  for (; exp.More(); exp.Next()) {
+    if (mapShape.Add(exp.Current())) {
+      TopoDS_Vertex aVi = TopoDS::Vertex(exp.Current());
+      gp_Pnt aPi = BRep_Tool::Pnt(aVi);
+      if (aPi.Distance(P) < eps) {
+        V = aVi;
+        isFound++;
+      }
+    }
+  }
+
+  if (isFound == 0) {
+    SetErrorCode("Vertex has not been found");
+    return NULL;
+  } else if (isFound > 1) {
+    SetErrorCode("Multiple vertices found by the given coordinates and epsilon");
+    return NULL;
+  } else {
+    TopTools_IndexedMapOfShape anIndices;
+    TopExp::MapShapes(aBlockOrComp, anIndices);
+    Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
+    anArray->SetValue(1, anIndices.FindIndex(V));
+    aResult = GetEngine()->AddSubShape(theShape, anArray);
+  }
+
+  //The GetPoint() doesn't change object so no new function is required.
+  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aResult->GetEntry(), anEntry);
+  aDescr += anEntry + " = IBlocksOperations.GetPoint(";
+  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
+  aDescr += anEntry + ", ";
+  aDescr += TCollection_AsciiString(theX) + ", ";
+  aDescr += TCollection_AsciiString(theY) + ", ";
+  aDescr += TCollection_AsciiString(theZ) + ", ";
+  aDescr += TCollection_AsciiString(theEpsilon) + ")";
+
+  TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
+  aNewDescr += aDescr;
+  aFunction->SetDescription(aNewDescr);
+
+  SetErrorCode(OK);
+  return aResult;
 }
 
 //=============================================================================
@@ -502,31 +655,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetEdge
       return NULL;
     }
 
-    const TopTools_ListOfShape& anEdgesOfV1 = MVE.FindFromKey(V1);
-    const TopTools_ListOfShape& anEdgesOfV2 = MVE.FindFromKey(V2);
-
-    Standard_Integer isFound = 0;
-    TopTools_ListIteratorOfListOfShape anIterE1 (anEdgesOfV1);
-    TopTools_MapOfShape mapShape1;
     TopoDS_Shape anEdge;
-    for (; anIterE1.More(); anIterE1.Next()) {
-
-      if (mapShape1.Add(anIterE1.Value())) {
-        TopTools_ListIteratorOfListOfShape anIterE2 (anEdgesOfV2);
-        TopTools_MapOfShape mapShape2;
-        for (; anIterE2.More(); anIterE2.Next()) {
-
-          if (mapShape2.Add(anIterE2.Value())) {
-            if (anIterE1.Value().IsSame(anIterE2.Value())) {
-              isFound++;
-
-              // Store the edge, defined by two vertices
-              anEdge = anIterE1.Value();
-            }
-          }
-        }
-      }
-    }
+    Standard_Integer isFound =
+      GEOMImpl_Block6Explorer::FindEdge(anEdge, V1, V2, MVE, Standard_True);
     if (isFound == 0) {
       SetErrorCode("The given vertices do not belong to one edge of the given shape");
       return NULL;
@@ -552,13 +683,141 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetEdge
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBlocksOperations.GetEdge(");
+  aDescr += anEntry + " = IBlocksOperations.GetEdge(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(thePoint1->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(thePoint2->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
+  aDescr += anEntry + ")";
+
+  TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
+  aNewDescr += aDescr;
+  aFunction->SetDescription(aNewDescr);
+
+  SetErrorCode(OK);
+  return aResult;
+}
+
+//=============================================================================
+/*!
+ *  GetEdgeNearPoint
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetEdgeNearPoint
+                                                (Handle(GEOM_Object) theShape,
+                                                 Handle(GEOM_Object) thePoint)
+{
+  SetErrorCode(KO);
+
+  //New object
+  Handle(GEOM_Object) aResult;
+
+  // Arguments
+  if (theShape.IsNull() || thePoint.IsNull()) return NULL;
+
+  TopoDS_Shape aBlockOrComp = theShape->GetValue();
+  if (aBlockOrComp.IsNull()) {
+    SetErrorCode("Block or compound is null");
+    return NULL;
+  }
+  if (aBlockOrComp.ShapeType() != TopAbs_SOLID &&
+      aBlockOrComp.ShapeType() != TopAbs_COMPOUND &&
+      aBlockOrComp.ShapeType() != TopAbs_COMPSOLID) {
+    SetErrorCode("Shape is neither a block, nor a compound of blocks");
+    return NULL;
+  }
+
+  TopoDS_Shape anArg = thePoint->GetValue();
+  if (anArg.IsNull()) {
+    SetErrorCode("Null shape is given as argument");
+    return NULL;
+  }
+  if (anArg.ShapeType() != TopAbs_VERTEX) {
+    SetErrorCode("Element for edge identification is not a vertex");
+    return NULL;
+  }
+
+  //Compute the Edge value
+  try {
+    TopoDS_Shape aShape;
+
+    TopoDS_Vertex aVert = TopoDS::Vertex(anArg);
+
+    // 1. Explode blocks on edges
+    TopTools_MapOfShape mapShape;
+    Standard_Integer nbEdges = 0;
+    TopExp_Explorer exp (aBlockOrComp, TopAbs_EDGE);
+    for (; exp.More(); exp.Next()) {
+      if (mapShape.Add(exp.Current())) {
+        nbEdges++;
+      }
+    }
+
+    mapShape.Clear();
+    Standard_Integer ind = 1;
+    TopTools_Array1OfShape anEdges (1, nbEdges);
+    TColStd_Array1OfReal aDistances (1, nbEdges);
+    for (exp.Init(aBlockOrComp, TopAbs_EDGE); exp.More(); exp.Next()) {
+      if (mapShape.Add(exp.Current())) {
+        TopoDS_Shape anEdge = exp.Current();
+        anEdges(ind) = anEdge;
+
+        // 2. Classify the point relatively each edge
+        BRepExtrema_DistShapeShape aDistTool (aVert, anEdges(ind));
+        if (!aDistTool.IsDone()) {
+          SetErrorCode("Can not find a distance from the given point to one of edges");
+          return NULL;
+        }
+        aDistances(ind) = aDistTool.Value();
+        ind++;
+      }
+    }
+
+    // 3. Define edge, having minimum distance to the point
+    Standard_Real nearest = RealLast(), nbFound = 0;
+    Standard_Real prec = Precision::Confusion();
+    for (ind = 1; ind <= nbEdges; ind++) {
+      if (Abs(aDistances(ind) - nearest) < prec) {
+        nbFound++;
+      } else if (aDistances(ind) < nearest) {
+        nearest = aDistances(ind);
+        aShape = anEdges(ind);
+        nbFound = 1;
+      } else {
+      }
+    }
+    if (nbFound > 1) {
+      SetErrorCode("Multiple edges near the given point are found");
+      return NULL;
+    } else if (nbFound == 0) {
+      SetErrorCode("There are no edges near the given point");
+      return NULL;
+    } else {
+      TopTools_IndexedMapOfShape anIndices;
+      TopExp::MapShapes(aBlockOrComp, anIndices);
+      Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
+      anArray->SetValue(1, anIndices.FindIndex(aShape));
+      aResult = GetEngine()->AddSubShape(theShape, anArray);
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //The GetEdgeNearPoint() doesn't change object so no new function is required.
+  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aResult->GetEntry(), anEntry);
+  aDescr += anEntry + " = IBlocksOperations.GetEdgeNearPoint(";
+  TDF_Tool::Entry(theShape->GetEntry(), anEntry);
+  aDescr += anEntry + ", ";
+  TDF_Tool::Entry(thePoint->GetEntry(), anEntry);
+  aDescr += anEntry + ")";
 
   TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
   aNewDescr += aDescr;
@@ -682,39 +941,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByPoints
       return NULL;
     }
 
-    const TopTools_ListOfShape& aFacesOfV1 = MVF.FindFromKey(V1);
-    const TopTools_ListOfShape& aFacesOfV2 = MVF.FindFromKey(V2);
-    const TopTools_ListOfShape& aFacesOfV3 = MVF.FindFromKey(V3);
-    const TopTools_ListOfShape& aFacesOfV4 = MVF.FindFromKey(V4);
-
-    Standard_Integer isFound = 0;
-    TopTools_ListIteratorOfListOfShape anIterF1 (aFacesOfV1);
-    for (; anIterF1.More(); anIterF1.Next()) {
-
-      TopoDS_Shape aFace = anIterF1.Value();
-      TopTools_ListIteratorOfListOfShape anIterF2 (aFacesOfV2);
-      for (; anIterF2.More(); anIterF2.Next()) {
-
-        if (aFace.IsSame(anIterF2.Value())) {
-          TopTools_ListIteratorOfListOfShape anIterF3 (aFacesOfV3);
-          for (; anIterF3.More(); anIterF3.Next()) {
-
-            if (aFace.IsSame(anIterF3.Value())) {
-              TopTools_ListIteratorOfListOfShape anIterF4 (aFacesOfV4);
-              for (; anIterF4.More(); anIterF4.Next()) {
-
-                if (aFace.IsSame(anIterF4.Value())) {
-                  isFound++;
-
-                  // Store the face, defined by four vertices
-                  aShape = aFace;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    Standard_Integer isFound =
+      GEOMImpl_Block6Explorer::FindFace(aShape, V1, V2, V3, V4, MVF, Standard_True);
     if (isFound == 0) {
       SetErrorCode("The given vertices do not belong to one face of the given shape");
       return NULL;
@@ -741,17 +969,17 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByPoints
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBlocksOperations.GetFaceByPoints(");
+  aDescr += anEntry + " = IBlocksOperations.GetFaceByPoints(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(thePoint1->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(thePoint2->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(thePoint3->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(thePoint4->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
+  aDescr += anEntry + ")";
 
   TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
   aNewDescr += aDescr;
@@ -884,13 +1112,13 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByEdges
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBlocksOperations.GetFaceByEdges(");
+  aDescr += anEntry + " = IBlocksOperations.GetFaceByEdges(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(theEdge1->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(theEdge2->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
+  aDescr += anEntry + ")";
 
   TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
   aNewDescr += aDescr;
@@ -963,11 +1191,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetOppositeFace
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBlocksOperations.GetOppositeFace(");
+  aDescr += anEntry + " = IBlocksOperations.GetOppositeFace(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(theFace->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
+  aDescr += anEntry + ")";
 
   TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
   aNewDescr += aDescr;
@@ -1136,11 +1364,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBlocksOperations.GetFaceNearPoint(");
+  aDescr += anEntry + " = IBlocksOperations.GetFaceNearPoint(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(thePoint->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
+  aDescr += anEntry + ")";
 
   TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
   aNewDescr += aDescr;
@@ -1206,7 +1434,6 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByNormale
 
     Standard_Real minAngle = RealLast();
     TopTools_MapOfShape mapShape;
-    Standard_Integer nbFaces = 0;
     TopExp_Explorer exp (aBlockOrComp, TopAbs_FACE);
     for (; exp.More(); exp.Next()) {
       if (mapShape.Add(exp.Current())) {
@@ -1280,11 +1507,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByNormale
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBlocksOperations.GetFaceByNormale(");
+  aDescr += anEntry + " = IBlocksOperations.GetFaceByNormale(";
   TDF_Tool::Entry(theShape->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(theVector->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
+  aDescr += anEntry + ")";
 
   TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
   aNewDescr += aDescr;
@@ -1349,6 +1576,466 @@ Standard_Boolean GEOMImpl_IBlocksOperations::IsCompoundOfBlocks
 
   SetErrorCode(OK);
   return isCompOfBlocks;
+}
+
+//=============================================================================
+/*!
+ *  Set of functions, used by CheckCompoundOfBlocks() method
+ */
+//=============================================================================
+void AddBlocksFrom (const TopoDS_Shape&  theShape,
+                    TopTools_ListOfShape& BLO,
+                    TopTools_ListOfShape& NOT)
+{
+  TopAbs_ShapeEnum aType = theShape.ShapeType();
+  switch (aType) {
+  case TopAbs_COMPOUND:
+  case TopAbs_COMPSOLID:
+    {
+      TopoDS_Iterator It (theShape);
+      for (; It.More(); It.Next()) {
+        AddBlocksFrom(It.Value(), BLO, NOT);
+      }
+    }
+    break;
+  case TopAbs_SOLID:
+    {
+      TopTools_MapOfShape mapFaces;
+      TopExp_Explorer expF (theShape, TopAbs_FACE);
+      Standard_Integer nbFaces = 0;
+      Standard_Integer nbEdges = 0;
+      for (; expF.More(); expF.Next()) {
+        if (mapFaces.Add(expF.Current())) {
+          nbFaces++;
+          if (nbFaces > 6) break;
+
+          // Check number of edges in the face
+          TopoDS_Shape aF = expF.Current();
+          TopExp_Explorer expE (aF, TopAbs_EDGE);
+          nbEdges = 0;
+          for (; expE.More(); expE.Next()) {
+            nbEdges++;
+            if (nbEdges > 4) break;
+          }
+          if (nbEdges != 4) break;
+        }
+      }
+      if (nbFaces == 6 && nbEdges == 4) {
+        BLO.Append(theShape);
+      } else {
+        NOT.Append(theShape);
+      }
+    }
+    break;
+  default:
+    NOT.Append(theShape);
+  }
+}
+
+#define REL_NOT_CONNECTED 0
+#define REL_OK            1
+#define REL_NOT_GLUED     2
+#define REL_COLLISION_VV  3
+#define REL_COLLISION_FF  4
+#define REL_COLLISION_EE  5
+#define REL_UNKNOWN       6
+
+Standard_Integer BlocksRelation (const TopoDS_Shape& theBlock1,
+                                 const TopoDS_Shape& theBlock2)
+{
+  // Compare bounding boxes before calling BRepExtrema_DistShapeShape
+  Standard_Real Xmin1, Ymin1, Zmin1, Xmax1, Ymax1, Zmax1;
+  Standard_Real Xmin2, Ymin2, Zmin2, Xmax2, Ymax2, Zmax2;
+  Bnd_Box B1, B2;
+  BRepBndLib::Add(theBlock1, B1);
+  BRepBndLib::Add(theBlock2, B2);
+//  BRepBndLib::AddClose(theBlock1, B1);
+//  BRepBndLib::AddClose(theBlock2, B2);
+  B1.Get(Xmin1, Ymin1, Zmin1, Xmax1, Ymax1, Zmax1);
+  B2.Get(Xmin2, Ymin2, Zmin2, Xmax2, Ymax2, Zmax2);
+  if (Xmax2 < Xmin1 || Xmax1 < Xmin2 ||
+      Ymax2 < Ymin1 || Ymax1 < Ymin2 ||
+      Zmax2 < Zmin1 || Zmax1 < Zmin2) {
+//  Standard_Real prec = Precision::Confusion();
+//  if (prec < Xmin1 - Xmax2 || prec < Xmin2 - Xmax1 ||
+//      prec < Ymin1 - Ymax2 || prec < Ymin2 - Ymax1 ||
+//      prec < Zmin1 - Zmax2 || prec < Zmin2 - Zmax1) {
+    return REL_NOT_CONNECTED;
+  }
+  // to be done
+
+  BRepExtrema_DistShapeShape dst (theBlock1, theBlock2);
+  if (!dst.IsDone()) {
+    return REL_UNKNOWN;
+  }
+
+  if (dst.Value() > Precision::Confusion()) {
+    return REL_NOT_CONNECTED;
+  }
+
+  if (dst.InnerSolution()) {
+    return REL_COLLISION_VV;
+  }
+
+  Standard_Integer nbSol = dst.NbSolution();
+  Standard_Integer relation = REL_OK;
+  Standard_Integer nbVerts = 0;
+  Standard_Integer nbEdges = 0;
+  Standard_Integer sol = 1;
+  for (; sol <= nbSol; sol++) {
+    BRepExtrema_SupportType supp1 = dst.SupportTypeShape1(sol);
+    BRepExtrema_SupportType supp2 = dst.SupportTypeShape2(sol);
+    if (supp1 == BRepExtrema_IsVertex && supp2 == BRepExtrema_IsVertex) {
+      nbVerts++;
+    } else if (supp1 == BRepExtrema_IsInFace || supp2 == BRepExtrema_IsInFace) {
+      return REL_COLLISION_FF;
+    } else if (supp1 == BRepExtrema_IsOnEdge && supp2 == BRepExtrema_IsOnEdge) {
+      nbEdges++;
+    } else if ((supp1 == BRepExtrema_IsOnEdge && supp2 == BRepExtrema_IsVertex) ||
+               (supp2 == BRepExtrema_IsOnEdge && supp1 == BRepExtrema_IsVertex)) {
+      relation = REL_COLLISION_EE;
+    } else {
+    }
+  }
+
+  if (relation != REL_OK) {
+    return relation;
+  }
+
+  TColStd_Array1OfInteger vertSol (1, nbVerts);
+  TopTools_Array1OfShape V1 (1, nbVerts);
+  TopTools_Array1OfShape V2 (1, nbVerts);
+  Standard_Integer ivs = 0;
+  for (sol = 1; sol <= nbSol; sol++) {
+    if (dst.SupportTypeShape1(sol) == BRepExtrema_IsVertex &&
+        dst.SupportTypeShape2(sol) == BRepExtrema_IsVertex) {
+      TopoDS_Vertex Vcur = TopoDS::Vertex(dst.SupportOnShape1(sol));
+      // Check, that this vertex is far enough from other solution vertices.
+      Standard_Integer ii = 1;
+      for (; ii <= ivs; ii++) {
+        if (BRepTools::Compare(TopoDS::Vertex(V1(ii)), Vcur)) {
+          continue;
+        }
+      }
+      ivs++;
+      vertSol(ivs) = sol;
+      V1(ivs) = Vcur;
+      V2(ivs) = dst.SupportOnShape2(sol);
+    }
+  }
+
+  // As we deal only with quadrangles,
+  // 2, 3 or 4 vertex solutions can be found.
+  if (ivs <= 1) {
+    if (nbEdges > 0) {
+      return REL_COLLISION_FF;
+    }
+    return REL_NOT_CONNECTED;
+  }
+  if (ivs > 4) {
+    return REL_UNKNOWN;
+  }
+
+  // Check sharing of coincident entities.
+  if (ivs == 2 || ivs == 3) {
+    // Map vertices and edges of the blocks
+    TopTools_IndexedDataMapOfShapeListOfShape MVE1, MVE2;
+    GEOMImpl_Block6Explorer::MapShapesAndAncestors
+      (theBlock1, TopAbs_VERTEX, TopAbs_EDGE, MVE1);
+    GEOMImpl_Block6Explorer::MapShapesAndAncestors
+      (theBlock2, TopAbs_VERTEX, TopAbs_EDGE, MVE2);
+
+    if (ivs == 2) {
+      // Find common edge
+      TopoDS_Shape anEdge1, anEdge2;
+      GEOMImpl_Block6Explorer::FindEdge(anEdge1, V1(1), V1(2), MVE1);
+      if (anEdge1.IsNull()) return REL_UNKNOWN;
+
+      GEOMImpl_Block6Explorer::FindEdge(anEdge2, V2(1), V2(2), MVE2);
+      if (anEdge2.IsNull()) return REL_UNKNOWN;
+
+      if (!anEdge1.IsSame(anEdge2)) return REL_NOT_GLUED;
+
+    } else { // ivs == 3
+      // Find common edges
+      Standard_Integer e1_v1 = 1;
+      Standard_Integer e1_v2 = 2;
+      Standard_Integer e2_v1 = 3;
+      Standard_Integer e2_v2 = 1;
+
+      TopoDS_Shape anEdge11, anEdge12;
+      GEOMImpl_Block6Explorer::FindEdge(anEdge11, V1(e1_v1), V1(e1_v2), MVE1);
+      if (anEdge11.IsNull()) {
+        e1_v2 = 3;
+        e2_v1 = 2;
+        GEOMImpl_Block6Explorer::FindEdge(anEdge11, V1(e1_v1), V1(e1_v2), MVE1);
+        if (anEdge11.IsNull()) return REL_UNKNOWN;
+      }
+      GEOMImpl_Block6Explorer::FindEdge(anEdge12, V1(e2_v1), V1(e2_v2), MVE1);
+      if (anEdge12.IsNull()) {
+        e2_v2 = 5 - e2_v1;
+        GEOMImpl_Block6Explorer::FindEdge(anEdge12, V1(e2_v1), V1(e2_v2), MVE1);
+        if (anEdge12.IsNull()) return REL_UNKNOWN;
+      }
+
+      TopoDS_Shape anEdge21, anEdge22;
+      GEOMImpl_Block6Explorer::FindEdge(anEdge21, V2(e1_v1), V2(e1_v2), MVE2);
+      if (anEdge21.IsNull()) return REL_UNKNOWN;
+      GEOMImpl_Block6Explorer::FindEdge(anEdge22, V2(e2_v1), V2(e2_v2), MVE2);
+      if (anEdge22.IsNull()) return REL_UNKNOWN;
+
+      // Check of edges coincidence (with some precision) have to be done here
+      // if (!anEdge11.IsEqual(anEdge21)) return REL_UNKNOWN;
+      // if (!anEdge12.IsEqual(anEdge22)) return REL_UNKNOWN;
+
+      // Check of edges sharing
+      if (!anEdge11.IsSame(anEdge21)) return REL_NOT_GLUED;
+      if (!anEdge12.IsSame(anEdge22)) return REL_NOT_GLUED;
+    }
+  }
+
+  if (ivs == 4) {
+    // Map vertices and faces of the blocks
+    TopTools_IndexedDataMapOfShapeListOfShape MVF1, MVF2;
+    GEOMImpl_Block6Explorer::MapShapesAndAncestors
+      (theBlock1, TopAbs_VERTEX, TopAbs_FACE, MVF1);
+    GEOMImpl_Block6Explorer::MapShapesAndAncestors
+      (theBlock2, TopAbs_VERTEX, TopAbs_FACE, MVF2);
+
+    TopoDS_Shape aFace1, aFace2;
+    GEOMImpl_Block6Explorer::FindFace(aFace1, V1(1), V1(2), V1(3), V1(4), MVF1);
+    if (aFace1.IsNull()) return REL_UNKNOWN;
+    GEOMImpl_Block6Explorer::FindFace(aFace2, V2(1), V2(2), V2(3), V2(4), MVF2);
+    if (aFace2.IsNull()) return REL_UNKNOWN;
+
+    // Check of faces coincidence (with some precision) have to be done here
+    // if (!aFace1.IsEqual(aFace2)) return REL_UNKNOWN;
+
+    // Check of faces sharing
+    if (!aFace1.IsSame(aFace2)) return REL_NOT_GLUED;
+  }
+
+  return REL_OK;
+}
+
+void FindConnected (const Standard_Integer         theBlockIndex,
+                    const TColStd_Array2OfInteger& theRelations,
+                    TColStd_MapOfInteger&          theProcessedMap,
+                    TColStd_MapOfInteger&          theConnectedMap)
+{
+  theConnectedMap.Add(theBlockIndex);
+  theProcessedMap.Add(theBlockIndex);
+
+  Standard_Integer nbBlocks = theRelations.ColLength();
+  Standard_Integer col = 1;
+  for (; col <= nbBlocks; col++) {
+    if (theRelations(theBlockIndex, col) == REL_OK ||
+        theRelations(theBlockIndex, col) == REL_NOT_GLUED) {
+      if (!theProcessedMap.Contains(col)) {
+        FindConnected(col, theRelations, theProcessedMap, theConnectedMap);
+      }
+    }
+  }
+}
+
+Standard_Boolean HasAnyConnection (const Standard_Integer         theBlockIndex,
+                                   const TColStd_MapOfInteger&    theWith,
+                                   const TColStd_Array2OfInteger& theRelations,
+                                   TColStd_MapOfInteger&          theProcessedMap)
+{
+  theProcessedMap.Add(theBlockIndex);
+
+  Standard_Integer nbBlocks = theRelations.ColLength();
+  Standard_Integer col = 1;
+  for (; col <= nbBlocks; col++) {
+    if (theRelations(theBlockIndex, col) != REL_NOT_CONNECTED) {
+      if (!theProcessedMap.Contains(col)) {
+        if (theWith.Contains(col))
+          return Standard_True;
+        if (HasAnyConnection(col, theWith, theRelations, theProcessedMap))
+          return Standard_True;
+      }
+    }
+  }
+
+  return Standard_False;
+}
+
+//=============================================================================
+/*!
+ *  CheckCompoundOfBlocks
+ */
+//=============================================================================
+Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
+                                                (Handle(GEOM_Object) theCompound,
+                                                 list<BCError>&      theErrors)
+{
+  SetErrorCode(KO);
+
+  if (theCompound.IsNull()) return Standard_False;
+  TopoDS_Shape aBlockOrComp = theCompound->GetValue();
+
+  Standard_Boolean isCompOfBlocks = Standard_True;
+
+  // Map sub-shapes and their indices
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aBlockOrComp, anIndices);
+
+  // 1. Report non-blocks
+  TopTools_ListOfShape NOT; // Not blocks
+  TopTools_ListOfShape BLO; // All blocks from the given compound
+  AddBlocksFrom(aBlockOrComp, BLO, NOT);
+
+  if (NOT.Extent() > 0) {
+    isCompOfBlocks = Standard_False;
+    BCError anErr;
+    anErr.error = NOT_BLOCK;
+    TopTools_ListIteratorOfListOfShape NOTit (NOT);
+    for (; NOTit.More(); NOTit.Next()) {
+      anErr.incriminated.push_back(anIndices.FindIndex(NOTit.Value()));
+    }
+    theErrors.push_back(anErr);
+  }
+
+  Standard_Integer nbBlocks = BLO.Extent();
+  if (nbBlocks == 0) {
+    isCompOfBlocks = Standard_False;
+    SetErrorCode(OK);
+    return isCompOfBlocks;
+  }
+  if (nbBlocks == 1) {
+    SetErrorCode(OK);
+    return isCompOfBlocks;
+  }
+
+  // Convert list of blocks into array for easy and fast access
+  Standard_Integer ibl = 1;
+  TopTools_Array1OfShape aBlocks (1, nbBlocks);
+  TopTools_ListIteratorOfListOfShape BLOit (BLO);
+  for (; BLOit.More(); BLOit.Next(), ibl++) {
+    aBlocks.SetValue(ibl, BLOit.Value());
+  }
+
+  // 2. Find relations between all blocks,
+  //    report connection errors (NOT_GLUED and INVALID_CONNECTION)
+  TColStd_Array2OfInteger aRelations (1, nbBlocks, 1, nbBlocks);
+  aRelations.Init(REL_NOT_CONNECTED);
+
+  Standard_Integer row = 1;
+  for (row = 1; row <= nbBlocks; row++) {
+    TopoDS_Shape aBlock = aBlocks.Value(row);
+
+    Standard_Integer col = row + 1;
+    for (; col <= nbBlocks; col++) {
+      Standard_Integer aRel = BlocksRelation(aBlock, aBlocks.Value(col));
+      if (aRel != REL_NOT_CONNECTED) {
+        aRelations.SetValue(row, col, aRel);
+        aRelations.SetValue(col, row, aRel);
+        if (aRel == REL_NOT_GLUED) {
+          // report connection error
+          isCompOfBlocks = Standard_False;
+          BCError anErr;
+          anErr.error = NOT_GLUED;
+          anErr.incriminated.push_back(anIndices.FindIndex(aBlocks.Value(row)));
+          anErr.incriminated.push_back(anIndices.FindIndex(aBlocks.Value(col)));
+          theErrors.push_back(anErr);
+        } else if (aRel == REL_COLLISION_VV ||
+                   aRel == REL_COLLISION_FF ||
+                   aRel == REL_COLLISION_EE ||
+                   aRel == REL_UNKNOWN) {
+          // report connection error
+          isCompOfBlocks = Standard_False;
+          BCError anErr;
+          anErr.error = INVALID_CONNECTION;
+          anErr.incriminated.push_back(anIndices.FindIndex(aBlocks.Value(row)));
+          anErr.incriminated.push_back(anIndices.FindIndex(aBlocks.Value(col)));
+          theErrors.push_back(anErr);
+        } else {
+        }
+      }
+    }
+  }
+
+  // 3. Find largest set of connected (good connection or not glued) blocks
+  TColStd_MapOfInteger aProcessedMap;
+  TColStd_MapOfInteger aLargestSet;
+  TColStd_MapOfInteger aCurrentSet;
+  for (ibl = 1; ibl <= nbBlocks; ibl++) {
+    if (!aProcessedMap.Contains(ibl)) {
+      FindConnected(ibl, aRelations, aProcessedMap, aCurrentSet);
+      if (aCurrentSet.Extent() > aLargestSet.Extent()) {
+        aLargestSet = aCurrentSet;
+      }
+    }
+  }
+
+  // 4. Report all blocks, isolated from <aLargestSet>
+  BCError anErr;
+  anErr.error = NOT_CONNECTED;
+  Standard_Boolean hasIsolated = Standard_False;
+  for (ibl = 1; ibl <= nbBlocks; ibl++) {
+    if (!aLargestSet.Contains(ibl)) {
+      aProcessedMap.Clear();
+      if (!HasAnyConnection(ibl, aLargestSet, aRelations, aProcessedMap)) {
+        // report connection absence
+        hasIsolated = Standard_True;
+        anErr.incriminated.push_back(anIndices.FindIndex(aBlocks.Value(ibl)));
+      }
+    }
+  }
+  if (hasIsolated) {
+    isCompOfBlocks = Standard_False;
+    theErrors.push_back(anErr);
+  }
+
+  SetErrorCode(OK);
+  return isCompOfBlocks;
+}
+
+//=============================================================================
+/*!
+ *  PrintBCErrors
+ */
+//=============================================================================
+TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
+                                                (Handle(GEOM_Object)  theCompound,
+                                                 const list<BCError>& theErrors)
+{
+  TCollection_AsciiString aDescr;
+
+  list<BCError>::const_iterator errIt = theErrors.begin();
+  int i = 0;
+  for (; errIt != theErrors.end(); i++, errIt++) {
+    BCError errStruct = *errIt;
+
+    switch (errStruct.error) {
+    case NOT_BLOCK:
+      aDescr += "\nNot a Blocks: ";
+      break;
+    case INVALID_CONNECTION:
+      aDescr += "\nInvalid connection between two blocks: ";
+      break;
+    case NOT_CONNECTED:
+      aDescr += "\nBlocks, not connected with main body: ";
+      break;
+    case NOT_GLUED:
+      aDescr += "\nNot glued blocks: ";
+      break;
+    default:
+      break;
+    }
+
+    list<int> sshList = errStruct.incriminated;
+    list<int>::iterator sshIt = sshList.begin();
+    int jj = 0;
+    for (; sshIt != sshList.end(); jj++, sshIt++) {
+      if (jj > 0)
+        aDescr += ", ";
+      aDescr += TCollection_AsciiString(*sshIt);
+    }
+  }
+
+  return aDescr;
 }
 
 //=============================================================================
@@ -1599,11 +2286,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetBlockNearPoint
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aResult->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBlocksOperations.GetBlockNearPoint(");
+  aDescr += anEntry + " = IBlocksOperations.GetBlockNearPoint(";
   TDF_Tool::Entry(theCompound->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
+  aDescr += anEntry + ", ";
   TDF_Tool::Entry(thePoint->GetEntry(), anEntry);
-  aDescr += (anEntry+")");
+  aDescr += anEntry + ")";
 
   TCollection_AsciiString aNewDescr = aFunction->GetDescription() + "\n";
   aNewDescr += aDescr;
@@ -1921,12 +2608,12 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeMultiTransformation1D
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBlocksOperations.MakeMultiTransformation1D(");
+  aDescr += anEntry + " = IBlocksOperations.MakeMultiTransformation1D(";
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theDirFace1)+", ");
-  aDescr += (TCollection_AsciiString(theDirFace2)+", ");
-  aDescr += (TCollection_AsciiString(theNbTimes)+") ");
+  aDescr += anEntry + ", ";
+  aDescr += TCollection_AsciiString(theDirFace1) + ", ";
+  aDescr += TCollection_AsciiString(theDirFace2) + ", ";
+  aDescr += TCollection_AsciiString(theNbTimes)  + ") ";
 
   aFunction->SetDescription(aDescr);
 
@@ -1990,15 +2677,15 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeMultiTransformation2D
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aCopy->GetEntry(), anEntry);
-  aDescr += (anEntry+" = IBlocksOperations.MakeMultiTransformation2D(");
+  aDescr += anEntry + " = IBlocksOperations.MakeMultiTransformation2D(";
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theDirFace1U)+", ");
-  aDescr += (TCollection_AsciiString(theDirFace2U)+", ");
-  aDescr += (TCollection_AsciiString(theNbTimesU)+", ");
-  aDescr += (TCollection_AsciiString(theDirFace1V)+", ");
-  aDescr += (TCollection_AsciiString(theDirFace2V)+", ");
-  aDescr += (TCollection_AsciiString(theNbTimesV)+") ");
+  aDescr += anEntry + ", ";
+  aDescr += TCollection_AsciiString(theDirFace1U) + ", ";
+  aDescr += TCollection_AsciiString(theDirFace2U) + ", ";
+  aDescr += TCollection_AsciiString(theNbTimesU)  + ", ";
+  aDescr += TCollection_AsciiString(theDirFace1V) + ", ";
+  aDescr += TCollection_AsciiString(theDirFace2V) + ", ";
+  aDescr += TCollection_AsciiString(theNbTimesV)  + ") ";
 
   aFunction->SetDescription(aDescr);
 

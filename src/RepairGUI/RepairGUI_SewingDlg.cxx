@@ -69,7 +69,7 @@ RepairGUI_SewingDlg::RepairGUI_SewingDlg(QWidget* parent, const char* name, SALO
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
 
   QGridLayout* aLay = new QGridLayout( 0, 2, 2, 0, 6, "aLay" );
   myTolEdt = new QAD_SpinBoxDbl( GroupPoints->GroupBox1, 0, 100, 1e-7, 10, 1e-10 );
@@ -129,6 +129,8 @@ void RepairGUI_SewingDlg::Init()
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   connect(myFreeBoundBtn, SIGNAL(clicked()), this, SLOT(onDetect()));
+
+  initName( tr( "SEWING_NEW_OBJ_NAME" ) );
 }
 
 
@@ -152,6 +154,8 @@ bool RepairGUI_SewingDlg::ClickOnApply()
 {
   if ( !onAccept() )
   	return false;
+
+  initName();
 
   GroupPoints->LineEdit1->setText("");
   myObject = GEOM::GEOM_Object::_nil();
@@ -178,18 +182,18 @@ void RepairGUI_SewingDlg::ClickOnCancel()
 //=================================================================================
 void RepairGUI_SewingDlg::SelectionIntoArgument()
 {
-	erasePreview();
+  erasePreview();
   myEditCurrentArgument->setText("");
   myObject = GEOM::GEOM_Object::_nil();
 
   if ( mySelection->IObjectCount() == 1 )
-	{
-		Handle(SALOME_InteractiveObject) anIO = mySelection->firstIObject();
-		Standard_Boolean aRes;
-		myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-		if ( aRes )
-			myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
-	}
+  {
+    Handle(SALOME_InteractiveObject) anIO = mySelection->firstIObject();
+    Standard_Boolean aRes;
+    myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
+    if ( aRes )
+      myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
+  }
 }
 
 //=================================================================================
@@ -198,11 +202,11 @@ void RepairGUI_SewingDlg::SelectionIntoArgument()
 //=================================================================================
 void RepairGUI_SewingDlg::SetEditCurrentArgument()
 {
-	const QObject* send = sender();
+  const QObject* send = sender();
   if ( send == GroupPoints->PushButton1 )
   {
-   	myEditCurrentArgument->setFocus();
-  	SelectionIntoArgument();
+    myEditCurrentArgument->setFocus();
+    SelectionIntoArgument();
   }
 }
 
@@ -213,12 +217,12 @@ void RepairGUI_SewingDlg::SetEditCurrentArgument()
 //=================================================================================
 void RepairGUI_SewingDlg::LineEditReturnPressed()
 {
-	const QObject* send = sender();
+  const QObject* send = sender();
   if( send == GroupPoints->LineEdit1 )
   {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-	  GEOMBase_Skeleton::LineEditReturnPressed();
-	}
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
 }
 
 

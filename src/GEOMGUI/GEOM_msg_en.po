@@ -1898,3 +1898,35 @@ msgstr "Incorrect parameters for Shape Healing algorithm"
 
 msgid "ShHealOper_ErrorExecution_msg"
 msgstr "Shape Healing algorithm failed"
+
+msgid "GEOM_GLUE_TITLE"
+msgstr "Glue faces"
+
+msgid "GEOM_GLUE"
+msgstr "Glue"
+
+### New object names for RepairGUI ###
+msgid "SEWING_NEW_OBJ_NAME"
+msgstr "Sewing"
+
+msgid "DEVIDE_EDGE_NEW_OBJECT_NAME"
+msgstr "NewObject"
+
+msgid "CLOSE_CONTOUR_NEW_OBJ_NAME"
+msgstr "CloseContour"
+
+msgid "REMOVE_HOLES_NEW_OBJ_NAME"
+msgstr "SupressHoles"
+
+msgid "GLUE_NEW_OBJ_NAME"
+msgstr "Glue"
+
+msgid "REMOVE_INT_WIRES_NEW_OBJ_NAME"
+msgstr "RemoveIntWires"
+
+msgid "PROCESS_SHAPE_NEW_OBJ_NAME"
+msgstr "ProcessShape"
+
+msgid "SUPRESS_FACE_NEW_OBJ_NAME"
+msgstr "SupressFaces"
+###

@@ -40,7 +40,10 @@
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
 
-#define GEOM_PREVIEW -2 // Definition for preview selection 
+#define GEOM_ALLOBJECTS -1 // Selection of all objects is activated
+#define GEOM_PREVIEW    -2 // Definition for preview selection
+#define GEOM_ALLSHAPES  -3 // Selection of all shapes is activated
+#define GEOM_ALLGEOM    -4 // Selection of all geom objects is activated
 
 typedef std::list<GEOM::GEOM_Object_ptr> ObjectList;
 
@@ -130,7 +133,7 @@ public:
   /* Activate/Deactivate selection*/
   void         LocalSelection( const Handle(SALOME_InteractiveObject)&, const int );
   void         LocalSelection( const SALOME_ListIO& theIOList, const int );
-  void         GlobalSelection( const int, const bool = false );
+  void         GlobalSelection( const int = GEOM_ALLOBJECTS, const bool = false );
   void         GlobalSelection( const TColStd_MapOfInteger&, const bool = false );
 
   static QAD_ViewFrame* GetActiveView();

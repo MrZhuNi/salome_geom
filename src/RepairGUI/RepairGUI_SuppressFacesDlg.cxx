@@ -66,7 +66,7 @@ RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg(QWidget* parent, const ch
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
   Init();
@@ -109,6 +109,8 @@ void RepairGUI_SuppressFacesDlg::Init()
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+
+  initName( tr( "SUPRESS_FACE_NEW_OBJ_NAME" ) );
 }
 
 
@@ -130,16 +132,18 @@ void RepairGUI_SuppressFacesDlg::ClickOnOk()
 //=================================================================================
 bool RepairGUI_SuppressFacesDlg::ClickOnApply()
 {
-	if ( !onAccept() )
-		return false;
+  if ( !onAccept() )
+    return false;
+
+  initName();
 
   myEditCurrentArgument->setText("");
   myObjects->length( 0 );
   myFaces.clear();
 
-	initSelection();
-	
-	return true;
+  initSelection();
+  
+  return true;
 }
 
 
@@ -176,19 +180,19 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
       TopoDS_Shape aShape;
       if ( myGeomBase->GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) )
       {
-				if ( aShape.ShapeType() <= TopAbs_FACE ) // FACE, SHELL, SOLID, COMPOUND
-				{
-					GEOM::short_array anIndexes;
-					if ( mySelection->HasIndex( anIO ) )
-					{
-						TColStd_IndexedMapOfInteger aMap;
-						mySelection->GetIndex( anIO, aMap );
-						Convert( aMap, anIndexes );
-						myObjects[i++] = aSelectedObject; // append the object
-						myFaces.append( anIndexes );   // append faces' indexes
-						numFaces += anIndexes.length();// just for text field output
-					}
-				}
+	if ( aShape.ShapeType() <= TopAbs_FACE ) // FACE, SHELL, SOLID, COMPOUND
+	{
+	  GEOM::short_array anIndexes;
+	  if ( mySelection->HasIndex( anIO ) )
+	  {
+	    TColStd_IndexedMapOfInteger aMap;
+	    mySelection->GetIndex( anIO, aMap );
+	    Convert( aMap, anIndexes );
+	    myObjects[i++] = aSelectedObject; // append the object
+	    myFaces.append( anIndexes );   // append faces' indexes
+	    numFaces += anIndexes.length();// just for text field output
+	  }
+	}
       }
     }
   }
@@ -203,10 +207,10 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::Convert( const TColStd_IndexedMapOfInteger& theMap, GEOM::short_array& theOutSeq )
 {
-	const int n = theMap.Extent();
-	theOutSeq.length( n );
-	for ( int i = 0; i < n; i++ )
-		theOutSeq[i] = theMap( i+1 );
+  const int n = theMap.Extent();
+  theOutSeq.length( n );
+  for ( int i = 0; i < n; i++ )
+    theOutSeq[i] = theMap( i+1 );
 }
 
 //=================================================================================
@@ -233,8 +237,8 @@ void RepairGUI_SuppressFacesDlg::LineEditReturnPressed()
   if( sender() == GroupPoints->LineEdit1 )
   {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-	  GEOMBase_Skeleton::LineEditReturnPressed();
-	}
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
 }
 
 
@@ -259,7 +263,7 @@ void RepairGUI_SuppressFacesDlg::ActivateThisDialog()
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   myGeomGUI->SetState( 0 );
-	initSelection();
+  initSelection();
 }
 
 
@@ -299,7 +303,7 @@ GEOM::GEOM_IOperations_ptr RepairGUI_SuppressFacesDlg::createOperation()
 //=================================================================================
 bool RepairGUI_SuppressFacesDlg::isValid( QString& msg )
 {
-	const int objL = myObjects->length(), facesL = myFaces.size();
+  const int objL = myObjects->length(), facesL = myFaces.size();
   return ( objL && objL == facesL );
 }
 
@@ -310,22 +314,22 @@ bool RepairGUI_SuppressFacesDlg::isValid( QString& msg )
 bool RepairGUI_SuppressFacesDlg::execute( ObjectList& objects )
 {
   QStringList anErrorObjNames;
-	for ( int i = 0; i < myObjects->length(); i++ )
-	{
-		GEOM::GEOM_Object_var obj = myObjects[i];
-		GEOM::short_array faces = myFaces[i];
-		//MESSAGE(">>>> Dlg, passing faces.. len = " << faces.length());
-		GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->SuppressFaces( obj, faces );
-		if ( anObj->_is_nil() )
-			anErrorObjNames << GEOMBase::GetName( obj );
-		else
-			objects.push_back( anObj._retn() );
-	}
+  for ( int i = 0; i < myObjects->length(); i++ )
+  {
+    GEOM::GEOM_Object_var obj = myObjects[i];
+    GEOM::short_array faces = myFaces[i];
+    //MESSAGE(">>>> Dlg, passing faces.. len = " << faces.length());
+    GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->SuppressFaces( obj, faces );
+    if ( anObj->_is_nil() )
+      anErrorObjNames << GEOMBase::GetName( obj );
+    else
+      objects.push_back( anObj._retn() );
+  }
 
-	if ( !anErrorObjNames.empty() )
-		MESSAGE("ERRORS occured while processing the following objects: " << anErrorObjNames.join( " " ));
+  if ( !anErrorObjNames.empty() )
+    MESSAGE("ERRORS occured while processing the following objects: " << anErrorObjNames.join( " " ));
 
-	return anErrorObjNames.size() < myObjects->length(); // true if at least one object was OK, false if ALL objects were nil after Healing.
+  return anErrorObjNames.size() < myObjects->length(); // true if at least one object was OK, false if ALL objects were nil after Healing.
 }
 
 //=================================================================================

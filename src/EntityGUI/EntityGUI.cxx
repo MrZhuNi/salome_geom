@@ -32,6 +32,7 @@
 #include "QAD_RightFrame.h"
 #include "QAD_Desktop.h"
 #include "OCCViewer_Viewer3d.h"
+#include "OCCViewer_ViewFrame.h"
 #include "VTKViewer_ViewFrame.h"
 #include "GEOM_AssemblyBuilder.h"
 #include "SALOMEGUI_ImportOperation.h"

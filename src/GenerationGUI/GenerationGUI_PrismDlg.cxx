@@ -129,6 +129,8 @@ void GenerationGUI_PrismDlg::Init()
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName(tr("GEOM_PRISM"));
+
+  globalSelection( GEOM_ALLSHAPES );
 }
 
 
@@ -210,7 +212,7 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
 void GenerationGUI_PrismDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  globalSelection();
+  globalSelection( GEOM_ALLSHAPES );
 
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
@@ -258,6 +260,7 @@ void GenerationGUI_PrismDlg::enterEvent(QEvent * e)
 void GenerationGUI_PrismDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  globalSelection( GEOM_ALLSHAPES );
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   GroupPoints->LineEdit1->setFocus();
   myEditCurrentArgument = GroupPoints->LineEdit1;

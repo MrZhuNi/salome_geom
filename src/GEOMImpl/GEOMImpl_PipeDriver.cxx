@@ -5,44 +5,47 @@ using namespace std;
 #include "GEOMImpl_Types.hxx"
 #include "GEOM_Function.hxx"
 
-#include <BRepBuilderAPI_MakeWire.hxx>
-#include <BRepOffsetAPI_MakePipe.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepCheck_Analyzer.hxx>
+#include <BRepOffsetAPI_MakePipe.hxx>
+#include <BRepBuilderAPI_MakeWire.hxx>
+
+#include <TopAbs.hxx>
 #include <TopoDS.hxx>
-#include <TopoDS_Shape.hxx>
 #include <TopoDS_Wire.hxx>
 #include <TopoDS_Edge.hxx>
-#include <TopAbs.hxx>
+#include <TopoDS_Shape.hxx>
 
 #include <Standard_NullObject.hxx>
 #include <Standard_TypeMismatch.hxx>
+#include <Standard_ConstructionError.hxx>
 
 //=======================================================================
 //function : GetID
 //purpose  :
-//======================================================================= 
+//=======================================================================
 const Standard_GUID& GEOMImpl_PipeDriver::GetID()
 {
   static Standard_GUID aPipeDriver("FF1BBB19-5D14-4df2-980B-3A668264EA16");
-  return aPipeDriver; 
+  return aPipeDriver;
 }
 
 
 //=======================================================================
 //function : GEOMImpl_PipeDriver
-//purpose  : 
+//purpose  :
 //=======================================================================
-GEOMImpl_PipeDriver::GEOMImpl_PipeDriver() 
+GEOMImpl_PipeDriver::GEOMImpl_PipeDriver()
 {
 }
 
 //=======================================================================
 //function : Execute
 //purpose  :
-//======================================================================= 
+//=======================================================================
 Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
 {
-  if (Label().IsNull()) return 0;    
+  if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
 
   GEOMImpl_IPipe aCI (aFunction);
@@ -80,28 +83,33 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
 
   if (aShape.IsNull()) return 0;
 
+  BRepCheck_Analyzer ana (aShape, Standard_False);
+  if (!ana.IsValid()) {
+    Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
+  }
+
   aFunction->SetValue(aShape);
 
-  log.SetTouched(Label()); 
+  log.SetTouched(Label());
 
-  return 1;    
+  return 1;
 }
 
 
 //=======================================================================
 //function :  GEOMImpl_PipeDriver_Type_
 //purpose  :
-//======================================================================= 
+//=======================================================================
 Standard_EXPORT Handle_Standard_Type& GEOMImpl_PipeDriver_Type_()
 {
 
   static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
   if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared); 
+  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
   if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
- 
+
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_PipeDriver",
@@ -116,7 +124,7 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_PipeDriver_Type_()
 //=======================================================================
 //function : DownCast
 //purpose  :
-//======================================================================= 
+//=======================================================================
 const Handle(GEOMImpl_PipeDriver) Handle(GEOMImpl_PipeDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
 {
   Handle(GEOMImpl_PipeDriver) _anOtherObject;

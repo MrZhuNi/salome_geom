@@ -135,6 +135,9 @@ static inline Handle(SALOME_Filter) getFilter( const int theMode )
       case GEOM_CONE      : aFilter = new GEOM_FaceFilter( StdSelect_Cone     ); break;
       
       case GEOM_PREVIEW   : aFilter = new GEOM_PreviewFilter(); break;
+      
+      case GEOM_ALLSHAPES : aFilter = new GEOM_ShapeTypeFilter( -1, true ); break;
+      case GEOM_ALLGEOM   : aFilter = new SALOME_TypeFilter( "GEOM" ); break;
 
       default             : aFilter = new GEOM_TypeFilter( theMode ); break;
     }
@@ -264,6 +267,13 @@ void GEOM_Displayer::Display( const Handle(SALOME_InteractiveObject)& theIO, con
   
   if ( vf )
   {
+      if ( vf->inherits( "VTKViewer_ViewFrame" ) )
+      {
+        SALOME_Prs* prs = vf->CreatePrs( !theIO.IsNull() ? theIO->getEntry() : 0 );
+        ((SALOME_View*)vf)->Erase( prs, true );
+        delete prs;
+      }
+    
     SALOME_Prs* prs = buildPresentation( theIO, vf );
     
     if ( prs )
@@ -273,7 +283,7 @@ void GEOM_Displayer::Display( const Handle(SALOME_InteractiveObject)& theIO, con
       vf->AfterDisplay( this );
       
       if ( updateViewer )
-	vf->Repaint();
+        vf->Repaint();
       
       delete prs;  // delete presentation because displayer is its owner
     }
@@ -476,7 +486,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
       {
         aTrh = new GEOM_AISTrihedron( aPlc );
 
-        if ( HasColor() )
+        if ( HasColor() )  
           aTrh->SetColor( (Quantity_NameOfColor)GetColor() );
 
         if ( HasWidth() )
@@ -570,7 +580,6 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         AIS_ListOfInteractive IOList;
         occPrs->GetObjects( IOList );
         AIS_ListIteratorOfListOfInteractive Iter( IOList );
-        int i = 0;
         for ( ; Iter.More(); Iter.Next() )
         {
           Handle(GEOM_AISShape) AISShape = Handle(GEOM_AISShape)::DownCast( Iter.Value() );
@@ -612,7 +621,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
   {
     myToActivate = false;
     GEOM_VTKTrihedron* aTrh = GEOM_VTKTrihedron::New();
-
+    
     if ( HasColor() )
     {
       Quantity_Color aColor( (Quantity_NameOfColor)GetColor() );
@@ -625,14 +634,13 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
       return;
 
     gp_Ax2 anAx2 = aPlane->Pln().Position().Ax2();
-
     aTrh->SetPlacement( new Geom_Axis2Placement( anAx2 ) );
 
     if ( VTKViewer_ViewFrame* vf = dynamic_cast<VTKViewer_ViewFrame*>( GetActiveView() ) )
       aTrh->SetSize( 0.5 * vf->GetTrihedronSize() );
 
     vtkPrs->AddObject( aTrh );
-
+      
     theActors = vtkActorCollection::New();
     theActors->AddItem( aTrh );
   }
@@ -661,7 +669,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
   {
     aProp->SetLineWidth( GetWidth() );
   }
-    
+
   while ( anActor != NULL )
   {
     SALOME_Actor* GActor = SALOME_Actor::SafeDownCast( anActor );
@@ -880,13 +888,15 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
   aSel->ClearIndex();
     
   aSel->ClearFilters();
+
+  if ( theModes.Contains( GEOM_ALLOBJECTS ) )
+    return;
+
   Handle(SALOME_Filter) aFilter;
   if ( theModes.Extent() == 1 )
   {
     int aMode = TColStd_MapIteratorOfMapOfInteger( theModes ).Key();
-    int aTopAbsMode = getTopAbsMode( aMode );
-    if ( aTopAbsMode != -1 )
-      aFilter = getFilter( aMode );
+    aFilter = getFilter( aMode );
   }
   else if ( theModes.Extent() > 1 )
   {
@@ -933,15 +943,15 @@ void GEOM_Displayer::LocalSelection( const SALOME_ListIO& theIOList, const int t
 void GEOM_Displayer::BeforeDisplay( SALOME_View* v, const SALOME_OCCViewType& )
 {
   OCCViewer_ViewFrame* vf = dynamic_cast<OCCViewer_ViewFrame*>( v );
-  if ( !vf )
-    return;
-
-  Handle(AIS_InteractiveContext) ic = vf->getViewer()->getAISContext();
-  if ( ic.IsNull() )
-    return;
-
-  if ( ic->HasOpenedContext() )
-    ic->CloseAllContexts();
+  if ( vf )
+  {
+    Handle(AIS_InteractiveContext) ic = vf->getViewer()->getAISContext();
+    if ( !ic.IsNull() )
+    {
+      if ( ic->HasOpenedContext() )
+      ic->CloseAllContexts();
+    }
+  }
 }
 
 void GEOM_Displayer::AfterDisplay( SALOME_View*, const SALOME_OCCViewType& )

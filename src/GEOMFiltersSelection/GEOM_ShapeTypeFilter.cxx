@@ -84,8 +84,10 @@ static GEOM::GEOM_Object_ptr convertIOinGEOMObject(
 // function : ShapeTypeFilter
 // purpose  : 
 //=======================================================================
-GEOM_ShapeTypeFilter::GEOM_ShapeTypeFilter( TopAbs_ShapeEnum theShapeType ) 
+GEOM_ShapeTypeFilter::GEOM_ShapeTypeFilter( const TopAbs_ShapeEnum theShapeType,
+                                            const bool theIsAll ) 
 {
+  myIsAll = theIsAll;
   myShapeTypes.Add( theShapeType );
   myTypeFilter = new SALOME_TypeFilter( "GEOM" );
 }
@@ -94,8 +96,10 @@ GEOM_ShapeTypeFilter::GEOM_ShapeTypeFilter( TopAbs_ShapeEnum theShapeType )
 // function : ShapeTypeFilter
 // purpose  : 
 //=======================================================================
-GEOM_ShapeTypeFilter::GEOM_ShapeTypeFilter( const TColStd_MapOfInteger& theShapeTypes ) 
+GEOM_ShapeTypeFilter::GEOM_ShapeTypeFilter( const TColStd_MapOfInteger& theShapeTypes,
+                                            const bool theIsAll ) 
 {
+  myIsAll = theIsAll;
   myShapeTypes = theShapeTypes;
   myTypeFilter = new SALOME_TypeFilter( "GEOM" );
 }
@@ -104,15 +108,18 @@ GEOM_ShapeTypeFilter::GEOM_ShapeTypeFilter( const TColStd_MapOfInteger& theShape
 // function : IsOk
 // purpose  : 
 //=======================================================================
-Standard_Boolean GEOM_ShapeTypeFilter::IsOk(const Handle(SALOME_InteractiveObject)& anObj) const 
+Standard_Boolean GEOM_ShapeTypeFilter::IsOk(
+  const Handle(SALOME_InteractiveObject)& anObj ) const 
 {
   if ( !myTypeFilter->IsOk(anObj) ) 
     return Standard_False;
 
   Standard_Boolean aResult = Standard_False;
   GEOM::GEOM_Object_ptr aGeomObj = convertIOinGEOMObject( anObj, aResult );
-  if ( !CORBA::is_nil( aGeomObj ) && aResult )
+  if ( !CORBA::is_nil( aGeomObj ) && aResult && aGeomObj->IsShape() )
   {
+    if ( myIsAll )
+      return true;
     TopoDS_Shape aShape;
     if ( getShape( aGeomObj, aShape ) )
     {
@@ -131,3 +138,27 @@ Standard_Boolean GEOM_ShapeTypeFilter::IsShapeOk( const TopoDS_Shape& ) const
 {
   return Standard_True;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -92,7 +92,7 @@ RepairGUI_CloseContourDlg::RepairGUI_CloseContourDlg(QWidget* parent, const char
   myIsVertexGr->insert( new QRadioButton( tr( "Close by new edge" ), myIsVertexGr ), 1 );
   myIsVertexGr->find( 0 )->toggle();
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
   GroupPoints->getGroupBoxLayout()->addLayout( aSelectWiresLay, 1, 0 );
   GroupPoints->getGroupBoxLayout()->addMultiCellWidget(myIsVertexGr, 2, 2, 0, 2);
   /***************************************************************/
@@ -140,6 +140,8 @@ void RepairGUI_CloseContourDlg::Init()
   connect(mySelectWiresEdt, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+
+  initName( tr( "CLOSE_CONTOUR_NEW_OBJ_NAME" ) );
 }
 
 
@@ -162,7 +164,9 @@ void RepairGUI_CloseContourDlg::ClickOnOk()
 bool RepairGUI_CloseContourDlg::ClickOnApply()
 {
   if ( !onAccept() )
-  	return false;
+    return false;
+
+  initName();
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setText("");
@@ -192,26 +196,31 @@ void RepairGUI_CloseContourDlg::ClickOnCancel()
 void RepairGUI_CloseContourDlg::SelectionIntoArgument()
 {
   erasePreview();
-  myEditCurrentArgument->setText("");
-  mySelectWiresEdt->setText("");
-  if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myObject = GEOM::GEOM_Object::_nil();
-  else if ( myEditCurrentArgument == mySelectWiresEdt ) myWiresInd->length( 0 );
+  myEditCurrentArgument->setText( "" );
+  mySelectWiresEdt->setText( "" );
+  
+  if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
+    myObject = GEOM::GEOM_Object::_nil();
+  else if ( myEditCurrentArgument == mySelectWiresEdt )
+    myWiresInd->length( 0 );
 
   if ( mySelection->IObjectCount() == 1 )
   {
     Handle(SALOME_InteractiveObject) anIO = mySelection->firstIObject();
 
-    if ( myEditCurrentArgument == GroupPoints->LineEdit1 )	// face selection
+    if ( myEditCurrentArgument == GroupPoints->LineEdit1 )  // face selection
     {
       Standard_Boolean aRes;
       myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-      if ( aRes )
+      if ( aRes && GEOMBase::IsShape( myObject ) )
       {
-	myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
-	TopoDS_Shape aShape;
-	if ( myGeomBase->GetShape( myObject, aShape, TopAbs_WIRE ) )
-	  mySelectWiresEdt->setText( myEditCurrentArgument->text() );
+        myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
+        TopoDS_Shape aShape;
+        if ( myGeomBase->GetShape( myObject, aShape, TopAbs_WIRE ) )
+          mySelectWiresEdt->setText( myEditCurrentArgument->text() );
       }
+      else
+        myObject = GEOM::GEOM_Object::_nil();
     }
     else if ( myEditCurrentArgument == mySelectWiresEdt )
     {
@@ -220,9 +229,9 @@ void RepairGUI_CloseContourDlg::SelectionIntoArgument()
       const int n = aMap.Extent();
       myWiresInd->length( n );
       for ( int i = 1; i <= n; i++ )
-	myWiresInd[i-1] = aMap( i );
+        myWiresInd[ i-1 ] = aMap( i );
       if ( n )
-	myEditCurrentArgument->setText( QString::number( n ) + "_" + tr( "GEOM_WIRE" ) + tr( "_S_" ) );
+        myEditCurrentArgument->setText( QString::number( n ) + "_" + tr( "GEOM_WIRE" ) + tr( "_S_" ) );
     }
   }
 }

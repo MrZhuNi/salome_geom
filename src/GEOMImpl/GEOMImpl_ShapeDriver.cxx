@@ -77,7 +77,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
     // add edges
     BRepBuilderAPI_MakeWire MW;
-    for (ind = 1; ind <= aShapes->Length(); ind++) {
+    for (ind = 1; ind <= nbshapes; ind++) {
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
       TopoDS_Shape aShape_i = aRefShape->GetValue();
       if (aShape_i.IsNull()) {
@@ -113,7 +113,6 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
   } else if (aType == FACE_WIRES) {
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
-    unsigned int ind, nbshapes = aShapes->Length();
 
     // first wire
     Handle(GEOM_Function) aRefWire = Handle(GEOM_Function)::DownCast(aShapes->Value(1));
@@ -130,6 +129,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     }
     TopoDS_Shape FFace = MF.Shape();
     if (!FFace.IsNull()) {
+      unsigned int ind, nbshapes = aShapes->Length();
       if (nbshapes == 1) {
 	aShape = FFace;
 
@@ -143,8 +143,9 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 	TopoDS_Shape aLocalS = FFace.Oriented(TopAbs_FORWARD);
 	FR.Init(TopoDS::Face(aLocalS), Standard_False, Standard_True);
 
-	for (unsigned int i = 1; i <= nbshapes; i++) {
-          Handle(GEOM_Function) aRefWire_i = Handle(GEOM_Function)::DownCast(aShapes->Value(i));
+	for (ind = 1; ind <= nbshapes; ind++) {
+          Handle(GEOM_Function) aRefWire_i =
+            Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
           TopoDS_Shape aWire_i = aRefWire_i->GetValue();
           if (aWire_i.IsNull() || aWire_i.ShapeType() != TopAbs_WIRE) {
             Standard_NullObject::Raise("Shape for face construction is null or not a wire");
@@ -177,7 +178,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
     // add faces
     BRepAlgo_Sewing aSewing(Precision::Confusion()*10.0);
-    for (ind = 1; ind <= aShapes->Length(); ind++) {
+    for (ind = 1; ind <= nbshapes; ind++) {
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
       TopoDS_Shape aShape_i = aRefShape->GetValue();
       if (aShape_i.IsNull()) {
@@ -229,7 +230,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     B.MakeCompound(Res);
 
     // add shapes
-    for (ind = 1; ind <= aShapes->Length(); ind++) {
+    for (ind = 1; ind <= nbshapes; ind++) {
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
       TopoDS_Shape aShapeShell = aRefShape->GetValue();
       if (aShapeShell.IsNull()) {
@@ -258,7 +259,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     // add shapes
     TopoDS_Compound C;
     B.MakeCompound(C);
-    for (ind = 1; ind <= aShapes->Length(); ind++) {
+    for (ind = 1; ind <= nbshapes; ind++) {
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
       TopoDS_Shape aShape_i = aRefShape->GetValue();
       if (aShape_i.IsNull()) {

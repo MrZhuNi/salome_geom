@@ -33,6 +33,8 @@ using namespace std;
 #include "QAD_RightFrame.h"
 #include "QAD_Desktop.h"
 #include "OCCViewer_Viewer3d.h"
+#include "OCCViewer_ViewFrame.h"
+#include "OCCViewer_AISSelector.h"
 #include "OCCViewer_ViewPort3d.h"
 #include "SALOMEGUI_QtCatchCorbaException.hxx"
 

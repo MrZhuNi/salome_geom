@@ -15,6 +15,10 @@ using namespace std;
 #include <TopExp.hxx>
 
 #include <gp_Pnt.hxx>
+#include <Precision.hxx>
+#include <StdFail_NotDone.hxx>
+#include <Standard_TypeMismatch.hxx>
+#include <Standard_ConstructionError.hxx>
 
 //=======================================================================
 //function : GetID
@@ -57,23 +61,36 @@ Standard_Integer GEOMImpl_TorusDriver::Execute(TFunction_Logbook& log) const
     Handle(GEOM_Function) aRefVector = aCI.GetVector();
     TopoDS_Shape aShapePnt = aRefPoint->GetValue();
     TopoDS_Shape aShapeVec = aRefVector->GetValue();
-    if (aShapePnt.ShapeType() == TopAbs_VERTEX &&
-        aShapeVec.ShapeType() == TopAbs_EDGE) {
-      gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
-      TopoDS_Edge anE = TopoDS::Edge(aShapeVec);
-      TopoDS_Vertex V1, V2;
-      TopExp::Vertices(anE, V1, V2, Standard_True);
-      if (!V1.IsNull() && !V2.IsNull()) {
-        gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
-        gp_Ax2 anAxes (aP, aV);
-        aShape = BRepPrimAPI_MakeTorus(anAxes, aCI.GetRMajor(), aCI.GetRMinor()).Shape();
-      }
+    if (aShapePnt.ShapeType() != TopAbs_VERTEX) {
+      Standard_TypeMismatch::Raise("Torus Center must be a vertex");
     }
+    if (aShapeVec.ShapeType() != TopAbs_EDGE) {
+      Standard_TypeMismatch::Raise("Torus Axis must be an edge");
+    }
+
+    gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
+    TopoDS_Edge anE = TopoDS::Edge(aShapeVec);
+    TopoDS_Vertex V1, V2;
+    TopExp::Vertices(anE, V1, V2, Standard_True);
+    if (V1.IsNull() || V2.IsNull()) {
+      Standard_ConstructionError::Raise("Bad edge for the Torus Axis given");
+    }
+
+    gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
+    if (aV.Magnitude() < Precision::Confusion()) {
+      Standard_ConstructionError::Raise
+        ("End vertices of edge, defining the Torus Axis, are too close");
+    }
+
+    gp_Ax2 anAxes (aP, aV);
+    BRepPrimAPI_MakeTorus MT (anAxes, aCI.GetRMajor(), aCI.GetRMinor());
+    if (!MT.IsDone()) MT.Build();
+    if (!MT.IsDone()) StdFail_NotDone::Raise("Torus construction algorithm has failed");
+    aShape = MT.Shape();
   } else {
   }
 
   if (aShape.IsNull()) return 0;
-
   aFunction->SetValue(aShape);
 
   log.SetTouched(Label()); 

@@ -297,11 +297,17 @@ void TransformationGUI_PositionDlg::SetEditCurrentArgument()
   }
   else if(send == Group1->PushButton2) {
     myEditCurrentArgument = Group1->LineEdit2;
-    globalSelection( GEOM_PLANE );
+    TColStd_MapOfInteger aMap;
+    aMap.Add( GEOM_PLANE );
+    aMap.Add( GEOM_MARKER );
+    globalSelection( aMap );
   }
   else if(send == Group1->PushButton3) {
     myEditCurrentArgument = Group1->LineEdit3;
-    globalSelection( GEOM_PLANE );
+    TColStd_MapOfInteger aMap;
+    aMap.Add( GEOM_PLANE );
+    aMap.Add( GEOM_MARKER );
+    globalSelection( aMap );
   }
 
   myEditCurrentArgument->setFocus();

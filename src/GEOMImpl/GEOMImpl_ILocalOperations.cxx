@@ -2,15 +2,6 @@ using namespace std;
 
 #include "GEOMImpl_ILocalOperations.hxx"
 
-#include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
-
-#include <TFunction_DriverTable.hxx>
-#include <TFunction_Driver.hxx>
-#include <TFunction_Logbook.hxx>
-#include <TDF_Tool.hxx>
-
 #include "GEOM_Function.hxx"
 #include "GEOMImpl_Types.hxx"
 
@@ -23,6 +14,15 @@ using namespace std;
 #include "GEOMImpl_IArchimede.hxx"
 #include "GEOMImpl_ArchimedeDriver.hxx"
 
+#include "utilities.h"
+#include "OpUtil.hxx"
+#include "Utils_ExceptHandlers.hxx"
+
+#include <TFunction_DriverTable.hxx>
+#include <TFunction_Driver.hxx>
+#include <TFunction_Logbook.hxx>
+#include <TDF_Tool.hxx>
+
 #include <TopExp.hxx>
 #include <TopoDS_TShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -34,7 +34,7 @@ using namespace std;
  *   constructor:
  */
 //=============================================================================
-GEOMImpl_ILocalOperations::GEOMImpl_ILocalOperations (GEOM_Engine* theEngine, int theDocID) 
+GEOMImpl_ILocalOperations::GEOMImpl_ILocalOperations (GEOM_Engine* theEngine, int theDocID)
 : GEOM_IOperations(theEngine, theDocID)
 {
   MESSAGE("GEOMImpl_ILocalOperations::GEOMImpl_ILocalOperations");
@@ -61,17 +61,17 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletAll
 {
   SetErrorCode(KO);
 
-  //Add a new Fillet object  
+  //Add a new Fillet object
   Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GetDocID(), GEOM_FILLET);
- 
+
   //Add a new Fillet function
   Handle(GEOM_Function) aFunction =
     aFillet->AddFunction(GEOMImpl_FilletDriver::GetID(), FILLET_SHAPE_ALL);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_FilletDriver::GetID()) return NULL; 
-  
+  if (aFunction->GetDriverGUID() != GEOMImpl_FilletDriver::GetID()) return NULL;
+
   GEOMImpl_IFillet aCI (aFunction);
 
   Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
@@ -93,7 +93,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletAll
     return NULL;
   }
 
-  //Make a Python command 
+  //Make a Python command
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aFillet->GetEntry(), anEntry);
   aDescr = anEntry + " = ILocalOperations.MakeFilletAll(";
@@ -104,7 +104,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletAll
   aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
-  return aFillet; 
+  return aFillet;
 }
 
 //=============================================================================
@@ -117,17 +117,17 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
 {
   SetErrorCode(KO);
 
-  //Add a new Fillet object  
+  //Add a new Fillet object
   Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GetDocID(), GEOM_FILLET);
- 
+
   //Add a new Fillet function
   Handle(GEOM_Function) aFunction =
     aFillet->AddFunction(GEOMImpl_FilletDriver::GetID(), FILLET_SHAPE_EDGES);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_FilletDriver::GetID()) return NULL; 
-  
+  if (aFunction->GetDriverGUID() != GEOMImpl_FilletDriver::GetID()) return NULL;
+
   GEOMImpl_IFillet aCI (aFunction);
 
   Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
@@ -157,7 +157,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
     return NULL;
   }
 
-  //Make a Python command 
+  //Make a Python command
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aFillet->GetEntry(), anEntry);
   aDescr = anEntry + " = ILocalOperations.MakeFilletEdges(";
@@ -176,7 +176,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
   aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
-  return aFillet; 
+  return aFillet;
 }
 
 //=============================================================================
@@ -189,17 +189,17 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
 {
   SetErrorCode(KO);
 
-  //Add a new Fillet object  
+  //Add a new Fillet object
   Handle(GEOM_Object) aFillet = GetEngine()->AddObject(GetDocID(), GEOM_FILLET);
- 
+
   //Add a new Fillet function
   Handle(GEOM_Function) aFunction =
     aFillet->AddFunction(GEOMImpl_FilletDriver::GetID(), FILLET_SHAPE_FACES);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_FilletDriver::GetID()) return NULL; 
-  
+  if (aFunction->GetDriverGUID() != GEOMImpl_FilletDriver::GetID()) return NULL;
+
   GEOMImpl_IFillet aCI (aFunction);
 
   Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
@@ -229,7 +229,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
     return NULL;
   }
 
-  //Make a Python command 
+  //Make a Python command
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aFillet->GetEntry(), anEntry);
   aDescr = anEntry + " = ILocalOperations.MakeFilletFaces(";
@@ -248,7 +248,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
   aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
-  return aFillet; 
+  return aFillet;
 }
 
 //=============================================================================
@@ -260,17 +260,17 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferAll (Handle(GEOM_Objec
 {
   SetErrorCode(KO);
 
-  //Add a new Chamfer object  
+  //Add a new Chamfer object
   Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_CHAMFER);
- 
+
   //Add a new Chamfer function
   Handle(GEOM_Function) aFunction =
     aChamfer->AddFunction(GEOMImpl_ChamferDriver::GetID(), CHAMFER_SHAPE_ALL);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID()) return NULL; 
-  
+  if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID()) return NULL;
+
   GEOMImpl_IChamfer aCI (aFunction);
 
   Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
@@ -292,7 +292,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferAll (Handle(GEOM_Objec
     return NULL;
   }
 
-  //Make a Python command 
+  //Make a Python command
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aChamfer->GetEntry(), anEntry);
   aDescr += anEntry;
@@ -304,7 +304,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferAll (Handle(GEOM_Objec
   aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
-  return aChamfer; 
+  return aChamfer;
 }
 
 //=============================================================================
@@ -318,17 +318,17 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdge
 {
   SetErrorCode(KO);
 
-  //Add a new Chamfer object  
+  //Add a new Chamfer object
   Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_CHAMFER);
- 
+
   //Add a new Chamfer function
   Handle(GEOM_Function) aFunction =
     aChamfer->AddFunction(GEOMImpl_ChamferDriver::GetID(), CHAMFER_SHAPE_EDGE);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID()) return NULL; 
-  
+  if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID()) return NULL;
+
   GEOMImpl_IChamfer aCI (aFunction);
 
   Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
@@ -353,7 +353,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdge
     return NULL;
   }
 
-  //Make a Python command 
+  //Make a Python command
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aChamfer->GetEntry(), anEntry);
   aDescr += anEntry;
@@ -368,7 +368,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdge
   aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
-  return aChamfer; 
+  return aChamfer;
 }
 
 //=============================================================================
@@ -382,17 +382,17 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
 {
   SetErrorCode(KO);
 
-  //Add a new Chamfer object  
+  //Add a new Chamfer object
   Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_CHAMFER);
- 
+
   //Add a new Chamfer function
   Handle(GEOM_Function) aFunction =
     aChamfer->AddFunction(GEOMImpl_ChamferDriver::GetID(), CHAMFER_SHAPE_FACES);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID()) return NULL; 
-  
+  if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID()) return NULL;
+
   GEOMImpl_IChamfer aCI (aFunction);
 
   Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
@@ -423,7 +423,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
     return NULL;
   }
 
-  //Make a Python command 
+  //Make a Python command
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aChamfer->GetEntry(), anEntry);
   aDescr += anEntry;
@@ -444,7 +444,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
   aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
-  return aChamfer; 
+  return aChamfer;
 }
 
 //=============================================================================
@@ -459,16 +459,16 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeArchimede (Handle(GEOM_Object
 {
   SetErrorCode(KO);
 
-  //Add a new Archimede object  
+  //Add a new Archimede object
   Handle(GEOM_Object) aChamfer = GetEngine()->AddObject(GetDocID(), GEOM_ARCHIMEDE);
- 
+
   //Add a new Archimede function
   Handle(GEOM_Function) aFunction = aChamfer->AddFunction(GEOMImpl_ArchimedeDriver::GetID(), ARCHIMEDE_TYPE);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_ArchimedeDriver::GetID()) return NULL; 
-  
+  if (aFunction->GetDriverGUID() != GEOMImpl_ArchimedeDriver::GetID()) return NULL;
+
   GEOMImpl_IArchimede aAI (aFunction);
 
   Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
@@ -492,7 +492,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeArchimede (Handle(GEOM_Object
     return NULL;
   }
 
-  //Make a Python command 
+  //Make a Python command
   TCollection_AsciiString anEntry, aDescr("");
   TDF_Tool::Entry(aChamfer->GetEntry(), anEntry);
   aDescr += anEntry;
@@ -506,7 +506,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeArchimede (Handle(GEOM_Object
   aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
-  return aChamfer; 
+  return aChamfer;
 }
 
 //=============================================================================
@@ -536,6 +536,8 @@ bool GEOMImpl_ILocalOperations::GetSubShape (const TopoDS_Shape& theShape, const
 Standard_Integer GEOMImpl_ILocalOperations::GetSubShapeIndex (Handle(GEOM_Object) theShape,
                                                               Handle(GEOM_Object) theSubShape)
 {
+  SetErrorCode(KO);
+
   TopoDS_Shape aShape = theShape->GetValue();
   TopoDS_Shape aSubShape = theSubShape->GetValue();
 
@@ -543,8 +545,10 @@ Standard_Integer GEOMImpl_ILocalOperations::GetSubShapeIndex (Handle(GEOM_Object
 
   TopTools_IndexedMapOfShape anIndices;
   TopExp::MapShapes(aShape, anIndices);
-  if (anIndices.Contains(aSubShape))
+  if (anIndices.Contains(aSubShape)) {
+    SetErrorCode(OK);
     return anIndices.FindIndex(aSubShape);
+  }
 
-  return -1; 
+  return -1;
 }

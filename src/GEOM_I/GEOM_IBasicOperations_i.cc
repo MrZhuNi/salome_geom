@@ -176,6 +176,39 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeVectorTwoPnt
 
 //=============================================================================
 /*!
+ *  MakeLine
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeLine
+                   (GEOM::GEOM_Object_ptr thePnt, GEOM::GEOM_Object_ptr theDir)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (thePnt == NULL || theDir == NULL) return aGEOMObject._retn();
+
+  //Get the reference objects
+
+  Handle(GEOM_Object) aRef1 = GetOperations()->GetEngine()->GetObject
+    (thePnt->GetStudyID(), thePnt->GetEntry());
+  Handle(GEOM_Object) aRef2 = GetOperations()->GetEngine()->GetObject
+    (theDir->GetStudyID(), theDir->GetEntry());
+  if (aRef1.IsNull() || aRef2.IsNull()) return aGEOMObject._retn();
+
+  //Create the Line
+
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeLine(aRef1, aRef2);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeLineTwoPnt
  */
 //=============================================================================

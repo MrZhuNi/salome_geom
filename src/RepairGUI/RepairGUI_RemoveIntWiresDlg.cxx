@@ -66,7 +66,7 @@ RepairGUI_RemoveIntWiresDlg::RepairGUI_RemoveIntWiresDlg(QWidget* parent, const 
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
 
   myAllChk = new QCheckBox( tr( "GEOM_REMOVE_ALL_INT_WIRES" ), GroupPoints->GroupBox1 );
 
@@ -138,6 +138,8 @@ void RepairGUI_RemoveIntWiresDlg::Init()
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   connect( myAllChk, SIGNAL( clicked() ), this, SLOT( onRemoveAllClicked() ) );
+
+  initName( tr( "REMOVE_INT_WIRES_NEW_OBJ_NAME" ) );
 }
 
 
@@ -161,6 +163,8 @@ bool RepairGUI_RemoveIntWiresDlg::ClickOnApply()
 {
   if ( !onAccept() )
   	return false;
+
+  initName();
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setText("");
@@ -202,8 +206,10 @@ void RepairGUI_RemoveIntWiresDlg::SelectionIntoArgument()
 		{
 			Standard_Boolean aRes;
 			myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-			if ( aRes )
+			if ( aRes && GEOMBase::IsShape( myObject ) )
 				myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
+      else
+        myObject = GEOM::GEOM_Object::_nil();
 		}
 		else if ( myEditCurrentArgument == mySelectWiresEdt && !myAllChk->isChecked() )
 		{

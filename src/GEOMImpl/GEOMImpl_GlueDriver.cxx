@@ -8,6 +8,7 @@ using namespace std;
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepLib.hxx>
+#include <BRepBndLib.hxx>
 #include <BRepTools_Quilt.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 
@@ -26,6 +27,7 @@ using namespace std;
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 
 #include <gp_Pnt.hxx>
+#include <Bnd_Box.hxx>
 #include <Precision.hxx>
 #include <Standard_NullObject.hxx>
 #include <Standard_ConstructionError.hxx>
@@ -54,8 +56,8 @@ GEOMImpl_GlueDriver::GEOMImpl_GlueDriver()
 //purpose  : for GLUE_FACES
 //=======================================================================
 static TopoDS_Face FindSameFace (const TopoDS_Shape& aShape,
-                                 const TopoDS_Face& F,
-                                 double tol3d)
+                                 const TopoDS_Face&  F,
+                                 const double        tol3d)
 {
   TopoDS_Face aFace;
   bool isSame = false;
@@ -110,8 +112,9 @@ static TopoDS_Face FindSameFace (const TopoDS_Shape& aShape,
 //function : FindSameEdge
 //purpose  : for GLUE_FACES
 //=======================================================================
-static TopoDS_Edge FindSameEdge (const TopoDS_Face& nf, TopoDS_Edge& Eold,
-                                 double tol3d)
+static TopoDS_Edge FindSameEdge (const TopoDS_Face& nf,
+                                 TopoDS_Edge&       Eold,
+                                 const double       tol3d)
 {
   TopoDS_Face newFace = TopoDS::Face(nf.Oriented(TopAbs_REVERSED));
   TopoDS_Vertex VFirst, VLast;
@@ -182,38 +185,55 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
   if (!its.More()) {
     Standard_ConstructionError::Raise("Glue aborted : no shell in shape");
   }
+
   TopoDS_Shell S = TopoDS::Shell(its.Value());
   bu.Add(C, S); // add first shell to compound
   shellList.Remove(its);
   bool shellAdded = true;
+  bool bigTolerance = false;
+
   while ((shellList.Extent() > 0) && shellAdded) {
     shellAdded = false;
     its.Initialize(shellList);
     for (; its.More(); its.Next()) {
-      TopTools_ListOfShape newFaces; // common faces from new compound
-      TopTools_ListOfShape oldFaces; // common faces from shell to add
-      TopTools_ListOfShape addFaces; // not common faces from shell to add
+      S = TopoDS::Shell(its.Value());
+
+      // compare tolerance with shape's size
+      Bnd_Box aBox;
+      BRepBndLib::Add(S, aBox);
+      Standard_Real Xmin, Ymin, Zmin, Xmax, Ymax, Zmax;
+      aBox.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
+      Standard_Real aTolerance = theTolerance;
+      if (aBox.IsXThin(100. * aTolerance))
+        aTolerance = 0.01 * (Xmax - Xmin);
+      if (aBox.IsYThin(100. * aTolerance))
+        aTolerance = 0.01 * (Ymax - Ymin);
+      if (aBox.IsZThin(100. * aTolerance))
+        aTolerance = 0.01 * (Zmax - Zmin);
+      if (theTolerance > aTolerance)
+        bigTolerance = true;
+
+      bool isConnected = false;
       TopTools_ListOfShape newEdges; // common edges from new compound
       TopTools_ListOfShape oldEdges; // common edges from face to add
       TopoDS_Compound CFN;
       TopoDS_Compound CFO;
       bu.MakeCompound(CFN);       // empty compound for new faces
       bu.MakeCompound(CFO);       // empty compound for old faces
-      S = TopoDS::Shell(its.Value());
+
       for (TopExp_Explorer exp (S, TopAbs_FACE); exp.More(); exp.Next()) {
         // try to find corresponding face in new compound
         TopoDS_Face F = TopoDS::Face(exp.Current());
-        TopoDS_Face newFace = FindSameFace(C,F,theTolerance);
+        TopoDS_Face newFace = FindSameFace(C,F,aTolerance);
         if (! newFace.IsNull())
         {
           // face found
-          newFaces.Append(newFace);
+          isConnected = true;
           bu.Add(CFN, newFace); // common faces from new compound
-          oldFaces.Append(F);
           for (TopExp_Explorer ee (F, TopAbs_EDGE); ee.More(); ee.Next()) {
             // find edge pair
             TopoDS_Edge Eold = TopoDS::Edge(ee.Current());
-            TopoDS_Edge Enew = FindSameEdge(newFace, Eold, theTolerance);
+            TopoDS_Edge Enew = FindSameEdge(newFace, Eold, aTolerance);
             if (Enew.IsNull()) {
               Standard_ConstructionError::Raise("Glue aborted : no same edge in same face");
             }
@@ -221,11 +241,10 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
             newEdges.Append(Enew);
           }
         } else {
-          addFaces.Append(F);
           bu.Add(CFO, F); // not common faces from shell to add
         }
       }
-      if (!newFaces.IsEmpty()) {
+      if (isConnected) {
         // some faces found
         shellAdded = true;
         BRepTools_Quilt glue;
@@ -248,6 +267,15 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
         break;
       }
     }
+  }
+
+  if (shellList.Extent() > 0) {
+    TCollection_AsciiString aMsg
+      ("Some shapes can not be glued with others, because they are too far from them.");
+    if (bigTolerance) {
+      aMsg += "\n\nWarning: The tolerance is too big for some sub-shapes, 1% of sub-shape size is given instead.";
+    }
+    Standard_ConstructionError::Raise(aMsg.ToCString());
   }
 
   TopExp_Explorer exp (C, TopAbs_SHELL);

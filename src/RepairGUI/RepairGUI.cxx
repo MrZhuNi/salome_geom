@@ -41,6 +41,7 @@
 #include "RepairGUI_RemoveIntWiresDlg.h"// Method REMOVE INTERNAL WIRES
 #include "RepairGUI_DivideEdgeDlg.h"    // Method DEVIDE EDGE
 #include "RepairGUI_FreeBoundDlg.h"     // Method FREE BOUNDARIES
+#include "RepairGUI_GlueDlg.h"          // Method GLUE FACES
 
 #include "utilities.h"
 
@@ -89,40 +90,42 @@ bool RepairGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
   SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
 
   QDialog* aDlg = NULL;
-  switch (theCommandID)
-  {
+  switch (theCommandID) {
     case 601: // SEWING
-			aDlg = new RepairGUI_SewingDlg( parent, "", Sel );
-			break;
+      aDlg = new RepairGUI_SewingDlg( parent, "", Sel );
+      break;
+    case 602: // GLUE FACES
+      aDlg = new RepairGUI_GlueDlg( parent, "", Sel );
+      break;
     case 603: // SUPPRESS FACES
-			aDlg = new RepairGUI_SuppressFacesDlg( parent, "", Sel);
-			break;
+      aDlg = new RepairGUI_SuppressFacesDlg( parent, "", Sel);
+      break;
     case 604: // SUPPRESS HOLES
       aDlg = new RepairGUI_RemoveHolesDlg( parent, "", Sel );
-			break;
+      break;
     case 605: // SHAPE PROCESSING
       aDlg = new RepairGUI_ShapeProcessDlg( parent, "", Sel );
-			break;
-		case 606: // CLOSE CONTOUR
-		  aDlg = new RepairGUI_CloseContourDlg( parent, "", Sel );
-		  break;
-		case 607: // REMOVE INTERNAL WIRES
-			aDlg = new RepairGUI_RemoveIntWiresDlg( parent, "", Sel );
-			break;
-		case 608: // ADD POINT ON EDGE
-			aDlg = new RepairGUI_DivideEdgeDlg( parent, "", Sel );
-			break;
-		case 609: // FREE BOUNDARIES
-			aDlg = new RepairGUI_FreeBoundDlg( parent, Sel );
-			break;      
+      break;
+    case 606: // CLOSE CONTOUR
+      aDlg = new RepairGUI_CloseContourDlg( parent, "", Sel );
+      break;
+    case 607: // REMOVE INTERNAL WIRES
+      aDlg = new RepairGUI_RemoveIntWiresDlg( parent, "", Sel );
+      break;
+    case 608: // ADD POINT ON EDGE
+      aDlg = new RepairGUI_DivideEdgeDlg( parent, "", Sel );
+      break;
+    case 609: // FREE BOUNDARIES
+      aDlg = new RepairGUI_FreeBoundDlg( parent, Sel );
+      break;    
     default:
-			parent->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
-			break;
+      parent->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+      break;
   }
 
   if ( aDlg )
-  	aDlg->show();
-     
+    aDlg->show();
+    
   return true;
 }
 

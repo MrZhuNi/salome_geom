@@ -30,7 +30,11 @@ import geompy
 import math
 
 import GEOM_TestAll
+import GEOM_TestOthers
+import GEOM_TestHealing
 import GEOM_TestMeasures
 
 GEOM_TestMeasures.TestMeasureOperations(geompy, math)
+GEOM_TestHealing.TestHealingOperations(geompy, math)
+GEOM_TestOthers.TestOtherOperations(geompy, math)
 GEOM_TestAll.TestAll(geompy, math)

@@ -384,17 +384,17 @@ bool BlocksGUI_QuadFaceDlg::execute (ObjectList& objects)
 
   switch (getConstructorId()) {
     case 0:
-      anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->MakeQuadFaceFourVertices
+      anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->MakeQuad4Vertices
         (myShape1, myShape2, myShape3, myShape4);
       res = true;
       break;
     case 1:
-      anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->MakeQuadFaceTwoEdges
+      anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->MakeQuad2Edges
         (myShape1, myShape2);
       res = true;
       break;
     case 2:
-      anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->MakeQuadFaceFourEdges
+      anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->MakeQuad
         (myShape1, myShape2, myShape3, myShape4);
       res = true;
       break;

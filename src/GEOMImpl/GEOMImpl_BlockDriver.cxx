@@ -13,6 +13,7 @@ using namespace std;
 #include "GEOM_Function.hxx"
 
 #include "ShHealOper_Sewing.hxx"
+#include "NMTAlgo_Splitter1.hxx"
 
 #include <TNaming_CopyShape.hxx>
 
@@ -31,7 +32,6 @@ using namespace std;
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepExtrema_ExtPF.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
-#include <BRepOffsetAPI_ThruSections.hxx>
 
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
@@ -103,8 +103,12 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
   Standard_Real prec = Precision::Confusion();
 
   Standard_Integer aNbSub = 0;
-  if (aType == BLOCK_FACE_TWO_EDGES ||
-      aType == BLOCK_TWO_FACES) {
+  if (aType == BLOCK_COMPOUND_GLUE) {
+
+    aNbSub = 1;
+
+  } else if (aType == BLOCK_FACE_TWO_EDGES ||
+             aType == BLOCK_TWO_FACES) {
 
     aNbSub = 2;
 
@@ -210,6 +214,9 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
 
       // try to build face on the wire
       GEOMImpl_Block6Explorer::MakeFace(aWire, Standard_False, aShape);
+      if (aShape.IsNull()) {
+        Standard_ConstructionError::Raise("Face construction failed");
+      }
 
     } else if (aType == BLOCK_FACE_TWO_EDGES) {
 
@@ -265,6 +272,9 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
 
       // try to build face on the wire
       GEOMImpl_Block6Explorer::MakeFace(MW, Standard_False, aShape);
+      if (aShape.IsNull()) {
+        Standard_ConstructionError::Raise("Face construction failed");
+      }
 
     } else if (aType == BLOCK_FACE_FOUR_PNT) {
 
@@ -320,6 +330,9 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
 
       // try to build face on the wire
       GEOMImpl_Block6Explorer::MakeFace(aMkPoly, Standard_False, aShape);
+      if (aShape.IsNull()) {
+        Standard_ConstructionError::Raise("Face construction failed");
+      }
 
     } else if (aType == BLOCK_SIX_FACES || aType == BLOCK_TWO_FACES) {
 
@@ -357,33 +370,16 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
           Standard_ConstructionError::Raise("A face for the block has more than one wire");
         }
 
-        if (aWire1.Closed() && aWire2.Closed()) {
-          // Build side surface by ThruSections algorithm
-          BRepOffsetAPI_ThruSections THS;
-          THS.AddWire(TopoDS::Wire(aWire1));
-          THS.AddWire(TopoDS::Wire(aWire2));
-          THS.Build();
-          if (!THS.IsDone()) {
-            StdFail_NotDone::Raise("Side surface generation failed");
-          }
-          TopoDS_Shape aShell = THS.Shape();
+        GEOMImpl_Block6Explorer aBlockTool;
+        aBlockTool.InitByTwoFaces(anArgs(1), anArgs(2));
 
-          Glue.Add(anArgs(1));
-          Glue.Add(aShell);
-          Glue.Add(anArgs(2));
-
-        } else {
-          GEOMImpl_Block6Explorer aBlockTool;
-          aBlockTool.InitByTwoFaces(anArgs(1), anArgs(2));
-
-          // Construct the linking faces and add them in the gluing tool
-          Glue.Add(anArgs(1));
-          Glue.Add(aBlockTool.GetFace(3, Standard_True));
-          Glue.Add(aBlockTool.GetFace(4, Standard_True));
-          Glue.Add(aBlockTool.GetFace(5, Standard_True));
-          Glue.Add(aBlockTool.GetFace(6, Standard_True));
-          Glue.Add(anArgs(2));
-        }
+        // Construct the linking faces and add them in the gluing tool
+        Glue.Add(anArgs(1));
+        Glue.Add(aBlockTool.GetFace(3, Standard_True));
+        Glue.Add(aBlockTool.GetFace(4, Standard_True));
+        Glue.Add(aBlockTool.GetFace(5, Standard_True));
+        Glue.Add(aBlockTool.GetFace(6, Standard_True));
+        Glue.Add(anArgs(2));
       }
 
       TopExp_Explorer exp (Glue.Shells(), TopAbs_SHELL);
@@ -411,11 +407,10 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
               aTol = aToler;
           }
         }
-	ShHealOper_Sewing aHealer (Shell, aTol);
-	Standard_Boolean aResult = aHealer.Perform();
-	if (aHealer.Perform())
+        ShHealOper_Sewing aHealer (Shell, aTol);
+        if (aHealer.Perform())
           aShape = aHealer.GetResultShape();
-	else
+        else
           Standard_ConstructionError::Raise
             ("Impossible to build a connected shell on the given faces");
       }
@@ -439,6 +434,25 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       aShape = Sol;
       BRepLib::SameParameter(aShape, 1.E-5, Standard_True);
 
+    } else if (aType == BLOCK_COMPOUND_GLUE) {
+
+      // Make blocks compound from a compound
+      if (anArgs(1).ShapeType() != TopAbs_COMPOUND &&
+          anArgs(2).ShapeType() != TopAbs_COMPSOLID) {
+        Standard_TypeMismatch::Raise("Not a compound given");
+      }
+
+      TopoDS_Shape aCompound = anArgs(1);
+
+      // Glue coincident faces and edges (with Partition algorithm).
+      NMTAlgo_Splitter1 PS;
+      PS.AddShape(aCompound);
+      PS.Compute();
+      PS.SetRemoveWebs(Standard_False);
+//      PS.Build(aCompound.ShapeType());
+      PS.Build(TopAbs_SOLID);
+
+      aShape = PS.Shape();
     } else {
     }
 
@@ -880,10 +894,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_BlockDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_BlockDriver",
-			                                 sizeof(GEOMImpl_BlockDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_BlockDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

@@ -1,4 +1,4 @@
-using namespace std; 
+using namespace std;
 
 #include "GEOM_ILocalOperations_i.hh"
 
@@ -37,14 +37,11 @@ GEOM_ILocalOperations_i::~GEOM_ILocalOperations_i()
 /*!
  *  MakeFilletAll
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletAll
                       (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR)
 {
   GEOM::GEOM_Object_var aGEOMObject;
-
-  //Set a not done flag
-  GetOperations()->SetNotDone();
 
   if (theShape == NULL) return aGEOMObject._retn();
 
@@ -56,7 +53,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletAll
 
   //Create the Fillet
   Handle(GEOM_Object) anObject =
-      GetOperations()->MakeFilletAll(aShapeRef, theR);
+    GetOperations()->MakeFilletAll(aShapeRef, theR);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -67,15 +64,12 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletAll
 /*!
  *  MakeFilletEdges
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletEdges
                       (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
 		       const GEOM::ListOfLong& theEdges)
 {
   GEOM::GEOM_Object_var aGEOMObject;
-
-  //Set a not done flag
-  GetOperations()->SetNotDone();
 
   if (theShape == NULL) return aGEOMObject._retn();
 
@@ -94,7 +88,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletEdges
 
   //Create the Fillet
   Handle(GEOM_Object) anObject =
-      GetOperations()->MakeFilletEdges(aShapeRef, theR, anEdges);
+    GetOperations()->MakeFilletEdges(aShapeRef, theR, anEdges);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -105,15 +99,12 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletEdges
 /*!
  *  MakeFilletFaces
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletFaces
                       (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
 		       const GEOM::ListOfLong& theFaces)
 {
   GEOM::GEOM_Object_var aGEOMObject;
-
-  //Set a not done flag
-  GetOperations()->SetNotDone();
 
   if (theShape == NULL) return aGEOMObject._retn();
 
@@ -132,7 +123,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletFaces
 
   //Create the Fillet
   Handle(GEOM_Object) anObject =
-      GetOperations()->MakeFilletFaces(aShapeRef, theR, aFaces);
+    GetOperations()->MakeFilletFaces(aShapeRef, theR, aFaces);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -143,14 +134,11 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletFaces
 /*!
  *  MakeChamferAll
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferAll
                       (GEOM::GEOM_Object_ptr theShape, CORBA::Double theD)
 {
   GEOM::GEOM_Object_var aGEOMObject;
-
-  //Set a not done flag
-  GetOperations()->SetNotDone();
 
   if (theShape == NULL) return aGEOMObject._retn();
 
@@ -162,7 +150,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferAll
 
   //Create the Chamfer
   Handle(GEOM_Object) anObject =
-      GetOperations()->MakeChamferAll(aShapeRef, theD);
+    GetOperations()->MakeChamferAll(aShapeRef, theD);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -173,16 +161,13 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferAll
 /*!
  *  MakeChamferEdge
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdge
                       (GEOM::GEOM_Object_ptr theShape,
 		       CORBA::Double theD1, CORBA::Double theD2,
 		       CORBA::Long theFace1, CORBA::Long theFace2)
 {
   GEOM::GEOM_Object_var aGEOMObject;
-
-  //Set a not done flag
-  GetOperations()->SetNotDone();
 
   if (theShape == NULL) return aGEOMObject._retn();
 
@@ -193,7 +178,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdge
 
   //Create the Chamfer
   Handle(GEOM_Object) anObject =
-      GetOperations()->MakeChamferEdge(aShapeRef, theD1, theD2, theFace1, theFace2);
+    GetOperations()->MakeChamferEdge(aShapeRef, theD1, theD2, theFace1, theFace2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -204,16 +189,13 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdge
 /*!
  *  MakeChamferFaces
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferFaces
                       (GEOM::GEOM_Object_ptr theShape,
 		       CORBA::Double theD1, CORBA::Double theD2,
 		       const GEOM::ListOfLong& theFaces)
 {
   GEOM::GEOM_Object_var aGEOMObject;
-
-  //Set a not done flag
-  GetOperations()->SetNotDone();
 
   if (theShape == NULL) return aGEOMObject._retn();
 
@@ -232,7 +214,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferFaces
 
   //Create the Chamfer
   Handle(GEOM_Object) anObject =
-      GetOperations()->MakeChamferFaces(aShapeRef, theD1, theD2, aFaces);
+    GetOperations()->MakeChamferFaces(aShapeRef, theD1, theD2, aFaces);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -243,7 +225,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferFaces
 /*!
  *  MakeArchimede
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeArchimede (GEOM::GEOM_Object_ptr theShape,
 							      CORBA::Double theWeight,
 							      CORBA::Double theWaterDensity,
@@ -251,40 +233,43 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeArchimede (GEOM::GEOM_Object_
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
-  //Set a not done flag
-  GetOperations()->SetNotDone();
-
   if (theShape == NULL) return aGEOMObject._retn();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetOperations()->GetEngine()->GetObject(theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aShapeRef = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
-
   //Create the Archimede
-  Handle(GEOM_Object) anObject = GetOperations()->MakeArchimede(aShapeRef, theWeight, theWaterDensity, theMeshingDeflection);
-  if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
+  Handle(GEOM_Object) anObject = GetOperations()->MakeArchimede
+    (aShapeRef, theWeight, theWaterDensity, theMeshingDeflection);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
 
   return GetObject(anObject);
-
-}							       
+}
 
 //=============================================================================
 /*!
  *  GetSubShapeIndex
  */
-//============================================================================= 
+//=============================================================================
 CORBA::Long GEOM_ILocalOperations_i::GetSubShapeIndex
   (GEOM::GEOM_Object_ptr theShape, GEOM::GEOM_Object_ptr theSubShape)
 {
   if (theShape == NULL || theSubShape == NULL) return -1;
 
   //Get the reference shapes
-  Handle(GEOM_Object) aShapeRef =
-    GetOperations()->GetEngine()->GetObject(theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aSubShapeRef =
-    GetOperations()->GetEngine()->GetObject(theSubShape->GetStudyID(), theSubShape->GetEntry());
+  Handle(GEOM_Object) aShapeRef = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aSubShapeRef = GetOperations()->GetEngine()->GetObject
+    (theSubShape->GetStudyID(), theSubShape->GetEntry());
   if (aShapeRef.IsNull() || aSubShapeRef.IsNull()) return -1;
 
-  return GetOperations()->GetSubShapeIndex(aShapeRef, aSubShapeRef);
-}							       
+  //Get the unique ID of <theSubShape> inside <theShape>
+  CORBA::Long anID = GetOperations()->GetSubShapeIndex(aShapeRef, aSubShapeRef);
+  if (!GetOperations()->IsDone())
+    return -1;
+
+  return anID;
+}

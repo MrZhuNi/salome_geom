@@ -176,6 +176,22 @@ class GEOMImpl_Block6Explorer
   static Standard_Boolean IsSimilarEdges (const TopoDS_Shape& E1, 
                                           const TopoDS_Shape& E2);
 
+  static Standard_Integer FindEdge (TopoDS_Shape&       theResult,
+                                    const TopoDS_Shape& V1,
+                                    const TopoDS_Shape& V2,
+                                    const TopTools_IndexedDataMapOfShapeListOfShape& MVE,
+                                    const Standard_Boolean findAll = Standard_False);
+  // returns number of found edges
+
+  static Standard_Integer FindFace (TopoDS_Shape&       theResult,
+                                    const TopoDS_Shape& V1,
+                                    const TopoDS_Shape& V2,
+                                    const TopoDS_Shape& V3,
+                                    const TopoDS_Shape& V4,
+                                    const TopTools_IndexedDataMapOfShapeListOfShape& MVF,
+                                    const Standard_Boolean findAll = Standard_False);
+  // returns number of found faces
+
   static void MakeFace (const TopoDS_Wire&     theWire,
                         const Standard_Boolean isPlanarWanted,
                         TopoDS_Shape&          theResult);

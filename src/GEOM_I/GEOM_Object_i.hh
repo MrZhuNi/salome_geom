@@ -46,7 +46,9 @@ class GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public virtual SALOM
 
   virtual GEOM::ListOfLong* GetSubShapeIndices(); 
  
-  virtual GEOM::GEOM_Object_ptr GetMainShape();   
+  virtual GEOM::GEOM_Object_ptr GetMainShape();
+
+  virtual bool IsShape();   
 
   Handle(GEOM_Object) GetImpl() { return _impl; }
 

@@ -1,8 +1,11 @@
-using namespace std; 
+using namespace std;
 
 #include "GEOM_Function.hxx"
 #include "GEOM_Object.hxx"
 #include "GEOM_Solver.hxx"
+
+#include "utilities.h"
+
 #include <TDF.hxx>
 #include <TDF_Data.hxx>
 #include <TDF_ChildIterator.hxx>
@@ -28,7 +31,7 @@ using namespace std;
 #include <TCollection_AsciiString.hxx>
 #include <TCollection_ExtendedString.hxx>
 
-#include "utilities.h"
+#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 #define ARGUMENT_LABEL 1
 #define RESULT_LABEL 2
@@ -45,7 +48,7 @@ const Standard_GUID& GEOM_Function::GetFunctionTreeID()
 {
   static Standard_GUID aFunctionTreeID("FF1BBB00-5D14-4df2-980B-3A668264EA16");
   return aFunctionTreeID;
-}   
+}
 
 
 //=======================================================================
@@ -56,7 +59,7 @@ const Standard_GUID& GEOM_Function::GetDependencyID()
 {
   static Standard_GUID aDependencyID("E2620650-2354-41bd-8C2C-210CFCD00948");
   return aDependencyID;
-}   
+}
 
 //=============================================================================
 /*!
@@ -79,12 +82,12 @@ GEOM_Function::GEOM_Function(const TDF_Label& theEntry, const Standard_GUID& the
 : _label(theEntry)
 {
   TFunction_Function::Set(theEntry, theGUID);
-  TDataStd_Integer::Set(theEntry, theType);   
+  TDataStd_Integer::Set(theEntry, theType);
 
   //Add function to a function tree
   Handle(TDocStd_Document) aDoc = TDocStd_Owner::GetDocument(theEntry.Data());
   Handle(TDataStd_TreeNode) aRoot, aNode;
-  if(!aDoc->Main().FindAttribute(GetFunctionTreeID(), aRoot)) 
+  if(!aDoc->Main().FindAttribute(GetFunctionTreeID(), aRoot))
     aRoot = TDataStd_TreeNode::Set(aDoc->Main(), GetFunctionTreeID());
 
   aNode = TDataStd_TreeNode::Set(theEntry, GetFunctionTreeID());
@@ -95,7 +98,7 @@ GEOM_Function::GEOM_Function(const TDF_Label& theEntry, const Standard_GUID& the
 /*!
  *  GetOwner
  */
-//============================================================================= 
+//=============================================================================
 TDF_Label GEOM_Function::GetOwnerEntry()
 {
   TDF_Label aFather = _label.Father();
@@ -103,8 +106,8 @@ TDF_Label GEOM_Function::GetOwnerEntry()
     if(aFather.IsAttribute(GEOM_Object::GetObjectID())) return aFather;
     aFather = aFather.Father();
   }
-  
-  return TDF_Label();    
+
+  return TDF_Label();
 }
 
 //=============================================================================
@@ -118,7 +121,7 @@ int GEOM_Function::GetType()
   Handle(TDataStd_Integer) aType;
   if(!_label.FindAttribute(TDataStd_Integer::GetID(), aType)) return 0;
   _isDone = true;
-  return aType->Get();          
+  return aType->Get();
 }
 
 //=============================================================================
@@ -129,7 +132,7 @@ int GEOM_Function::GetType()
 TopoDS_Shape GEOM_Function::GetValue()
 {
   _isDone = false;
-  
+
   TopoDS_Shape aShape;
   TDF_Label aLabel = GetOwnerEntry();
   if(aLabel.IsRoot()) return aShape;
@@ -139,7 +142,7 @@ TopoDS_Shape GEOM_Function::GetValue()
     try {
       GEOM_Solver aSolver(GEOM_Engine::GetEngine());
       if (!aSolver.ComputeFunction(this)) {
-	MESSAGE("GEOM_Object::GetValue Error : Can't build a sub shape");	 
+	MESSAGE("GEOM_Object::GetValue Error : Can't build a sub shape");
 	return aShape;
       }
     }
@@ -150,14 +153,14 @@ TopoDS_Shape GEOM_Function::GetValue()
     }
   }
 
-  TDF_Label aResultLabel = _label.FindChild(RESULT_LABEL);  
+  TDF_Label aResultLabel = _label.FindChild(RESULT_LABEL);
   Handle(TNaming_NamedShape) aNS;
   if(!aResultLabel.FindAttribute(TNaming_NamedShape::GetID(), aNS)) return aShape;
 
   aShape = aNS->Get();
 
   _isDone = true;
-  return aShape;          
+  return aShape;
 }
 
 //=============================================================================
@@ -172,7 +175,7 @@ void GEOM_Function::SetValue(TopoDS_Shape& theShape)
   TNaming_Builder aBuilder(aResultLabel);
 
   aBuilder.Generated(theShape);
-  
+
   _isDone = true;
 }
 
@@ -401,7 +404,7 @@ void GEOM_Function::SetReference(int thePosition, Handle(GEOM_Function) theRefer
  *  GetReference
  */
 //=============================================================================
-Handle(GEOM_Function) GEOM_Function::GetReference(int thePosition) 
+Handle(GEOM_Function) GEOM_Function::GetReference(int thePosition)
 {
   _isDone = false;
   if(thePosition <= 0) return NULL;
@@ -422,13 +425,13 @@ Handle(GEOM_Function) GEOM_Function::GetReference(int thePosition)
 void GEOM_Function::SetStringArray(int thePosition, const Handle(TColStd_HArray1OfExtendedString)& theArray)
 {
   _isDone = false;
-  if(thePosition <= 0 || theArray.IsNull()) return; 
+  if(thePosition <= 0 || theArray.IsNull()) return;
   TDF_Label anArgLabel = ARGUMENT(thePosition);
 
   Handle(TDataStd_ExtStringArray) anArray = new TDataStd_ExtStringArray;
   anArray->ChangeArray(theArray);
   anArgLabel.AddAttribute(anArray);
-  
+
   _isDone = true;
 }
 
@@ -437,7 +440,7 @@ void GEOM_Function::SetStringArray(int thePosition, const Handle(TColStd_HArray1
 /*!
  *  GetStringArray
  */
-//=============================================================================  
+//=============================================================================
 Handle(TColStd_HArray1OfExtendedString) GEOM_Function::GetStringArray(int thePosition)
 {
   _isDone = false;
@@ -458,7 +461,7 @@ const Standard_GUID& GEOM_Function::GetReferencesTreeID()
 {
   static Standard_GUID aReferencesTreeID("FF1BBB10-5D14-4df2-980B-3A668264EA16");
   return aReferencesTreeID;
-}   
+}
 
 //=============================================================================
 /*!
@@ -503,7 +506,7 @@ void GEOM_Function::SetReferenceList (int thePosition,
  *  GetReferenceList
  */
 //=============================================================================
-Handle(TColStd_HSequenceOfTransient) GEOM_Function::GetReferenceList(int thePosition) 
+Handle(TColStd_HSequenceOfTransient) GEOM_Function::GetReferenceList(int thePosition)
 {
   Handle(TColStd_HSequenceOfTransient) aResult = new TColStd_HSequenceOfTransient;
   _isDone = false;
@@ -556,7 +559,7 @@ void GEOM_Function::SetShape(int thePosition, const TopoDS_Shape& theShape)
 /*!
  *  GetShape
  */
-//=============================================================================  
+//=============================================================================
 TopoDS_Shape GEOM_Function::GetShape(int thePosition)
 {
   _isDone = false;
@@ -577,7 +580,7 @@ TopoDS_Shape GEOM_Function::GetShape(int thePosition)
 /*!
  *  GetDependency
  */
-//=============================================================================  
+//=============================================================================
 void GEOM_Function::GetDependency(TDF_LabelSequence& theSeq)
 {
   TDF_ChildIterator anIterator(ARGUMENTS, Standard_True);
@@ -589,15 +592,15 @@ void GEOM_Function::GetDependency(TDF_LabelSequence& theSeq)
 //=======================================================================
 //function :  GEOM_Function_Type_
 //purpose  :
-//======================================================================= 
+//=======================================================================
 Standard_EXPORT Handle_Standard_Type& GEOM_Function_Type_()
 {
 
   static Handle_Standard_Type aType1 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(MMgt_TShared); 
+  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(Standard_Transient);
   if ( aType2.IsNull()) aType2 = STANDARD_TYPE(Standard_Transient);
- 
+
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOM_Function",
@@ -612,7 +615,7 @@ Standard_EXPORT Handle_Standard_Type& GEOM_Function_Type_()
 //=======================================================================
 //function : DownCast
 //purpose  :
-//======================================================================= 
+//=======================================================================
 
 const Handle(GEOM_Function) Handle(GEOM_Function)::DownCast(const Handle(Standard_Transient)& AnObject)
 {
@@ -626,7 +629,3 @@ const Handle(GEOM_Function) Handle(GEOM_Function)::DownCast(const Handle(Standar
 
   return _anOtherObject ;
 }
-
-
-
-

@@ -128,6 +128,8 @@ void GenerationGUI_RevolDlg::Init()
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName(tr("GEOM_REVOLUTION"));
+
+  globalSelection( GEOM_ALLSHAPES );
 }
 
 
@@ -233,7 +235,7 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
 void GenerationGUI_RevolDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  globalSelection();
+  globalSelection( GEOM_ALLSHAPES );
 
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
@@ -271,6 +273,7 @@ void GenerationGUI_RevolDlg::LineEditReturnPressed()
 void GenerationGUI_RevolDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  globalSelection( GEOM_ALLSHAPES );
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   GroupPoints->LineEdit1->setFocus();
   myEditCurrentArgument = GroupPoints->LineEdit1;

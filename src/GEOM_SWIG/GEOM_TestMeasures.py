@@ -12,9 +12,9 @@ def TestMeasureOperations (geompy, math):
 
   ####### PointCoordinates #######
 
-  #Coords = geompy.PointCoordinates(p137)
-  #if Coords[0] != 10 or Coords[1] != 30 or Coords[2] != 70:
-  #  print "Coordinates of p137 must be (10, 30, 70), but returned (", Coords[0], ", ", Coords[1], ", ", Coords[2], ")"
+  Coords = geompy.PointCoordinates(p137)
+  if Coords[0] != 10 or Coords[1] != 30 or Coords[2] != 70:
+    print "Coordinates of p137 must be (10, 30, 70), but returned (", Coords[0], ", ", Coords[1], ", ", Coords[2], ")"
 
   ####### CheckShape #######
 
@@ -84,10 +84,11 @@ def TestMeasureOperations (geompy, math):
   if pcdg is None:
     raise RuntimeError, "MakeCDG(box) failed"
   else:
-    print "\nCentre of gravity of box has been successfully obtained"
-    #Coords = geompy.PointCoordinates(pcdg)
-    #if Coords[0] != 5 or Coords[1] != 15 or Coords[2] != 35:
-    #  print "Coordinates of box center of gravity must be (5, 15, 35), but returned (", Coords[0], ", ", Coords[1], ", ", Coords[2], ")"
+    print "\nCentre of gravity of box has been successfully obtained:"
+    Coords = geompy.PointCoordinates(pcdg)
+    print "(", Coords[0], ", ", Coords[1], ", ", Coords[2], ")"
+    if Coords[0] != 5 or Coords[1] != 15 or Coords[2] != 35:
+      print "But must be (5, 15, 35)"
 
   ####### MinDistance #######
 

@@ -137,6 +137,8 @@ void BooleanGUI_Dialog::Init()
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( GroupConstructors->title() );
+
+  globalSelection( GEOM_ALLSHAPES );
 }
 
 
@@ -171,7 +173,7 @@ bool BooleanGUI_Dialog::ClickOnApply()
 //=================================================================================
 void BooleanGUI_Dialog::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
 
   if ( mySelection->IObjectCount() != 1 )
   {
@@ -183,7 +185,7 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
   // nbSel == 1
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), aRes );
-  if ( !CORBA::is_nil( aSelectedObject ) && aRes )
+  if ( !CORBA::is_nil( aSelectedObject ) && aRes && GEOMBase::IsShape( aSelectedObject ) )
   {
     myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     if      ( myEditCurrentArgument == myGroup->LineEdit1 )   myObject1 = aSelectedObject;
@@ -231,6 +233,7 @@ void BooleanGUI_Dialog::LineEditReturnPressed()
 void BooleanGUI_Dialog::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  globalSelection( GEOM_ALLSHAPES );
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 

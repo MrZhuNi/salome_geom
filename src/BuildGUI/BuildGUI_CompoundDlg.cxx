@@ -92,7 +92,9 @@ void BuildGUI_CompoundDlg::Init()
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
   connect(GroupShapes->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));  
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
-  
+
+  globalSelection( GEOM_ALLSHAPES );
+
   initName( tr( "GEOM_COMPOUND" ) );
 }
 
@@ -128,18 +130,18 @@ bool BuildGUI_CompoundDlg::ClickOnApply()
 //=================================================================================
 void BuildGUI_CompoundDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
   QString aString = ""; /* name of selection */
 
   myOkShapes = false;
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel == 0) 
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects( mySelection, aString, true );
+  if ( nbSel == 0 ) 
     return;
-  if(nbSel != 1)
-    aString = tr("%1_objects").arg(nbSel);
+  if ( nbSel != 1 )
+    aString = QString( "%1_objects").arg( nbSel );
   
-  GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(),  myShapes);
-  myEditCurrentArgument->setText(aString);
+  GEOMBase::ConvertListOfIOInListOfGO( mySelection->StoredIObjects(), myShapes, true );
+  myEditCurrentArgument->setText( aString );
   myOkShapes = true;
 }
 
@@ -168,6 +170,7 @@ void BuildGUI_CompoundDlg::SetEditCurrentArgument()
 void BuildGUI_CompoundDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  globalSelection( GEOM_ALLSHAPES );
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 }
 

@@ -42,6 +42,9 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
                                                     const Standard_Integer theShapeType,
                                                     const Standard_Boolean isSorted);
 
+  Handle(GEOM_Object) GetSubShape (Handle(GEOM_Object)    theMainShape,
+                                   const Standard_Integer theID);
+
   Standard_Integer NumberOfFaces (Handle(GEOM_Object) theShape);
   Standard_Integer NumberOfEdges (Handle(GEOM_Object) theShape);
 

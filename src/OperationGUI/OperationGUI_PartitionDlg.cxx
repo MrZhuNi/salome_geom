@@ -234,55 +234,61 @@ void OperationGUI_PartitionDlg::ClickOnCancel()
 //=================================================================================
 void OperationGUI_PartitionDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
   QString aString = "";
   
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects(mySelection, aString);
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects( mySelection, aString, true );
     
-  if(nbSel < 1) {
-    if(myEditCurrentArgument == GroupPoints->LineEdit1)
-      {
-	myListShapes.length(0);
-	myListMaterials.length(0);
-      }
-    else if(myEditCurrentArgument == GroupPoints->LineEdit2)
-      myListTools.length(0);
-    else if(myEditCurrentArgument == GroupPoints->LineEdit3)
-      myListRemoveInside.length(0);
-    else if(myEditCurrentArgument == GroupPoints->LineEdit4)
-      myListKeepInside.length(0);
+  if ( nbSel < 1 )
+  {
+    if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
+    {
+      myListShapes.length( 0 );
+      myListMaterials.length( 0 );
+    }
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+      myListTools.length( 0 );
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit3 )
+      myListRemoveInside.length( 0 );
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit4 )
+      myListKeepInside.length( 0 );
   }
   
   // One and only one plane can be selected
   
-  if(getConstructorId() == 1 && myEditCurrentArgument == GroupPoints->LineEdit2 && nbSel!=1) {
-    myListTools.length(0);
+  if ( getConstructorId() == 1 && myEditCurrentArgument == GroupPoints->LineEdit2 && nbSel != 1 )
+  {
+    myListTools.length( 0 );
     return;
   }
   
-  if(myEditCurrentArgument == GroupPoints->LineEdit1) {
-    GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(),  myListShapes);
-    myListMaterials.length(0);
-    if (!myListShapes.length())
+  if ( myEditCurrentArgument == GroupPoints->LineEdit1 )
+  {
+    GEOMBase::ConvertListOfIOInListOfGO( mySelection->StoredIObjects(), myListShapes, true );
+    myListMaterials.length( 0 );
+    if ( !myListShapes.length() )
       return;
   }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
-    GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(),  myListTools);
-    if (!myListTools.length())
+  else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+  {
+    GEOMBase::ConvertListOfIOInListOfGO( mySelection->StoredIObjects(), myListTools, true );
+    if ( !myListTools.length() )
       return;
   }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit3) {
-    GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(),  myListRemoveInside);
+  else if(myEditCurrentArgument == GroupPoints->LineEdit3)
+  {
+    GEOMBase::ConvertListOfIOInListOfGO( mySelection->StoredIObjects(), myListRemoveInside, true );
     if (!myListRemoveInside.length())
       return;
   }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit4) {
-    GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(),  myListKeepInside);
-    if (!myListKeepInside.length())
+  else if(myEditCurrentArgument == GroupPoints->LineEdit4)
+  {
+    GEOMBase::ConvertListOfIOInListOfGO( mySelection->StoredIObjects(),  myListKeepInside, true );
+    if ( !myListKeepInside.length() )
       return;
   }
   
-  myEditCurrentArgument->setText(aString);
+  myEditCurrentArgument->setText( aString );
 }
 
 
@@ -297,17 +303,17 @@ void OperationGUI_PartitionDlg::SetEditCurrentArgument()
   if(send == GroupPoints->PushButton1) 
     myEditCurrentArgument = GroupPoints->LineEdit1;
   else if(send == GroupPoints->PushButton2)
-    {
-      myEditCurrentArgument = GroupPoints->LineEdit2;
-      if( getConstructorId()==1 )
-	globalSelection( GEOM_PLANE  );
-    }
+  {
+    myEditCurrentArgument = GroupPoints->LineEdit2;
+    if( getConstructorId()==1 )
+      globalSelection( GEOM_PLANE  );
+  }
   else if(send == GroupPoints->PushButton3)
     myEditCurrentArgument = GroupPoints->LineEdit3;
   else if(send == GroupPoints->PushButton4)
     myEditCurrentArgument = GroupPoints->LineEdit4;
  
-  globalSelection();
+  globalSelection( GEOM_ALLSHAPES );
       
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();

@@ -136,21 +136,21 @@ bool BuildGUI_ShellDlg::ClickOnApply()
 //=================================================================================
 void BuildGUI_ShellDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
-  QString aString = "";
+  myEditCurrentArgument->setText( "" );
+  QString aString;
 
   myOkFacesAndShells = false;
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects(mySelection, aString);
-  if(nbSel == 0)
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects( mySelection, aString, true );
+  if ( nbSel == 0 )
     return;
-  if(nbSel != 1)
-    aString = tr("%1_objects").arg(nbSel);
+  if ( nbSel != 1 )
+    aString = QString( "%1_objects ").arg( nbSel );
 
-  GEOMBase::ConvertListOfIOInListOfGO(mySelection->StoredIObjects(),  myFacesAndShells);
-  if (!myFacesAndShells.length())
+  GEOMBase::ConvertListOfIOInListOfGO( mySelection->StoredIObjects(),  myFacesAndShells, true );
+  if ( !myFacesAndShells.length() )
     return;
 
-  myEditCurrentArgument->setText(aString);
+  myEditCurrentArgument->setText( aString );
   myOkFacesAndShells = true;
 }
 

@@ -483,3 +483,6 @@ msgstr "block_face_2e.png"
 
 msgid "ICON_DLG_QUAD_FACE_4_EDGE"
 msgstr "block_face_4e.png"
+
+msgid "ICON_DLG_GLUE_FACES"
+msgstr "glue.png"

@@ -80,6 +80,7 @@
 #define PLANE_THREE_PNT 3
 
 #define LINE_TWO_PNT 1
+#define LINE_PNT_DIR 2
 
 #define TRANSLATE_TWO_POINTS      1
 #define TRANSLATE_VECTOR          2
@@ -199,9 +200,9 @@
 #define BLOCK_FACE_TWO_EDGES      3
 #define BLOCK_SIX_FACES           4
 #define BLOCK_TWO_FACES           5
-//
 #define BLOCK_MULTI_TRANSFORM_1D  6
 #define BLOCK_MULTI_TRANSFORM_2D  7
+#define BLOCK_COMPOUND_GLUE      8
 
 // Marker
 #define MARKER_CS 1

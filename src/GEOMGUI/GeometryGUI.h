@@ -90,7 +90,8 @@ public:
   virtual bool SetSettings(QAD_Desktop* parent);
   virtual bool ActiveStudyChanged(QAD_Desktop* parent);
   virtual void Deactivate();
-  virtual void BuildPresentation(const Handle(SALOME_InteractiveObject)&);
+  virtual void BuildPresentation( const Handle(SALOME_InteractiveObject)&,
+                                  QAD_ViewFrame*  = 0 );
   virtual void SupportedViewType (int* buffer, int bufferSize);
   virtual void DefinePopup(QString & theContext, QString & theParent, QString & theObject);
   virtual bool CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QString& theContext,

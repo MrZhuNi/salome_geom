@@ -259,7 +259,7 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
       GEOM::GEOM_Object_var anObj =
         GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), aResult);
 
-      if (aResult && !anObj->_is_nil()) {
+      if (aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
         myShape = anObj;
         mySelName[aCurrFocus]->setText(GEOMBase::GetName(anObj));
         enableWidgets();
@@ -279,7 +279,7 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
       GEOM::GEOM_Object_var anObj =
         GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), aResult);
 
-      if (aResult && !anObj->_is_nil()) {
+      if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
         TColStd_IndexedMapOfInteger anIndexes;
         mySelection->GetIndex(mySelection->firstIObject(), anIndexes);
 
@@ -397,7 +397,7 @@ void BlocksGUI_TrsfDlg::activateSelection()
       return;
     }
   } else {
-    globalSelection();
+    globalSelection( GEOM_ALLSHAPES );
   }
 
   SelectionIntoArgument();

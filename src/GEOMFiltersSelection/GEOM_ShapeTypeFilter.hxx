@@ -46,7 +46,8 @@
 #include <TopoDS_Shape.hxx>
 #include <TColStd_MapOfInteger.hxx>
 
-class GEOM_ShapeTypeFilter : public SALOME_Filter {
+class GEOM_ShapeTypeFilter : public SALOME_Filter
+{
 
 public:
 
@@ -63,9 +64,11 @@ public:
         if (anAddress) Standard::Free((Standard_Address&)anAddress); 
       }
  // Methods PUBLIC
- // 
-Standard_EXPORT GEOM_ShapeTypeFilter( TopAbs_ShapeEnum theShapeType );
-Standard_EXPORT GEOM_ShapeTypeFilter( const TColStd_MapOfInteger& theShapeTypes );
+ //
+Standard_EXPORT GEOM_ShapeTypeFilter( const TopAbs_ShapeEnum theShapeType,
+                                      const bool theIsAll = false );
+Standard_EXPORT GEOM_ShapeTypeFilter( const TColStd_MapOfInteger& theShapeTypes,
+                                      const bool theIsAll = false );
 Standard_EXPORT ~GEOM_ShapeTypeFilter();
 
 Standard_EXPORT virtual  Standard_Boolean IsOk(const Handle(SALOME_InteractiveObject)& anobj) const;
@@ -80,7 +83,7 @@ Standard_EXPORT virtual  Standard_Boolean IsOk(const Handle(SALOME_InteractiveOb
 protected:
 
  // Methods PROTECTED
- // 
+ //
  Standard_EXPORT virtual Standard_Boolean IsShapeOk(const TopoDS_Shape& theShape ) const;
 
 
@@ -91,12 +94,7 @@ Handle(SALOME_TypeFilter) myTypeFilter;
 
 private: 
 
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
+ bool myIsAll;
 
 
 };

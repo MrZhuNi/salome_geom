@@ -14,8 +14,11 @@ using namespace std;
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
 
-#include <Precision.hxx>
 #include <gp_Pnt.hxx>
+#include <Precision.hxx>
+#include <StdFail_NotDone.hxx>
+#include <Standard_TypeMismatch.hxx>
+#include <Standard_ConstructionError.hxx>
 
 //=======================================================================
 //function : GetID
@@ -55,23 +58,32 @@ Standard_Integer GEOMImpl_RevolutionDriver::Execute(TFunction_Logbook& log) cons
     Handle(GEOM_Function) aRefAxis = aCI.GetAxis();
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
     TopoDS_Shape aShapeAxis = aRefAxis->GetValue();
-    if (aShapeAxis.ShapeType() == TopAbs_EDGE) {
-      TopoDS_Edge anE = TopoDS::Edge(aShapeAxis);
-      TopoDS_Vertex V1, V2;
-      TopExp::Vertices(anE, V1, V2, Standard_True);
-      if (!V1.IsNull() && !V2.IsNull()) {
-        gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
-        gp_Ax1 anAxis (BRep_Tool::Pnt(V1), aV);
-        aShape = BRepPrimAPI_MakeRevol
-          (aShapeBase, anAxis, aCI.GetAngle(), Standard_False).Shape();
-      }
+    if (aShapeAxis.ShapeType() != TopAbs_EDGE) {
+      Standard_TypeMismatch::Raise("Revolution Axis must be an edge");
     }
-  }
-  else {
+
+    TopoDS_Edge anE = TopoDS::Edge(aShapeAxis);
+    TopoDS_Vertex V1, V2;
+    TopExp::Vertices(anE, V1, V2, Standard_True);
+    if (V1.IsNull() || V2.IsNull()) {
+      Standard_ConstructionError::Raise("Bad edge for the Revolution Axis given");
+    }
+
+    gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
+    if (aV.Magnitude() < Precision::Confusion()) {
+      Standard_ConstructionError::Raise
+        ("End vertices of edge, defining the Revolution Axis, are too close");
+    }
+
+    gp_Ax1 anAxis (BRep_Tool::Pnt(V1), aV);
+    BRepPrimAPI_MakeRevol MR (aShapeBase, anAxis, aCI.GetAngle(), Standard_False);
+    if (!MR.IsDone()) MR.Build();
+    if (!MR.IsDone()) StdFail_NotDone::Raise("Revolution algorithm has failed");
+    aShape = MR.Shape();
+  } else {
   }
 
   if (aShape.IsNull()) return 0;
-
   aFunction->SetValue(aShape);
 
   log.SetTouched(Label()); 

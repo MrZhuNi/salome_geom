@@ -7,20 +7,20 @@ using namespace std;
 #include "GEOM_Function.hxx"
 #include "GEOMImpl_Block6Explorer.hxx"
 
-#include <BRepFilletAPI_MakeChamfer.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepTools.hxx>
+#include <BRepFilletAPI_MakeChamfer.hxx>
 
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
-#include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
+#include <TopoDS_Shape.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
-#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
@@ -46,7 +46,7 @@ GEOMImpl_ChamferDriver::GEOMImpl_ChamferDriver()
 }
 
 //=======================================================================
-//function : Execute
+//function : isGoodForChamfer
 //purpose  :
 //=======================================================================
 static Standard_Boolean isGoodForChamfer (const TopoDS_Shape& theShape)
@@ -90,10 +90,11 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(TFunction_Logbook& log) const
   Handle(GEOM_Function) aRefShape = aCI.GetShape();
   TopoDS_Shape aShapeBase = aRefShape->GetValue();
 
-  // to do: check the shape type.
-  // It have to be shell, or solid, or compsolid, or compound of these shapes
+  // Check the shape type. It have to be shell
+  // or solid, or compsolid, or compound of these shapes.
   if (!isGoodForChamfer(aShapeBase)) {
-    StdFail_NotDone::Raise("Wrong shape. Must be shell or solid, or compsolid or compound of these shapes");
+    StdFail_NotDone::Raise
+      ("Wrong shape. Must be shell or solid, or compsolid or compound of these shapes");
   }
 
   BRepFilletAPI_MakeChamfer fill (aShapeBase);
@@ -129,7 +130,7 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(TFunction_Logbook& log) const
 
       // find edges of the first face, common with the second face
       TopExp_Explorer Exp (aFace1, TopAbs_EDGE);
-      for (Exp; Exp.More(); Exp.Next()) {
+      for (; Exp.More(); Exp.Next()) {
         if (aMap.Contains(Exp.Current())) {
           TopoDS_Edge E = TopoDS::Edge(Exp.Current());
           if (!BRepTools::IsReallyClosed(E, F) && !BRep_Tool::Degenerated(E))
@@ -154,7 +155,7 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(TFunction_Logbook& log) const
           (aShapeBase, aCI.GetFace(ind), aShapeFace)) {
         TopoDS_Face F = TopoDS::Face(aShapeFace);
         TopExp_Explorer Exp (F, TopAbs_EDGE);
-        for (Exp; Exp.More(); Exp.Next()) {
+        for (; Exp.More(); Exp.Next()) {
           if (!aMap.Contains(Exp.Current())) {
             TopoDS_Edge E = TopoDS::Edge(Exp.Current());
             if (!BRepTools::IsReallyClosed(E, F) &&

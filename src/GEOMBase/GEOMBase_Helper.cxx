@@ -93,7 +93,7 @@ GEOMBase_Helper::~GEOMBase_Helper()
   if ( hasCommand() )
     abortCommand();
 
-  globalSelection( -1, true );
+  globalSelection( GEOM_ALLOBJECTS, true );
 
   delete myDisplayer;
 }

@@ -189,7 +189,7 @@ void TransformationGUI_MultiTranslationDlg::ConstructorsClicked(int constructorI
   myStepU = myStepV = 50.0;
   myNbTimesU = myNbTimesV = 2;
 
-  globalSelection();
+  globalSelection( GEOM_ALLSHAPES );
 
   switch (constructorId)
     {
@@ -293,7 +293,7 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
   Standard_Boolean testResult = Standard_False;;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), testResult );
 
-  if (!testResult || CORBA::is_nil( aSelectedObject ))
+  if ( !testResult || CORBA::is_nil( aSelectedObject ) || !GEOMBase::IsShape( aSelectedObject ) )
     return;
 
   if(myEditCurrentArgument == GroupPoints->LineEdit1 || myEditCurrentArgument == GroupDimensions->LineEdit1)
@@ -320,7 +320,7 @@ void TransformationGUI_MultiTranslationDlg::SetEditCurrentArgument()
 
   if(send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection();
+    globalSelection( GEOM_ALLSHAPES );
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
@@ -328,7 +328,7 @@ void TransformationGUI_MultiTranslationDlg::SetEditCurrentArgument()
   }
   else if(send == GroupDimensions->PushButton1) {
     myEditCurrentArgument = GroupDimensions->LineEdit1;
-    globalSelection();
+    globalSelection( GEOM_ALLSHAPES );
   }
   else if(send == GroupDimensions->PushButton2) {
     myEditCurrentArgument = GroupDimensions->LineEdit2;

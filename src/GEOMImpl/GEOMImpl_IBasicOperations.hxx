@@ -16,8 +16,8 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
   // Point
   Handle(GEOM_Object) MakePointXYZ (double theX, double theY, double theZ);
 
-  Handle(GEOM_Object) MakePointWithReference
-    (Handle(GEOM_Object) theReference, double theX, double theY, double theZ);
+  Handle(GEOM_Object) MakePointWithReference (Handle(GEOM_Object) theReference,
+                                              double theX, double theY, double theZ);
 
   Handle(GEOM_Object) MakePointOnCurve (Handle(GEOM_Object) theCurve,
                                         double theParameter);
@@ -25,12 +25,15 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
   // Vector
   Handle(GEOM_Object) MakeVectorDXDYDZ (double theDX, double theDY, double theDZ);
 
-  Handle(GEOM_Object) MakeVectorTwoPnt
-                     (Handle(GEOM_Object) thePnt1, Handle(GEOM_Object) thePnt2);
+  Handle(GEOM_Object) MakeVectorTwoPnt (Handle(GEOM_Object) thePnt1,
+                                        Handle(GEOM_Object) thePnt2);
 
   // Line
-  Handle(GEOM_Object) MakeLineTwoPnt
-                     (Handle(GEOM_Object) thePnt1, Handle(GEOM_Object) thePnt2);
+  Handle(GEOM_Object) MakeLineTwoPnt (Handle(GEOM_Object) thePnt1,
+                                      Handle(GEOM_Object) thePnt2);
+
+  Handle(GEOM_Object) MakeLine (Handle(GEOM_Object) thePnt,
+                                Handle(GEOM_Object) theDir);
 
   // Plane
   Handle(GEOM_Object) MakePlaneThreePnt (Handle(GEOM_Object) thePnt1,

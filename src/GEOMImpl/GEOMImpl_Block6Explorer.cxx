@@ -10,6 +10,7 @@ using namespace std;
 #include <BRep_TFace.hxx>
 #include <BRepTools.hxx>
 #include <BRepTools_WireExplorer.hxx>
+#include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -37,6 +38,7 @@ using namespace std;
 #include <gp_Pnt.hxx>
 #include <TColgp_Array1OfPnt.hxx>
 
+#include <StdFail_NotDone.hxx>
 #include <Standard_NullObject.hxx>
 #include <Standard_TypeMismatch.hxx>
 #include <Standard_ConstructionError.hxx>
@@ -309,7 +311,12 @@ TopoDS_Shape GEOMImpl_Block6Explorer::GetFace (const Standard_Integer theFaceID,
     if (!MW.IsDone()) {
       Standard_ConstructionError::Raise("Wire construction failed");
     }
-    MakeFace(MW, Standard_False, myFaces(theFaceID));
+    TopoDS_Shape aFace;
+    MakeFace(MW, Standard_False, aFace);
+    if (aFace.IsNull()) {
+      Standard_ConstructionError::Raise("Face construction failed");
+    }
+    myFaces(theFaceID) = aFace;
   }
 
   return myFaces(theFaceID);
@@ -946,6 +953,64 @@ void GEOMImpl_Block6Explorer::InitByTwoFaces (const TopoDS_Shape& theFace1,
     if (s_min == -1) nb = mod4(nb - 1);
     myEdges(edge_id(2, i)) = anEdges2(nb);
   }
+
+  // 4. Generate side surface
+  if (!aWire1.Closed() || !aWire2.Closed()) {
+    // BRepOffsetAPI_ThruSections is not applicable on not closed wires
+    GetFace(3, Standard_True);
+    GetFace(4, Standard_True);
+    GetFace(5, Standard_True);
+    GetFace(6, Standard_True);
+  } else {
+    // try to build faces on native surfaces of edges or planar
+    Standard_Boolean tryThru = Standard_False;
+    for (Standard_Integer i = 3; i <= 6 && !tryThru; i++) {
+      Standard_Boolean doMake = Standard_True;
+      TopoDS_Shape E1 = GetEdge(edge_id(i, 1), doMake);
+      TopoDS_Shape E2 = GetEdge(edge_id(i, 2), doMake);
+      TopoDS_Shape E3 = GetEdge(edge_id(i, 3), doMake);
+      TopoDS_Shape E4 = GetEdge(edge_id(i, 4), doMake);
+
+      BRepBuilderAPI_MakeWire MW (TopoDS::Edge(E1),
+                                  TopoDS::Edge(E2),
+                                  TopoDS::Edge(E3),
+                                  TopoDS::Edge(E4));
+      if (!MW.IsDone()) {
+        Standard_ConstructionError::Raise("Wire construction failed");
+      }
+
+      BRepBuilderAPI_MakeFace MF (MW, Standard_False);
+      if (MF.IsDone()) {
+        myFaces(i) = MF.Shape();
+      } else {
+        tryThru = Standard_True;
+      }
+    }
+
+    // Build side surface by ThruSections algorithm
+    if (tryThru) {
+      BRepOffsetAPI_ThruSections THS;
+      THS.AddWire(TopoDS::Wire(aWire1));
+      THS.AddWire(TopoDS::Wire(aWire2));
+      THS.Build();
+      if (!THS.IsDone()) {
+        StdFail_NotDone::Raise("Side surface generation failed");
+      }
+      for (Standard_Integer i = 1; i <= 4; i++) {
+        // fill face
+        myFaces(i+2) = THS.GeneratedFace(myEdges(i));
+
+        // fill edge
+        Standard_Integer ee = side_edge_id(i);
+        TopTools_IndexedDataMapOfShapeListOfShape MVE;
+        MapShapesAndAncestors(myFaces(i+2), TopAbs_VERTEX, TopAbs_EDGE, MVE);
+        FindEdge(myEdges(ee),
+                 myVertices(vertex_id_edge(ee, 1)),
+                 myVertices(vertex_id_edge(ee, 2)),
+                 MVE);
+      }
+    }
+  }
 }
 
 //=======================================================================
@@ -1007,6 +1072,82 @@ Standard_Boolean GEOMImpl_Block6Explorer::IsSimilarEdges (const TopoDS_Shape& E1
 }
 
 //=======================================================================
+//function : FindEdge
+//purpose  :
+//=======================================================================
+Standard_Integer GEOMImpl_Block6Explorer::FindEdge
+                   (TopoDS_Shape&       theResult,
+                    const TopoDS_Shape& V1,
+                    const TopoDS_Shape& V2,
+                    const TopTools_IndexedDataMapOfShapeListOfShape& MVE,
+                    const Standard_Boolean findAll)
+{
+  Standard_Integer isFound = 0;
+
+  const TopTools_ListOfShape& anEdgesOfV1 = MVE.FindFromKey(V1);
+  const TopTools_ListOfShape& anEdgesOfV2 = MVE.FindFromKey(V2);
+
+  TopTools_ListIteratorOfListOfShape it1 (anEdgesOfV1);
+  for (; it1.More(); it1.Next()) {
+    TopTools_ListIteratorOfListOfShape it2 (anEdgesOfV2);
+    for (; it2.More(); it2.Next()) {
+      if (it1.Value().IsSame(it2.Value())) {
+        isFound++;
+        theResult = it1.Value();
+        if (!findAll) return isFound;
+      }
+    }
+  }
+
+  return isFound;
+}
+
+//=======================================================================
+//function : FindFace
+//purpose  :
+//=======================================================================
+Standard_Integer GEOMImpl_Block6Explorer::FindFace
+                   (TopoDS_Shape&       theResult,
+                    const TopoDS_Shape& V1,
+                    const TopoDS_Shape& V2,
+                    const TopoDS_Shape& V3,
+                    const TopoDS_Shape& V4,
+                    const TopTools_IndexedDataMapOfShapeListOfShape& MVF,
+                    const Standard_Boolean findAll)
+{
+  Standard_Integer isFound = Standard_False;
+
+  const TopTools_ListOfShape& aFacesOfV1 = MVF.FindFromKey(V1);
+  const TopTools_ListOfShape& aFacesOfV2 = MVF.FindFromKey(V2);
+  const TopTools_ListOfShape& aFacesOfV3 = MVF.FindFromKey(V3);
+  const TopTools_ListOfShape& aFacesOfV4 = MVF.FindFromKey(V4);
+
+  TopTools_ListIteratorOfListOfShape it1 (aFacesOfV1);
+  for (; it1.More(); it1.Next()) {
+    TopTools_ListIteratorOfListOfShape it2 (aFacesOfV2);
+    for (; it2.More(); it2.Next()) {
+      if (it1.Value().IsSame(it2.Value())) {
+        TopTools_ListIteratorOfListOfShape it3 (aFacesOfV3);
+        for (; it3.More(); it3.Next()) {
+          if (it1.Value().IsSame(it3.Value())) {
+            TopTools_ListIteratorOfListOfShape it4 (aFacesOfV4);
+            for (; it4.More(); it4.Next()) {
+              if (it1.Value().IsSame(it4.Value())) {
+                isFound++;
+                theResult = it1.Value();
+                if (!findAll) return isFound;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return isFound;
+}
+
+//=======================================================================
 //function : MakeFace
 //purpose  :
 //=======================================================================
@@ -1018,9 +1159,11 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
   BRepBuilderAPI_MakeFace MK (theWire, isPlanarWanted);
   if (MK.IsDone()) {
     theResult = MK.Shape();
+    return;
+  }
 
-  } else if (!isPlanarWanted) {
-    // try to construct filling surface
+  // try to construct filling surface
+  if (!isPlanarWanted) {
     BRepOffsetAPI_MakeFilling MF;
 
     Standard_Integer nbEdges = 0;
@@ -1030,44 +1173,41 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
     }
 
     MF.Build();
-    if (!MF.IsDone()) {
-      Standard_ConstructionError::Raise("Building of face on the given wire failed");
-    }
+    if (MF.IsDone()) {
+      // Result of filling
+      TopoDS_Shape aFace = MF.Shape();
 
-    // Result of filling
-    TopoDS_Shape aFace = MF.Shape();
+      // Update tolerance
+      Standard_Real aTol = MF.G0Error();
 
-    // Update tolerance
-    Standard_Real aTol = MF.G0Error();
-
-    TColgp_Array1OfPnt aPnts (1,nbEdges); // points of the given wire
-    aWE = BRepTools_WireExplorer(theWire);
-    Standard_Integer vi = 1;
-    for (; aWE.More() && vi <= nbEdges; aWE.Next(), vi++) {
-      aPnts(vi) = BRep_Tool::Pnt(TopoDS::Vertex(aWE.CurrentVertex()));
-    }
-
-    // Find maximum deviation in vertices
-    TopExp_Explorer exp (aFace, TopAbs_VERTEX);
-    TopTools_MapOfShape mapShape;
-    for (; exp.More(); exp.Next()) {
-      if (mapShape.Add(exp.Current())) {
-        TopoDS_Vertex aV = TopoDS::Vertex(exp.Current());
-        Standard_Real aTolV = BRep_Tool::Tolerance(aV);
-        gp_Pnt aP = BRep_Tool::Pnt(aV);
-        Standard_Real min_dist = aP.Distance(aPnts(1));
-        for (vi = 2; vi <= nbEdges; vi++) {
-          min_dist = Min(min_dist, aP.Distance(aPnts(vi)));
-        }
-        aTol = Max(aTol, min_dist);
+      TColgp_Array1OfPnt aPnts (1,nbEdges); // points of the given wire
+      aWE = BRepTools_WireExplorer(theWire);
+      Standard_Integer vi = 1;
+      for (; aWE.More() && vi <= nbEdges; aWE.Next(), vi++) {
+        aPnts(vi) = BRep_Tool::Pnt(TopoDS::Vertex(aWE.CurrentVertex()));
       }
-    }
 
-    if ((*((Handle(BRep_TFace)*)&aFace.TShape()))->Tolerance() < aTol) {
-      (*((Handle(BRep_TFace)*)&aFace.TShape()))->Tolerance(aTol);
+      // Find maximum deviation in vertices
+      TopExp_Explorer exp (aFace, TopAbs_VERTEX);
+      TopTools_MapOfShape mapShape;
+      for (; exp.More(); exp.Next()) {
+        if (mapShape.Add(exp.Current())) {
+          TopoDS_Vertex aV = TopoDS::Vertex(exp.Current());
+          Standard_Real aTolV = BRep_Tool::Tolerance(aV);
+          gp_Pnt aP = BRep_Tool::Pnt(aV);
+          Standard_Real min_dist = aP.Distance(aPnts(1));
+          for (vi = 2; vi <= nbEdges; vi++) {
+            min_dist = Min(min_dist, aP.Distance(aPnts(vi)));
+          }
+          aTol = Max(aTol, aTolV);
+          aTol = Max(aTol, min_dist);
+        }
+      }
+
+      if ((*((Handle(BRep_TFace)*)&aFace.TShape()))->Tolerance() < aTol) {
+        (*((Handle(BRep_TFace)*)&aFace.TShape()))->Tolerance(aTol);
+      }
+      theResult = aFace;
     }
-    theResult = aFace;
-  } else {
-    Standard_ConstructionError::Raise("Building of face on the given wire failed");
   }
 }

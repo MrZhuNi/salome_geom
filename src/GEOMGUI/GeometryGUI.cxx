@@ -42,6 +42,7 @@
 #include "SALOMEGUI_Desktop.h"
 
 #include "OCCViewer_Viewer3d.h"
+#include "OCCViewer_ViewFrame.h"
 #include "OCCViewer_ViewPort3d.h"
 #include "OCCViewer_Prs.h"
 
@@ -400,11 +401,12 @@ bool GeometryGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
   else if( theCommandID == 601 ||   // MENU REPAIR - SEWING
 	   theCommandID == 603 ||   // MENU REPAIR - SUPPRESS FACES
 	   theCommandID == 604 ||   // MENU REPAIR - SUPPRESS HOLE
-     theCommandID == 605 ||   // MENU REPAIR - SHAPE PROCESSING
-     theCommandID == 606 ||   // MENU REPAIR - CLOSE CONTOUR
-     theCommandID == 607 ||   // MENU REPAIR - REMOVE INTERNAL WIRES
-     theCommandID == 608 ||   // MENU REPAIR - ADD POINT ON EDGE
-     theCommandID == 609 ) {  // MENU REPAIR - FREE BOUNDARIES
+           theCommandID == 605 ||   // MENU REPAIR - SHAPE PROCESSING
+           theCommandID == 606 ||   // MENU REPAIR - CLOSE CONTOUR
+           theCommandID == 607 ||   // MENU REPAIR - REMOVE INTERNAL WIRES
+           theCommandID == 608 ||   // MENU REPAIR - ADD POINT ON EDGE
+           theCommandID == 609 ||   // MENU REPAIR - FREE BOUNDARIES
+	   theCommandID == 602 ) {  // MENU REPAIR - GLUE FACES
     library = geomGUI->getLibrary( "libRepairGUI.so" );
   }
   else if( theCommandID == 701  ||  // MENU MEASURE - PROPERTIES
@@ -414,7 +416,7 @@ bool GeometryGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	   theCommandID == 7042 ||  // MENU MEASURE - MIN DISTANCE
 	   theCommandID == 705  ||  // MENU MEASURE - TOLERANCE
 	   theCommandID == 706  ||  // MENU MEASURE - WHATIS
-	   theCommandID == 707  ||   // MENU MEASURE - CHECK
+	   theCommandID == 707  ||  // MENU MEASURE - CHECK
 	   theCommandID == 708 ) {  // MENU MEASURE - POINT COORDINATES
     library = geomGUI->getLibrary( "libMeasureGUI.so" );
   }
@@ -970,9 +972,10 @@ bool GeometryGUI::ActiveStudyChanged(QAD_Desktop* parent)
 // function : GeometryGUI::BuildPresentation()
 // purpose  : static
 //=======================================================================
-void GeometryGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO)
+void GeometryGUI::BuildPresentation( const Handle(SALOME_InteractiveObject)& theIO,
+                                     QAD_ViewFrame* theViewFrame )
 {
-  GEOM_Displayer().Display( theIO, false );
+  GEOM_Displayer().Display( theIO, false, theViewFrame );
 }
 
 void GeometryGUI::SupportedViewType(int* buffer, int bufferSize)

@@ -1,8 +1,9 @@
-using namespace std; 
+using namespace std;
 
 #include "GEOM_Object_i.hh"
 #include "GEOM_Gen_i.hh"
 #include "GEOM_ISubShape.hxx"
+#include "GEOMImpl_Types.hxx"
 
 #include "utilities.h"
 #include "OpUtil.hxx"
@@ -42,18 +43,18 @@ GEOM_Object_i::~GEOM_Object_i()
 
 
 //=============================================================================
-/*! 
+/*!
  *  GetEntry
  */
-//============================================================================= 
+//=============================================================================
 char* GEOM_Object_i::GetEntry()
 {
-  const TDF_Label& aLabel = _impl->GetEntry();    
+  const TDF_Label& aLabel = _impl->GetEntry();
   TCollection_AsciiString anEntry;
-  TDF_Tool::Entry(aLabel, anEntry);    
-  return CORBA::string_dup(anEntry.ToCString());    
+  TDF_Tool::Entry(aLabel, anEntry);
+  return CORBA::string_dup(anEntry.ToCString());
 }
- 
+
 //=============================================================================
 /*!
  *  GetStudyID
@@ -62,9 +63,9 @@ char* GEOM_Object_i::GetEntry()
 CORBA::Long GEOM_Object_i::GetStudyID()
 {
    return _impl->GetDocID();
-} 
-    
-    
+}
+
+
 //=============================================================================
 /*!
  *  GetType
@@ -82,7 +83,7 @@ CORBA::Long GEOM_Object_i::GetType()
 //=============================================================================
 GEOM::shape_type GEOM_Object_i::GetShapeType()
 {
-  TopoDS_Shape _geom = _impl->GetValue(); 
+  TopoDS_Shape _geom = _impl->GetValue();
   if(_geom.IsNull()) return GEOM::SHAPE;
   return (GEOM::shape_type)_geom.ShapeType();
 }
@@ -166,7 +167,7 @@ GEOM::ListOfGO* GEOM_Object_i::GetDependency()
 
 //=============================================================================
 /*!
- * GetLastDependency 
+ * GetLastDependency
  */
 //=============================================================================
 GEOM::ListOfGO* GEOM_Object_i::GetLastDependency()
@@ -201,8 +202,8 @@ GEOM::ListOfGO* GEOM_Object_i::GetLastDependency()
 //=================================================================================
 SALOMEDS::TMPFile* GEOM_Object_i::GetShapeStream()
 {
-  TopoDS_Shape aShape = _impl->GetValue(); 
- 
+  TopoDS_Shape aShape = _impl->GetValue();
+
   if(aShape.IsNull()) return NULL;
 
   ostrstream streamShape;
@@ -215,7 +216,7 @@ SALOMEDS::TMPFile* GEOM_Object_i::GetShapeStream()
   char* valueOfStream = streamShape.str();
   //Create copy of ostrstream content
   memcpy(buf, valueOfStream, size);
-  //Allow automatic deletion of ostrstream content 
+  //Allow automatic deletion of ostrstream content
   streamShape.rdbuf()->freeze(0);
 
   CORBA::Octet* OctetBuf =  (CORBA::Octet*)buf;
@@ -232,7 +233,7 @@ SALOMEDS::TMPFile* GEOM_Object_i::GetShapeStream()
 long GEOM_Object_i::getShape() {
   _geom = _impl->GetValue();
   return((long)(&_geom));
-}      
+}
 
 //=============================================================================
 /*!
@@ -256,7 +257,7 @@ GEOM::ListOfLong* GEOM_Object_i::GetSubShapeIndices()
     anIndices->length(0);
   }
 
-  return anIndices._retn(); 
+  return anIndices._retn();
 }
 
 
@@ -275,13 +276,17 @@ GEOM::GEOM_Object_ptr GEOM_Object_i::GetMainShape()
 
     aFunction = ISS.GetMainShape();
     if(aFunction.IsNull()) return obj._retn();
-    TDF_Label aLabel  = aFunction->GetOwnerEntry();   
+    TDF_Label aLabel  = aFunction->GetOwnerEntry();
     if(aLabel.IsNull()) return obj._retn();
     TCollection_AsciiString anEntry;
     TDF_Tool::Entry(aLabel, anEntry);
     return GEOM::GEOM_Object::_duplicate(_engine->GetObject(_impl->GetDocID(), anEntry.ToCString()));
   }
 
-  return obj._retn();   
+  return obj._retn();
 }
 
+bool GEOM_Object_i::IsShape()
+{
+  return !_impl->GetValue().IsNull() && _impl->GetType() != GEOM_MARKER;
+}

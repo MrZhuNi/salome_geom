@@ -307,7 +307,7 @@ void GEOMToolsGUI::OnEditDelete()
         {
           GEOM::GEOM_Object_var aGeomObj = GEOM::GEOM_Object::_narrow( CSO->GetObject() );
           if ( !aGeomObj->_is_nil() )
-            GEOM_Displayer().Erase( aGeomObj );
+            GEOM_Displayer().Erase( aGeomObj, true );
         }
       }
     }
@@ -317,7 +317,7 @@ void GEOMToolsGUI::OnEditDelete()
     for ( int i = 0; i < nbSf; i++ )
     {
       QAD_StudyFrame* sf = QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame( i );
-      GEOM_Displayer().Erase( IObject );
+      GEOM_Displayer().Erase( IObject, true );
     }
 
     /* Delete main shape in Client : */

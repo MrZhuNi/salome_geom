@@ -235,7 +235,7 @@ void BlocksGUI_ExplodeDlg::SelectionIntoArgument()
     GEOM::GEOM_Object_var anObj =
       GEOMBase::ConvertIOinGEOMObject(mySelection->firstIObject(), aResult);
 
-    if (aResult && !anObj->_is_nil()) {
+    if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
       myObject = anObj;
       mySelName->setText(GEOMBase::GetName(anObj));
     }
@@ -315,7 +315,7 @@ void BlocksGUI_ExplodeDlg::activateSelection()
   erasePreview(true);
 
   if (isAllSubShapes()) { // Sub-shapes selection disabled
-    globalSelection();
+    globalSelection( GEOM_ALLSHAPES );
     SelectionIntoArgument();
 
   } else {

@@ -47,6 +47,17 @@ GEOM_LogicalFilter::GEOM_LogicalFilter( const GEOM_ListOfFilter& theFilters,
 }
 
 //=======================================================================
+// name    : GEOM_LogicalFilter::GEOM_LogicalFilter
+// Purpose : Constructor
+//=======================================================================
+GEOM_LogicalFilter::GEOM_LogicalFilter( const Handle(SALOME_Filter)& theFilter,
+                                        const int                    theLogOp )
+{
+  myFilters.Append( theFilter );
+  myLogOp = theLogOp;
+}
+
+//=======================================================================
 // name    : GEOM_LogicalFilter::~GEOM_LogicalFilter
 // Purpose : Destructor
 //=======================================================================
@@ -68,8 +79,10 @@ Standard_Boolean GEOM_LogicalFilter::IsOk( const Handle(SALOME_InteractiveObject
     {
       if ( myLogOp == LO_OR && anIter.Value()->IsOk( theIO ) )
         return true;
-      if ( myLogOp == LO_AND && anIter.Value()->IsOk( theIO ) )
+      if ( myLogOp == LO_AND && !anIter.Value()->IsOk( theIO ) )
         return false;
+      if ( myLogOp == LO_NOT )
+        return !anIter.Value()->IsOk( theIO );
     }
   }
 

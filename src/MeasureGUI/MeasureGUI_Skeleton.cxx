@@ -303,7 +303,7 @@ void MeasureGUI_Skeleton::redisplayPreview()
 //=================================================================================
 void MeasureGUI_Skeleton::activateSelection()
 {
-  globalSelection();
+  globalSelection( GEOM_ALLSHAPES );
 }
 
 //=================================================================================

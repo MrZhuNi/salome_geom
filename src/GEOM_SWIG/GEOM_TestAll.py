@@ -1,7 +1,6 @@
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #
-#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#  Copyright (C) 2003  CEA
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -17,7 +16,7 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
+#  See http://www.salome-platform.org or email : webmaster.salome@opencascade.org
 #
 #
 #  File   : GEOM_usinggeom.py
@@ -79,7 +78,8 @@ def TestAll (geompy, math):
   cs2 = geompy.MakeMarker(70,80,10, 1,0,1, 1,1,0)
 
   #Create base geometry 2D
-  Line   = geompy.MakeLine(p0, pxyz)                        #(2 GEOM_Object_ptr)->GEOM_Object_ptr
+  Line   = geompy.MakeLineTwoPnt(p0, pxyz)                  #(2 GEOM_Object_ptr)->GEOM_Object_ptr
+  Line1  = geompy.MakeLine(pz, vxy)                         #(2 GEOM_Object_ptr)->GEOM_Object_ptr
   Plane  = geompy.MakePlane(pz, vxyz, trimsize)             #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Plane1 = geompy.MakePlaneThreePnt(px, pz, p200, trimsize) #(4 Doubles)->GEOM_Object_ptr
 
@@ -98,11 +98,13 @@ def TestAll (geompy, math):
 
   #Create base geometry 3D
   Box      = geompy.MakeBoxTwoPnt(p0, p200)                   #(2 GEOM_Object_ptr)->GEOM_Object_ptr
-  Box1     = geompy.MakeBoxDXDYDZ(10, 20,30)                  #(3 Doubles)->GEOM_Object_ptr
+  Box1     = geompy.MakeBoxDXDYDZ(10, 20, 30)                 #(3 Doubles)->GEOM_Object_ptr
+  Box2     = geompy.MakeBox(10,20,30, 15,25,35)               #(6 Doubles)->GEOM_Object_ptr
   Cylinder = geompy.MakeCylinder(p0, vz, radius1, height)     #(2 GEOM_Object_ptr, 2 Doubles)->GEOM_Object_ptr
   Cyl1     = geompy.MakeCylinderRH(radius2, height)           #(2 Doubles)->GEOM_Object_ptr
-  Sphere   = geompy.MakeSphere(p0, radius1)                   #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  Sphere   = geompy.MakeSpherePntR(p0, radius1)               #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Sphere1  = geompy.MakeSphereR(radius)                       #(Double)->GEOM_Object_ptr
+  Sphere2  = geompy.MakeSphere(50, 70, 30, radius)            #(4 Doubles)->GEOM_Object_ptr
   Cone     = geompy.MakeCone(p0, vz, radius2, radius, height) #(2 GEOM_Object_ptr, 3 Doubles)->GEOM_Object_ptr
   Cone1    = geompy.MakeConeR1R2H(radius1, radius, height)    #(3 Doubles)->GEOM_Object_ptr
   Torus    = geompy.MakeTorus(p0, vz, radius2, radius)        #(2 GEOM_Object_ptr, 2 Doubles)->GEOM_Object_ptr
@@ -123,7 +125,7 @@ def TestAll (geompy, math):
   Face2    = geompy.MakeFace(Sketcher, WantPlanarFace)
   Shell    = geompy.MakeShell([Face, Face1])         #(List of GEOM_Object_ptr)->GEOM_Object_ptr
 
-  Prism1   = geompy.MakePrismTwoPnt(Face2, p0, pxyz) #(3 GEOM_Object_ptr)->GEOM_Object_ptr
+  Prism1   = geompy.MakePrism(Face2, p0, pxyz)       #(3 GEOM_Object_ptr)->GEOM_Object_ptr
   prism1_faces = geompy.SubShapeAllSorted(Prism1, ShapeTypeFace)
   Shell1   = geompy.MakeShell([prism1_faces[0], prism1_faces[1],
                                prism1_faces[3], prism1_faces[4],
@@ -146,7 +148,7 @@ def TestAll (geompy, math):
 
   #Create advanced objects
   Copy       = geompy.MakeCopy(Box)                      #(GEOM_Object_ptr)->GEOM_Object_ptr
-  Prism      = geompy.MakePrism(Face, vz, 100.0)         #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  Prism      = geompy.MakePrismVecH(Face, vz, 100.0)     #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Revolution = geompy.MakeRevolution(Face, vz, angle2)   #
   Filling    = geompy.MakeFilling(Compound, mindeg, maxdeg,
                                   tol2d, tol3d, nbiter)  #(GEOM_Object_ptr, 4 Doubles, Short)->GEOM_Object_ptr
@@ -160,24 +162,25 @@ def TestAll (geompy, math):
   Mirror      = geompy.MakeMirrorByPlane(Box, Plane)          #(2 GEOM_Object_ptr)->GEOM_Object_ptr
   Position    = geompy.MakePosition(Box, cs1, cs2)            #(3 GEOM_Object_ptr)->GEOM_Object_ptr
   Offset      = geompy.MakeOffset(Box, 10.)                   #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  Orientation = geompy.ChangeOrientation(Box)
 
   #IDList for Fillet/Chamfer
   prism_edges = geompy.SubShapeAllSorted(Prism, ShapeTypeEdge)
-  for anEdge in prism_edges:
-    name = geompy.SubShapeName(anEdge, Prism)
-    #Id_SubEdge = geompy.addToStudyInFather(Prism, anEdge, name)
-    print "Edge Id = ", geompy.GetSubShapeID(Prism, anEdge)
 
-  prism_faces = geompy.SubShapeAllSorted(Prism, ShapeTypeFace)
-  for aFace in prism_faces:
-    name = geompy.SubShapeName(aFace, Prism)
-    #Id_SubFace = geompy.addToStudyInFather(Prism, aFace, name)
-    print "Face Id = ", geompy.GetSubShapeID(Prism, aFace)
+  for anEdge in prism_edges:
+    eid = geompy.GetSubShapeID(Prism, anEdge)
+    sse = geompy.GetSubShape(Prism, [eid])
+
+    sse_id = geompy.GetSubShapeID(Prism, sse)
+    if sse_id != eid:
+      print "Error: GetSubShape() or GetSubShapeID() has failed!"
 
   IDlist_e = []
   IDlist_e.append(geompy.GetSubShapeID(Prism, prism_edges[0]))
   IDlist_e.append(geompy.GetSubShapeID(Prism, prism_edges[1]))
   IDlist_e.append(geompy.GetSubShapeID(Prism, prism_edges[2]))
+
+  prism_faces = geompy.SubShapeAllSorted(Prism, ShapeTypeFace)
 
   f_ind_1 = geompy.GetSubShapeID(Prism, prism_faces[0])
   f_ind_2 = geompy.GetSubShapeID(Prism, prism_faces[1])
@@ -196,8 +199,8 @@ def TestAll (geompy, math):
   MultiTrans1D = geompy.MakeMultiTranslation1D(Fillet, vz, step1, nbtimes1)
   MultiTrans2D = geompy.MakeMultiTranslation2D(Fillet, vz, step1, nbtimes1, vy, step2, nbtimes2)
   #!!!!Angle In Degree!!!!
-  MultiRot1D   = geompy.MakeMultiRotation1D(Chamfer, vx, nbtimes1)
-  MultiRot2D   = geompy.MakeMultiRotation2D(Chamfer, vx, angle, nbtimes1, step1, nbtimes2)
+  MultiRot1D   = geompy.MultiRotate1D(Chamfer, vx, nbtimes1)
+  MultiRot2D   = geompy.MultiRotate2D(Chamfer, vx, angle, nbtimes1, step1, nbtimes2)
 
   #Create Informations objects
   CDG        = geompy.MakeCDG(Prism)               #(GEOM_Object_ptr)->GEOM_Object_ptr
@@ -228,6 +231,7 @@ def TestAll (geompy, math):
   id_cs2 = geompy.addToStudy(cs2, "CS 70,80,10, 1,0,1, 1,1,0")
 
   id_Line   = geompy.addToStudy(Line,   "Line")
+  id_Line1  = geompy.addToStudy(Line1,  "Line by point and vector")
   id_Plane  = geompy.addToStudy(Plane,  "Plane")
   id_Plane1 = geompy.addToStudy(Plane1,  "Plane by 3 points")
 
@@ -244,10 +248,12 @@ def TestAll (geompy, math):
 
   id_Box      = geompy.addToStudy(Box,      "Box")
   id_Box1     = geompy.addToStudy(Box1,     "Box 10x20x30")
+  id_Box2     = geompy.addToStudy(Box2,     "Box (10,20,30)-(15,25,35)")
   id_Cylinder = geompy.addToStudy(Cylinder, "Cylinder")
   id_Cyl1     = geompy.addToStudy(Cyl1,     "Cylinder RH")
-  id_Sphere   = geompy.addToStudy(Sphere,   "Sphere")
+  id_Sphere   = geompy.addToStudy(Sphere,   "Sphere Pnt R")
   id_Sphere1  = geompy.addToStudy(Sphere1,  "Sphere R")
+  id_Sphere2  = geompy.addToStudy(Sphere2,  "Sphere")
   id_Cone     = geompy.addToStudy(Cone,     "Cone")
   id_Cone1    = geompy.addToStudy(Cone1,    "Cone R1R2H")
   id_Torus    = geompy.addToStudy(Torus,    "Torus")
@@ -279,38 +285,42 @@ def TestAll (geompy, math):
   id_Pipe       = geompy.addToStudy(Pipe,       "Pipe")
   id_Sewing     = geompy.addToStudy(Sewing,     "Sewing")
 
-  Id_Translation = geompy.addToStudy(Translation, "Translation")
-  Id_Rotation    = geompy.addToStudy(Rotation,    "Rotation")
-  Id_Scale       = geompy.addToStudy(Scale,       "Scale")
-  Id_Mirror      = geompy.addToStudy(Mirror,      "Mirror")
-  Id_Position    = geompy.addToStudy(Position,    "Positioned box")
-  Id_Offset      = geompy.addToStudy(Offset,      "Offset")
+  id_Translation = geompy.addToStudy(Translation, "Translation")
+  id_Rotation    = geompy.addToStudy(Rotation,    "Rotation")
+  id_Scale       = geompy.addToStudy(Scale,       "Scale")
+  id_Mirror      = geompy.addToStudy(Mirror,      "Mirror")
+  id_Position    = geompy.addToStudy(Position,    "Positioned box")
+  id_Offset      = geompy.addToStudy(Offset,      "Offset")
+  id_Orientation = geompy.addToStudy(Orientation, "Orientation")
 
-  Id_Fillet   = geompy.addToStudy(Fillet,   "Fillet")
-  Id_Chamfer  = geompy.addToStudy(Chamfer,  "Chamfer on Edge")
-  Id_Chamfer2 = geompy.addToStudy(Chamfer2, "Chamfer on Faces")
+  id_Fillet   = geompy.addToStudy(Fillet,   "Fillet")
+  id_Chamfer  = geompy.addToStudy(Chamfer,  "Chamfer on Edge")
+  id_Chamfer2 = geompy.addToStudy(Chamfer2, "Chamfer on Faces")
 
-  Id_MultiTrans1D = geompy.addToStudy(MultiTrans1D, "MultiTrans1D")
-  Id_MultiTrans2D = geompy.addToStudy(MultiTrans2D, "MultiTrans2D")
-  Id_MultiRot1D   = geompy.addToStudy(MultiRot1D,   "MultiRot1D")
-  Id_MultiRot2D   = geompy.addToStudy(MultiRot2D,   "MultiRot2D")
+  id_MultiTrans1D = geompy.addToStudy(MultiTrans1D, "MultiTrans1D")
+  id_MultiTrans2D = geompy.addToStudy(MultiTrans2D, "MultiTrans2D")
+  id_MultiRot1D   = geompy.addToStudy(MultiRot1D,   "MultiRot1D")
+  id_MultiRot2D   = geompy.addToStudy(MultiRot2D,   "MultiRot2D")
 
-  Id_CDG       = geompy.addToStudy(CDG,       "CDG")
-  Id_Archimede = geompy.addToStudy(Archimede, "Archimede")
+  id_CDG       = geompy.addToStudy(CDG,       "CDG")
+  id_Archimede = geompy.addToStudy(Archimede, "Archimede")
 
-  Id_Partition = geompy.addToStudy(Partition, "Partition")
+  id_Partition = geompy.addToStudy(Partition, "Partition")
 
   #Decompose objects
-  SubFaceList    = geompy.SubShapeAll(Box, geompy.ShapeType["FACE"])
-  SubFace        = SubFaceList[2]
-  name           = geompy.SubShapeName(SubFace, Box)
-  Id_SubFace     = geompy.addToStudyInFather(Box, SubFace, name)
+  SubFace    = geompy.SubShape(Box, geompy.ShapeType["FACE"], [2])
+  name       = geompy.SubShapeName(SubFace, Box)
+  id_SubFace = geompy.addToStudyInFather(Box, SubFace, name)
+
+  SubFaceS   = geompy.SubShapeSorted(Box, geompy.ShapeType["FACE"], [5])
+  nameS      = geompy.SubShapeName(SubFaceS, Box)
+  id_SubFace = geompy.addToStudyInFather(Box, SubFaceS, nameS)
 
   SubEdgeList = geompy.SubShapeAll(SubFace, geompy.ShapeType["EDGE"])
   i=0
   for SubEdge in SubEdgeList :
     name = geompy.SubShapeName(SubEdge, SubFace)
-    Id_SubEdge = geompy.addToStudyInFather(SubFace, SubEdge, name)
+    id_SubEdge = geompy.addToStudyInFather(SubFace, SubEdge, name)
 
   #-------------------
 

@@ -5,43 +5,44 @@ using namespace std;
 #include "GEOMImpl_Types.hxx"
 #include "GEOM_Function.hxx"
 
-#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRep_Tool.hxx>
-#include <gp_Pnt.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
+
+#include <TopAbs.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopAbs.hxx>
 
 #include <Geom_Curve.hxx>
+#include <gp_Pnt.hxx>
 
 //=======================================================================
 //function : GetID
 //purpose  :
-//======================================================================= 
+//=======================================================================
 const Standard_GUID& GEOMImpl_PointDriver::GetID()
 {
   static Standard_GUID aPointDriver("FF1BBB02-5D14-4df2-980B-3A668264EA16");
-  return aPointDriver; 
+  return aPointDriver;
 }
 
 
 //=======================================================================
 //function : GEOMImpl_PointDriver
-//purpose  : 
+//purpose  :
 //=======================================================================
-GEOMImpl_PointDriver::GEOMImpl_PointDriver() 
+GEOMImpl_PointDriver::GEOMImpl_PointDriver()
 {
 }
 
 //=======================================================================
 //function : Execute
 //purpose  :
-//======================================================================= 
+//=======================================================================
 Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
 {
-  if (Label().IsNull())  return 0;    
+  if (Label().IsNull())  return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
 
   GEOMImpl_IPoint aPI (aFunction);
@@ -49,10 +50,10 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
 
   gp_Pnt aPnt;
 
-  if (aFunction->GetType() == POINT_XYZ) {
+  if (aType == POINT_XYZ) {
     aPnt = gp_Pnt(aPI.GetX(), aPI.GetY(), aPI.GetZ());
 
-  } else if (aFunction->GetType() == POINT_XYZ_REF) {
+  } else if (aType == POINT_XYZ_REF) {
 
     Handle(GEOM_Function) aRefPoint = aPI.GetRef();
     TopoDS_Shape aRefShape = aRefPoint->GetValue();
@@ -61,9 +62,9 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
         ("Point creation aborted : referenced shape is not a vertex");
     }
     gp_Pnt P = BRep_Tool::Pnt(TopoDS::Vertex(aRefShape));
-    aPnt = gp_Pnt(P.X() + aPI.GetX(), P.Y() + aPI.GetY(), P.Z() + aPI.GetZ()); 
+    aPnt = gp_Pnt(P.X() + aPI.GetX(), P.Y() + aPI.GetY(), P.Z() + aPI.GetZ());
 
-  } else if (aFunction->GetType() == POINT_CURVE_PAR) {
+  } else if (aType == POINT_CURVE_PAR) {
 
     Handle(GEOM_Function) aRefCurve = aPI.GetCurve();
     TopoDS_Shape aRefShape = aRefCurve->GetValue();
@@ -85,7 +86,7 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
   aShape.Infinite(Standard_True);
   aFunction->SetValue(aShape);
 
-  log.SetTouched(Label()); 
+  log.SetTouched(Label());
 
   return 1;
 }
@@ -94,17 +95,17 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
 //=======================================================================
 //function :  GEOMImpl_PointDriver_Type_
 //purpose  :
-//======================================================================= 
+//=======================================================================
 Standard_EXPORT Handle_Standard_Type& GEOMImpl_PointDriver_Type_()
 {
 
   static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
   if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared); 
+  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
   if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
- 
+
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_PointDriver",
@@ -119,7 +120,7 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_PointDriver_Type_()
 //=======================================================================
 //function : DownCast
 //purpose  :
-//======================================================================= 
+//=======================================================================
 
 const Handle(GEOMImpl_PointDriver) Handle(GEOMImpl_PointDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
 {

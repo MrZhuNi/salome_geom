@@ -33,11 +33,12 @@ class GEOMImpl_ILocalOperations : public GEOM_IOperations {
                                      double theWeight, double theWaterDensity,
                                      double theMeshingDeflection);
 
-  static bool GetSubShape (const TopoDS_Shape& theShape, const int theIndex,
-                           TopoDS_Shape& theSubShape);
+  Standard_Integer GetSubShapeIndex (Handle(GEOM_Object) theShape,
+                                     Handle(GEOM_Object) theSubShape);
 
-  static Standard_Integer GetSubShapeIndex (Handle(GEOM_Object) theShape,
-                                            Handle(GEOM_Object) theSubShape);
+  static bool GetSubShape (const TopoDS_Shape& theShape,
+                           const int theIndex,
+                           TopoDS_Shape& theSubShape);
 };
- 
+
 #endif

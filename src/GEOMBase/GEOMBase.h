@@ -45,6 +45,7 @@ class GEOM_Actor;
 class SALOME_Selection;
 class SALOME_ListIO;
 class QAD_Desktop;
+class TColStd_MapOfInteger;
 
 class QWidget;
 
@@ -70,7 +71,7 @@ public :
   static TopoDS_Shape GetShapeFromIOR(QString IOR);
   static bool GetShape( const GEOM::GEOM_Object_ptr&, TopoDS_Shape&, const TopAbs_ShapeEnum = TopAbs_SHAPE );
   static bool GetTopoFromSelection(SALOME_Selection *Sel, TopoDS_Shape& tds);
-  static int GetNameOfSelectedIObjects(SALOME_Selection* Sel, QString& aName); 
+  static int GetNameOfSelectedIObjects(SALOME_Selection* Sel, QString& aName, const bool theShapesOnly = false );
   static bool GetShapeTypeString(const TopoDS_Shape& aShape, Standard_CString& aTypeString);
 
   /* Convertions */
@@ -94,8 +95,9 @@ public :
   static GEOM::GEOM_Object_ptr ConvertIOinGEOMObject(const Handle(SALOME_InteractiveObject)& IO, 
 					      Standard_Boolean& testResult);
 
-  static void ConvertListOfIOInListOfGO(const SALOME_ListIO& aList,
-				 GEOM::ListOfGO& listGO); 
+  static void ConvertListOfIOInListOfGO( const SALOME_ListIO& aList,
+                                         GEOM::ListOfGO& listGO,
+                                         const bool theShapesOnly = false ); 
 
   static GEOM::GEOM_Object_ptr GetObjectFromIOR( const char* theIOR );
 
@@ -129,6 +131,8 @@ public :
 
   /* Gets name of object */
   static const char* GetName( GEOM::GEOM_Object_ptr );
+
+  static bool IsShape( GEOM::GEOM_Object_ptr theObj );
 };
 
 #endif

@@ -69,7 +69,7 @@ RepairGUI_RemoveHolesDlg::RepairGUI_RemoveHolesDlg(QWidget* parent, const char* 
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 1, 0);
+  Layout1->addWidget(GroupPoints, 2, 0);
 
   myAllChk = new QCheckBox( tr( "GEOM_REMOVE_ALL_HOLES" ), GroupPoints->GroupBox1 );
 
@@ -152,6 +152,8 @@ void RepairGUI_RemoveHolesDlg::Init()
 
   connect( myAllChk, SIGNAL( clicked() ), this, SLOT( onRemoveAllClicked() ) );
   connect( myFreeBoundBtn, SIGNAL(clicked()), this, SLOT(onDetect()) );
+
+  initName( tr( "REMOVE_HOLES_NEW_OBJ_NAME" ) );
 }
 
 
@@ -175,6 +177,8 @@ bool RepairGUI_RemoveHolesDlg::ClickOnApply()
 {
   if ( !onAccept() )
     return false;
+
+  initName();
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setText("");
@@ -217,8 +221,10 @@ void RepairGUI_RemoveHolesDlg::SelectionIntoArgument()
     {
       Standard_Boolean aRes;
       myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-      if ( aRes )
-	myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
+      if ( aRes && GEOMBase::IsShape( myObject ) )
+        myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
+      else
+        myObject = GEOM::GEOM_Object::_nil();
     }
     else if ( myEditCurrentArgument == mySelectWiresEdt && !myAllChk->isChecked() )
     {

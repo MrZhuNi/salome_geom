@@ -1,4 +1,4 @@
-using namespace std; 
+using namespace std;
 
 #include "GEOM_IShapesOperations_i.hh"
 
@@ -40,7 +40,7 @@ GEOM_IShapesOperations_i::~GEOM_IShapesOperations_i()
 /*!
  *  MakeEdge
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdge
                       (GEOM::GEOM_Object_ptr thePnt1, GEOM::GEOM_Object_ptr thePnt2)
 {
@@ -59,7 +59,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdge
 
   if (aPnt1.IsNull() || aPnt2.IsNull()) return aGEOMObject._retn();
 
-  //Create the Edge 
+  //Create the Edge
   Handle(GEOM_Object) anObject = GetOperations()->MakeEdge(aPnt1, aPnt2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -71,7 +71,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdge
 /*!
  *  MakeWire
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeWire
                                       (const GEOM::ListOfGO& theEdgesAndWires)
 {
@@ -106,7 +106,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeWire
 /*!
  *  MakeFace
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFace
                       (GEOM::GEOM_Object_ptr theWire, CORBA::Boolean isPlanarWanted)
 {
@@ -123,7 +123,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFace
 
   if (aWire.IsNull()) return aGEOMObject._retn();
 
-  //Create the Face 
+  //Create the Face
   Handle(GEOM_Object) anObject = GetOperations()->MakeFace(aWire, isPlanarWanted);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -135,7 +135,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFace
 /*!
  *  MakeFaceWires
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFaceWires
                                          (const GEOM::ListOfGO& theWires,
 					  CORBA::Boolean        isPlanarWanted)
@@ -171,7 +171,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFaceWires
 /*!
  *  MakeShell
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeShell
                                       (const GEOM::ListOfGO& theFacesAndShells)
 {
@@ -206,7 +206,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeShell
 /*!
  *  MakeSolidShell
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeSolidShell
                                                 (GEOM::GEOM_Object_ptr theShell)
 {
@@ -235,7 +235,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeSolidShell
 /*!
  *  MakeSolidShells
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeSolidShells
                                       (const GEOM::ListOfGO& theShells)
 {
@@ -270,7 +270,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeSolidShells
 /*!
  *  MakeCompound
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeCompound
                                       (const GEOM::ListOfGO& theShapes)
 {
@@ -305,10 +305,10 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeCompound
 /*!
  *  MakeGlueFaces
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFaces
-                                                (GEOM::GEOM_Object_ptr   theShape,
-						 const CORBA::Double     theTolerance)
+                                           (GEOM::GEOM_Object_ptr theShape,
+					    const CORBA::Double   theTolerance)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -357,6 +357,35 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeExplode (GEOM::GEOM_Object_ptr the
 
 //=============================================================================
 /*!
+ *  GetSubShape
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetSubShape
+                                           (GEOM::GEOM_Object_ptr theMainShape,
+					    const CORBA::Long     theID)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theMainShape == NULL) return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theMainShape->GetStudyID(), theMainShape->GetEntry());
+
+  if (aShape.IsNull()) return aGEOMObject._retn();
+
+  Handle(GEOM_Object) anObject = GetOperations()->GetSubShape(aShape, theID);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  NumberOfFaces
  */
 //=============================================================================
@@ -395,7 +424,7 @@ CORBA::Long GEOM_IShapesOperations_i::NumberOfEdges (GEOM::GEOM_Object_ptr theSh
 /*!
  *  ReverseOrientation
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::ChangeOrientation
                                                 (GEOM::GEOM_Object_ptr theShape)
 {

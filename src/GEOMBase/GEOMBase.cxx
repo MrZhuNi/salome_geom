@@ -48,6 +48,7 @@
 #include "VTKViewer_RenderWindowInteractor.h"
 #include "OCCViewer_ViewPort3d.h"
 #include "OCCViewer_Viewer3d.h"
+#include "OCCViewer_ViewFrame.h"
 
 #include "SALOME_ListIteratorOfListIO.hxx"
 #include "GEOM_AISTrihedron.hxx"
@@ -76,7 +77,10 @@
 #include <Precision.hxx>
 
 #include <vtkRenderer.h>
+#include <qvaluelist.h>
+#include <qstringlist.h> 
 
+#include "GEOMImpl_Types.hxx"
 
 using namespace std;
 
@@ -167,22 +171,39 @@ bool GEOMBase::GetTopoFromSelection(SALOME_Selection *Sel, TopoDS_Shape& tds)
   return false;
 }
 
-
 //=======================================================================
 // function : GetNameOfSelectedIObjects()
 // purpose  : Define the name geom++ or other name of mono or multi sel.
 //=======================================================================
-int GEOMBase::GetNameOfSelectedIObjects(SALOME_Selection* Sel, QString& aName)
+int GEOMBase::GetNameOfSelectedIObjects( SALOME_Selection* theSel,
+                                         QString&          theName,
+                                         const bool        theShapesOnly )
 {
-  int nbSel = Sel->IObjectCount();
-  if(nbSel == 1) {
-    Handle(SALOME_InteractiveObject) IObject = Sel->firstIObject();
-    aName = IObject->getName();
+  if ( !theShapesOnly )
+  {
+    int nbSel = theSel->IObjectCount();
+    if ( nbSel == 1 )
+    {
+      Handle(SALOME_InteractiveObject) anIObj = theSel->firstIObject();
+      theName = anIObj->getName();
+    }
+    else
+      theName = QObject::tr("%1_objects").arg(nbSel);
+
+    return nbSel;
   }
-  else {
-    aName = QObject::tr("%1_objects").arg(nbSel);
+  else
+  {
+    QStringList aNames;
+    GEOM::ListOfGO anObjs;
+    ConvertListOfIOInListOfGO( theSel->StoredIObjects(), anObjs, theShapesOnly );
+    if ( anObjs.length() == 1 )
+      theName = GetName( anObjs[ 0 ] );
+    else
+      theName = QString( "%1_objects" ).arg( anObjs.length() );
+
+    return anObjs.length();
   }
-  return nbSel;
 }
 
 
@@ -586,27 +607,29 @@ GEOM::GEOM_Object_ptr GEOMBase::ConvertIOinGEOMObject( const Handle(SALOME_Inter
 // function : ConvertListOfIOInListOfGO()
 // purpose  : 
 //=======================================================================
-void GEOMBase::ConvertListOfIOInListOfGO(const SALOME_ListIO& aList, GEOM::ListOfGO& listGO)
+void GEOMBase::ConvertListOfIOInListOfGO( const SALOME_ListIO& theList,
+                                          GEOM::ListOfGO&      theListGO,
+                                          const bool           theShapesOnly )
 {
-  int nbSel = aList.Extent();  
-  listGO.length(nbSel);
-  int j=0;
-  SALOME_ListIteratorOfListIO It(aList);
-  for(int i=0; It.More(); It.Next(), i++) {
-    Handle(SALOME_InteractiveObject) IObject = It.Value();
-    SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-    SALOMEDS::SObject_var aSObj = aStudy->FindObjectID(IObject->getEntry());
-    
-    if(!aSObj->_is_nil()) {
+  int nbSel = theList.Extent();  
+  theListGO.length( nbSel );
+  SALOME_ListIteratorOfListIO anIter( theList );
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+  int j = 0;
+  for ( int i=0; anIter.More(); anIter.Next(), i++ )
+  {
+    Handle(SALOME_InteractiveObject) anIObj = anIter.Value();
+    SALOMEDS::SObject_var aSObj = aStudy->FindObjectID( anIObj->getEntry() );
+
+    if ( !aSObj->_is_nil() )
+    {
       GEOM::GEOM_Object_var aGeomObj = GEOM::GEOM_Object::_narrow(aSObj->GetObject());
-      if(!CORBA::is_nil(aGeomObj))
-	{
-	  listGO[j] = aGeomObj;
-	  j++;
-	}
+      if ( !CORBA::is_nil( aGeomObj ) && ( !theShapesOnly || IsShape( aGeomObj ) ) )
+        theListGO[ j++ ] = aGeomObj;
     }
   }
-  listGO.length(j);
+  
+  theListGO.length( j );
 }
 
 //=================================================================================
@@ -907,7 +930,10 @@ const char* GEOMBase::GetName( GEOM::GEOM_Object_ptr theObj )
   return "";  
 }
 
-
+bool GEOMBase::IsShape( GEOM::GEOM_Object_ptr theObj )
+{
+  return !theObj->_is_nil() && theObj->IsShape();
+}
 
 
 

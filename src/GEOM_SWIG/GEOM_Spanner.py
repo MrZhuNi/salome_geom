@@ -79,13 +79,13 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
   p_0_35  = geompy.MakeVertex( 0., 35., 0.)
   p_0_10  = geompy.MakeVertex( 0., 10., 0.)
 
-  Face11 = geompy.MakeQuadFaceVertices(p_10_0, p_10_25, p_0_10, p_0_35);
+  Face11 = geompy.MakeQuad4Vertices(p_10_0, p_10_25, p_0_10, p_0_35);
   id_face11 = geompy.addToStudy(Face11, "1 Face for Block 1")
 
   Face12 = geompy.MakeTranslationTwoPoints(Face11, p0, pth)
   id_face12 = geompy.addToStudy(Face12, "2 Face for Block 1")
 
-  Block1 = geompy.MakeHexaSolidTwoFaces(Face11, Face12)
+  Block1 = geompy.MakeHexa2Faces(Face11, Face12)
   id_block1 = geompy.addToStudy(Block1, "Block 1")
 
   ### Block 2 ###
@@ -101,13 +101,13 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
     print "BlocksOp.GetEdge(Block1, p_10_0, p_10_25) : ", BlocksOp.GetErrorCode()
   id_edge22 = geompy.addToStudy(Edge22, "2 Edge for Block 2")
 
-  Face21 = geompy.MakeQuadFaceTwoEdges(Edge21, Edge22);
+  Face21 = geompy.MakeQuad2Edges(Edge21, Edge22);
   id_face21 = geompy.addToStudy(Face21, "1 Face for Block 2")
 
   Face22 = geompy.MakeTranslationTwoPoints(Face21, p0, pth)
   id_face22 = geompy.addToStudy(Face22, "2 Face for Block 2")
 
-  Block2 = geompy.MakeHexaSolidTwoFaces(Face21, Face22)
+  Block2 = geompy.MakeHexa2Faces(Face21, Face22)
   id_block2 = geompy.addToStudy(Block2, "Block 2")
 
   ### Block 3 ###
@@ -117,7 +117,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
   Face31 = GetFaceNearPoint(geompy, Block2, p_15_10_1)
   id_face31 = geompy.addToStudy(Face31, "1 Face for Block 3")
 
-  Prism1 = geompy.MakePrism(Face31, vx, 5);
+  Prism1 = geompy.MakePrismVecH(Face31, vx, 5);
   id_prism1 = geompy.addToStudy(Prism1, "Prism to be Block 3")
 
   nbFaces = geompy.ShapesOp.NumberOfFaces(Prism1)
@@ -133,9 +133,9 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
     Id_Face = geompy.addToStudyInFather(Prism1, aFace, name)
     ii = ii + 1
 
-  Block3 = geompy.MakeHexaSolid(Prism1_faces[0], Prism1_faces[1],
-                                Prism1_faces[2], Prism1_faces[3],
-                                Prism1_faces[4], Prism1_faces[5]);
+  Block3 = geompy.MakeHexa(Prism1_faces[0], Prism1_faces[1],
+                           Prism1_faces[2], Prism1_faces[3],
+                           Prism1_faces[4], Prism1_faces[5]);
   id_block3 = geompy.addToStudy(Block3, "Block 3")
 
   ### Block 4 ###
@@ -161,10 +161,10 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
   Edge44 = geompy.MakeEdge(p_25_20, p_25_20_2)
   id_edge44 = geompy.addToStudy(Edge44, "4 Edge for Block 4")
 
-  Face42 = geompy.MakeQuadFace(Edge41, Edge42, Edge43, Edge44)
+  Face42 = geompy.MakeQuad(Edge41, Edge42, Edge43, Edge44)
   id_face42 = geompy.addToStudy(Face42, "2 Face for Block 4")
 
-  Block4 = geompy.MakeHexaSolidTwoFaces(Face41, Face42)
+  Block4 = geompy.MakeHexa2Faces(Face41, Face42)
   id_block4 = geompy.addToStudy(Block4, "Block 4")
 
   ### Block 5 ###
@@ -177,7 +177,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
   Face52 = geompy.MakeRotation(Face51, axis_rot, math.pi/2.)
   id_face52 = geompy.addToStudy(Face52, "2 Face for Block 5")
 
-  Block5 = geompy.MakeHexaSolidTwoFaces(Face51, Face52)
+  Block5 = geompy.MakeHexa2Faces(Face51, Face52)
   id_block5 = geompy.addToStudy(Block5, "Block 5")
 
   ### Compound of blocks 1 - 4 ###
@@ -214,10 +214,10 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
   Edge4s = geompy.MakeArc(p_20_0, p_18_0_r, p_20_0_r)
   id_edge4s = geompy.addToStudy(Edge4s, "4 Edge for Block 1s")
 
-  Face1s = geompy.MakeQuadFace(Edge1s, Edge2s, Edge3s, Edge4s)
+  Face1s = geompy.MakeQuad(Edge1s, Edge2s, Edge3s, Edge4s)
   id_face1s = geompy.addToStudy(Face1s, "1 Face for Block 1s")
 
-  Block1s = geompy.MakePrism(Face1s, vz, th);
+  Block1s = geompy.MakePrismVecH(Face1s, vz, th);
   id_block1s = geompy.addToStudy(Block1s, "Block 1s")
 
   p_30_0_1 = geompy.MakeVertex(30., 0., 1.)
@@ -247,7 +247,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
   Face12l = GetFaceNearPoint(geompy, Gear, p_55_110_1)
   id_face12l = geompy.addToStudy(Face12l, "2 Face for Linking Block 1")
 
-  Block1l = geompy.MakeHexaSolidTwoFaces(Face11l, Face12l)
+  Block1l = geompy.MakeHexa2Faces(Face11l, Face12l)
   id_block1l = geompy.addToStudy(Block1l, "Linking Block 1")
 
   ### Linking Block 2 ###
@@ -261,7 +261,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
   Face22l = GetFaceNearPoint(geompy, Gear, p_45_110_1)
   id_face22l = geompy.addToStudy(Face22l, "2 Face for Linking Block 2")
 
-  Block2l = geompy.MakeHexaSolidTwoFaces(Face21l, Face22l)
+  Block2l = geompy.MakeHexa2Faces(Face21l, Face22l)
   id_block2l = geompy.addToStudy(Block2l, "Linking Block 2")
 
   ### Linking Block 3 ###
@@ -275,7 +275,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
   Face32l = GetFaceNearPoint(geompy, Gear, p_65_110_1)
   id_face32l = geompy.addToStudy(Face32l, "2 Face for Linking Block 3")
 
-  Block3l = geompy.MakeHexaSolidTwoFaces(Face31l, Face32l)
+  Block3l = geompy.MakeHexa2Faces(Face31l, Face32l)
   id_block3l = geompy.addToStudy(Block3l, "Linking Block 3")
 
   ### Handle ###
@@ -381,7 +381,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
 
     ### equivalent of Block1s, but made as block
 
-    Block_new = geompy.MakeHexaSolidTwoFaces(Face_g_1, Face_g_1_tr)
+    Block_new = geompy.MakeHexa2Faces(Face_g_1, Face_g_1_tr)
     id_block_new = geompy.addToStudy(Block_new, "Block New")
 
   if isMeshTest == 1:

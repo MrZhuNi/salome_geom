@@ -19,7 +19,7 @@
 // 
 //  See http://www.salome-platform.org or email : webmaster.salome@opencascade.org 
 //
-//
+//            
 //
 //  File   : GEOMToolsGUI_1.cxx
 //  Author : Sergey ANIKIN
@@ -40,6 +40,7 @@
 #include "SALOMEGUI_NameDlg.h"
 
 #include "OCCViewer_Viewer3d.h"
+#include "OCCViewer_ViewFrame.h"
 #include "VTKViewer_ViewFrame.h"
 #include "VTKViewer_RenderWindowInteractor.h"
 
@@ -313,7 +314,7 @@ void GEOMToolsGUI::OnTransparency()
     OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     ic = v3d->getAISContext();
   }
-  GEOMBase_TransparencyDlg *aDlg = new GEOMBase_TransparencyDlg(QAD_Application::getDesktop(), "", Sel, ic);
+  new GEOMBase_TransparencyDlg(QAD_Application::getDesktop(), "", Sel, ic);
 }
 
 void GEOMToolsGUI::OnNbIsos()

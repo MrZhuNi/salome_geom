@@ -8,7 +8,7 @@
 #  Module : GEOM
 
 #%Make geometry (like CEA script (A1)) using Partition algorithm%
-# appel: 
+# appel:
 # import alveole_3D_01_GEOM
 # reload(alveole_3D_01_GEOM)
 
@@ -57,12 +57,12 @@ colis_cc = geompy.MakeCompound([colis, cc])
 
 colis_cc = geompy.MakeTranslation(colis_cc, colis_center, 0.0, 0.0)
 
-colis_cc_multi = geompy.MakeMultiRotation1D(colis_cc, vecz, 4)
+colis_cc_multi = geompy.MultiRotate1D(colis_cc, vecz, 4)
 
 # --
 
 alveole = geompy.MakePartition([colis_cc_multi, barier])
-	
+
 geompy.addToStudy(alveole, "alveole before explode")
 
 subshapes = geompy.SubShapeAll(alveole, geompy.ShapeType["SHAPE"])
@@ -82,5 +82,5 @@ compGOs.append(comp4);
 comp = geompy.MakeCompound(compGOs);
 
 alveole = geompy.MakeCompound([comp, subshapes[8]]);
-	
+
 geompy.addToStudy(alveole, "alveole")

@@ -116,6 +116,8 @@ void GenerationGUI_PipeDlg::Init()
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName(tr("GEOM_PIPE"));
+
+  globalSelection( GEOM_ALLSHAPES );
 }
 
 
@@ -253,6 +255,7 @@ void GenerationGUI_PipeDlg::enterEvent(QEvent* e)
 void GenerationGUI_PipeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  globalSelection( GEOM_ALLSHAPES );
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   displayPreview();
 }

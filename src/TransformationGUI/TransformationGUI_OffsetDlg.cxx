@@ -118,6 +118,9 @@ void TransformationGUI_OffsetDlg::Init()
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
   
   initName( tr( "GEOM_OFFSET" ) );
+
+  globalSelection( GEOM_ALLSHAPES );
+  
 }
 
 
@@ -236,7 +239,7 @@ void TransformationGUI_OffsetDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  globalSelection();
+  globalSelection( GEOM_ALLSHAPES );
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setFocus();
 }

@@ -29,8 +29,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=8452>
-<meta name=layout-width content=532>
+<meta name=layout-height content=8252>
+<meta name=layout-width content=766>
 
 
 <!--(Links)=========================================================-->
@@ -101,14 +101,20 @@ p.whs41 {margin-left: 80px; font-size: 12pt; text-indent: -40px;}
 img_whs42 {border-style: none; border: none; width: 200px; height: 231px;}
 img_whs43 {border-style: none; border: none; width: 185px; height: 231px;}
 p.whs44 {font-size: 12pt; text-indent: -68px; margin-left: 72px;}
-p.whs45 {font-size: 12pt; text-indent: -40px; margin-left: 80px;}
-p.whs46 {font-size: 12pt; margin-left: 80px; text-indent: -80px;}
-p.whs47 {font-size: 12pt; margin-left: 80px; text-indent: -68px;}
-img_whs48 {border-style: none; border: none; width: 200px; height: 180px;}
-p.whs49 {font-size: 12pt; margin-left: 0px;}
-img_whs50 {border-style: none; border: none; width: 209px; height: 138px;}
-img_whs51 {border-style: none; border: none; width: 192px; height: 138px;}
-img_whs52 {border-style: none; border: none; width: 191px; height: 138px;}
+p.whs45 {font-size: 12pt; text-indent: -68px; margin-left: 112px;}
+img_whs46 {border-style: none; border: none; width: 200px; height: 216px;}
+p.whs47 {font-size: 12pt; margin-left: 112px; text-indent: -112px;}
+p.whs48 {font-size: 12pt; text-indent: -112px; margin-left: 152px;}
+img_whs49 {border-style: none; border: none; width: 200px; height: 150px; float: none;}
+img_whs50 {border-style: none; border: none; width: 204px; height: 150px;}
+p.whs51 {font-size: 12pt; text-indent: -40px; margin-left: 80px;}
+p.whs52 {font-size: 12pt; margin-left: 80px; text-indent: -80px;}
+p.whs53 {font-size: 12pt; margin-left: 80px; text-indent: -68px;}
+img_whs54 {border-style: none; border: none; width: 200px; height: 180px;}
+p.whs55 {font-size: 12pt; margin-left: 0px;}
+img_whs56 {border-style: none; border: none; width: 209px; height: 138px;}
+img_whs57 {border-style: none; border: none; width: 192px; height: 138px;}
+img_whs58 {border-style: none; border: none; width: 191px; height: 138px;}
 -->
 </style>
 <script type="text/javascript" language="JavaScript">
@@ -121,9 +127,12 @@ if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
   strNSS += "p.whs41 {text-indent:1; }";
   strNSS += "p.whs44 {text-indent:1; }";
   strNSS += "p.whs45 {text-indent:1; }";
-  strNSS += "p.whs46 {text-indent:1; }";
   strNSS += "p.whs47 {text-indent:1; }";
-  strNSS += "p.whs49 {margin-left:1; }";
+  strNSS += "p.whs48 {text-indent:1; }";
+  strNSS += "p.whs51 {text-indent:1; }";
+  strNSS += "p.whs52 {text-indent:1; }";
+  strNSS += "p.whs53 {text-indent:1; }";
+  strNSS += "p.whs55 {margin-left:1; }";
   strNSS +="</style>";
   document.write(strNSS);
 }
@@ -178,7 +187,7 @@ addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
 
 	if (window.setRelStartPage)
 	{
-	setRelStartPage("../geom_help.html");
+	setRelStartPage("../geom.html");
 
 		autoSync(0);
 		sendSyncInfo();
@@ -218,6 +227,9 @@ else
 	
 	<li class=kadov-p><p class="whs1"><a 
  HREF="#_Toc57113182">&nbsp;</a><a HREF="#sewing">Sewing</a></p></li>
+	
+	<li class=kadov-p><p class="whs1">&nbsp;<a 
+ href="#Glue_faces">Glue faces</a></p></li>
 	
 	<li class=kadov-p><p class="whs1"><a 
  HREF="#_Toc57113183">&nbsp;</a><a href="#AddPointOnEdge">Add 
@@ -752,12 +764,64 @@ if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4)) 
 
 <p class="whs44">&nbsp;</p>
 
-<p class="whs45">&nbsp;</p>
+<p class="whs44">&nbsp;</p>
 
-<p class="whs46"><a name=CheckFreeBound><img src="../image44.gif" width="22px" height="22px" border="0" class="img_whs35"> <span 
- style="font-size: 14pt; font-weight: bold;"><font size=4 style="font-size:14pt;"><B>Check free boundaries</B></font></span></a></p>
+<p class="whs44">&nbsp;</p>
+
+<p class="whs44"><a name=Glue_faces><img src="../image61.gif" width="25px" height="24px" border="0" class="img_whs6"><span 
+ style="font-size: 14pt; font-weight: bold;"><font size=4 style="font-size:14pt;"><B> Glue faces</B></font></span></a></p>
+
+<p class="whs44">&nbsp;</p>
+
+<p class="whs44"><b style="font-weight: bold;">Description:</b> 
+ Glues faces that are coincident with respect to the given tolerance </p>
+
+<p class="whs44">value.</p>
+
+<p class="whs44">&nbsp;</p>
+
+<p class="whs44"><span style="font-size: 12pt;"><font size=3 style="font-size:12pt;"><b style="font-weight: bold;">Result:</b> 
+ GEOM_Object.</font></span></p>
+
+<p class="whs44">&nbsp;</p>
+
+<p class="whs44"><b style="font-weight: bold;">TUI Command 
+ : </b><span style="font-style: italic;"><I>geompy.MakeGlueFaces(theShape, 
+ theTolerance)</I></span>, where theShape is a compound of shapesto be glued, 
+ theTolerance is a maximum distance between two faces, which can be considered 
+ as coincident.</p>
+
+<p class="whs44"><i><span style="font-style: italic;"><I>&nbsp;</I></span></i></p>
+
+<p class="whs44"><b style="font-weight: bold;">Arguments: 
+ </b>1 <i><span style="font-style: normal;">Compound + Tolerance Value</span></i></p>
+
+<p class="whs44">&nbsp;</p>
+
+<p class="whs44"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs44">&nbsp;</p>
+
+<p class="whs45"><img src="../image200.jpg" width="200px" height="216px" border="0" class="img_whs46"></p>
 
 <p class="whs47">&nbsp;</p>
+
+<p class="whs47"><b style="font-weight: bold;">Example:</b></p>
+
+<p class="whs47">&nbsp;</p>
+
+<p class="whs48"><img src="../image201.jpg" x-maintain-ratio="TRUE" width="200px" height="150px" border="0" class="img_whs49"> &nbsp;&nbsp;<img src="../image202.jpg" width="204px" height="150px" border="0" class="img_whs50"></p>
+
+<p class="whs51">&nbsp;</p>
+
+<p class="whs51">&nbsp;</p>
+
+<p class="whs51">&nbsp;</p>
+
+<p class="whs52"><a name=CheckFreeBound><img src="../image44.gif" width="22px" height="22px" border="0" class="img_whs35"> <span 
+ style="font-size: 14pt; font-weight: bold;"><font size=4 style="font-size:14pt;"><B>Check free boundaries</B></font></span></a></p>
+
+<p class="whs53">&nbsp;</p>
 
 <p class="whs4"><b style="font-weight: bold;">Description:</b> 
  Detects wires and edges that correspond to the shape's boundary, and highlights 
@@ -787,19 +851,19 @@ if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4)) 
 
 <p class="whs36">&nbsp;</p>
 
-<p class="whs15"><b style="font-weight: bold;"><img src="../image169.jpg" width="200px" height="180px" border="0" class="img_whs48"></b></p>
+<p class="whs15"><b style="font-weight: bold;"><img src="../image169.jpg" width="200px" height="180px" border="0" class="img_whs54"></b></p>
 
-<p class="whs49">&nbsp;</p>
+<p class="whs55">&nbsp;</p>
 
-<p class="whs49"><b style="font-weight: bold;">Example:</b></p>
+<p class="whs55"><b style="font-weight: bold;">Example:</b></p>
 
-<p class="whs49">&nbsp;</p>
+<p class="whs55">&nbsp;</p>
 
-<p class="whs49"><img src="../image170.jpg" width="209px" height="138px" border="0" class="img_whs50"> &nbsp;<img src="../image171.jpg" width="192px" height="138px" border="0" class="img_whs51">&nbsp; <img src="../image172.jpg" width="191px" height="138px" border="0" class="img_whs52"></p>
+<p class="whs55"><img src="../image170.jpg" width="209px" height="138px" border="0" class="img_whs56"> &nbsp;<img src="../image171.jpg" width="192px" height="138px" border="0" class="img_whs57">&nbsp; <img src="../image172.jpg" width="191px" height="138px" border="0" class="img_whs58"></p>
 
-<p class="whs49">&nbsp;</p>
+<p class="whs55">&nbsp;</p>
 
-<p class="whs49">&nbsp;</p>
+<p class="whs55">&nbsp;</p>
 
 <script type="text/javascript" language="javascript1.2">
 <!--

@@ -49,11 +49,12 @@ class GEOM_LogicalFilter : public SALOME_Filter
 {
 public:
 
-  enum { LO_OR, LO_AND, LO_UNDEFINED };
+  enum { LO_OR, LO_AND, LO_NOT, LO_UNDEFINED };
 
 public:
 
                               GEOM_LogicalFilter( const GEOM_ListOfFilter&, const int  );
+                              GEOM_LogicalFilter( const Handle(SALOME_Filter)&, const int );
 
 
   virtual                     ~GEOM_LogicalFilter();

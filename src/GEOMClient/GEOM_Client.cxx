@@ -113,6 +113,20 @@ Standard_Integer GEOM_Client::Find( const TCollection_AsciiString& IOR, TopoDS_S
   return 0;
 }
 
+//=======================================================================
+// function : Find()
+// purpose  : 
+//=======================================================================
+Standard_Integer GEOM_Client::Find( const TopoDS_Shape& S, TCollection_AsciiString& IOR )
+{
+  for ( Standard_Integer i = 1; i<= myShapes.Length(); i++ ) {
+    if (myShapes.Value(i) == S) {
+      IOR = myIORs.Value(i);
+      return i;
+    }
+  }
+  return 0;
+}
 
 //=======================================================================
 // function : Bind()

@@ -29,6 +29,7 @@
 #ifndef GEOMBASE_HELPER_H
 #define GEOMBASE_HELPER_H
 
+#include "GEOM_Displayer.h"
 #include "SALOME_Prs.h"
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
@@ -42,7 +43,6 @@ typedef std::list<GEOM::GEOM_Object_ptr> ObjectList;
 class GEOM_Operation;
 class QAD_Study;
 class TopoDS_Shape;
-class GEOM_Displayer;
 class QAD_ViewFrame;
 class TColStd_MapOfInteger;
 
@@ -89,7 +89,7 @@ protected:
   void localSelection( const ObjectList&, const int );
   void localSelection( GEOM::GEOM_Object_ptr, const int );
   void activate( const int );
-  void globalSelection( const int = -1, const bool = false  );
+  void globalSelection( const int = GEOM_ALLOBJECTS, const bool = false  );
   void globalSelection( const TColStd_MapOfInteger&, const bool = false );
   void updateViewer    ();
 

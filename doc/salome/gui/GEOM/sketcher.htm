@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=536>
-<meta name=layout-width content=491>
+<meta name=layout-height content=1268>
+<meta name=layout-width content=740>
 
 
 <!--(Links)=========================================================-->
@@ -36,8 +36,30 @@ if (navigator.appName !="Netscape")
 <!--
 img_whs1 {border-style: none; border: none; float: none; width: 30px; height: 30px;}
 p.whs2 {font-size: 12pt;}
+ul.whs3 {list-style: disc;}
+p.whs4 {margin-left: 40px; font-size: 12pt;}
+img_whs5 {border-style: none; border: none; width: 200px; height: 277px;}
+img_whs6 {border-style: none; border: none; width: 200px; height: 276px;}
+p.whs7 {font-size: 12pt; margin-left: 40px; text-indent: -40px;}
+p.whs8 {font-size: 12pt; margin-left: 40px; text-indent: -40px; font-weight: bold;}
+p.whs9 {font-size: 12pt; text-indent: -40px; font-weight: bold; margin-left: 80px;}
+img_whs10 {border-style: none; border: none; width: 200px; height: 200px;}
+img_whs11 {border-style: none; border: none; width: 200px; height: 195px;}
 -->
 </style>
+<script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "p.whs7 {text-indent:1; }";
+  strNSS += "p.whs8 {text-indent:1; }";
+  strNSS += "p.whs9 {text-indent:1; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
 <script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
 function reDo() {
@@ -87,7 +109,7 @@ addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
 
 	if (window.setRelStartPage)
 	{
-	setRelStartPage("geom_help.html");
+	setRelStartPage("geom.html");
 
 		autoSync(0);
 		sendSyncInfo();
@@ -135,11 +157,62 @@ else
 <p class="whs2">&nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;">Arguments:</b> 
- 1 shape + 3 values (coordinates).</p>
+ </p>
+
+<p class="whs2"><span><font size=3 style="font-size:12pt;">1. Element type (segment or arc).</font></span></p>
+
+<p class="whs2">2. Destination type (point or direction).</p>
+
+<p class="whs2">3. <span>Destination point by means of:</span></p>
+
+<ul type="disc" class="whs3">
+	
+	<li class=kadov-p><p class="whs2">absolute coordinates 
+ X,Y;</p></li>
+	
+	<li class=kadov-p><p class="whs2">relative coordinates 
+ DX, DY (with respect to the current point);</p></li>
+	
+	<li class=kadov-p><p class="whs2">selection of an existing 
+ point.</p></li>
+</ul>
+
+<p class="whs2">4. Destination direction by means of:</p>
+
+<ul type="disc" class="whs3">
+	
+	<li class=kadov-p><p class="whs2">angle between the new 
+ segment and the previous one;</p></li>
+	
+	<li class=kadov-p><p class="whs2">perpendicular to the 
+ previous segment (same as previous, but angle is predefined and is equal 
+ to 90 degrees);</p></li>
+	
+	<li class=kadov-p><p class="whs2">tangent to the previous 
+ segment;</p></li>
+	
+	<li class=kadov-p><p class="whs2">vector components VX, 
+ DY.</p></li>
+</ul>
+
+<p class="whs2">5. Parameters of an element (for segment : 
+ length or target X or Y coordinate value, for arc : radius and angle).</p>
 
 <p class="whs2">&nbsp;</p>
 
 <p class="whs2"><b style="font-weight: bold;">Dialog Box:</b></p>
+
+<p class="whs2">&nbsp;</p>
+
+<p class="whs4"><img src="image203.jpg" width="200px" height="277px" border="0" class="img_whs5"> &nbsp;&nbsp;<img src="image205.jpg" width="200px" height="276px" border="0" class="img_whs6"></p>
+
+<p class="whs7">&nbsp;</p>
+
+<p class="whs8">Example:</p>
+
+<p class="whs9">&nbsp;</p>
+
+<p class="whs9"><img src="image204.jpg" width="200px" height="200px" border="0" class="img_whs10"> &nbsp;&nbsp;<img src="image206.jpg" width="200px" height="195px" border="0" class="img_whs11"></p>
 
 <script type="text/javascript" language="javascript1.2">
 <!--

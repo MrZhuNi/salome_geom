@@ -307,6 +307,7 @@ void BasicGUI_CircleDlg::LineEditReturnPressed()
 void BasicGUI_CircleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  globalSelection( GEOM_POINT );
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   myGeomGUI->SetState( 0 );

@@ -35,61 +35,64 @@ using namespace std;
 
 //=======================================================================
 //function : GEOM_SubShapeDriver
-//purpose  : 
+//purpose  :
 //=======================================================================
-GEOM_SubShapeDriver::GEOM_SubShapeDriver() 
+GEOM_SubShapeDriver::GEOM_SubShapeDriver()
 {
 }
 
 //=======================================================================
 //function : Execute
 //purpose  :
-//======================================================================= 
+//=======================================================================
 Standard_Integer GEOM_SubShapeDriver::Execute(TFunction_Logbook& log) const
 {
-  if (Label().IsNull()) return 0;    
+  if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
 
   GEOM_ISubShape aCI (aFunction);
 
   TDF_Label aLabel = aCI.GetMainShape()->GetOwnerEntry();
-  if(aLabel.IsRoot()) return 0;
+  if (aLabel.IsRoot()) return 0;
   Handle(GEOM_Object) anObj = GEOM_Object::GetObject(aLabel);
-  if(anObj.IsNull()) return 0;
+  if (anObj.IsNull()) return 0;
   TopoDS_Shape aMainShape = anObj->GetValue();
-  if(aMainShape.IsNull()) return 0;    
-  
-  Handle(TColStd_HArray1OfInteger) anIndices = aCI.GetIndices();  
-  if(anIndices.IsNull() || anIndices->Length() <= 0) return 0;
+  if (aMainShape.IsNull()) return 0;
+
+  Handle(TColStd_HArray1OfInteger) anIndices = aCI.GetIndices();
+  if (anIndices.IsNull() || anIndices->Length() <= 0) return 0;
 
   BRep_Builder B;
   TopoDS_Compound aCompound;
   TopoDS_Shape aShape;
 
-  if(anIndices->Length() == 1 && anIndices->Value(1) == -1) { //The empty subshape 
+  if (anIndices->Length() == 1 && anIndices->Value(1) == -1) { //The empty subshape
     B.MakeCompound(aCompound);
     aShape = aCompound;
-  }
-  else {
-    
+
+  } else {
+
     TopTools_IndexedMapOfShape aMapOfShapes;
     TopExp::MapShapes(aMainShape, aMapOfShapes);
 
-    if(anIndices->Length() > 1) {
-      
+    if (anIndices->Length() > 1) {
+
       B.MakeCompound(aCompound);
 
-      for(int i = anIndices->Lower(); i<= anIndices->Upper(); i++) {
+      for (int i = anIndices->Lower(); i<= anIndices->Upper(); i++) {
 	if (aMapOfShapes.Extent() < anIndices->Value(i))
-	  Standard_NullObject::Raise("GEOM_SubShapeDriver::Execute:Index is out range"); 
+	  Standard_NullObject::Raise("GEOM_SubShapeDriver::Execute: Index is out of range");
 	TopoDS_Shape aSubShape = aMapOfShapes.FindKey(anIndices->Value(i));
-	if(aSubShape.IsNull()) continue;
+	if (aSubShape.IsNull()) continue;
 	B.Add(aCompound,aSubShape);
       }
-      
+
       aShape = aCompound;
-    }
-    else {
+
+    } else {
+
+      if (aMapOfShapes.Extent() < anIndices->Value(1))
+        Standard_NullObject::Raise("GEOM_SubShapeDriver::Execute: Index is out of range");
       aShape = aMapOfShapes.FindKey(anIndices->Value(1));
     }
   }
@@ -98,26 +101,26 @@ Standard_Integer GEOM_SubShapeDriver::Execute(TFunction_Logbook& log) const
 
   aFunction->SetValue(aShape);
 
-  log.SetTouched(Label()); 
+  log.SetTouched(Label());
 
-  return 1;    
+  return 1;
 }
 
 
 //=======================================================================
 //function :  GEOM_SubShapeDriver_Type_
 //purpose  :
-//======================================================================= 
+//=======================================================================
 Standard_EXPORT Handle_Standard_Type& GEOM_SubShapeDriver_Type_()
 {
 
   static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
   if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared); 
+  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
   if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
- 
+
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOM_SubShapeDriver",
@@ -132,7 +135,7 @@ Standard_EXPORT Handle_Standard_Type& GEOM_SubShapeDriver_Type_()
 //=======================================================================
 //function : DownCast
 //purpose  :
-//======================================================================= 
+//=======================================================================
 const Handle(GEOM_SubShapeDriver) Handle(GEOM_SubShapeDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
 {
   Handle(GEOM_SubShapeDriver) _anOtherObject;
@@ -145,5 +148,3 @@ const Handle(GEOM_SubShapeDriver) Handle(GEOM_SubShapeDriver)::DownCast(const Ha
 
   return _anOtherObject ;
 }
-
-

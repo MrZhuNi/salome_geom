@@ -32,6 +32,7 @@ using namespace std;
 #include "QAD_RightFrame.h"
 #include "SALOME_ListIteratorOfListIO.hxx"
 #include "OCCViewer_Viewer3d.h"
+#include "OCCViewer_ViewFrame.h"
 #include <AIS_InteractiveContext.hxx>
 
 #include <qframe.h>

@@ -338,6 +338,65 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeVectorTwoPnt
 
 //=============================================================================
 /*!
+ *  MakeLine
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLine
+                     (Handle(GEOM_Object) thePnt, Handle(GEOM_Object) theDir)
+{
+  SetErrorCode(KO);
+
+  if (thePnt.IsNull() || theDir.IsNull()) return NULL;
+
+  //Add a new Line object
+  Handle(GEOM_Object) aLine = GetEngine()->AddObject(GetDocID(), GEOM_LINE);
+
+  //Add a new Line function
+  Handle(GEOM_Function) aFunction =
+    aLine->AddFunction(GEOMImpl_LineDriver::GetID(), LINE_PNT_DIR);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_LineDriver::GetID()) return NULL;
+
+  GEOMImpl_ILine aPI (aFunction);
+
+  Handle(GEOM_Function) aRef1 = thePnt->GetLastFunction();
+  Handle(GEOM_Function) aRef2 = theDir->GetLastFunction();
+  if (aRef1.IsNull() || aRef2.IsNull()) return NULL;
+
+  aPI.SetPoint1(aRef1);
+  aPI.SetPoint2(aRef2);
+
+  //Compute the Line value
+  try {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Line driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aDescr;
+  TDF_Tool::Entry(aLine->GetEntry(), anEntry);
+  aDescr += (anEntry+" = IBasicOperations.MakeLine(");
+  TDF_Tool::Entry(thePnt->GetEntry(), anEntry);
+  aDescr += (anEntry+", ");
+  TDF_Tool::Entry(theDir->GetEntry(), anEntry);
+  aDescr += (anEntry+")");
+
+  aFunction->SetDescription(aDescr);
+
+  SetErrorCode(OK);
+  return aLine;
+}
+
+//=============================================================================
+/*!
  *  MakeLineTwoPnt
  */
 //=============================================================================

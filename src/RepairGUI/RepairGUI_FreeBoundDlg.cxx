@@ -156,7 +156,7 @@ void RepairGUI_FreeBoundDlg::onSelectionDone()
   GEOM::GEOM_Object_var anObj =
     GEOMBase::ConvertIOinGEOMObject( mySelection->firstIObject(), isOk );
 
-  if ( !isOk || anObj->_is_nil() || anObj->GetType() == GEOM_MARKER )
+  if ( !isOk || anObj->_is_nil() || !GEOMBase::IsShape( anObj ) )
     return;
   else
   {

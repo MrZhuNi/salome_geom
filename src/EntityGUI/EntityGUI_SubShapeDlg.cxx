@@ -185,7 +185,7 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
 
   QString aString = ""; /* name of selection */
 
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects( mySelection, aString );
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects( mySelection, aString, true );
   if( nbSel != 1 )
     return;
 
@@ -393,7 +393,7 @@ void EntityGUI_SubShapeDlg::ResetStateOfDialog()
 void EntityGUI_SubShapeDlg::SubShapeToggled()
 {
   if ( isAllSubShapes() )
-    globalSelection();
+    globalSelection( GEOM_ALLSHAPES );
   else
     localSelection( myObject, shapeType() );
 }

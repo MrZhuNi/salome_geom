@@ -27,8 +27,15 @@
 #  $Header$
 
 from batchmode_salome import *
+import GEOM
 
-geom = lcc.FindOrLoadComponent("FactoryServer", "GEOM")
+g=None
+step = 0
+while step < 50 and g == None:
+    g = lcc.FindOrLoadComponent("FactoryServer", "GEOM")
+    step = step + 1
+    time.sleep(4)
+geom = g._narrow( GEOM.GEOM_Gen )
 myBuilder = myStudy.NewBuilder()
 
 father = myStudy.FindComponent("GEOM")
@@ -52,7 +59,7 @@ def SubShapeName(aSubObj, aMainObj):
     return name
 
 # -----------------------------------------------------------------------------
-# The code below is common with geompy.py
+# Operations
 # -----------------------------------------------------------------------------
 
 def addToStudy(aShape, aName):
@@ -130,7 +137,13 @@ def MakeVector(p1,p2):
       print "MakeVectorTwoPnt : ", BasicOp.GetErrorCode()
     return anObj
 
-def MakeLine(p1, p2):
+def MakeLine(p1, d1):
+    anObj = BasicOp.MakeLine(p1,d1)
+    if BasicOp.IsDone() == 0:
+      print "MakeLine : ", BasicOp.GetErrorCode()
+    return anObj
+
+def MakeLineTwoPnt(p1, p2):
     anObj = BasicOp.MakeLineTwoPnt(p1,p2)
     if BasicOp.IsDone() == 0:
       print "MakeLineTwoPnt : ", BasicOp.GetErrorCode()
@@ -206,7 +219,9 @@ def MakeInterpol(ListShape):
       print "MakeSplineInterpolation : ", CurvesOp.GetErrorCode()
     return anObj
 
-def MakeSketcher(Cmd, WPL):
+# <WPL>: Nine double values, defining origin,
+# OZ and OX directions of the working plane.
+def MakeSketcher(Cmd, WPL = [0,0,0, 0,0,1, 1,0,0]):
     anObj = CurvesOp.MakeSketcher(Cmd, WPL)
     if CurvesOp.IsDone() == 0:
       print "MakeSketcher : ", CurvesOp.GetErrorCode()
@@ -245,10 +260,15 @@ def MakeCylinderRH(radius,height):
       print "MakeCylinderRH : ", PrimOp.GetErrorCode()
     return anObj
 
-def MakeSphere(point,radius):
+def MakeSpherePntR(point,radius):
     anObj = PrimOp.MakeSpherePntR(point,radius)
     if PrimOp.IsDone() == 0:
       print "MakeSpherePntR : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakeSphere(x,y,z,radius):
+    point = MakeVertex(x,y,z)
+    anObj = MakeSpherePntR(point,radius)
     return anObj
 
 def MakeSphereR(radius):
@@ -281,16 +301,16 @@ def MakeTorusRR(major_radius,minor_radius):
       print "MakeTorusRR : ", PrimOp.GetErrorCode()
     return anObj
 
-def MakePrism(baseShape,vector,height):
-    anObj = PrimOp.MakePrismVecH(baseShape,vector,height)
-    if PrimOp.IsDone() == 0:
-      print "MakePrismVecH : ", PrimOp.GetErrorCode()
-    return anObj
-
-def MakePrismTwoPnt(baseShape,point1,point2):
+def MakePrism(baseShape,point1,point2):
     anObj = PrimOp.MakePrismTwoPnt(baseShape,point1,point2)
     if PrimOp.IsDone() == 0:
       print "MakePrismTwoPnt : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakePrismVecH(baseShape,vector,height):
+    anObj = PrimOp.MakePrismVecH(baseShape,vector,height)
+    if PrimOp.IsDone() == 0:
+      print "MakePrismVecH : ", PrimOp.GetErrorCode()
     return anObj
 
 def MakePipe(baseShape,pathShape):
@@ -333,6 +353,10 @@ def MakeFaceWires(ListWires,WantPlanarFace):
       print "MakeFaceWires : ", ShapesOp.GetErrorCode()
     return anObj
 
+def MakeFaces(ListWires,WantPlanarFace):
+    anObj = MakeFaceWires(ListWires,WantPlanarFace)
+    return anObj
+
 def MakeShell(ListOfShapes):
     anObj = ShapesOp.MakeShell(ListOfShapes)
     if ShapesOp.IsDone() == 0:
@@ -357,28 +381,62 @@ def ChangeOrientation(Shape):
       print "ChangeOrientation : ", ShapesOp.GetErrorCode()
     return anObj
 
+def OrientationChange(Shape):
+    anObj = ChangeOrientation(Shape)
+    return anObj
+
+# -----------------------------------------------------------------------------
+# Access to sub-shapes by their unique IDs inside the main shape.
+# -----------------------------------------------------------------------------
+
+# Obtain a composite sub-shape of <aShape>, composed from sub-shapes
+# of <aShape>, selected by their unique IDs inside <aShape>
+def GetSubShape(aShape, ListOfID):
+    anObj = geom.AddSubShape(aShape,ListOfID)
+    return anObj
+
+# Obtain unique ID of sub-shape <aSubShape> inside <aShape>
+def GetSubShapeID(aShape, aSubShape):
+    anID = LocalOp.GetSubShapeIndex(aShape, aSubShape)
+    if LocalOp.IsDone() == 0:
+      print "GetSubShapeIndex : ", LocalOp.GetErrorCode()
+    return anID
+
 # -----------------------------------------------------------------------------
 # Decompose objects
 # -----------------------------------------------------------------------------
 
-def SubShape(aShape,ListOfId):
-    anObj = geom.AddSubShape(aShape,ListOfId)
+def SubShapeAll(aShape, aType):
+    ListObj = ShapesOp.MakeExplode(aShape,aType,0)
+    if ShapesOp.IsDone() == 0:
+      print "MakeExplode : ", ShapesOp.GetErrorCode()
+    return ListObj
+
+def SubShapeAllSorted(aShape,aType):
+    ListObj = ShapesOp.MakeExplode(aShape,aType,1)
+    if ShapesOp.IsDone() == 0:
+      print "MakeExplode : ", ShapesOp.GetErrorCode()
+    return ListObj
+
+# Obtain a compound of sub-shapes of <aShape>,
+# selected by they indices in list of all sub-shapes of type <aType>
+def SubShape(aShape, aType, ListOfInd):
+    ListOfIDs = []
+    AllShapeList = SubShapeAll(aShape, aType)
+    for ind in ListOfInd:
+        ListOfIDs.append(GetSubShapeID(aShape, AllShapeList[ind - 1]))
+    anObj = GetSubShape(aShape, ListOfIDs)
     return anObj
 
-def SubShapeAll(aShape,type):
-    ListObj = ShapesOp.MakeExplode(aShape,type,0)
-    if ShapesOp.IsDone() == 0:
-      print "MakeExplode : ", ShapesOp.GetErrorCode()
-    return ListObj
-
-def SubShapeAllSorted(aShape,type):
-    ListObj = ShapesOp.MakeExplode(aShape,type,1)
-    if ShapesOp.IsDone() == 0:
-      print "MakeExplode : ", ShapesOp.GetErrorCode()
-    return ListObj
-
-def GetSubShapeID(aShape, aSubShape):
-    return LocalOp.GetSubShapeIndex(aShape, aSubShape)
+# Obtain a compound of sub-shapes of <aShape>,
+# selected by they indices in sorted list of all sub-shapes of type <aType>
+def SubShapeSorted(aShape, aType, ListOfInd):
+    ListOfIDs = []
+    AllShapeList = SubShapeAllSorted(aShape, aType)
+    for ind in ListOfInd:
+        ListOfIDs.append(GetSubShapeID(aShape, AllShapeList[ind - 1]))
+    anObj = GetSubShape(aShape, ListOfIDs)
+    return anObj
 
 # -----------------------------------------------------------------------------
 # Healing operations
@@ -469,6 +527,18 @@ def MakeBoolean(shape1,shape2,operation):
       print "MakeBoolean : ", BoolOp.GetErrorCode()
     return anObj
 
+def MakeCommon(s1, s2):
+    return MakeBoolean(s1, s2, 1)
+
+def MakeCut(s1, s2):
+    return MakeBoolean(s1, s2, 2)
+
+def MakeFuse(s1, s2):
+    return MakeBoolean(s1, s2, 3)
+
+def MakeSection(s1, s2):
+    return MakeBoolean(s1, s2, 4)
+
 def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                   Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
     anObj = BoolOp.MakePartition(ListShapes, ListTools,
@@ -476,6 +546,13 @@ def MakePartition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=
                                  Limit, RemoveWebs, ListMaterials);
     if BoolOp.IsDone() == 0:
       print "MakePartition : ", BoolOp.GetErrorCode()
+    return anObj
+
+def Partition(ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
+              Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[]):
+    anObj = MakePartition(ListShapes, ListTools,
+                          ListKeepInside, ListRemoveInside,
+                          Limit, RemoveWebs, ListMaterials);
     return anObj
 
 # -----------------------------------------------------------------------------
@@ -540,16 +617,26 @@ def MakeMultiTranslation2D(aShape,d1,step1,nbtimes1,d2,step2,nbtimes2):
       print "MultiTranslate2D : ", TrsfOp.GetErrorCode()
     return anObj
 
-def MakeMultiRotation1D(aShape,aVec,aNbTimes):
+def MultiRotate1D(aShape,aVec,aNbTimes):
     anObj = TrsfOp.MultiRotate1D(aShape,aVec,aNbTimes)
     if TrsfOp.IsDone() == 0:
       print "MultiRotate1D : ", TrsfOp.GetErrorCode()
     return anObj
 
-def MakeMultiRotation2D(aShape,aVec,anAngle,nbtimes1,aStep,nbtimes2):
+def MultiRotate2D(aShape,aVec,anAngle,nbtimes1,aStep,nbtimes2):
     anObj = TrsfOp.MultiRotate2D(aShape,aVec,anAngle,nbtimes1,aStep,nbtimes2)
     if TrsfOp.IsDone() == 0:
       print "MultiRotate2D : ", TrsfOp.GetErrorCode()
+    return anObj
+
+def MakeMultiRotation1D(aShape,aDir,aPoint,aNbTimes):
+    aVec = MakeLine(aPoint,aDir)
+    anObj = MultiRotate1D(aShape,aVec,aNbTimes)
+    return anObj
+
+def MakeMultiRotation2D(aShape,aDir,aPoint,anAngle,nbtimes1,aStep,nbtimes2):
+    aVec = MakeLine(aPoint,aDir)
+    anObj = MultiRotate2D(aShape,aVec,anAngle,nbtimes1,aStep,nbtimes2)
     return anObj
 
 # -----------------------------------------------------------------------------
@@ -590,29 +677,19 @@ def MakeChamferFaces(aShape,d1,d2,ListShape):
       print "MakeChamferFaces : ", LocalOp.GetErrorCode()
     return anObj
 
+def MakeChamfer(aShape,d1,d2,aShapeType,ListShape):
+    anObj = None
+    if aShapeType == ShapeType["EDGE"]:
+        anObj = MakeChamferEdge(aShape,d1,d2,ListShape[0],ListShape[1])
+    else:
+        anObj = MakeChamferFaces(aShape,d1,d2,ListShape)
+    return anObj
+
 def Archimede(aShape,weight,WaterDensity,MeshingDeflection):
     anObj = LocalOp.MakeArchimede(aShape,weight,WaterDensity,MeshingDeflection)
     if LocalOp.IsDone() == 0:
       print "MakeArchimede : ", LocalOp.GetErrorCode()
     return anObj
-
-def MakeMultiTransformation1D(Block, DirFaceID1, DirFaceID2, NbTimes):
-    anObj = BlocksOp.MakeMultiTransformation1D(Block, DirFaceID1, DirFaceID2, NbTimes)
-    if BlocksOp.IsDone() == 0:
-      print "MakeMultiTransformation1D : ", BlocksOp.GetErrorCode()
-    return anObj
-
-def MakeMultiTransformation2D(Block, DirFaceID1U, DirFaceID2U, NbTimesU, DirFaceID1V, DirFaceID2V, NbTimesV):
-    anObj = BlocksOp.MakeMultiTransformation2D(Block, DirFaceID1U, DirFaceID2U, NbTimesU, DirFaceID1V, DirFaceID2V, NbTimesV)
-    if BlocksOp.IsDone() == 0:
-      print "MakeMultiTransformation2D : ", BlocksOp.GetErrorCode()
-    return anObj
-
-def MakeBlockExplode(Compound, MinNbFaces, MaxNbFaces):
-    aList = BlocksOp.ExplodeCompoundOfBlocks(Compound, MinNbFaces, MaxNbFaces)
-    if BlocksOp.IsDone() == 0:
-      print "MakeBlockExplode : ", BlocksOp.GetErrorCode()
-    return aList
 
 # -----------------------------------------------------------------------------
 # Information objects
@@ -694,35 +771,65 @@ def Export(aShape, filename, formatname):
 # Block operations
 # -----------------------------------------------------------------------------
 
-def MakeQuadFace(E1, E2, E3, E4):
-    anObj = BlocksOp.MakeQuadFaceFourEdges(E1, E2, E3, E4)
+def MakeQuad(E1, E2, E3, E4):
+    anObj = BlocksOp.MakeQuad(E1, E2, E3, E4)
     if BlocksOp.IsDone() == 0:
-      print "MakeQuadFace : ", BlocksOp.GetErrorCode()
+      print "MakeQuad : ", BlocksOp.GetErrorCode()
     return anObj
 
-def MakeQuadFaceTwoEdges(E1, E2):
-    anObj = BlocksOp.MakeQuadFaceTwoEdges(E1, E2)
+def MakeQuad2Edges(E1, E2):
+    anObj = BlocksOp.MakeQuad2Edges(E1, E2)
     if BlocksOp.IsDone() == 0:
-      print "MakeQuadFaceEdge : ", BlocksOp.GetErrorCode()
+      print "MakeQuad2Edges : ", BlocksOp.GetErrorCode()
     return anObj
 
-def MakeQuadFaceVertices(V1, V2, V3, V4):
-    anObj = BlocksOp.MakeQuadFaceFourVertices(V1, V2, V3, V4)
+def MakeQuad4Vertices(V1, V2, V3, V4):
+    anObj = BlocksOp.MakeQuad4Vertices(V1, V2, V3, V4)
     if BlocksOp.IsDone() == 0:
-      print "MakeQuadFaceVertex : ", BlocksOp.GetErrorCode()
+      print "MakeQuad4Vertices : ", BlocksOp.GetErrorCode()
     return anObj
 
-def MakeHexaSolid(F1, F2, F3, F4, F5, F6):
-    anObj = BlocksOp.MakeHexaSolidSixFaces(F1, F2, F3, F4, F5, F6)
+def MakeHexa(F1, F2, F3, F4, F5, F6):
+    anObj = BlocksOp.MakeHexa(F1, F2, F3, F4, F5, F6)
     if BlocksOp.IsDone() == 0:
-      print "MakeHexaSolid : ", BlocksOp.GetErrorCode()
+      print "MakeHexa : ", BlocksOp.GetErrorCode()
     return anObj
 
-def MakeHexaSolidTwoFaces(F1, F2):
-    anObj = BlocksOp.MakeHexaSolidTwoFaces(F1, F2)
+def MakeHexa2Faces(F1, F2):
+    anObj = BlocksOp.MakeHexa2Faces(F1, F2)
     if BlocksOp.IsDone() == 0:
-      print "MakeHexaSolidTwoFace : ", BlocksOp.GetErrorCode()
+      print "MakeHexa2Faces : ", BlocksOp.GetErrorCode()
     return anObj
+
+def MakeMultiTransformation1D(Block, DirFaceID1, DirFaceID2, NbTimes):
+    anObj = BlocksOp.MakeMultiTransformation1D(Block, DirFaceID1, DirFaceID2, NbTimes)
+    if BlocksOp.IsDone() == 0:
+      print "MakeMultiTransformation1D : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def MakeMultiTransformation2D(Block, DirFaceID1U, DirFaceID2U, NbTimesU,
+			             DirFaceID1V, DirFaceID2V, NbTimesV):
+    anObj = BlocksOp.MakeMultiTransformation2D(Block, DirFaceID1U, DirFaceID2U, NbTimesU,
+					              DirFaceID1V, DirFaceID2V, NbTimesV)
+    if BlocksOp.IsDone() == 0:
+      print "MakeMultiTransformation2D : ", BlocksOp.GetErrorCode()
+    return anObj
+
+def MakeBlockExplode(Compound, MinNbFaces, MaxNbFaces):
+    aList = BlocksOp.ExplodeCompoundOfBlocks(Compound, MinNbFaces, MaxNbFaces)
+    if BlocksOp.IsDone() == 0:
+      print "MakeBlockExplode : ", BlocksOp.GetErrorCode()
+    return aList
+
+def CheckCompoundOfBlocks(Compound):
+    (IsValid, BCErrors) = BlocksOp.CheckCompoundOfBlocks(Compound)
+    if BlocksOp.IsDone() == 0:
+      print "CheckCompoundOfBlocks : ", BlocksOp.GetErrorCode()
+    else:
+      if IsValid == 0:
+        Descr = BlocksOp.PrintBCErrors(Compound, BCErrors)
+        print Descr
+    return IsValid
 
 # -----------------------------------------------------------------------------
 # Group operations
@@ -735,19 +842,21 @@ def CreateGroup(MainShape, ShapeType):
     return anObj
 
 def AddObject(Group, SubShapeID):
-    anObj = GroupOp.AddObject(Group, SubShapeID)
+    GroupOp.AddObject(Group, SubShapeID)
     if GroupOp.IsDone() == 0:
       print "AddObject : ", GroupOp.GetErrorCode()
-    return anObj
 
 def RemoveObject(Group, SubShapeID):
-    anObj = GroupOp.RemoveObject(Group, SubShapeID)
+    GroupOp.RemoveObject(Group, SubShapeID)
     if GroupOp.IsDone() == 0:
       print "RemoveObject : ", GroupOp.GetErrorCode()
-    return anObj
 
 def GetObjectIDs(Group):
-    anObj = GroupOp.GetObjects(Group)
+    ListIDs = GroupOp.GetObjects(Group)
     if GroupOp.IsDone() == 0:
       print "GetObjectIDs : ", GroupOp.GetErrorCode()
-    return anObj
+    return ListIDs
+
+def addPath(Path):
+    if (sys.path.count(Path) < 1):
+	sys.path.append(Path)

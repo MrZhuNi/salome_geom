@@ -21,33 +21,44 @@ class GEOM_IBlocksOperations_i :
   ~GEOM_IBlocksOperations_i();
 
   // Creation of blocks and block faces
-  GEOM::GEOM_Object_ptr MakeQuadFaceFourVertices (GEOM::GEOM_Object_ptr thePnt1,
-						  GEOM::GEOM_Object_ptr thePnt2,
-						  GEOM::GEOM_Object_ptr thePnt3,
-						  GEOM::GEOM_Object_ptr thePnt4);
+  GEOM::GEOM_Object_ptr MakeQuad (GEOM::GEOM_Object_ptr theEdge1,
+				  GEOM::GEOM_Object_ptr theEdge2,
+				  GEOM::GEOM_Object_ptr theEdge3,
+				  GEOM::GEOM_Object_ptr theEdge4);
 
-  GEOM::GEOM_Object_ptr MakeQuadFaceFourEdges (GEOM::GEOM_Object_ptr theEdge1,
-					       GEOM::GEOM_Object_ptr theEdge2,
-					       GEOM::GEOM_Object_ptr theEdge3,
-					       GEOM::GEOM_Object_ptr theEdge4);
+  GEOM::GEOM_Object_ptr MakeQuad2Edges (GEOM::GEOM_Object_ptr theEdge1,
+					GEOM::GEOM_Object_ptr theEdge2);
 
-  GEOM::GEOM_Object_ptr MakeQuadFaceTwoEdges (GEOM::GEOM_Object_ptr theEdge1,
-					      GEOM::GEOM_Object_ptr theEdge2);
+  GEOM::GEOM_Object_ptr MakeQuad4Vertices (GEOM::GEOM_Object_ptr thePnt1,
+					   GEOM::GEOM_Object_ptr thePnt2,
+					   GEOM::GEOM_Object_ptr thePnt3,
+					   GEOM::GEOM_Object_ptr thePnt4);
 
-  GEOM::GEOM_Object_ptr MakeHexaSolidSixFaces (GEOM::GEOM_Object_ptr theFace1,
-					       GEOM::GEOM_Object_ptr theFace2,
-					       GEOM::GEOM_Object_ptr theFace3,
-					       GEOM::GEOM_Object_ptr theFace4,
-					       GEOM::GEOM_Object_ptr theFace5,
-					       GEOM::GEOM_Object_ptr theFace6);
+  GEOM::GEOM_Object_ptr MakeHexa (GEOM::GEOM_Object_ptr theFace1,
+				  GEOM::GEOM_Object_ptr theFace2,
+				  GEOM::GEOM_Object_ptr theFace3,
+				  GEOM::GEOM_Object_ptr theFace4,
+				  GEOM::GEOM_Object_ptr theFace5,
+				  GEOM::GEOM_Object_ptr theFace6);
 
-  GEOM::GEOM_Object_ptr MakeHexaSolidTwoFaces (GEOM::GEOM_Object_ptr theFace1,
-					       GEOM::GEOM_Object_ptr theFace2);
+  GEOM::GEOM_Object_ptr MakeHexa2Faces (GEOM::GEOM_Object_ptr theFace1,
+					GEOM::GEOM_Object_ptr theFace2);
+
+  GEOM::GEOM_Object_ptr MakeBlockCompound (GEOM::GEOM_Object_ptr theCompound);
 
   // Extract elements of blocks and blocks compounds
+  GEOM::GEOM_Object_ptr GetPoint (GEOM::GEOM_Object_ptr theShape,
+				  const CORBA::Double   theX,
+				  const CORBA::Double   theY,
+				  const CORBA::Double   theZ,
+				  const CORBA::Double   theEpsilon);
+
   GEOM::GEOM_Object_ptr GetEdge (GEOM::GEOM_Object_ptr theShape,
 				 GEOM::GEOM_Object_ptr thePoint1,
 				 GEOM::GEOM_Object_ptr thePoint2);
+
+  GEOM::GEOM_Object_ptr GetEdgeNearPoint (GEOM::GEOM_Object_ptr theShape,
+					  GEOM::GEOM_Object_ptr thePoint);
 
   GEOM::GEOM_Object_ptr GetFaceByPoints (GEOM::GEOM_Object_ptr theShape,
 					 GEOM::GEOM_Object_ptr thePoint1,
@@ -68,12 +79,19 @@ class GEOM_IBlocksOperations_i :
   GEOM::GEOM_Object_ptr GetFaceByNormale (GEOM::GEOM_Object_ptr theBlock,
 					  GEOM::GEOM_Object_ptr theVector);
 
-  // Extract blocks from blocks compounds
+  // Check blocks compound
   CORBA::Boolean IsCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
 				     const CORBA::Long     theMinNbFaces,
 				     const CORBA::Long     theMaxNbFaces,
 				     CORBA::Long&          theNbBlocks);
 
+  CORBA::Boolean CheckCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
+					GEOM::GEOM_IBlocksOperations::BCErrors_out theErrors);
+
+  char* PrintBCErrors (GEOM::GEOM_Object_ptr theCompound,
+		       const GEOM::GEOM_IBlocksOperations::BCErrors& theErrors);
+
+  // Extract blocks from blocks compounds
   GEOM::ListOfGO* ExplodeCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
 					   const CORBA::Long     theMinNbFaces,
 					   const CORBA::Long     theMaxNbFaces);

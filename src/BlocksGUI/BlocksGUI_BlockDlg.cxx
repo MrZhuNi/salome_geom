@@ -372,7 +372,7 @@ bool BlocksGUI_BlockDlg::execute (ObjectList& objects)
     case 0:
       if (!CORBA::is_nil(myFace1) && !CORBA::is_nil(myFace2)) {
         anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-          MakeHexaSolidTwoFaces(myFace1, myFace2);
+          MakeHexa2Faces(myFace1, myFace2);
         res = true;
       }
       break;
@@ -381,7 +381,7 @@ bool BlocksGUI_BlockDlg::execute (ObjectList& objects)
           !CORBA::is_nil(myFace3) && !CORBA::is_nil(myFace4) &&
           !CORBA::is_nil(myFace5) && !CORBA::is_nil(myFace6)) {
         anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-          MakeHexaSolidSixFaces(myFace1, myFace2, myFace3, myFace4, myFace5, myFace6);
+          MakeHexa(myFace1, myFace2, myFace3, myFace4, myFace5, myFace6);
         res = true;
       }
       break;
