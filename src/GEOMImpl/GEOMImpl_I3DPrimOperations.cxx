@@ -898,7 +898,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle (Handle(
   }
 
   //Make a Python command
-  TCollection_AsciiString anEntry, aDescr("");
+  TCollection_AsciiString anEntry, aDescr("import math\n\t");
   TDF_Tool::Entry(aRevolution->GetEntry(), anEntry);
   aDescr += anEntry;
   aDescr += " = geompy.MakeRevolution(";
@@ -906,7 +906,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle (Handle(
   aDescr += (anEntry+", ");
   TDF_Tool::Entry(theAxis->GetEntry(), anEntry);
   aDescr += (anEntry+", ");
-  aDescr += (TCollection_AsciiString(theAngle)+")");
+  aDescr += (TCollection_AsciiString(theAngle/PI)+"*math.pi)");
 
   aFunction->SetDescription(aDescr);
 
