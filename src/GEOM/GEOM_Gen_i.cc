@@ -2363,8 +2363,8 @@ GEOM::GEOM_Gen::ListOfGeomShapes* GEOM_Gen_i::SubShapesAll(GEOM::GEOM_Shape_ptr 
 // purpose  : Boolean operation according to the type 'operation'
 //=================================================================================
 GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeBoolean(GEOM::GEOM_Shape_ptr shape1,
-				       GEOM::GEOM_Shape_ptr shape2,
-				       CORBA::Long operation) 
+					     GEOM::GEOM_Shape_ptr shape2,
+					     CORBA::Long operation) 
   throw (SALOME::SALOME_Exception)
 {
   Unexpect aCatch(SALOME_SalomeException);
@@ -2502,7 +2502,6 @@ GEOM::AxisStruct GEOM_Gen_i::MakeAxisStruct(CORBA::Double x,
 				      CORBA::Double vy,
 				      CORBA::Double vz) 
 {
-  int a = 1; int b = 0; int c; c=a/b;
   GEOM::AxisStruct A ;
   A.x  = x ;   A.y  = y ;   A.z  = z ;
   A.vx = vx ;  A.vy = vy ;  A.vz = vz ;
@@ -2532,9 +2531,9 @@ GEOM::PointStruct GEOM_Gen_i::MakePointStruct(CORBA::Double x,
 GEOM::DirStruct GEOM_Gen_i::MakeDirection(const GEOM::PointStruct& p)
 { 
   GEOM::DirStruct d ;
-    d.PS.x = p.x ;  d.PS.y = p.y ;  d.PS.z = p.z ;
-    return d ;
-  }
+  d.PS.x = p.x ;  d.PS.y = p.y ;  d.PS.z = p.z ;
+  return d ;
+}
 
 //=================================================================================
 // function : MakeBox()
