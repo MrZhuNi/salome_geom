@@ -219,7 +219,6 @@ all:
 	$(MAKE) lib
 	$(MAKE) bin
 	$(MAKE) resources
-	$(MAKE) data
 	$(MAKE) doc
 
 #
