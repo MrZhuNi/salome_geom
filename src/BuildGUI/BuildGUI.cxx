@@ -80,39 +80,39 @@ bool BuildGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 
   switch (theCommandID)
     {
-    case 303: // EXPLODE : use ic
+    case 407: // EXPLODE : use ic
       {
 	OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
 	BuildGUI_SubShapeDlg *aDlg = new BuildGUI_SubShapeDlg(parent, "", this, Sel, ic);
 	break ;
       }
-    case 304: // GEOM::EDGE
+    case 4081: // GEOM::EDGE
       {
 	BuildGUI_EdgeDlg *aDlg = new BuildGUI_EdgeDlg(parent, "", this, Sel);
 	break;
       }
-    case 305: // GEOM::WIRE
+    case 4082: // GEOM::WIRE
       {
 	BuildGUI_WireDlg *aDlg = new BuildGUI_WireDlg(parent, "", this, Sel);
 	break;
       }
-    case 306: // GEOM::FACE
+    case 4083: // GEOM::FACE
       {
 	BuildGUI_FaceDlg *aDlg = new BuildGUI_FaceDlg(parent, "", this, Sel);
 	break;
       }
-    case 315: // GEOM::SHELL
+    case 4084: // GEOM::SHELL
       {
 	BuildGUI_ShellDlg *aDlg = new BuildGUI_ShellDlg(parent, "", this, Sel);
 	break;
       }
-    case 316: // GEOM::SOLID
+    case 4085: // GEOM::SOLID
       {
 	BuildGUI_SolidDlg *aDlg = new BuildGUI_SolidDlg(parent, "", this, Sel);
 	break;
       }
-    case 308: // GEOM::COMPOUND
+    case 4086: // GEOM::COMPOUND
       {
 	BuildGUI_CompoundDlg *aDlg = new BuildGUI_CompoundDlg(parent, "", this, Sel);
 	break;

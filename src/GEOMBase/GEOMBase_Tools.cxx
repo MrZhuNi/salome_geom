@@ -84,9 +84,6 @@ bool GEOMBase_Tools::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
   myGeomGUI->EmitSignalDeactivateDialog();
   SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection());
 
-  QMenuBar* Mb = myGeomGUI->GetDesktop()->getMainMenuBar();
-  QMenuData* pp;
-
   SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
 
@@ -147,25 +144,29 @@ bool GEOMBase_Tools::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	myGeomGUI->ResetState();
 	break;
       }
-    case 701: // SETTINGS - COPY
+    case 411: // SETTINGS - COPY
       {
-	QMenuItem* item = parent->menuBar()->findItem(701, &pp);
-	bool check = !pp->isItemChecked(701);
-	pp->setItemChecked(701, check);
+	QMenuBar* Mb = myGeomGUI->GetDesktop()->getMainMenuBar();
+	QMenuData* pp;
+	QMenuItem* item = parent->menuBar()->findItem(411, &pp);
+	bool check = !pp->isItemChecked(411);
+	pp->setItemChecked(411, check);
 	myGeomGUI->GetSettings_Copy() = check;	
 	QAD_CONFIG->addSetting("Geometry:SettingsCopy", myGeomGUI->GetSettings_Copy());
 	break;
       }
-    case 702: // SETTINGS - ADD IN STUDY
+    case 412: // SETTINGS - ADD IN STUDY
       {
-	QMenuItem* item = parent->menuBar()->findItem(702, &pp);
-	bool check = !pp->isItemChecked(702);
-	pp->setItemChecked(702,check);
+	QMenuBar* Mb = myGeomGUI->GetDesktop()->getMainMenuBar();
+	QMenuData* pp;
+	QMenuItem* item = parent->menuBar()->findItem(412, &pp);
+	bool check = !pp->isItemChecked(412);
+	pp->setItemChecked(412,check);
 	myGeomGUI->GetSettings_AddInStudy() = check;
 	QAD_CONFIG->addSetting("Geometry:SettingsAddInStudy", myGeomGUI->GetSettings_AddInStudy());
 	break;
       }
-    case 703: // SETTINGS - SHADING COLOR
+    case 413: // SETTINGS - SHADING COLOR
       {
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
 	  break;
@@ -212,7 +213,7 @@ bool GEOMBase_Tools::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	}
 	break;
       }
-    case 704: // SETTINGS - ISOS
+    case 414: // SETTINGS - ISOS
       {
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
 	  break;
@@ -228,8 +229,7 @@ bool GEOMBase_Tools::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	else
 	  IsoV = "1";
 	
-	GEOMBase_NbIsosDlg* NbIsosDlg = new GEOMBase_NbIsosDlg(myGeomGUI->GetDesktop(),
-							       tr("GEOM_MEN_ISOS"), TRUE);	
+	GEOMBase_NbIsosDlg* NbIsosDlg = new GEOMBase_NbIsosDlg(myGeomGUI->GetDesktop(), tr("GEOM_MEN_ISOS"), TRUE);	
 	int UIso = IsoU.toInt();
 	int VIso = IsoV.toInt();
 	
@@ -270,7 +270,7 @@ bool GEOMBase_Tools::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	ic->UpdateCurrentViewer();
 	break;
       }
-    case 705: // SETTINGS : STEP VALUE FOR SPIN BOXES
+    case 415: // SETTINGS : STEP VALUE FOR SPIN BOXES
       {
 	QString step = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
 	if(step.isEmpty())
@@ -288,7 +288,7 @@ bool GEOMBase_Tools::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	  parent->putInfo(tr("GEOM_PRP_ABORT"));
 	break;
       }
-    case 801: // ADD IN STUDY - POPUP VIEWER
+    case 804: // ADD IN STUDY - POPUP VIEWER
       {
 	const SALOME_ListIO& ListSelected = Sel->StoredIObjects();
 	SALOME_ListIteratorOfListIO It(ListSelected);
@@ -558,7 +558,7 @@ bool GEOMBase_Tools::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	}
 	break;
       }
-    case 5001: // CHECK GEOMETRY
+    case 5103: // CHECK GEOMETRY
       {
 	QAD_PyEditor* PyEditor = myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getPyEditor();
 	PyEditor->setText("from GEOM_usinggeom import *\n");
@@ -566,7 +566,7 @@ bool GEOMBase_Tools::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	PyEditor->handleReturn();
 	break;
       }
-    case 8031: // COLOR - POPUP VIEWER
+    case 8032: // COLOR - POPUP VIEWER
       {
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
 	  // VTK
@@ -621,12 +621,12 @@ bool GEOMBase_Tools::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	QApplication::restoreOverrideCursor();
 	break;
       }
-    case 8032: // TRANSPARENCY - POPUP VIEWER
+    case 8033: // TRANSPARENCY - POPUP VIEWER
       {
 	GEOMBase_TransparencyDlg *aDlg = new GEOMBase_TransparencyDlg(parent, "", Sel, ic);
 	break;
       }
-    case 8033: // ISOS - POPUP VIEWER
+    case 8034: // ISOS - POPUP VIEWER
       {
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
 	  break;

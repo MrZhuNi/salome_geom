@@ -45,17 +45,18 @@ class GEOMBase_NbIsosDlg : public QDialog
     Q_OBJECT
 
 public:
-    GEOMBase_NbIsosDlg( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+    GEOMBase_NbIsosDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~GEOMBase_NbIsosDlg();
 
-    GEOMBase_Context*  myGeomGUI ;    /* Current GeomGUI object */
+    GEOMBase_Context* myGeomGUI;    /* Current GeomGUI object */
 
-    QPushButton*  buttonOk;
-    QPushButton*  buttonCancel;
-    QLabel*       TextLabel1 ;
-    QLabel*       TextLabel2 ;
-    QSpinBox*     SpinBoxU ;
-    QSpinBox*     SpinBoxV ;
+    QPushButton* buttonOk;
+    QPushButton* buttonCancel;
+    QLabel* TextLabel1;
+    QLabel* TextLabel2;
+    QSpinBox* SpinBoxU;
+    QSpinBox* SpinBoxV;
+
 };
 
 #endif // GEOMETRYGUI_NBISOSDLG_H

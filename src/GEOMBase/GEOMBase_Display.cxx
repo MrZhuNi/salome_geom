@@ -69,7 +69,7 @@ bool GEOMBase_Display::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
   switch (theCommandID)
     {
-    case 6021: // SHADING/WIREFRAME - MENU
+    case 211: // SHADING/WIREFRAME - MENU
       {
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
 	  QApplication::setOverrideCursor(waitCursor);
@@ -79,11 +79,11 @@ bool GEOMBase_Display::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	  int themode = myRenderInter->GetDisplayMode();
 	  if(themode==0) {
 	    myRenderInter->SetDisplayMode(1);
-	    myGeomGUI->GetDesktop()->menuBar()->changeItem(6021, tr("GEOM_MEN_WIREFRAME"));
+	    myGeomGUI->GetDesktop()->menuBar()->changeItem(211, tr("GEOM_MEN_WIREFRAME"));
 	  } 
 	  else {
 	    myRenderInter->SetDisplayMode(0);
-	    myGeomGUI->GetDesktop()->menuBar()->changeItem(6021, tr("GEOM_MEN_SHADING"));
+	    myGeomGUI->GetDesktop()->menuBar()->changeItem(211, tr("GEOM_MEN_SHADING"));
 	  }
 
 	  QApplication::restoreOverrideCursor(); 	  
@@ -113,15 +113,15 @@ bool GEOMBase_Display::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 
 	  ic->SetDisplayMode(newmode, Standard_False);
 	  if(newmode == 1)
-	    myGeomGUI->GetDesktop()->menuBar()->changeItem(6021, tr("GEOM_MEN_WIREFRAME"));
+	    myGeomGUI->GetDesktop()->menuBar()->changeItem(211, tr("GEOM_MEN_WIREFRAME"));
 	  else
-	    myGeomGUI->GetDesktop()->menuBar()->changeItem(6021, tr("GEOM_MEN_SHADING"));
+	    myGeomGUI->GetDesktop()->menuBar()->changeItem(211, tr("GEOM_MEN_SHADING"));
 	  
 	  QApplication::restoreOverrideCursor();
 	}
 	break;
       }
-    case 6022: // DISPLAY ALL - MENU
+    case 212: // DISPLAY ALL - MENU
       {
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
 	  ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->DisplayAll();
@@ -129,7 +129,7 @@ bool GEOMBase_Display::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	  this->OnDisplayAll();
 	break;
       }
-    case 6024: // ERASE ALL - MENU
+    case 214: // ERASE ALL - MENU
       {
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
 	  ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->EraseAll();
@@ -276,7 +276,7 @@ void GEOMBase_Display::OnDisplayAll(bool onlyPreviousDisplayedObject)
 //=====================================================================================
 void GEOMBase_Display::OnVTKDisplayOnly()
 {
-  QApplication::setOverrideCursor( Qt::waitCursor );
+  QApplication::setOverrideCursor(Qt::waitCursor);
 
   // Erase all not selected actors
   vtkRenderer* aren = ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
@@ -307,7 +307,7 @@ void GEOMBase_Display::OnVTKDisplayOnly()
     Handle(SALOME_InteractiveObject) IObject = It.Value();
     SALOMEDS::SObject_var obj = aStudy->FindObjectID( IObject->getEntry() );
 
-    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+    VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
 
     if(myRenderInter->isInViewer(IObject)) {
       myRenderInter->Display(IObject);

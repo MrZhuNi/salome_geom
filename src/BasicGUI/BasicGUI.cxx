@@ -75,7 +75,7 @@ bool BasicGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 
   switch (theCommandID)
     {
-    case 3011: // POINT
+    case 4011: // POINT
       {
 	Handle(AIS_InteractiveContext) ic;
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
@@ -85,37 +85,37 @@ bool BasicGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	BasicGUI_PointDlg *aDlg = new BasicGUI_PointDlg(parent, "", this, Sel, ic); 
 	break;
       }
-    case 3012:  // LINE
+    case 4012:  // LINE
       {
   	BasicGUI_LineDlg *aDlg = new BasicGUI_LineDlg(parent, "", this, Sel);
 	break;
       }
-    case 3013:  // CIRCLE
+    case 4013:  // CIRCLE
       {
   	BasicGUI_CircleDlg *aDlg = new BasicGUI_CircleDlg(parent, "", this, Sel);
 	break;
       }
-    case 3014:  // ELLIPSE
+    case 4014:  // ELLIPSE
       {
   	BasicGUI_EllipseDlg *aDlg = new BasicGUI_EllipseDlg(parent, "", this, Sel);
 	break;
       }
-    case 3015:  // ARC
+    case 4015:  // ARC
       {
   	BasicGUI_ArcDlg *aDlg = new BasicGUI_ArcDlg(parent, "", this, Sel);
 	break ;
       }
-    case 3016: // VECTOR
+    case 4016: // VECTOR
       {	
   	BasicGUI_VectorDlg *aDlg = new BasicGUI_VectorDlg(parent, "", this, Sel);
 	break;
       }
-    case 3017: // PLANE
+    case 4017: // PLANE
       {	
   	BasicGUI_PlaneDlg *aDlg = new BasicGUI_PlaneDlg(parent, "", this, Sel);
 	break;
       }
-    case 3018: // WORKING PLANE
+    case 4018: // WORKING PLANE
       {	
 	BasicGUI_WorkingPlaneDlg *aDlg = new BasicGUI_WorkingPlaneDlg(parent, "", this, Sel);
 	break;

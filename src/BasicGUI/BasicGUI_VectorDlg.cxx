@@ -53,15 +53,15 @@ BasicGUI_VectorDlg::BasicGUI_VectorDlg(QWidget* parent, const char* name, BasicG
   /***************************************************************/
   GroupConstructors->setTitle(tr("GEOM_VECTOR"));
   RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
+  RadioButton2->setPixmap(image1);
   RadioButton3->close(TRUE);
 
   GroupPoints = new DlgRef_2Sel_QTD(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_POINTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_POINT_I").arg("1"));
   GroupPoints->TextLabel2->setText(tr("GEOM_POINT_I").arg("2"));
-  GroupPoints->PushButton1->setPixmap(image1);
-  GroupPoints->PushButton2->setPixmap(image1);
+  GroupPoints->PushButton1->setPixmap(image2);
+  GroupPoints->PushButton2->setPixmap(image2);
 
   GroupDimensions = new DlgRef_3Spin1Check(this, "GroupDimensions");
   GroupDimensions->GroupBox1->setTitle(tr("GEOM_COORDINATES"));
@@ -140,6 +140,10 @@ void BasicGUI_VectorDlg::Init()
   connect(GroupDimensions->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupDimensions->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupDimensions->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DZ, SLOT(SetStep(double)));
 
   connect(GroupDimensions->CheckBox1, SIGNAL(stateChanged(int)), this, SLOT(ReverseVector(int)));
 

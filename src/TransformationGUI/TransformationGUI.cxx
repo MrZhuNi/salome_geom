@@ -69,32 +69,32 @@ bool TransformationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 
   switch (theCommandID)
     {
-    case 4021: // TRANSLATION
+    case 5021: // TRANSLATION
       {	
   	TransformationGUI_TranslationDlg *aDlg = new TransformationGUI_TranslationDlg(parent, "", this, Sel);
 	break;
       }
-    case 4022: // ROTATION
+    case 5022: // ROTATION
       {	
   	TransformationGUI_RotationDlg *aDlg = new TransformationGUI_RotationDlg(parent, "", this, Sel);
 	break;
       }
-    case 4023: // MIRROR
+    case 5023: // MIRROR
       {	
 	TransformationGUI_MirrorDlg *aDlg = new TransformationGUI_MirrorDlg(parent, "", this, Sel);
 	break;
       }
-    case 4024: // SCALE
+    case 5024: // SCALE
       {	
   	TransformationGUI_ScaleDlg *aDlg = new TransformationGUI_ScaleDlg(parent, "", this, Sel );
 	break;
       }
-    case 4030: // MULTI TRANSLATION
+    case 5025: // MULTI TRANSLATION
       {	
   	TransformationGUI_MultiTranslationDlg *aDlg = new TransformationGUI_MultiTranslationDlg(parent, "", this, Sel);
 	break;
       }
-    case 4040: // MULTI ROTATION
+    case 5026: // MULTI ROTATION
       {	
   	TransformationGUI_MultiRotationDlg *aDlg = new TransformationGUI_MultiRotationDlg(parent, "", this, Sel);
 	break;

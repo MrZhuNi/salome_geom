@@ -44,16 +44,16 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GEOMBase_NbIsosDlg::GEOMBase_NbIsosDlg( QWidget* parent, const char* name, bool modal, WFlags fl )
-    : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
+GEOMBase_NbIsosDlg::GEOMBase_NbIsosDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
+  :QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  if ( !name )
-    setName( "GEOMBase_NbIsosDlg" );
-  setCaption( name );
-  setSizeGripEnabled( TRUE );
-  QGridLayout* MyDialogLayout = new QGridLayout( this ); 
-  MyDialogLayout->setSpacing( 6 );
-  MyDialogLayout->setMargin( 11 );
+  if( !name )
+    setName("GEOMBase_NbIsosDlg");
+  setCaption(name);
+  setSizeGripEnabled(TRUE);
+  QGridLayout* MyDialogLayout = new QGridLayout(this); 
+  MyDialogLayout->setSpacing(6);
+  MyDialogLayout->setMargin(11);
   
   /***************************************************************/
   QGroupBox* GroupC1 = new QGroupBox( this, "GroupC1" );
@@ -109,18 +109,18 @@ GEOMBase_NbIsosDlg::GEOMBase_NbIsosDlg( QWidget* parent, const char* name, bool 
   GroupButtonsLayout->addWidget( buttonCancel, 0, 2 );
   /***************************************************************/
   
-  MyDialogLayout->addWidget( GroupC1,      0, 0 );
-  MyDialogLayout->addWidget( GroupButtons, 1, 0 );
+  MyDialogLayout->addWidget(GroupC1, 0, 0);
+  MyDialogLayout->addWidget(GroupButtons, 1, 0);
   
   /* Retrieve GeomGUI */
-  myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
+  myGeomGUI = GEOMBase_Context::GetGeomGUI();
   
   // signals and slots connections
-  connect( buttonOk, SIGNAL( clicked() ), this, SLOT( accept() ) );
-  connect( buttonCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
+  connect(buttonOk, SIGNAL(clicked()), this, SLOT(accept()));
+  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(reject()));
   
   /* Move widget on the botton right corner of main widget */
-  QAD_Tools::centerWidget( this, parent );
+  QAD_Tools::centerWidget(this, parent);
 }
 
 
@@ -132,4 +132,3 @@ GEOMBase_NbIsosDlg::~GEOMBase_NbIsosDlg()
 {
     // no need to delete child widgets, Qt does it all for us
 }
-

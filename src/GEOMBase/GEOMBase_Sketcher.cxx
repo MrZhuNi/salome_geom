@@ -78,7 +78,7 @@ bool GEOMBase_Sketcher::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 
   switch (theCommandID)
     {
-    case 312: // SKETCHER
+    case 404: // SKETCHER
       {
 	((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->onViewTop(); // DCQ : 28/02/2002
 	
@@ -87,111 +87,126 @@ bool GEOMBase_Sketcher::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	mySketcher = Sketch(v3d->getViewer3d());
 	myGeomGUI->SetState(CURRENT_SKETCH);
 
-        QMenuItem* item = Mb->findItem(10010, &pp);
-	mySketcher.SetParameterVisibility(LENGTH_PARAMETER, pp->isItemChecked(10010));
-	item = Mb->findItem(10011, &pp);
-	mySketcher.SetParameterVisibility(ANGLE_PARAMETER, pp->isItemChecked(10011));
-	item = Mb->findItem(10012, &pp);
-	mySketcher.SetParameterVisibility(RADIUS_PARAMETER, pp->isItemChecked(10012));
-	item = Mb->findItem(10013, &pp);
-	mySketcher.SetParameterVisibility(XVALUE_PARAMETER, pp->isItemChecked(10013));
-	item = Mb->findItem(10014, &pp);
-	mySketcher.SetParameterVisibility(YVALUE_PARAMETER, pp->isItemChecked(10014));
+        QMenuItem* item = Mb->findItem(4061, &pp);
+	mySketcher.SetParameterVisibility(LENGTH_PARAMETER, pp->isItemChecked(4061));
+	item = Mb->findItem(4062, &pp);
+	mySketcher.SetParameterVisibility(ANGLE_PARAMETER, pp->isItemChecked(4062));
+	item = Mb->findItem(4063, &pp);
+	mySketcher.SetParameterVisibility(RADIUS_PARAMETER, pp->isItemChecked(4063));
+	item = Mb->findItem(4064, &pp);
+	mySketcher.SetParameterVisibility(XVALUE_PARAMETER, pp->isItemChecked(4064));
+	item = Mb->findItem(4065, &pp);
+	mySketcher.SetParameterVisibility(YVALUE_PARAMETER, pp->isItemChecked(4065));
 	
 	mySketcher.SetTransitionStatus(NOCONSTRAINT);
-	item = Mb->findItem(3133, &pp);
-	pp->setItemChecked(3133, false);
-	item = Mb->findItem(3134, &pp);
-	pp->setItemChecked(3134, false);
+	item = Mb->findItem(4052, &pp);
+	pp->setItemChecked(4052, false);
+	item = Mb->findItem(4053, &pp);
+	pp->setItemChecked(4053, false);
 	break;
       }
-    case 3133: // sketcher
-      { 
-	QMenuItem* item = Mb->findItem(3133, &pp);
-	pp->setItemChecked(3133, !pp->isItemChecked(3133));
-	if (pp->isItemChecked(3133) == true) 
-	  mySketcher.SetTransitionStatus(TANGENT);
-	else
-	  mySketcher.SetTransitionStatus(NOCONSTRAINT);
-
-	pp->setItemChecked(3134, false);
-	break;
-      }
-    case 3134: // sketcher
-      {
-	QMenuItem* item = Mb->findItem(3134, &pp);
-	pp->setItemChecked(3134,!pp->isItemChecked(3134));
-	if (pp->isItemChecked(3134) == true) 
-	  mySketcher.SetTransitionStatus(PERPENDICULAR);
-	else 
-	  mySketcher.SetTransitionStatus(NOCONSTRAINT);
-	
-	pp->setItemChecked(3133, false);
-	break;
-      }
-    case 10000 : // SKETCH Segment
+    case 4041: // SKETCH Segment
       {
 	mySketcher.ChangeMode(SEGMENT);
 	break;
       }
-    case 10001 : // SKETCH Arc
+    case 4042: // SKETCH Arc
       {
 	mySketcher.ChangeMode(ARC_CHORD);
 	break;
       }
-    case 10002 : // SKETCH Set Angle
+    case 4043: // SKETCH Set Angle
       {
 	OnSketchSetAngle();
 	break;
       }
-    case 10003 : // SKETCH Set X
+    case 4044: // SKETCH Set X
       {
 	OnSketchSetx();
 	break;
       }
-    case 10004 : // SKETCH Set Y
+    case 4045: // SKETCH Set Y
       {
 	OnSketchSety();
 	break;
       }
-    case 10006 : // SKETCH Delete
+    case 4046: // SKETCH Delete
       {
 	OnSketchDelete();
 	break;
       }
-    case 10007 : // SKETCH End
+    case 4047: // SKETCH End
       {
 	OnSketchEnd();
 	break;
       }
-    case 10008 : // SKETCH Close
+    case 4048: // SKETCH Close
       {
 	OnSketchClose();
 	break;
       }
-    case 10010 : // SKETCH OptionsOnofflengthdimension
+    case 4051: // sketcher Set Plane
       {
-	OnSketchOptionsOnofflengthdimension();
+	//TO DO
 	break;
       }
-    case 10011 : // SKETCH OptionsOnoffangledimension
-      {
-	OnSketchOptionsOnoffangledimension();
+    case 4052: // sketcher TANGENT
+      { 
+	QMenuItem* item = Mb->findItem(theCommandID, &pp);
+	pp->setItemChecked(theCommandID, !pp->isItemChecked(theCommandID));
+	if(pp->isItemChecked(theCommandID) == true) 
+	  mySketcher.SetTransitionStatus(TANGENT);
+	else
+	  mySketcher.SetTransitionStatus(NOCONSTRAINT);
+
+	pp->setItemChecked(4053, false);
 	break;
       }
-    case 10012 : // SKETCH OptionsOnoffradiusdimension
+    case 4053: // sketcher PERPENDICULAR
       {
-	OnSketchOptionsOnoffradiusdimension();
+	QMenuItem* item = Mb->findItem(theCommandID, &pp);
+	pp->setItemChecked(theCommandID,!pp->isItemChecked(theCommandID));
+	if(pp->isItemChecked(theCommandID) == true) 
+	  mySketcher.SetTransitionStatus(PERPENDICULAR);
+	else 
+	  mySketcher.SetTransitionStatus(NOCONSTRAINT);
+	
+	pp->setItemChecked(4052, false);
 	break;
       }
-    case 10013 : // SKETCH OptionsOnoffxdimension
+    case 4061: // SKETCH OptionsOnofflengthdimension
       {
-	OnSketchOptionsOnoffxdimension();
+	QMenuItem* item = Mb->findItem(theCommandID, &pp);
+	pp->setItemChecked(theCommandID, !pp->isItemChecked(theCommandID));
+	mySketcher.SetParameterVisibility(LENGTH_PARAMETER, pp->isItemChecked(theCommandID));
 	break;
       }
-    case 10014 : // SKETCH OptionsOnoffydimension
+    case 4062: // SKETCH OptionsOnoffangledimension
       {
-	OnSketchOptionsOnoffydimension();
+	QMenuItem* item = Mb->findItem(theCommandID, &pp);
+	pp->setItemChecked(theCommandID, !pp->isItemChecked(theCommandID));
+	mySketcher.SetParameterVisibility(ANGLE_PARAMETER, pp->isItemChecked(theCommandID));
+	break;
+      }
+    case 4063: // SKETCH OptionsOnoffradiusdimension
+      {
+	QMenuItem* item = Mb->findItem(theCommandID, &pp);
+	pp->setItemChecked(theCommandID, !pp->isItemChecked(theCommandID));
+	mySketcher.SetParameterVisibility(RADIUS_PARAMETER, pp->isItemChecked(theCommandID));
+	break;
+      }
+    case 4064: // SKETCH OptionsOnoffxdimension
+      {
+	QMenuItem* item = Mb->findItem(theCommandID, &pp);
+	pp->setItemChecked(theCommandID, !pp->isItemChecked(theCommandID));
+	mySketcher.SetParameterVisibility(XVALUE_PARAMETER, pp->isItemChecked(theCommandID));
+	break;
+      }
+    case 4065: // SKETCH OptionsOnoffydimension
+      {
+	QMenuItem* item = Mb->findItem(theCommandID, &pp);
+	pp->setItemChecked(theCommandID, !pp->isItemChecked(theCommandID));
+	mySketcher.SetParameterVisibility(YVALUE_PARAMETER, pp->isItemChecked(theCommandID));
 	break;
       }
     default:
@@ -221,10 +236,10 @@ void GEOMBase_Sketcher::OnSketchSetAngle()
     mySketcher.SetSegmentAngle(anAngle);
     QMenuBar* Mb = myGeomGUI->GetDesktop()->getMainMenuBar();
     QMenuData* pp;
-    QMenuItem* item = Mb->findItem(3133, &pp);
-    pp->setItemChecked(3133, false);
-    item = Mb->findItem(3134, &pp);
-    pp->setItemChecked(3134, false);
+    QMenuItem* item = Mb->findItem(4052, &pp);
+    pp->setItemChecked(4052, false);
+    item = Mb->findItem(4053, &pp);
+    pp->setItemChecked(4053, false);
   }
   return;
 }
@@ -243,10 +258,10 @@ void GEOMBase_Sketcher::OnSketchSetx()
     mySketcher.SetXDimension(X);
   QMenuBar* Mb = myGeomGUI->GetDesktop()->getMainMenuBar();
   QMenuData* pp;
-  QMenuItem* item = Mb->findItem(3133, &pp);
-  pp->setItemChecked(3133, false);
-  item = Mb->findItem(3134, &pp);
-  pp->setItemChecked(3134, false);
+  QMenuItem* item = Mb->findItem(4052, &pp);
+  pp->setItemChecked(4052, false);
+  item = Mb->findItem(4053, &pp);
+  pp->setItemChecked(4053, false);
   return;
 }
 
@@ -264,10 +279,10 @@ void GEOMBase_Sketcher::OnSketchSety()
     mySketcher.SetYDimension(Y);
   QMenuBar* Mb = myGeomGUI->GetDesktop()->getMainMenuBar();
   QMenuData* pp;
-  QMenuItem* item = Mb->findItem(3133, &pp);
-  pp->setItemChecked(3133, false);
-  item = Mb->findItem(3134, &pp);
-  pp->setItemChecked(3134, false);
+  QMenuItem* item = Mb->findItem(4052, &pp);
+  pp->setItemChecked(4052, false);
+  item = Mb->findItem(4053, &pp);
+  pp->setItemChecked(4053, false);
   return;
 }
 
@@ -281,8 +296,8 @@ void GEOMBase_Sketcher::OnSketchDelete()
   if(mySketcher.GetmyEdgesNumber() == 1) {
     QMenuBar* Mb = myGeomGUI->GetDesktop()->getMainMenuBar();
     QMenuData* pp;
-    QMenuItem* item = Mb->findItem(313, &pp);
-    pp->setItemEnabled(313, false);  // SKETCH CONTRAINTS
+    QMenuItem* item = Mb->findItem(406, &pp);
+    pp->setItemEnabled(406, false);  // SKETCH CONTRAINTS
     mySketcher.SetTransitionStatus(NOCONSTRAINT);
   }
 
@@ -375,8 +390,8 @@ void GEOMBase_Sketcher::OnSketchClose()
   myGeomGUI->ResetState();
   QMenuBar* Mb = myGeomGUI->GetDesktop()->getMainMenuBar();
   QMenuData* pp;
-  QMenuItem* item = Mb->findItem(313, &pp);
-  pp->setItemEnabled(313, false);  // SKETCH CONTRAINTS
+  QMenuItem* item = Mb->findItem(406, &pp);
+  pp->setItemEnabled(406, false);  // SKETCH CONTRAINTS
   mySketcher.SetTransitionStatus(NOCONSTRAINT);
   return;
 }
@@ -465,83 +480,8 @@ void GEOMBase_Sketcher::OnSketchEnd()
   myGeomGUI->ResetState();
   QMenuBar* Mb = myGeomGUI->GetDesktop()->getMainMenuBar();
   QMenuData* pp;
-  QMenuItem* item = Mb->findItem(313, &pp);
-  pp->setItemEnabled(313, false);  // SKETCH CONTRAINTS
+  QMenuItem* item = Mb->findItem(406, &pp);
+  pp->setItemEnabled(406, false);  // SKETCH CONTRAINTS
   mySketcher.SetTransitionStatus(NOCONSTRAINT);
-  return;
-}
-
-
-//=======================================================================
-// function : OnSketchOptionsOnoffangledimension()
-// purpose  : 
-//=======================================================================
-void GEOMBase_Sketcher::OnSketchOptionsOnoffangledimension()
-{
-  QMenuBar* Mb = myGeomGUI->GetDesktop()->getMainMenuBar();
-  QMenuData* pp;
-  QMenuItem* item = Mb->findItem(10011, &pp);
-  pp->setItemChecked(10011, !pp->isItemChecked(10011));
-  mySketcher.SetParameterVisibility(ANGLE_PARAMETER, pp->isItemChecked(10011));
-  return;
-}
-
-
-//=======================================================================
-// function : OnSketchOptionsOnofflengthdimension()
-// purpose  : 
-//=======================================================================
-void GEOMBase_Sketcher::OnSketchOptionsOnofflengthdimension()
-{
-  QMenuBar* Mb = myGeomGUI->GetDesktop()->getMainMenuBar();
-  QMenuData* pp;
-  QMenuItem* item = Mb->findItem(10010, &pp);
-  pp->setItemChecked(10010, !pp->isItemChecked(10010));
-  mySketcher.SetParameterVisibility(LENGTH_PARAMETER, pp->isItemChecked(10010));
-  return;
-}
-
-
-//=======================================================================
-// function : OnSketchOptionsOnoffradiusdimension()
-// purpose  : 
-//=======================================================================
-void GEOMBase_Sketcher::OnSketchOptionsOnoffradiusdimension()
-{
-  QMenuBar* Mb = myGeomGUI->GetDesktop()->getMainMenuBar();
-  QMenuData* pp;
-  QMenuItem* item = Mb->findItem(10012, &pp);
-  pp->setItemChecked(10012, !pp->isItemChecked(10012));
-  mySketcher.SetParameterVisibility(RADIUS_PARAMETER, pp->isItemChecked(10012));
-  return;
-}
-
-
-//=======================================================================
-// function : OnSketchOptionsOnoffxdimension()
-// purpose  : 
-//=======================================================================
-void GEOMBase_Sketcher::OnSketchOptionsOnoffxdimension()
-{
-  QMenuBar* Mb = myGeomGUI->GetDesktop()->getMainMenuBar();
-  QMenuData* pp;
-  QMenuItem* item = Mb->findItem(10013, &pp);
-  pp->setItemChecked(10013, !pp->isItemChecked(10013));
-  mySketcher.SetParameterVisibility(XVALUE_PARAMETER, pp->isItemChecked(10013));
-  return;
-}
-
-
-//=======================================================================
-// function : OnSketchOptionsOnoffydimension()
-// purpose  : 
-//=======================================================================
-void GEOMBase_Sketcher::OnSketchOptionsOnoffydimension()
-{
-  QMenuBar* Mb = myGeomGUI->GetDesktop()->getMainMenuBar();
-  QMenuData* pp;
-  QMenuItem* item = Mb->findItem(10014, &pp);
-  pp->setItemChecked(10014, !pp->isItemChecked(10014));
-  mySketcher.SetParameterVisibility(YVALUE_PARAMETER, pp->isItemChecked(10014));
   return;
 }

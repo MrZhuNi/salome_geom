@@ -70,22 +70,22 @@ bool BooleanGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 
   switch (theCommandID)
     {
-    case 4011: // FUSE
+    case 5011: // FUSE
       {
 	BooleanGUI_FuseDlg *aDlg = new BooleanGUI_FuseDlg(parent, "", this, Sel);
 	break;
       }
-    case 4012: // COMMON
+    case 5012: // COMMON
       {
 	BooleanGUI_CommonDlg *aDlg = new BooleanGUI_CommonDlg(parent, "", this, Sel);
 	break;
       }
-    case 4013: // CUT
+    case 5013: // CUT
       {
 	BooleanGUI_CutDlg *aDlg = new BooleanGUI_CutDlg(parent, "", this, Sel);
 	break;
       }
-    case 4014: // SECTION
+    case 5014: // SECTION
       {
 	BooleanGUI_SectionDlg *aDlg = new BooleanGUI_SectionDlg(parent, "", this, Sel);
 	break;

@@ -53,12 +53,6 @@ public :
   void OnSketchDelete();
   void OnSketchClose();
   void OnSketchEnd();
-  
-  void OnSketchOptionsOnoffangledimension();
-  void OnSketchOptionsOnofflengthdimension();
-  void OnSketchOptionsOnoffradiusdimension();
-  void OnSketchOptionsOnoffxdimension();
-  void OnSketchOptionsOnoffydimension();
 
 private:
   GEOMBase_Context* myGeomGUI;

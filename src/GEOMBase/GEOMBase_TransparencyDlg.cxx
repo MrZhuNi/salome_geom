@@ -54,22 +54,17 @@ using namespace std;
 //          : WARNING : this dialog is modal !
 //
 //=================================================================================
-GEOMBase_TransparencyDlg::GEOMBase_TransparencyDlg( QWidget* parent,
-							  const char* name,
-							  SALOME_Selection* Sel,
-							  const Handle(AIS_InteractiveContext)& ic,
-							  bool modal,
-							  WFlags fl )
-  : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
+GEOMBase_TransparencyDlg::GEOMBase_TransparencyDlg(QWidget* parent, const char* name, SALOME_Selection* Sel, const Handle(AIS_InteractiveContext)& ic, bool modal, WFlags fl)
+  :QDialog(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  if ( !name )
-    setName( "GEOMBase_TransparencyDlg" );
-  resize( 152, 107 ); 
-  setCaption( tr( "GEOM_TRANSPARENCY_TITLE"  ) );
-  setSizeGripEnabled( TRUE );
-  GEOMBase_TransparencyDlgLayout = new QGridLayout( this ); 
-  GEOMBase_TransparencyDlgLayout->setSpacing( 6 );
-  GEOMBase_TransparencyDlgLayout->setMargin( 11 );
+  if(!name)
+    setName("GEOMBase_TransparencyDlg");
+  resize(152, 107); 
+  setCaption(tr("GEOM_TRANSPARENCY_TITLE"));
+  setSizeGripEnabled(TRUE);
+  GEOMBase_TransparencyDlgLayout = new QGridLayout(this); 
+  GEOMBase_TransparencyDlgLayout->setSpacing(6);
+  GEOMBase_TransparencyDlgLayout->setMargin(11);
 
   /*************************************************************************/
   QGroupBox* GroupButtons = new QGroupBox( this, "GroupButtons" );
@@ -116,33 +111,31 @@ GEOMBase_TransparencyDlg::GEOMBase_TransparencyDlg( QWidget* parent,
   GroupC1Layout->addMultiCellWidget( Slider1, 1, 1, 0, 2 );
   /*************************************************************************/
   
-  GEOMBase_TransparencyDlgLayout->addWidget( GroupC1,      0,  0 );
-  GEOMBase_TransparencyDlgLayout->addWidget( GroupButtons, 1, 0 );
+  GEOMBase_TransparencyDlgLayout->addWidget(GroupC1, 0,  0);
+  GEOMBase_TransparencyDlgLayout->addWidget(GroupButtons, 1, 0);
   
   /* Initialisations */
-  this->myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
-  this->myIc  = ic ;
-  this->mySel = Sel ;
+  this->myGeomGUI = GEOMBase_Context::GetGeomGUI();
+  this->myIc = ic;
+  this->mySel = Sel;
   
   /* First call valueChanged() method for initialisation               */
   /* The default value of transparency will change with the selection  */
-  this->myFirstInit = true ;
+  this->myFirstInit = true;
 //  Slider1->setMaxValue( 10 );
 //  Slider1->setValue( 5 ) ;
-  this->ValueHasChanged( Slider1->value() ) ;
+  this->ValueHasChanged(Slider1->value());
   
   // signals and slots connections : after ValueHasChanged()
-  connect( buttonOk, SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
-  connect( Slider1, SIGNAL( valueChanged(int) ), this, SLOT( ValueHasChanged(int) ) );
+  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(Slider1, SIGNAL(valueChanged(int)), this, SLOT(ValueHasChanged(int)));
   
   /* Move widget on the botton right corner of main widget */
   int x, y ;
-  myGeomGUI->DefineDlgPosition( this, x, y ) ;
-  this->move( x, y ) ;
+  myGeomGUI->DefineDlgPosition(this, x, y);
+  this->move(x, y) ;
   this->show() ; /* Displays this Dialog */
 }
-
-
 
 
 //=================================================================================
@@ -161,8 +154,8 @@ GEOMBase_TransparencyDlg::~GEOMBase_TransparencyDlg()
 //=======================================================================
 void GEOMBase_TransparencyDlg::ClickOnOk()
 {
-  accept() ;
-  return ;
+  accept();
+  return;
 }
 
 
@@ -172,8 +165,8 @@ void GEOMBase_TransparencyDlg::ClickOnOk()
 //=======================================================================
 void GEOMBase_TransparencyDlg::ClickOnClose()
 {
-  accept() ;
-  return ;
+  accept();
+  return;
 }
 
 
@@ -182,68 +175,64 @@ void GEOMBase_TransparencyDlg::ClickOnClose()
 // purpose  : Called when value of slider change
 //          : or the first time as initilisation
 //=================================================================================
-void GEOMBase_TransparencyDlg::ValueHasChanged( int newValue )
+void GEOMBase_TransparencyDlg::ValueHasChanged(int newValue)
 {
-
-  if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
+  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
     // VTK
-    //    vtkQGLRenderWindowInteractor* myRenderInter= myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getVTKView()->getRWInteractor();
     VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
-    SALOME_ListIteratorOfListIO It( this->mySel->StoredIObjects() );
+    SALOME_ListIteratorOfListIO It(this->mySel->StoredIObjects());
 
     Handle(SALOME_InteractiveObject) FirstIOS =  mySel->firstIObject();
-    if( !FirstIOS.IsNull() ) {
-      
+    if(!FirstIOS.IsNull()) {
       /* The first time as initialisation */
-      if( this->myFirstInit ) {	
-	this->myFirstInit = false ;
-	float transp = ( myRenderInter->GetTransparency(FirstIOS))*10.0 ;
-        this->Slider1->setValue( int(transp) ) ;
+      if(this->myFirstInit) {	
+	this->myFirstInit = false;
+	float transp = (myRenderInter->GetTransparency(FirstIOS))*10.0;
+        this->Slider1->setValue(int(transp));
       }
     }
     
-    QApplication::setOverrideCursor( Qt::waitCursor );
-    for( ;It.More(); It.Next() ) {
+    QApplication::setOverrideCursor(Qt::waitCursor);
+    for(;It.More(); It.Next()) {
       Handle(SALOME_InteractiveObject) IOS = It.Value();
-      myRenderInter->SetTransparency( IOS, newValue/10.0 );
+      myRenderInter->SetTransparency(IOS, newValue/10.0);
     }
     QApplication::restoreOverrideCursor();
   }
 
-  else if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+  else if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     // OCC  
-    SALOME_ListIteratorOfListIO It( this->mySel->StoredIObjects() );
-    Handle(SALOME_InteractiveObject) FirstIOS = mySel->firstIObject() ;
-    if( !FirstIOS.IsNull() ) {
+    SALOME_ListIteratorOfListIO It(this->mySel->StoredIObjects());
+    Handle(SALOME_InteractiveObject) FirstIOS = mySel->firstIObject();
+    if(!FirstIOS.IsNull()) {
       
       /* The first time as initialisation */
-      if( this->myFirstInit ) {
-	this->myFirstInit = false ;
+      if(this->myFirstInit) {
+	this->myFirstInit = false;
 	Standard_Boolean found;
 	Handle(GEOM_AISShape) Shape = myGeomGUI->ConvertIOinGEOMAISShape(FirstIOS, found);
-	if( !found ) {
-	  return ;
-	}
-	float transp = ( int( Shape->Transparency() * 10.0 + 0.001) );
-        this->Slider1->setValue(int(transp) ) ;
-	return ;
+	if(!found)
+	  return;
+	float transp = (int(Shape->Transparency() * 10.0 + 0.001));
+        this->Slider1->setValue(int(transp));
+	return;
       }
     }
 
-    QApplication::setOverrideCursor( Qt::waitCursor );
-    for( ;It.More(); It.Next() ) {
+    QApplication::setOverrideCursor(Qt::waitCursor);
+    for(;It.More(); It.Next()) {
       Handle(SALOME_InteractiveObject) IObject = It.Value();
       Standard_Boolean found;
       Handle(GEOM_AISShape) Shape = myGeomGUI->ConvertIOinGEOMAISShape(IObject, found);      
-      if( !found ) {
+      if(!found) {
 	QApplication::restoreOverrideCursor();
-	return ;
+	return;
       }
-      this->myIc->SetTransparency( Shape, newValue / 10.0, false );
-      myIc->Redisplay( Shape, Standard_False, Standard_True );
+      this->myIc->SetTransparency(Shape, newValue / 10.0, false);
+      myIc->Redisplay(Shape, Standard_False, Standard_True);
     }
     myIc->UpdateCurrentViewer();
   }
   QApplication::restoreOverrideCursor();
-  return ;
+  return;
 }

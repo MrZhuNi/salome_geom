@@ -56,10 +56,10 @@ GenerationGUI_FillingDlg::GenerationGUI_FillingDlg(QWidget* parent, const char* 
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_FILLING_COMPOUND"));
   GroupPoints->TextLabel2->setText(tr("GEOM_FILLING_MIN_DEG"));
-  GroupPoints->TextLabel3->setText(tr("GEOM_FILLING_MAX_DEG"));
-  GroupPoints->TextLabel4->setText(tr("GEOM_FILLING_TOL_3D"));
-  GroupPoints->TextLabel5->setText(tr("GEOM_FILLING_TOL_2D"));
-  GroupPoints->TextLabel6->setText(tr("GEOM_FILLING_NB_ITER"));
+  GroupPoints->TextLabel3->setText(tr("GEOM_FILLING_TOL_2D"));
+  GroupPoints->TextLabel4->setText(tr("GEOM_FILLING_NB_ITER"));
+  GroupPoints->TextLabel5->setText(tr("GEOM_FILLING_MAX_DEG"));
+  GroupPoints->TextLabel6->setText(tr("GEOM_FILLING_TOL_3D"));
   GroupPoints->PushButton1->setPixmap(image1);
 
   Layout1->addWidget(GroupPoints, 1, 0);
@@ -102,20 +102,20 @@ void GenerationGUI_FillingDlg::Init()
 
   /* Get setting of step value from file configuration */
   QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
+  step = St.toInt();
 
   /* min, max, step and decimals for spin boxes & initial values */
   GroupPoints->SpinBox_1->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupPoints->SpinBox_2->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupPoints->SpinBox_3->RangeStepAndValidator(0.00001, 10000.0, 3, 10);
-  GroupPoints->SpinBox_4->RangeStepAndValidator(0.00001, 10000.0, 3, 10);
-  GroupPoints->SpinBox_5->RangeStepAndValidator(0.001, 999.999, step, 3);
+  GroupPoints->SpinBox_2->RangeStepAndValidator(0.00001, 10000.0, 3, 10);
+  GroupPoints->SpinBox_3->RangeStepAndValidator(0.001, 999.999, step, 3);
+  GroupPoints->SpinBox_4->RangeStepAndValidator(0.001, 999.999, step, 3);
+  GroupPoints->SpinBox_5->RangeStepAndValidator(0.00001, 10000.0, 3, 10);
 
   GroupPoints->SpinBox_1->SetValue(myMinDeg);
-  GroupPoints->SpinBox_2->SetValue(myMaxDeg);
-  GroupPoints->SpinBox_3->SetValue(myTol3D);
-  GroupPoints->SpinBox_4->SetValue(myTol2D);
-  GroupPoints->SpinBox_5->SetValue(myNbIter);
+  GroupPoints->SpinBox_2->SetValue(myTol2D);
+  GroupPoints->SpinBox_3->SetValue(myNbIter);
+  GroupPoints->SpinBox_4->SetValue(myMaxDeg);
+  GroupPoints->SpinBox_5->SetValue(myTol3D);
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -155,10 +155,10 @@ void GenerationGUI_FillingDlg::ClickOnApply()
   myGeomGUI->GetDesktop()->putInfo(tr(""));
 
   myMinDeg = GroupPoints->SpinBox_1->value();
-  myMaxDeg = GroupPoints->SpinBox_2->value();
-  myTol3D = GroupPoints->SpinBox_3->value(); 
-  myTol2D = GroupPoints->SpinBox_4->value(); 
-  myNbIter = GroupPoints->SpinBox_5->value();
+  myTol2D = GroupPoints->SpinBox_2->value(); 
+  myNbIter = GroupPoints->SpinBox_3->value();
+  myMaxDeg = GroupPoints->SpinBox_4->value();
+  myTol3D = GroupPoints->SpinBox_5->value(); 
 
   if(myOkSectionShape)	  
     myGenerationGUI->MakeFillingAndDisplay(myGeomShape, myMinDeg, myMaxDeg, myTol3D, myTol2D, myNbIter);

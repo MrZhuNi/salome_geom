@@ -119,10 +119,10 @@ void PrimitiveGUI_ConeDlg::Init()
   /* min, max, step and decimals for spin boxes & initial values */
   GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
   GroupPoints->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupPoints->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupPoints->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, step, 3);
   GroupDimensions->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
   GroupDimensions->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupDimensions->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupDimensions->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, step, 3);
 
   GroupPoints->SpinBox_DX->SetValue(myRadius1);
   GroupPoints->SpinBox_DY->SetValue(myRadius2);
@@ -148,6 +148,13 @@ void PrimitiveGUI_ConeDlg::Init()
   connect(GroupDimensions->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupDimensions->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupDimensions->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DZ, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DZ, SLOT(SetStep(double)));
   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 

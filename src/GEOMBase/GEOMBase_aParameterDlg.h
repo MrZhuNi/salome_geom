@@ -45,28 +45,19 @@ class GEOMBase_aParameterDlg : public QDialog
     Q_OBJECT
 
 public:
-    GEOMBase_aParameterDlg( const char* aValue1 = "25",
-			       const char* aTitle1 = "Value :",
-			       QWidget* parent     = 0,
-			       const char* name    = 0, 
-			       bool modal          = FALSE,
-			       WFlags fl           = 0,
-			       const double bottom = -1E6,
-			       const double top    = +1E6,
-			       const int decimals  = 6 ) ;
-
+    GEOMBase_aParameterDlg(const char* aValue1 = "25", const char* aTitle1 = "Value :", QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0, const double bottom = -1E6, const double top = +1E6, const int decimals = 6);
     ~GEOMBase_aParameterDlg();
 
-    void   setValue( double val );
+    void setValue(double val);
     double getValue();
 
 private:
-    GEOMBase_Context*    myGeomGUI ;    /* Current GeomGUI object */
+    GEOMBase_Context* myGeomGUI;    /* Current GeomGUI object */
 
-    QPushButton*    myButtonOk;
-    QPushButton*    myButtonCancel;
+    QPushButton* myButtonOk;
+    QPushButton* myButtonCancel;
     QAD_SpinBoxDbl* mySpinBox;
- 
+
 };
 
 #endif // GEOMBase_aParameterDlg.h

@@ -71,42 +71,42 @@ bool MeasureGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 
   switch (theCommandID)
     {
-    case 601: // PROPERTIES (Length, surface, volume)
+    case 701: // PROPERTIES (Length, surface, volume)
       {
 	MeasureGUI_PropertiesDlg *aDlg = new MeasureGUI_PropertiesDlg(parent, "", Sel);
 	break;
       }
-    case 604: // CDG : Center of mass
+    case 702: // CDG : Center of mass
       {
 	MeasureGUI_CenterMassDlg *aDlg = new MeasureGUI_CenterMassDlg(parent, "", this, Sel);
 	break;
       }
-    case 605: // INERTIA
+    case 703: // INERTIA
       {
 	MeasureGUI_InertiaDlg *aDlg = new MeasureGUI_InertiaDlg(parent, "", Sel);
 	break;
       }
-    case 6060: // BOUNDING BOX
+    case 7041: // BOUNDING BOX
       {
 	MeasureGUI_BndBoxDlg *aDlg = new MeasureGUI_BndBoxDlg(parent, "", Sel);
 	break;
       }
-    case 6061: // MIN DISTANCE
+    case 7042: // MIN DISTANCE
       {
 	MeasureGUI_DistanceDlg *aDlg = new MeasureGUI_DistanceDlg(parent, "", Sel);
 	break;
       }
-    case 607: // MAXTOLERANCE
+    case 705: // MAXTOLERANCE
       {
 	MeasureGUI_MaxToleranceDlg *aDlg = new MeasureGUI_MaxToleranceDlg(parent, "", Sel);
 	break;
       }
-    case 608: // WHATIS
+    case 706: // WHATIS
       {
 	MeasureGUI_WhatisDlg *aDlg = new MeasureGUI_WhatisDlg(parent, "", Sel);
 	break;
       }
-    case 609: // CHECKSHAPE
+    case 707: // CHECKSHAPE
      {
        MeasureGUI_CheckShape *aDlg = new MeasureGUI_CheckShape(parent, "", Sel);
        break;

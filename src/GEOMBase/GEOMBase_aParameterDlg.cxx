@@ -58,80 +58,72 @@ using namespace std;
 //  TRUE to construct a modal dialog.
 // 
 //====================================================================================== 
-GEOMBase_aParameterDlg::GEOMBase_aParameterDlg( const char *aValue1,
-						      const char *aTitle1,
-						      QWidget* parent,
-						      const char* name,
-						      bool modal,
-						      WFlags fl,
-						      const double bottom,
-						      const double top,
-						      const int decimals )
-  : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
+GEOMBase_aParameterDlg::GEOMBase_aParameterDlg(const char *aValue1, const char *aTitle1, QWidget* parent, const char* name, bool modal, WFlags fl, const double bottom, const double top, const int decimals)
+  :QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-  if ( !name )
+  if(!name)
     setName( "MyParameterDialog" );
-  resize( 288, 81 ); 
-  setCaption( name ); /* appears on the title bar */
-  setSizeGripEnabled( TRUE );
-  
-  QGridLayout* topLayout = new QGridLayout( this ); 
-  topLayout->setSpacing( 6 );
-  topLayout->setMargin( 11 );
+  resize(288, 81); 
+  setCaption(name); /* appears on the title bar */
+  setSizeGripEnabled(TRUE);
 
-  QGroupBox* mainGrp = new QGroupBox( this, "mainGrp" );
-  mainGrp->setColumnLayout(0, Qt::Vertical );
-  mainGrp->layout()->setSpacing( 0 );
-  mainGrp->layout()->setMargin( 0 );
-  QGridLayout* mainGrpLayout = new QGridLayout( mainGrp->layout() );
-  mainGrpLayout->setAlignment( Qt::AlignTop );
-  mainGrpLayout ->setSpacing( 6 );
-  mainGrpLayout->setMargin( 11 );
-  topLayout->addWidget( mainGrp, 0, 0 );
+  QGridLayout* topLayout = new QGridLayout(this); 
+  topLayout->setSpacing(6);
+  topLayout->setMargin(11);
+
+  QGroupBox* mainGrp = new QGroupBox(this, "mainGrp");
+  mainGrp->setColumnLayout(0, Qt::Vertical);
+  mainGrp->layout()->setSpacing(0);
+  mainGrp->layout()->setMargin(0);
+  QGridLayout* mainGrpLayout = new QGridLayout(mainGrp->layout());
+  mainGrpLayout->setAlignment(Qt::AlignTop);
+  mainGrpLayout ->setSpacing(6);
+  mainGrpLayout->setMargin(11);
+  topLayout->addWidget(mainGrp, 0, 0);
 
   /* aTitle1 : text prompt on left of edit line */
-  QLabel* TextLabel1 = new QLabel( mainGrp, "TextLabel1" );
-  TextLabel1->setText( tr( aTitle1  ) );  
-  mainGrpLayout->addWidget( TextLabel1, 0, 0 );
+  QLabel* TextLabel1 = new QLabel(mainGrp, "TextLabel1");
+  TextLabel1->setText(tr(aTitle1));  
+  mainGrpLayout->addWidget(TextLabel1, 0, 0);
 
-  mySpinBox = new QAD_SpinBoxDbl( mainGrp, "mySpinBox" );
-  mySpinBox->setPrecision( 12);
-  mySpinBox->setRange( bottom, top );
-  (( QDoubleValidator* )(mySpinBox->validator()))->setRange(bottom, top, decimals);
+  mySpinBox = new QAD_SpinBoxDbl(mainGrp, "mySpinBox");
+  mySpinBox->setPrecision(12);
+  mySpinBox->setRange(bottom, top);
+  ((QDoubleValidator*)(mySpinBox->validator()))->setRange(bottom, top, decimals);
   mySpinBox->setValue(QString(aValue1).toDouble());
-  mainGrpLayout->addWidget( mySpinBox, 0, 1 );
+  mainGrpLayout->addWidget(mySpinBox, 0, 1);
   
-  QGroupBox* btnGrp = new QGroupBox( this, "btnGrp" );
-  btnGrp->setColumnLayout(0, Qt::Vertical );
-  btnGrp->layout()->setSpacing( 0 );
-  btnGrp->layout()->setMargin( 0 );
-  QGridLayout* btnGrpLayout = new QGridLayout( btnGrp->layout() );
-  btnGrpLayout->setAlignment( Qt::AlignTop );
-  btnGrpLayout->setSpacing( 6 );
-  btnGrpLayout->setMargin( 11 );
-  topLayout->addWidget( btnGrp, 1, 0 );
+  QGroupBox* btnGrp = new QGroupBox(this, "btnGrp");
+  btnGrp->setColumnLayout(0, Qt::Vertical);
+  btnGrp->layout()->setSpacing(0);
+  btnGrp->layout()->setMargin(0);
+  QGridLayout* btnGrpLayout = new QGridLayout(btnGrp->layout());
+  btnGrpLayout->setAlignment(Qt::AlignTop);
+  btnGrpLayout->setSpacing(6);
+  btnGrpLayout->setMargin(11);
+  topLayout->addWidget(btnGrp, 1, 0);
 
   /* Ok button */
-  myButtonOk = new QPushButton( btnGrp, "buttonOk" );
-  myButtonOk->setText( tr("GEOM_BUT_OK") );
-  myButtonOk->setAutoDefault( TRUE );
-  myButtonOk->setDefault( TRUE );
-  btnGrpLayout->addWidget( myButtonOk, 0, 0 );
+  myButtonOk = new QPushButton(btnGrp, "buttonOk");
+  myButtonOk->setText(tr("GEOM_BUT_OK"));
+  myButtonOk->setAutoDefault(TRUE);
+  myButtonOk->setDefault(TRUE);
+  btnGrpLayout->addWidget(myButtonOk, 0, 0);
 
-  btnGrpLayout->addItem( new QSpacerItem(5, 5, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 1 );
+  btnGrpLayout->addItem(new QSpacerItem(5, 5, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 1);
 
   /* Cancel button */
-  myButtonCancel = new QPushButton( btnGrp, "buttonCancel" );
-  myButtonCancel->setText( tr("GEOM_BUT_CANCEL") );
-  myButtonCancel->setAutoDefault( TRUE );
-  btnGrpLayout->addWidget( myButtonCancel, 0, 2 );
+  myButtonCancel = new QPushButton(btnGrp, "buttonCancel");
+  myButtonCancel->setText(tr("GEOM_BUT_CANCEL"));
+  myButtonCancel->setAutoDefault(TRUE);
+  btnGrpLayout->addWidget(myButtonCancel, 0, 2);
 
   /* signals and slots connections */
-  connect( myButtonOk,     SIGNAL( clicked() ), this, SLOT( accept() ) );
-  connect( myButtonCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
+  connect(myButtonOk, SIGNAL(clicked()), this, SLOT(accept()));
+  connect(myButtonCancel, SIGNAL(clicked()), this, SLOT(reject()));
  
   /* Retrieve GeomGUI */
-  myGeomGUI = GEOMBase_Context::GetGeomGUI() ;
+  myGeomGUI = GEOMBase_Context::GetGeomGUI();
   
   /* Move widget on the botton right corner of main widget */
   QAD_Tools::centerWidget(this, parent);
@@ -143,17 +135,20 @@ GEOMBase_aParameterDlg::GEOMBase_aParameterDlg( const char *aValue1,
 // purpose  : Destroys the object and frees any allocated resources
 //====================================================================================== 
 GEOMBase_aParameterDlg::~GEOMBase_aParameterDlg()
-{    // no need to delete child widgets, Qt does it all for us
+{
+  // no need to delete child widgets, Qt does it all for us
 }
+
 
 //====================================================================================== 
 // function : GEOMBase_aParameterDlg::setValue
 // purpose  : sets value
 //====================================================================================== 
-void GEOMBase_aParameterDlg::setValue( double val )
+void GEOMBase_aParameterDlg::setValue(double val)
 {
-  mySpinBox->setValue( val );
+  mySpinBox->setValue(val);
 }
+
 
 //====================================================================================== 
 // function : GEOMBase_aParameterDlg::getValue
@@ -163,4 +158,3 @@ double GEOMBase_aParameterDlg::getValue()
 {
   return mySpinBox->value();
 }
-

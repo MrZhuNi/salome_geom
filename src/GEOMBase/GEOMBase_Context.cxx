@@ -276,7 +276,6 @@ bool GEOMBase_Context::GetTopoFromSelection(SALOME_Selection *Sel, TopoDS_Shape&
 }
 
 
-
 //=====================================================================================
 // function : PrepareSubShapeSelection()
 // purpose  : (localContextId of the method is opened and defined here)
@@ -907,7 +906,7 @@ bool GEOMBase_Context::DefineDlgPosition(QWidget* aDlg, int& x, int& y)
 {
   /* Here the position is on the bottom right corner - 10 */
   QAD_Desktop* PP = QAD_Application::getDesktop();
-  x = abs(PP->x() + PP->size().width()  - aDlg->size().width()  - 10);
+  x = abs(PP->x() + PP->size().width() - aDlg->size().width() - 10);
   y = abs(PP->y() + PP->size().height() - aDlg->size().height() - 10);
   return true;  
 }
@@ -963,34 +962,33 @@ void GEOMBase_Context::SetDisplayedObjectList()
 //=====================================================================================
 void GEOMBase_Context::DisplaySimulationShape(const TopoDS_Shape& S) 
 {
-  if( S.IsNull() )
-    return ;
+  if(S.IsNull())
+    return;
   	
   //NRI DEBUG : 14/02/2002
-  if ( myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
-    return ;
+  if(myActiveStudy->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+    return;
 	
   OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+  Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
   
   try {
     /* erase any previous */
-    ic->Erase( this->mySimulationShape, Standard_True, Standard_False );
-    ic->ClearPrs( this->mySimulationShape );
-    this->mySimulationShape = new AIS_Shape( TopoDS_Shape() ) ;
-    this->mySimulationShape->Set( S ) ;
-    this->mySimulationShape->SetColor(Quantity_NOC_VIOLET) ;
-    ic->Deactivate( this->mySimulationShape );
-    ic->Display( this->mySimulationShape, Standard_False );
+    ic->Erase(this->mySimulationShape, Standard_True, Standard_False);
+    ic->ClearPrs(this->mySimulationShape);
+    this->mySimulationShape = new AIS_Shape(TopoDS_Shape());
+    this->mySimulationShape->Set(S);
+    this->mySimulationShape->SetColor(Quantity_NOC_VIOLET);
+    ic->Deactivate(this->mySimulationShape);
+    ic->Display(this->mySimulationShape, Standard_False);
     ic->UpdateCurrentViewer();
   }
   catch(Standard_Failure) {
-    MESSAGE( "Exception catched in GEOMBase_Context::DisplaySimulationShape " ) ;
+    MESSAGE("Exception catched in GEOMBase_Context::DisplaySimulationShape ");
   } 
-  this->mySimulationShape->UnsetColor() ;
-  return ;
+  this->mySimulationShape->UnsetColor();
+  return;
 }
-
 
 
 //==================================================================================
@@ -1000,18 +998,15 @@ void GEOMBase_Context::DisplaySimulationShape(const TopoDS_Shape& S)
 void GEOMBase_Context::EraseSimulationShape()
 {
   int count = myActiveStudy->getStudyFramesCount();
-  for ( int i = 0; i < count; i++ ) {
-    if (myActiveStudy->getStudyFrame(i)->getTypeView() == VIEW_OCC ) {
+  for(int i = 0; i < count; i++) {
+    if(myActiveStudy->getStudyFrame(i)->getTypeView() == VIEW_OCC) {
       OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myActiveStudy->getStudyFrame(i)->getRightFrame()->getViewFrame())->getViewer();
-      Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
-      ic->Erase( this->mySimulationShape, Standard_True, Standard_False );
-      ic->ClearPrs( this->mySimulationShape );
+      Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
+      ic->Erase(this->mySimulationShape, Standard_True, Standard_False);
+      ic->ClearPrs(this->mySimulationShape);
       ic->UpdateCurrentViewer();
-      
-    } else if (myActiveStudy->getStudyFrame(i)->getTypeView() == VIEW_VTK ) { // VTK
-    }
+    } 
   }
-  // MESSAGE ( " GEOMBase_Context::EraseSimulationShape done. " )
 }
 
 
@@ -1027,115 +1022,102 @@ bool GEOMBase_Context::Display(GEOM::GEOM_Shape_ptr aShape, Standard_CString nam
   Sel->ClearIObjects();
 
   if(aShape->_is_nil()) {
-    QAD_MessageBox::warn1 ( QAD_Application::getDesktop(),
-			    tr ("GEOM_WRN_WARNING"),
-			    tr ("GEOM_PRP_ABORT"),
-			    tr ("GEOM_BUT_OK") );
-    return false ;
+    QAD_MessageBox::warn1 (QAD_Application::getDesktop(), tr("GEOM_WRN_WARNING"), tr("GEOM_PRP_ABORT"), tr("GEOM_BUT_OK"));
+    return false;
   }
   
   TopoDS_Shape shape = myShapeReader.GetShape(myComponentGeom, aShape);
-
-  if ( shape.IsNull() )
+  if(shape.IsNull())
     return false;
 
-  SALOMEDS::Study_var            aStudy = myActiveStudy->getStudyDocument();
-  SALOMEDS::StudyBuilder_var     aStudyBuilder = aStudy->NewBuilder();
+  SALOMEDS::Study_var aStudy = myActiveStudy->getStudyDocument();
+  SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
   SALOMEDS::GenericAttribute_var anAttr;
-  SALOMEDS::AttributeName_var    aName;
-  SALOMEDS::AttributePixMap_var    aPixmap;
+  SALOMEDS::AttributeName_var aName;
+  SALOMEDS::AttributePixMap_var aPixmap;
 
   SALOMEDS::SComponent_var father = aStudy->FindComponent("GEOM");
   int aLocked = false;
-  if (father->_is_nil()) {
-    QAD_Operation* op = new SALOMEGUI_ImportOperation( myActiveStudy );
+  if(father->_is_nil()) {
+    QAD_Operation* op = new SALOMEGUI_ImportOperation(myActiveStudy);
     op->start();
     aLocked = aStudy->GetProperties()->IsLocked();
-    if (aLocked) aStudy->GetProperties()->SetLocked(false);
+    if(aLocked) 
+      aStudy->GetProperties()->SetLocked(false);
     father = aStudyBuilder->NewComponent("GEOM");
     anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributeName");
     aName = SALOMEDS::AttributeName::_narrow(anAttr);
-    //    aName->SetValue( tr("GEOM_MEN_COMPONENT") );
-    aName->SetValue( QAD_Application::getDesktop()->getComponentUserName( "GEOM" ) );
+    aName->SetValue(QAD_Application::getDesktop()->getComponentUserName("GEOM"));
     anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributePixMap");
     aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_Geometry" );
+    aPixmap->SetPixMap("ICON_OBJBROWSER_Geometry");
     myActiveStudy->updateObjBrowser();
-    if (aLocked) aStudy->GetProperties()->SetLocked(true);
+    if(aLocked)
+      aStudy->GetProperties()->SetLocked(true);
     op->finish();
   }
-//    if (aLocked) return false;
 
-  aStudyBuilder->DefineComponentInstance( father, myComponentGeom );
-  father->ComponentIOR( myFatherior );
+  aStudyBuilder->DefineComponentInstance(father, myComponentGeom);
+  father->ComponentIOR(myFatherior);
 
   TCollection_AsciiString nameG("");
   Standard_CString Type;
-  if ( TCollection_AsciiString(name).IsEqual(Standard_CString("")) ) {
-    if ( TCollection_AsciiString(aShape->NameType()).IsEqual(Standard_CString("")) ) {
+  if(TCollection_AsciiString(name).IsEqual(Standard_CString(""))) {
+    if(TCollection_AsciiString(aShape->NameType()).IsEqual(Standard_CString(""))) {
       Standard_CString type;
       GetShapeTypeString(shape,type);
-      aShape->NameType( type );
-      nameG += TCollection_AsciiString( type ) + TCollection_AsciiString("_") + 
-	TCollection_AsciiString( myNbGeom++ ) + TCollection_AsciiString("\0");
-    } else
-      nameG += TCollection_AsciiString( aShape->NameType()) + TCollection_AsciiString("_") + 
-	TCollection_AsciiString( myNbGeom++ ) + TCollection_AsciiString("\0");
-  } else 
+      aShape->NameType(type);
+      nameG += TCollection_AsciiString(type) + TCollection_AsciiString("_") + TCollection_AsciiString(myNbGeom++) + TCollection_AsciiString("\0");
+    } 
+    else
+      nameG += TCollection_AsciiString(aShape->NameType()) + TCollection_AsciiString("_") + TCollection_AsciiString(myNbGeom++) + TCollection_AsciiString("\0");
+  } 
+  else 
     nameG = TCollection_AsciiString(name);
   
   // VTK
-  if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
+  if(myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
     VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
     
     vtkRenderer *theRenderer = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
     int themode = myRenderInter->GetDisplayMode();
 
-    vtkActorCollection* theActors = 
-      GEOM_AssemblyBuilder::BuildActors(shape,0,themode,Standard_True);
+    vtkActorCollection* theActors = GEOM_AssemblyBuilder::BuildActors(shape, 0, themode, Standard_True);
     theActors->InitTraversal();
     vtkActor* anActor = (vtkActor*)theActors->GetNextActor();
 
-    IO = new GEOM_InteractiveObject(aShape->Name(),
-				    myFatherior,
-				    "GEOM");
+    IO = new GEOM_InteractiveObject(aShape->Name(), myFatherior, "GEOM");
     while(!(anActor==NULL)) {
-      GEOM_Actor* GActor = GEOM_Actor::SafeDownCast( anActor );
-      GActor->setIO( IO );
-      GActor->setName( nameG.ToCString() );
+      GEOM_Actor* GActor = GEOM_Actor::SafeDownCast(anActor);
+      GActor->setIO(IO);
+      GActor->setName(nameG.ToCString());
       
       theRenderer->AddActor(GActor);
       anActor = (vtkActor*)theActors->GetNextActor();
     }
   } 
   // OCC
-  else if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+  else if(myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
-    Handle(GEOM_AISShape) theResult = new GEOM_AISShape( shape, nameG.ToCString() );
-    theResult->SetShadingColor( myShadingColor );
-    IO = new GEOM_InteractiveObject(aShape->Name(),
-				    myFatherior,
-				    "GEOM");
-    theResult->setIO( IO );
-    theResult->setName( nameG.ToCString() );
+    Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
+    Handle(GEOM_AISShape) theResult = new GEOM_AISShape(shape, nameG.ToCString());
+    theResult->SetShadingColor(myShadingColor);
+    IO = new GEOM_InteractiveObject(aShape->Name(), myFatherior, "GEOM");
+    theResult->setIO(IO);
+    theResult->setName(nameG.ToCString());
     
     /* Precaution : close any local context to permit the display */
-    if ( ic->HasOpenedContext() ) {
+    if(ic->HasOpenedContext())
       ic->CloseAllContexts();
-    }
-    
-//     if(isInfinite)
-//       theResult->SetInfiniteState() ;
-    
+
     ic->Display(theResult);
   }
 
-  Sel->AddIObject( IO, false );
+  Sel->AddIObject(IO, false);
   myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame()->Repaint();
-  if ( mySettings_AddInStudy )
-    AddInStudy( false, IO );
-  
+  if(mySettings_AddInStudy)
+    AddInStudy(false, IO);
+
   return true;
 }
 
@@ -1146,41 +1128,41 @@ bool GEOMBase_Context::Display(GEOM::GEOM_Shape_ptr aShape, Standard_CString nam
 //=====================================================================================
 bool GEOMBase_Context::AddInStudy(bool selection, const Handle(SALOME_InteractiveObject)& anIO)
 {
-  SALOME_Selection* Sel = SALOME_Selection::Selection( myActiveStudy->getSelection() );
-  if ( !( !mySettings_AddInStudy || selection ) ) {
+  SALOME_Selection* Sel = SALOME_Selection::Selection(myActiveStudy->getSelection());
+  if (!(!mySettings_AddInStudy || selection)) {
     Sel->ClearIObjects();
   }
 
-  SALOMEDS::Study_var               aStudy = myActiveStudy->getStudyDocument();
-  SALOMEDS::StudyBuilder_var        aStudyBuilder = aStudy->NewBuilder();
-  SALOMEDS::GenericAttribute_var    anAttr;
-  SALOMEDS::AttributeName_var       aName;
-  SALOMEDS::AttributePixMap_var     aPixmap;
-  SALOMEDS::AttributeIOR_var        anIOR;
+  SALOMEDS::Study_var aStudy = myActiveStudy->getStudyDocument();
+  SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
+  SALOMEDS::GenericAttribute_var anAttr;
+  SALOMEDS::AttributeName_var aName;
+  SALOMEDS::AttributePixMap_var aPixmap;
+  SALOMEDS::AttributeIOR_var anIOR;
   SALOMEDS::AttributeSelectable_var aSelAttr;
   
   SALOMEDS::SComponent_var father = aStudy->FindComponent("GEOM");
   int aLocked = false;
-  if (father->_is_nil()) {
-    QAD_Operation* op = new SALOMEGUI_ImportOperation( myActiveStudy );
+  if(father->_is_nil()) {
+    QAD_Operation* op = new SALOMEGUI_ImportOperation(myActiveStudy);
     op->start();
     aLocked = aStudy->GetProperties()->IsLocked();
-    if (aLocked) aStudy->GetProperties()->SetLocked(false);
+    if(aLocked)
+      aStudy->GetProperties()->SetLocked(false);
     father = aStudyBuilder->NewComponent("GEOM");
     anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributeName");
     aName = SALOMEDS::AttributeName::_narrow(anAttr);
-    //    aName->SetValue( tr("GEOM_MEN_COMPONENT") );
-    aName->SetValue( QAD_Application::getDesktop()->getComponentUserName( "GEOM" ) );
+    aName->SetValue( QAD_Application::getDesktop()->getComponentUserName("GEOM"));
     anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributePixMap");
     aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_Geometry" );
-    if (aLocked) aStudy->GetProperties()->SetLocked(true);
+    aPixmap->SetPixMap("ICON_OBJBROWSER_Geometry");
+    if (aLocked)
+      aStudy->GetProperties()->SetLocked(true);
     op->finish();
   }
-//    if (aLocked) return false;
 
-  aStudyBuilder->DefineComponentInstance( father, myComponentGeom );
-  father->ComponentIOR( myFatherior );
+  aStudyBuilder->DefineComponentInstance(father, myComponentGeom);
+  father->ComponentIOR(myFatherior);
   
   SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(myActiveStudy->getActiveStudyFrame()->entry());
   
@@ -1190,20 +1172,20 @@ bool GEOMBase_Context::AddInStudy(bool selection, const Handle(SALOME_Interactiv
   bool found = false;
 
   // VTK
-  if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
+  if (myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
     vtkRenderer *Renderer = ((VTKViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
 
     vtkActorCollection* theActors = Renderer->GetActors();
     theActors->InitTraversal();
     vtkActor *ac = theActors->GetNextActor();
     while(!(ac==NULL)) {
-      if ( ac->IsA("GEOM_Actor") ) {
-	GEOM_Actor* anActor = GEOM_Actor::SafeDownCast( ac );
-	if ( anActor->hasIO() ) {
+      if(ac->IsA("GEOM_Actor")) {
+	GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(ac);
+	if(anActor->hasIO()) {
 	  Handle(SALOME_InteractiveObject) IO = anActor->getIO();
-	  if ( IO->IsKind(STANDARD_TYPE(GEOM_InteractiveObject)) ) {
-	    GIO = Handle(GEOM_InteractiveObject)::DownCast( IO );
-	    if ( anIO->isSame( GIO ) ) {
+	  if(IO->IsKind(STANDARD_TYPE(GEOM_InteractiveObject))) {
+	    GIO = Handle(GEOM_InteractiveObject)::DownCast(IO);
+	    if(anIO->isSame(GIO)) {
 	      found = true;
 	      GActor = anActor;
 	      break;
@@ -1214,25 +1196,25 @@ bool GEOMBase_Context::AddInStudy(bool selection, const Handle(SALOME_Interactiv
       ac = theActors->GetNextActor();
     }
     
-    if ( !found )
+    if(!found)
       return false;
   }
   // OCC
-  else if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC )  {
+  else if(myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myActiveStudy->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
     
     AIS_ListOfInteractive List;
     ic->DisplayedObjects(List);
     AIS_ListIteratorOfListOfInteractive ite(List);
-    while (ite.More()) {
-      if (ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
+    while(ite.More()) {
+      if(ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
 	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
-	if ( aSh->hasIO() ) {
+	if(aSh->hasIO()) {
 	  Handle(SALOME_InteractiveObject) IO = aSh->getIO();
-	  if ( IO->IsKind(STANDARD_TYPE(GEOM_InteractiveObject)) ) {
-	    GIO = Handle(GEOM_InteractiveObject)::DownCast( IO );
-	    if ( anIO->isSame( GIO ) ) {
+	  if ( IO->IsKind(STANDARD_TYPE(GEOM_InteractiveObject))) {
+	    GIO = Handle(GEOM_InteractiveObject)::DownCast(IO);
+	    if(anIO->isSame(GIO)) {
 	      found = true;
 	      GAISShape = aSh;
 	      break;
@@ -1243,37 +1225,35 @@ bool GEOMBase_Context::AddInStudy(bool selection, const Handle(SALOME_Interactiv
       ite.Next();
     }
 
-    if ( !found )
+    if(!found)
       return false;
   }
 
-  if ( !mySettings_AddInStudy || selection ) {
-    QString Name = SALOMEGUI_NameDlg::getName( QAD_Application::getDesktop(), anIO->getName() );
-    if ( !Name.isEmpty() ) {
+  if(!mySettings_AddInStudy || selection) {
+    QString Name = SALOMEGUI_NameDlg::getName(QAD_Application::getDesktop(), anIO->getName());
+    if(!Name.isEmpty()) {
       // VTK
-      if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
-	GActor->setName( strdup(Name.latin1()) );
-      }
+      if(myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
+	GActor->setName(strdup(Name.latin1()));
       // OCC
-      else if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-	GAISShape->setName( strdup(Name.latin1()) );
-      }
-    } else {
+      else if(myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
+	GAISShape->setName(strdup(Name.latin1()));
+    } 
+    else
       return false;
-    }
   }
 
   // open transaction
-  QAD_Operation* op = new SALOMEGUI_ImportOperation( myActiveStudy );
+  QAD_Operation* op = new SALOMEGUI_ImportOperation(myActiveStudy);
   op->start();
 
   SALOMEDS::SObject_var newObj = aStudyBuilder->NewObject(father);
 
-  GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString( GIO->getIOR() );
+  GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString(GIO->getIOR());
 
   /* For the shape inserted into the study we set its field 'studyshapeid'    */
   /* so the shape will contain its corresponding entry in the study Ocaf doc. */
-  aShape->StudyShapeId(newObj->GetID()) ;
+  aShape->StudyShapeId(newObj->GetID());
 
   GIO->setEntry(newObj->GetID());
 
@@ -1286,32 +1266,31 @@ bool GEOMBase_Context::AddInStudy(bool selection, const Handle(SALOME_Interactiv
 
   anAttr = aStudyBuilder->FindOrCreateAttribute(newObj, "AttributePixMap");
   aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
-  if ( aShape->ShapeType() == GEOM::COMPOUND ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_COMPOUND" );
-  } else if ( aShape->ShapeType() == GEOM::COMPSOLID ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_COMPSOLID" );
-  } else if ( aShape->ShapeType() == GEOM::SOLID ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_SOLID" );
-  } else if ( aShape->ShapeType() == GEOM::SHELL ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_SHELL" );
-  } else if ( aShape->ShapeType() == GEOM::FACE ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_FACE" );
-  } else if ( aShape->ShapeType() == GEOM::WIRE ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_WIRE" );
-  } else if ( aShape->ShapeType() == GEOM::EDGE ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_EDGE" );
-  } else if ( aShape->ShapeType() == GEOM::VERTEX ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_VERTEX" );
-  }
+  if(aShape->ShapeType() == GEOM::COMPOUND)
+    aPixmap->SetPixMap("ICON_OBJBROWSER_COMPOUND");
+  else if(aShape->ShapeType() == GEOM::COMPSOLID)
+    aPixmap->SetPixMap("ICON_OBJBROWSER_COMPSOLID");
+  else if(aShape->ShapeType() == GEOM::SOLID)
+    aPixmap->SetPixMap("ICON_OBJBROWSER_SOLID");
+  else if(aShape->ShapeType() == GEOM::SHELL)
+    aPixmap->SetPixMap("ICON_OBJBROWSER_SHELL");
+  else if(aShape->ShapeType() == GEOM::FACE)
+    aPixmap->SetPixMap("ICON_OBJBROWSER_FACE");
+  else if(aShape->ShapeType() == GEOM::WIRE)
+    aPixmap->SetPixMap("ICON_OBJBROWSER_WIRE");
+  else if(aShape->ShapeType() == GEOM::EDGE)
+    aPixmap->SetPixMap("ICON_OBJBROWSER_EDGE");
+  else if(aShape->ShapeType() == GEOM::VERTEX)
+    aPixmap->SetPixMap("ICON_OBJBROWSER_VERTEX");
 
   // VTK
-  if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK ) {
-    GActor->setIO( GIO );
+  if(myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
+    GActor->setIO(GIO);
     aName->SetValue(GActor->getName());
   }
   // OCC
-  else if ( myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-    GAISShape->setIO( GIO );
+  else if(myActiveStudy->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    GAISShape->setIO(GIO);
     aName->SetValue(GAISShape->getName());
   }
 
@@ -1321,7 +1300,7 @@ bool GEOMBase_Context::AddInStudy(bool selection, const Handle(SALOME_Interactiv
   GEOM::GEOM_Gen::ListOfIOR_var listIOR = new GEOM::GEOM_Gen::ListOfIOR;
   listIOR = myComponentGeom->GetReferencedObjects(aShape);
 
-  if (listIOR->length()>0) {
+  if(listIOR->length()>0) {
     SALOMEDS::SObject_var Arguments = aStudyBuilder->NewObject(newObj);
     anAttr = aStudyBuilder->FindOrCreateAttribute(Arguments, "AttributeName");
     aName = SALOMEDS::AttributeName::_narrow(anAttr);
@@ -1334,30 +1313,25 @@ bool GEOMBase_Context::AddInStudy(bool selection, const Handle(SALOME_Interactiv
     for (unsigned int ind = 0; ind < listIOR->length();ind++) {
       SALOMEDS::SObject_var theObj = aStudy->FindObjectIOR(listIOR[ind]);
 
-      if ( !theObj->_is_nil() ) {
+      if(!theObj->_is_nil()) {
 	SALOMEDS::SObject_var RefObject = aStudyBuilder->NewObject(Arguments);
 	aStudyBuilder->Addreference(RefObject, theObj);
 	ObjectReferenced = true;
       }
     }
 
-    if ( !ObjectReferenced )
+    if(!ObjectReferenced)
       aStudyBuilder->RemoveObject(Arguments);
   }
-
   op->finish();
 
-
-  if ( !mySettings_AddInStudy || selection ) {
+  if(!mySettings_AddInStudy || selection)
     myActiveStudy->updateObjBrowser();
-  } else {
+  else {
     myActiveStudy->updateObjBrowser(false);
-    Sel->AddIObject( GIO );
+    Sel->AddIObject(GIO);
   }
-
-  // MESSAGE ( " highlihght done" )
   return true;
- 
 }
 
 
@@ -1365,23 +1339,21 @@ bool GEOMBase_Context::AddInStudy(bool selection, const Handle(SALOME_Interactiv
 // function : GetShapeFromIOR()
 // purpose  : exist also as static method !
 //=====================================================================================
-TopoDS_Shape GEOMBase_Context::GetShapeFromIOR( QString IOR )
+TopoDS_Shape GEOMBase_Context::GetShapeFromIOR(QString IOR)
 {
   TopoDS_Shape result;
-  if( IOR.stripWhiteSpace().isEmpty() )
+  if(IOR.stripWhiteSpace().isEmpty())
     return result;
-  ORB_INIT &init = *SINGLETON_<ORB_INIT>::Instance() ;
+  ORB_INIT &init = *SINGLETON_<ORB_INIT>::Instance();
   CORBA::ORB_var& _orb = init.orb() ;
-  CORBA::Object_var obj = _orb->string_to_object( (char*)(IOR.latin1()) );
-  if ( CORBA::is_nil( obj ) )
+  CORBA::Object_var obj = _orb->string_to_object((char*)(IOR.latin1()));
+  if(CORBA::is_nil(obj))
     return result;
-  GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString( IOR );
-  if (!aShape->_is_nil()) {
-    result = myShapeReader.GetShape( myComponentGeom, aShape );
-  }
+  GEOM::GEOM_Shape_var aShape = myComponentGeom->GetIORFromString(IOR);
+  if(!aShape->_is_nil())
+    result = myShapeReader.GetShape(myComponentGeom, aShape);
   return result;
 }
-
 
 
 //=======================================================================

@@ -73,17 +73,17 @@ bool OperationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 
   switch (theCommandID)
     {
-    case 4025: // PARTITION
+    case 503: // PARTITION
       {
   	OperationGUI_PartitionDlg *aDlg = new OperationGUI_PartitionDlg(parent, "", this, Sel);	
 	break;
       }
-    case 4026: // ARCHIMEDE
+    case 504: // ARCHIMEDE
       {
 	OperationGUI_ArchimedeDlg *aDlg = new OperationGUI_ArchimedeDlg(parent, "", this, Sel);	
 	break;
       }
-    case 4027: // FILLET
+    case 505: // FILLET
       {
 	Handle(AIS_InteractiveContext) ic;
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
@@ -93,7 +93,7 @@ bool OperationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
   	OperationGUI_FilletDlg *aDlg = new OperationGUI_FilletDlg(parent, "", this, Sel, ic);	
 	break;
       }
-    case 4028: // CHAMFER
+    case 506: // CHAMFER
       {
 	Handle(AIS_InteractiveContext) ic;
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {

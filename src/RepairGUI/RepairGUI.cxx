@@ -70,17 +70,17 @@ bool RepairGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 
   switch (theCommandID)
     {
-    case 501: // SEWING
+    case 601: // SEWING
       {
 	RepairGUI_SewingDlg *aDlg = new RepairGUI_SewingDlg(parent, "", this, Sel);
 	break;
       }
-    case 502: // ORIENTATION
+    case 602: // ORIENTATION
       {
 	RepairGUI_OrientationDlg *aDlg = new RepairGUI_OrientationDlg(parent, "", this, Sel);
 	break;
       }
-    case 309: // SUPPRESS FACES : use ic
+    case 603: // SUPPRESS FACES : use ic
       {
 	Handle(AIS_InteractiveContext) ic;
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
@@ -90,7 +90,7 @@ bool RepairGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	RepairGUI_SuppressFacesDlg *aDlg = new RepairGUI_SuppressFacesDlg(parent, "", this, Sel, ic);
 	break;
       }
-    case 314: // SUPPRESS HOLES : use ic
+    case 604: // SUPPRESS HOLES : use ic
       {
 	Handle(AIS_InteractiveContext) ic;
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {

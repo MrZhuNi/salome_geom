@@ -68,27 +68,27 @@ bool PrimitiveGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 
   switch (theCommandID)
     {
-    case 3021: // BOX
+    case 4021: // BOX
       {
 	PrimitiveGUI_BoxDlg *aDlg = new PrimitiveGUI_BoxDlg(parent, "", this, Sel);
 	break;
       }
-    case 3022: // CYLINDER
+    case 4022: // CYLINDER
       {
 	PrimitiveGUI_CylinderDlg *aDlg = new PrimitiveGUI_CylinderDlg(parent, "", this, Sel);
 	break;
       }
-    case 3023: // SPHERE
+    case 4023: // SPHERE
       {
 	PrimitiveGUI_SphereDlg *aDlg = new PrimitiveGUI_SphereDlg(parent, "", this, Sel);
 	break;
       }
-    case 3024: // TORUS
+    case 4024: // TORUS
       {
 	PrimitiveGUI_TorusDlg *aDlg = new PrimitiveGUI_TorusDlg(parent, "", this, Sel);
 	break;
       }
-    case 3025: // CONE
+    case 4025: // CONE
       {
 	PrimitiveGUI_ConeDlg *aDlg = new PrimitiveGUI_ConeDlg(parent, "", this, Sel);
 	break;
