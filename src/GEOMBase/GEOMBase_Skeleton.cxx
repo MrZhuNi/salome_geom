@@ -77,8 +77,6 @@ void GEOMBase_Skeleton::Init(SALOME_Selection* Sel)
   myGeomBase = new GEOMBase();
   myGeomGUI = GEOMContext::GetGeomGUI();
   myGeomGUI->SetActiveDialogBox((QDialog*)this);
-//   Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-//   myGeom = GEOM::GEOM_Gen::_narrow(comp);
   myGeom = myGeomGUI->myComponentGeom;
 
   /* signals and slots connections */
@@ -88,7 +86,7 @@ void GEOMBase_Skeleton::Init(SALOME_Selection* Sel)
 
   /* Move widget on the botton right corner of main widget */
 //   int x, y;
-//   myGeomGUI->DefineDlgPosition( this, x, y );
+//   myGeomBase->DefineDlgPosition( this, x, y );
 
   /* displays Dialog */
   RadioButton1->setChecked(TRUE);
@@ -142,6 +140,7 @@ void GEOMBase_Skeleton::DeactivateActiveDialog()
 {
   this->setEnabled(false);
   mySelection->ClearFilters();
+  myGeomGUI->ResetState();
   disconnect(mySelection, 0, this, 0);
   myGeomBase->EraseSimulationShape();
   myGeomGUI->SetActiveDialogBox(0);

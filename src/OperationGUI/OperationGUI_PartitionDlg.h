@@ -29,98 +29,51 @@
 #ifndef DIALOGBOX_PARTITION_H
 #define DIALOGBOX_PARTITION_H
 
+#include "GEOMBase_Skeleton.h"
+#include "DlgRef_4Sel1List_QTD.h"
+
 #include "OperationGUI.h"
-
-#include <qdialog.h>
-
-class QButtonGroup;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
-class QComboBox;
-
 
 //=================================================================================
 // class    : OperationGUI_PartitionDlg
 // purpose  :
 //=================================================================================
-class OperationGUI_PartitionDlg : public QDialog
+class OperationGUI_PartitionDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
 public:
-    OperationGUI_PartitionDlg( QWidget* parent = 0, const char* name = 0, OperationGUI* theOperationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    OperationGUI_PartitionDlg(QWidget* parent = 0, const char* name = 0, OperationGUI* theOperationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~OperationGUI_PartitionDlg();
 
 private:
+    void Init();
+    void enterEvent(QEvent* e);
+
     OperationGUI* myOperationGUI;
-    void Init( SALOME_Selection* Sel ) ;
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent ( QEvent * ) ;             /* Mouse enter the QWidget */
 
-    GEOM::GEOM_Gen_var myGeom ;                /* Current Geom object */
-    GEOMBase*       myGeomBase ;             /* Current GeomGUI object */
-    GEOMContext*       myGeomGUI ;             /* Current GeomGUI object */
-    SALOME_Selection*  mySelection ;           /* User shape selection */
+    GEOM::GEOM_Gen::ListOfIOR myListShapes;
+    GEOM::GEOM_Gen::ListOfIOR myListTools;
+    GEOM::GEOM_Gen::ListOfIOR myListRemoveInside;
+    GEOM::GEOM_Gen::ListOfIOR myListKeepInside;
 
-    GEOM::GEOM_Gen::ListOfIOR  myListShapes ;
-    GEOM::GEOM_Gen::ListOfIOR  myListTools ;
-    GEOM::GEOM_Gen::ListOfIOR  myListRemoveInside ;
-    GEOM::GEOM_Gen::ListOfIOR  myListKeepInside ;
+    bool myOkListShapes;   /* to check when argument is defined */
+    bool myOkListTools;    /* to check when argument is defined */
+    bool myOkKeepShape;    /* to check when argument is defined */
+    bool myOkRemoveShape;  /* to check when argument is defined */
+    int myLimit;
 
-    bool                       myOkListShapes ;        /* to check when argument is defined */
-    bool                       myOkListTools ;         /* to check when argument is defined */
-    bool                       myOkKeepShape ;         /* to check when argument is defined */
-    bool                       myOkRemoveShape ;       /* to check when argument is defined */
-    int                        myLimit;
-    QLineEdit*                 myEditCurrentArgument;  /* Current LineEdit */    
-
-    /* common buttons */
-    QGroupBox*     GroupButtons;
-    QPushButton*   buttonOk;
-    QPushButton*   buttonCancel;
-    QPushButton*   buttonApply;
-
-    /* constructor radiobuttons */
-    QButtonGroup*  GroupConstructors;
-    QRadioButton*  Constructor1;
-
-    /* Arguments group */
-    QGroupBox*     GroupC1;
-    QLineEdit*     LineEditC1A1;
-    QLabel*        TextLabelC1A1;
-    QPushButton*   SelectButtonC1A1;
-    QLineEdit*     LineEditC1A2;
-    QLabel*        TextLabelC1A2;
-    QPushButton*   SelectButtonC1A2;
-
-    /* limit */
-    QComboBox*     ComboBox1;
-    QLabel*        TextLabelComboBox1;
-
-    /* Keep Inside and Remove Inside feilds */
-    QGroupBox*     GroupC2;
-    QLineEdit*     LineEditC2A1;
-    QLabel*        TextLabelC2A1;
-    QPushButton*   SelectButtonC2A1;
-    QLineEdit*     LineEditC2A2;
-    QLabel*        TextLabelC2A2;
-    QPushButton*   SelectButtonC2A2;
+    DlgRef_4Sel1List_QTD* GroupPoints;
 
 private slots:
-
-    //void ConstructorsClicked(int constructorId);
     void ClickOnOk();
-    void ClickOnCancel();
     void ClickOnApply();
-    void SetEditCurrentArgument() ;
-    void LineEditReturnPressed() ;
-    void SelectionIntoArgument() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
-    void ComboTextChanged() ;
+    void ActivateThisDialog();
+    void LineEditReturnPressed();
+    void SelectionIntoArgument();
+    void SetEditCurrentArgument();
+    void ComboTextChanged();
+
 };
 
 #endif // DIALOGBOX_PARTITION_H

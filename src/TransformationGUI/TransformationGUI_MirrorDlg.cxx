@@ -257,6 +257,8 @@ void TransformationGUI_MirrorDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  GroupPoints->LineEdit1->setFocus();
+  myEditCurrentArgument = GroupPoints->LineEdit1;
   if(!mySimulationTopoDs.IsNull())
     myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;

@@ -89,7 +89,7 @@ void TransformationGUI_TranslationDlg::Init()
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
-  myVec.SetCoord(100.0, 100.0, 100.0);
+  myVec.SetCoord(0.0, 0.0, 0.0);
   myOkBase = false;
 
   /* Get setting of step value from file configuration */
@@ -101,9 +101,9 @@ void TransformationGUI_TranslationDlg::Init()
   GroupPoints->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, step, 3);
   GroupPoints->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, step, 3);
 
-  GroupPoints->SpinBox_DX->SetValue(100.0);
-  GroupPoints->SpinBox_DY->SetValue(100.0);
-  GroupPoints->SpinBox_DZ->SetValue(100.0);
+  GroupPoints->SpinBox_DX->SetValue(0.0);
+  GroupPoints->SpinBox_DY->SetValue(0.0);
+  GroupPoints->SpinBox_DZ->SetValue(0.0);
 
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));

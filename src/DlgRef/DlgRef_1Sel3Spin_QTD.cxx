@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DlgRef_1Sel3Spin_QTD.ui'
 **
-** Created: mer oct 1 16:53:03 2003
+** Created: ven oct 24 15:55:11 2003
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ DlgRef_1Sel3Spin_QTD::DlgRef_1Sel3Spin_QTD( QWidget* parent,  const char* name, 
 {
     if ( !name )
 	setName( "DlgRef_1Sel3Spin_QTD" );
-    resize( 232, 87 ); 
+    resize( 129, 143 ); 
     setCaption( trUtf8( "DlgRef_1Sel3Spin_QTD" ) );
     DlgRef_1Sel3Spin_QTDLayout = new QGridLayout( this, 1, 1, 0, 6, "DlgRef_1Sel3Spin_QTDLayout"); 
 
@@ -41,58 +41,58 @@ DlgRef_1Sel3Spin_QTD::DlgRef_1Sel3Spin_QTD( QWidget* parent,  const char* name, 
 
     Layout1 = new QGridLayout( 0, 1, 1, 0, 6, "Layout1"); 
 
-    PushButton1 = new QPushButton( GroupBox1, "PushButton1" );
-    PushButton1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, PushButton1->sizePolicy().hasHeightForWidth() ) );
-    PushButton1->setText( trUtf8( "" ) );
-
-    Layout1->addWidget( PushButton1, 0, 1 );
-    QSpacerItem* spacer = new QSpacerItem( 0, 207, QSizePolicy::Minimum, QSizePolicy::Expanding );
-    Layout1->addItem( spacer, 2, 2 );
-
     TextLabel1 = new QLabel( GroupBox1, "TextLabel1" );
     TextLabel1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel1->sizePolicy().hasHeightForWidth() ) );
     TextLabel1->setText( trUtf8( "TL1" ) );
 
     Layout1->addWidget( TextLabel1, 0, 0 );
 
+    PushButton1 = new QPushButton( GroupBox1, "PushButton1" );
+    PushButton1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, PushButton1->sizePolicy().hasHeightForWidth() ) );
+    PushButton1->setText( trUtf8( "" ) );
+
+    Layout1->addWidget( PushButton1, 0, 1 );
+
     LineEdit1 = new QLineEdit( GroupBox1, "LineEdit1" );
 
     Layout1->addWidget( LineEdit1, 0, 2 );
+    QSpacerItem* spacer = new QSpacerItem( 0, 150, QSizePolicy::Minimum, QSizePolicy::Expanding );
+    Layout1->addItem( spacer, 2, 2 );
 
     Layout2 = new QGridLayout( 0, 1, 1, 0, 6, "Layout2"); 
 
-    TextLabel4 = new QLabel( GroupBox1, "TextLabel4" );
-    TextLabel4->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel4->sizePolicy().hasHeightForWidth() ) );
-    TextLabel4->setText( trUtf8( "TL4" ) );
+    SpinBox2 = new QSpinBox( GroupBox1, "SpinBox2" );
+    SpinBox2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, SpinBox2->sizePolicy().hasHeightForWidth() ) );
 
-    Layout2->addWidget( TextLabel4, 0, 5 );
-
-    TextLabel2 = new QLabel( GroupBox1, "TextLabel2" );
-    TextLabel2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel2->sizePolicy().hasHeightForWidth() ) );
-    TextLabel2->setText( trUtf8( "TL2" ) );
-
-    Layout2->addWidget( TextLabel2, 0, 1 );
+    Layout2->addWidget( SpinBox2, 1, 1 );
 
     TextLabel3 = new QLabel( GroupBox1, "TextLabel3" );
     TextLabel3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel3->sizePolicy().hasHeightForWidth() ) );
     TextLabel3->setText( trUtf8( "TL3" ) );
 
-    Layout2->addWidget( TextLabel3, 0, 3 );
+    Layout2->addWidget( TextLabel3, 1, 0 );
 
     SpinBox3 = new QSpinBox( GroupBox1, "SpinBox3" );
     SpinBox3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, SpinBox3->sizePolicy().hasHeightForWidth() ) );
 
-    Layout2->addWidget( SpinBox3, 0, 6 );
+    Layout2->addWidget( SpinBox3, 2, 1 );
 
     SpinBox1 = new QSpinBox( GroupBox1, "SpinBox1" );
     SpinBox1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, SpinBox1->sizePolicy().hasHeightForWidth() ) );
 
-    Layout2->addWidget( SpinBox1, 0, 2 );
+    Layout2->addWidget( SpinBox1, 0, 1 );
 
-    SpinBox2 = new QSpinBox( GroupBox1, "SpinBox2" );
-    SpinBox2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, SpinBox2->sizePolicy().hasHeightForWidth() ) );
+    TextLabel4 = new QLabel( GroupBox1, "TextLabel4" );
+    TextLabel4->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel4->sizePolicy().hasHeightForWidth() ) );
+    TextLabel4->setText( trUtf8( "TL4" ) );
 
-    Layout2->addWidget( SpinBox2, 0, 4 );
+    Layout2->addWidget( TextLabel4, 2, 0 );
+
+    TextLabel2 = new QLabel( GroupBox1, "TextLabel2" );
+    TextLabel2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel2->sizePolicy().hasHeightForWidth() ) );
+    TextLabel2->setText( trUtf8( "TL2" ) );
+
+    Layout2->addWidget( TextLabel2, 0, 0 );
 
     Layout1->addMultiCellLayout( Layout2, 1, 1, 0, 2 );
 

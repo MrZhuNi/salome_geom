@@ -199,6 +199,7 @@ void BasicGUI_WorkingPlaneDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  mySelection->AddFilter(myFaceFilter);
   return;
 }
 

@@ -56,12 +56,58 @@
                         <property name="spacing">
                             <number>6</number>
                         </property>
+                        <spacer row="3" column="2">
+                            <property name="name">
+                                <cstring>Spacer5</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Vertical</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>0</width>
+                                    <height>166</height>
+                                </size>
+                            </property>
+                        </spacer>
                         <widget class="QRadioButton" row="2" column="0" rowspan="1" colspan="3">
                             <property name="name">
                                 <cstring>CheckButton1</cstring>
                             </property>
                             <property name="text">
                                 <string></string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>TextLabel2</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="text">
+                                <string>TL2</string>
+                            </property>
+                        </widget>
+                        <widget class="QComboBox" row="1" column="2">
+                            <property name="name">
+                                <cstring>ComboBox1</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>7</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
                             </property>
                         </widget>
                         <widget class="QLineEdit" row="0" column="2">
@@ -101,36 +147,6 @@
                                 <string></string>
                             </property>
                         </widget>
-                        <widget class="QComboBox" row="1" column="2">
-                            <property name="name">
-                                <cstring>ComboBox1</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>7</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                        </widget>
-                        <spacer row="3" column="2">
-                            <property name="name">
-                                <cstring>Spacer5</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Vertical</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>0</width>
-                                    <height>60</height>
-                                </size>
-                            </property>
-                        </spacer>
                     </grid>
                 </widget>
             </grid>

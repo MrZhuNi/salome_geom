@@ -29,90 +29,36 @@
 #ifndef DIALOGBOX_MAXTOLERANCE_H
 #define DIALOGBOX_MAXTOLERANCE_H
 
+#include "MeasureGUI_Skeleton.h"
+#include "MeasureGUI_1Sel6LineEdit_QTD.h"
+
 #include "MeasureGUI.h"
-
-#include <qvariant.h>
-#include <qdialog.h>
-
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
 
 //=================================================================================
 // class    : DialogBox_PROPERTIES
 // purpose  :
 //=================================================================================
-class MeasureGUI_MaxToleranceDlg : public QDialog
+class MeasureGUI_MaxToleranceDlg : public MeasureGUI_Skeleton
 { 
     Q_OBJECT
 
 public:
-    MeasureGUI_MaxToleranceDlg( QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    MeasureGUI_MaxToleranceDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~MeasureGUI_MaxToleranceDlg();
 
 private:
+    void Init();
+    void enterEvent(QEvent* e);
+    void CalculateMaxTolerance(const TopoDS_Shape& S);
 
-    void Init( SALOME_Selection* Sel ) ;
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent ( QEvent * ) ;                         /* mouse enter the QWidget */
-    void CalculateMaxTolerance(const TopoDS_Shape& S) ;
-
-    GEOM::GEOM_Gen_var         myGeom ;                 /* Current GeomI object */
-    GEOMContext*                  myGeomGUI ;              /* Current GeomGUI object */
-    GEOMBase*                  myGeomBase ;              /* Current GeomGUI object */
-    SALOME_Selection*             mySelection ;            /* User shape selection */
-
-    int                           myConstructorId ;        /* Current constructor id = radio button id */
-    QLineEdit*                    myEditCurrentArgument;   /* Current LineEdit */
-
-    QButtonGroup* GroupConstructors;
-    QRadioButton* Constructor1;
-    QGroupBox* GroupConstructor1;
-    QLineEdit* LineEditC1A1;
-    QPushButton* SelectButtonC1A1;
-    QLabel* TextLabelC1A1;
-
-    QLabel* TextLabel_Min;
-    QLabel* TextLabel_Max;
-
-    QLabel* TextLabel_Face;
-    QLabel* TextLabel_Edge;
-    QLabel* TextLabel_Vertex;
-
-    QLineEdit* LineEdit_MinFace;
-    QLineEdit* LineEdit_MinEdge;
-    QLineEdit* LineEdit_MinVertex;
-   
-    QLineEdit* LineEdit_MaxFace;
-    QLineEdit* LineEdit_MaxEdge;
-    QLineEdit* LineEdit_MaxVertex;
-
-    QGroupBox* GroupButtons;
-    QPushButton* buttonApply;
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
+    MeasureGUI_1Sel6LineEdit_QTD* GroupC1;
 
 private slots:
+    void SetEditCurrentArgument();
+    void SelectionIntoArgument();
+    void LineEditReturnPressed();
+    void ActivateThisDialog();
 
-    void ConstructorsClicked(int constructorId);
-    void ClickOnCancel();
-    void SetEditCurrentArgument() ;
-    void LineEditReturnPressed() ;
-    void SelectionIntoArgument() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
-
-protected:
-    QGridLayout* MeasureGUI_MaxToleranceDlgLayout;
-    QGridLayout* GroupConstructorsLayout;
-    QGridLayout* GroupConstructor1Layout;
-    QGridLayout* GroupButtonsLayout;
 };
 
 #endif // DIALOGBOX_MAXTOLERANCE_H

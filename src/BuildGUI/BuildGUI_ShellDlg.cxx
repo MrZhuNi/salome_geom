@@ -165,13 +165,10 @@ void BuildGUI_ShellDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
   mySelection->ClearFilters() ;
-
-  if(send == GroupShell->PushButton1) {
-    GroupShell->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupShell->LineEdit1;
-    mySelection->AddFilter(myFaceFilter);
-  }
-  SelectionIntoArgument();
+  GroupShell->LineEdit1->setFocus();
+  myEditCurrentArgument = GroupShell->LineEdit1;
+  mySelection->AddFilter(myFaceFilter);
+  this->SelectionIntoArgument();
   return;
 }
 
@@ -184,6 +181,7 @@ void BuildGUI_ShellDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  mySelection->AddFilter(myFaceFilter);
   return;
 }
 

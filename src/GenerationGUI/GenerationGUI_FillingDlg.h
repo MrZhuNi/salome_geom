@@ -54,7 +54,6 @@ private:
 
     GenerationGUI* myGenerationGUI;
 
-    int step;
     Handle(GEOM_ShapeTypeFilter) myCompoundFilter;  /* Filter selection */
 
     GEOM::GEOM_Shape_var myGeomShape; /* is mySectionShape */

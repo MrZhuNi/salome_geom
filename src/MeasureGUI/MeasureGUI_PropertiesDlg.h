@@ -28,89 +28,36 @@
 #ifndef DIALOGBOX_PROPERTIES_H
 #define DIALOGBOX_PROPERTIES_H
 
+#include "MeasureGUI_Skeleton.h"
+#include "MeasureGUI_1Sel3LineEdit_QTD.h"
+
 #include "MeasureGUI.h"
-
-#include <BRepGProp.hxx>
-#include <GProp_GProps.hxx>
-#include <GProp_PrincipalProps.hxx>
-
-#include <qvariant.h>
-#include <qdialog.h>
-
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
-class MeasureGUI;
 
 //=================================================================================
 // class    : MeasureGUI_PropertiesDlg
 // purpose  :
 //=================================================================================
-class MeasureGUI_PropertiesDlg : public QDialog
+class MeasureGUI_PropertiesDlg : public MeasureGUI_Skeleton
 { 
     Q_OBJECT
 
 public:
-    MeasureGUI_PropertiesDlg( QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    MeasureGUI_PropertiesDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~MeasureGUI_PropertiesDlg();
 
 private:
+    void Init();
+    void enterEvent(QEvent* e);
+    void CalculateAndDisplayProperties(const TopoDS_Shape& S);
 
-    void Init( SALOME_Selection* Sel ) ;
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent ( QEvent * ) ;                         /* mouse enter the QWidget */
-    void CalculateAndDisplayProperties(const TopoDS_Shape& S) ;
-
-    GEOM::GEOM_Gen_var            myGeom ;                 /* Current GeomI object */
-    GEOMContext*                  myGeomGUI ;              /* Current GeomGUI object */
-    GEOMBase*                  myGeomBase ;              /* Current GeomGUI object */
-    SALOME_Selection*             mySelection ;            /* User shape selection */
-    TopoDS_Shape                  mySimulationTopoDs ;     /* Shape used for simulation display */
-
-    int                           myConstructorId ;        /* Current constructor id = radio button id */
-    QLineEdit*                    myEditCurrentArgument;   /* Current LineEdit */
-
-    QButtonGroup* GroupConstructors;
-    QRadioButton* Constructor1;
-    QGroupBox* GroupConstructor1;
-    QLineEdit* LineEditC1A1;
-    QPushButton* SelectButtonC1A1;
-    QLabel* TextLabelC1A1;
-
-    QLabel* TextLabel_Length;
-    QLabel* TextLabel_Surface;
-    QLabel* TextLabel_Volume;
-
-    QLineEdit* LineEdit_Length;
-    QLineEdit* LineEdit_Surface;
-    QLineEdit* LineEdit_Volume;
-   
-    QGroupBox* GroupButtons;
-    QPushButton* buttonApply;
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
+    MeasureGUI_1Sel3LineEdit_QTD* GroupC1;
 
 private slots:
+    void SetEditCurrentArgument();
+    void SelectionIntoArgument();
+    void LineEditReturnPressed();
+    void ActivateThisDialog();
 
-    void ConstructorsClicked(int constructorId);
-    void ClickOnCancel();
-    void SetEditCurrentArgument() ;
-    void LineEditReturnPressed() ;
-    void SelectionIntoArgument() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
-    
-protected:
-    QGridLayout* MeasureGUI_PropertiesDlgLayout;
-    QGridLayout* GroupConstructorsLayout;
-    QGridLayout* GroupConstructor1Layout;
-    QGridLayout* GroupButtonsLayout;
 };
 
 #endif // DIALOGBOX_PROPERTIES_H

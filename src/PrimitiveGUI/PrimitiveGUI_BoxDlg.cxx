@@ -159,6 +159,7 @@ void PrimitiveGUI_BoxDlg::ConstructorsClicked(int constructorId)
   myConstructorId = constructorId;
   mySelection->ClearFilters();
   myGeomBase->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
   disconnect(mySelection, 0, this, 0);
   myOkPoint1 = myOkPoint2 = false;
 
@@ -344,6 +345,8 @@ void PrimitiveGUI_BoxDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  if(myConstructorId == 0)
+    mySelection->AddFilter(myVertexFilter);
   if(!mySimulationTopoDs.IsNull())
     myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;

@@ -30,9 +30,7 @@
 #define GEOMBASE_H
 
 #include "GEOMContext.h"
-
 #include "SALOME_Selection.h"
-#include <V3d_View.hxx>
 
 //=================================================================================
 // class    : GEOMBase
@@ -46,56 +44,48 @@ public :
   GEOMBase();
   ~GEOMBase();
 
+  bool Display(GEOM::GEOM_Shape_ptr aShape, Standard_CString name = "");
   bool AddInStudy(bool selection = false, const Handle(SALOME_InteractiveObject)& anIO = 0);
 
+  /* Selection and objects management */
+  int GetIndex(const TopoDS_Shape& subshape, const TopoDS_Shape& shape, int ShapeType);
+  TopoDS_Shape GetShapeFromIOR(QString IOR);
+  bool GetTopoFromSelection(SALOME_Selection *Sel, TopoDS_Shape& tds);
+  int GetNameOfSelectedIObjects(SALOME_Selection* Sel, QString& aName); 
+  bool GetShapeTypeString(const TopoDS_Shape& aShape, Standard_CString& aTypeString);
+
+  /* Convertions */
+  GEOM::GEOM_Shape_ptr ConvertIOinGEOMShape(const Handle(SALOME_InteractiveObject)& IO, 
+					    Standard_Boolean& testResult);
+  Handle(GEOM_AISShape) ConvertIOinGEOMAISShape(const Handle(SALOME_InteractiveObject)& IO,
+						Standard_Boolean& testResult,
+						bool onlyInActiveView = false); 
+  void ConvertListOfIOInListOfIOR(const SALOME_ListIO& aList,
+				  GEOM::GEOM_Gen::ListOfIOR& listIOR); 
+
+  /* Geometry */
   bool VertexToPoint(const TopoDS_Shape& S, gp_Pnt& P);
+
+  /* Used just by Plane and Prism */
   bool LinearEdgeExtremities(const TopoDS_Shape& S, gp_Pnt& P1, gp_Pnt& P2);
-  gp_Pnt ConvertClickToPoint(Standard_Real x, Standard_Real y, Handle(V3d_View) aView);
   void GetBipointDxDyDz(gp_Pnt P1, gp_Pnt P2, double& dx, double& dy, double& dz);
+
   /* User dialog 1 parameter returned */
   double Parameter(Standard_Boolean& res,
 		   const char* aValue1 = 0, const char* aTitle1 = 0,
 		   const char* aTitle = 0, const double bottom = -1E6,
 		   const double top = +1E6, const int decimals = 6);
 
-  bool DefineDlgPosition(QWidget* aDlg, int& x, int& y);
-  bool SObjectExist(SALOMEDS::SObject_ptr theFatherObject, const char* IOR);
-
-  /* Selection and objects management */
-  TopoDS_Shape GetShapeFromIOR(QString IOR);
-  bool GetTopoFromSelection(SALOME_Selection *Sel, TopoDS_Shape& tds);
-  int GetNameOfSelectedIObjects(SALOME_Selection* Sel, QString& aName); 
-  bool GetShapeTypeString(const TopoDS_Shape& aShape, Standard_CString& aTypeString);
-
-  GEOM::GEOM_Shape_ptr ConvertIOinGEOMShape(const Handle(SALOME_InteractiveObject)& IO, 
-					    Standard_Boolean& testResult);
-  Handle(GEOM_AISShape) ConvertIOinGEOMAISShape(const Handle(SALOME_InteractiveObject)& IO,
-						Standard_Boolean& testResult,
-						bool onlyInActiveView = false); 
-  Handle(GEOM_AISShape) ConvertIORinGEOMAISShape(const char * IOR,
-						 Standard_Boolean& testResult,
-						 bool onlyInActiveView = false); 
-  GEOM_Actor* ConvertIORinGEOMActor(const char * IOR, Standard_Boolean& testResult,
-				    bool onlyInActiveView = false);
-  void ConvertListOfIOInListOfIOR(const SALOME_ListIO& aList,
-				  GEOM::GEOM_Gen::ListOfIOR& listIOR); 
-
-  /* Method used by dialog boxes called when used has entered a name of object in a LineEdit */
-  bool SelectionByNameInDialogs(QWidget* aWidget, const QString& userObjectName, SALOME_Selection *Sel);
-
-  int GetIndex(const TopoDS_Shape& subshape, const TopoDS_Shape& shape, int ShapeType);
-  /* Define a list of indices of sub shapes selected in a local context */
-  bool GetIndexSubShapeSelected(const TopoDS_Shape& ShapeTopo, const int SubShapeType,
-				GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID,
-				Standard_Integer& aLocalContextId, bool& myUseLocalContext);
-
   void SetDisplayedObjectList();
-  bool Display(GEOM::GEOM_Shape_ptr aShape, Standard_CString name = "");
 
   /* Simulation management */
   bool CreateArrowForLinearEdge(const TopoDS_Shape& tds, TopoDS_Shape& ArrowCone);
   void DisplaySimulationShape(const TopoDS_Shape& S); 
   void EraseSimulationShape();
+
+  /* Method used by dialog boxes called when used has entered a name of object in a LineEdit */
+  bool SelectionByNameInDialogs(QWidget* aWidget, const QString& userObjectName, SALOME_Selection *Sel);
+  bool DefineDlgPosition(QWidget* aDlg, int& x, int& y);
 
   GEOMContext* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */

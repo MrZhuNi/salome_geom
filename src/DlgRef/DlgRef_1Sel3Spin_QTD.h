@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'DlgRef_1Sel3Spin_QTD.ui'
 **
-** Created: mer oct 1 16:53:02 2003
+** Created: ven oct 24 15:55:10 2003
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -29,15 +29,15 @@ public:
     ~DlgRef_1Sel3Spin_QTD();
 
     QGroupBox* GroupBox1;
-    QPushButton* PushButton1;
     QLabel* TextLabel1;
+    QPushButton* PushButton1;
     QLineEdit* LineEdit1;
-    QLabel* TextLabel4;
-    QLabel* TextLabel2;
+    QSpinBox* SpinBox2;
     QLabel* TextLabel3;
     QSpinBox* SpinBox3;
     QSpinBox* SpinBox1;
-    QSpinBox* SpinBox2;
+    QLabel* TextLabel4;
+    QLabel* TextLabel2;
 
 
 protected:

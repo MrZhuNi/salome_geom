@@ -62,7 +62,6 @@ private :
 
     gp_Pnt myPoint1;   /* Points containing the vector */
     Standard_Real myRadius;
-    bool myOkRadius;   /* Are true when myPoint is defined */
     bool myOkPoint1;
 
     DlgRef_1Sel1Spin* GroupPoints;

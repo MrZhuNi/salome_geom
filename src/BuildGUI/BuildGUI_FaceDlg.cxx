@@ -201,6 +201,7 @@ void BuildGUI_FaceDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  mySelection->AddFilter(myWireFilter);
   return;
 }
 

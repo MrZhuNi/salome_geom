@@ -363,6 +363,8 @@ void BasicGUI_VectorDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  if(myConstructorId == 0)
+    mySelection->AddFilter(myVertexFilter);
   if(!mySimulationTopoDs.IsNull())
     myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
@@ -386,25 +388,18 @@ void BasicGUI_VectorDlg::enterEvent(QEvent* e)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BasicGUI_VectorDlg::ValueChangedInSpinBox( double newValue )
+void BasicGUI_VectorDlg::ValueChangedInSpinBox(double newValue)
 {
   myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   QObject* send = (QObject*)sender();
 
-  if(send == GroupDimensions->SpinBox_DX ) {
+  if(send == GroupDimensions->SpinBox_DX)
     myDx = newValue;
-    myDy = GroupDimensions->SpinBox_DY->GetValue();
-    myDz = GroupDimensions->SpinBox_DZ->GetValue();
-  } else if (send == GroupDimensions->SpinBox_DY) {
-    myDx = GroupDimensions->SpinBox_DX->GetValue();
+  else if (send == GroupDimensions->SpinBox_DY)
     myDy = newValue;
-    myDz = GroupDimensions->SpinBox_DZ->GetValue();
-  } else if (send == GroupDimensions->SpinBox_DZ) {
-    myDx = GroupDimensions->SpinBox_DX->GetValue();
-    myDy = GroupDimensions->SpinBox_DY->GetValue();
+  else if (send == GroupDimensions->SpinBox_DZ)
     myDz = newValue;
-  }
 
   myPoint1.SetCoord(0.0, 0.0, 0.0);
   myPoint2.SetCoord(myDx, myDy, myDz);
@@ -452,11 +447,10 @@ void BasicGUI_VectorDlg::ReverseVector(int state)
   mySimulationTopoDs.Nullify();
 
   myDx = -myDx;
-  myDy = -myDy;
-  myDz = -myDz;
-
   GroupDimensions->SpinBox_DX->SetValue(myDx);
+  myDy = -myDy;
   GroupDimensions->SpinBox_DY->SetValue(myDy);
+  myDz = -myDz;
   GroupDimensions->SpinBox_DZ->SetValue(myDz);
   
   myPoint1.SetCoord(0.0, 0.0, 0.0);

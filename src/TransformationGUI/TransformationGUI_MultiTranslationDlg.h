@@ -29,141 +29,67 @@
 #ifndef DIALOGBOX_MULTITRANSLATION_H
 #define DIALOGBOX_MULTITRANSLATION_H
 
+#include "GEOMBase_Skeleton.h"
+#include "DlgRef_2Sel2Spin1Check.h"
+#include "DlgRef_3Sel4Spin2Check.h"
+
 #include "TransformationGUI.h"
 
-#include "GEOM_EdgeFilter.hxx"
-#include "DlgRef_SpinBox.h"
-
+#include "GEOM_ShapeTypeFilter.hxx"
 #include <gp_Vec.hxx>
 #include <gp_Dir.hxx>
-
-#include <qvariant.h>
-#include <qdialog.h>
-
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
-class QCheckBox;
-class QGroupBox;
-class QLabel;
-class QSpinBox;
-class QLineEdit;
-class QPushButton;
-class QSpinBox;
-class QRadioButton;
 
 //=================================================================================
 // class    : TransformationGUI_MultiTranslationDlg
 // purpose  :
 //=================================================================================
-class TransformationGUI_MultiTranslationDlg : public QDialog
+class TransformationGUI_MultiTranslationDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
 public:
-    TransformationGUI_MultiTranslationDlg( QWidget* parent = 0, const char* name = 0, TransformationGUI* theTransformationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    TransformationGUI_MultiTranslationDlg(QWidget* parent = 0, const char* name = 0, TransformationGUI* theTransformationGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~TransformationGUI_MultiTranslationDlg();
 
 private :
+    void Init();
+    void enterEvent(QEvent* e);
+    void MakeMultiTranslationSimulationAndDisplay();
+
     TransformationGUI* myTransformationGUI;
-    GEOM::GEOM_Gen_var        myGeom ;                /* Current Geom object */   
-    GEOMBase*                 myGeomBase ;             /* Current GeomGUI object */ 
-    GEOMContext*                 myGeomGUI ;             /* Current GeomGUI object */ 
-    TopoDS_Shape                 mySimulationTopoDs ;    /* Shape used for simulation display */
-    SALOME_Selection*            mySelection ;           /* User shape selection */
-    TopoDS_Shape                 myBase ;
-    GEOM::GEOM_Shape_var               myGeomShape ;           /* is myBase */
 
-    gp_Vec                       myVec ;
-    int                          myNbTimes1 ;
-    int                          myNbTimes2 ;
-    Standard_Real                myStep1 ;
-    Standard_Real                myStep2 ;
-    gp_Dir                       myDir1 ;
-    gp_Dir                       myDir2 ;
-   
-    bool                         myOkBase ; 
-    bool                         myOkDir1 ;
-    bool                         myOkDir2 ;
+    double step;
+    int myConstructorId;   /* Current constructor id = radio button id */ 
+    Handle(GEOM_ShapeTypeFilter) myEdgeFilter;   /* Filters selection */
 
-    QLineEdit*                   myEditCurrentArgument;  /* Current LineEdit */   
-    int                          myConstructorId ;       /* Current constructor id = radio button id */ 
-    Handle(GEOM_EdgeFilter)      myEdgeFilter;           /* Filter selection */
+    TopoDS_Shape myBase;
+    GEOM::GEOM_Shape_var myGeomShape;   /* is myBase */
+    gp_Vec myVec;
+    int myNbTimes1;
+    int myNbTimes2;
+    Standard_Real myStep1;
+    Standard_Real myStep2;
+    gp_Dir myDir1;
+    gp_Dir myDir2;
+    bool myOkBase; 
+    bool myOkDir1;
+    bool myOkDir2;
 
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent( QEvent* e);
-    void Init( SALOME_Selection* Sel ) ;
-    void MakeMultiTranslationSimulationAndDisplay() ;
-
-    QButtonGroup* GroupConstructors;
-    QRadioButton* Constructor1;
-    QRadioButton* Constructor2;
-
-    QGroupBox* GroupButtons;
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
-    QPushButton* buttonApply;
-
-    QGroupBox* GroupC1;
-    QPushButton* SelectButtonC1A2;
-    QLineEdit* LineEditC1A1;
-    QLineEdit* LineEditC1A2;
-    QPushButton* SelectButtonC1A1;
-    QLabel* TextLabelC1A1;
-    QLabel* TextLabelC1A2;
-    
-    QLabel* TextLabelC1A3;
-    QLabel* TextLabelC1A4;
-    DlgRef_SpinBox* SpinBox_C1A3 ;
-    QSpinBox* SpinBox_C1A4 ;
-
-    QGroupBox* GroupC2;
-    QPushButton* SelectButtonC2A2;
-    QLineEdit* LineEditC2A1;
-    QLineEdit* LineEditC2A2;
-    QPushButton* SelectButtonC2A1;
-    QLineEdit* LineEditC2A3;
-    QPushButton* SelectButtonC2A3;
-    QLabel* TextLabelC2A1;
-    QLabel* TextLabelC2A2;
-    QLabel* TextLabelC2A3;
-    
-    QLabel* TextLabelC2A4;
-    QLabel* TextLabelC2A5;
-    QLabel* TextLabelC2A6;
-    QLabel* TextLabelC2A7;
-    DlgRef_SpinBox* SpinBox_C2A4 ;
-    QSpinBox* SpinBox_C2A5;
-    DlgRef_SpinBox* SpinBox_C2A6 ;
-    QSpinBox* SpinBox_C2A7 ;
-
-    QCheckBox* CheckBoxReverse0;
-    QCheckBox* CheckBoxReverse1;
-    QCheckBox* CheckBoxReverse2;
+    DlgRef_2Sel2Spin1Check* GroupPoints;
+    DlgRef_3Sel4Spin2Check* GroupDimensions;
 
 private slots:
-
-    void ConstructorsClicked(int constructorId);
     void ClickOnOk();
-    void ClickOnCancel();
     void ClickOnApply();
-    void SetEditCurrentArgument() ;
-    void SelectionIntoArgument() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
-    void LineEditReturnPressed() ;
-    void ReverseAngle1(int) ;
-    void ReverseAngle2(int) ;
-    void ValueChangedInSpinBox( double newValue ) ; /* for TransformationGUI_SpinBox       */
-    void ValueChangedInt( int newIntValue ) ;       /* for QT spin box ! not const ! */
+    void ActivateThisDialog();
+    void LineEditReturnPressed();
+    void SelectionIntoArgument();
+    void SetEditCurrentArgument();
+    void ReverseAngle1(int state);
+    void ReverseAngle2(int state);
+    void ValueChangedInSpinBox(double newValue);
+    void ConstructorsClicked(int constructorId);
 
-protected:
-    QGridLayout* TransformationGUI_MultiTranslationDlgLayout;
-    QGridLayout* GroupConstructorsLayout;
-    QGridLayout* GroupButtonsLayout;
-    QGridLayout* GroupC1Layout;
-    QGridLayout* GroupC2Layout;
 };
 
 #endif // DIALOGBOX_MULTITRANSLATION_H

@@ -54,6 +54,7 @@ public:
 private :
     void Init(const Handle(AIS_InteractiveContext)& ic);
     void enterEvent(QEvent* e);
+    void closeEvent(QCloseEvent* e);
 
     BasicGUI* myBasicGUI;
 
@@ -71,13 +72,15 @@ private :
     TopAbs_ShapeEnum myLocalContextMode;   /* identify a selection mode into local context */
     bool myUseLocalContext;                /* true when method as opened a local context  */
 
-    DlgRef_1Sel1Spin* GroupPoints;
-    DlgRef_3Spin* GroupDimensions;
+    DlgRef_1Sel1Spin* GroupDimensions;
+    DlgRef_3Spin* GroupPoints;
 
 private slots:
     void ClickOnOk();
+    void ClickOnCancel();
     void ClickOnApply();
     void ActivateThisDialog();
+    void DeactivateActiveDialog();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();

@@ -29,95 +29,36 @@
 #ifndef DIALOGBOX_INERTIA_H
 #define DIALOGBOX_INERTIA_H
 
+#include "MeasureGUI_Skeleton.h"
+#include "MeasureGUI_1Sel12LineEdit_QTD.h"
+
 #include "MeasureGUI.h"
-
-#include <BRepGProp.hxx>
-#include <GProp_GProps.hxx>
-#include <GProp_PrincipalProps.hxx>
-
-#include <qvariant.h>
-#include <qdialog.h>
-
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
-
 
 //=================================================================================
 // class    : MeasureGUI_InertiaDlg
 // purpose  :
 //=================================================================================
-class MeasureGUI_InertiaDlg : public QDialog
+class MeasureGUI_InertiaDlg : public MeasureGUI_Skeleton
 { 
     Q_OBJECT
 
 public:
-    MeasureGUI_InertiaDlg( QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    MeasureGUI_InertiaDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~MeasureGUI_InertiaDlg();
 
-    void Init( SALOME_Selection* Sel ) ;
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent ( QEvent * ) ;                /* mouse enter the QWidget */
-    void CalculateAndDisplayInertia(const TopoDS_Shape& S) ;
+private:
+    void Init();
+    void enterEvent(QEvent* e);
+    void CalculateAndDisplayInertia(const TopoDS_Shape& S);
 
-    GEOM::GEOM_Gen_var myGeom ;                /* Current GeomI object */
-    GEOMBase*          myGeomBase ;             /* Current GeomGUI object */
-    GEOMContext*          myGeomGUI ;             /* Current GeomGUI object */
-    SALOME_Selection*     mySelection ;
-
-    int                   myConstructorId ;       /* Current constructor id = radio button id */
-    QLineEdit*            myEditCurrentArgument;  /* Current LineEdit */
-
-
-    QButtonGroup* GroupConstructors;
-    QRadioButton* Constructor1;
-    QGroupBox* GroupC1;
-    QLabel* TextLabelC1A1;
-    QPushButton* SelectButtonC1A1;
-    QLineEdit* LineEditC1A1;
-    QLabel* TextLabel_Matrix;
-    QLabel* TextLabelMatrix_11;
-    QLabel* TextLabelMatrix_21;
-    QLabel* TextLabelMatrix_31;
-    QLineEdit* LineEdit_L1C1;
-    QLineEdit* LineEdit_L1C2;
-    QLineEdit* LineEdit_L1C3;
-    QLineEdit* LineEdit_L2C1;
-    QLineEdit* LineEdit_L2C2;
-    QLineEdit* LineEdit_L2C3;
-    QLineEdit* LineEdit_L3C1;
-    QLineEdit* LineEdit_L3C2;
-    QLineEdit* LineEdit_L3C3;
-    QLineEdit* LineEdit_IX;
-    QLineEdit* LineEdit_IY;
-    QLineEdit* LineEdit_IZ;
-    QLabel* TextLabel_IXIYIZ;
-    QGroupBox* GroupButtons;
-    QPushButton* buttonApply;
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
+    MeasureGUI_1Sel12LineEdit_QTD* GroupC1;
 
 private slots:
+    void SetEditCurrentArgument();
+    void SelectionIntoArgument();
+    void LineEditReturnPressed();
+    void ActivateThisDialog();
 
-    void ConstructorsClicked(int constructorId);
-    void ClickOnCancel();
-    void SetEditCurrentArgument() ;
-    void LineEditReturnPressed() ;
-    void SelectionIntoArgument() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
-
-protected:
-    QGridLayout* MeasureGUI_InertiaDlgLayout;
-    QGridLayout* GroupConstructorsLayout;
-    QGridLayout* GroupC1Layout;
-    QGridLayout* GroupButtonsLayout;
 };
 
 #endif // DIALOGBOX_INERTIA_H

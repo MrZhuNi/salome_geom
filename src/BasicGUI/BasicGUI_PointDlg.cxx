@@ -29,6 +29,9 @@
 using namespace std;
 #include "BasicGUI_PointDlg.h"
 
+#include "QAD_RightFrame.h"
+#include "OCCViewer_Viewer3d.h"
+
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAlgoAPI.hxx>
@@ -46,8 +49,8 @@ using namespace std;
 BasicGUI_PointDlg::BasicGUI_PointDlg(QWidget* parent, const char* name, BasicGUI* theBasicGUI, SALOME_Selection* Sel, const Handle (AIS_InteractiveContext)& ic, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
 {
-  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_POINT_EDGE")));
-  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_POINT")));
+  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_POINT")));
+  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_POINT_EDGE")));
   QPixmap image2(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
 
   setCaption(tr("GEOM_POINT_TITLE"));
@@ -58,17 +61,17 @@ BasicGUI_PointDlg::BasicGUI_PointDlg(QWidget* parent, const char* name, BasicGUI
   RadioButton2->setPixmap(image1);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_1Sel1Spin(this, "GroupPoints");
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_PARAM_POINT"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_EDGE"));
-  GroupPoints->TextLabel2->setText(tr("GEOM_PARAMETER"));
-  GroupPoints->PushButton1->setPixmap(image2);
+  GroupPoints = new DlgRef_3Spin(this, "GroupPoints");
+  GroupPoints->GroupBox1->setTitle(tr("GEOM_COORDINATES"));
+  GroupPoints->TextLabel1->setText(tr("GEOM_X"));
+  GroupPoints->TextLabel2->setText(tr("GEOM_Y"));
+  GroupPoints->TextLabel3->setText(tr("GEOM_Z"));
 
-  GroupDimensions = new DlgRef_3Spin(this, "GroupDimensions");
-  GroupDimensions->GroupBox1->setTitle(tr("GEOM_COORDINATES"));
-  GroupDimensions->TextLabel1->setText(tr("GEOM_X"));
-  GroupDimensions->TextLabel2->setText(tr("GEOM_Y"));
-  GroupDimensions->TextLabel3->setText(tr("GEOM_Z"));
+  GroupDimensions = new DlgRef_1Sel1Spin(this, "GroupDimensions");
+  GroupDimensions->GroupBox1->setTitle(tr("GEOM_PARAM_POINT"));
+  GroupDimensions->TextLabel1->setText(tr("GEOM_EDGE"));
+  GroupDimensions->TextLabel2->setText(tr("GEOM_PARAMETER"));
+  GroupDimensions->PushButton1->setPixmap(image2);
 
   Layout1->addWidget(GroupPoints, 1, 0);
   Layout1->addWidget(GroupDimensions, 1, 0);
@@ -98,7 +101,7 @@ void BasicGUI_PointDlg::Init(const Handle(AIS_InteractiveContext)& ic)
 {
   /* init variables */
   myConstructorId = 0;
-  myEditCurrentArgument = GroupPoints->LineEdit1;
+  myEditCurrentArgument = GroupDimensions->LineEdit1;
 
   myIC = ic;
   myParameter = 0.50;
@@ -109,7 +112,6 @@ void BasicGUI_PointDlg::Init(const Handle(AIS_InteractiveContext)& ic)
 
   /*  Vertices Filter for all arguments */
   myEdgeFilter = new GEOM_ShapeTypeFilter(TopAbs_EDGE, myGeom);
-  mySelection->AddFilter(myEdgeFilter);
 
   /* Get setting of step value from file configuration */
   QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
@@ -117,25 +119,25 @@ void BasicGUI_PointDlg::Init(const Handle(AIS_InteractiveContext)& ic)
 
   /* min, max, step and decimals for spin boxes */
   double specificStep = 0.1;
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999999.99999, 999999.99999, specificStep, 5);
-  GroupDimensions->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupDimensions->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupDimensions->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupPoints->SpinBox_DX->SetValue(myParameter);
-  GroupDimensions->SpinBox_DX->SetValue(0.0);
-  GroupDimensions->SpinBox_DY->SetValue(0.0);
-  GroupDimensions->SpinBox_DZ->SetValue(0.0);
+  GroupDimensions->SpinBox_DX->RangeStepAndValidator(-999999.99999, 999999.99999, specificStep, 5);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupPoints->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupPoints->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupDimensions->SpinBox_DX->SetValue(myParameter);
+  GroupPoints->SpinBox_DX->SetValue(0.0);
+  GroupPoints->SpinBox_DY->SetValue(0.0);
+  GroupPoints->SpinBox_DZ->SetValue(0.0);
 
-  if (myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     myLocalContextId = myIC->OpenLocalContext();
     myGeomBase->SetDisplayedObjectList();
     /* sub shapes selection */
     myLocalContextMode = TopAbs_VERTEX;
     myIC->ActivateStandardMode(myLocalContextMode);
     myUseLocalContext = true;
-  } else {
+  } 
+  else
     myUseLocalContext = false;
-  }
 
   TopoDS_Shape S;
   bool displayPoint = true;
@@ -144,24 +146,29 @@ void BasicGUI_PointDlg::Init(const Handle(AIS_InteractiveContext)& ic)
     if(myGeomBase->VertexToPoint(S, myPoint))
       displayPoint = false;
   }
+  this->PointIntoCoordinates(myPoint, displayPoint);
     
   /* signals and slots connections */
+  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
   connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
 
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupDimensions->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupDimensions->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupDimensions->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupDimensions->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupDimensions->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DZ, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DZ, SLOT(SetStep(double)));
 
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
@@ -190,26 +197,6 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     {
     case 0:
       {
-	if (myUseLocalContext == true && myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  myIC->CloseLocalContext(myLocalContextId);
-	  myUseLocalContext = false;
-	}
-
-	GroupDimensions->hide();
-	resize(0, 0);
-	GroupPoints->show();
-
-	myEditCurrentArgument = GroupPoints->LineEdit1;
-	GroupPoints->LineEdit1->setText("");
-	myOkEdge = false;
-
-	/* filter for next selections */
-	mySelection->AddFilter(myEdgeFilter);
-	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-	break;
-      }
-    case 1:
-      {
 	if(myUseLocalContext == false && myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
 	  myLocalContextId = myIC->OpenLocalContext();
 	  myGeomBase->SetDisplayedObjectList();
@@ -219,12 +206,32 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
 	  myUseLocalContext = true;
 	}
 
+	GroupDimensions->hide();
+	resize(0, 0);
+	GroupPoints->show();
+
+	/* Display point simulation */
+	PointIntoCoordinates(myPoint, true);
+	break;
+      }
+    case 1:
+      {
+	if(myUseLocalContext == true && myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  myIC->CloseLocalContext(myLocalContextId);
+	  myUseLocalContext = false;
+	}
+
 	GroupPoints->hide();
 	resize(0, 0);
 	GroupDimensions->show();
 
-	/* Display point simulation */
-	PointIntoCoordinates(myPoint, true);
+	myEditCurrentArgument = GroupDimensions->LineEdit1;
+	GroupDimensions->LineEdit1->setText("");
+	myOkEdge = false;
+
+	/* filter for next selections */
+	mySelection->AddFilter(myEdgeFilter);
+	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
     }
@@ -239,7 +246,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
 void BasicGUI_PointDlg::ClickOnOk()
 {
   this->ClickOnApply();
-  ClickOnCancel();
+  this->ClickOnCancel();
   return;
 }
 
@@ -257,7 +264,7 @@ void BasicGUI_PointDlg::ClickOnApply()
   mySimulationTopoDs.Nullify();
 
   /* Close local context */
-  if (myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     myIC->CloseLocalContext(myLocalContextId);
     myUseLocalContext = false;
   }
@@ -266,18 +273,10 @@ void BasicGUI_PointDlg::ClickOnApply()
     {
     case 0 :
       {
-	if(myOkEdge == true) {
-	  /* this constructor method has no idl interface : we use same than constructor 0 */
-	  myBasicGUI->MakePointAndDisplay(myPoint.X(), myPoint.Y(), myPoint.Z());
-	}
-	break;
-      }
-    case 1 :
-      {
 	/* Recup args and call method */
-	double x = GroupDimensions->SpinBox_DX->GetValue();
-	double y = GroupDimensions->SpinBox_DY->GetValue();
-	double z = GroupDimensions->SpinBox_DZ->GetValue();
+	double x = GroupPoints->SpinBox_DX->GetValue();
+	double y = GroupPoints->SpinBox_DY->GetValue();
+	double z = GroupPoints->SpinBox_DZ->GetValue();
       
 	myBasicGUI->MakePointAndDisplay(x,y,z);  /* WARNING : no display if a local context is opened */
 	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
@@ -291,7 +290,35 @@ void BasicGUI_PointDlg::ClickOnApply()
 	}
 	break;
       }
+    case 1 :
+      {
+	if(myOkEdge == true) {
+	  /* this constructor method has no idl interface : we use same than constructor 0 */
+	  myBasicGUI->MakePointAndDisplay(myPoint.X(), myPoint.Y(), myPoint.Z());
+	}
+	break;
+      }
     }
+  return;
+}
+
+
+//=======================================================================
+// function : ClickOnCancel()
+// purpose  :
+//=======================================================================
+void BasicGUI_PointDlg::ClickOnCancel()
+{
+  if(myConstructorId == 0 && myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+    myIC = v3d->getAISContext();
+    if(myIC->HasOpenedContext()) {
+      myIC->CloseLocalContext(myLocalContextId);
+      myUseLocalContext = false;
+    }
+  }
+
+  GEOMBase_Skeleton::ClickOnCancel();
   return;
 }
 
@@ -321,7 +348,7 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
   if(S.ShapeType() == TopAbs_EDGE) {
     if(CalculateVertexOnCurve(TopoDS::Edge(S), myParameter, mySimulationTopoDs)) {
       if(myGeomBase->VertexToPoint(mySimulationTopoDs, myPoint)) {
-	GroupPoints->LineEdit1->setText(aString);
+	GroupDimensions->LineEdit1->setText(aString);
 	myOkEdge = true;
 	myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
       }
@@ -338,8 +365,8 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
 void BasicGUI_PointDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
-    myEditCurrentArgument = GroupPoints->LineEdit1;
+  if(send == GroupDimensions->LineEdit1)
+    myEditCurrentArgument = GroupDimensions->LineEdit1;
   else
     return;
 
@@ -356,9 +383,9 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
 
-  if(send == GroupPoints->PushButton1) {
-    GroupPoints->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit1;
+  if(send == GroupDimensions->PushButton1) {
+    GroupDimensions->LineEdit1->setFocus();
+    myEditCurrentArgument = GroupDimensions->LineEdit1;
     mySelection->AddFilter(myEdgeFilter);
     this->SelectionIntoArgument();
   }
@@ -379,6 +406,17 @@ void BasicGUI_PointDlg::enterEvent(QEvent* e)
 }
 
 
+//=======================================================================
+// function : closeEvent()
+// purpose  :
+//=======================================================================
+void BasicGUI_PointDlg::closeEvent(QCloseEvent* e)
+{
+  /* same than click on cancel button */
+  this->ClickOnCancel();
+}
+
+
 //=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
@@ -388,20 +426,38 @@ void BasicGUI_PointDlg::ActivateThisDialog( )
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-//   myGeomGUI->SetState(POINT_METHOD);
-//   if( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-//     OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-//     myIC = v3d->getAISContext();
-//     myLocalContextId = myIC->OpenLocalContext();
-//     myGeomBase->SetDisplayedObjectList();
-//     /* sub shapes selection */
-//     myLocalContextMode = TopAbs_VERTEX ;
-//     myIC->ActivateStandardMode(myLocalContextMode);
-//     myUseLocalContext = true ;
-//   }
+  myGeomGUI->SetState(POINT_METHOD);
+  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+    myIC = v3d->getAISContext();
+    myLocalContextId = myIC->OpenLocalContext();
+    myGeomBase->SetDisplayedObjectList();
+    /* sub shapes selection */
+    myLocalContextMode = TopAbs_VERTEX;
+    myIC->ActivateStandardMode(myLocalContextMode);
+    myUseLocalContext = true;
+  }
+
+  if(myConstructorId == 1)
+    mySelection->AddFilter(myEdgeFilter);
 
   if(!mySimulationTopoDs.IsNull())
     myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
+  return;
+}
+
+
+//=================================================================================
+// function : DeactivateActiveDialog()
+// purpose  : public slot to deactivate if active
+//=================================================================================
+void BasicGUI_PointDlg::DeactivateActiveDialog()
+{
+  if(myConstructorId == 0 && myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    myIC->CloseLocalContext(myLocalContextId);
+    myUseLocalContext = false;
+  }
+  GEOMBase_Skeleton::DeactivateActiveDialog();
   return;
 }
 
@@ -415,19 +471,19 @@ void BasicGUI_PointDlg::ValueChangedInSpinBox(double newValue)
   DlgRef_SpinBox* send = (DlgRef_SpinBox*)sender();
   double vx, vy, vz;
 
-  if(send == GroupDimensions->SpinBox_DX) {
+  if(send == GroupPoints->SpinBox_DX) {
     vx = newValue;
-    vy = GroupDimensions->SpinBox_DY->GetValue();
-    vz = GroupDimensions->SpinBox_DZ->GetValue();
-  } else if(send == GroupDimensions->SpinBox_DY) {
-    vx = GroupDimensions->SpinBox_DX->GetValue();
+    vy = GroupPoints->SpinBox_DY->GetValue();
+    vz = GroupPoints->SpinBox_DZ->GetValue();
+  } else if(send == GroupPoints->SpinBox_DY) {
+    vx = GroupPoints->SpinBox_DX->GetValue();
     vy = newValue;
-    vz = GroupDimensions->SpinBox_DZ->GetValue();
-  } else if(send == GroupDimensions->SpinBox_DZ) {
-    vx = GroupDimensions->SpinBox_DX->GetValue();
-    vy = GroupDimensions->SpinBox_DY->GetValue();
+    vz = GroupPoints->SpinBox_DZ->GetValue();
+  } else if(send == GroupPoints->SpinBox_DZ) {
+    vx = GroupPoints->SpinBox_DX->GetValue();
+    vy = GroupPoints->SpinBox_DY->GetValue();
     vz = newValue;
-  }  else if(send == GroupPoints->SpinBox_DX) {
+  }  else if(send == GroupDimensions->SpinBox_DX) {
     myParameter = newValue;
   } else
     return;
@@ -436,14 +492,14 @@ void BasicGUI_PointDlg::ValueChangedInSpinBox(double newValue)
     {
     case 0: // default constructor 
       {
-	this->SelectionIntoArgument();	
+	myPoint.SetCoord(vx, vy, vz);
+	mySimulationTopoDs = BRepBuilderAPI_MakeVertex (myPoint).Shape();
+	myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
 	break;
       }
     case 1: 
       {
-	myPoint.SetCoord(vx, vy, vz);
-	mySimulationTopoDs = BRepBuilderAPI_MakeVertex (myPoint).Shape();
-	myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
+	this->SelectionIntoArgument();	
 	break;
       }
     }
@@ -490,10 +546,10 @@ bool BasicGUI_PointDlg::CalculateVertexOnCurve(const TopoDS_Edge& anEdge, const 
 //=======================================================================
 void BasicGUI_PointDlg::PointIntoCoordinates(gp_Pnt P, bool displayPoint)
 {
-  GroupDimensions->SpinBox_DX->SetValue(P.X());
-  GroupDimensions->SpinBox_DY->SetValue(P.Y());
-  GroupDimensions->SpinBox_DZ->SetValue(P.Z());
-  this->myPoint.SetCoord(P.X(), P.Y(), P.Z());
+  GroupPoints->SpinBox_DX->SetValue(P.X());
+  GroupPoints->SpinBox_DY->SetValue(P.Y());
+  GroupPoints->SpinBox_DZ->SetValue(P.Z());
+  myPoint.SetCoord(P.X(), P.Y(), P.Z());
   if(displayPoint) {
     mySimulationTopoDs = BRepBuilderAPI_MakeVertex(P).Shape();
     myGeomBase->DisplaySimulationShape(mySimulationTopoDs);

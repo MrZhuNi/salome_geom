@@ -360,6 +360,11 @@ void PrimitiveGUI_ConeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  if(myConstructorId == 0) {
+    GroupPoints->LineEdit1->setFocus();
+    myEditCurrentArgument = GroupPoints->LineEdit1;
+    mySelection->AddFilter(myVertexFilter);
+  }
   if(!mySimulationTopoDs.IsNull())
     myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;

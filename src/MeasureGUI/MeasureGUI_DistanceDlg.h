@@ -29,96 +29,46 @@
 #ifndef DIALOGBOX_DISTANCE_H
 #define DIALOGBOX_DISTANCE_H
 
+#include "MeasureGUI_Skeleton.h"
+#include "MeasureGUI_2Sel1LineEdit_QTD.h"
+
 #include "MeasureGUI.h"
-
-#include <BRepExtrema_DistShapeShape.hxx>
-#include <AIS_LengthDimension.hxx>
-
-#include <qvariant.h>
-#include <qdialog.h>
-
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
-class QFrame;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
-
 
 //=================================================================================
 // class    : MeasureGUI_DistanceDlg
 // purpose  :
 //=================================================================================
-class MeasureGUI_DistanceDlg : public QDialog
+class MeasureGUI_DistanceDlg : public MeasureGUI_Skeleton
 { 
     Q_OBJECT
 
 public:
-    MeasureGUI_DistanceDlg( QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    MeasureGUI_DistanceDlg(QWidget* parent = 0, const char* name = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~MeasureGUI_DistanceDlg();
 
 private:
+    void Init();
+    void enterEvent(QEvent* e);
+    void closeEvent(QCloseEvent* e);
+    void MakeDistanceSimulationAndDisplay(const TopoDS_Shape& S1, const TopoDS_Shape& S2);
+    void EraseDistance();
 
-    void Init( SALOME_Selection* Sel ) ;
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent ( QEvent * ) ;                /* mouse enter the QWidget */
-    void MakeDistanceSimulationAndDisplay( const TopoDS_Shape& S1, const TopoDS_Shape& S2 ) ;
-    void EraseDistance() ;
+    TopoDS_Shape myShape1;              
+    TopoDS_Shape myShape2;              
+    GEOM::GEOM_Shape_var myGeomShape1;          
+    GEOM::GEOM_Shape_var myGeomShape2;          
+    bool myOkShape1;
+    bool myOkShape2;   /* to check when arguments are defined */
 
-    GEOM::GEOM_Gen_var myGeom ;                /* Current GeomI object */
-    GEOMContext*          myGeomGUI ;             /* Current GeomGUI object */
-    GEOMBase*          myGeomBase ;             /* Current GeomGUI object */
-    SALOME_Selection*     mySelection ;           /* User shape selection */
-    TopoDS_Shape          myShape1 ;              
-    TopoDS_Shape          myShape2 ;              
-    GEOM::GEOM_Shape_var        myGeomShape1 ;          
-    GEOM::GEOM_Shape_var        myGeomShape2 ;          
-    bool                  myOkShape1 ;
-    bool                  myOkShape2 ;            /* to check when arguments are defined */
-    int                   myConstructorId ;       /* Current constructor id = radio button id */
-    QLineEdit*            myEditCurrentArgument;  /* Current LineEdit */    
-    TopoDS_Shape          mySimulationTopoDs;     /* Shape used for simulation display */
-
-    QButtonGroup* GroupConstructors;
-    QRadioButton* Constructor1;
-
-    QGroupBox* GroupConstructor1;
-    QLineEdit* LineEditC1A1Shape;
-    QLineEdit* LineEditC1A2Shape;
-    QPushButton* SelectButtonC1A1Shape;
-    QPushButton* SelectButtonC1A2Shape;
-    QLabel* TextLabelC1A2Shape;
-    QLabel* TextLabelC1A1Shape;
-
-    QLabel* TextLabel_Length;
-    QLineEdit* LineEdit_Length;
-
-    QGroupBox* GroupButtons;
-    QPushButton* buttonApply;
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
+    MeasureGUI_2Sel1LineEdit_QTD* GroupC1;
 
 private slots:
-
-    void ConstructorsClicked(int constructorId);
-    void ClickOnOk();
     void ClickOnCancel();
-    void ClickOnApply();
-    void SetEditCurrentArgument() ;
-    void SelectionIntoArgument() ;
-    void LineEditReturnPressed() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
+    void SetEditCurrentArgument();
+    void SelectionIntoArgument();
+    void LineEditReturnPressed();
+    void ActivateThisDialog();
 
-protected:
-    QGridLayout* MeasureGUI_DistanceDlgLayout;
-    QGridLayout* GroupConstructorsLayout;
-    QGridLayout* GroupButtonsLayout;
-    QGridLayout* GroupConstructor1Layout;
 };
 
 #endif // DIALOGBOX_DISTANCE_H

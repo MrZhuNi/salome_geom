@@ -502,6 +502,101 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 }
 
 
+//=======================================================================
+// function : ConvertIORinGEOMAISShape()
+// purpose  :
+//=======================================================================
+Handle(GEOM_AISShape) GEOMToolsGUI::ConvertIORinGEOMAISShape(const char * IOR, Standard_Boolean& testResult, bool onlyInActiveView)
+{
+  Handle(GEOM_AISShape) resultShape;
+  testResult = false;
+  int nbSf = myGeomGUI->GetActiveStudy()->getStudyFramesCount();
+  for(int i = 0; i < nbSf; i++) {
+    QAD_StudyFrame* sf = myGeomGUI->GetActiveStudy()->getStudyFrame(i);
+    if(sf->getTypeView() == VIEW_OCC) {
+      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getViewer();
+      Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+
+      AIS_ListOfInteractive List;
+      ic->DisplayedObjects(List);
+      AIS_ListOfInteractive List1;
+      ic->ObjectsInCollector(List1);
+      List.Append(List1);
+
+      AIS_ListIteratorOfListOfInteractive ite(List);
+      while(ite.More()) {
+	if(ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
+	  Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
+	  if(aSh->hasIO()) {
+	    Handle(GEOM_InteractiveObject) GIO = Handle(GEOM_InteractiveObject)::DownCast(aSh->getIO());
+	    Standard_CString theIOR = GIO->getIOR();
+	    if(strcmp(IOR, theIOR) == 0) {
+	      if(onlyInActiveView) {
+		if(sf == myGeomGUI->GetActiveStudy()->getActiveStudyFrame()) {
+		  testResult = true;
+		  resultShape = aSh;
+		  return resultShape; 
+		}
+	      } 
+	      else {
+		testResult = true;
+		resultShape = aSh;
+		return resultShape; 
+	      }
+	    }
+	  }
+	}
+	ite.Next();
+      }  
+    }
+  }
+  return  resultShape;
+}
+
+
+//=======================================================================
+// function : ConvertIORinGEOMActor()
+// purpose  :
+//=======================================================================
+GEOM_Actor* GEOMToolsGUI::ConvertIORinGEOMActor(const char* IOR, Standard_Boolean& testResult, bool onlyInActiveView)
+{
+  int nbSf = myGeomGUI->GetActiveStudy()->getStudyFramesCount();
+  for(int i = 0; i < nbSf; i++) {
+    QAD_StudyFrame* sf = myGeomGUI->GetActiveStudy()->getStudyFrame(i);
+    if(sf->getTypeView() == VIEW_VTK) {
+      vtkRenderer* Renderer = ((VTKViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getRenderer();
+      vtkActorCollection* theActors = Renderer->GetActors();
+      theActors->InitTraversal();
+      vtkActor *ac = theActors->GetNextActor();
+      while(!(ac==NULL)) {
+	if( ac->IsA("GEOM_Actor")) {
+	  GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(ac);
+	  if(anActor->hasIO()) {
+	    Handle(GEOM_InteractiveObject) GIO = Handle(GEOM_InteractiveObject)::DownCast(anActor->getIO());
+	    Standard_CString theIOR = GIO->getIOR();
+	    if(strcmp(IOR, theIOR) == 0) {
+	      if(onlyInActiveView) {
+		if(sf == myGeomGUI->GetActiveStudy()->getActiveStudyFrame()) {
+		  testResult = true;
+		  return anActor;
+		}
+	      } 
+	      else {
+		testResult = true;
+		return anActor;
+	      }
+	    }
+	  }
+	}
+	ac = theActors->GetNextActor();
+      }
+    }
+  }
+  testResult = false;
+  return GEOM_Actor::New();
+}
+
+
 //===============================================================================
 // function : OnEditDelete()
 // purpose  :
@@ -546,13 +641,13 @@ void GEOMToolsGUI::OnEditDelete()
 	    if ( sf->getTypeView() == VIEW_OCC ) {
 	      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getViewer();
 	      Handle (AIS_InteractiveContext) myContext = v3d->getAISContext();
-	      Handle(GEOM_AISShape) Result = myGeomBase->ConvertIORinGEOMAISShape( anIOR->Value(), found );
+	      Handle(GEOM_AISShape) Result = this->ConvertIORinGEOMAISShape( anIOR->Value(), found );
 	      if ( found )
 		myContext->Erase( Result, true, false );
 	    } else if ( sf->getTypeView() == VIEW_VTK ) {
 	      //vtkRenderer* Renderer = ((VTKViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getRenderer();
 	      VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getRWInteractor();
-	      GEOM_Actor* ac = myGeomBase->ConvertIORinGEOMActor( anIOR->Value(), found );
+	      GEOM_Actor* ac = this->ConvertIORinGEOMActor( anIOR->Value(), found );
 	      if ( found ) {
 		//Renderer->RemoveActor(ac);
 		if ( ac->hasIO() ) 

@@ -30,6 +30,7 @@
 #define BASICGUI_H
 
 #include "GEOMBase.h"
+#include <V3d_View.hxx>
 
 //=================================================================================
 // class    : BasicGUI
@@ -45,6 +46,8 @@ public :
 
   static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
   static bool OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame* studyFrame);
+
+  gp_Pnt ConvertClickToPoint(Standard_Real x, Standard_Real y, Handle(V3d_View) aView);
 
   void MakePointAndDisplay(const double x, const double y, const double z);
   void MakeLineAndDisplay(const gp_Pnt InitPoint, const gp_Pnt LastPoint);

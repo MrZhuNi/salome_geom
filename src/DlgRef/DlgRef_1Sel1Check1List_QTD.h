@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'DlgRef_1Sel1Check1List_QTD.ui'
 **
-** Created: jeu oct 16 10:43:10 2003
+** Created: lun oct 27 16:18:55 2003
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -31,10 +31,11 @@ public:
 
     QGroupBox* GroupBox1;
     QRadioButton* CheckButton1;
+    QLabel* TextLabel2;
+    QComboBox* ComboBox1;
     QLineEdit* LineEdit1;
     QLabel* TextLabel1;
     QPushButton* PushButton1;
-    QComboBox* ComboBox1;
 
 
 protected:

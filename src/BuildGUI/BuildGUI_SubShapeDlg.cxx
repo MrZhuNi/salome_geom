@@ -61,7 +61,7 @@ BuildGUI_SubShapeDlg::BuildGUI_SubShapeDlg(QWidget* parent, const char* name, Bu
   GroupPoints = new DlgRef_1Sel1Check1List_QTD(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
-  //GroupPoints->ComboBox1->setText(tr("GEOM_SUBSHAPE_TYPE"));
+  GroupPoints->TextLabel2->setText(tr("GEOM_SUBSHAPE_TYPE"));
   GroupPoints->CheckButton1->setText(tr("GEOM_SUBSHAPE_SELECT"));
   GroupPoints->PushButton1->setPixmap(image1);
 
@@ -112,7 +112,14 @@ void BuildGUI_SubShapeDlg::Init(Handle(AIS_InteractiveContext) ic)
   myShapeType = GroupPoints->ComboBox1->currentItem();
   myOkSelectSubMode = GroupPoints->CheckButton1->isChecked();
 
+  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC)
+    GroupPoints->CheckButton1->setEnabled(false);
+
   /* signals and slots connections */
+  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
@@ -204,13 +211,12 @@ void BuildGUI_SubShapeDlg::ClickOnCancel()
   if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     myIC = v3d->getAISContext();
-
     if(myUseLocalContext) {
       myIC->CloseLocalContext(myLocalContextId);
       myUseLocalContext = false;
-      DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->OnDisplayAll(true);
     }
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->OnDisplayAll(true);
   }
   GEOMBase_Skeleton::ClickOnCancel();
   return;
@@ -361,10 +367,8 @@ void BuildGUI_SubShapeDlg::LineEditReturnPressed()
 void BuildGUI_SubShapeDlg::DeactivateActiveDialog()
 {
   if(GroupConstructors->isEnabled()) {
-    GEOMBase_Skeleton::DeactivateActiveDialog();
     this->ResetStateOfDialog();
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true);
+    GEOMBase_Skeleton::DeactivateActiveDialog();
   }
   return;
 }
@@ -378,6 +382,10 @@ void BuildGUI_SubShapeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
+    GroupPoints->CheckButton1->setEnabled(true);
+  else
+    GroupPoints->CheckButton1->setEnabled(false);
   return;
 }
 
@@ -447,13 +455,12 @@ void BuildGUI_SubShapeDlg::ResetStateOfDialog()
   if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     myIC = v3d->getAISContext();
-
     if(myUseLocalContext) {
       myIC->CloseLocalContext(myLocalContextId);
       myUseLocalContext = false;
-      DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->OnDisplayAll(true);
     }
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->OnDisplayAll(true);
   }
   return;
 }
@@ -492,9 +499,9 @@ void BuildGUI_SubShapeDlg::AllOrNotAll()
     if(myUseLocalContext) {
       myIC->CloseLocalContext(myLocalContextId);
       myUseLocalContext = false;
-      DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->OnDisplayAll(true);
     }
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->OnDisplayAll(true);
   }
   else {
     myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER"));
@@ -534,9 +541,9 @@ void BuildGUI_SubShapeDlg::ComboTextChanged()
     if(myUseLocalContext) {
       myIC->CloseLocalContext(myLocalContextId);
       myUseLocalContext = false;
-      DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->OnDisplayAll(true);
     }
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->OnDisplayAll(true);
   }
   return;
 }

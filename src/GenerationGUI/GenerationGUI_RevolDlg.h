@@ -56,7 +56,6 @@ private :
 
     GenerationGUI* myGenerationGUI;
 
-    double step;
     Handle(GEOM_ShapeTypeFilter) myEdgeFilter;   /* Filters selection */
 
     TopoDS_Shape myBase;

@@ -56,7 +56,6 @@ private :
 
     TransformationGUI* myTransformationGUI;
 
-    double step;
     Handle(GEOM_ShapeTypeFilter) myEdgeFilter;   /* Filters selection */
 
     TopoDS_Shape myBase;

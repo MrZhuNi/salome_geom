@@ -55,7 +55,6 @@ private :
 
     TransformationGUI* myTransformationGUI;
 
-    double step;
     Handle(GEOM_ShapeTypeFilter) myVertexFilter;
 
     gp_Pnt myPoint1;   /* Points containing the vector */

@@ -251,6 +251,9 @@ void BasicGUI_CircleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  GroupPoints->LineEdit1->setFocus();
+  myEditCurrentArgument = GroupPoints->LineEdit1;
+  mySelection->AddFilter(myVertexFilter);
   if(!mySimulationTopoDs.IsNull())
     myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;

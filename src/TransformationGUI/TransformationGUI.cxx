@@ -31,12 +31,12 @@ using namespace std;
 
 #include "SALOMEGUI_QtCatchCorbaException.hxx"
 
+#include "TransformationGUI_MultiTranslationDlg.h"   // Method MULTI TRANSLATION
+#include "TransformationGUI_MultiRotationDlg.h"      // Method MULTI ROTATION
 #include "TransformationGUI_TranslationDlg.h"        // Method TRANSLATION
 #include "TransformationGUI_RotationDlg.h"           // Method ROTATION
 #include "TransformationGUI_MirrorDlg.h"             // Method MIRROR
 #include "TransformationGUI_ScaleDlg.h"              // Method SCALE
-#include "TransformationGUI_MultiTranslationDlg.h"   // Method MULTI TRANSLATION
-#include "TransformationGUI_MultiRotationDlg.h"      // Method MULTI ROTATION
 
 //=======================================================================
 // function : TransformationGUI()
@@ -47,8 +47,6 @@ TransformationGUI::TransformationGUI() :
 {
   myGeomBase = new GEOMBase();
   myGeomGUI = GEOMContext::GetGeomGUI();
-//   Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-//   myGeom = GEOM::GEOM_Gen::_narrow(comp);
   myGeom = myGeomGUI->myComponentGeom;
 }
 
@@ -142,7 +140,7 @@ void TransformationGUI::MakeTranslationAndDisplay(GEOM::GEOM_Shape_ptr Shape, gp
 // purpose  :
 //=======================================================================================
 void TransformationGUI::MakeRotationAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Pnt loc,
-					 const gp_Dir dir, const Standard_Real angle)
+					       const gp_Dir dir, const Standard_Real angle)
 {
   try {
     const GEOM::AxisStruct axis = myGeom->MakeAxisStruct(loc.X(), loc.Y(), loc.Z(),
@@ -191,7 +189,7 @@ void TransformationGUI::MakeMirrorAndDisplay(GEOM::GEOM_Shape_ptr Shape1, GEOM::
 // purpose  :
 //=====================================================================================
 void TransformationGUI::MakeScaleAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Pnt centralPoint,
-				      const Standard_Real factor)
+					    const Standard_Real factor)
 {
   try {
     GEOM::PointStruct P = myGeom->MakePointStruct(centralPoint.X(), centralPoint.Y(), centralPoint.Z());
@@ -214,7 +212,7 @@ void TransformationGUI::MakeScaleAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp
 // purpose  : Multi-Translate a shape
 //=================================================================================
 void TransformationGUI::MakeMultiTranslation1DAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Dir Dir,
-						   const double Step, const short NbTimes) 
+							 const double Step, const short NbTimes) 
 {
   try {
     GEOM::PointStruct d = myGeom->MakePointStruct(Dir.X(), Dir.Y(), Dir.Z());
@@ -241,8 +239,8 @@ void TransformationGUI::MakeMultiTranslation1DAndDisplay(GEOM::GEOM_Shape_ptr Sh
 // purpose  : Multi-Translate a shape
 //=================================================================================
 void TransformationGUI::MakeMultiTranslation2DAndDisplay(GEOM::GEOM_Shape_ptr Shape,
-						   const gp_Dir Dir1,const double Step1, const short NbTimes1,
-						   const gp_Dir Dir2, const double Step2, const short NbTimes2) 
+							 const gp_Dir Dir1,const double Step1, const short NbTimes1,
+							 const gp_Dir Dir2, const double Step2, const short NbTimes2) 
 {
   try {
     GEOM::PointStruct d1 = myGeom->MakePointStruct(Dir1.X(), Dir1.Y(), Dir1.Z());
@@ -272,7 +270,7 @@ void TransformationGUI::MakeMultiTranslation2DAndDisplay(GEOM::GEOM_Shape_ptr Sh
 // purpose  : Multi-Rotate a shape
 //=================================================================================
 void TransformationGUI::MakeMultiRotation1DAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Dir Dir, 
-						const gp_Pnt Loc, const short NbTimes) 
+						      const gp_Pnt Loc, const short NbTimes) 
 {
   try {
     GEOM::PointStruct d = myGeom->MakePointStruct(Dir.X(), Dir.Y(), Dir.Z());
@@ -300,7 +298,7 @@ void TransformationGUI::MakeMultiRotation1DAndDisplay(GEOM::GEOM_Shape_ptr Shape
 // purpose  : Multi-Rotate a shape
 //=================================================================================
 void TransformationGUI::MakeMultiRotation2DAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Dir Dir,
-						const gp_Pnt Loc, const double Ang, const short NbTimes1,
+						      const gp_Pnt Loc, const double Ang, const short NbTimes1,
 						const double Step, const short NbTimes2) 
 {
   try {

@@ -45,6 +45,12 @@ public :
 
   static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
 
+  Handle(GEOM_AISShape) ConvertIORinGEOMAISShape(const char * IOR,
+						 Standard_Boolean& testResult,
+						 bool onlyInActiveView = false);
+  GEOM_Actor* ConvertIORinGEOMActor(const char * IOR, Standard_Boolean& testResult,
+				    bool onlyInActiveView = false);
+
   /* Import and export topology methods */
   bool Import();
   bool Export(); 

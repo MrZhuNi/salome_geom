@@ -277,6 +277,38 @@ void BuildGUI::MakeCompoundAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR)
 }
 
 
+
+
+//=====================================================================================
+// function : SObjectExist()
+// purpose  :
+//=====================================================================================
+bool BuildGUI::SObjectExist(SALOMEDS::SObject_ptr theFatherObject, const char* IOR)
+{
+  SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+  SALOMEDS::ChildIterator_var it = aStudy->NewChildIterator(theFatherObject);
+  SALOMEDS::SObject_var RefSO;
+  SALOMEDS::GenericAttribute_var anAttr;
+  SALOMEDS::AttributeIOR_var anIOR;
+  for(; it->More();it->Next()) {
+    SALOMEDS::SObject_var SO= it->Value();
+    if(SO->FindAttribute(anAttr, "AttributeIOR")) {
+      anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+      if(strcmp( anIOR->Value(), IOR ) == 0)
+	return true;
+    }
+    if(SO->ReferencedObject(RefSO)) {
+      if(RefSO->FindAttribute(anAttr, "AttributeIOR")) {
+        anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+	if(strcmp(anIOR->Value(), IOR) == 0)
+	  return true;
+      }
+    }
+  }
+  return false;
+}
+
+
 //=====================================================================================
 // function : OnSubShapeGetAll()
 // purpose  : Explode a shape in all sub shapes with a SubShapeType
@@ -405,7 +437,7 @@ bool BuildGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* Shape
       }
       else {
 	allreadyexist = true;
- 	if(!myGeomBase->SObjectExist(theObj, aResult->Name())) {
+ 	if(!this->SObjectExist(theObj, aResult->Name())) {
 	  SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(theObj);
 	  aStudyBuilder->Addreference(newObj1, SO);
 	  IO->setEntry(SO->GetID());
@@ -462,7 +494,7 @@ bool BuildGUI::OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* Shape
       }
       else {
 	allreadyexist = true;
-	if(!myGeomBase->SObjectExist(theObj, aResult->Name())) {
+	if(!this->SObjectExist(theObj, aResult->Name())) {
 	  SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(theObj);
 	  aStudyBuilder->Addreference(newObj1, SO);
 	  IO->setEntry(SO->GetID());
@@ -655,7 +687,7 @@ bool BuildGUI::OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* 
   } 
   else {
     allreadyexist = true;
-    if(!myGeomBase->SObjectExist(theObj, aResult->Name())) {
+    if(!this->SObjectExist(theObj, aResult->Name())) {
       SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(theObj);
       aStudyBuilder->Addreference(newObj1, SO);
     

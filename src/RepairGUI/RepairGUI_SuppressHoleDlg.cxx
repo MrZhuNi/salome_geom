@@ -418,7 +418,7 @@ void RepairGUI_SuppressHoleDlg::ClickOnApply()
 	  if( !CheckBox3->isChecked() ) {
 	    
 	    /* Call method to get sub shape selection of GEOM::WIRE */
-	    bool aTest = myGeomBase->GetIndexSubShapeSelected(myFace, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
+	    bool aTest = this->GetIndexSubShapeSelected(myFace, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
 	    
 	    DisplayGUI* myDisplayGUI = new DisplayGUI();
 	    myDisplayGUI->OnDisplayAll(true) ;/* Display all objects so that next method using ic can memorize them */
@@ -436,7 +436,7 @@ void RepairGUI_SuppressHoleDlg::ClickOnApply()
 	  else { /* CheckBox3->isChecked() */
 	    
 	    /* Call method to get sub shape selection of END GEOM::FACE */
-	    bool aTest = myGeomBase->GetIndexSubShapeSelected(myShape, int(TopAbs_FACE), myListOfIdEndFace, myLocalContextId, myUseLocalContext) ;
+	    bool aTest = this->GetIndexSubShapeSelected(myShape, int(TopAbs_FACE), myListOfIdEndFace, myLocalContextId, myUseLocalContext) ;
 	    
 	    DisplayGUI* myDisplayGUI = new DisplayGUI();
 	    myDisplayGUI->OnDisplayAll(true) ; /* Display all objects so that next method using ic can memorize them */
@@ -459,7 +459,7 @@ void RepairGUI_SuppressHoleDlg::ClickOnApply()
 	if( CheckBoxC2_1->isChecked() ) {
 	  
 	  /* Call method to get sub shape selection of one or more GEOM::WIRE(s) on a face or a shell */
-	  bool aTest = myGeomBase->GetIndexSubShapeSelected(myShape, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
+	  bool aTest = this->GetIndexSubShapeSelected(myShape, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
 	  
 	  DisplayGUI* myDisplayGUI = new DisplayGUI();
 	  myDisplayGUI->OnDisplayAll(true) ; /* Display all objects so that next method using ic can memorize them */
@@ -770,7 +770,7 @@ void RepairGUI_SuppressHoleDlg::ActivateUserWireSelection()
   if( CheckBox1->isChecked() ) {
     
     /* Get sub shape selection GEOM::FACE : local context is closed */    
-    bool aTest = myGeomBase->GetIndexSubShapeSelected(myShape, int(TopAbs_FACE), myListOfIdFace, myLocalContextId, myUseLocalContext) ;
+    bool aTest = this->GetIndexSubShapeSelected(myShape, int(TopAbs_FACE), myListOfIdFace, myLocalContextId, myUseLocalContext) ;
     
     DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->OnDisplayAll(true) ; /* Display all objects so that next method using ic can memorize them */
@@ -832,7 +832,7 @@ void RepairGUI_SuppressHoleDlg::ActivateUserEndFaceSelection()
    
   if( CheckBox2->isChecked() ) {
     /* Call method to get sub shape selection for the GEOM::WIRE into myFace : local context is closed */
-    bool aTest = myGeomBase->GetIndexSubShapeSelected(this->myFace, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
+    bool aTest = this->GetIndexSubShapeSelected(this->myFace, int(TopAbs_WIRE), myListOfIdWire, myLocalContextId, myUseLocalContext) ;
     
     DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->OnDisplayAll(true) ; /* Display all objects so that next method using ic can memorize them */
@@ -978,4 +978,58 @@ void RepairGUI_SuppressHoleDlg::ResetPartial()
   }
 
   return ;
+}
+
+
+//=====================================================================================
+// function : GetIndexSubShapeSelected()
+// purpose  : Define a ListOfID of sub shapes selected in ShapeTopo with SubShapeType
+//          : Method used by Dialogs
+//=====================================================================================
+bool RepairGUI_SuppressHoleDlg::GetIndexSubShapeSelected(const TopoDS_Shape& ShapeTopo, const int SubShapeType, GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID, Standard_Integer& aLocalContextId, bool& myUseLocalContext)
+{
+  //* Test the type of viewer */
+  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+    return false;
+  
+  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
+
+  ic->InitSelected();
+  int nbSelected = ic->NbSelected();
+  ListOfID.length(nbSelected);
+  
+  //***************** DEFINE INDEX OF EACH SELECTION *********************//
+  int i = 0;
+  ic->InitSelected(); /* to restart */
+  while(ic->MoreSelected()) {
+    /* Find index of sub shape into main shape */
+    TopExp_Explorer Exp (ShapeTopo, TopAbs_ShapeEnum(SubShapeType));
+    int index = 1;
+    bool found = false;
+    while( Exp.More()) {
+      if((Exp.Current()).IsSame(ic->SelectedShape())) {
+	found = true;
+	break;
+      }
+      index++;
+      Exp.Next();
+    }
+    if(!found) {
+      /* Manage local context from DialogBox */
+      ic->CloseLocalContext(aLocalContextId);
+      myUseLocalContext = false;
+      return false;
+    }
+    ListOfID[i] = index;
+    i++;
+    ic->NextSelected();
+  }
+    //***************** END  *********************//
+
+  /* Manage local context from DialogBox */
+  ic->CloseLocalContext(aLocalContextId);
+  myUseLocalContext = false;
+  
+  return true;
 }

@@ -41,6 +41,13 @@ EXPORT_HEADERS=
 LIB = libMeasureGUI.la 
 
 LIB_SRC = 	MeasureGUI.cxx \
+		MeasureGUI_Skeleton_QTD.cxx \
+		MeasureGUI_1Sel3LineEdit_QTD.cxx \
+		MeasureGUI_1Sel6LineEdit_QTD.cxx \
+		MeasureGUI_1Sel12LineEdit_QTD.cxx \
+		MeasureGUI_1Sel1TextView_QTD.cxx \
+		MeasureGUI_2Sel1LineEdit_QTD.cxx \
+		MeasureGUI_Skeleton.cxx \
 		MeasureGUI_PropertiesDlg.cxx \
 		MeasureGUI_CenterMassDlg.cxx \
 		MeasureGUI_InertiaDlg.cxx \
@@ -48,10 +55,17 @@ LIB_SRC = 	MeasureGUI.cxx \
 		MeasureGUI_DistanceDlg.cxx \
 		MeasureGUI_MaxToleranceDlg.cxx \
 		MeasureGUI_WhatisDlg.cxx \
-		MeasureGUI_CheckShape.cxx
+		MeasureGUI_CheckShapeDlg.cxx
 
 LIB_MOC = \
 		MeasureGUI.h \
+		MeasureGUI_Skeleton_QTD.h \
+		MeasureGUI_1Sel3LineEdit_QTD.h \
+		MeasureGUI_1Sel6LineEdit_QTD.h \
+		MeasureGUI_1Sel12LineEdit_QTD.h \
+		MeasureGUI_1Sel1TextView_QTD.h \
+		MeasureGUI_2Sel1LineEdit_QTD.h \
+		MeasureGUI_Skeleton.h \
 		MeasureGUI_PropertiesDlg.h \
 		MeasureGUI_CenterMassDlg.h \
 		MeasureGUI_InertiaDlg.h \
@@ -59,7 +73,7 @@ LIB_MOC = \
 		MeasureGUI_DistanceDlg.h \
 		MeasureGUI_MaxToleranceDlg.h \
 		MeasureGUI_WhatisDlg.h \
-		MeasureGUI_CheckShape.h
+		MeasureGUI_CheckShapeDlg.h
 
 LIB_CLIENT_IDL = SALOME_Exception.idl \
 		 GEOM_Gen.idl \
@@ -76,6 +90,6 @@ LIB_SERVER_IDL =
 CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMFiltersSelection -lDlgRef -lGEOMContext -lGEOMBase -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMBase -L${KERNEL_ROOT_DIR}/lib/salome
 
 @CONCLUDE@

@@ -75,6 +75,11 @@ private :
 
     void ResetStateOfDialog() ;
     void ResetPartial() ;
+    
+    /* Define a list of indices of sub shapes selected in a local context */
+    bool GetIndexSubShapeSelected(const TopoDS_Shape& ShapeTopo, const int SubShapeType,
+				  GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID,
+				  Standard_Integer& aLocalContextId, bool& myUseLocalContext);
 
     /* Return the face selected by user from the main shape and index in a ListOfSub */
     TopoDS_Shape FaceFromList( const TopoDS_Shape& aShape,

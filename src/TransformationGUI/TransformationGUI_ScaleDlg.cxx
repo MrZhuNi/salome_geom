@@ -29,7 +29,6 @@
 using namespace std;
 #include "TransformationGUI_ScaleDlg.h"
 
-#include "QAD_Config.h"
 #include <BRepBuilderAPI_Transform.hxx>
 
 //=================================================================================
@@ -95,12 +94,9 @@ void TransformationGUI_ScaleDlg::Init()
 
   myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
 
-  /* Get setting of step value from file configuration */
-  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
-
+  double SpecificStep = 0.5;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
   GroupPoints->SpinBox_DX->SetValue(myFactor);
 
   /* signals and slots connections */
@@ -254,6 +250,8 @@ void TransformationGUI_ScaleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  GroupPoints->LineEdit1->setFocus();
+  myEditCurrentArgument = GroupPoints->LineEdit1;
   if(!mySimulationTopoDs.IsNull())
     myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;

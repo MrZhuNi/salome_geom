@@ -53,8 +53,6 @@ OperationGUI::OperationGUI() :
 {
   myGeomBase = new GEOMBase();
   myGeomGUI = GEOMContext::GetGeomGUI();
-//   Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-//   myGeom = GEOM::GEOM_Gen::_narrow(comp);
   myGeom = myGeomGUI->myComponentGeom;
 }
 

@@ -100,7 +100,7 @@ void GenerationGUI_PipeDlg::Init()
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   /* displays Dialog */
   GroupPoints->show();
@@ -168,21 +168,27 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
   if(!myGeomBase->GetTopoFromSelection(mySelection, S))
     return;
   
-  if(myEditCurrentArgument == GroupPoints->LineEdit1 && S.ShapeType() != TopAbs_COMPSOLID && S.ShapeType() != TopAbs_COMPOUND && S.ShapeType() != TopAbs_SOLID && S.ShapeType() != TopAbs_SHAPE) {
-    myGeomShape1 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
-    if(!testResult)
-      return;
-    myEditCurrentArgument->setText(aString);
-    myOkShape1 = true;
-    myShape1 = S;
+  if(myEditCurrentArgument == GroupPoints->LineEdit1) {
+    myOkShape1 = false;
+    if(S.ShapeType() != TopAbs_COMPSOLID && S.ShapeType() != TopAbs_COMPOUND && S.ShapeType() != TopAbs_SOLID && S.ShapeType() != TopAbs_SHAPE) {
+      myGeomShape1 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
+      if(!testResult)
+	return;
+      myEditCurrentArgument->setText(aString);
+      myOkShape1 = true;
+      myShape1 = S;
+    }
   }
-  else if(myEditCurrentArgument == GroupPoints->LineEdit2 && S.ShapeType() != TopAbs_COMPSOLID && S.ShapeType() != TopAbs_COMPOUND && S.ShapeType() != TopAbs_SOLID && S.ShapeType() != TopAbs_SHAPE) {
-    myGeomShape2 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
-    if(!testResult)
-      return;
-    myEditCurrentArgument->setText(aString);
-    myOkShape2 = true;
-    myShape2 = S;
+  else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
+    myOkShape2 = false;
+    if(S.ShapeType() != TopAbs_COMPSOLID && S.ShapeType() != TopAbs_COMPOUND && S.ShapeType() != TopAbs_SOLID && S.ShapeType() != TopAbs_SHAPE && S.ShapeType() != TopAbs_VERTEX) {
+      myGeomShape2 = myGeomBase->ConvertIOinGEOMShape(IO, testResult);
+      if(!testResult)
+	return;
+      myEditCurrentArgument->setText(aString);
+      myOkShape2 = true;
+      myShape2 = S;
+    }
   }
 
   if(myOkShape1 && myOkShape2)

@@ -96,7 +96,7 @@ void PrimitiveGUI_SphereDlg::Init()
 
   myPoint1.SetCoord(0.0, 0.0, 0.0);
   myRadius = 100.0;
-  myOkPoint1 = myOkRadius = false;
+  myOkPoint1 = false;
 
   /*  Vertices Filter for all arguments */
   myVertexFilter = new GEOM_ShapeTypeFilter(TopAbs_VERTEX, myGeom);
@@ -148,7 +148,6 @@ void PrimitiveGUI_SphereDlg::ConstructorsClicked(int constructorId)
   myGeomBase->EraseSimulationShape();
   disconnect(mySelection, 0, this, 0);
   myRadius = 100.0;
-  myOkRadius = true;
 
   switch (constructorId)
     {
@@ -212,7 +211,7 @@ void PrimitiveGUI_SphereDlg::ClickOnApply()
   myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
-  if(myOkPoint1 && myOkRadius)
+  if(myOkPoint1)
     myPrimitiveGUI->MakeSphereAndDisplay(myPoint1, myRadius);
   return;
 }
@@ -248,7 +247,7 @@ void PrimitiveGUI_SphereDlg::SelectionIntoArgument()
     myOkPoint1 = true;
   }
   
-  if(myOkPoint1 && myOkRadius) {
+  if(myOkPoint1) {
     mySimulationTopoDs = BRepPrimAPI_MakeSphere(myPoint1, myRadius).Shape();
     myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
   }
@@ -302,6 +301,8 @@ void PrimitiveGUI_SphereDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  if(myConstructorId == 0)
+    mySelection->AddFilter(myVertexFilter);
   if(!mySimulationTopoDs.IsNull())
     myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;
@@ -330,9 +331,8 @@ void PrimitiveGUI_SphereDlg::ValueChangedInSpinBox(double newValue)
   myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
   myRadius = newValue;
-  myOkRadius = true;
   
-  if(myOkPoint1 && myOkRadius) {
+  if(myOkPoint1) {
     mySimulationTopoDs = BRepPrimAPI_MakeSphere(myPoint1, myRadius).Shape();
     myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
   }

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DlgRef_1Sel1Check1List_QTD.ui'
 **
-** Created: jeu oct 16 10:43:10 2003
+** Created: lun oct 27 16:18:55 2003
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -41,11 +41,24 @@ DlgRef_1Sel1Check1List_QTD::DlgRef_1Sel1Check1List_QTD( QWidget* parent,  const 
     GroupBox1Layout->setAlignment( Qt::AlignTop );
 
     Layout1 = new QGridLayout( 0, 1, 1, 0, 6, "Layout1"); 
+    QSpacerItem* spacer = new QSpacerItem( 0, 166, QSizePolicy::Minimum, QSizePolicy::Expanding );
+    Layout1->addItem( spacer, 3, 2 );
 
     CheckButton1 = new QRadioButton( GroupBox1, "CheckButton1" );
     CheckButton1->setText( trUtf8( "" ) );
 
     Layout1->addMultiCellWidget( CheckButton1, 2, 2, 0, 2 );
+
+    TextLabel2 = new QLabel( GroupBox1, "TextLabel2" );
+    TextLabel2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel2->sizePolicy().hasHeightForWidth() ) );
+    TextLabel2->setText( trUtf8( "TL2" ) );
+
+    Layout1->addMultiCellWidget( TextLabel2, 1, 1, 0, 1 );
+
+    ComboBox1 = new QComboBox( FALSE, GroupBox1, "ComboBox1" );
+    ComboBox1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, ComboBox1->sizePolicy().hasHeightForWidth() ) );
+
+    Layout1->addWidget( ComboBox1, 1, 2 );
 
     LineEdit1 = new QLineEdit( GroupBox1, "LineEdit1" );
 
@@ -62,13 +75,6 @@ DlgRef_1Sel1Check1List_QTD::DlgRef_1Sel1Check1List_QTD( QWidget* parent,  const 
     PushButton1->setText( trUtf8( "" ) );
 
     Layout1->addWidget( PushButton1, 0, 1 );
-
-    ComboBox1 = new QComboBox( FALSE, GroupBox1, "ComboBox1" );
-    ComboBox1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, ComboBox1->sizePolicy().hasHeightForWidth() ) );
-
-    Layout1->addWidget( ComboBox1, 1, 2 );
-    QSpacerItem* spacer = new QSpacerItem( 0, 60, QSizePolicy::Minimum, QSizePolicy::Expanding );
-    Layout1->addItem( spacer, 3, 2 );
 
     GroupBox1Layout->addLayout( Layout1, 0, 0 );
 

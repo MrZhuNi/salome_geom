@@ -81,8 +81,8 @@ private slots:
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-    void AllOrNotAll() ;
-    void ComboTextChanged() ;
+    void AllOrNotAll();
+    void ComboTextChanged();
 
 };
 

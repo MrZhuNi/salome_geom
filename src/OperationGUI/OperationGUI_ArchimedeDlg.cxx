@@ -97,10 +97,13 @@ void OperationGUI_ArchimedeDlg::Init()
   QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
   step = St.toDouble();
 
+
+  double SpecificStep1 = 0.1;
+  double SpecificStep2 = 0.01;
   /* min, max, step and decimals for spin boxes & initial values */
   GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupPoints->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
-  GroupPoints->SpinBox_DZ->RangeStepAndValidator(0.001, 999.999, step, 3);
+  GroupPoints->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, SpecificStep1, 3);
+  GroupPoints->SpinBox_DZ->RangeStepAndValidator(0.001, 999.999, SpecificStep2, 3);
 
   GroupPoints->SpinBox_DX->SetValue(myWeight);
   GroupPoints->SpinBox_DY->SetValue(myWaterDensity);

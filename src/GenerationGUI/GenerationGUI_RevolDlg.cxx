@@ -96,12 +96,9 @@ void GenerationGUI_RevolDlg::Init()
 
   myEdgeFilter = new GEOM_ShapeTypeFilter(TopAbs_EDGE, myGeom);
 
-  /* Get setting of step value from file configuration */
-  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
-
+  double SpecificStep = 5;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
   GroupPoints->SpinBox_DX->SetValue(myAngle);
 
   /* signals and slots connections */
@@ -115,7 +112,9 @@ void GenerationGUI_RevolDlg::Init()
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupPoints->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ReverseVector(int)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+
+  connect(GroupPoints->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ReverseAngle(int)));
   
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
@@ -260,6 +259,8 @@ void GenerationGUI_RevolDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  GroupPoints->LineEdit1->setFocus();
+  myEditCurrentArgument = GroupPoints->LineEdit1;
   if(!mySimulationTopoDs.IsNull())
     myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;

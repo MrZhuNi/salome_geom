@@ -38,7 +38,7 @@ using namespace std;
 #include "MeasureGUI_DistanceDlg.h"      // Method DISTANCE
 #include "MeasureGUI_MaxToleranceDlg.h"  // Method MAXTOLERANCE
 #include "MeasureGUI_WhatisDlg.h"        // Method WHATIS
-#include "MeasureGUI_CheckShape.h"       // Method CHECKSHAPE
+#include "MeasureGUI_CheckShapeDlg.h"    // Method CHECKSHAPE
 
 //=======================================================================
 // function : MeasureGUI()
@@ -111,7 +111,7 @@ bool MeasureGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       }
     case 707: // CHECKSHAPE
      {
-       MeasureGUI_CheckShape *aDlg = new MeasureGUI_CheckShape(parent, "", Sel);
+       MeasureGUI_CheckShapeDlg *aDlg = new MeasureGUI_CheckShapeDlg(parent, "", Sel);
        break;
      }
     default:

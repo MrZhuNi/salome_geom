@@ -131,19 +131,20 @@ void BasicGUI_PlaneDlg::Init()
   this->myTrimSize = 2000.0;
   
   /* min, max, step and decimals for spin boxes */
-  GroupPointDirection->SpinBox_DX->RangeStepAndValidator(+0.001, 10000000.0, step, 5);
+  GroupPointDirection->SpinBox_DX->RangeStepAndValidator(0.001, 10000000.0, step, 3);
   GroupPointDirection->SpinBox_DX->SetValue(myTrimSize);
 
-  GroupPointPlusCoordinates->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupPointPlusCoordinates->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupPointPlusCoordinates->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, step, 3);
-  GroupPointPlusCoordinates->SpinBox_DX->SetValue(1.0);
-  GroupPointPlusCoordinates->SpinBox_DY->SetValue(1.0);
+  double SpecificStep = 1;
+  GroupPointPlusCoordinates->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
+  GroupPointPlusCoordinates->SpinBox_DY->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
+  GroupPointPlusCoordinates->SpinBox_DZ->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
+  GroupPointPlusCoordinates->SpinBox_DX->SetValue(0.0);
+  GroupPointPlusCoordinates->SpinBox_DY->SetValue(0.0);
   GroupPointPlusCoordinates->SpinBox_DZ->SetValue(1.0); 
-  GroupPointPlusCoordinates->SpinBox_S->RangeStepAndValidator(+0.001, 10000000.0, step, 5);
+  GroupPointPlusCoordinates->SpinBox_S->RangeStepAndValidator(0.001, 10000000.0, step, 3);
   GroupPointPlusCoordinates->SpinBox_S->SetValue(myTrimSize) ;
 
-  GroupFace->SpinBox_DX->RangeStepAndValidator(+0.001, 10000000.0, step, 5);
+  GroupFace->SpinBox_DX->RangeStepAndValidator(0.001, 10000000.0, step, 3);
   GroupFace->SpinBox_DX->SetValue(myTrimSize);
 
   /* signals and slots connections */
@@ -226,8 +227,8 @@ void BasicGUI_PlaneDlg::ConstructorsClicked(int constructorId)
 
 	myEditCurrentArgument = GroupPointPlusCoordinates->LineEdit1;
 	GroupPointPlusCoordinates->LineEdit1->setText(tr(""));
-	GroupPointPlusCoordinates->SpinBox_DX->SetValue(1.0);
-	GroupPointPlusCoordinates->SpinBox_DY->SetValue(1.0);
+	GroupPointPlusCoordinates->SpinBox_DX->SetValue(0.0);
+	GroupPointPlusCoordinates->SpinBox_DY->SetValue(0.0);
 	GroupPointPlusCoordinates->SpinBox_DZ->SetValue(1.0);
 	myOkCoordinates = true;
 
@@ -419,7 +420,7 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
   QPushButton* send = (QPushButton*)sender();  
   mySelection->ClearFilters();
 
-  switch (myConstructorId)
+  switch(myConstructorId)
     {
     case 0:
       {	
@@ -493,6 +494,30 @@ void BasicGUI_PlaneDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  switch(myConstructorId)
+    {
+    case 0:
+      {	
+	GroupPointDirection->LineEdit1->setFocus();
+	myEditCurrentArgument = GroupPointDirection->LineEdit1;
+	mySelection->AddFilter(myVertexFilter);
+	break;
+      }
+    case 1:
+      {	
+	GroupPointPlusCoordinates->LineEdit1->setFocus();
+	myEditCurrentArgument = GroupPointPlusCoordinates->LineEdit1;
+	mySelection->AddFilter(myVertexFilter);
+	break;
+      }
+    case 2:
+      {
+	GroupFace->LineEdit1->setFocus();
+	myEditCurrentArgument = GroupFace->LineEdit1;
+	mySelection->AddFilter(myFaceFilter);
+	break;
+      }
+    }
   if(!mySimulationTopoDs.IsNull())
     myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;

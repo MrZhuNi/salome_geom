@@ -29,7 +29,6 @@
 using namespace std;
 #include "TransformationGUI_RotationDlg.h"
 
-#include "QAD_Config.h"
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepAdaptor_Curve.hxx>
 
@@ -91,17 +90,14 @@ void TransformationGUI_RotationDlg::Init()
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
-  myAngle = 45.0;
+  myAngle = 0.0;
   myOkBase = myOkAxis = false;
 
   myEdgeFilter = new GEOM_ShapeTypeFilter(TopAbs_EDGE, myGeom);
 
-  /* Get setting of step value from file configuration */
-  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
-
+  double SpecificStep = 5;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, step, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
   GroupPoints->SpinBox_DX->SetValue(myAngle);
 
   /* signals and slots connections */
@@ -257,6 +253,8 @@ void TransformationGUI_RotationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  GroupPoints->LineEdit1->setFocus();
+  myEditCurrentArgument = GroupPoints->LineEdit1;
   if(!mySimulationTopoDs.IsNull())
     myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   return;

@@ -143,6 +143,10 @@ void OperationGUI_ChamferDlg::Init(Handle (AIS_InteractiveContext) ic)
   Group3->SpinBox_DY->SetValue(myD2);
 
   /* signals and slots connections */
+  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
   connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
@@ -283,8 +287,6 @@ void OperationGUI_ChamferDlg::ClickOnOk()
 void OperationGUI_ChamferDlg::ClickOnApply()
 {
   myGeomGUI->GetDesktop()->putInfo(tr(""));
-  if (mySimulationTopoDs.IsNull())
-    return;
   myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
@@ -459,12 +461,10 @@ void OperationGUI_ChamferDlg::SetEditCurrentArgument()
 //=================================================================================
 void OperationGUI_ChamferDlg::DeactivateActiveDialog()
 {
-  if(GroupConstructors->isEnabled()) {
-    GEOMBase_Skeleton::DeactivateActiveDialog();
-    this->ResetStateOfDialog();
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true);
-  }
+  this->ResetStateOfDialog();
+  DisplayGUI* myDisplayGUI = new DisplayGUI();
+  myDisplayGUI->OnDisplayAll(true);
+  GEOMBase_Skeleton::DeactivateActiveDialog();
   return;
 }
 

@@ -451,8 +451,6 @@ bool GeometryGUI::SetSettings(QAD_Desktop* parent)
   return true;
 }
 
-  SALOME_Selection* Sel = SALOME_Selection::Selection(GeomGUI->GetActiveStudy()->getSelection());
-  theObject = "";
 
 //=================================================================================
 // function : DefinePopup()
@@ -495,18 +493,6 @@ void GeometryGUI::DefinePopup(QString & theContext, QString & theParent, QString
   return;
 }
 
-  if((theParent.compare("Viewer")==0)) {
-    if(GeomGUI->GetState() == CURRENT_SKETCH) 
-      theContext = "Sketch";
-    else {
-      if(Sel->IObjectCount() > 0)
-	theContext = "";
-      else
-	theContext = "NothingSelected";
-    }
-  } 
-  else 
-    theContext = "";
 
 //=================================================================================
 // function : CustomPopup()

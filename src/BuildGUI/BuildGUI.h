@@ -53,6 +53,7 @@ public :
   void MakeCompoundAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR);
 
     /* Methods for sub shapes explode */
+  bool SObjectExist(SALOMEDS::SObject_ptr theFatherObject, const char* IOR);
   bool OnSubShapeGetAll(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType);  
   bool OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char* ShapeTopoIOR, const int SubShapeType,
 			     Standard_Integer& aLocalContextId, bool& myUseLocalContext);
