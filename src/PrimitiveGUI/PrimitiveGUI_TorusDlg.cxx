@@ -102,7 +102,6 @@ void PrimitiveGUI_TorusDlg::Init()
 
   myRadius1 = 300.0;
   myRadius2 = 100.0;
-  myOkRadius1 = myOkRadius2 = true;
   myOkPoint1 = myOkDir = false;
 
   myEdgeFilter = new GEOM_EdgeFilter(StdSelect_Line, myGeom);
@@ -167,7 +166,6 @@ void PrimitiveGUI_TorusDlg::ConstructorsClicked(int constructorId)
   mySelection->ClearFilters();
   myGeomBase->EraseSimulationShape();
   disconnect(mySelection, 0, this, 0);
-  myOkRadius1 = myOkRadius2 = true;
   myRadius1 = 300.0;
   myRadius2 = 100.0;
 
@@ -230,13 +228,14 @@ void PrimitiveGUI_TorusDlg::ClickOnOk()
 //=================================================================================
 void PrimitiveGUI_TorusDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
-  if(myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2 )	  
+  if(myOkPoint1 && myOkDir)	  
     myPrimitiveGUI->MakeTorusAndDisplay(myPoint1, myDir, myRadius1, myRadius2); 
   return ;
 }
@@ -278,7 +277,7 @@ void PrimitiveGUI_TorusDlg::SelectionIntoArgument()
     myOkDir = true;
   }
 
-  if(myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2)
+  if(myOkPoint1 && myOkDir)
     MakeTorusSimulationAndDisplay();
   return;
 }
@@ -374,15 +373,23 @@ void PrimitiveGUI_TorusDlg::ValueChangedInSpinBox(double newValue)
   QObject* send = (QObject*)sender();
   
   if(send == GroupPoints->SpinBox_DX || send == GroupDimensions->SpinBox_DX) {
-    myRadius1 = newValue;
-    myOkRadius1 = true;
+    if(newValue > myRadius2)
+      myRadius1 = newValue;
+    else {
+      GroupPoints->SpinBox_DX->SetValue(myRadius1);
+      GroupDimensions->SpinBox_DX->SetValue(myRadius1);
+    }
   }
   else if(send == GroupPoints->SpinBox_DY || send == GroupDimensions->SpinBox_DY) {
-    myRadius2 = newValue;
-    myOkRadius2 = true;
+    if(newValue < myRadius1)
+      myRadius2 = newValue;
+    else {
+      GroupPoints->SpinBox_DY->SetValue(myRadius2);
+      GroupDimensions->SpinBox_DY->SetValue(myRadius2);
+    }
   }
   
-  if(myOkPoint1 && myOkDir && myOkRadius1 && myOkRadius2)
+  if(myOkPoint1 && myOkDir)
     MakeTorusSimulationAndDisplay();
   return;
 }

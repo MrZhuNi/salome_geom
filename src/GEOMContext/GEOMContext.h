@@ -49,12 +49,13 @@ public :
 
 private :
   QDialog* myActiveDialogBox; /* Unique active dialog box */
-  int myNbGeom; /* Unique name for a geom entity */
   GEOM_Client myShapeReader;
   Standard_CString myFatherior;
   Sketch mySketcher;
 
 public :
+  int myNbGeom; /* Unique name for a geom entity */
+
   static GEOMContext* GetOrCreateGeomGUI(QAD_Desktop* desktop);
   static GEOMContext* GetGeomGUI();
 

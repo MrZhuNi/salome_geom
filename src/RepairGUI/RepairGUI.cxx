@@ -311,11 +311,11 @@ bool RepairGUI::OnSuppressFaces(const TopoDS_Shape& ShapeTopo, const char* Shape
     Standard_CString Type;
     if(myGeomBase->GetShapeTypeString(S, Type)) {
       aShellOrFace->NameType(Type);
-      sprintf (nameG, "%s_%d", Type, myGeomGUI->GetNbGeom()++);
+      sprintf (nameG, "%s_%d", Type, myGeomGUI->myNbGeom++);
     }
     else {
       aShellOrFace->NameType(tr("GEOM_SHAPE"));
-      sprintf (nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->GetNbGeom()++);
+      sprintf (nameG, "%s_%d", tr("GEOM_SHAPE").latin1(), myGeomGUI->myNbGeom++);
     }
     
     /* Display with name */

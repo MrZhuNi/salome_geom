@@ -269,6 +269,7 @@ void TransformationGUI_MultiTranslationDlg::ClickOnOk()
 //=================================================================================
 void TransformationGUI_MultiTranslationDlg::ClickOnApply()
 {
+  buttonApply->setFocus();
   QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
@@ -488,7 +489,7 @@ void TransformationGUI_MultiTranslationDlg::ValueChangedInSpinBox(double newValu
 	if(send == GroupPoints->SpinBox_DX)
 	  myStep1 = newValue;
 	else if(send == GroupPoints->SpinBox_DY)
-	  myNbTimes1 = newValue;
+	  myNbTimes1 = (int)newValue;
 	if(myOkBase && myOkDir1)
 	  this->MakeMultiTranslationSimulationAndDisplay();
 	break;
@@ -498,11 +499,11 @@ void TransformationGUI_MultiTranslationDlg::ValueChangedInSpinBox(double newValu
 	if(send == GroupDimensions->SpinBox_DX1)
 	  myStep1 = newValue;
 	else if(send == GroupDimensions->SpinBox_DY1)
-	  myNbTimes1 = newValue;
+	  myNbTimes1 = (int)newValue;
 	else if(send == GroupDimensions->SpinBox_DX2)
 	  myStep2 = newValue;
 	else if(send == GroupDimensions->SpinBox_DY2)
-	  myNbTimes2 = newValue;
+	  myNbTimes2 = (int)newValue;
 	if(myOkBase && myOkDir1 && myOkDir2)
 	  this->MakeMultiTranslationSimulationAndDisplay();
 	break;

@@ -507,6 +507,7 @@ void GeometryGUI::activeStudyChanged(QAD_Desktop* parent)
 
   if(GeomGUI != 0) {
     QMenuBar* Mb = QAD_Application::getDesktop()->getMainMenuBar();
+    GeomGUI->myNbGeom = GeomGUI->myComponentGeom->NbLabels();
     if(GeomGUI->myState == 2) {
       Mb->setItemEnabled(405, false);//SKETCHER
       GeomGUI->GetSketcher().Clear();

@@ -506,11 +506,11 @@ bool GEOMBase::Display(GEOM::GEOM_Shape_ptr aShape, Standard_CString name)
       Standard_CString type;
       GetShapeTypeString(shape,type);
       aShape->NameType(type);
-      nameG += TCollection_AsciiString(type) + TCollection_AsciiString("_") + TCollection_AsciiString(myGeomGUI->GetNbGeom()++) + TCollection_AsciiString("\0");
+      nameG += TCollection_AsciiString(type) + TCollection_AsciiString("_") + TCollection_AsciiString(myGeomGUI->myNbGeom++) + TCollection_AsciiString("\0");
     } 
     else
-      nameG += TCollection_AsciiString(aShape->NameType()) + TCollection_AsciiString("_") + TCollection_AsciiString(myGeomGUI->GetNbGeom()++) + TCollection_AsciiString("\0");
-  } 
+      nameG += TCollection_AsciiString(aShape->NameType()) + TCollection_AsciiString("_") + TCollection_AsciiString(myGeomGUI->myNbGeom++) + TCollection_AsciiString("\0");
+  }
   else 
     nameG = TCollection_AsciiString(name);
   

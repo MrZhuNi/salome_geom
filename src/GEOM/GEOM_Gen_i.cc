@@ -614,7 +614,7 @@ CORBA::Boolean GEOM_Gen_i::CanCopy(SALOMEDS::SObject_ptr theObject) {
 //============================================================================
 SALOMEDS::TMPFile* GEOM_Gen_i::CopyFrom(SALOMEDS::SObject_ptr theObject, CORBA::Long& theObjectID) {
   // Declare a sequence of the byte to store the copied object
-  SALOMEDS::TMPFile_var aStreamFile;
+  SALOMEDS::TMPFile_var aStreamFile = new SALOMEDS::TMPFile;
 
   // Try to get GEOM_Shape object by given SObject
   SALOMEDS::GenericAttribute_var anAttr;
@@ -911,7 +911,15 @@ void GEOM_Gen_i::InsertInLabelMoreArguments(TopoDS_Shape main_topo,
 //=================================================================================
 CORBA::Short GEOM_Gen_i::NbLabels()
 {
-  return TDF_Tool::NbLabels( myCurrentOCAFDoc->Main() );
+  TDF_ChildIterator ChildIterator(myCurrentOCAFDoc->Main());
+  unsigned int i = 1;
+  
+  while (ChildIterator.More()) {
+    i++;
+    ChildIterator.Next();
+  }
+  return i;
+  //  return TDF_Tool::NbLabels( myCurrentOCAFDoc->Main() );
 }
 
 
@@ -2334,7 +2342,6 @@ GEOM::GEOM_Gen::ListOfGeomShapes* GEOM_Gen_i::SubShapesAll(GEOM::GEOM_Shape_ptr 
   return listOfGeomShapes._retn() ;
 }
 
-
 //=================================================================================
 // function : MakeBoolean()
 // purpose  : Boolean operation according to the type 'operation'
@@ -2348,7 +2355,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeBoolean(GEOM::GEOM_Shape_ptr shape1,
   TopoDS_Shape shape ;
   TopoDS_Shape aShape1  ;
   TopoDS_Shape aShape2  ;
-  
+
   try {
     aShape1 = GetTopoShape(shape1) ;
     aShape2 = GetTopoShape(shape2) ;
@@ -3598,6 +3605,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeVertex(CORBA::Double x,
   if (tds.IsNull()) {
     THROW_SALOME_CORBA_EXCEPTION("Make Vertex/Point aborted", SALOME::BAD_PARAM);
   }
+  tds.Infinite(true);
   result = CreateObject(tds) ;
   const char *entry = InsertInLabel(tds, result->Name(), myCurrentOCAFDoc) ;
   result->ShapeId(entry);
@@ -3814,6 +3822,7 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeLine(const GEOM::PointStruct& pstruct,
     THROW_SALOME_CORBA_EXCEPTION("Make Line aborted : null shape", SALOME::BAD_PARAM);
   }
   else {
+    tds.Infinite(true);
     result = CreateObject(tds) ;
     const char *entry = InsertInLabel(tds, result->Name(), myCurrentOCAFDoc) ;
     result->ShapeId(entry);
