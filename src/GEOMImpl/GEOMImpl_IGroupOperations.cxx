@@ -125,6 +125,7 @@ void GEOMImpl_IGroupOperations::AddObject(Handle(GEOM_Object) theGroup, int theS
   aDescr += (anEntry+", ");
   aDescr += (TCollection_AsciiString(theSubShapeID)+" )");
 
+  aDescr = aFunction->GetDescription() + "\n\t" + aDescr;
   aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
@@ -540,11 +541,13 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::GetMainShape(Handle(GEOM_Object) 
   //Make a Python command
   TCollection_AsciiString anEntry, aDescr;
   TDF_Tool::Entry(aMainShape->GetEntry(), aDescr);
-  TDF_Tool::Entry(theGroup->GetEntry(), anEntry);
   aDescr += " = geompy.GetMainShape( ";
+  TDF_Tool::Entry(theGroup->GetEntry(), anEntry);
   aDescr += (anEntry+" )");
 
-  theGroup->GetFunction(1)->SetDescription(aDescr);
+  aFunction = theGroup->GetFunction(1);
+  aDescr = aFunction->GetDescription() + "\n\t" + aDescr;
+  aFunction->SetDescription(aDescr);
 
   SetErrorCode(OK);
   return aMainShape; 
