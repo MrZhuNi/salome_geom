@@ -78,15 +78,15 @@ bool BasicGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
   BasicGUI* myBasicGUI = new BasicGUI();
   myBasicGUI->myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myBasicGUI->myGeomGUI->GetActiveStudy()->getSelection());
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
     case 4011: // POINT
       {
 	Handle(AIS_InteractiveContext) ic;
-	if(myBasicGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myBasicGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  ic = v3d->getAISContext();
 	}
 	BasicGUI_PointDlg *aDlg = new BasicGUI_PointDlg(parent, "", myBasicGUI, Sel, ic); 
@@ -145,10 +145,10 @@ bool BasicGUI::OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame
 {
   BasicGUI* myBasicGUI = new BasicGUI();
 
-  if(myBasicGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
     return false;
 
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myBasicGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
   Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
   OCCViewer_ViewPort* vp = ((OCCViewer_ViewFrame*)studyFrame->getRightFrame()->getViewFrame())->getViewPort();
   
@@ -176,7 +176,7 @@ bool BasicGUI::OnMousePress(QMouseEvent* pe, QAD_Desktop* parent, QAD_StudyFrame
   if(DialogPt != 0)
     DialogPt->PointIntoCoordinates(thePoint, true);  /* display point */
   else
-    myBasicGUI->myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
 
   return false;
 }
@@ -219,7 +219,7 @@ void BasicGUI::MakePointAndDisplay(const double x, const double y, const double 
     GEOM::GEOM_Shape_var P = myGeom->MakeVertex(x, y, z);
     P->NameType(tr("GEOM_VERTEX"));
     if (myGeomBase->Display(P))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -239,7 +239,7 @@ void BasicGUI::MakeLineAndDisplay(const gp_Pnt InitPoint, const gp_Pnt LastPoint
   myGeomBase->GetBipointDxDyDz(InitPoint, LastPoint, dx, dy, dz);
   Standard_Real length = InitPoint.Distance(LastPoint);
   if(length <= Precision::Confusion()) {
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
     return;
   }
   
@@ -262,13 +262,13 @@ void BasicGUI::MakeLineAndDisplay(const gp_Pnt InitPoint, const gp_Pnt LastPoint
     
     GEOM::GEOM_Shape_ptr result = myGeom->MakeLine(pstruct, dstruct);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;
     }
     result->NameType(tr("GEOM_LINE"));
     
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_READY"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_READY"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -290,12 +290,12 @@ void BasicGUI::MakeCircleAndDisplay(const gp_Pnt CenterPoint, const gp_Dir dir, 
     
     GEOM::GEOM_Shape_var result = myGeom->MakeCircle(pstruct, dstruct, Radius);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;
     }
     result->NameType(tr("GEOM_CIRCLE"));
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -318,12 +318,12 @@ void BasicGUI::MakeEllipseAndDisplay(const gp_Pnt CenterPoint, const gp_Dir dir,
 
     GEOM::GEOM_Shape_var result = myGeom->MakeEllipse(pstruct, dstruct, Major_Radius, Minor_Radius);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;
     }
     result->NameType(tr("GEOM_ELLIPSE"));
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -349,12 +349,12 @@ void BasicGUI::MakeArcAndDisplay(gp_Pnt InitPoint, gp_Pnt CirclePoint, gp_Pnt En
     GEOM::PointStruct pE = myGeom->MakePointStruct(EndPoint.X(), EndPoint.Y(), EndPoint.Z());
     GEOM::GEOM_Shape_var result = myGeom->MakeArc(pI, pC, pE);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;
     }
     result->NameType(tr("GEOM_ARC"));
     if (myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -375,7 +375,7 @@ void BasicGUI::MakeVectorAndDisplay(const gp_Pnt P1, const gp_Pnt P2)
     GEOM::GEOM_Shape_var Vector = myGeom->MakeVector(pstruct1, pstruct2);
     Vector->NameType(tr("GEOM_VECTOR"));
     if(myGeomBase->Display(Vector))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -402,7 +402,7 @@ void BasicGUI::MakePlaneAndDisplay(const gp_Pnt P1, const Standard_Real dx, cons
     GEOM::GEOM_Shape_ptr plane = myGeom->MakePlane(pstruct, dstruct, TrimSize);
     plane->NameType(tr("GEOM_PLANE"));
     if(myGeomBase->Display(plane))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -417,16 +417,16 @@ void BasicGUI::MakePlaneAndDisplay(const gp_Pnt P1, const Standard_Real dx, cons
 //=======================================================================
 void BasicGUI::MakeWorkingPlane(const gp_Pnt P, const gp_Dir D)
 {
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC) {
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER"));
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC) {
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER"));
     return;
   }
 
-  OCCViewer_ViewPort* vp = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewPort();
+  OCCViewer_ViewPort* vp = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewPort();
   Handle(V3d_View) view3d = ((OCCViewer_ViewPort3d*)vp)->getView();
   view3d->SetAt(P.X(), P.Y(), P.Z());
   view3d->SetProj(D.X(), D.Y(), D.Z());
-  myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+  QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   return;
 }
 

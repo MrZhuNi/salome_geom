@@ -29,6 +29,9 @@
 using namespace std;
 #include "MeasureGUI_MaxToleranceDlg.h"
 
+#include <TopoDS_Vertex.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Face.hxx>
 #include <TopExp_Explorer.hxx>
 #include <BRep_Tool.hxx>
 

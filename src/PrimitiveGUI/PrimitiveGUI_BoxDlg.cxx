@@ -221,7 +221,7 @@ void PrimitiveGUI_BoxDlg::ClickOnOk()
 //=================================================================================
 void PrimitiveGUI_BoxDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();

@@ -66,7 +66,7 @@ bool GenerationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
   GenerationGUI* myGenerationGUI = new GenerationGUI();
   myGenerationGUI->myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGenerationGUI->myGeomGUI->GetActiveStudy()->getSelection());
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
@@ -108,7 +108,7 @@ void GenerationGUI::MakePrismAndDisplay(GEOM::GEOM_Shape_ptr BaseShape, const gp
 {
   try {
     if(BaseShape->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
       return;
     }
 
@@ -116,7 +116,7 @@ void GenerationGUI::MakePrismAndDisplay(GEOM::GEOM_Shape_ptr BaseShape, const gp
     GEOM::PointStruct PS2 = myGeom->MakePointStruct(P2.X(), P2.Y(), P2.Z());
     GEOM::GEOM_Shape_ptr result = myGeom->MakePrism(BaseShape, PS1, PS2);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
       return;
     }  
 
@@ -126,7 +126,7 @@ void GenerationGUI::MakePrismAndDisplay(GEOM::GEOM_Shape_ptr BaseShape, const gp
     result->NameType(type);
 
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -145,7 +145,7 @@ void GenerationGUI::MakeRevolutionAndDisplay(GEOM::GEOM_Shape_ptr Shape, const g
     GEOM::AxisStruct axis = myGeom->MakeAxisStruct(loc.X(), loc.Y(), loc.Z(), dir.X(), dir.Y(), dir.Z());
     GEOM::GEOM_Shape_ptr result = myGeom->MakeRevolution(Shape, axis, revolAngle) ;
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;
     }
 
@@ -155,7 +155,7 @@ void GenerationGUI::MakeRevolutionAndDisplay(GEOM::GEOM_Shape_ptr Shape, const g
     result->NameType(type);
 
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -176,7 +176,7 @@ void GenerationGUI::MakeFillingAndDisplay(GEOM::GEOM_Shape_ptr SectionShape, con
     GEOM::GEOM_Shape_ptr result = myGeom->MakeFilling(SectionShape, mindeg, maxdeg,
 						      tol3d, tol2d, nbiter);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
       return;
     }  
 
@@ -186,7 +186,7 @@ void GenerationGUI::MakeFillingAndDisplay(GEOM::GEOM_Shape_ptr SectionShape, con
     result->NameType(type);
 
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
     return;  
   } 
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -210,10 +210,10 @@ void GenerationGUI::MakePipeAndDisplay(GEOM::GEOM_Shape_ptr aPath, GEOM::GEOM_Sh
       myGeomBase->GetShapeTypeString(S,type);
       result->NameType(type);
 
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
     }
     else {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
     }
   }
   catch (const SALOME::SALOME_Exception& S_ex) {

@@ -83,9 +83,9 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
   GEOMToolsGUI* myGEOMToolsGUI = new GEOMToolsGUI();
   myGEOMToolsGUI->myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->getSelection());
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
 
-  SALOMEDS::Study_var aStudy = myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->getStudyDocument();
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
   switch (theCommandID)
     {
     case 31: // COPY
@@ -100,74 +100,51 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       }
     case 111: // IMPORT BREP
       {
-	myGEOMToolsGUI->myGeomGUI->SetState(111);
-	myGEOMToolsGUI->Import();
-	myGEOMToolsGUI->myGeomGUI->ResetState();
+	myGEOMToolsGUI->Import(theCommandID);
 	break;
       }
     case 112: // IMPORT IGES
       {
-	myGEOMToolsGUI->myGeomGUI->SetState(112);
-	myGEOMToolsGUI->Import();
-	myGEOMToolsGUI->myGeomGUI->ResetState();
+	myGEOMToolsGUI->Import(theCommandID);
 	break;
       }
     case 113: // IMPORT STEP
       {
-	myGEOMToolsGUI->myGeomGUI->SetState(113);
-	myGEOMToolsGUI->Import();
-	myGEOMToolsGUI->myGeomGUI->ResetState();
+	myGEOMToolsGUI->Import(theCommandID);
 	break;
       }
     case 121: // EXPORT BREP
       {
-	myGEOMToolsGUI->myGeomGUI->SetState(121);
-	myGEOMToolsGUI->Export();
-	myGEOMToolsGUI->myGeomGUI->ResetState();
+	myGEOMToolsGUI->Export(theCommandID);
 	break;
       }
     case 122: // EXPORT IGES
       {
-	myGEOMToolsGUI->myGeomGUI->SetState(122);
-	myGEOMToolsGUI->Export();
-	myGEOMToolsGUI->myGeomGUI->ResetState();
+	myGEOMToolsGUI->Export(theCommandID);
 	break;
       }
     case 123: // EXPORT STEP
       {
-	myGEOMToolsGUI->myGeomGUI->SetState(123);
-	myGEOMToolsGUI->Export();
-	myGEOMToolsGUI->myGeomGUI->ResetState();
+	myGEOMToolsGUI->Export(theCommandID);
 	break;
       }
-    case 411: // SETTINGS - COPY
+    case 411: // SETTINGS - ADD IN STUDY
       {
-	QMenuBar* Mb = myGEOMToolsGUI->myGeomGUI->GetDesktop()->getMainMenuBar();
+	QMenuBar* Mb = QAD_Application::getDesktop()->getMainMenuBar();
 	QMenuData* pp;
 	QMenuItem* item = parent->menuBar()->findItem(411, &pp);
 	bool check = !pp->isItemChecked(411);
-	pp->setItemChecked(411, check);
-	myGEOMToolsGUI->myGeomGUI->GetSettings_Copy() = check;	
-	QAD_CONFIG->addSetting("Geometry:SettingsCopy", myGEOMToolsGUI->myGeomGUI->GetSettings_Copy());
+	pp->setItemChecked(411,check);
+	//myGEOMToolsGUI->myGeomGUI->GetSettings_AddInStudy() = check;
+	QAD_CONFIG->addSetting("Geometry:SettingsAddInStudy", check);
 	break;
       }
-    case 412: // SETTINGS - ADD IN STUDY
+    case 412: // SETTINGS - SHADING COLOR
       {
-	QMenuBar* Mb = myGEOMToolsGUI->myGeomGUI->GetDesktop()->getMainMenuBar();
-	QMenuData* pp;
-	QMenuItem* item = parent->menuBar()->findItem(412, &pp);
-	bool check = !pp->isItemChecked(412);
-	pp->setItemChecked(412,check);
-	myGEOMToolsGUI->myGeomGUI->GetSettings_AddInStudy() = check;
-	QAD_CONFIG->addSetting("Geometry:SettingsAddInStudy", myGEOMToolsGUI->myGeomGUI->GetSettings_AddInStudy());
-	break;
-      }
-    case 413: // SETTINGS - SHADING COLOR
-      {
-	if(myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
 	  break;
 
-	OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
 
 	QString SCr = QAD_CONFIG->getSetting("Geometry:SettingsShadingColorRed");
@@ -182,9 +159,9 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	  color = QColor ((int)Default.Red()  * 255.0, (int)Default.Green()* 255.0, (int)Default.Blue() * 255.0);
 	}
 	
-	QColor c = QColorDialog::getColor(color, myGEOMToolsGUI->myGeomGUI->GetDesktop());
+	QColor c = QColorDialog::getColor(color, QAD_Application::getDesktop());
 	if(c.isValid()) {
-	  myGEOMToolsGUI->myGeomGUI->GetShadingColor() = Quantity_Color(c.red() / 255.0, c.green() / 255.0, c.blue() / 255.0, Quantity_TOC_RGB);
+	  //myGEOMToolsGUI->myGeomGUI->GetShadingColor() = Quantity_Color(c.red() / 255.0, c.green() / 255.0, c.blue() / 255.0, Quantity_TOC_RGB);
 	  
 	  AIS_ListOfInteractive List;
 	  ic->DisplayedObjects(List);
@@ -196,7 +173,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	  while(ite.More()) {
 	    if(ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
 	      Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
-	      aSh->SetShadingColor(myGEOMToolsGUI->myGeomGUI->GetShadingColor());
+	      aSh->SetShadingColor(Quantity_Color(c.red() / 255.0, c.green() / 255.0, c.blue() / 255.0, Quantity_TOC_RGB));
 	      ic->Redisplay(aSh, Standard_True, Standard_True);
 	    }
 	    ite.Next();
@@ -210,12 +187,12 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	}
 	break;
       }
-    case 414: // SETTINGS - ISOS
+    case 413: // SETTINGS - ISOS
       {
-	if(myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
 	  break;
 
-	OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
 
 	QString IsoU = QAD_CONFIG->getSetting("Geometry:SettingsIsoU");
@@ -229,7 +206,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	else
 	  IsoV = "1";
 	
-	GEOMBase_NbIsosDlg* NbIsosDlg = new GEOMBase_NbIsosDlg(myGEOMToolsGUI->myGeomGUI->GetDesktop(), tr("GEOM_MEN_ISOS"), TRUE);	
+	GEOMBase_NbIsosDlg* NbIsosDlg = new GEOMBase_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE);	
 	int UIso = IsoU.toInt();
 	int VIso = IsoV.toInt();
 	
@@ -270,7 +247,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	ic->UpdateCurrentViewer();
 	break;
       }
-    case 415: // SETTINGS : STEP VALUE FOR SPIN BOXES
+    case 414: // SETTINGS : STEP VALUE FOR SPIN BOXES
       {
 	QString step = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
 	if(step.isEmpty())
@@ -314,10 +291,10 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
               aName = SALOMEDS::AttributeName::_narrow(anAttr);
 
 	      QString nm = QString(aName->Value());
-	      nm = SALOMEGUI_NameDlg::getName(myGEOMToolsGUI->myGeomGUI->GetDesktop(), nm);
+	      nm = SALOMEGUI_NameDlg::getName(QAD_Application::getDesktop(), nm);
 	      if(!nm.isEmpty()) {
 		QApplication::setOverrideCursor(Qt::waitCursor);
-		myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->renameIObject(IObject, nm);
+		QAD_Application::getDesktop()->getActiveStudy()->renameIObject(IObject, nm);
 		QApplication::restoreOverrideCursor();
 	      }
 	    }
@@ -327,7 +304,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       }
     case 5103: // CHECK GEOMETRY
       {
-	QAD_PyEditor* PyEditor = myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getPyEditor();
+	QAD_PyEditor* PyEditor = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getPyEditor();
 	PyEditor->setText("from GEOM_usinggeom import *\n");
 	PyEditor->setText(">>> ");
 	PyEditor->handleReturn();
@@ -335,15 +312,15 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       }
     case 8032: // COLOR - POPUP VIEWER
       {
-	if(myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
 	  // VTK
-	  VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+	  VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
 	  
 	  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
 	  Handle(SALOME_InteractiveObject) FirstIOS =  Sel->firstIObject();
 	  if(!FirstIOS.IsNull()) {
 	    QColor initcolor = myRenderInter->GetColor(FirstIOS);
-	    QColor c = QColorDialog::getColor( initcolor, myGEOMToolsGUI->myGeomGUI->GetDesktop());
+	    QColor c = QColorDialog::getColor( initcolor, QAD_Application::getDesktop());
 	    
 	    if(c.isValid()) {
 	      QApplication::setOverrideCursor(Qt::waitCursor);
@@ -355,7 +332,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	    QApplication::restoreOverrideCursor();
 	  }
 	}
-	else if(myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
 	  Handle(SALOME_InteractiveObject) IO = Sel->firstIObject();
 	  Standard_Boolean found;
 	  Handle(GEOM_AISShape) Shape = myGEOMToolsGUI->myGeomBase->ConvertIOinGEOMAISShape(IO, found, true);
@@ -363,7 +340,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	    Quantity_Color CSFColor;
 	    Shape->Color(CSFColor);
 	    
-	    QColor c = QColorDialog::getColor(QColor(CSFColor.Red()  * 255.0, CSFColor.Green()* 255.0, CSFColor.Blue() * 255.0), myGEOMToolsGUI->myGeomGUI->GetDesktop());
+	    QColor c = QColorDialog::getColor(QColor(CSFColor.Red()  * 255.0, CSFColor.Green()* 255.0, CSFColor.Blue() * 255.0), QAD_Application::getDesktop());
 	    
 	    if(c.isValid()) {
 	      CSFColor = Quantity_Color (c.red()/255., c.green()/255., c.blue()/255., Quantity_TOC_RGB);
@@ -389,8 +366,8 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       {
 	OCCViewer_Viewer3d* v3d;
 	Handle(AIS_InteractiveContext) ic;
-	if(myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC) {
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC) {
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
 	}
 	GEOMBase_TransparencyDlg *aDlg = new GEOMBase_TransparencyDlg(parent, "", Sel, ic);
@@ -398,10 +375,10 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       }
     case 8034: // ISOS - POPUP VIEWER
       {
-	if(myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
 	  break;
 
-	OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGEOMToolsGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
 
 	ic->InitCurrent();
@@ -420,7 +397,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	    IsoV = "1";
 	    
 	  GEOMBase_NbIsosDlg * NbIsosDlg =
-	    new GEOMBase_NbIsosDlg(myGEOMToolsGUI->myGeomGUI->GetDesktop(), tr("GEOM_MEN_ISOS"), TRUE);
+	    new GEOMBase_NbIsosDlg(QAD_Application::getDesktop(), tr("GEOM_MEN_ISOS"), TRUE);
 	    
 	  NbIsosDlg->SpinBoxU->setValue(IsoU.toInt());
 	  NbIsosDlg->SpinBoxV->setValue(IsoV.toInt());
@@ -471,7 +448,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	      if(!obj->FindAttribute(anAttr, "AttributeIOR") &&
 		  obj->FindAttribute(anAttr, "AttributePersistentRef")) {
 		// load
-		Engines::Component_var comp = myGEOMToolsGUI->myGeomGUI->GetDesktop()->getEngine("FactoryServer","GEOM");
+		Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer","GEOM");
 		if (!CORBA::is_nil(comp)) {
 		  SALOMEDS::Driver_var driver = SALOMEDS::Driver::_narrow(comp);
 		  SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
@@ -502,101 +479,6 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 }
 
 
-//=======================================================================
-// function : ConvertIORinGEOMAISShape()
-// purpose  :
-//=======================================================================
-Handle(GEOM_AISShape) GEOMToolsGUI::ConvertIORinGEOMAISShape(const char * IOR, Standard_Boolean& testResult, bool onlyInActiveView)
-{
-  Handle(GEOM_AISShape) resultShape;
-  testResult = false;
-  int nbSf = myGeomGUI->GetActiveStudy()->getStudyFramesCount();
-  for(int i = 0; i < nbSf; i++) {
-    QAD_StudyFrame* sf = myGeomGUI->GetActiveStudy()->getStudyFrame(i);
-    if(sf->getTypeView() == VIEW_OCC) {
-      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getViewer();
-      Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
-
-      AIS_ListOfInteractive List;
-      ic->DisplayedObjects(List);
-      AIS_ListOfInteractive List1;
-      ic->ObjectsInCollector(List1);
-      List.Append(List1);
-
-      AIS_ListIteratorOfListOfInteractive ite(List);
-      while(ite.More()) {
-	if(ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
-	  Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
-	  if(aSh->hasIO()) {
-	    Handle(GEOM_InteractiveObject) GIO = Handle(GEOM_InteractiveObject)::DownCast(aSh->getIO());
-	    Standard_CString theIOR = GIO->getIOR();
-	    if(strcmp(IOR, theIOR) == 0) {
-	      if(onlyInActiveView) {
-		if(sf == myGeomGUI->GetActiveStudy()->getActiveStudyFrame()) {
-		  testResult = true;
-		  resultShape = aSh;
-		  return resultShape; 
-		}
-	      } 
-	      else {
-		testResult = true;
-		resultShape = aSh;
-		return resultShape; 
-	      }
-	    }
-	  }
-	}
-	ite.Next();
-      }  
-    }
-  }
-  return  resultShape;
-}
-
-
-//=======================================================================
-// function : ConvertIORinGEOMActor()
-// purpose  :
-//=======================================================================
-GEOM_Actor* GEOMToolsGUI::ConvertIORinGEOMActor(const char* IOR, Standard_Boolean& testResult, bool onlyInActiveView)
-{
-  int nbSf = myGeomGUI->GetActiveStudy()->getStudyFramesCount();
-  for(int i = 0; i < nbSf; i++) {
-    QAD_StudyFrame* sf = myGeomGUI->GetActiveStudy()->getStudyFrame(i);
-    if(sf->getTypeView() == VIEW_VTK) {
-      vtkRenderer* Renderer = ((VTKViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getRenderer();
-      vtkActorCollection* theActors = Renderer->GetActors();
-      theActors->InitTraversal();
-      vtkActor *ac = theActors->GetNextActor();
-      while(!(ac==NULL)) {
-	if( ac->IsA("GEOM_Actor")) {
-	  GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(ac);
-	  if(anActor->hasIO()) {
-	    Handle(GEOM_InteractiveObject) GIO = Handle(GEOM_InteractiveObject)::DownCast(anActor->getIO());
-	    Standard_CString theIOR = GIO->getIOR();
-	    if(strcmp(IOR, theIOR) == 0) {
-	      if(onlyInActiveView) {
-		if(sf == myGeomGUI->GetActiveStudy()->getActiveStudyFrame()) {
-		  testResult = true;
-		  return anActor;
-		}
-	      } 
-	      else {
-		testResult = true;
-		return anActor;
-	      }
-	    }
-	  }
-	}
-	ac = theActors->GetNextActor();
-      }
-    }
-  }
-  testResult = false;
-  return GEOM_Actor::New();
-}
-
-
 //===============================================================================
 // function : OnEditDelete()
 // purpose  :
@@ -604,26 +486,26 @@ GEOM_Actor* GEOMToolsGUI::ConvertIORinGEOMActor(const char* IOR, Standard_Boolea
 void GEOMToolsGUI::OnEditDelete()
 {
   if ( QAD_MessageBox::warn2 
-       ( myGeomGUI->GetDesktop(),
+       ( QAD_Application::getDesktop(),
 	 tr ("GEOM_WRN_WARNING"),
 	 tr ("GEOM_REALLY_DELETE"),
 	 tr ("GEOM_BUT_YES"), tr ("GEOM_BUT_NO"), 1, 0, 0) != 1 )
     return;
        
-  int nbSf = myGeomGUI->GetActiveStudy()->getStudyFramesCount();
+  int nbSf = QAD_Application::getDesktop()->getActiveStudy()->getStudyFramesCount();
     
   Standard_Boolean found;
-  SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
   SALOMEDS::GenericAttribute_var anAttr;
   SALOMEDS::AttributeIOR_var     anIOR;
   
-  SALOME_Selection* Sel = SALOME_Selection::Selection( myGeomGUI->GetActiveStudy()->getSelection() );
+  SALOME_Selection* Sel = SALOME_Selection::Selection( QAD_Application::getDesktop()->getActiveStudy()->getSelection() );
   SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
   for(;It.More();It.Next()) {
     Handle(SALOME_InteractiveObject) IObject = It.Value();
     if ( IObject->hasEntry() ) {
-      SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+      SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
       SALOMEDS::SObject_var SO = aStudy->FindObjectID( IObject->getEntry() );
       
       /* Erase child graphical objects */
@@ -637,17 +519,17 @@ void GEOMToolsGUI::OnEditDelete()
 	  myGeomGUI->GetShapeReader().RemoveShapeFromBuffer( ASCior ) ;
 
 	  for ( int i = 0; i < nbSf; i++ ) {
-	    QAD_StudyFrame* sf = myGeomGUI->GetActiveStudy()->getStudyFrame(i);
+	    QAD_StudyFrame* sf = QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i);
 	    if ( sf->getTypeView() == VIEW_OCC ) {
 	      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getViewer();
 	      Handle (AIS_InteractiveContext) myContext = v3d->getAISContext();
-	      Handle(GEOM_AISShape) Result = this->ConvertIORinGEOMAISShape( anIOR->Value(), found );
+	      Handle(GEOM_AISShape) Result = myGeomBase->ConvertIORinGEOMAISShape(anIOR->Value(), found);
 	      if ( found )
 		myContext->Erase( Result, true, false );
 	    } else if ( sf->getTypeView() == VIEW_VTK ) {
 	      //vtkRenderer* Renderer = ((VTKViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getRenderer();
 	      VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getRWInteractor();
-	      GEOM_Actor* ac = this->ConvertIORinGEOMActor( anIOR->Value(), found );
+	      GEOM_Actor* ac = myGeomBase->ConvertIORinGEOMActor(anIOR->Value(), found);
 	      if ( found ) {
 		//Renderer->RemoveActor(ac);
 		if ( ac->hasIO() ) 
@@ -660,7 +542,7 @@ void GEOMToolsGUI::OnEditDelete()
       
       /* Erase main graphical object */
       for ( int i = 0; i < nbSf; i++ ) {
-	QAD_StudyFrame* sf = myGeomGUI->GetActiveStudy()->getStudyFrame(i);
+	QAD_StudyFrame* sf = QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i);
 	if ( sf->getTypeView() == VIEW_OCC ) {
 	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)sf->getRightFrame()->getViewFrame())->getViewer();
 	  Handle (AIS_InteractiveContext) myContext = v3d->getAISContext();
@@ -683,7 +565,7 @@ void GEOMToolsGUI::OnEditDelete()
       /* Erase objects in Study */
       SALOMEDS::SObject_var obj = aStudy->FindObjectID( IObject->getEntry() );
       if ( !obj->_is_nil() ) {
-	QAD_Operation* op = new SALOMEGUI_ImportOperation(myGeomGUI->GetActiveStudy());
+	QAD_Operation* op = new SALOMEGUI_ImportOperation(QAD_Application::getDesktop()->getActiveStudy());
 	op->start();
 	aStudyBuilder->RemoveObject(obj);
 	op->finish();
@@ -694,7 +576,7 @@ void GEOMToolsGUI::OnEditDelete()
 
   /* Clear any previous selection */
   Sel->ClearIObjects() ; 
-  myGeomGUI->GetActiveStudy()->updateObjBrowser();
+  QAD_Application::getDesktop()->getActiveStudy()->updateObjBrowser();
 }
 
 
@@ -704,7 +586,7 @@ void GEOMToolsGUI::OnEditDelete()
 //==============================================================================
 void GEOMToolsGUI::OnEditCopy()
 {
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection() );
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection() );
   GEOM::GEOM_Gen::ListOfIOR_var listIOR = new GEOM::GEOM_Gen::ListOfIOR;
 
   const SALOME_ListIO& List = Sel->StoredIObjects();
@@ -725,7 +607,7 @@ void GEOMToolsGUI::OnEditCopy()
     }
   }
   
-  myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_READY"));
+  QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_READY"));
 }
 
 
@@ -733,23 +615,23 @@ void GEOMToolsGUI::OnEditCopy()
 // function : Import
 // purpose  : BRep, Iges, Step
 //=====================================================================================
-bool GEOMToolsGUI::Import()
+bool GEOMToolsGUI::Import(int aState)
 {
-  SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
   
   GEOM::GEOM_Shape_var aShape;
   QString file;
   QStringList filtersList;
   
-  switch(myGeomGUI->GetState())
+  switch(aState)
     {
     case 111 :	// Import BREP
       {
 	filtersList.append(tr("GEOM_MEN_IMPORT_BREP"));
 	filtersList.append(tr("GEOM_MEN_ALL_FILES"));
 
-	file = QAD_FileDlg::getFileName(myGeomGUI->GetDesktop(), "", filtersList, tr("GEOM_MEN_IMPORT"), true);
+	file = QAD_FileDlg::getFileName(QAD_Application::getDesktop(), "", filtersList, tr("GEOM_MEN_IMPORT"), true);
 	if(!file.isEmpty()) {
 	  QApplication::setOverrideCursor(Qt::waitCursor);
 	  try {
@@ -766,7 +648,7 @@ bool GEOMToolsGUI::Import()
 	filtersList.append( tr("GEOM_MEN_IMPORT_IGES") ) ;
 	filtersList.append( tr("GEOM_MEN_ALL_FILES") ) ;
 
-	file = QAD_FileDlg::getFileName(myGeomGUI->GetDesktop(),
+	file = QAD_FileDlg::getFileName(QAD_Application::getDesktop(),
 					"",
 					filtersList,
 					tr("GEOM_MEN_IMPORT"),
@@ -787,7 +669,7 @@ bool GEOMToolsGUI::Import()
 	filtersList.append( tr("GEOM_MEN_IMPORT_STEP") ) ;
 	filtersList.append( tr("GEOM_MEN_ALL_FILES") ) ;
 
-	file = QAD_FileDlg::getFileName(myGeomGUI->GetDesktop(),
+	file = QAD_FileDlg::getFileName(QAD_Application::getDesktop(),
 					"",
 					filtersList,
 					tr("GEOM_MEN_IMPORT"),
@@ -806,16 +688,16 @@ bool GEOMToolsGUI::Import()
     }
   
   if ( !file.isEmpty() ) {
-    myGeomGUI->GetDesktop()->putInfo( tr("GEOM_PRP_LOADING").arg(QAD_Tools::getFileNameFromPath( file )) );
+    QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_LOADING").arg(QAD_Tools::getFileNameFromPath( file )) );
 
     SALOMEDS::SComponent_var father = aStudy->FindComponent("GEOM");
-    SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->entry());
+    SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->entry());
     SALOMEDS::GenericAttribute_var anAttr;
     SALOMEDS::AttributeName_var    aName;
     SALOMEDS::AttributePixMap_var  aPixmap;
     int aLocked = false;
     if (father->_is_nil()) {
-      QAD_Operation* op = new SALOMEGUI_ImportOperation(myGeomGUI->GetActiveStudy() );
+      QAD_Operation* op = new SALOMEGUI_ImportOperation(QAD_Application::getDesktop()->getActiveStudy() );
       op->start();
       aLocked = aStudy->GetProperties()->IsLocked();
       if (aLocked) aStudy->GetProperties()->SetLocked(false);
@@ -823,7 +705,7 @@ bool GEOMToolsGUI::Import()
       anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributeName");
       aName = SALOMEDS::AttributeName::_narrow(anAttr);
       //      aName->SetValue( tr("GEOM_MEN_COMPONENT") );
-      aName->SetValue(myGeomGUI->GetDesktop()->getComponentUserName( "GEOM" ) );
+      aName->SetValue(QAD_Application::getDesktop()->getComponentUserName( "GEOM" ) );
       anAttr = aStudyBuilder->FindOrCreateAttribute(father, "AttributePixMap");
       aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
       aPixmap->SetPixMap( "ICON_OBJBROWSER_Geometry" );
@@ -837,8 +719,8 @@ bool GEOMToolsGUI::Import()
     QString nameShape = QAD_Tools::getFileNameFromPath(file,false) +  QString("_%1").arg(myGeomGUI->GetNbGeom()++);
 
     if(myGeomBase->Display(aShape, strdup(nameShape.latin1()))) {
-      myGeomGUI->GetActiveStudy()->setMessage( tr("GEOM_INF_LOADED").arg(QAD_Tools::getFileNameFromPath( file )) );
-      myGeomGUI->GetDesktop()->putInfo( tr("GEOM_PRP_READY"));
+      QAD_Application::getDesktop()->getActiveStudy()->setMessage( tr("GEOM_INF_LOADED").arg(QAD_Tools::getFileNameFromPath( file )) );
+      QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_READY"));
     }
   }
   QApplication::restoreOverrideCursor();
@@ -850,9 +732,9 @@ bool GEOMToolsGUI::Import()
 // function : Export
 // purpose  : BRep, Iges, Step
 //=====================================================================================
-bool GEOMToolsGUI::Export()
+bool GEOMToolsGUI::Export(int aState)
 {
-  SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
 
   GEOM::GEOM_Shape_var aShape;
@@ -861,10 +743,10 @@ bool GEOMToolsGUI::Export()
 			       tr("GEOM_MEN_IMPORT_IGES"),
 			       tr("GEOM_MEN_IMPORT_STEP") };
   
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection());
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
   SALOME_ListIteratorOfListIO It( Sel->StoredIObjects() );
 
-  switch (myGeomGUI->GetState())
+  switch (aState)
     {
     case 121 :
       {
@@ -875,7 +757,7 @@ bool GEOMToolsGUI::Export()
 	  GEOM::GEOM_Shape_var aShape = myGeomBase->ConvertIOinGEOMShape(IObject, found);
 	  //	  Handle(GEOM_AISShape) Shape = myGeomGUI->ConvertIOinGEOMAISShape(IObject, found, true);
 	  if ( found ) {
-	    QString file = QAD_FileDlg::getFileName(myGeomGUI->GetDesktop(), 
+	    QString file = QAD_FileDlg::getFileName(QAD_Application::getDesktop(), 
 						    QString( IObject->getName() ) + ".brep",
 						    tr("GEOM_MEN_IMPORT_BREP"),
 						    tr("GEOM_MEN_EXPORT"),
@@ -903,7 +785,7 @@ bool GEOMToolsGUI::Export()
 	  GEOM::GEOM_Shape_var aShape = myGeomBase->ConvertIOinGEOMShape(IObject, found);
 	  //	  Handle(GEOM_AISShape) Shape = myGeomGUI->ConvertIOinGEOMAISShape(IObject, found, true);
 	  if ( found ) {
-	    QString file = QAD_FileDlg::getFileName(myGeomGUI->GetDesktop(), 
+	    QString file = QAD_FileDlg::getFileName(QAD_Application::getDesktop(), 
 						    QString( IObject->getName() ) + ".igs",
 						    tr("GEOM_MEN_IMPORT_IGES"),
 						    tr("GEOM_MEN_EXPORT"),
@@ -948,7 +830,7 @@ bool GEOMToolsGUI::Export()
 	  GEOM::GEOM_Shape_var aShape = myGeomBase->ConvertIOinGEOMShape(IObject, found);
 	  //	  Handle(GEOM_AISShape) Shape = myGeomBase->ConvertIOinGEOMAISShape(IObject, found, true);
 	  if ( found ) {
-	    file = QAD_FileDlg::getFileName(myGeomGUI->GetDesktop(), 
+	    file = QAD_FileDlg::getFileName(QAD_Application::getDesktop(), 
 					    QString( IObject->getName() ) + ".stp",
 					    tr("GEOM_MEN_IMPORT_STEP"),
 					    tr("GEOM_MEN_EXPORT"),

@@ -29,6 +29,8 @@
 using namespace std;
 #include "GenerationGUI_PipeDlg.h"
 
+#include <TopoDS_Edge.hxx>
+#include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
 #include <BRepAlgoAPI.hxx>
 
@@ -128,7 +130,7 @@ void GenerationGUI_PipeDlg::ClickOnOk()
 //=================================================================================
 void GenerationGUI_PipeDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();

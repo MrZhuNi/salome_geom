@@ -21,41 +21,27 @@
 //
 //
 //
-//  File   : GEOMBase_Tools.h
+//  File   : DlgRef_1Sel1Spin1Check.h
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header: 
 
-#ifndef GEOMTOOLSGUI_H
-#define GEOMTOOLSGUI_H
+#ifndef DLGREF_1SEL1SPIN1CHECK_H
+#define DLGREF_1SEL1SPIN1CHECK_H
 
-#include "GEOMBase.h"
+#include "DlgRef_1Sel1Spin1Check_QTD.h"
+#include "DlgRef_SpinBox.h"
 
-//=================================================================================
-// class    : GEOMBase_Tools
-// purpose  :
-//=================================================================================
-class GEOMToolsGUI : public QObject
-{
-  Q_OBJECT /* for QT compatibility */
+class DlgRef_1Sel1Spin1Check : public DlgRef_1Sel1Spin1Check_QTD
+{ 
+    Q_OBJECT
 
-public :
-  GEOMToolsGUI();
-  ~GEOMToolsGUI();
+public:
+    DlgRef_1Sel1Spin1Check(QWidget* parent = 0, const char* name = 0, WFlags fl = 0);
+    ~DlgRef_1Sel1Spin1Check();
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
-
-  /* Import and export topology methods */
-  bool Import(int aState);
-  bool Export(int aState); 
-  
-  void OnEditCopy();
-  void OnEditDelete();
-
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
+    DlgRef_SpinBox* SpinBox_DX;
 
 };
 
-#endif
+#endif // DLGREF_1SEL1SPIN1CHECK_H

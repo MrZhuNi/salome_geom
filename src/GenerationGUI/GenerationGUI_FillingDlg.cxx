@@ -150,7 +150,7 @@ void GenerationGUI_FillingDlg::ClickOnOk()
 //=================================================================================
 void GenerationGUI_FillingDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
 
   myMinDeg = GroupPoints->SpinBox_1->value();
   myTol2D = GroupPoints->SpinBox_2->value(); 

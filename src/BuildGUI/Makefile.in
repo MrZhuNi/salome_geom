@@ -59,21 +59,15 @@ LIB_MOC = \
 		BuildGUI_SolidDlg.h \
 		BuildGUI_CompoundDlg.h
 
-LIB_CLIENT_IDL = SALOME_Exception.idl \
-		 GEOM_Gen.idl \
-		 GEOM_Shape.idl \
-		 SALOMEDS.idl \
-		 SALOMEDS_Attributes.idl \
-		 SALOME_ModuleCatalog.idl \
-		 SALOME_Component.idl \
+LIB_CLIENT_IDL = 
 
 LIB_SERVER_IDL = 
 
 # additionnal information to compil and link file
 
-CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
-CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
+CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
+CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMFiltersSelection -lDlgRef -lGEOMContext -lGEOMBase -lDisplayGUI -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS += -lGEOMFiltersSelection -lDisplayGUI
 
 @CONCLUDE@

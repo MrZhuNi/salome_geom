@@ -68,7 +68,7 @@ bool TransformationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
   TransformationGUI* myTransformationGUI = new TransformationGUI();
   myTransformationGUI->myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myTransformationGUI->myGeomGUI->GetActiveStudy()->getSelection());
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
@@ -121,12 +121,12 @@ void TransformationGUI::MakeTranslationAndDisplay(GEOM::GEOM_Shape_ptr Shape, gp
   try {
     GEOM::GEOM_Shape_var result = myGeom->MakeTranslation(Shape, V.X(), V.Y(), V.Z());
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;
     }
     result->NameType(Shape->NameType());
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }  
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -147,12 +147,12 @@ void TransformationGUI::MakeRotationAndDisplay(GEOM::GEOM_Shape_ptr Shape, const
 							 dir.X(), dir.Y(), dir.Z());
     GEOM::GEOM_Shape_var result = myGeom->MakeRotation(Shape, axis, angle);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return ;
     }
     result->NameType(Shape->NameType());
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -170,12 +170,12 @@ void TransformationGUI::MakeMirrorAndDisplay(GEOM::GEOM_Shape_ptr Shape1, GEOM::
   try {
     GEOM::GEOM_Shape_var result = myGeom->MakeMirrorByPlane(Shape1, Shape2);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
       return;
     }  
     result->NameType(Shape1->NameType());
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -196,9 +196,9 @@ void TransformationGUI::MakeScaleAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp
     GEOM::GEOM_Shape_var result = myGeom->MakeScaleTransform(Shape, P, factor);
     result->NameType(Shape->NameType());
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
     else 
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -220,12 +220,12 @@ void TransformationGUI::MakeMultiTranslation1DAndDisplay(GEOM::GEOM_Shape_ptr Sh
 
     GEOM::GEOM_Shape_var result = myGeom->MakeMultiTranslation1D(Shape, dstruct, Step, NbTimes);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;
     }
     result->NameType(tr("GEOM_COMPOUND"));
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }  
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -251,12 +251,12 @@ void TransformationGUI::MakeMultiTranslation2DAndDisplay(GEOM::GEOM_Shape_ptr Sh
     GEOM::GEOM_Shape_var result = myGeom->MakeMultiTranslation2D(Shape, dstruct1, Step1, NbTimes1,
 								 dstruct2, Step2, NbTimes2);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;
     }
     result->NameType(tr("GEOM_COMPOUND"));
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }  
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -279,12 +279,12 @@ void TransformationGUI::MakeMultiRotation1DAndDisplay(GEOM::GEOM_Shape_ptr Shape
 
     GEOM::GEOM_Shape_var result = myGeom->MakeMultiRotation1D(Shape, dstruct, pstruct, NbTimes);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;
     }
     result->NameType(tr("GEOM_COMPOUND"));
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }  
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -309,12 +309,12 @@ void TransformationGUI::MakeMultiRotation2DAndDisplay(GEOM::GEOM_Shape_ptr Shape
     GEOM::GEOM_Shape_var result = myGeom->MakeMultiRotation2D(Shape, dstruct, pstruct, 
 							      Ang, NbTimes1, Step, NbTimes2);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;
     }
     result->NameType(tr("GEOM_COMPOUND"));
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }  
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);

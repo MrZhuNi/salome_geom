@@ -30,14 +30,13 @@ using namespace std;
 #include "OperationGUI_ChamferDlg.h"
 
 #include "DisplayGUI.h"
-#include "QAD_Config.h"
-#include "QAD_RightFrame.h"
-#include "OCCViewer_Viewer3d.h"
 
+#include <AIS_InteractiveContext.hxx>
 #include <BRepFilletAPI_MakeChamfer.hxx>
 #include <BRepTools.hxx>
 #include <BRep_Tool.hxx>
 #include <TopExp.hxx>
+#include <Precision.hxx>
 
 //=================================================================================
 // class    : OperationGUI_ChamferDlg()
@@ -114,26 +113,21 @@ void OperationGUI_ChamferDlg::Init(Handle (AIS_InteractiveContext) ic)
   myConstructorId = 0;
   myEditCurrentArgument = Group1->LineEdit1;
 
-  myD1 = 50.0;
-  myOkD1 = true;
-  myD2 = 50.0;
-  myOkD2 = true;
+  myD1 = 5.0;
+  myD2 = 5.0;
   myOkShape = false;
   myIC = ic;
   myLocalContextId = -1;
   myUseLocalContext = false;
 
-  /* Get setting of step value from file configuration */
-  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
-
+  double SpecificStep = 10.0;
   /* min, max, step and decimals for spin boxes */
-  Group1->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  Group2->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  Group3->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  Group1->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
-  Group2->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
-  Group3->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, step, 3);
+  Group1->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
+  Group2->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
+  Group3->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
+  Group1->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
+  Group2->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
+  Group3->SpinBox_DY->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
 
   Group1->SpinBox_DX->SetValue(myD1);
   Group2->SpinBox_DX->SetValue(myD1);
@@ -196,23 +190,17 @@ void OperationGUI_ChamferDlg::ConstructorsClicked(int constructorId)
   mySimulationTopoDs.Nullify();
   disconnect(mySelection, 0, this, 0);
   myOkShape = false;
-  myD1 = 50.0;
-  myD2 = 50.0;
-  myOkD1 = true;
-  myOkD2 = true;
+  myD1 = 5.0;
+  myD2 = 5.0;
 
-
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext();
-    if(myUseLocalContext) {
-      myIC->CloseLocalContext(myLocalContextId);
-      DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->OnDisplayAll(true);
-      myUseLocalContext = false;
-    }
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myUseLocalContext) {
+    myIC->CloseLocalContext(myLocalContextId);
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->OnDisplayAll(true);
+    myUseLocalContext = false;
   }
 
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   switch (constructorId)
     {
     case 0: /* Chamfer All */
@@ -228,7 +216,6 @@ void OperationGUI_ChamferDlg::ConstructorsClicked(int constructorId)
 
 	Group1->SpinBox_DX->SetValue(myD1);
 	Group1->SpinBox_DY->SetValue(myD2);
-	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
     case 1: /* Chamfer edges */
@@ -244,7 +231,6 @@ void OperationGUI_ChamferDlg::ConstructorsClicked(int constructorId)
 
 	Group2->SpinBox_DX->SetValue(myD1);
 	Group2->SpinBox_DY->SetValue(myD2);
-	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
     case 2: /* Chamfer Faces */
@@ -260,7 +246,6 @@ void OperationGUI_ChamferDlg::ConstructorsClicked(int constructorId)
 
 	Group3->SpinBox_DX->SetValue(myD1);
 	Group3->SpinBox_DY->SetValue(myD2);
-	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
     }
@@ -286,7 +271,8 @@ void OperationGUI_ChamferDlg::ClickOnOk()
 //=================================================================================
 void OperationGUI_ChamferDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QApplication::setOverrideCursor(Qt::waitCursor);
+  QAD_Application::getDesktop()->putInfo(tr(""));
   myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
@@ -295,20 +281,20 @@ void OperationGUI_ChamferDlg::ClickOnApply()
     { 
     case 0 : /* Chamfer All */
       {	
-	if(myOkD1 && myOkD2 && myOkShape)
+	if(myOkShape)
 	  testResult = myOperationGUI->OnChamferGetAll(myShape, myD1, myD2, myShapeType, myShapeIOR);
 	break;
       }
     case 1 : /* Chamfer Edge */
       {	
-	if(myOkD1 && myOkD2 && myOkShape)
+	if(myOkShape)
 	  testResult = myOperationGUI->OnChamferGetSelected(myShape, myShapeIOR, myD1, myD2, myShapeType, 
 							    myLocalContextId, myUseLocalContext);
 	break;
       }
     case 2 :  /* Chamfer Face */
       {
-	if(myOkD1 && myOkD2 && myOkShape)
+	if(myOkShape)
 	  testResult = myOperationGUI->OnChamferGetSelected(myShape, myShapeIOR, myD1, myD2, myShapeType, 
 							    myLocalContextId, myUseLocalContext);
 	break;
@@ -316,11 +302,12 @@ void OperationGUI_ChamferDlg::ClickOnApply()
     }
 
   if(!testResult) 
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
   else
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   /* Reset all arguments and local context to allow user a new selection ...*/
   this->ResetStateOfDialog();
+  QApplication::restoreOverrideCursor();
   return;
 }
 
@@ -331,17 +318,7 @@ void OperationGUI_ChamferDlg::ClickOnApply()
 //=================================================================================
 void OperationGUI_ChamferDlg::ClickOnCancel()
 {
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext();
-
-    if(myUseLocalContext) {
-      myIC->CloseLocalContext(myLocalContextId);
-      myUseLocalContext = false;
-      DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->OnDisplayAll(true);
-    }
-  }
+  this->ResetStateOfDialog();
   GEOMBase_Skeleton::ClickOnCancel();
   return;
 }
@@ -354,6 +331,7 @@ void OperationGUI_ChamferDlg::ClickOnCancel()
 void OperationGUI_ChamferDlg::SelectionIntoArgument()
 {
   myGeomBase->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   this->ResetStateOfDialog();
   QString aString = ""; /* name of selection */
@@ -365,7 +343,7 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
     if(!myGeomBase->GetTopoFromSelection(mySelection, S))
       return;
     if(!IO->hasEntry()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
       return;
     }
 
@@ -379,7 +357,7 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
       }
 	
       if(IO->hasEntry()) {
-	SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+	SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
 	SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
         SALOMEDS::GenericAttribute_var anAttr;
         SALOMEDS::AttributeIOR_var anIOR;
@@ -394,7 +372,8 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
 	}
       }
     }
-    this->MakePreview();
+    if(myConstructorId == 0)
+      this->MakePreview();
 
   }
   else 
@@ -462,8 +441,6 @@ void OperationGUI_ChamferDlg::SetEditCurrentArgument()
 void OperationGUI_ChamferDlg::DeactivateActiveDialog()
 {
   this->ResetStateOfDialog();
-  DisplayGUI* myDisplayGUI = new DisplayGUI();
-  myDisplayGUI->OnDisplayAll(true);
   GEOMBase_Skeleton::DeactivateActiveDialog();
   return;
 }
@@ -520,14 +497,14 @@ void OperationGUI_ChamferDlg::ValueChangedInSpinBox( double newValue )
   QObject* send = (QObject*)sender();
   if(send == Group1->SpinBox_DX || send == Group2->SpinBox_DX || send == Group3->SpinBox_DX) { /* D1 */
     myD1 = newValue;
-    myOkD1 = true;
-    this->MakePreview();
+    if(myConstructorId == 0)
+      this->MakePreview();
     return ;
   } 
   else if(send == Group1->SpinBox_DY || send == Group2->SpinBox_DY || send == Group3->SpinBox_DY) { /* D2 */
     myD2 = newValue;
-    myOkD2 = true;
-    this->MakePreview();
+    if(myConstructorId == 0)
+      this->MakePreview();
     return;
   }
   return;
@@ -542,18 +519,14 @@ void OperationGUI_ChamferDlg::ResetStateOfDialog()
 {
   myOkShape = false;
   myEditCurrentArgument->setText("");
+  QApplication::restoreOverrideCursor();
 
   /* Close its local contact if opened */
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext();
-
-    if(myUseLocalContext) {
-      myIC->CloseLocalContext(myLocalContextId);
-      myUseLocalContext = false;
-      DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->OnDisplayAll(true);
-    }
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myUseLocalContext) {
+    myIC->CloseLocalContext(myLocalContextId);
+    myUseLocalContext = false;
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->OnDisplayAll(true);
   }
   return;
 }
@@ -565,33 +538,49 @@ void OperationGUI_ChamferDlg::ResetStateOfDialog()
 //=================================================================================
 void OperationGUI_ChamferDlg::MakePreview()
 {
-  TopoDS_Shape tds;
+  QApplication::setOverrideCursor(Qt::waitCursor);
+
+  if(!myOkShape) {
+    QApplication::restoreOverrideCursor();
+    return;
+  }
+
+  GEOM::GEOM_Shape::ListOfSubShapeID_var ListOfID = new GEOM::GEOM_Shape::ListOfSubShapeID;
+  ListOfID->length(0);
+
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+  SALOMEDS::SObject_var theObj = aStudy->FindObjectIOR(myShapeIOR);
+  if(theObj->_is_nil()) {
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
+    QApplication::restoreOverrideCursor();
+    return;
+  }
+
   try {
-    BRepFilletAPI_MakeChamfer MC(myShape);
-    switch (myConstructorId)
-      {
-      case 0: /* Chamfer All */
-	{
-	  TopTools_IndexedDataMapOfShapeListOfShape M;
-	  TopExp::MapShapesAndAncestors(myShape,TopAbs_EDGE,TopAbs_FACE,M);
-	  for(int i = 1;i<=M.Extent();i++) {
-	    TopoDS_Edge E = TopoDS::Edge(M.FindKey(i));
-	    TopoDS_Face F = TopoDS::Face(M.FindFromIndex(i).First());
-	    if(!BRepTools::IsReallyClosed(E, F) && !BRep_Tool::Degenerated(E))
-	      MC.Add(myD1, myD2,E,F);
-	  }
-	  tds = MC.Shape();
-	  break;
-	}
-      }
-    if(!tds.IsNull()) {
-      mySimulationTopoDs = tds;
-      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
+    if(myD1 <= Precision::Confusion() || myD2 <= Precision::Confusion()) {
+      QApplication::restoreOverrideCursor();
+      return;
     }
+
+    GEOM::GEOM_Shape_var aShape = myGeom->GetIORFromString(myShapeIOR);
+    GEOM::GEOM_Shape_var result = myGeom->MakeChamfer(aShape, myD1, myD2, myShapeType, ListOfID);
+    if(result->_is_nil()) {
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QApplication::restoreOverrideCursor();
+      return;
+    }
+
+    TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
+
+    mySimulationTopoDs = S;
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs);
   }
   catch(Standard_Failure) {
-      myGeomBase->EraseSimulationShape(); 
-      mySimulationTopoDs.Nullify();
+    MESSAGE("Exception catched in MakePreview");
+    QApplication::restoreOverrideCursor();
+    return;
   }
+  QApplication::restoreOverrideCursor();
   return;
+
 }

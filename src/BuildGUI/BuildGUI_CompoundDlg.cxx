@@ -116,7 +116,7 @@ void BuildGUI_CompoundDlg::ClickOnOk()
 //=================================================================================
 void BuildGUI_CompoundDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if(myOkListShapes)  
     myBuildGUI->MakeCompoundAndDisplay(myListShapes);
   return;

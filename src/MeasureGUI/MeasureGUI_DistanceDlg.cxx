@@ -32,6 +32,8 @@ using namespace std;
 #include "QAD_RightFrame.h"
 #include "OCCViewer_Viewer3d.h"
 
+#include <Geom_Plane.hxx>
+#include <TopoDS_Edge.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <AIS_LengthDimension.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -324,8 +326,8 @@ void MeasureGUI_DistanceDlg::MakeDistanceSimulationAndDisplay(const TopoDS_Shape
 
 	GroupC1->LineEdit3->setText(S);
 
-	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
 	  ic->Display(Distance);
 	  ic->UpdateCurrentViewer();
@@ -346,10 +348,10 @@ void MeasureGUI_DistanceDlg::MakeDistanceSimulationAndDisplay(const TopoDS_Shape
 //=================================================================================
 void MeasureGUI_DistanceDlg::EraseDistance()
 {
-  int count = myGeomGUI->GetActiveStudy()->getStudyFramesCount();
+  int count = QAD_Application::getDesktop()->getActiveStudy()->getStudyFramesCount();
   for(int i = 0; i < count; i++) {
-    if (myGeomGUI->GetActiveStudy()->getStudyFrame(i)->getTypeView() == VIEW_OCC ) {
-      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getStudyFrame(i)->getRightFrame()->getViewFrame())->getViewer();
+    if (QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i)->getTypeView() == VIEW_OCC ) {
+      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getStudyFrame(i)->getRightFrame()->getViewFrame())->getViewer();
       Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
 
       AIS_ListOfInteractive L;

@@ -401,7 +401,7 @@ void RepairGUI_SuppressHoleDlg::ClickOnOk()
 //=================================================================================
 void RepairGUI_SuppressHoleDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo( tr("") ) ; 
+  QAD_Application::getDesktop()->putInfo( tr("") ) ; 
   bool testResult = false ;
   
   if( !myOkShape )
@@ -424,7 +424,7 @@ void RepairGUI_SuppressHoleDlg::ClickOnApply()
 	    myDisplayGUI->OnDisplayAll(true) ;/* Display all objects so that next method using ic can memorize them */
 	    if( !aTest || myListOfIdWire->length() != 1 ) {
 	      CheckBox2->setChecked(FALSE) ;
-	      myGeomGUI->GetDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ; 
+	      QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ; 
 	    }
 	    else {
 	      myListOfIdEndFace->length(0) ; /* no end face */	
@@ -442,7 +442,7 @@ void RepairGUI_SuppressHoleDlg::ClickOnApply()
 	    myDisplayGUI->OnDisplayAll(true) ; /* Display all objects so that next method using ic can memorize them */
 	    if( !aTest || myListOfIdEndFace->length() != 1 ) {
 	      CheckBox3->setChecked(FALSE) ;
-	      myGeomGUI->GetDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ; 
+	      QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ; 
 	    }
 	    else {	
 	      QApplication::setOverrideCursor( Qt::waitCursor );
@@ -466,7 +466,7 @@ void RepairGUI_SuppressHoleDlg::ClickOnApply()
 	  
 	  if( !aTest || myListOfIdWire->length() < 1 ) {
 	    CheckBoxC2_1->setChecked(FALSE) ;
-	    myGeomGUI->GetDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ;
+	    QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ;
 	  }
 	  else {
 	    QApplication::setOverrideCursor( Qt::waitCursor );
@@ -480,9 +480,9 @@ void RepairGUI_SuppressHoleDlg::ClickOnApply()
   
 
   if( !testResult )
-    myGeomGUI->GetDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ;
+    QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ;
   else
-    myGeomGUI->GetDesktop()->putInfo( tr("GEOM_PRP_DONE") ) ;
+    QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_DONE") ) ;
   
   /* Reset arguments to allow a new selection */
   this->ResetStateOfDialog() ;
@@ -498,11 +498,11 @@ void RepairGUI_SuppressHoleDlg::ClickOnApply()
 void RepairGUI_SuppressHoleDlg::ClickOnClose()
 {
   disconnect( mySelection, 0, this, 0 );
-  myGeomGUI->ResetState() ;
+  //myGeomGUI->ResetState() ;
 
-  if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext(); //    myIC = myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getViewerOCC()->getAISContext();
+  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+    myIC = v3d->getAISContext(); //    myIC = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getViewerOCC()->getAISContext();
     if(myUseLocalContext) {
       myIC->CloseLocalContext(myLocalContextId) ;
       this->myUseLocalContext = false ;
@@ -560,7 +560,7 @@ void RepairGUI_SuppressHoleDlg::SelectionIntoArgument()
     } 
     
     if ( IO->hasEntry() ) {
-      SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+      SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
       SALOMEDS::SObject_var obj = aStudy->FindObjectID( IO->getEntry() );
       SALOMEDS::GenericAttribute_var anAttr;
       SALOMEDS::AttributeIOR_var     anIOR;
@@ -656,7 +656,7 @@ void RepairGUI_SuppressHoleDlg::DeactivateActiveDialog()
     GroupC2->setEnabled(false) ;
     GroupButtons->setEnabled(false) ;
 
-    myGeomGUI->ResetState() ;    
+    //myGeomGUI->ResetState() ;    
     myGeomGUI->SetActiveDialogBox(0) ;
     DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->OnDisplayAll(true) ;
@@ -719,13 +719,13 @@ void RepairGUI_SuppressHoleDlg::ActivateUserFaceSelection()
 {
   if( !this->myOkShape ) {
     this->ResetStateOfDialog() ;
-    myGeomGUI->GetDesktop()->putInfo( tr("GEOM_MAIN_OBJECT") ) ;
+    QAD_Application::getDesktop()->putInfo( tr("GEOM_MAIN_OBJECT") ) ;
     return ;
   }
   
   /* Test the viewer type VTK */
-  if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
-    myGeomGUI->GetDesktop()->putInfo( tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
+  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
+    QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
     this->ResetStateOfDialog() ;  
     return;
   }
@@ -736,7 +736,7 @@ void RepairGUI_SuppressHoleDlg::ActivateUserFaceSelection()
     DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->PrepareSubShapeSelection( int(TopAbs_FACE), this->myLocalContextId ) ;    
     myUseLocalContext = true ;
-    myGeomGUI->GetDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECTFACE") ) ;
+    QAD_Application::getDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECTFACE") ) ;
   } 
   else {
     this->ResetPartial() ;
@@ -756,13 +756,13 @@ void RepairGUI_SuppressHoleDlg::ActivateUserWireSelection()
   
   if( !this->myOkShape ) {
     this->ResetStateOfDialog() ;
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_MAIN_OBJECT") ) ;
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_MAIN_OBJECT") ) ;
     return ;
   } 
   
   /* Test the type of viewer VTK */
-  if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
+  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
     this->ResetStateOfDialog() ;
     return;
   }
@@ -777,7 +777,7 @@ void RepairGUI_SuppressHoleDlg::ActivateUserWireSelection()
     if( !aTest || myListOfIdFace->length() != 1 ) {
       CheckBox1->setChecked(FALSE) ;
       myOkSelectFace = false ;
-      myGeomGUI->GetDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ; 
+      QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ; 
     }
     else {
       myOkSelectFace = true ;
@@ -797,7 +797,7 @@ void RepairGUI_SuppressHoleDlg::ActivateUserWireSelection()
     DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->PrepareSubShapeSelectionArgumentShape( this->myFace, int(TopAbs_WIRE), this->myLocalContextId ) ;    
     myUseLocalContext = true ;
-    myGeomGUI->GetDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECTWIRE") ) ;
+    QAD_Application::getDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECTWIRE") ) ;
   }
   else {
     this->ResetPartial() ;
@@ -818,13 +818,13 @@ void RepairGUI_SuppressHoleDlg::ActivateUserEndFaceSelection()
   
   if( !this->myOkShape ) {
     this->ResetStateOfDialog() ;
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_MAIN_OBJECT") ) ;
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_MAIN_OBJECT") ) ;
     return ;
   }
   
   /* Test the type of viewer VTK */
-  if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
+  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
     this->ResetStateOfDialog() ;
     return;
   }
@@ -840,7 +840,7 @@ void RepairGUI_SuppressHoleDlg::ActivateUserEndFaceSelection()
     if( !aTest || myListOfIdWire->length() != 1 ) {
       CheckBox2->setChecked(FALSE) ;
       CheckBox3->setChecked(FALSE) ;
-      myGeomGUI->GetDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ;     
+      QAD_Application::getDesktop()->putInfo( tr("GEOM_PRP_ABORT") ) ;     
       return ;
     }
   }
@@ -855,7 +855,7 @@ void RepairGUI_SuppressHoleDlg::ActivateUserEndFaceSelection()
     DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->PrepareSubShapeSelectionArgumentShape( this->myShape, int(TopAbs_FACE), this->myLocalContextId ) ;    
     myUseLocalContext = true ;
-    myGeomGUI->GetDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECTFACE_END") ) ;
+    QAD_Application::getDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECTFACE_END") ) ;
   }
   else {
     this->ResetPartial() ;
@@ -877,13 +877,13 @@ void RepairGUI_SuppressHoleDlg::ActivateUserWiresOnFaceShellSelection()
   
   if( !this->myOkShape ) {
     this->ResetStateOfDialog() ;
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_MAIN_OBJECT") ) ;
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_MAIN_OBJECT") ) ;
     return ;
   }
   
   /* Test the type of viewer VTK */
-  if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
+  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC ) {
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER") ) ;
     this->ResetStateOfDialog() ;
     return;
   }
@@ -893,7 +893,7 @@ void RepairGUI_SuppressHoleDlg::ActivateUserWiresOnFaceShellSelection()
     DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->PrepareSubShapeSelectionArgumentShape( this->myShape, int(TopAbs_WIRE), this->myLocalContextId ) ;    
     myUseLocalContext = true ;
-    myGeomGUI->GetDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECT_HOLES_ON_FACE") ) ;
+    QAD_Application::getDesktop()->putInfo( tr("GEOM_SUPPRESSHOLE_SELECT_HOLES_ON_FACE") ) ;
   }
   else {
     this->ResetPartial() ;
@@ -966,9 +966,9 @@ void RepairGUI_SuppressHoleDlg::ResetPartial()
   myListOfIdEndFace->length(0) ;
   
   /* Close its local contact if opened */
-  if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext(); //    myIC = myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getViewerOCC()->getAISContext();
+  if ( QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+    myIC = v3d->getAISContext(); //    myIC = QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getViewerOCC()->getAISContext();
     if( this->myUseLocalContext ) {
       myIC->CloseLocalContext(this->myLocalContextId) ;
       this->myUseLocalContext = false ;
@@ -989,10 +989,10 @@ void RepairGUI_SuppressHoleDlg::ResetPartial()
 bool RepairGUI_SuppressHoleDlg::GetIndexSubShapeSelected(const TopoDS_Shape& ShapeTopo, const int SubShapeType, GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID, Standard_Integer& aLocalContextId, bool& myUseLocalContext)
 {
   //* Test the type of viewer */
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
     return false;
   
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
   Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
 
   ic->InitSelected();

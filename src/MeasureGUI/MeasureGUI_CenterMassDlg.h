@@ -33,6 +33,8 @@
 
 #include "MeasureGUI.h"
 
+#include <gp_Pnt.hxx>
+
 //=================================================================================
 // class    : MeasureGUI_CenterMassDlg
 // purpose  :

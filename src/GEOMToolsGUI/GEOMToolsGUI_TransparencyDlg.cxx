@@ -30,6 +30,7 @@ using namespace std;
 
 #include "QAD_RightFrame.h"
 #include "SALOME_ListIteratorOfListIO.hxx"
+#include <AIS_InteractiveContext.hxx>
 
 #include <qframe.h>
 #include <qlabel.h>
@@ -177,9 +178,9 @@ void GEOMBase_TransparencyDlg::ClickOnClose()
 //=================================================================================
 void GEOMBase_TransparencyDlg::ValueHasChanged(int newValue)
 {
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
     // VTK
-    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
     SALOME_ListIteratorOfListIO It(this->mySel->StoredIObjects());
 
     Handle(SALOME_InteractiveObject) FirstIOS =  mySel->firstIObject();
@@ -200,7 +201,7 @@ void GEOMBase_TransparencyDlg::ValueHasChanged(int newValue)
     QApplication::restoreOverrideCursor();
   }
 
-  else if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+  else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     // OCC  
     SALOME_ListIteratorOfListIO It(this->mySel->StoredIObjects());
     Handle(SALOME_InteractiveObject) FirstIOS = mySel->firstIObject();

@@ -29,6 +29,7 @@
 using namespace std;
 #include "GenerationGUI_RevolDlg.h"
 
+#include <gp_Lin.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepPrimAPI_MakeRevol.hxx>
 #include "QAD_Config.h"
@@ -144,7 +145,7 @@ void GenerationGUI_RevolDlg::ClickOnOk()
 //=================================================================================
 void GenerationGUI_RevolDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();

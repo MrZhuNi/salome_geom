@@ -124,7 +124,7 @@ void BuildGUI_SolidDlg::ClickOnOk()
 //=================================================================================
 void BuildGUI_SolidDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr("")); 
+  QAD_Application::getDesktop()->putInfo(tr("")); 
 
   if(myOkListShapes)  
     myBuildGUI->MakeSolidAndDisplay(myListShapes);

@@ -29,8 +29,7 @@
 using namespace std;
 #include "TransformationGUI_MultiTranslationDlg.h"
 
-#include "QAD_Config.h"
-
+#include <gp_Lin.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepAdaptor_Curve.hxx>
@@ -38,6 +37,7 @@ using namespace std;
 #include <BRepGProp.hxx>
 #include <GProp_GProps.hxx>
 #include <TopoDS_Compound.hxx>
+#include "QAD_Config.h"
 
 //=================================================================================
 // class    : TransformationGUI_MultiTranslationDlg()
@@ -269,7 +269,7 @@ void TransformationGUI_MultiTranslationDlg::ClickOnOk()
 //=================================================================================
 void TransformationGUI_MultiTranslationDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();

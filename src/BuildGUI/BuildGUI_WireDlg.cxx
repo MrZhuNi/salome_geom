@@ -116,7 +116,7 @@ void BuildGUI_WireDlg::ClickOnOk()
 //=================================================================================
 void BuildGUI_WireDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if(myOkListShapes)  
     myBuildGUI->MakeWireAndDisplay(myListShapes);
   return;

@@ -30,6 +30,7 @@
 #define TRANSFORMATIONGUI_H
 
 #include "GEOMBase.h"
+#include <gp_Vec.hxx>
 
 //=================================================================================
 // class    : TransformationGUI

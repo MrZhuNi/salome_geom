@@ -36,6 +36,7 @@ using namespace std;
 #include "OCCViewer_ViewFrame.h"
 #include "SALOMEGUI_QtCatchCorbaException.hxx"
 
+#include <TopTools_MapOfShape.hxx>
 #include <TopExp_Explorer.hxx>
 #include <Precision.hxx>
 
@@ -74,7 +75,7 @@ bool OperationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
   OperationGUI* myOperationGUI = new OperationGUI();
   myOperationGUI->myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myOperationGUI->myGeomGUI->GetActiveStudy()->getSelection());
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
@@ -91,8 +92,8 @@ bool OperationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
     case 505: // FILLET
       {
 	Handle(AIS_InteractiveContext) ic;
-	if(myOperationGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myOperationGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  ic = v3d->getAISContext();
 	}
   	OperationGUI_FilletDlg *aDlg = new OperationGUI_FilletDlg(parent, "", myOperationGUI, Sel, ic);	
@@ -101,8 +102,8 @@ bool OperationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
     case 506: // CHAMFER
       {
 	Handle(AIS_InteractiveContext) ic;
-	if(myOperationGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myOperationGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  ic = v3d->getAISContext();
 	}
 	OperationGUI_ChamferDlg *aDlg = new OperationGUI_ChamferDlg(parent, "", myOperationGUI, Sel, ic);	
@@ -133,12 +134,12 @@ void OperationGUI::MakePartitionAndDisplay(const GEOM::GEOM_Gen::ListOfIOR& list
 						    listKeepInsIOR, listRemoveInsIOR,
 						    (CORBA::Short) limit);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
       return;
     }
     result->NameType(tr("GEOM_PARTITION"));
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
     return;
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -162,12 +163,12 @@ void OperationGUI::Archimede(const Handle(SALOME_InteractiveObject)& IO, const d
       GEOM::GEOM_Shape_var Result = myGeom->Archimede(Shape, aWeight, aWaterDensity, aMeshingDeflection);
       Result->NameType(tr("GEOM_PLANE"));
       if(myGeomBase->Display(Result)) {
-	myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+	QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
       }
       return;
     }
     if(IO->hasEntry()) {
-      SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+      SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
       SALOMEDS::SObject_var obj = aStudy->FindObjectID( IO->getEntry());
       SALOMEDS::GenericAttribute_var anAttr;
       SALOMEDS::AttributeIOR_var anIOR;
@@ -178,7 +179,7 @@ void OperationGUI::Archimede(const Handle(SALOME_InteractiveObject)& IO, const d
 	  GEOM::GEOM_Shape_var Result = myGeom->Archimede(Shape, aWeight, aWaterDensity, aMeshingDeflection);
 	  Result->NameType(tr("GEOM_PLANE"));
 	  if (myGeomBase->Display(Result)) {
-	    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+	    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
 	  }
 	}
       }
@@ -200,10 +201,10 @@ bool OperationGUI::OnFilletGetAll(const TopoDS_Shape& ShapeTopo, const double Ra
   GEOM::GEOM_Shape::ListOfSubShapeID_var ListOfID = new GEOM::GEOM_Shape::ListOfSubShapeID;
   ListOfID->length(0);
 
-  SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
   SALOMEDS::SObject_var theObj = aStudy->FindObjectIOR(ShapeTopoIOR);
   if(theObj->_is_nil()) {
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
     return false;
   }
   
@@ -214,7 +215,7 @@ bool OperationGUI::OnFilletGetAll(const TopoDS_Shape& ShapeTopo, const double Ra
     GEOM::GEOM_Shape_var aShape = myGeom->GetIORFromString(ShapeTopoIOR);
     GEOM::GEOM_Shape_var result = myGeom->MakeFillet(aShape, Radius, SubShapeType, ListOfID);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return false;
     }
     TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
@@ -223,7 +224,7 @@ bool OperationGUI::OnFilletGetAll(const TopoDS_Shape& ShapeTopo, const double Ra
     result->NameType(type);
 
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch (const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -240,15 +241,15 @@ bool OperationGUI::OnFilletGetSelected(const TopoDS_Shape& ShapeTopo, const char
 				       const double Radius, const int SubShapeType,
 				       Standard_Integer& aLocalContextId, bool& myUseLocalContext)
 {
-  if (myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+  if (QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
     return false;
 
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
   Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
   
   if(myUseLocalContext == false) {
     /*  No local context opened for fillet method */
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
     return false;
   }
   
@@ -295,7 +296,7 @@ bool OperationGUI::OnFilletGetSelected(const TopoDS_Shape& ShapeTopo, const char
     aResult->NameType(type);
 
     if(myGeomBase->Display(aResult))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -309,8 +310,8 @@ bool OperationGUI::OnFilletGetSelected(const TopoDS_Shape& ShapeTopo, const char
   
   DisplayGUI* myDisplayGUI = new DisplayGUI();
   myDisplayGUI->OnDisplayAll(true) ;
-  myGeomGUI->GetActiveStudy()->updateObjBrowser();
-  myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_READY"));
+  QAD_Application::getDesktop()->getActiveStudy()->updateObjBrowser();
+  QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_READY"));
 
   return true;  
 }
@@ -322,13 +323,13 @@ bool OperationGUI::OnFilletGetSelected(const TopoDS_Shape& ShapeTopo, const char
 //=====================================================================================
 bool OperationGUI::OnChamferGetAll(const TopoDS_Shape& ShapeTopo, const double D1, const double D2, const int SubShapeType, const char* ShapeTopoIOR)
 {
- GEOM::GEOM_Shape::ListOfSubShapeID_var ListOfID = new GEOM::GEOM_Shape::ListOfSubShapeID;
+  GEOM::GEOM_Shape::ListOfSubShapeID_var ListOfID = new GEOM::GEOM_Shape::ListOfSubShapeID;
   ListOfID->length(0);
 
-  SALOMEDS::Study_var   aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
   SALOMEDS::SObject_var theObj = aStudy->FindObjectIOR(ShapeTopoIOR);
   if(theObj->_is_nil()) {
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
     return false;
   }
   
@@ -341,7 +342,7 @@ bool OperationGUI::OnChamferGetAll(const TopoDS_Shape& ShapeTopo, const double D
     GEOM::GEOM_Shape_var aShape = myGeom->GetIORFromString(ShapeTopoIOR);
     GEOM::GEOM_Shape_var result = myGeom->MakeChamfer(aShape, D1, D2, SubShapeType, ListOfID);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return false;
     }
 
@@ -351,7 +352,7 @@ bool OperationGUI::OnChamferGetAll(const TopoDS_Shape& ShapeTopo, const double D
     result->NameType(type);
 
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch (const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -368,15 +369,15 @@ bool OperationGUI::OnChamferGetSelected(const TopoDS_Shape& ShapeTopo, const cha
 					const double D1, const double D2, const int SubShapeType,
 					Standard_Integer& aLocalContextId, bool& myUseLocalContext)
 {
-  if (myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+  if (QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
     return false;
   
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
   Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
   
   if(myUseLocalContext == false) {
     /* No local context opened for chamfer method */
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
     return false;
   }
   
@@ -423,7 +424,7 @@ bool OperationGUI::OnChamferGetSelected(const TopoDS_Shape& ShapeTopo, const cha
     aResult->NameType(type);
 
     if(myGeomBase->Display(aResult))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -437,8 +438,8 @@ bool OperationGUI::OnChamferGetSelected(const TopoDS_Shape& ShapeTopo, const cha
 
   DisplayGUI* myDisplayGUI = new DisplayGUI();
   myDisplayGUI->OnDisplayAll(true) ;
-  myGeomGUI->GetActiveStudy()->updateObjBrowser();
-  myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_READY"));
+  QAD_Application::getDesktop()->getActiveStudy()->updateObjBrowser();
+  QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_READY"));
 
   return true;  
 }

@@ -37,8 +37,6 @@ using namespace std;
 #include <BRepAlgoAPI.hxx>
 #include <Geom_Curve.hxx>
 
-#include "QAD_Config.h"
-
 //=================================================================================
 // class    : BasicGUI_PointDlg()
 // purpose  : Constructs a BasicGUI_PointDlg which is a child of 'parent', with the 
@@ -108,7 +106,7 @@ void BasicGUI_PointDlg::Init(const Handle(AIS_InteractiveContext)& ic)
   myPoint.SetCoord(0.0, 0.0, 0.0);
   myOkEdge = false;
 
-  myGeomGUI->SetState(POINT_METHOD);
+  myGeomGUI->myState = 0;
 
   /*  Vertices Filter for all arguments */
   myEdgeFilter = new GEOM_ShapeTypeFilter(TopAbs_EDGE, myGeom);
@@ -128,9 +126,9 @@ void BasicGUI_PointDlg::Init(const Handle(AIS_InteractiveContext)& ic)
   GroupPoints->SpinBox_DY->SetValue(0.0);
   GroupPoints->SpinBox_DZ->SetValue(0.0);
 
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     myLocalContextId = myIC->OpenLocalContext();
-    myGeomBase->SetDisplayedObjectList();
+    //myGeomBase->SetDisplayedObjectList();
     /* sub shapes selection */
     myLocalContextMode = TopAbs_VERTEX;
     myIC->ActivateStandardMode(myLocalContextMode);
@@ -197,9 +195,9 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     {
     case 0:
       {
-	if(myUseLocalContext == false && myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	if(myUseLocalContext == false && QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
 	  myLocalContextId = myIC->OpenLocalContext();
-	  myGeomBase->SetDisplayedObjectList();
+	  //myGeomBase->SetDisplayedObjectList();
 	  /* sub shapes selection */
 	  myLocalContextMode = TopAbs_VERTEX;
 	  myIC->ActivateStandardMode(myLocalContextMode);
@@ -216,7 +214,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       }
     case 1:
       {
-	if(myUseLocalContext == true && myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	if(myUseLocalContext == true && QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
 	  myIC->CloseLocalContext(myLocalContextId);
 	  myUseLocalContext = false;
 	}
@@ -257,14 +255,14 @@ void BasicGUI_PointDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_PointDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if(mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
   /* Close local context */
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     myIC->CloseLocalContext(myLocalContextId);
     myUseLocalContext = false;
   }
@@ -279,10 +277,10 @@ void BasicGUI_PointDlg::ClickOnApply()
 	double z = GroupPoints->SpinBox_DZ->GetValue();
       
 	myBasicGUI->MakePointAndDisplay(x,y,z);  /* WARNING : no display if a local context is opened */
-	if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
 	  /* no display if a local context is opened */
 	  myLocalContextId = myIC->OpenLocalContext();
-	  myGeomBase->SetDisplayedObjectList();
+	  //myGeomBase->SetDisplayedObjectList();
 	  /* sub shapes selection */
 	  myLocalContextMode = TopAbs_VERTEX;
 	  myIC->ActivateStandardMode(myLocalContextMode);
@@ -309,8 +307,8 @@ void BasicGUI_PointDlg::ClickOnApply()
 //=======================================================================
 void BasicGUI_PointDlg::ClickOnCancel()
 {
-  if(myConstructorId == 0 && myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  if(myConstructorId == 0 && QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     myIC = v3d->getAISContext();
     if(myIC->HasOpenedContext()) {
       myIC->CloseLocalContext(myLocalContextId);
@@ -318,6 +316,7 @@ void BasicGUI_PointDlg::ClickOnCancel()
     }
   }
 
+  myGeomGUI->myState = -1;
   GEOMBase_Skeleton::ClickOnCancel();
   return;
 }
@@ -426,12 +425,12 @@ void BasicGUI_PointDlg::ActivateThisDialog( )
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  myGeomGUI->SetState(POINT_METHOD);
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  myGeomGUI->myState = 0;
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     myIC = v3d->getAISContext();
     myLocalContextId = myIC->OpenLocalContext();
-    myGeomBase->SetDisplayedObjectList();
+    //myGeomBase->SetDisplayedObjectList();
     /* sub shapes selection */
     myLocalContextMode = TopAbs_VERTEX;
     myIC->ActivateStandardMode(myLocalContextMode);
@@ -453,10 +452,11 @@ void BasicGUI_PointDlg::ActivateThisDialog( )
 //=================================================================================
 void BasicGUI_PointDlg::DeactivateActiveDialog()
 {
-  if(myConstructorId == 0 && myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+  if(myConstructorId == 0 && QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     myIC->CloseLocalContext(myLocalContextId);
     myUseLocalContext = false;
   }
+  myGeomGUI->myState = -1;
   GEOMBase_Skeleton::DeactivateActiveDialog();
   return;
 }

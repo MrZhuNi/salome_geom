@@ -107,7 +107,7 @@ void GEOMBase_Skeleton::ClickOnCancel()
   mySelection->ClearFilters();
   disconnect(mySelection, 0, this, 0);
 
-  myGeomGUI->ResetState();
+  //myGeomGUI->ResetState();
   reject();
 
   return;
@@ -140,7 +140,7 @@ void GEOMBase_Skeleton::DeactivateActiveDialog()
 {
   this->setEnabled(false);
   mySelection->ClearFilters();
-  myGeomGUI->ResetState();
+  //myGeomGUI->ResetState();
   disconnect(mySelection, 0, this, 0);
   myGeomBase->EraseSimulationShape();
   myGeomGUI->SetActiveDialogBox(0);

@@ -66,7 +66,7 @@ bool BooleanGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
   BooleanGUI* myBooleanGUI = new BooleanGUI();
   myBooleanGUI->myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myBooleanGUI->myGeomGUI->GetActiveStudy()->getSelection());
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
@@ -109,7 +109,7 @@ void BooleanGUI::MakeBooleanAndDisplay(GEOM::GEOM_Shape_ptr Shape1, GEOM::GEOM_S
   try {
     GEOM::GEOM_Shape_ptr result = myGeom->MakeBoolean(Shape1, Shape2, operation);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE")); 
       return;
     }  
 
@@ -119,7 +119,7 @@ void BooleanGUI::MakeBooleanAndDisplay(GEOM::GEOM_Shape_ptr Shape1, GEOM::GEOM_S
     result->NameType(type);
 
     if (myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch (const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);

@@ -265,7 +265,7 @@ void GeometryGUI_FillingHoleDlg::ClickOnOk()
 void GeometryGUI_FillingHoleDlg::ClickOnApply()
 {
   bool testResult = false ;
-  myGeomGUI->GetDesktop()->putInfo( tr("") ) ; 
+  QAD_Application::getDesktop()->putInfo( tr("") ) ; 
 
   switch(myConstructorId)
     { 
@@ -275,10 +275,10 @@ void GeometryGUI_FillingHoleDlg::ClickOnApply()
 	  testResult = myGeomGUI->OnFillingHole( myShape, myShapeIOR, myLocalContextId, myUseLocalContext ) ; 
 	}
 	if( !testResult ) {
-	  myGeomGUI->GetDesktop()->putInfo(tr("Operation aborted")) ;
+	  QAD_Application::getDesktop()->putInfo(tr("Operation aborted")) ;
 	}
 	else {
-	  myGeomGUI->GetDesktop()->putInfo(tr("Operation done"));
+	  QAD_Application::getDesktop()->putInfo(tr("Operation done"));
 	}
 	/* Reset arguments to allow a new selection */
 	this->ResetStateOfDialog() ;
@@ -334,7 +334,7 @@ void GeometryGUI_FillingHoleDlg::SelectionIntoArgument()
     return ;
   
 //    if( !IO->hasEntry() ) {
-//      myGeomGUI->GetDesktop()->putInfo(tr("Main shape must be in the study before")) ;
+//      QAD_Application::getDesktop()->putInfo(tr("Main shape must be in the study before")) ;
 //      return ;
 //    }
   
@@ -351,7 +351,7 @@ void GeometryGUI_FillingHoleDlg::SelectionIntoArgument()
     } 
     
     if ( IO->hasEntry() ) {
-      SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+      SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
       SALOMEDS::SObject_var obj = aStudy->FindObjectID( IO->getEntry() );
       SALOMEDS::GenericAttribute_var anAttr;
       SALOMEDS::AttributeIOR_var     anIOR;
@@ -492,7 +492,7 @@ void GeometryGUI_FillingHoleDlg::ActivateUserSelection()
   
   if( !this->myOkShape ) {
     this->ResetStateOfDialog() ;
-    myGeomGUI->GetDesktop()->putInfo(tr("Select main shape first")) ;
+    QAD_Application::getDesktop()->putInfo(tr("Select main shape first")) ;
     return ;
   }
   
@@ -509,7 +509,7 @@ void GeometryGUI_FillingHoleDlg::ActivateUserSelection()
     TopAbs_ShapeEnum aType = TopAbs_EDGE ;
     myGeomGUI->PrepareSubShapeSelection( int(aType), this->myLocalContextId ) ;    
     myUseLocalContext = true ;
-    myGeomGUI->GetDesktop()->putInfo(tr("Select edges to fill an hole and click on Ok/Apply")) ;
+    QAD_Application::getDesktop()->putInfo(tr("Select edges to fill an hole and click on Ok/Apply")) ;
   }
   return ;
 }

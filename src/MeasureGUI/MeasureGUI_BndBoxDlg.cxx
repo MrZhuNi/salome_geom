@@ -227,10 +227,10 @@ void MeasureGUI_BndBoxDlg::CalculateAndDisplayBndBox(const TopoDS_Shape& S)
     BRepBndLib::Add(S,B);
     B.Get(axmin, aymin, azmin, axmax, aymax, azmax);
     GroupC1->LineEdit11->setText(tr("%1").arg(axmin, 12, 'f', 6));
-    GroupC1->LineEdit12->setText(tr("%1").arg(aymin, 12, 'f', 6));
-    GroupC1->LineEdit21->setText(tr("%1").arg(azmin, 12, 'f', 6));
-    GroupC1->LineEdit22->setText(tr("%1").arg(axmax, 12, 'f', 6));
-    GroupC1->LineEdit31->setText(tr("%1").arg(aymax, 12, 'f', 6));
+    GroupC1->LineEdit12->setText(tr("%1").arg(axmax, 12, 'f', 6));
+    GroupC1->LineEdit21->setText(tr("%1").arg(aymin, 12, 'f', 6));
+    GroupC1->LineEdit22->setText(tr("%1").arg(aymax, 12, 'f', 6));
+    GroupC1->LineEdit31->setText(tr("%1").arg(azmin, 12, 'f', 6));
     GroupC1->LineEdit32->setText(tr("%1").arg(azmax, 12, 'f', 6));
     
     mySimulationTopoDs = BRepPrimAPI_MakeBox(gp_Pnt(axmin, aymin, azmin), gp_Pnt(axmax, aymax, azmax)).Shape();

@@ -39,35 +39,28 @@ LIB = libGEOMBase.la
 
 # header files 
 EXPORT_HEADERS= GEOMBase.h \
-		GEOMBase_Sketcher.h \
 		GEOMBase_Skeleton.h
 
 LIB_SRC = 	GEOMBase.cxx \
 		GEOMBase_Skeleton.cxx \
-		GEOMBase_Sketcher.cxx \
 		GEOMBase_aParameterDlg.cxx
 
 LIB_MOC = \
 		GEOMBase.h \
 		GEOMBase_Skeleton.h \
-		GEOMBase_Sketcher.h \
 		GEOMBase_aParameterDlg.h
 
 LIB_CLIENT_IDL = SALOME_Exception.idl \
-		 GEOM_Gen.idl \
-		 GEOM_Shape.idl \
 		 SALOMEDS.idl \
-		 SALOMEDS_Attributes.idl \
-		 SALOME_ModuleCatalog.idl \
-		 SALOME_Component.idl \
+		 SALOMEDS_Attributes.idl
 
 LIB_SERVER_IDL = 
 
 # additionnal information to compil and link file
 
-CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OGL_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
-CXXFLAGS += $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
+CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
+CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -lGEOMFiltersSelection -lGEOMSketcher -lDlgRef -lGEOMContext -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS += -lDlgRef -lGEOMContext
 
 @CONCLUDE@

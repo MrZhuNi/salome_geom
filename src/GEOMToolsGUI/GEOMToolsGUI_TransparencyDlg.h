@@ -32,10 +32,10 @@
 #include <qvariant.h>
 #include <qdialog.h>
 
-#include "SALOME_Selection.h"
-#include "SALOME_InteractiveObject.hxx"
-#include "GEOM_InteractiveObject.hxx"
-#include "GEOM_AISShape.hxx"
+/* #include "SALOME_Selection.h" */
+/* #include "SALOME_InteractiveObject.hxx" */
+/* #include "GEOM_InteractiveObject.hxx" */
+/* #include "GEOM_AISShape.hxx" */
 
 #include "GEOMBase.h"
 

@@ -29,6 +29,7 @@
 using namespace std;
 #include "PrimitiveGUI_ConeDlg.h"
 
+#include <gp_Lin.hxx>
 #include <BRepPrimAPI_MakeCone.hxx>
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepAdaptor_Curve.hxx>
@@ -246,7 +247,7 @@ void PrimitiveGUI_ConeDlg::ClickOnOk()
 //=================================================================================
 void PrimitiveGUI_ConeDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();

@@ -73,27 +73,27 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
     {
     case 211: // MENU VIEW - WIREFRAME/SHADING
       {
-	if(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
 	  QApplication::setOverrideCursor(waitCursor);
 
-	  VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+	  VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
 
 	  int themode = myRenderInter->GetDisplayMode();
 	  if(themode==0) {
 	    myRenderInter->SetDisplayMode(1);
-	    myDisplayGUI->myGeomGUI->GetDesktop()->menuBar()->changeItem(211, tr("GEOM_MEN_WIREFRAME"));
+	    QAD_Application::getDesktop()->menuBar()->changeItem(211, tr("GEOM_MEN_WIREFRAME"));
 	  } 
 	  else {
 	    myRenderInter->SetDisplayMode(0);
-	    myDisplayGUI->myGeomGUI->GetDesktop()->menuBar()->changeItem(211, tr("GEOM_MEN_SHADING"));
+	    QAD_Application::getDesktop()->menuBar()->changeItem(211, tr("GEOM_MEN_SHADING"));
 	  }
 
 	  QApplication::restoreOverrideCursor(); 	  
 	} 
-	else if(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
 	  QApplication::setOverrideCursor(Qt::waitCursor);
 
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
 	  AIS_DisplayMode mode = (AIS_DisplayMode)ic->DisplayMode();
 	  AIS_DisplayMode newmode = (mode == AIS_WireFrame ? AIS_Shaded : AIS_WireFrame);
@@ -115,9 +115,9 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 
 	  ic->SetDisplayMode(newmode, Standard_False);
 	  if(newmode == 1)
-	    myDisplayGUI->myGeomGUI->GetDesktop()->menuBar()->changeItem(211, tr("GEOM_MEN_WIREFRAME"));
+	    QAD_Application::getDesktop()->menuBar()->changeItem(211, tr("GEOM_MEN_WIREFRAME"));
 	  else
-	    myDisplayGUI->myGeomGUI->GetDesktop()->menuBar()->changeItem(211, tr("GEOM_MEN_SHADING"));
+	    QAD_Application::getDesktop()->menuBar()->changeItem(211, tr("GEOM_MEN_SHADING"));
 	  
 	  QApplication::restoreOverrideCursor();
 	}
@@ -125,26 +125,26 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       }
     case 212: // MENU VIEW - DISPLAY ALL
       {
-	if(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
-	  ((VTKViewer_ViewFrame*)myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->DisplayAll();
-	else if(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
+	  ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->DisplayAll();
+	else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
 	  myDisplayGUI->OnDisplayAll();
 	break;
       }
     case 213: // MENU VIEW - DISPLAY ONLY
       {
-	if(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
 	  myDisplayGUI->OnVTKDisplayOnly();
-	else if(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
+	else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
 	  myDisplayGUI->OnDisplayOnly();	
 	break;
       }
     case 214: // MENU VIEW - ERASE ALL
       {
-	if(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
-	  ((VTKViewer_ViewFrame*)myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->EraseAll();
-	else if(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK)
+	  ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor()->EraseAll();
+	else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
 
 	  ic->EraseAll(Standard_True, Standard_False);
@@ -159,11 +159,11 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
       }
     case 8031: // POPUP VIEWER - WIREFRAME/SHADING
       {
-	if(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
 	  // VTK
-	  VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+	  VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
 	  
-	  SALOME_Selection* Sel = SALOME_Selection::Selection(myDisplayGUI->myGeomGUI->GetActiveStudy()->getSelection());
+	  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
 	  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
 	  
 	  QApplication::setOverrideCursor(Qt::waitCursor);
@@ -174,10 +174,10 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 	  myRenderInter->Render();
 	  QApplication::restoreOverrideCursor();
 	}
-	else if(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
 	  QApplication::setOverrideCursor(Qt::waitCursor);
-	  SALOME_Selection* Sel = SALOME_Selection::Selection(myDisplayGUI->myGeomGUI->GetActiveStudy()->getSelection());
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
 	  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
 	  for(;It.More();It.Next()) {
@@ -217,19 +217,19 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
 {
   DisplayGUI* myDisplayGUI = new DisplayGUI();
 
-  SALOMEDS::Study_var aStudy = myDisplayGUI->myGeomGUI->GetActiveStudy()->getStudyDocument();
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
   
   OCCViewer_Viewer3d* v3d;
   Handle(AIS_InteractiveContext) ic;
   vtkRenderer* Renderer;
 
-  if(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    v3d = ((OCCViewer_ViewFrame*)myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     ic = v3d->getAISContext();
   } 
-  else if(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
-    Renderer = ((VTKViewer_ViewFrame*)myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+  else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
+    Renderer = ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
   } 
   else
     return;
@@ -237,14 +237,14 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
   if(theIO.IsNull())
     MESSAGE("BuildPresentation(): null SALOME_InteractiveObject passed")
 
-  if(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
     // VTK
 	  
-    SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->entry());
+    SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->entry());
 	    
     SALOMEDS::SObject_var obj = aStudy->FindObjectID(theIO->getEntry());
 
-    VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+    VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
 
     SALOMEDS::GenericAttribute_var anAttr;
     SALOMEDS::AttributeName_var aName;
@@ -260,7 +260,7 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
 	  // this SObject may be GEOM module root SObject
 
 	  bool useSubItems = false;
-	  SALOMEDS::ChildIterator_var anIter = myDisplayGUI->myGeomGUI->GetActiveStudy()->getStudyDocument()->NewChildIterator(obj);
+	  SALOMEDS::ChildIterator_var anIter = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument()->NewChildIterator(obj);
 	  if(myDisplayGUI->myGeom->GetIORFromString(SALOMEDS::AttributeIOR::_narrow(anAttr)->Value())->_is_nil()) {
 	    while (anIter->More() && !useSubItems) {
 	      SALOMEDS::SObject_var subobj = anIter->Value();
@@ -287,7 +287,7 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
 	    if(obj->FindAttribute(anAttr, "AttributeName")) {
 	      aName = SALOMEDS::AttributeName::_narrow(anAttr);
 	      
-	      vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+	      vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
 	      vtkActorCollection* theAllActors = theRenderer->GetActors();
 	      theAllActors->InitTraversal();
 	      vtkActor* actor = (vtkActor*)theAllActors->GetNextActor();
@@ -309,7 +309,7 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
 	      }
 	      if(!isDisplayed) {
 		// open transaction
-		QAD_Operation* op = new SALOMEGUI_ImportOperation( myDisplayGUI->myGeomGUI->GetActiveStudy() );
+		QAD_Operation* op = new SALOMEGUI_ImportOperation( QAD_Application::getDesktop()->getActiveStudy() );
 		op->start();
 		
 		SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(fatherSF);
@@ -360,10 +360,10 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
     }
     // No viewer update should be done here!
     //myRenderInter->Render();
-    //myDisplayGUI->myGeomGUI->GetActiveStudy()->updateObjBrowser( true );
+    //QAD_Application::getDesktop()->getActiveStudy()->updateObjBrowser( true );
   } 
-  else if(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(myDisplayGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->entry());
+  else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->entry());
     SALOMEDS::GenericAttribute_var anAttr;
     SALOMEDS::AttributeName_var aName;
     SALOMEDS::AttributeIOR_var anIOR;
@@ -386,7 +386,7 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
 	  // this SObject may be GEOM module root SObject
 
 	  bool useSubItems = false;
-	  SALOMEDS::ChildIterator_var anIter = myDisplayGUI->myGeomGUI->GetActiveStudy()->getStudyDocument()->NewChildIterator(obj);
+	  SALOMEDS::ChildIterator_var anIter = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument()->NewChildIterator(obj);
 	  if(myDisplayGUI->myGeom->GetIORFromString(SALOMEDS::AttributeIOR::_narrow(anAttr)->Value())->_is_nil()) {
 	    while(anIter->More() && !useSubItems) {
 	      SALOMEDS::SObject_var subobj = anIter->Value();
@@ -434,7 +434,7 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
 	      else {
 		if(!useSubItems) {
 		  // open transaction
-		  QAD_Operation* op = new SALOMEGUI_ImportOperation( myDisplayGUI->myGeomGUI->GetActiveStudy() );
+		  QAD_Operation* op = new SALOMEGUI_ImportOperation( QAD_Application::getDesktop()->getActiveStudy() );
 		  op->start();
 		  if (fatherSF->_is_nil())
 		    MESSAGE("BuildPresentation(): fatherSF is nil!")
@@ -444,7 +444,7 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
 		  op->finish();
 		}
 		Handle(GEOM_AISShape) aSh = new GEOM_AISShape(Shape, aName->Value());
-		aSh->SetShadingColor(myDisplayGUI->myGeomGUI->GetShadingColor());
+		aSh->SetShadingColor(myDisplayGUI->myGeomBase->myShadingColor);
 		Handle(GEOM_InteractiveObject) IO = new GEOM_InteractiveObject(anIOR->Value(), myDisplayGUI->myGeomGUI->GetFatherior(), "GEOM");
 		IO->setEntry(obj->GetID());
 		aSh->setIO(IO);
@@ -476,7 +476,7 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
       }
     }
     // No viewer update should be done here!
-    //myDisplayGUI->myGeomGUI->GetActiveStudy()->updateObjBrowser( true );
+    //QAD_Application::getDesktop()->getActiveStudy()->updateObjBrowser( true );
     //ic->UpdateCurrentViewer();
   }
 }
@@ -488,10 +488,10 @@ void DisplayGUI::BuildPresentation(const Handle(SALOME_InteractiveObject)& theIO
 //=====================================================================================
 void DisplayGUI::OnDisplayAll(bool onlyPreviousDisplayedObject)
 {
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
     return;
 
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
   Handle (AIS_InteractiveContext) myContext = v3d->getAISContext();
 
   myContext->Display(v3d->getTrihedron());
@@ -514,7 +514,9 @@ void DisplayGUI::OnDisplayAll(bool onlyPreviousDisplayedObject)
     }
   }
   else {
-    AIS_ListIteratorOfListOfInteractive ite(myGeomGUI->GetListDisplayedObject());
+    AIS_ListOfInteractive aListDisplayedObject;
+    myContext->DisplayedObjects(aListDisplayedObject);
+    AIS_ListIteratorOfListOfInteractive ite(aListDisplayedObject);
     while(ite.More()) {
       if(ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
 	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
@@ -541,7 +543,7 @@ void DisplayGUI::OnVTKDisplayOnly()
   QApplication::setOverrideCursor(Qt::waitCursor);
 
   // Erase all not selected actors
-  vtkRenderer* aren = ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+  vtkRenderer* aren = ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
   vtkActorCollection* theActors = aren->GetActors();
   theActors->InitTraversal();
   vtkActor *ac = theActors->GetNextActor();
@@ -555,21 +557,21 @@ void DisplayGUI::OnVTKDisplayOnly()
   }
 
   // Display selection
-  SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
-  SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->entry());
+  SALOMEDS::SObject_var fatherSF = aStudy->FindObjectID(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->entry());
   SALOMEDS::GenericAttribute_var anAttr;
   SALOMEDS::AttributeName_var aName;
   SALOMEDS::AttributeIOR_var anIOR;
 
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection());
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
   SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
 	  
   for(;It.More();It.Next()) {
     Handle(SALOME_InteractiveObject) IObject = It.Value();
     SALOMEDS::SObject_var obj = aStudy->FindObjectID( IObject->getEntry() );
 
-    VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+    VTKViewer_RenderWindowInteractor* myRenderInter = ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
 
     if(myRenderInter->isInViewer(IObject)) {
       myRenderInter->Display(IObject);
@@ -580,7 +582,7 @@ void DisplayGUI::OnVTKDisplayOnly()
 	if(!obj->FindAttribute(anAttr, "AttributeIOR")) 
 	  break;
 	// If selected object contains displayable subobjects, then do nothing
-	SALOMEDS::ChildIterator_var anIter = myGeomGUI->GetActiveStudy()->getStudyDocument()->NewChildIterator(obj);
+	SALOMEDS::ChildIterator_var anIter = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument()->NewChildIterator(obj);
 	SALOMEDS::GenericAttribute_var aTmpAttr;
 	
 	anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
@@ -591,7 +593,7 @@ void DisplayGUI::OnVTKDisplayOnly()
 	if(obj->FindAttribute(anAttr, "AttributeName")) {
           aName = SALOMEDS::AttributeName::_narrow(anAttr);
 	  // open transaction
-	  QAD_Operation* op = new SALOMEGUI_ImportOperation(myGeomGUI->GetActiveStudy());
+	  QAD_Operation* op = new SALOMEGUI_ImportOperation(QAD_Application::getDesktop()->getActiveStudy());
 	  op->start();
 
 	  SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(fatherSF);
@@ -599,7 +601,7 @@ void DisplayGUI::OnVTKDisplayOnly()
 	  // commit transaction
 	  op->finish();
 		  
-	  vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+	  vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
 	  int themode = myRenderInter->GetDisplayMode();
 	  vtkActorCollection* theActors = GEOM_AssemblyBuilder::BuildActors(Shape, 0, themode, Standard_True);
 	  theActors->InitTraversal();
@@ -610,7 +612,7 @@ void DisplayGUI::OnVTKDisplayOnly()
 	    GActor->setName(IObject->getName());
 		    
 	    theRenderer->AddActor(GActor);
-	    vtkRenderWindow *renWin = ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer()->GetRenderWindow();
+	    vtkRenderWindow *renWin = ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer()->GetRenderWindow();
 	    renWin->Render();
 	    anActor = (vtkActor*)theActors->GetNextActor();
 	  }
@@ -618,7 +620,7 @@ void DisplayGUI::OnVTKDisplayOnly()
       }
     }
   }
-  myGeomGUI->GetActiveStudy()->updateObjBrowser(true);
+  QAD_Application::getDesktop()->getActiveStudy()->updateObjBrowser(true);
 
   QApplication::restoreOverrideCursor();
   return;		       
@@ -631,11 +633,11 @@ void DisplayGUI::OnVTKDisplayOnly()
 //=====================================================================================
 void DisplayGUI::OnDisplayOnly()
 {
-  if (myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+  if (QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
     return;
 
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-  SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
   Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
 
   AIS_ListOfInteractive List;
@@ -652,14 +654,14 @@ void DisplayGUI::OnDisplayOnly()
   }
 
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection());
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
 
   SALOME_ListIteratorOfListIO It1(Sel->StoredIObjects());
   for(;It1.More();It1.Next()) {
     Handle(SALOME_InteractiveObject) IObject = It1.Value();
 
     SALOMEDS::SObject_var fatherSF = 
-      aStudy->FindObjectID(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->entry());
+      aStudy->FindObjectID(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->entry());
     if(v3d->isInViewer(IObject, true)) {
       AIS_ListOfInteractive List1;
       ic->ObjectsInCollector(List1);
@@ -697,7 +699,7 @@ void DisplayGUI::OnDisplayOnly()
 	    if(obj->FindAttribute(anAttr, "AttributeName")) {
 	      aName = SALOMEDS::AttributeName::_narrow(anAttr);
 	      // open transaction
-	      QAD_Operation* op = new SALOMEGUI_ImportOperation(myGeomGUI->GetActiveStudy());
+	      QAD_Operation* op = new SALOMEGUI_ImportOperation(QAD_Application::getDesktop()->getActiveStudy());
 	      op->start();
 	      
 	      SALOMEDS::SObject_var newObj1 = aStudyBuilder->NewObject(fatherSF);
@@ -728,15 +730,15 @@ void DisplayGUI::OnDisplayOnly()
 //=====================================================================================
 void DisplayGUI::OnErase()
 {
-  SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection());
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_VTK) {
     // VTK
     SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
     Handle(SALOME_InteractiveObject) anIObject;
     for(;It.More();It.Next()) {
       anIObject = It.Value();
-      VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
+      VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRWInteractor();
 
       if(myRenderInter->isInViewer(anIObject)) {
 	myRenderInter->Erase(anIObject);
@@ -748,7 +750,7 @@ void DisplayGUI::OnErase()
 	if(!obj->_is_nil()) {
 	  if(obj->FindAttribute(anAttr, "AttributeIOR")) {
 	    // this SObject may be GEOM module root SObject
-	    SALOMEDS::ChildIterator_var anIter = myGeomGUI->GetActiveStudy()->getStudyDocument()->NewChildIterator(obj);
+	    SALOMEDS::ChildIterator_var anIter = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument()->NewChildIterator(obj);
 	    bool useSubItems = false;
 	    while(anIter->More() && !useSubItems) {
 	      SALOMEDS::SObject_var subobj = anIter->Value();
@@ -768,7 +770,7 @@ void DisplayGUI::OnErase()
 	      TopoDS_Shape Shape = myGeomGUI->GetShapeReader().GetShape(myGeom, aShape);
 	      if(obj->FindAttribute(anAttr, "AttributeName")) {
 		// searchin for already displayed objects with the same shape
-		vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
+		vtkRenderer* theRenderer = ((VTKViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getRenderer();
 		vtkActorCollection* theAllActors = theRenderer->GetActors();
 		theAllActors->InitTraversal();
 		vtkActor* actor = (vtkActor*)theAllActors->GetNextActor();
@@ -812,9 +814,9 @@ void DisplayGUI::OnErase()
       }
     }
   }
-  else if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+  else if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
     // OCC
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
     SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
     Handle(SALOME_InteractiveObject) anIObject;
@@ -835,7 +837,7 @@ void DisplayGUI::OnErase()
 	if(!obj->_is_nil()) {
 	  if(obj->FindAttribute(anAttr, "AttributeIOR")) {
 	    // this SObject may be GEOM module root SObject
-	    SALOMEDS::ChildIterator_var anIter = myGeomGUI->GetActiveStudy()->getStudyDocument()->NewChildIterator(obj);
+	    SALOMEDS::ChildIterator_var anIter = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument()->NewChildIterator(obj);
 	    bool useSubItems = false;
 	    while(anIter->More() && !useSubItems) {
 	      SALOMEDS::SObject_var subobj = anIter->Value();
@@ -905,18 +907,18 @@ void DisplayGUI::OnErase()
 bool DisplayGUI::PrepareSubShapeSelection(const int SubShapeType, Standard_Integer& returnLocalContextId)
 {
   //* Test the type of viewer */
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
     return false;
   
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
   Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
   
   /* local context opening */
-  myGeomBase->SetDisplayedObjectList();
+  //myGeomBase->SetDisplayedObjectList();
   this->OnDisplayOnly();
 
   returnLocalContextId = ic->OpenLocalContext(Standard_False, Standard_True, Standard_False, Standard_False);
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myGeomGUI->GetActiveStudy()->getSelection());
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
   SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
   for(;It.More();It.Next()) {
     Handle(SALOME_InteractiveObject) IObject = It.Value();
@@ -927,7 +929,7 @@ bool DisplayGUI::PrepareSubShapeSelection(const int SubShapeType, Standard_Integ
       ic->HilightWithColor(Shape, Quantity_NOC_RED);
     }
   }
-  myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SELECT_SUBSHAPES"));
+  QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SELECT_SUBSHAPES"));
   return true;
 }
 
@@ -939,17 +941,17 @@ bool DisplayGUI::PrepareSubShapeSelection(const int SubShapeType, Standard_Integ
 bool DisplayGUI::PrepareSubShapeSelectionArgumentShape(const TopoDS_Shape& aShape,const int SubShapeType, Standard_Integer& returnLocalContextId)
 {
   //* Test the type of viewer */
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
     return false;
   
   if(aShape.IsNull())
     return false ;
   
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
   Handle (AIS_InteractiveContext) ic = v3d->getAISContext();
   
   /* local context opening */
-  myGeomBase->SetDisplayedObjectList();
+  //myGeomBase->SetDisplayedObjectList();
   this->OnDisplayOnly();
   
   returnLocalContextId = ic->OpenLocalContext(Standard_False, Standard_True, Standard_False, Standard_False) ;
@@ -961,7 +963,7 @@ bool DisplayGUI::PrepareSubShapeSelectionArgumentShape(const TopoDS_Shape& aShap
   //  ic->Load(Shape, (8 - SubShapeType), Standard_True);
   ic->HilightWithColor(Shape, Quantity_NOC_RED);
   
-  myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SELECT_SUBSHAPES"));
+  QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SELECT_SUBSHAPES"));
   return true;
 }
 

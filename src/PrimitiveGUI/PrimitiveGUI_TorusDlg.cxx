@@ -29,6 +29,7 @@
 using namespace std;
 #include "PrimitiveGUI_TorusDlg.h"
 
+#include <gp_Lin.hxx>
 #include <BRepPrimAPI_MakeTorus.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include "QAD_Config.h"
@@ -229,7 +230,7 @@ void PrimitiveGUI_TorusDlg::ClickOnOk()
 //=================================================================================
 void PrimitiveGUI_TorusDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();

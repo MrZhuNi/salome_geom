@@ -103,7 +103,7 @@ void MeasureGUI_Skeleton::ClickOnCancel()
   mySimulationTopoDs.Nullify();
 
   disconnect(mySelection, 0, this, 0);
-  myGeomGUI->ResetState();
+  //myGeomGUI->ResetState();
   reject();
 
   return;
@@ -135,7 +135,7 @@ void MeasureGUI_Skeleton::LineEditReturnPressed()
 void MeasureGUI_Skeleton::DeactivateActiveDialog()
 {
   this->setEnabled(false);
-  myGeomGUI->ResetState();
+  //myGeomGUI->ResetState();
   disconnect(mySelection, 0, this, 0);
   myGeomBase->EraseSimulationShape();
   myGeomGUI->SetActiveDialogBox(0);

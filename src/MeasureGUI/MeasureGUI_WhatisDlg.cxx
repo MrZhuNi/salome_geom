@@ -29,6 +29,9 @@
 using namespace std;
 #include "MeasureGUI_WhatisDlg.h"
 
+#include <TopTools_MapOfShape.hxx>
+#include <TCollection_AsciiString.hxx>
+#include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopoDS_Iterator.hxx>
 

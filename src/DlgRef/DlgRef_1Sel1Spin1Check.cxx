@@ -21,41 +21,34 @@
 //
 //
 //
-//  File   : GEOMBase_Tools.h
+//  File   : DlgRef_1Sel1Spin1Check.cxx
 //  Author : Damien COQUERET
 //  Module : GEOM
 //  $Header: 
 
-#ifndef GEOMTOOLSGUI_H
-#define GEOMTOOLSGUI_H
+#include "DlgRef_1Sel1Spin1Check.h"
 
-#include "GEOMBase.h"
+#include <qlayout.h>
+#include <qspinbox.h>
+#include <qgroupbox.h>
 
-//=================================================================================
-// class    : GEOMBase_Tools
-// purpose  :
-//=================================================================================
-class GEOMToolsGUI : public QObject
+/* 
+ *  Constructs a DlgRef_1Sel1Spin which is a child of 'parent', with the 
+ *  name 'name' and widget flags set to 'f' 
+ */
+DlgRef_1Sel1Spin1Check::DlgRef_1Sel1Spin1Check(QWidget* parent, const char* name, WFlags fl)
+  :DlgRef_1Sel1Spin1Check_QTD(parent, name, fl)
 {
-  Q_OBJECT /* for QT compatibility */
+  SpinBox1->close(TRUE);
+  SpinBox_DX = new DlgRef_SpinBox(GroupBox1, "SpinBox_DX");
+  Layout2->addWidget(SpinBox_DX, 0, 1);
+}
 
-public :
-  GEOMToolsGUI();
-  ~GEOMToolsGUI();
 
-  static bool OnGUIEvent(int theCommandID, QAD_Desktop* parent);
-
-  /* Import and export topology methods */
-  bool Import(int aState);
-  bool Export(int aState); 
-  
-  void OnEditCopy();
-  void OnEditDelete();
-
-  GEOMBase* myGeomBase;
-  GEOMContext* myGeomGUI;
-  GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
-
-};
-
-#endif
+/*  
+ *  Destroys the object and frees any allocated resources
+ */
+DlgRef_1Sel1Spin1Check::~DlgRef_1Sel1Spin1Check()
+{
+    // no need to delete child widgets, Qt does it all for us
+}

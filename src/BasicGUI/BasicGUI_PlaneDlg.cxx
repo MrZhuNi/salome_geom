@@ -273,7 +273,7 @@ void BasicGUI_PlaneDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_PlaneDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();

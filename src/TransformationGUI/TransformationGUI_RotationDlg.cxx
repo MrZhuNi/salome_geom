@@ -29,6 +29,7 @@
 using namespace std;
 #include "TransformationGUI_RotationDlg.h"
 
+#include <gp_Lin.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepAdaptor_Curve.hxx>
 
@@ -141,7 +142,7 @@ void TransformationGUI_RotationDlg::ClickOnOk()
 //=================================================================================
 void TransformationGUI_RotationDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();

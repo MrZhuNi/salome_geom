@@ -28,11 +28,11 @@
 using namespace std;
 #include "BasicGUI_EllipseDlg.h"
 
-#include "gp_Elips.hxx"
-#include "QAD_Config.h"
-
+#include <gp_Lin.hxx>
+#include <gp_Elips.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepAdaptor_Curve.hxx>
+#include "QAD_Config.h"
 
 //=================================================================================
 // class    : BasicGUI_EllipseDlg()
@@ -153,7 +153,7 @@ void BasicGUI_EllipseDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_EllipseDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();

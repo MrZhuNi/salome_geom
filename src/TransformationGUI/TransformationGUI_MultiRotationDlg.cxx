@@ -29,8 +29,7 @@
 using namespace std;
 #include "TransformationGUI_MultiRotationDlg.h"
 
-#include "QAD_Config.h"
-
+#include <gp_Lin.hxx>
 #include <Precision.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <GeomAPI_ProjectPointOnCurve.hxx>
@@ -41,6 +40,7 @@ using namespace std;
 #include <TopoDS_Compound.hxx>
 #include <Geom_Line.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
+#include "QAD_Config.h"
 
 //=================================================================================
 // class    : TransformationGUI_MultiRotationDlg()
@@ -258,7 +258,7 @@ void TransformationGUI_MultiRotationDlg::ClickOnOk()
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();

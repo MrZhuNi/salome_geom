@@ -148,7 +148,7 @@ void OperationGUI_PartitionDlg::ClickOnOk()
 //=================================================================================
 void OperationGUI_PartitionDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
 
   if(myOkListShapes || myOkListTools || myOkKeepShape || myOkRemoveShape) {
     GEOM::shape_type limit;

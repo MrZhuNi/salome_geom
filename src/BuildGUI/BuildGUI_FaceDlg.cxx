@@ -123,7 +123,7 @@ void BuildGUI_FaceDlg::ClickOnOk()
 //=================================================================================
 void BuildGUI_FaceDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if(myOkShape)	  
     myBuildGUI->MakeFaceAndDisplay(myGeomShape, GroupPoints->CheckButton1->isChecked());
   return;

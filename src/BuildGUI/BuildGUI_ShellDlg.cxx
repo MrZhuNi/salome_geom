@@ -125,7 +125,7 @@ void BuildGUI_ShellDlg::ClickOnOk()
 //=================================================================================
 void BuildGUI_ShellDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
 
   if(myOkListShapes) 
     myBuildGUI->MakeShellAndDisplay(myListShapes);

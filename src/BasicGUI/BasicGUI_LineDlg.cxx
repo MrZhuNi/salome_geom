@@ -135,7 +135,7 @@ void BasicGUI_LineDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_LineDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();

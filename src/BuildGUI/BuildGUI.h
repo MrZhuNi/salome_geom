@@ -30,6 +30,7 @@
 #define BUILDGUI_H
 
 #include "GEOMBase.h"
+#include <gp_Pnt.hxx>
 
 //=================================================================================
 // class    : BuildGUI

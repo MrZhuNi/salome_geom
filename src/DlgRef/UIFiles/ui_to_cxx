@@ -9,6 +9,9 @@
 #uic -o DlgRef_1Sel1Spin_QTD.h DlgRef_1Sel1Spin_QTD.ui
 #uic -o DlgRef_1Sel1Spin_QTD.cxx -impl DlgRef_1Sel1Spin_QTD.h DlgRef_1Sel1Spin_QTD.ui
 
+uic -o DlgRef_1Sel1Spin1Check_QTD.h DlgRef_1Sel1Spin1Check_QTD.ui
+uic -o DlgRef_1Sel1Spin1Check_QTD.cxx -impl DlgRef_1Sel1Spin1Check_QTD.h DlgRef_1Sel1Spin1Check_QTD.ui
+
 #uic -o DlgRef_1Sel2Spin_QTD.h DlgRef_1Sel2Spin_QTD.ui
 #uic -o DlgRef_1Sel2Spin_QTD.cxx -impl DlgRef_1Sel2Spin_QTD.h DlgRef_1Sel2Spin_QTD.ui
 
@@ -23,6 +26,9 @@
 
 #uic -o DlgRef_1Sel1Check_QTD.h DlgRef_1Sel1Check_QTD.ui
 #uic -o DlgRef_1Sel1Check_QTD.cxx -impl DlgRef_1Sel1Check_QTD.h DlgRef_1Sel1Check_QTD.ui
+
+#uic -o DlgRef_1Sel3Check_QTD.h DlgRef_1Sel3Check_QTD.ui
+#uic -o DlgRef_1Sel3Check_QTD.cxx -impl DlgRef_1Sel3Check_QTD.h DlgRef_1Sel3Check_QTD.ui
 
 #uic -o DlgRef_1Sel1Check1List_QTD.h DlgRef_1Sel1Check1List_QTD.ui
 #uic -o DlgRef_1Sel1Check1List_QTD.cxx -impl DlgRef_1Sel1Check1List_QTD.h DlgRef_1Sel1Check1List_QTD.ui
@@ -48,8 +54,8 @@
 #uic -o DlgRef_2Sel4Spin1Check_QTD.h DlgRef_2Sel4Spin1Check_QTD.ui
 #uic -o DlgRef_2Sel4Spin1Check_QTD.cxx -impl DlgRef_2Sel4Spin1Check_QTD.h DlgRef_2Sel4Spin1Check_QTD.ui
 
-uic -o DlgRef_4Sel1List_QTD.h DlgRef_4Sel1List_QTD.ui
-uic -o DlgRef_4Sel1List_QTD.cxx -impl DlgRef_4Sel1List_QTD.h DlgRef_4Sel1List_QTD.ui
+#uic -o DlgRef_4Sel1List_QTD.h DlgRef_4Sel1List_QTD.ui
+#uic -o DlgRef_4Sel1List_QTD.cxx -impl DlgRef_4Sel1List_QTD.h DlgRef_4Sel1List_QTD.ui
 
 #uic -o DlgRef_3Sel_QTD.h DlgRef_3Sel_QTD.ui
 #uic -o DlgRef_3Sel_QTD.cxx -impl DlgRef_3Sel_QTD.h DlgRef_3Sel_QTD.ui

@@ -68,7 +68,7 @@ bool PrimitiveGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
   PrimitiveGUI* aPrimitiveGUI = new PrimitiveGUI();
   aPrimitiveGUI->myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(aPrimitiveGUI->myGeomGUI->GetActiveStudy()->getSelection());
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
   switch (theCommandID)
     {
     case 4021: // BOX
@@ -116,7 +116,7 @@ void PrimitiveGUI::MakeBoxAndDisplay(const gp_Pnt P1, const gp_Pnt P2)
     GEOM::GEOM_Shape_var box = myGeom->MakeBox(P1.X(), P1.Y(), P1.Z(), P2.X(), P2.Y(), P2.Z());
     box->NameType(tr("GEOM_BOX"));
     if(myGeomBase->Display(box))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -141,12 +141,12 @@ void PrimitiveGUI::MakeCylinderAndDisplay(const gp_Pnt BasePoint, const gp_Dir a
     
     GEOM::GEOM_Shape_var result = myGeom->MakeCylinder(pstruct, dstruct, Radius, aHeight);
     if (result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;
     }
     result->NameType(tr("GEOM_CYLINDER"));
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -168,7 +168,7 @@ void PrimitiveGUI::MakeSphereAndDisplay(const gp_Pnt aCenterPoint, const double 
     GEOM::GEOM_Shape_ptr result = myGeom->MakeSphere(aCenterPoint.X(),aCenterPoint.Y(),aCenterPoint.Z(), aRadius);
     result->NameType(tr("GEOM_SPHERE"));
     if (myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch (const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -194,12 +194,12 @@ void PrimitiveGUI::MakeTorusAndDisplay(const gp_Pnt BasePoint, const gp_Dir aDir
     
     GEOM::GEOM_Shape_var result = myGeom->MakeTorus(pstruct, dstruct, Radius1, Radius2);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;
     }
     result->NameType(tr("GEOM_TORUS"));
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -225,12 +225,12 @@ void PrimitiveGUI::MakeConeAndDisplay(const gp_Pnt BasePoint, const gp_Dir aDir,
 
     GEOM::GEOM_Shape_var result = myGeom->MakeCone(pstruct, dstruct, Radius1, Radius2, aHeight);  
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;
     }
     result->NameType(tr("GEOM_CONE"));
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   } 
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);

@@ -205,7 +205,7 @@ void PrimitiveGUI_SphereDlg::ClickOnOk()
 //=================================================================================
 void PrimitiveGUI_SphereDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if(mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();

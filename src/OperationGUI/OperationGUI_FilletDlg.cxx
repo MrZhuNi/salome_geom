@@ -30,12 +30,11 @@ using namespace std;
 #include "OperationGUI_FilletDlg.h"
 
 #include "DisplayGUI.h"
-#include "QAD_Config.h"
-#include "QAD_RightFrame.h"
-#include "OCCViewer_Viewer3d.h"
 
+#include <AIS_InteractiveContext.hxx>
 #include <TopExp_Explorer.hxx>
 #include <BRepFilletAPI_MakeFillet.hxx>
+#include <Precision.hxx>
 
 //=================================================================================
 // class    : OperationGUI_FilletDlg()
@@ -109,21 +108,17 @@ void OperationGUI_FilletDlg::Init(Handle(AIS_InteractiveContext) ic)
   myConstructorId = 0;
   myEditCurrentArgument = Group1->LineEdit1;
 
-  myRadius = 50.0;
-  myOkRadius = true;
+  myRadius = 5.0;
   myOkShape = false;
   myIC = ic;
   myLocalContextId = -1;
   myUseLocalContext = false;
 
-  /* Get setting of step value from file configuration */
-  QString St = QAD_CONFIG->getSetting("Geometry:SettingsGeomStep");
-  step = St.toDouble();
-
+  double SpecificStep = 10.0;
   /* min, max, step and decimals for spin boxes */
-  Group1->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  Group2->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
-  Group3->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, step, 3);
+  Group1->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
+  Group2->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
+  Group3->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
 
   Group1->SpinBox_DX->SetValue(myRadius);
   Group2->SpinBox_DX->SetValue(myRadius);
@@ -177,20 +172,16 @@ void OperationGUI_FilletDlg::ConstructorsClicked(int constructorId)
   mySimulationTopoDs.Nullify();
   disconnect(mySelection, 0, this, 0);
   myOkShape = false;
-  myRadius = 50.0;
-  myOkRadius = true;
+  myRadius = 5.0;
 
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext();
-    if(myUseLocalContext) {
-      myIC->CloseLocalContext(myLocalContextId);
-      DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->OnDisplayAll(true);
-      this->myUseLocalContext = false;
-    }
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myUseLocalContext) {
+    myIC->CloseLocalContext(myLocalContextId);
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->OnDisplayAll(true);
+    myUseLocalContext = false;
   }
 
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   switch (constructorId)
     {
     case 0: /* Fillet All */
@@ -205,7 +196,6 @@ void OperationGUI_FilletDlg::ConstructorsClicked(int constructorId)
 	myShapeType = -1;
 
 	Group1->SpinBox_DX->SetValue(myRadius);
-	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
     case 1: /* Fillet edges */
@@ -220,7 +210,6 @@ void OperationGUI_FilletDlg::ConstructorsClicked(int constructorId)
 	myShapeType = 6;
 
 	Group2->SpinBox_DX->SetValue(myRadius);
-	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
     case 2: /* Fillet Faces */
@@ -235,7 +224,6 @@ void OperationGUI_FilletDlg::ConstructorsClicked(int constructorId)
 	myShapeType = 4;
 
 	Group3->SpinBox_DX->SetValue(myRadius);
-	connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
     }
@@ -261,7 +249,8 @@ void OperationGUI_FilletDlg::ClickOnOk()
 //=================================================================================
 void OperationGUI_FilletDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QApplication::setOverrideCursor(Qt::waitCursor);
+  QAD_Application::getDesktop()->putInfo(tr(""));
   myGeomBase->EraseSimulationShape();
   mySimulationTopoDs.Nullify();
 
@@ -270,30 +259,31 @@ void OperationGUI_FilletDlg::ClickOnApply()
     { 
     case 0 : /* Fillet All */
       {	
-	if(myOkRadius && myOkShape)
+	if(myOkShape)
 	  testResult = myOperationGUI->OnFilletGetAll(myShape, myRadius, myShapeType, myShapeIOR);
 	break;
       }
     case 1 : /* Fillet Edge */
       {	
-	if(myOkRadius && myOkShape)
+	if(myOkShape)
 	  testResult = myOperationGUI->OnFilletGetSelected(myShape, myShapeIOR, myRadius, myShapeType, myLocalContextId, myUseLocalContext);
 	break;
       }
     case 2 : /* Fillet Face */
       {
-	if(myOkRadius && myOkShape)
+	if(myOkShape)
 	  testResult = myOperationGUI->OnFilletGetSelected(myShape, myShapeIOR, myRadius, myShapeType, myLocalContextId, myUseLocalContext);       
 	break;
       }
     }
 
   if(!testResult) 
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
   else
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   /* Reset all arguments and local context to allow user a new selection ...*/
   this->ResetStateOfDialog();
+  QApplication::restoreOverrideCursor();
   return;
 }
 
@@ -304,17 +294,7 @@ void OperationGUI_FilletDlg::ClickOnApply()
 //=================================================================================
 void OperationGUI_FilletDlg::ClickOnCancel()
 {
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext();
-
-    if(myUseLocalContext) {
-      myIC->CloseLocalContext(myLocalContextId);
-      myUseLocalContext = false;
-      DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->OnDisplayAll(true);
-    }
-  }
+  this->ResetStateOfDialog();
   GEOMBase_Skeleton::ClickOnCancel();
   return;
 }
@@ -327,6 +307,7 @@ void OperationGUI_FilletDlg::ClickOnCancel()
 void OperationGUI_FilletDlg::SelectionIntoArgument()
 {
   myGeomBase->EraseSimulationShape();
+  mySimulationTopoDs.Nullify();
   myEditCurrentArgument->setText("");
   this->ResetStateOfDialog();
   QString aString = ""; /* name of selection */
@@ -338,7 +319,7 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
     if(!myGeomBase->GetTopoFromSelection(mySelection, S))
       return;
     if(!IO->hasEntry()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
       return;
     }
 	
@@ -352,7 +333,7 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
       }
       
       if(IO->hasEntry()) {
-	SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+	SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
 	SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
         SALOMEDS::GenericAttribute_var anAttr;
         SALOMEDS::AttributeIOR_var anIOR;
@@ -367,8 +348,8 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
 	}
       }
     }
-    this->MakePreview();
-	
+    if(myConstructorId == 0)
+      this->MakePreview();
   }
   else 
     return;
@@ -434,10 +415,9 @@ void OperationGUI_FilletDlg::SetEditCurrentArgument()
 //=================================================================================
 void OperationGUI_FilletDlg::DeactivateActiveDialog()
 {
-    this->ResetStateOfDialog();
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true);
-    GEOMBase_Skeleton::DeactivateActiveDialog();
+  this->ResetStateOfDialog();
+  GEOMBase_Skeleton::DeactivateActiveDialog();
+  return;
 }
 
 
@@ -488,18 +468,14 @@ void OperationGUI_FilletDlg::ResetStateOfDialog()
 {
   myOkShape = false;
   myEditCurrentArgument->setText("");
+  QApplication::restoreOverrideCursor();
 
   /* Close its local contact if opened */
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
-    myIC = v3d->getAISContext();
-
-    if(myUseLocalContext) {
-      myIC->CloseLocalContext(myLocalContextId);
-      myUseLocalContext = false;
-      DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->OnDisplayAll(true);
-    }
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC && myUseLocalContext) {
+    myIC->CloseLocalContext(myLocalContextId);
+    myUseLocalContext = false;
+    DisplayGUI* myDisplayGUI = new DisplayGUI();
+    myDisplayGUI->OnDisplayAll(true);
   }
   return;
 }
@@ -515,9 +491,9 @@ void OperationGUI_FilletDlg::ValueChangedInSpinBox(double newValue)
   mySimulationTopoDs.Nullify();
 
   myRadius = newValue;
-  myOkRadius = true;
 
-  MakePreview();
+  if(myConstructorId == 0)
+    this->MakePreview();
   return;
 }
 
@@ -528,33 +504,47 @@ void OperationGUI_FilletDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 void OperationGUI_FilletDlg::MakePreview()
 {
-  TopoDS_Shape tds;
-  try {
-    BRepFilletAPI_MakeFillet fill(myShape);
-    switch (myConstructorId)
-      {
-      case 0: /* Fillet All */
-	{
-	  TopExp_Explorer Exp (myShape, TopAbs_EDGE);
-	  for(Exp; Exp.More(); Exp.Next()) {
-	    TopoDS_Edge E = TopoDS::Edge(Exp.Current());
-	    fill.Add(E);
-	  }
-	  for(int i = 1;i<=fill.NbContours();i++) 
-	    fill.SetRadius(myRadius,i);
-	
-	  tds = fill.Shape();
-	  break;
-	}
-      }
-    if(!tds.IsNull()) {
-      mySimulationTopoDs = tds;
-      myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
-    }
-  }  
-  catch(Standard_Failure) {
-    myGeomBase->EraseSimulationShape(); 
-    mySimulationTopoDs.Nullify();
+  QApplication::setOverrideCursor(Qt::waitCursor);
+
+  if(!myOkShape) {
+    QApplication::restoreOverrideCursor();
+    return;
   }
+
+  GEOM::GEOM_Shape::ListOfSubShapeID_var ListOfID = new GEOM::GEOM_Shape::ListOfSubShapeID;
+  ListOfID->length(0);
+
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+  SALOMEDS::SObject_var theObj = aStudy->FindObjectIOR(myShapeIOR);
+  if(theObj->_is_nil()) {
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
+    QApplication::restoreOverrideCursor();
+    return;
+  }
+  
+  try {
+    if(myRadius <= Precision::Confusion()) {
+      QApplication::restoreOverrideCursor();
+      return;
+    }
+
+    GEOM::GEOM_Shape_var aShape = myGeom->GetIORFromString(myShapeIOR);
+    GEOM::GEOM_Shape_var result = myGeom->MakeFillet(aShape, myRadius, myShapeType, ListOfID);
+    if(result->_is_nil()) {
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QApplication::restoreOverrideCursor();
+      return;
+    }
+    TopoDS_Shape S = myGeomGUI->GetShapeReader().GetShape(myGeom, result);
+
+    mySimulationTopoDs = S;
+    myGeomBase->DisplaySimulationShape(mySimulationTopoDs); 
+  }
+  catch(Standard_Failure) {
+    MESSAGE("Exception catched in MakePreview");
+    QApplication::restoreOverrideCursor();
+    return;
+  }
+  QApplication::restoreOverrideCursor();
   return;
 }

@@ -29,6 +29,7 @@
 using namespace std;
 #include "PrimitiveGUI_CylinderDlg.h"
 
+#include <gp_Lin.hxx>
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <Precision.hxx>
@@ -233,7 +234,7 @@ void PrimitiveGUI_CylinderDlg::ClickOnOk()
 //=================================================================================
 void PrimitiveGUI_CylinderDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();

@@ -29,94 +29,47 @@
 #ifndef DIALOGBOX_ORIENTATION_H
 #define DIALOGBOX_ORIENTATION_H
 
+#include "GEOMBase_Skeleton.h"
+#include "DlgRef_1Sel1Spin1Check.h"
+
 #include "RepairGUI.h"
-
-#include "DlgRef_SpinBox.h"
-
-#include <qvariant.h>
-#include <qdialog.h>
-#include <qvalidator.h>
-
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QButtonGroup;
-class QCheckBox;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
-
 
 //=================================================================================
 // class    : DialogBox_ORIENTATION
 // purpose  :
 //=================================================================================
-class RepairGUI_OrientationDlg : public QDialog
+class RepairGUI_OrientationDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
 public:
-    RepairGUI_OrientationDlg( QWidget* parent = 0, const char* name = 0, RepairGUI* theRepairGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0 );
+    RepairGUI_OrientationDlg(QWidget* parent = 0, const char* name = 0, RepairGUI* theRepairGUI = 0, SALOME_Selection* Sel = 0, bool modal = FALSE, WFlags fl = 0);
     ~RepairGUI_OrientationDlg();
 
 private :
+    void Init();
+    void enterEvent(QEvent* e);
+    void MakeOrientationSimulationAndDisplay();
+
     RepairGUI* myRepairGUI;
-    GEOM::GEOM_Gen_var            myGeom ;                 /* Current Geom object */
-    GEOMBase*                     myGeomBase ;              /* Current GeomGUI object */
-    GEOMContext*                     myGeomGUI ;              /* Current GeomGUI object */
-    TopoDS_Shape                     mySimulationTopoDs ;     /* Shape used for simulation display */
-    SALOME_Selection*                mySelection ;            /* User shape selection */
-    GEOM::GEOM_Shape_var                   myGeomShape ;            /* is myShape */
-    TopoDS_Shape                     myShape ;                /* topology used */
-    Standard_Real                    myLength ;               /* to simulate normal vector */
-    bool                             myOkShape ;
-    bool                             myOkLength ;
-    QDoubleValidator                 *myVa ;                  /* Double validator for numeric input */
-    QLineEdit*                       myEditCurrentArgument;   /* Current LineEdit */
-    int                              myConstructorId ;        /* Current constructor id = radio button id */
 
-    void closeEvent( QCloseEvent* e ) ;
-    void enterEvent( QEvent* e);
-    void Init( SALOME_Selection* Sel ) ;
-    void MakeOrientationSimulationAndDisplay( const TopoDS_Shape& aTopoDS, Standard_Real length ) ;
+    GEOM::GEOM_Shape_var myGeomShape;   /* is myShape */
+    TopoDS_Shape myShape;   /* topology used */
+    Standard_Real myLength;   /* to simulate normal vector */
+    bool myOkShape;
 
-    QButtonGroup* GroupConstructors;
-    QRadioButton* Constructor1;
-    QGroupBox* GroupButtons;
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
-    QPushButton* buttonApply;
-    QGroupBox* GroupC1;
-    QLineEdit* LineEditC1A1;
-    DlgRef_SpinBox*  SpinBox_C1A2 ;
-
-    QPushButton* SelectButtonC1A1;
-    QLabel* TextLabelC1A1;
-    QLabel* TextLabelC1A2;
-    QCheckBox* CheckBoxReverse;
+    DlgRef_1Sel1Spin1Check* GroupPoints;
 
 private slots:
-
-    void ConstructorsClicked(int constructorId);
     void ClickOnOk();
-    void ClickOnCancel();
     void ClickOnApply();
-    void SetEditCurrentArgument() ;
-    void SelectionIntoArgument() ;
-    void LineEditReturnPressed() ;
-    void DeactivateActiveDialog() ;
-    void ActivateThisDialog() ;
-    void ReverseOrientation(int state) ;
-    void ValueChangedInSpinBox( double newValue ) ;
+    void ActivateThisDialog();
+    void LineEditReturnPressed();
+    void SelectionIntoArgument();
+    void SetEditCurrentArgument();
+    void ReverseAngle(int state);
+    void ValueChangedInSpinBox(double newValue);
 
-protected:
-
-    QGridLayout* RepairGUI_OrientationDlgLayout;
-    QGridLayout* GroupConstructorsLayout;
-    QGridLayout* GroupButtonsLayout;
-    QGridLayout* GroupC1Layout;
 };
 
 #endif // DIALOGBOX_ORIENTATION_H

@@ -30,7 +30,21 @@
 #define GEOMBASE_H
 
 #include "GEOMContext.h"
+
+// SALOME Includes
+#include "QAD_Config.h"
 #include "SALOME_Selection.h"
+#include "GEOM_Actor.h"
+#include "GEOM_AISShape.hxx"
+#include "GEOM_InteractiveObject.hxx"
+
+// Open CASCADE Includes
+#include <Quantity_Color.hxx>
+
+// IDL Headers
+#include <SALOMEconfig.h>
+#include CORBA_SERVER_HEADER(SALOMEDS)
+#include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
 
 //=================================================================================
 // class    : GEOMBase
@@ -43,6 +57,9 @@ class GEOMBase : public QObject
 public :
   GEOMBase();
   ~GEOMBase();
+
+  static bool CustomPopup(QAD_Desktop* parent, QPopupMenu* popup, const QString& theContext,
+			  const QString& theParent, const QString& theObject);
 
   bool Display(GEOM::GEOM_Shape_ptr aShape, Standard_CString name = "");
   bool AddInStudy(bool selection = false, const Handle(SALOME_InteractiveObject)& anIO = 0);
@@ -63,6 +80,12 @@ public :
   void ConvertListOfIOInListOfIOR(const SALOME_ListIO& aList,
 				  GEOM::GEOM_Gen::ListOfIOR& listIOR); 
 
+  Handle(GEOM_AISShape) ConvertIORinGEOMAISShape(const char * IOR,
+						 Standard_Boolean& testResult,
+						 bool onlyInActiveView = false);
+  GEOM_Actor* ConvertIORinGEOMActor(const char * IOR, Standard_Boolean& testResult,
+				    bool onlyInActiveView = false);
+
   /* Geometry */
   bool VertexToPoint(const TopoDS_Shape& S, gp_Pnt& P);
 
@@ -76,7 +99,7 @@ public :
 		   const char* aTitle = 0, const double bottom = -1E6,
 		   const double top = +1E6, const int decimals = 6);
 
-  void SetDisplayedObjectList();
+  //void SetDisplayedObjectList();
 
   /* Simulation management */
   bool CreateArrowForLinearEdge(const TopoDS_Shape& tds, TopoDS_Shape& ArrowCone);
@@ -89,6 +112,10 @@ public :
 
   GEOMContext* myGeomGUI;
   GEOM::GEOM_Gen_var myGeom;   /* Current Geom Component */
+
+  Quantity_Color myShadingColor;
+  Handle(AIS_Shape) mySimulationShape; /* AIS shape used only during topo/geom simulations */
+  bool mySettings_AddInStudy;
 
 };
 

@@ -127,7 +127,7 @@ void BooleanGUI_FuseDlg::ClickOnOk()
 //=================================================================================
 void BooleanGUI_FuseDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
 
   if(myOkShape1 && myOkShape2)
     myBooleanGUI->MakeBooleanAndDisplay(myGeomShape1 ,myGeomShape2, 3);

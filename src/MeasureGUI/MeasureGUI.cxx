@@ -70,7 +70,7 @@ bool MeasureGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
   MeasureGUI* myMeasureGUI = new MeasureGUI();
   myMeasureGUI->myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myMeasureGUI->myGeomGUI->GetActiveStudy()->getSelection());
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
@@ -133,12 +133,12 @@ void MeasureGUI::MakeCDGAndDisplay(GEOM::GEOM_Shape_ptr Shape)
   try {
     GEOM::GEOM_Shape_var result = myGeom->MakeCDG(Shape);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return;
     }
     result->NameType(tr("GEOM_POINT"));
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }  
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);

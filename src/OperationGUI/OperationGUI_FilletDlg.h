@@ -57,7 +57,6 @@ private :
 
     OperationGUI* myOperationGUI;
 
-    double step;
     int myConstructorId;   /* Current constructor id = radio button id */
 
     /* Interactive and local context management see also : bool myUseLocalContext() */
@@ -69,7 +68,6 @@ private :
     bool myOkShape;
     char* myShapeIOR;
     int myShapeType;
-    bool myOkRadius;
     double myRadius;
     
     DlgRef_1Sel1Spin* Group1;

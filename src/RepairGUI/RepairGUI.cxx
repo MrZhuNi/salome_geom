@@ -70,7 +70,7 @@ bool RepairGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
 {
   RepairGUI* myRepairGUI = new RepairGUI();
   myRepairGUI->myGeomGUI->EmitSignalDeactivateDialog();
-  SALOME_Selection* Sel = SALOME_Selection::Selection(myRepairGUI->myGeomGUI->GetActiveStudy()->getSelection());
+  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
 
   switch (theCommandID)
     {
@@ -87,8 +87,8 @@ bool RepairGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
     case 603: // SUPPRESS FACES : use ic
       {
 	Handle(AIS_InteractiveContext) ic;
-	if(myRepairGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myRepairGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  ic = v3d->getAISContext();
 	}
 	RepairGUI_SuppressFacesDlg *aDlg = new RepairGUI_SuppressFacesDlg(parent, "", myRepairGUI, Sel, ic);
@@ -97,8 +97,8 @@ bool RepairGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
     case 604: // SUPPRESS HOLES : use ic
       {
 	Handle(AIS_InteractiveContext) ic;
-	if(myRepairGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myRepairGUI->myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
 	  ic = v3d->getAISContext();
 	}
 	RepairGUI_SuppressHoleDlg *aDlg = new RepairGUI_SuppressHoleDlg(parent, "", myRepairGUI, Sel, ic);
@@ -124,7 +124,7 @@ void RepairGUI::MakeSewingAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR,
   try {
     GEOM::GEOM_Shape_var result = myGeom->MakeSewing(listShapesIOR, precision);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
       return;
     }
 
@@ -134,7 +134,7 @@ void RepairGUI::MakeSewingAndDisplay(GEOM::GEOM_Gen::ListOfIOR& listShapesIOR,
     result->NameType(type);
 
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
     return;
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -153,12 +153,12 @@ void RepairGUI::MakeOrientationChangeAndDisplay(GEOM::GEOM_Shape_ptr Shape)
   try {
     GEOM::GEOM_Shape_var result = myGeom->OrientationChange(Shape);
     if(result->_is_nil()) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NULLSHAPE"));
       return;
     }
     result->NameType(Shape->NameType());
     if(myGeomBase->Display(result))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE")); 
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE")); 
     return;
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
@@ -181,7 +181,7 @@ bool RepairGUI::OnSuppressHole(const char* ShapeTopoIOR,
 			       const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdEndFace)
 {
   /* Test the type of viewer */
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC )
     return false;
   
   try {
@@ -194,7 +194,7 @@ bool RepairGUI::OnSuppressHole(const char* ShapeTopoIOR,
     aResult->NameType(type);
 
     if(myGeomBase->Display(aResult))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -212,7 +212,7 @@ bool RepairGUI::OnSuppressHolesInFaceOrShell(const char* ShapeTopoIOR,
 					     const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfIdWires)
 {
   /* Test the type of viewer */
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
     return false;
   
   try {
@@ -225,7 +225,7 @@ bool RepairGUI::OnSuppressHolesInFaceOrShell(const char* ShapeTopoIOR,
     aResult->NameType(type);
     
     if(myGeomBase->Display(aResult))
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }
   catch(const SALOME::SALOME_Exception& S_ex) {
     QtCatchCorbaException(S_ex);
@@ -243,17 +243,17 @@ bool RepairGUI::OnSuppressFaces(const TopoDS_Shape& ShapeTopo, const char* Shape
 				const Standard_Integer& aLocalContextId, bool& myUseLocalContext)
 {
   /* Test the type of viewer */
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() > VIEW_OCC)
     return false;
   
-  SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
   SALOMEDS::SObject_var theObj = aStudy->FindObjectIOR(ShapeTopoIOR);
   if(theObj->_is_nil()) {
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
     return false;
   }
   
-  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
   Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
   
   if(myUseLocalContext == false) {
@@ -320,12 +320,12 @@ bool RepairGUI::OnSuppressFaces(const TopoDS_Shape& ShapeTopo, const char* Shape
     
     /* Display with name */
     if(!myGeomBase->Display(aShellOrFace, nameG)) {
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
       return false;
     }
   }
   
-  myGeomGUI->GetDesktop()->putInfo (tr("GEOM_PRP_READY"));
+  QAD_Application::getDesktop()->putInfo (tr("GEOM_PRP_READY"));
   return true;
 }
 

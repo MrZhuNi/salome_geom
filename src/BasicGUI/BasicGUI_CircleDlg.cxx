@@ -29,6 +29,8 @@
 using namespace std;
 #include "BasicGUI_CircleDlg.h"
 
+#include <gp_Lin.hxx>
+#include <gp_Circ.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include "QAD_Config.h"
@@ -145,7 +147,7 @@ void BasicGUI_CircleDlg::ClickOnOk()
 //=================================================================================
 void BasicGUI_CircleDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   if (mySimulationTopoDs.IsNull())
     return;
   myGeomBase->EraseSimulationShape();

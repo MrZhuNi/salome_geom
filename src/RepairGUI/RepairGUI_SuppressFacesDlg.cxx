@@ -30,21 +30,8 @@ using namespace std;
 #include "RepairGUI_SuppressFacesDlg.h"
 
 #include "DisplayGUI.h"
-
-
-#include <qbuttongroup.h>
-#include <qcheckbox.h>
-#include <qgroupbox.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qlayout.h>
-#include <qvariant.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
-#include <qimage.h>
-#include <qpixmap.h>
+#include "QAD_RightFrame.h"
+#include "OCCViewer_Viewer3d.h"
 
 //=================================================================================
 // class    : RepairGUI_SuppressFacesDlg()
@@ -53,119 +40,32 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg( QWidget* parent, 
-							    const char* name,
-							    RepairGUI* theRepairGUI,
-							    SALOME_Selection* Sel,
-							    Handle (AIS_InteractiveContext) ic,
-							    bool modal,
-							    WFlags fl )
-    : QDialog( parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
+RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg(QWidget* parent, const char* name, RepairGUI* theRepairGUI, SALOME_Selection* Sel, Handle(AIS_InteractiveContext) ic, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(parent, name, Sel, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
-    QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_DLG_SUPRESS_FACE")));
-    QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap( "GEOM",tr("ICON_SELECT")));
+  QPixmap image0(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_DLG_SUPRESS_FACE")));
+  QPixmap image1(QAD_Desktop::getResourceManager()->loadPixmap("GEOM",tr("ICON_SELECT")));
     
-    if ( !name )
-	setName( "RepairGUI_SuppressFacesDlg" );
-    resize( 322, 203 ); 
-    setCaption( tr( "GEOM_SUPRESSFACE_TITLE"  ) );
-    setSizeGripEnabled( TRUE );
-    RepairGUI_SuppressFacesDlgLayout = new QGridLayout( this ); 
-    RepairGUI_SuppressFacesDlgLayout->setSpacing( 6 );
-    RepairGUI_SuppressFacesDlgLayout->setMargin( 11 );
+  setCaption(tr("GEOM_SUPRESSFACE_TITLE"));
 
-    /***************************************************************/
-    GroupConstructors = new QButtonGroup( this, "GroupConstructors" );
-    GroupConstructors->setTitle( tr( "GEOM_SUPRESSFACE"  ) );
-    GroupConstructors->setExclusive( TRUE );
-    GroupConstructors->setColumnLayout(0, Qt::Vertical );
-    GroupConstructors->layout()->setSpacing( 0 );
-    GroupConstructors->layout()->setMargin( 0 );
-    GroupConstructorsLayout = new QGridLayout( GroupConstructors->layout() );
-    GroupConstructorsLayout->setAlignment( Qt::AlignTop );
-    GroupConstructorsLayout->setSpacing( 6 );
-    GroupConstructorsLayout->setMargin( 11 );
-    Constructor1 = new QRadioButton( GroupConstructors, "Constructor1" );
-    Constructor1->setText( tr( ""  ) );
-    Constructor1->setPixmap( image0 );
-    Constructor1->setChecked( TRUE );
-    Constructor1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, Constructor1->sizePolicy().hasHeightForWidth() ) );
-    Constructor1->setMinimumSize( QSize( 50, 0 ) );
-    GroupConstructorsLayout->addWidget( Constructor1, 0, 0 );
-    QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    GroupConstructorsLayout->addItem( spacer, 0, 1 );
-    RepairGUI_SuppressFacesDlgLayout->addWidget( GroupConstructors, 0, 0 );
+  /***************************************************************/
+  GroupConstructors->setTitle(tr("GEOM_SUPRESSFACE"));
+  RadioButton1->setPixmap(image0);
+  RadioButton2->close(TRUE);
+  RadioButton3->close(TRUE);
 
-    /***************************************************************/
-    GroupC1 = new QGroupBox( this, "GroupC1" );
-    GroupC1->setTitle( tr( "GEOM_ARGUMENTS"  ) );
-    GroupC1->setMinimumSize( QSize( 0, 0 ) );
-    GroupC1->setFrameShape( QGroupBox::Box );
-    GroupC1->setFrameShadow( QGroupBox::Sunken );
-    GroupC1->setColumnLayout(0, Qt::Vertical );
-    GroupC1->layout()->setSpacing( 0 );
-    GroupC1->layout()->setMargin( 0 );
-    GroupC1Layout = new QGridLayout( GroupC1->layout() );
-    GroupC1Layout->setAlignment( Qt::AlignTop );
-    GroupC1Layout->setSpacing( 6 );
-    GroupC1Layout->setMargin( 11 );
-    Layout2 = new QHBoxLayout; 
-    Layout2->setSpacing( 6 );
-    Layout2->setMargin( 0 );
-    TextLabelC1A1 = new QLabel( GroupC1, "TextLabelC1A1" );
-    TextLabelC1A1->setText( tr( "GEOM_MAIN_OBJECT"  ) );
-    TextLabelC1A1->setMinimumSize( QSize( 50, 0 ) );
-    TextLabelC1A1->setFrameShape( QLabel::NoFrame );
-    TextLabelC1A1->setFrameShadow( QLabel::Plain );
-    Layout2->addWidget( TextLabelC1A1 );
-    SelectButtonC1A1 = new QPushButton( GroupC1, "SelectButtonC1A1" );
-    SelectButtonC1A1->setText( tr( ""  ) );
-    SelectButtonC1A1->setPixmap( image1 );
-    SelectButtonC1A1->setToggleButton( FALSE );
-    SelectButtonC1A1->setMaximumSize( QSize( 28, 32767 ) );
-    Layout2->addWidget( SelectButtonC1A1 );
-    LineEditC1A1 = new QLineEdit( GroupC1, "LineEditC1A1" );
-    LineEditC1A1->setAlignment( int( QLineEdit::AlignLeft ) );
-    Layout2->addWidget( LineEditC1A1 );
-    GroupC1Layout->addLayout( Layout2, 0, 0 );
-    CheckBox1 = new QCheckBox( GroupC1, "CheckBox1" );
-    CheckBox1->setText( tr( "GEOM_SUPRESSFACE_SELECT"  ) );
-    CheckBox1->setChecked( FALSE );
-    GroupC1Layout->addWidget( CheckBox1, 1, 0 );
-    RepairGUI_SuppressFacesDlgLayout->addWidget( GroupC1, 1, 0 );
+  GroupPoints = new DlgRef_1Sel1Check_QTD(this, "GroupPoints");
+  GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
+  GroupPoints->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
+  GroupPoints->CheckButton1->setText(tr("GEOM_SUPRESSFACE_SELECT"));
+  GroupPoints->PushButton1->setPixmap(image1);
 
-   /***************************************************************/
-    GroupButtons = new QGroupBox( this, "GroupButtons" );
-    GroupButtons->setTitle( tr( ""  ) );
-    GroupButtons->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)5, GroupButtons->sizePolicy().hasHeightForWidth() ) );
-    GroupButtons->setColumnLayout(0, Qt::Vertical );
-    GroupButtons->layout()->setSpacing( 0 );
-    GroupButtons->layout()->setMargin( 0 );
-    GroupButtonsLayout = new QGridLayout( GroupButtons->layout() );
-    GroupButtonsLayout->setAlignment( Qt::AlignTop );
-    GroupButtonsLayout->setSpacing( 6 );
-    GroupButtonsLayout->setMargin( 11 );
-    //
-    buttonOk = new QPushButton( GroupButtons, "buttonOk" );
-    buttonOk->setText( tr( "GEOM_BUT_OK"  ) );
-    buttonOk->setAutoDefault( TRUE );
-    buttonOk->setDefault( TRUE );
-    GroupButtonsLayout->addWidget( buttonOk, 0, 0 );    
-    buttonApply = new QPushButton( GroupButtons, "buttonApply" );
-    buttonApply->setText( tr( "GEOM_BUT_APPLY"  ) );
-    buttonApply->setAutoDefault( TRUE );
-    GroupButtonsLayout->addWidget( buttonApply, 0, 1 );    
-    QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    GroupButtonsLayout->addItem( spacer_2, 0, 2 );
-    buttonClose = new QPushButton( GroupButtons, "buttonClose" );
-    buttonClose->setText( tr( "GEOM_BUT_CLOSE"  ) );
-    buttonClose->setAutoDefault( TRUE );
-    GroupButtonsLayout->addWidget( buttonClose, 0, 3 );
-    RepairGUI_SuppressFacesDlgLayout->addWidget( GroupButtons, 2, 0 );
-    myRepairGUI = theRepairGUI;
-    /* Initialisations */
-    Init(Sel, ic) ;
+  Layout1->addWidget(GroupPoints, 1, 0);
+  /***************************************************************/
 
+  /* Initialisations */
+  myRepairGUI = theRepairGUI;
+  Init(ic);
 }
 
 
@@ -175,69 +75,44 @@ RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg( QWidget* parent,
 //=================================================================================
 RepairGUI_SuppressFacesDlg::~RepairGUI_SuppressFacesDlg()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
-
 
 
 //=================================================================================
 // function : Init()
 // purpose  :
 //=================================================================================
-void RepairGUI_SuppressFacesDlg::Init( SALOME_Selection* Sel, Handle (AIS_InteractiveContext) ic )
+void RepairGUI_SuppressFacesDlg::Init(Handle(AIS_InteractiveContext) ic)
 {
+  /* init variables */
+  myEditCurrentArgument = GroupPoints->LineEdit1;
 
-  GroupC1->show();
-  myConstructorId = 0 ;
-  Constructor1->setChecked( TRUE );
-  myEditCurrentArgument = LineEditC1A1 ;
-  mySelection = Sel;
-  myShape.Nullify() ;
-
-  myIC = ic ;
-  myUseLocalContext = false ;
-  myOkShape = false ;
-  myGeomBase = new GEOMBase() ;
-  myGeomGUI = GEOMContext::GetGeomGUI() ;
-
-  /* Select sub shapes mode not checked */
-  CheckBox1->setChecked( FALSE );
-  myOkSelectSubMode = false ;
-
-  // TODO : previous selection into argument ?
-
-  /* Filter definitions */
-  Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer", "GEOM");
-  myGeom = GEOM::GEOM_Gen::_narrow(comp);
+  myOkSelectSubMode = false;
+  myOkShape = myUseLocalContext = false;
+  myIC = ic;
+  myLocalContextId = -1;
 
   /* signals and slots connections */
-  connect( buttonOk,          SIGNAL( clicked() ),    this, SLOT( ClickOnOk() ) );
-  connect( buttonApply,       SIGNAL( clicked() ),    this, SLOT( ClickOnApply() ) );
-  connect( buttonClose,       SIGNAL( clicked() ),    this, SLOT( ClickOnClose() ) );
-  connect( GroupConstructors, SIGNAL( clicked(int) ), this, SLOT( ConstructorsClicked(int) ));
+  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
 
-  connect( SelectButtonC1A1,  SIGNAL( clicked() ),                      this, SLOT( SetEditCurrentArgument() ));
-  connect( CheckBox1,         SIGNAL( stateChanged(int) ),              this, SLOT( ActivateUserSelection() ));
-  connect( mySelection,       SIGNAL( currentSelectionChanged() ),      this, SLOT( SelectionIntoArgument() ));
-  connect( myGeomGUI,         SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) ) ;  
-  connect( myGeomGUI,         SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnClose() ));
- 
-  /* Move widget on the botton right corner of main widget */
-  int x, y ;
-  myGeomBase->DefineDlgPosition( this, x, y ) ;
-  this->move( x, y ) ;
-  this->show() ; /* display Dialog */
-  return ;
-}
+  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
+  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-//=================================================================================
-// function : ConstructorsClicked()
-// purpose  : Radio button management
-//=================================================================================
-void RepairGUI_SuppressFacesDlg::ConstructorsClicked(int constructorId)
-{
-  return ;
+  connect(GroupPoints->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ActivateUserSelection()));
+  
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+
+  /* displays Dialog */
+  GroupPoints->show();
+  this->show();
+
+  return;
 }
 
 
@@ -247,10 +122,9 @@ void RepairGUI_SuppressFacesDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::ClickOnOk()
 {
-  this->ClickOnApply() ;
-  accept();
-
-  return ;
+  this->ClickOnApply();
+  this->ClickOnCancel();
+  return;
 }
 
 
@@ -261,47 +135,41 @@ void RepairGUI_SuppressFacesDlg::ClickOnOk()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::ClickOnApply()
 {
-  bool testResult = false ;
-  switch(myConstructorId)
-    { 
-    case 0 :
-      {
-	if( myOkShape && myOkSelectSubMode ) {
-	  testResult = myRepairGUI->OnSuppressFaces( myShape, myShapeIOR, myLocalContextId, myUseLocalContext ) ; 
-	}
-	if( !testResult ) {
-	  myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT")) ;
-	}
-	else {
-	  myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE")) ;
-	}
-	/* Reset arguments to allow a new selection */
-	this->ResetStateOfDialog() ;
-	break ;
-      }
-    }
+  QAD_Application::getDesktop()->putInfo(tr(""));
+  bool testResult = false;
+
+  if(myOkShape && myOkSelectSubMode)
+    testResult = myRepairGUI->OnSuppressFaces(myShape, myShapeIOR, myLocalContextId, myUseLocalContext); 
+
+  if(!testResult)
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+  else
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+
+  /* Reset arguments to allow a new selection */
+  this->ResetStateOfDialog();
   return ;
 }
 
 
-
 //=================================================================================
-// function : ClickOnClose()
+// function : ClickOnCancel()
 // purpose  :
 //=================================================================================
-void RepairGUI_SuppressFacesDlg::ClickOnClose()
+void RepairGUI_SuppressFacesDlg::ClickOnCancel()
 {
-  disconnect( mySelection, 0, this, 0 );
-  myGeomGUI->ResetState() ;
-  
-  if(myUseLocalContext) {
-    myIC->CloseLocalContext(myLocalContextId) ;
-    this->myUseLocalContext = false ;
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+    myIC = v3d->getAISContext();
+    if(myUseLocalContext) {
+      myIC->CloseLocalContext(myLocalContextId);
+      myUseLocalContext = false;
+    }
     DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true) ;
+    myDisplayGUI->OnDisplayAll(true);
   }
-  reject() ;
-  return ;
+  GEOMBase_Skeleton::ClickOnCancel();
+  return;
 }
 
 
@@ -312,59 +180,57 @@ void RepairGUI_SuppressFacesDlg::ClickOnClose()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
 {
-  
-  /* Reset argument and local context when selection as changed */
-  this->ResetStateOfDialog() ;
-  
+  myEditCurrentArgument->setText("");
+  this->ResetStateOfDialog();
   QString aString = ""; /* name of selection */
-  
-  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString) ;
-  if ( nbSel != 1 )
-    return ;
-  
-  /* nbSel == 1 */
-  TopoDS_Shape S ;
-  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject() ;
 
-  if( !myGeomBase->GetTopoFromSelection(mySelection, S) )
-    return ;
-  
-  if( !IO->hasEntry() ) {
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY")) ;
-    return ;
+  int nbSel = myGeomBase->GetNameOfSelectedIObjects(mySelection, aString);
+  if(nbSel != 1) {
+    myOkShape = false;
+    return;
   }
   
+  /* nbSel == 1 */
+  TopoDS_Shape S;
+  Handle(SALOME_InteractiveObject) IO = mySelection->firstIObject();
+  if(!myGeomBase->GetTopoFromSelection(mySelection, S))
+    return;
+  
+  if(!IO->hasEntry()) {
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
+    return;
+  }
+
   /* Test the exact type of topology to suppress faces into */
-  if ( !S.IsNull() && ( S.ShapeType() == TopAbs_SOLID || S.ShapeType() == TopAbs_SHELL || S.ShapeType() == TopAbs_COMPOUND ) ) {
-    
-    if ( IO->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject)) ) {
-      Handle(GEOM_InteractiveObject) GIObject = Handle(GEOM_InteractiveObject)::DownCast( IO );
+  if(!S.IsNull() && (S.ShapeType() == TopAbs_SOLID || S.ShapeType() == TopAbs_SHELL || S.ShapeType() == TopAbs_COMPOUND)) {
+    if(IO->IsInstance(STANDARD_TYPE(GEOM_InteractiveObject))) {
+      Handle(GEOM_InteractiveObject) GIObject = Handle(GEOM_InteractiveObject)::DownCast(IO);
       myShapeIOR = GIObject->getIOR(); /* the Geom IOR string of selection */
-      LineEditC1A1->setText(aString) ;
-      myShape = S ;
-      myOkShape = true ;
+      myEditCurrentArgument->setText(aString);
+      myShape = S;
+      myOkShape = true;
       return;
     } 
     
-    if ( IO->hasEntry() ) {
-      SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
-      SALOMEDS::SObject_var obj = aStudy->FindObjectID( IO->getEntry() );
+    if(IO->hasEntry()) {
+      SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+      SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
       SALOMEDS::GenericAttribute_var anAttr;
-      SALOMEDS::AttributeIOR_var     anIOR;
-      if ( !obj->_is_nil() ) {
-	if (obj->FindAttribute(anAttr, "AttributeIOR")) {
+      SALOMEDS::AttributeIOR_var anIOR;
+      if(!obj->_is_nil()) {
+	if(obj->FindAttribute(anAttr, "AttributeIOR")) {
           anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
 	  myShapeIOR = anIOR->Value();
-	  myOkShape = true ;
-	  myShape = S ;
-	  LineEditC1A1->setText(aString) ;
+	  myOkShape = true;
+	  myShape = S;
+	  myEditCurrentArgument->setText(aString);
 	  return;
 	}
       }
     }
 
   }
-  return ;
+  return;
 }
 
 
@@ -375,19 +241,14 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
 void RepairGUI_SuppressFacesDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  switch (myConstructorId)
-    {
-    case 0: /* default constructor */
-      {
-	if(send == SelectButtonC1A1) {
-	  LineEditC1A1->setFocus() ;
-	  myEditCurrentArgument = LineEditC1A1;	  
-	  SelectionIntoArgument() ;
-	}
-	break;
-      }
-    }
-  return ;
+
+  if(send == GroupPoints->PushButton1) {
+    GroupPoints->LineEdit1->setFocus();
+    myEditCurrentArgument = GroupPoints->LineEdit1;
+  }
+  this->SelectionIntoArgument();
+
+  return;
 }
 
 
@@ -397,7 +258,14 @@ void RepairGUI_SuppressFacesDlg::SetEditCurrentArgument()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::LineEditReturnPressed()
 {
-  return ;
+  QLineEdit* send = (QLineEdit*)sender();
+  if(send == GroupPoints->LineEdit1)
+    myEditCurrentArgument = GroupPoints->LineEdit1;
+  else
+    return;
+
+  GEOMBase_Skeleton::LineEditReturnPressed();
+  return;
 }
 
 
@@ -407,20 +275,11 @@ void RepairGUI_SuppressFacesDlg::LineEditReturnPressed()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::DeactivateActiveDialog()
 {
-  if ( GroupConstructors->isEnabled() ) {
- 
-   this->ResetStateOfDialog() ;
-
-    disconnect( mySelection, 0, this, 0 );
-    GroupConstructors->setEnabled(false) ;
-    GroupC1->setEnabled(false) ;
-    GroupButtons->setEnabled(false) ;
-    myGeomGUI->ResetState() ;    
-    myGeomGUI->SetActiveDialogBox(0) ;
-    DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true) ;
+  if(GroupConstructors->isEnabled()) {
+    this->ResetStateOfDialog();
+    GEOMBase_Skeleton::DeactivateActiveDialog();
   }
-  return ;
+  return;
 }
 
 
@@ -430,14 +289,9 @@ void RepairGUI_SuppressFacesDlg::DeactivateActiveDialog()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::ActivateThisDialog()
 {
-  /* Emit a signal to deactivate other active dialog */
-  myGeomGUI->EmitSignalDeactivateDialog() ;
-  GroupConstructors->setEnabled(true) ;
-  GroupC1->setEnabled(true) ;
-  GroupButtons->setEnabled(true) ;
-  connect ( mySelection, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-  myGeomGUI->SetActiveDialogBox( (QDialog*)this ) ;
-  return ;
+  GEOMBase_Skeleton::ActivateThisDialog();
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  return;
 }
 
 
@@ -447,10 +301,10 @@ void RepairGUI_SuppressFacesDlg::ActivateThisDialog()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::enterEvent(QEvent* e)
 {
-  if ( GroupConstructors->isEnabled() )
-    return ;  
-  ActivateThisDialog() ;
-  return ;
+  if(GroupConstructors->isEnabled())
+    return;
+  this->ActivateThisDialog();
+  return;
 }
 
 
@@ -458,11 +312,11 @@ void RepairGUI_SuppressFacesDlg::enterEvent(QEvent* e)
 // function : closeEvent()
 // purpose  :
 //=================================================================================
-void RepairGUI_SuppressFacesDlg::closeEvent( QCloseEvent* e )
+void RepairGUI_SuppressFacesDlg::closeEvent(QCloseEvent* e)
 {
   /* same than click on cancel button */
-  this->ClickOnClose() ;
-  return ;
+  this->ClickOnCancel();
+  return;
 }
 
 
@@ -472,34 +326,37 @@ void RepairGUI_SuppressFacesDlg::closeEvent( QCloseEvent* e )
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::ActivateUserSelection()
 {
-  if ( myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC ) {
-    if( !this->myOkShape ) {
-      this->ResetStateOfDialog() ;
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SELECT_FIRST")) ;
-      return ;
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    if(!myOkShape) {
+      this->ResetStateOfDialog();
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SELECT_FIRST"));
+      return;
     }
   
-    this->myOkSelectSubMode = CheckBox1->isChecked() ;
+    myOkSelectSubMode = GroupPoints->CheckButton1->isChecked();
     
-    if( this->myUseLocalContext ) {
-      myIC->CloseLocalContext(myLocalContextId) ;
-      this->myUseLocalContext = false ;
+    if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+      OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+      myIC = v3d->getAISContext();
+      if(myUseLocalContext) {
+	myIC->CloseLocalContext(myLocalContextId);
+	myUseLocalContext = false;
+      }
       DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->OnDisplayAll(true) ;
+      myDisplayGUI->OnDisplayAll(true);
     }
     
-    if( myOkShape && myOkSelectSubMode ) {
+    if(myOkShape && myOkSelectSubMode) {
       /* local context is defined into the method : 4 = FACES sub selection */
       DisplayGUI* myDisplayGUI = new DisplayGUI();
-      myDisplayGUI->PrepareSubShapeSelection( int(TopAbs_FACE), this->myLocalContextId ) ;    
-      myUseLocalContext = true ;
-      myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SELECT_FACE")) ;
+      myDisplayGUI->PrepareSubShapeSelection(int(TopAbs_FACE), myLocalContextId);    
+      myUseLocalContext = true;
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SELECT_FACE"));
     }
-  } else {
-    CheckBox1->setChecked( false );
-  }
-
-  return ;
+  } 
+  else
+    GroupPoints->CheckButton1->setChecked(false);
+  return;
 }
 
 
@@ -510,19 +367,23 @@ void RepairGUI_SuppressFacesDlg::ActivateUserSelection()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::ResetStateOfDialog()
 {
-  this->myOkShape = false ;
-  this->myEditCurrentArgument->setText("") ;
+  myOkShape = false ;
+  myEditCurrentArgument->setText("");
 
   /* Select sub shapes mode not checked */
-  this->myOkSelectSubMode = false ;    
-  this->CheckBox1->setChecked( FALSE );
+  myOkSelectSubMode = false;    
+  GroupPoints->CheckButton1->setChecked(FALSE);
 
   /* Close its local contact if opened */
-  if( this->myUseLocalContext ) {
-    myIC->CloseLocalContext(this->myLocalContextId) ;
-    this->myUseLocalContext = false ;
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+    myIC = v3d->getAISContext();
+    if(myUseLocalContext) {
+      myIC->CloseLocalContext(myLocalContextId);
+      myUseLocalContext = false;
+    }
     DisplayGUI* myDisplayGUI = new DisplayGUI();
-    myDisplayGUI->OnDisplayAll(true) ;
+    myDisplayGUI->OnDisplayAll(true);
   }
-  return ;
+  return;
 }

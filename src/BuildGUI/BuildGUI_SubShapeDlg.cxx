@@ -34,6 +34,7 @@ using namespace std;
 #include "OCCViewer_Viewer3d.h"
 
 #include <TopExp_Explorer.hxx>
+#include <TopTools_MapOfShape.hxx>
 
 #include <qmessagebox.h>
 
@@ -112,7 +113,7 @@ void BuildGUI_SubShapeDlg::Init(Handle(AIS_InteractiveContext) ic)
   myShapeType = GroupPoints->ComboBox1->currentItem();
   myOkSelectSubMode = GroupPoints->CheckButton1->isChecked();
 
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC)
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() != VIEW_OCC)
     GroupPoints->CheckButton1->setEnabled(false);
 
   /* signals and slots connections */
@@ -163,7 +164,7 @@ void BuildGUI_SubShapeDlg::ClickOnOk()
 //=================================================================================
 void BuildGUI_SubShapeDlg::ClickOnApply()
 {
-  myGeomGUI->GetDesktop()->putInfo(tr(""));
+  QAD_Application::getDesktop()->putInfo(tr(""));
   bool testResult = false;
   myAbort = false; /* Not aborted by default */
     
@@ -190,11 +191,11 @@ void BuildGUI_SubShapeDlg::ClickOnApply()
     testResult = myBuildGUI->OnSubShapeGetSelected(myShape, myShapeIOR, myShapeType, myLocalContextId, myUseLocalContext); 
 
   if(!testResult) {
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
     myAbort = true;
   }
   else
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
 
   /* Reset all arguments and local context to allow user a new selection ...*/
   this->ResetStateOfDialog();
@@ -208,8 +209,8 @@ void BuildGUI_SubShapeDlg::ClickOnApply()
 //=================================================================================
 void BuildGUI_SubShapeDlg::ClickOnCancel()
 {
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     myIC = v3d->getAISContext();
     if(myUseLocalContext) {
       myIC->CloseLocalContext(myLocalContextId);
@@ -247,7 +248,7 @@ void BuildGUI_SubShapeDlg::SelectionIntoArgument()
     return;
   
   if(!IO->hasEntry()) {
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
     return;
   }
 
@@ -260,7 +261,7 @@ void BuildGUI_SubShapeDlg::SelectionIntoArgument()
       myOkShape = true;
     }
     else {
-      SALOMEDS::Study_var aStudy = myGeomGUI->GetActiveStudy()->getStudyDocument();
+      SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
       SALOMEDS::SObject_var obj = aStudy->FindObjectID(IO->getEntry());
       SALOMEDS::GenericAttribute_var anAttr;
       SALOMEDS::AttributeIOR_var anIOR;
@@ -382,7 +383,7 @@ void BuildGUI_SubShapeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC)
     GroupPoints->CheckButton1->setEnabled(true);
   else
     GroupPoints->CheckButton1->setEnabled(false);
@@ -452,8 +453,8 @@ void BuildGUI_SubShapeDlg::ResetStateOfDialog()
   GroupPoints->CheckButton1->setChecked(FALSE);
 
   /* Close its local contact if opened */
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     myIC = v3d->getAISContext();
     if(myUseLocalContext) {
       myIC->CloseLocalContext(myLocalContextId);
@@ -476,7 +477,7 @@ void BuildGUI_SubShapeDlg::AllOrNotAll()
   /* No sub shape selection if main shape not selected */
   if(!myOkShape) {
     this->ResetStateOfDialog();
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SELECT_FIRST"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SELECT_FIRST"));
     return;
   }
   
@@ -486,14 +487,14 @@ void BuildGUI_SubShapeDlg::AllOrNotAll()
     GroupPoints->CheckButton1->setChecked( FALSE );
     //no meaning to allow user selection for type = shape
     //TODO - add another message
-    //myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SELECT_FIRST")) ;
+    //QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SELECT_FIRST")) ;
     return;
   }
 
   myOkSelectSubMode = GroupPoints->CheckButton1->isChecked();
 
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     myIC = v3d->getAISContext();
 
     if(myUseLocalContext) {
@@ -504,7 +505,7 @@ void BuildGUI_SubShapeDlg::AllOrNotAll()
     myDisplayGUI->OnDisplayAll(true);
   }
   else {
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_NOT_FOR_VTK_VIEWER"));
     return;
   }
 
@@ -513,7 +514,7 @@ void BuildGUI_SubShapeDlg::AllOrNotAll()
     DisplayGUI* myDisplayGUI = new DisplayGUI();
     myDisplayGUI->PrepareSubShapeSelection(myShapeType, myLocalContextId);    
     myUseLocalContext = true;
-    myGeomGUI->GetDesktop()->putInfo(tr("GEOM_PRP_SELECT_FACE"));
+    QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_SELECT_FACE"));
   }
   return;
 }
@@ -534,8 +535,8 @@ void BuildGUI_SubShapeDlg::ComboTextChanged()
   GroupPoints->CheckButton1->setChecked(FALSE);
   myOkSelectSubMode = FALSE;
 
-  if(myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
-    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)myGeomGUI->GetActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+  if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+    OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
     myIC = v3d->getAISContext();
 
     if(myUseLocalContext) {
