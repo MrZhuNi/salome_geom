@@ -51,8 +51,8 @@ Standard_Integer GEOMAlgo_Tools::RefineSDShapes(GEOMAlgo_IndexedDataMapOfPassKey
   aNbE=aMPKLE.Extent();
   for (i=1; i<=aNbE; ++i) {
     TopTools_ListOfShape& aLSDE=aMPKLE.ChangeFromIndex(i);
-    aMEE.Clear();
     //
+    aMEE.Clear();
     iErr=GEOMAlgo_Tools::FindSDShapes(aLSDE, aTol, aMEE, aCtx);
     if (iErr) {
       return iErr;
@@ -107,11 +107,17 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopTools_ListOfShape& aLE,
   TopTools_ListOfShape aLESD;
   TopTools_ListIteratorOfListOfShape aIt, aIt1;
   TopTools_IndexedMapOfShape aMProcessed;
+  TopAbs_ShapeEnum aType;
   //
   aNbE=aLE.Extent();
   if (!aNbE) {
     return 3; // Err
-  }
+  } 
+  //modified by NIZNHY-PKV Thu Dec 30 10:56:52 2004 f
+  if (aNbE==1) {
+    return 0; // Nothing to do
+  } 
+  //modified by NIZNHY-PKV Thu Dec 30 10:56:56 2004 t
   //
   while(1) {
     aNbEProcessed=aMProcessed.Extent();
@@ -122,9 +128,21 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopTools_ListOfShape& aLE,
     aIt.Initialize(aLE);
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aS=aIt.Value();
+      //
       if (aMProcessed.Contains(aS)) {
 	continue;
       }
+      //
+      //modified by NIZNHY-PKV Thu Dec 30 10:57:01 2004 f
+      aType=aS.ShapeType();
+      if (aType==TopAbs_EDGE) {
+	const TopoDS_Edge& aE=TopoDS::Edge(aS);
+	if (BRep_Tool::Degenerated(aE)) {
+	  aMProcessed.Add(aE);
+	  continue;
+	}
+      }
+      //modified by NIZNHY-PKV Thu Dec 30 10:57:03 2004 t
       //
       aLESD.Clear();
       iErr=GEOMAlgo_Tools::FindSDShapes(aS, aLE, aTol, aLESD, aCtx);

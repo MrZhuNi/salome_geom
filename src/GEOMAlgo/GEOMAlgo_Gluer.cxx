@@ -676,11 +676,15 @@ void GEOMAlgo_Gluer::MakeVertex(const TopTools_ListOfShape& aLV,
 void GEOMAlgo_Gluer::MakeEdge(const TopoDS_Edge& aE, 
 			      TopoDS_Edge& aNewEdge)
 {
+  //modified by NIZNHY-PKV Thu Dec 30 11:15:23 2004 f
   myErrorStatus=0;
   //
+  Standard_Boolean bIsDE;
   Standard_Real aT1, aT2;
   TopoDS_Vertex aV1, aV2, aVR1, aVR2;
   TopoDS_Edge aEx;
+  //
+  bIsDE=BRep_Tool::Degenerated(aE);
   //
   aEx=aE;
   aEx.Orientation(TopAbs_FORWARD);
@@ -695,7 +699,31 @@ void GEOMAlgo_Gluer::MakeEdge(const TopoDS_Edge& aE,
   aVR2=TopoDS::Vertex(myOrigins.Find(aV2));
   aVR2.Orientation(TopAbs_REVERSED);
   //
-  BOPTools_Tools::MakeSplitEdge(aEx, aVR1, aT1, aVR2, aT2, aNewEdge); 
+  if (bIsDE) {
+    Standard_Real aTol;
+    BRep_Builder aBB;
+    TopoDS_Edge E;
+    TopAbs_Orientation anOrE;
+    //
+    anOrE=aE.Orientation();
+    aTol=BRep_Tool::Tolerance(aE);
+    //
+    E=aEx;
+    E.EmptyCopy();
+    //
+    aBB.Add  (E, aVR1);
+    aBB.Add  (E, aVR2);
+    aBB.Range(E, aT1, aT2);
+    aBB.Degenerated(E, Standard_True);
+    aBB.UpdateEdge(E, aTol);
+    //
+    aNewEdge=E;
+  }
+  //
+  else {
+    BOPTools_Tools::MakeSplitEdge(aEx, aVR1, aT1, aVR2, aT2, aNewEdge); 
+  }
+  //modified by NIZNHY-PKV Thu Dec 30 11:15:28 2004 t
 }
 //
 //=======================================================================
@@ -736,17 +764,23 @@ void GEOMAlgo_Gluer::MakeFace(const TopoDS_Face& aF,
     for (; aExpE.More(); aExpE.Next()) {
       const TopoDS_Edge& aE=TopoDS::Edge(aExpE.Current());
       aER=TopoDS::Edge(myOrigins.Find(aE));
+      //
       aER.Orientation(TopAbs_FORWARD);
-      // build p-curve
-      if (bIsUPeriodic) {
-	GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(aER, aFFWD, aUMin, aUMax);
+      if (!BRep_Tool::Degenerated(aER)) {//modified by NIZNHY-PKV Thu Dec 30 11:31:37 2004 ft
+	// build p-curve
+	if (bIsUPeriodic) {
+	  GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(aER, aFFWD, aUMin, aUMax);
+	}
+	BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aER, aFFWD);
+	
+	// orient image 
+	bIsToReverse=BOPTools_Tools3D::IsSplitToReverse1(aER, aE, myContext);
+	if (bIsToReverse) {
+	  aER.Reverse();
+	}
       }
-      BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aER, aFFWD);
-      
-      // orient image 
-      bIsToReverse=BOPTools_Tools3D::IsSplitToReverse1(aER, aE, myContext);
-      if (bIsToReverse) {
-	aER.Reverse();
+      else {
+	aER.Orientation(aE.Orientation());
       }
       //
       aBB.Add(newWire, aER);
@@ -772,29 +806,34 @@ Standard_Boolean GEOMAlgo_Gluer::IsToReverse(const TopoDS_Face& aFR,
   bRet=Standard_False;
   //
   aExp.Init(aF, TopAbs_EDGE);
-  if (!aExp.More()) {
-    return bRet;
+  for (; aExp.More(); aExp.Next()) {
+    const TopoDS_Edge& aE=TopoDS::Edge(aExp.Current());
+    //modified by NIZNHY-PKV Thu Dec 30 11:38:05 2004 f
+    if (BRep_Tool::Degenerated(aE)) {
+      continue;
+    }
+    //modified by NIZNHY-PKV Thu Dec 30 11:38:08 2004 t
+    const TopoDS_Edge& aER=TopoDS::Edge(myOrigins.Find(aE));
+    //
+    aC3D=BRep_Tool::Curve(aE, aT1, aT2);
+    aT=BOPTools_Tools2D::IntermediatePoint(aT1, aT2);
+    aC3D->D0(aT, aP);
+    myContext.ProjectPointOnEdge(aP, aER, aTR);
+    //
+    BOPTools_Tools3D::GetNormalToFaceOnEdge (aE, aF, aT, aDNF);
+    if (aF.Orientation()==TopAbs_REVERSED) {
+      aDNF.Reverse();
+    }
+    //
+    BOPTools_Tools3D::GetNormalToFaceOnEdge (aER, aFR, aTR, aDNFR);
+    if (aFR.Orientation()==TopAbs_REVERSED) {
+      aDNFR.Reverse();
+    }
+    //
+    aScPr=aDNF*aDNFR;
+    return (aScPr<0.);
   }
-  const TopoDS_Edge& aE=TopoDS::Edge(aExp.Current());
-  const TopoDS_Edge& aER=TopoDS::Edge(myOrigins.Find(aE));
-  //
-  aC3D=BRep_Tool::Curve(aE, aT1, aT2);
-  aT=BOPTools_Tools2D::IntermediatePoint(aT1, aT2);
-  aC3D->D0(aT, aP);
-  myContext.ProjectPointOnEdge(aP, aER, aTR);
-  //
-  BOPTools_Tools3D::GetNormalToFaceOnEdge (aE, aF, aT, aDNF);
-  if (aF.Orientation()==TopAbs_REVERSED) {
-    aDNF.Reverse();
-  }
-  //
-  BOPTools_Tools3D::GetNormalToFaceOnEdge (aER, aFR, aTR, aDNFR);
-  if (aFR.Orientation()==TopAbs_REVERSED) {
-    aDNFR.Reverse();
-  }
-  //
-  aScPr=aDNF*aDNFR;
-  return (aScPr<0.);
+  return bRet;
 }
 //
 
