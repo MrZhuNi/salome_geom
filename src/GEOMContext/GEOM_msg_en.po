@@ -157,6 +157,10 @@ msgstr "IGES Files ( *.iges *.igs )"
 msgid "GEOM_MEN_IMPORT_STEP"
 msgstr "STEP Files ( *.step *.stp )"
 
+#: GeometryGUI.cxx:3763
+msgid "GEOM_MEN_LOAD_SCRIPT"
+msgstr "PYTHON Files ( *.py )"
+
 #: GeometryGUI.cxx:2931
 msgid "GEOM_MEN_ISOS"
 msgstr "Select Number Of Isos"
@@ -1177,3 +1181,12 @@ msgid "GEOM_RECONSTRUCTION_LIMIT_EDGE"
 msgstr "Edge"
 msgid "GEOM_RECONSTRUCTION_LIMIT_VERTEX"
 msgstr "Vertex"
+
+msgid "GEOM_SPLINE_TITLE"
+msgstr "Spline Construction"
+msgid "GEOM_SPLINE"
+msgstr "Spline"
+msgid "GEOM_BEZIER"
+msgstr "Bezier"
+msgid "GEOM_BSPLINE"
+msgstr "BSpline"

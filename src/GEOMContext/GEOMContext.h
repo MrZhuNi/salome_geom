@@ -29,26 +29,10 @@
 #ifndef GEOMCONTEXT_H
 #define GEOMCONTEXT_H
 
-// SALOME Includes
 #include "QAD_Desktop.h"
 #include "GEOM_Client.hxx"
-//#include "GEOM_AISShape.hxx"
-//#include "GEOM_InteractiveObject.hxx"
-//#include "GEOM_Actor.h"
-
-// Open CASCADE Includes
-//#include <Quantity_Color.hxx>
-//#include <AIS_ListOfInteractive.hxx>
 #include <OSD_SharedLibrary.hxx>
-
-// QT Includes
 #include <qapplication.h>
-
-// IDL Headers
-//#include <SALOMEconfig.h>
-//#include CORBA_SERVER_HEADER(GEOM_Gen)
-//#include CORBA_SERVER_HEADER(SALOMEDS)
-//#include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
 
 //=================================================================================
 // class    : GEOMContext
@@ -63,20 +47,10 @@ public :
   ~GEOMContext();
 
 private :
-  //  QAD_Desktop* myDesktop;
-  //  QAD_Study* myActiveStudy;
   QDialog* myActiveDialogBox; /* Unique active dialog box */
-
   int myNbGeom; /* Unique name for a geom entity */
-  //  int myState; /* Identify a method */
-
   GEOM_Client myShapeReader;
   Standard_CString myFatherior;
-  //  AIS_ListOfInteractive myListDisplayedObject;
-  //  Quantity_Color myShadingColor;
-
-  //  bool mySettings_AddInStudy;
-  //  bool mySettings_Copy;
 
 public :
   static GEOMContext* GetOrCreateGeomGUI(QAD_Desktop* desktop);
@@ -85,28 +59,17 @@ public :
   OSD_SharedLibrary myGUILibrary;
   GEOM::GEOM_Gen_var myComponentGeom;
   int myState; /* Identify a method */
-  //  Handle(AIS_Shape) mySimulationShape; /* AIS shape used only during topo/geom simulations */
 
-  //  QAD_Desktop* GetDesktop(){return myDesktop;};
-  //  QAD_Study* GetActiveStudy(){return myActiveStudy;};
-  QDialog* GetActiveDialogBox(){return myActiveDialogBox ;}; /* Returns the active DialogBox */
-    
+  /* Returns the active DialogBox */
+  QDialog* GetActiveDialogBox(){return myActiveDialogBox ;};
   int& GetNbGeom(){return myNbGeom;};
-  //  int& GetState(){return myState;};
-
   GEOM_Client& GetShapeReader(){return myShapeReader;};
   Standard_CString& GetFatherior(){return myFatherior;};
-  //  AIS_ListOfInteractive& GetListDisplayedObject(){return myListDisplayedObject;};
-  //  Quantity_Color& GetShadingColor(){return myShadingColor;};
-
-  //  bool& GetSettings_AddInStudy(){return mySettings_AddInStudy;};
-  //  bool& GetSettings_Copy(){return mySettings_Copy;};
 
   bool LoadLibrary(QString GUILibrary);
 
-  //  void SetState(int aState);
-  //  void ResetState(); /* Sets myState = -1 a private field to indicate wich method is active */
-  void SetActiveDialogBox(QDialog* aDlg);  /* Sets 'myActiveDialogBox' a pointer to the active Dialog Box  */
+  /* Sets 'myActiveDialogBox' a pointer to the active Dialog Box  */
+  void SetActiveDialogBox(QDialog* aDlg);
 
   /* Non modal dialog boxes magement */
   void EmitSignalDeactivateDialog();

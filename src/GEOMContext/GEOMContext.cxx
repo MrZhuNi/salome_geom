@@ -39,9 +39,6 @@ static GEOMContext* GeomGUI = 0;
 GEOMContext::GEOMContext() :
   QObject()
 {
-//   mySettings_AddInStudy = false;
-//   mySettings_Copy = false;
-  myFatherior = "";
 }
 
 
@@ -73,26 +70,19 @@ GEOMContext* GEOMContext::GetOrCreateGeomGUI(QAD_Desktop* desktop)
 {
   if(GeomGUI == 0) {
     GeomGUI = new GEOMContext();
-//     GeomGUI->myDesktop = desktop;
-//     GeomGUI->myActiveStudy = desktop->getActiveStudy();
     Engines::Component_var comp = desktop->getEngine("FactoryServer", "GEOM");
     GeomGUI->myComponentGeom = GEOM::GEOM_Gen::_narrow(comp);
     
     GeomGUI->myState = -1;
     GeomGUI->myActiveDialogBox = 0;
+    GeomGUI->myFatherior = "";
     GeomGUI->myGUILibrary = OSD_SharedLibrary();
-//     GeomGUI->mySimulationShape = new AIS_Shape(TopoDS_Shape());
-//     GeomGUI->myShadingColor = Quantity_Color(Quantity_NOC_GOLDENROD);
 
     /* GetCurrentStudy */
     int studyId = desktop->getActiveStudy()->getStudyId();
     GeomGUI->myComponentGeom->GetCurrentStudy(studyId);
     GeomGUI->myNbGeom = GeomGUI->myComponentGeom->NbLabels();
-  } 
-//   else {
-//     /* study may have changed */
-//     GeomGUI->myActiveStudy = desktop->getActiveStudy();
-//   }
+  }
 
   return GeomGUI;
 }
@@ -127,28 +117,6 @@ bool GEOMContext::LoadLibrary(QString GUILibrary)
     cout<<"Can't open library : "<<myGUILibrary.DlError()<<endl;
   return res;
 }
-
-
-//=======================================================================
-// function : SetState()
-// purpose  : Sets myState = aState a private field indicating which methode is active
-//=======================================================================
-// void GEOMContext::SetState(int aState)
-// {
-//   myState = aState;
-//   return;
-// }
-
-
-//=======================================================================
-// function : ResetState()
-// purpose  : Sets myState = -1 a private field indicating which methode is active
-//=======================================================================
-// void GEOMContext::ResetState()
-// {
-//   myState = -1;
-//   return;
-// }
 
 
 //=======================================================================

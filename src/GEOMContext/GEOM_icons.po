@@ -346,4 +346,17 @@ msgstr "multirotationdouble.png"
 msgid "ICON_DLG_ELLIPSE_PV"
 msgstr "ellipsepointvector.png"
 
+#SplineDlg
+msgid "ICON_DLG_SPLINE"
+msgstr "spline.png"
+
+#SplineDlg
+msgid "ICON_DLG_BEZIER"
+msgstr "bezier.png"
+
+#SplineDlg
+msgid "ICON_DLG_BSPLINE"
+msgstr "bspline.png"
+
+
 
