@@ -10,6 +10,8 @@ using namespace std;
 #include "GEOMImpl_Types.hxx"
 #include "GEOMImpl_ILocalOperations.hxx"
 #include "GEOMImpl_Block6Explorer.hxx"
+#include "GEOMImpl_IBlocksOperations.hxx"
+
 #include "GEOM_Function.hxx"
 
 #include "ShHealOper_Sewing.hxx"
@@ -471,12 +473,13 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
         Standard_NullObject::Raise("Null Shape given");
       }
 
-      if (aType == BLOCK_REMOVE_EXTRA) {
+      // 1. Improve solids with seam and/or degenerated edges
+      BlockFix_BlockFixAPI aTool;
+      //aTool.Tolerance() = toler;
+      aTool.SetShape(aBlockOrComp);
+      aTool.Perform();
 
-        BlockFix_BlockFixAPI aTool;
-        //aTool.Tolerance() = toler;
-        aTool.SetShape(aBlockOrComp);
-        aTool.Perform();
+      if (aType == BLOCK_REMOVE_EXTRA) {
 
         aShape = aTool.Shape();
         if (aShape == aBlockOrComp) {
@@ -484,6 +487,37 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
         }
 
       } else { // aType == BLOCK_COMPOUND_IMPROVE
+
+        TopoDS_Shape aFixedExtra = aTool.Shape();
+
+        // 2. Separate non-blocks
+        TopTools_ListOfShape BLO; // All blocks from the given compound
+        TopTools_ListOfShape NOT; // Not blocks
+        TopTools_ListOfShape EXT; // Hexahedral solids, having degenerated and/or seam edges
+        GEOMImpl_IBlocksOperations::AddBlocksFrom(aFixedExtra, BLO, NOT, EXT);
+
+        if (NOT.Extent() > 0) {
+          MESSAGE("Some non-blocks have been removed");
+        }
+
+        // 3. Warn about staying extra-edges
+        if (EXT.Extent() > 0) {
+          MESSAGE("Warning: Not all seam or degenerated edges was removed");
+        }
+
+        // ??? Throw away standalone blocks ???
+
+        // 4. Create compound of all blocks
+        TopoDS_Compound aComp;
+        BRep_Builder BB;
+        BB.MakeCompound(aComp);
+        TopTools_ListIteratorOfListOfShape BLOit (BLO);
+        for (; BLOit.More(); BLOit.Next()) {
+          BB.Add(aComp, BLOit.Value());
+        }
+
+        // 5. Glue Faces
+        aShape = GEOMImpl_GlueDriver::GlueFaces(aComp, Precision::Confusion());
       }
 
     } else if (aType == BLOCK_MULTI_TRANSFORM_1D ||

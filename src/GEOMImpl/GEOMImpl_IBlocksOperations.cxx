@@ -1660,10 +1660,10 @@ Standard_Boolean GEOMImpl_IBlocksOperations::IsCompoundOfBlocks
  *  Set of functions, used by CheckCompoundOfBlocks() method
  */
 //=============================================================================
-void AddBlocksFrom (const TopoDS_Shape&  theShape,
-                    TopTools_ListOfShape& BLO,
-                    TopTools_ListOfShape& NOT,
-                    TopTools_ListOfShape& EXT)
+void GEOMImpl_IBlocksOperations::AddBlocksFrom (const TopoDS_Shape&   theShape,
+                                                TopTools_ListOfShape& BLO,
+                                                TopTools_ListOfShape& NOT,
+                                                TopTools_ListOfShape& EXT)
 {
   TopAbs_ShapeEnum aType = theShape.ShapeType();
   switch (aType) {

@@ -109,6 +109,11 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
 
   Handle(GEOM_Object) CheckAndImprove (Handle(GEOM_Object) theCompound);
 
+  static void AddBlocksFrom (const TopoDS_Shape&   theShape,
+                             TopTools_ListOfShape& BLO,
+                             TopTools_ListOfShape& NOT,
+                             TopTools_ListOfShape& EXT);
+
   // Extract blocks from blocks compounds
   Handle(TColStd_HSequenceOfTransient) ExplodeCompoundOfBlocks
                                       (Handle(GEOM_Object)    theCompound,
