@@ -45,6 +45,7 @@ LIB_SRC = 	TransformationGUI.cxx \
 		TransformationGUI_MultiRotationDlg.cxx \
 		TransformationGUI_TranslationDlg.cxx \
 		TransformationGUI_RotationDlg.cxx \
+		TransformationGUI_PositionDlg.cxx \
 		TransformationGUI_MirrorDlg.cxx \
 		TransformationGUI_ScaleDlg.cxx
 
@@ -54,6 +55,7 @@ LIB_MOC = \
 		TransformationGUI_MultiRotationDlg.h \
 		TransformationGUI_TranslationDlg.h \
 		TransformationGUI_RotationDlg.h \
+		TransformationGUI_PositionDlg.h \
 		TransformationGUI_MirrorDlg.h \
 		TransformationGUI_ScaleDlg.h
 
@@ -66,6 +68,6 @@ LIB_SERVER_IDL =
 CPPFLAGS += $(QT_INCLUDES) $(VTK_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
 CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS += -lGEOMFiltersSelection -lGEOMBase
+LDFLAGS += -lGEOMFiltersSelection -lDisplayGUI
 
 @CONCLUDE@

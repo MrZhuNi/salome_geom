@@ -112,11 +112,12 @@
    <submenu label-id="Transformation" item-id="502" pos-id="2">
        <popup-item item-id="5021" pos-id="" label-id="Translation" icon-id="translation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
        <popup-item item-id="5022" pos-id="" label-id="Rotation" icon-id="rotate.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="5023" pos-id="" label-id="Mirror by plane" icon-id="mirrorPlane.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="5024" pos-id="" label-id="Scale transform" icon-id="scale.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5023" pos-id="" label-id="Position" icon-id="position.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5024" pos-id="" label-id="Mirror by plane" icon-id="mirrorPlane.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5025" pos-id="" label-id="Scale transform" icon-id="scale.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
        <separator pos-id=""/>	
-       <popup-item item-id="5025" pos-id="" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-       <popup-item item-id="5026" pos-id="" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5026" pos-id="" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+       <popup-item item-id="5027" pos-id="" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
    <popup-item item-id="503" pos-id="" label-id="Partition" icon-id="partition.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>  
@@ -139,7 +140,7 @@
 <!-- ************************** Kinematic  (menubar)  ************************************ -->
 <menu-item label-id="Kinematic" item-id="61" pos-id="6">
    <popup-item item-id="611" pos-id="" label-id="Add Assembly" icon-id="assembly.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
-   <submenu label-id="Add Contact" item-id="612" icon-id="contact.png" pos-id="">
+   <submenu label-id="Add Contact" item-id="612" icon-id="" pos-id="">
 	<popup-item item-id="61201" pos-id="" label-id="Embedding" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 	<popup-item item-id="61202" pos-id="" label-id="Pivot" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 	<popup-item item-id="61203" pos-id="" label-id="Slide" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
@@ -252,11 +253,12 @@
 <toolbar label-id="Transformation">
    <toolbutton-item item-id="5021" label-id="Translation" icon-id="translation.png" tooltip-id="Translate a shape"accel-id="" toggle-id="" execute-action=""/>
    <toolbutton-item item-id="5022" label-id="Rotation" icon-id="rotate.png" tooltip-id="Rotate a shape" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="5023" label-id="Mirror by plane" icon-id="mirrorPlane.png" tooltip-id="Mirror a shape" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="5024" label-id="Scale transform" icon-id="scale.png" tooltip-id="Scale a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5023" label-id="Position" icon-id="position.png" tooltip-id="Position a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5024" label-id="Mirror by plane" icon-id="mirrorPlane.png" tooltip-id="Mirror a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5025" label-id="Scale transform" icon-id="scale.png" tooltip-id="Scale a shape" accel-id="" toggle-id="" execute-action=""/>
    <separatorTB/>
-   <toolbutton-item item-id="5025" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="Multi-translate a shape" accel-id="" toggle-id="" execute-action=""/>
-   <toolbutton-item item-id="5026" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="Multi-rotate a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5026" label-id="Multi-Translation" icon-id="multitranslation.png" tooltip-id="Multi-translate a shape" accel-id="" toggle-id="" execute-action=""/>
+   <toolbutton-item item-id="5027" label-id="Multi-Rotation" icon-id="multirotation.png" tooltip-id="Multi-rotate a shape" accel-id="" toggle-id="" execute-action=""/>
 </toolbar>
 
 

@@ -382,5 +382,18 @@ msgstr "bezier.png"
 msgid "ICON_DLG_INTERPOL"
 msgstr "interpol.png"
 
+#PositionDlg
+msgid "ICON_DLG_POSITION"
+msgstr "position.png"
 
+#PositionDlg
+msgid "ICON_DLG_POS_POINT"
+msgstr "positionpoint.png"
 
+#PositionDlg
+msgid "ICON_DLG_POS_VECT"
+msgstr "positionvect.png"
+
+#PositionDlg
+msgid "ICON_DLG_POS_FACE"
+msgstr "positionface.png"

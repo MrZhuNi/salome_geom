@@ -1371,3 +1371,18 @@ msgstr "Nb. Sequences"
 
 msgid "GEOM_IS_IN_LOOP"
 msgstr "In Loop"
+
+msgid "GEOM_POSITION"
+msgstr "Position"
+
+msgid "GEOM_POSITION_TITLE"
+msgstr "Position Of An Object"
+
+msgid "GEOM_POS_VERTEX"
+msgstr "Position by Points"
+
+msgid "GEOM_POS_EDGE"
+msgstr "Position by Edges"
+
+msgid "GEOM_POS_FACE"
+msgstr "Position by Faces"

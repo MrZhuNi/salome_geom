@@ -46,6 +46,7 @@ using namespace std;
 #include <gp_Elips.hxx>
 #include <Geom_Plane.hxx>
 #include <Geom_Line.hxx>
+#include <Geom2d_Curve.hxx>
 #include <Geom_BezierCurve.hxx>
 #include <Geom_BSplineCurve.hxx>
 #include <GeomFill_Line.hxx>
@@ -64,6 +65,7 @@ using namespace std;
 #include <BRepAlgoAPI.hxx>
 #endif
 #include <BRepAdaptor_Surface.hxx>
+#include <BRepAdaptor_Curve.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepAlgoAPI_Common.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
@@ -4417,6 +4419,121 @@ GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakeRotation( GEOM::GEOM_Shape_ptr myShape,
     InsertInLabelOneArgument(aShape, myShape, tds, result, myCurrentOCAFDoc) ;
   }
   return result ;
+}
+
+
+//=================================================================================
+// function : MakePosition()
+// purpose  : 
+//=================================================================================
+GEOM::GEOM_Shape_ptr GEOM_Gen_i::MakePosition(GEOM::GEOM_Shape_ptr shape1,
+					      GEOM::GEOM_Shape_ptr shape2,
+					      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID1,
+					      const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID2,
+					      const CORBA::Short typeofshape)
+  throw (SALOME::SALOME_Exception)
+{
+  GEOM::GEOM_Shape_var result;
+  TopoDS_Shape tds;
+  TopoDS_Shape aShape1 = GetTopoShape(shape1);
+  TopoDS_Shape aShape2 = GetTopoShape(shape2);
+  if(aShape1.IsNull() || aShape2.IsNull()) {
+    THROW_SALOME_CORBA_EXCEPTION("MakePosition aborted : null shape during operation", SALOME::BAD_PARAM);
+  }
+  
+  try {
+    gp_Trsf theTransformation;
+    TopoDS_Shape S1, S2;
+
+    GetShapeFromIndex(aShape1, (TopAbs_ShapeEnum)typeofshape, ListOfID1[0], S1);
+    GetShapeFromIndex(aShape2, (TopAbs_ShapeEnum)typeofshape, ListOfID2[0], S2);
+
+    if(S1.ShapeType() == TopAbs_VERTEX && S2.ShapeType() == TopAbs_VERTEX) {
+      gp_Pnt Pt1 = BRep_Tool::Pnt(TopoDS::Vertex(S1));
+      gp_Pnt Pt2 = BRep_Tool::Pnt(TopoDS::Vertex(S2));
+
+      gp_Vec theVector(Pt1, Pt2);
+      theTransformation.SetTranslation(theVector);
+    }
+    else if(S1.ShapeType() == TopAbs_EDGE && S2.ShapeType() == TopAbs_EDGE) {
+      Standard_Real f, l;
+      gp_Pnt Pt1, Pt2;
+      gp_Vec V1, V2;
+
+      Handle(Geom_Curve) C = BRep_Tool::Curve(TopoDS::Edge(S1), f, l);
+      C->D1(f, Pt1, V1);
+      C = BRep_Tool::Curve(TopoDS::Edge(S2), f, l);
+      C->D1(f, Pt2, V2);
+
+      gp_Vec theVector(Pt1, Pt2);
+      theTransformation.SetTranslation(theVector);
+
+      if(!V1.IsParallel(V2, Precision::Angular())) {
+	gp_Vec VN = V1.Crossed(V2);
+	double Angle = V1.Angle(V2);
+	
+	gp_Dir D(VN.X(), VN.Y(), VN.Z());
+	gp_Ax1 AX(Pt1, D);
+	
+	gp_Trsf TheRot;
+	TheRot.SetRotation(AX, Angle);
+	theTransformation = theTransformation * TheRot;
+      }
+    }
+    else if(S1.ShapeType() == TopAbs_FACE && S2.ShapeType() == TopAbs_FACE) {
+      TopoDS_Edge E1, E2;
+      Standard_Real f, l;
+      gp_Pnt P1, P2;
+      gp_Vec D1, D2, N1, N2, V1, V2;
+
+      TopExp_Explorer Exp1(S1, TopAbs_EDGE);
+      TopExp_Explorer Exp2(S2, TopAbs_EDGE);
+
+      for(; Exp1.More(); Exp1.Next()) {
+	E1 = TopoDS::Edge(Exp1.Current());
+	if(!BRep_Tool::Degenerated(E1))
+	  break;
+      }
+      for(; Exp2.More(); Exp2.Next()) {
+	E2 = TopoDS::Edge(Exp2.Current());
+	if(!BRep_Tool::Degenerated(E2))
+	  break;
+      }
+
+      Handle(Geom_Curve) C = BRep_Tool::Curve(E1, f, l);
+      C->D1(f, P1, D1);
+      Handle(Geom2d_Curve) C2 = BRep_Tool::CurveOnSurface(E1, TopoDS::Face(S1), f, l);
+      gp_Pnt2d P2d = C2->Value(f);
+      Handle(Geom_Surface) S = BRep_Tool::Surface(TopoDS::Face(S1));
+      S->D1(P2d.X(), P2d.Y(), P1, V1, V2);
+      N1 = V1^V2;
+
+      C = BRep_Tool::Curve(E2, f, l);
+      C->D1(f, P2, D2);
+      C2 = BRep_Tool::CurveOnSurface(E2, TopoDS::Face(S2), f, l);
+      P2d = C2->Value(f);
+      S = BRep_Tool::Surface(TopoDS::Face(S2));
+      S->D1(P2d.X(), P2d.Y(), P2, V1, V2);
+      N2 = V1^V2;
+
+      gp_Ax3 Ax1(P1, N1, D1);
+      gp_Ax3 Ax2(P2, N2, D2);
+
+      theTransformation.SetDisplacement(Ax1, Ax2);
+    }
+
+    BRepBuilderAPI_Transform myBRepTransformation(aShape1, theTransformation, Standard_False);
+    tds = myBRepTransformation.Shape();
+  }
+  catch(Standard_Failure) {
+    THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::MakePosition", SALOME::BAD_PARAM);
+  }
+  
+  if(!tds.IsNull()) {
+    result = CreateObject(tds);
+    InsertInLabelOneArgument(aShape1, shape1, tds, result, myCurrentOCAFDoc);
+  }
+  return result;
 }
 
 

@@ -401,20 +401,27 @@ class GEOM_Gen_i: public POA_GEOM::GEOM_Gen,
   //---------------------------------------------------------------------//
   // Transformations Operations                                          //
   //---------------------------------------------------------------------//
-  // Copy 
-  GEOM::GEOM_Shape_ptr MakeCopy( GEOM::GEOM_Shape_ptr shape)
+  // Copy
+  GEOM::GEOM_Shape_ptr MakeCopy(GEOM::GEOM_Shape_ptr shape)
     throw (SALOME::SALOME_Exception) ;
 
   // Translation
-  GEOM::GEOM_Shape_ptr MakeTranslation( GEOM::GEOM_Shape_ptr shape,
+  GEOM::GEOM_Shape_ptr MakeTranslation(GEOM::GEOM_Shape_ptr shape,
 				       CORBA::Double x,
 				       CORBA::Double y,
 				       CORBA::Double z)
     throw (SALOME::SALOME_Exception) ;
   // Rotation
-  GEOM::GEOM_Shape_ptr MakeRotation( GEOM::GEOM_Shape_ptr shape,
+  GEOM::GEOM_Shape_ptr MakeRotation(GEOM::GEOM_Shape_ptr shape,
 				    const GEOM::AxisStruct& axis,
 				    CORBA::Double angle)
+    throw (SALOME::SALOME_Exception) ;
+  // Position
+  GEOM::GEOM_Shape_ptr MakePosition(GEOM::GEOM_Shape_ptr shape1,
+				    GEOM::GEOM_Shape_ptr shape2,
+				    const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID1,
+				    const GEOM::GEOM_Shape::ListOfSubShapeID& ListOfID2,
+				    const CORBA::Short typeofshape)
     throw (SALOME::SALOME_Exception) ;
   // Create a shape using a scale factor
   GEOM::GEOM_Shape_ptr MakeScaleTransform(GEOM::GEOM_Shape_ptr shape,

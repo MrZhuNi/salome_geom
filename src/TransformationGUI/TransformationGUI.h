@@ -49,6 +49,10 @@ public :
   void MakeTranslationAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Vec V);
   void MakeRotationAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Pnt loc,
 			      const gp_Dir dir, const Standard_Real angle);
+  void MakePositionAndDisplay(GEOM::GEOM_Shape_ptr ShapePtr1,
+			      GEOM::GEOM_Shape_ptr ShapePtr2,
+			      const TopoDS_Shape& Shape1, const TopoDS_Shape& Shape2,
+			      const TopoDS_Shape& SubShape1, const TopoDS_Shape& SubShape2);
   void MakeMirrorAndDisplay(GEOM::GEOM_Shape_ptr Shape1, GEOM::GEOM_Shape_ptr Shape2);
   void MakeScaleAndDisplay(GEOM::GEOM_Shape_ptr Shape, const gp_Pnt centralPoint,
 			   const Standard_Real factor);

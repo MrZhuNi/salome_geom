@@ -29,12 +29,16 @@
 using namespace std;
 #include "TransformationGUI.h"
 
+#include "BRepAdaptor_Curve.hxx"
+#include "QAD_RightFrame.h"
+#include "OCCViewer_Viewer3d.h"
 #include "SALOMEGUI_QtCatchCorbaException.hxx"
 
 #include "TransformationGUI_MultiTranslationDlg.h"   // Method MULTI TRANSLATION
 #include "TransformationGUI_MultiRotationDlg.h"      // Method MULTI ROTATION
 #include "TransformationGUI_TranslationDlg.h"        // Method TRANSLATION
 #include "TransformationGUI_RotationDlg.h"           // Method ROTATION
+#include "TransformationGUI_PositionDlg.h"           // Method POSITION
 #include "TransformationGUI_MirrorDlg.h"             // Method MIRROR
 #include "TransformationGUI_ScaleDlg.h"              // Method SCALE
 
@@ -73,31 +77,41 @@ bool TransformationGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
   switch (theCommandID)
     {
     case 5021: // TRANSLATION
-      {	
+      {
   	TransformationGUI_TranslationDlg *aDlg = new TransformationGUI_TranslationDlg(parent, "", myTransformationGUI, Sel);
 	break;
       }
     case 5022: // ROTATION
-      {	
+      {
   	TransformationGUI_RotationDlg *aDlg = new TransformationGUI_RotationDlg(parent, "", myTransformationGUI, Sel);
 	break;
       }
-    case 5023: // MIRROR
-      {	
+    case 5023: // POSITION
+      {
+	Handle(AIS_InteractiveContext) ic;
+	if(QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getTypeView() == VIEW_OCC) {
+	  OCCViewer_Viewer3d* v3d = ((OCCViewer_ViewFrame*)QAD_Application::getDesktop()->getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame())->getViewer();
+	  ic = v3d->getAISContext();
+	}
+  	TransformationGUI_PositionDlg *aDlg = new TransformationGUI_PositionDlg(parent, "", myTransformationGUI, Sel, ic);
+	break;
+      }
+    case 5024: // MIRROR
+      {
 	TransformationGUI_MirrorDlg *aDlg = new TransformationGUI_MirrorDlg(parent, "", myTransformationGUI, Sel);
 	break;
       }
-    case 5024: // SCALE
+    case 5025: // SCALE
       {	
   	TransformationGUI_ScaleDlg *aDlg = new TransformationGUI_ScaleDlg(parent, "", myTransformationGUI, Sel );
 	break;
       }
-    case 5025: // MULTI TRANSLATION
+    case 5026: // MULTI TRANSLATION
       {	
   	TransformationGUI_MultiTranslationDlg *aDlg = new TransformationGUI_MultiTranslationDlg(parent, "", myTransformationGUI, Sel);
 	break;
       }
-    case 5026: // MULTI ROTATION
+    case 5027: // MULTI ROTATION
       {	
   	TransformationGUI_MultiRotationDlg *aDlg = new TransformationGUI_MultiRotationDlg(parent, "", myTransformationGUI, Sel);
 	break;
@@ -148,9 +162,51 @@ void TransformationGUI::MakeRotationAndDisplay(GEOM::GEOM_Shape_ptr Shape, const
     GEOM::GEOM_Shape_var result = myGeom->MakeRotation(Shape, axis, angle);
     if(result->_is_nil()) {
       QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
-      return ;
+      return;
     }
     result->NameType(Shape->NameType());
+    if(myGeomBase->Display(result))
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
+  }
+  catch(const SALOME::SALOME_Exception& S_ex) {
+    QtCatchCorbaException(S_ex);
+  }  
+  return;
+}
+
+
+//=======================================================================================
+// function : MakePositionAndDisplay()
+// purpose  :
+//=======================================================================================
+void TransformationGUI::MakePositionAndDisplay(GEOM::GEOM_Shape_ptr ShapePtr1,
+					       GEOM::GEOM_Shape_ptr ShapePtr2,
+					       const TopoDS_Shape& Shape1,
+					       const TopoDS_Shape& Shape2,
+					       const TopoDS_Shape& SubShape1, 
+					       const TopoDS_Shape& SubShape2)
+{
+  try {
+    GEOM::GEOM_Shape_var result;
+
+    if(SubShape1.ShapeType() == SubShape2.ShapeType()) {
+      GEOM::GEOM_Shape::ListOfSubShapeID_var ListOfID1 = new GEOM::GEOM_Shape::ListOfSubShapeID;
+      GEOM::GEOM_Shape::ListOfSubShapeID_var ListOfID2 = new GEOM::GEOM_Shape::ListOfSubShapeID;
+
+      ListOfID1->length(1);
+      ListOfID2->length(1);
+
+      ListOfID1[0] = myGeomBase->GetIndex(SubShape1, Shape1, SubShape1.ShapeType());
+      ListOfID2[0] = myGeomBase->GetIndex(SubShape2, Shape2, SubShape2.ShapeType());
+
+      result = myGeom->MakePosition(ShapePtr1, ShapePtr2, ListOfID1, ListOfID2, SubShape1.ShapeType());
+    }
+
+    if(result->_is_nil()) {
+      QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_ABORT"));
+      return;
+    }
+    result->NameType(ShapePtr1->NameType());
     if(myGeomBase->Display(result))
       QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_DONE"));
   }

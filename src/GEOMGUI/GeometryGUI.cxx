@@ -222,10 +222,11 @@ bool GeometryGUI::OnGUIEvent(int theCommandID, QAD_Desktop* parent)
     }
     else if(theCommandID == 5021 || // MENU TRANSFORMATION - TRANSLATION
 	    theCommandID == 5022 || // MENU TRANSFORMATION - ROTATION
-	    theCommandID == 5023 || // MENU TRANSFORMATION - MIRROR
-	    theCommandID == 5024 || // MENU TRANSFORMATION - SCALE
-	    theCommandID == 5025 || // MENU TRANSFORMATION - MULTI-TRANSLATION
-	    theCommandID == 5026) { // MENU TRANSFORMATION - MULTI-ROTATION
+	    theCommandID == 5023 || // MENU TRANSFORMATION - POSITION
+	    theCommandID == 5024 || // MENU TRANSFORMATION - MIRROR
+	    theCommandID == 5025 || // MENU TRANSFORMATION - SCALE
+	    theCommandID == 5026 || // MENU TRANSFORMATION - MULTI-TRANSLATION
+	    theCommandID == 5027) { // MENU TRANSFORMATION - MULTI-ROTATION
       if(!GeomGUI->LoadLibrary("libTransformationGUI.so")) 
 	return false;
     }

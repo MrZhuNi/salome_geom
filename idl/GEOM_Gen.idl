@@ -120,6 +120,11 @@ module GEOM
     GEOM_Shape MakeRotation(in GEOM_Shape shape,
 			    in AxisStruct axis,
 			    in double angle) raises (SALOME::SALOME_Exception) ;
+    GEOM_Shape MakePosition(in GEOM_Shape shape1,
+			    in GEOM_Shape shape2,
+			    in GEOM_Shape::ListOfSubShapeID ListOfID1,
+			    in GEOM_Shape::ListOfSubShapeID ListOfID2,
+			    in short typeofshape) raises (SALOME::SALOME_Exception) ;
     GEOM_Shape MakeScaleTransform(in GEOM_Shape shape,
 				  in PointStruct theCenterofScale,
 				  in double factor) raises (SALOME::SALOME_Exception) ;
