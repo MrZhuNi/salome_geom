@@ -31,101 +31,7 @@
 module GEOM
 {
 
-  interface GEOM_Contact;
-  typedef sequence<GEOM_Contact> ListOfContact;
-
-  //-----------------------------------------------------------------//
-  //  interface GEOM_Position methods                                //
-  //-----------------------------------------------------------------//
-  interface GEOM_Position {
-
-    void SetOrigin(in GEOM::PointStruct P0)
-      raises (SALOME::SALOME_Exception);
-
-    void SetVX(in GEOM::DirStruct Vect)
-      raises (SALOME::SALOME_Exception);
-
-    void SetVY(in GEOM::DirStruct Vect)
-      raises (SALOME::SALOME_Exception);
-
-    void SetVZ(in GEOM::DirStruct Vect)
-      raises (SALOME::SALOME_Exception);
-
-    GEOM::PointStruct GetOrigin()
-      raises (SALOME::SALOME_Exception);
-
-    GEOM::DirStruct GetVX()
-      raises (SALOME::SALOME_Exception);
-
-    GEOM::DirStruct GetVY()
-      raises (SALOME::SALOME_Exception);
-
-    GEOM::DirStruct GetVZ()
-      raises (SALOME::SALOME_Exception);
-
-  };
-
-  //-----------------------------------------------------------------//
-  //  interface GEOM_Rotation methods                                //
-  //-----------------------------------------------------------------//
-  interface GEOM_Rotation {
-
-    void SetRotation(in long Rot1, in long Rot2, in long Rot3,
-		     in double Val1, in double Val2, in double Val3)
-      raises (SALOME::SALOME_Exception);
-
-    long GetRot1()
-      raises (SALOME::SALOME_Exception);
-    long GetRot2()
-      raises (SALOME::SALOME_Exception);
-    long GetRot3()
-      raises (SALOME::SALOME_Exception);
-
-    double GetVal1()
-      raises (SALOME::SALOME_Exception);
-    double GetVal2()
-      raises (SALOME::SALOME_Exception);
-    double GetVal3()
-      raises (SALOME::SALOME_Exception);
-
-  };
-
-  //-----------------------------------------------------------------//
-  //  interface GEOM_Translation methods                             //
-  //-----------------------------------------------------------------//
-  interface GEOM_Translation {
-
-    void SetTranslation(in double ValX, in double ValY, in double ValZ)
-      raises (SALOME::SALOME_Exception);
-
-    double GetValX()
-      raises (SALOME::SALOME_Exception);
-    double GetValY()
-      raises (SALOME::SALOME_Exception);
-    double GetValZ()
-      raises (SALOME::SALOME_Exception);
-
-  };
-
-  //-----------------------------------------------------------------//
-  //  interface GEOM_Assembly methods                                //
-  //-----------------------------------------------------------------//
-  interface GEOM_Assembly {
-
-    void AddContact(in GEOM::GEOM_Contact aContact)
-      raises (SALOME::SALOME_Exception);
-
-    GEOM::ListOfContact GetContactList()
-      raises (SALOME::SALOME_Exception);
-
-    long NbContacts()
-      raises (SALOME::SALOME_Exception);
-
-    attribute string Name;
-    attribute string ShapeId;
-    attribute string StudyShapeId;
-
-  };
+  typedef sequence<double> ListOfDouble;
 
   //-----------------------------------------------------------------//
   //   interface GEOM_Contact methods                                //
@@ -144,13 +50,51 @@ module GEOM
     double GetStep()
       raises (SALOME::SALOME_Exception);
 
-    GEOM::GEOM_Position GetPosition()
+    GEOM::ListOfDouble GetPosition()
       raises (SALOME::SALOME_Exception);
 
-    GEOM::GEOM_Rotation GetRotation()
+    GEOM::ListOfDouble GetAngularRange()
       raises (SALOME::SALOME_Exception);
 
-    GEOM::GEOM_Translation GetTranslation()
+    GEOM::ListOfDouble GetLinearRange()
+      raises (SALOME::SALOME_Exception);
+
+    void SetPosition(in double P0x, in double P0y, in double P0z,
+		     in double VXx, in double VXy, in double VXz,
+		     in double VYx, in double VYy, in double VYz,
+		     in double VZx, in double VZy, in double VZz)
+      raises (SALOME::SALOME_Exception);
+
+    void SetAngularRange(in double MinValX, in double MaxValX,
+			 in double MinValY, in double MaxValY,
+			 in double MinValZ, in double MaxValZ)
+      raises (SALOME::SALOME_Exception);
+
+    void SetLinearRange(in double MinValX, in double MaxValX,
+			in double MinValY, in double MaxValY,
+			in double MinValZ, in double MaxValZ)
+      raises (SALOME::SALOME_Exception);
+
+    attribute string Name;
+    attribute string ShapeId;
+    attribute string StudyShapeId;
+
+  };
+
+  typedef sequence<GEOM_Contact> ListOfContact;
+
+  //-----------------------------------------------------------------//
+  //  interface GEOM_Assembly methods                                //
+  //-----------------------------------------------------------------//
+  interface GEOM_Assembly {
+
+    void AddContact(in GEOM::GEOM_Contact aContact)
+      raises (SALOME::SALOME_Exception);
+
+    GEOM::ListOfContact GetContactList()
+      raises (SALOME::SALOME_Exception);
+
+    long NbContacts()
       raises (SALOME::SALOME_Exception);
 
     attribute string Name;
@@ -174,6 +118,13 @@ module GEOM
       raises (SALOME::SALOME_Exception);
 
     long GetNbSeq()
+      raises (SALOME::SALOME_Exception);
+
+    GEOM::ListOfDouble GetDisplacement(in GEOM_Contact aContact)
+      raises (SALOME::SALOME_Exception);
+
+    void SetDisplacement(in GEOM_Contact aContact,
+			 in GEOM::ListOfDouble aList)
       raises (SALOME::SALOME_Exception);
 
     attribute string Name;

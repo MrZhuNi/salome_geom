@@ -26,7 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "BasicGUI_PlaneDlg.h"
 
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -36,6 +35,10 @@ using namespace std;
 #include <gp_Dir.hxx>
 #include <Precision.hxx>
 #include "QAD_Config.h"
+
+#include "utilities.h"
+
+using namespace std;
 
 //=================================================================================
 // class    : BasicGUI_PlaneDlg()

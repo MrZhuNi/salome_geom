@@ -196,7 +196,12 @@ module GEOM
 			   in DirStruct dstruct,
 			   in double major_radius,
 			   in double minor_radius) raises (SALOME::SALOME_Exception) ;
-
+    
+    //-----------------------------------------------------------//
+    // Sketcher                                                  //
+    //-----------------------------------------------------------//  
+    GEOM_Shape MakeSketcher (in string Cmd) raises (SALOME::SALOME_Exception) ;
+    
     //-----------------------------------------------------------//
     // Primitives Construction                                   //
     //-----------------------------------------------------------//
@@ -346,9 +351,12 @@ module GEOM
 
     void SetPosition(in GEOM_Contact Contact) raises (SALOME::SALOME_Exception) ;
 
-    void SetRotation(in GEOM_Contact Contact) raises (SALOME::SALOME_Exception) ;
+    void SetAngularRange(in GEOM_Contact Contact) raises (SALOME::SALOME_Exception) ;
 
-    void SetTranslation(in GEOM_Contact Contact) raises (SALOME::SALOME_Exception) ;
+    void SetLinearRange(in GEOM_Contact Contact) raises (SALOME::SALOME_Exception) ;
+
+    void SetDisplacement(in GEOM_Animation Animation,
+			 in GEOM_Contact Contact) raises (SALOME::SALOME_Exception) ;
 
   };
 };
