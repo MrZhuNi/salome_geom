@@ -30,14 +30,7 @@ using namespace std;
 #include "BlocksGUI_PropagateDlg.h"
 
 #include "QAD_Desktop.h"
-#include "QAD_SpinBoxDbl.h"
-
-#include "OCCViewer_Viewer3d.h"
-#include "DlgRef_1Sel_Ext.h"
-#include "SALOME_ListIteratorOfListIO.hxx"
-
 #include "GEOMImpl_Types.hxx"
-
 
 
 //=================================================================================
@@ -61,13 +54,18 @@ BlocksGUI_PropagateDlg::BlocksGUI_PropagateDlg(QWidget* parent, const char* name
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_1Sel_Ext(this, "GroupPoints");
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_PROPAGATE"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_SELECTED_SHAPE"));
-  GroupPoints->PushButton1->setPixmap(image1);
-  GroupPoints->LineEdit1->setReadOnly( true );
-  Layout1->removeChild( GroupBoxName );
-  Layout1->addWidget(GroupPoints, 1, 0);
+  QGroupBox* aMainGrp = new QGroupBox( 1, Qt::Horizontal, tr( "GEOM_SELECTED_SHAPE" ), this );
+  QGroupBox* aSelGrp = new QGroupBox(3, Qt::Horizontal, aMainGrp);
+  aSelGrp->setFrameStyle(QFrame::NoFrame);
+  aSelGrp->setInsideMargin(0);
+
+  new QLabel(tr("GEOM_OBJECT"), aSelGrp);
+  mySelBtn = new QPushButton(aSelGrp);
+  mySelBtn->setPixmap(image1);
+  mySelName = new QLineEdit(aSelGrp);
+  mySelName->setReadOnly(true);
+
+  Layout1->addWidget(aMainGrp, 1, 0);
 
   /***************************************************************/
 
@@ -91,12 +89,10 @@ BlocksGUI_PropagateDlg::~BlocksGUI_PropagateDlg()
 void BlocksGUI_PropagateDlg::Init()
 {
   /* init variables */
-  myEditCurrentArgument = GroupPoints->LineEdit1;
 
   myObject = GEOM::GEOM_Object::_nil();
 
   myGeomGUI->SetState( 0 );
-  globalSelection( GEOM_COMPOUND );
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
@@ -106,11 +102,10 @@ void BlocksGUI_PropagateDlg::Init()
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(mySelBtn, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(mySelName, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-
+  activateSelection();
 }
 
 
@@ -137,10 +132,10 @@ bool BlocksGUI_PropagateDlg::ClickOnApply()
 
   initName();
 
-  GroupPoints->LineEdit1->setText("");
+  mySelName->setText("");
   myObject = GEOM::GEOM_Object::_nil();
 
-  globalSelection( GEOM_COMPOUND );
+  activateSelection();
 
   return true;
 }
@@ -162,8 +157,7 @@ void BlocksGUI_PropagateDlg::ClickOnCancel()
 //=================================================================================
 void BlocksGUI_PropagateDlg::SelectionIntoArgument()
 {
-  erasePreview();
-  myEditCurrentArgument->setText("");
+  mySelName->setText("");
   myObject = GEOM::GEOM_Object::_nil();
 
   if ( mySelection->IObjectCount() == 1 ) {
@@ -171,7 +165,7 @@ void BlocksGUI_PropagateDlg::SelectionIntoArgument()
     Standard_Boolean aRes;
     myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
     if ( aRes )
-      myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
+      mySelName->setText( GEOMBase::GetName( myObject ) );
   }
 }
 
@@ -182,10 +176,10 @@ void BlocksGUI_PropagateDlg::SelectionIntoArgument()
 void BlocksGUI_PropagateDlg::SetEditCurrentArgument()
 {
   const QObject* send = sender();
-  if ( send == GroupPoints->PushButton1 )  {
-    myEditCurrentArgument->setFocus();
-    SelectionIntoArgument();
+  if ( send == mySelBtn )  {
+    mySelName->setFocus();
   }
+  activateSelection();
 }
 
 
@@ -196,8 +190,7 @@ void BlocksGUI_PropagateDlg::SetEditCurrentArgument()
 void BlocksGUI_PropagateDlg::LineEditReturnPressed()
 {
   const QObject* send = sender();
-  if( send == GroupPoints->LineEdit1 ) {
-    myEditCurrentArgument = GroupPoints->LineEdit1;
+  if( send == mySelName ) {
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
 }
@@ -221,13 +214,12 @@ void BlocksGUI_PropagateDlg::DeactivateActiveDialog()
 void BlocksGUI_PropagateDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  GroupPoints->LineEdit1->setText("");
+  mySelName->setText("");
   myObject = GEOM::GEOM_Object::_nil();
 
   myGeomGUI->SetState( 0 );
-  globalSelection( GEOM_COMPOUND );
+  activateSelection();
 }
 
 
@@ -276,12 +268,43 @@ bool BlocksGUI_PropagateDlg::isValid( QString& msg )
 //=================================================================================
 bool BlocksGUI_PropagateDlg::execute( ObjectList& objects )
 {
-  bool aResult = false;
-  GEOM::ListOfGO_var aCurrList = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->Propagate( myObject );
-  for ( int i = 0, n = aCurrList->length(); i < n; i++ )
+
+  GEOM::ListOfGO_var aList = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->Propagate( myObject );
+
+  if ( !aList->length() )
+    return false;
+
+  for ( int i = 0, n = aList->length(); i < n; i++ )
   {
-    //NOT yet implemented
+    objects.push_back(aList[i]._retn());
   }
 
-  return aResult;
+  return objects.size() ? true : false;
 }
+
+//=================================================================================
+// function : activateSelection
+// purpose  : Activate selection
+//=================================================================================
+void BlocksGUI_PropagateDlg::activateSelection()
+{
+  TColStd_MapOfInteger aMap;
+  aMap.Add( GEOM_SOLID );
+  aMap.Add( GEOM_COMPOUND );
+  globalSelection( aMap );
+  if (myObject->_is_nil()) {
+    SelectionIntoArgument();
+  }
+  connect(mySelection, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+}
+
+//================================================================
+// Function : getFather
+// Purpose  : Get father object for object to be added in study
+//            ( called with addInStudy method )
+//================================================================
+GEOM::GEOM_Object_ptr BlocksGUI_PropagateDlg::getFather (GEOM::GEOM_Object_ptr)
+{
+  return myObject;
+}
+

@@ -31,8 +31,6 @@
 
 #include "GEOMBase_Skeleton.h"
 
-class QAD_SpinBoxDbl;
-class DlgRef_1Sel_Ext;
 
 //=================================================================================
 // class    : BlocksGUI_PropagateDlg
@@ -51,16 +49,7 @@ protected:
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
-
-private :
-    void Init();
-    void enterEvent(QEvent* e);
-    void closeEvent(QCloseEvent* e);
-    void initSelection();
-
-    GEOM::GEOM_Object_var myObject;
-
-    DlgRef_1Sel_Ext* GroupPoints;
+    virtual GEOM::GEOM_Object_ptr getFather(GEOM::GEOM_Object_ptr theObj);
 
 private slots:
     void ClickOnOk();
@@ -73,6 +62,19 @@ private slots:
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
+
+private :
+    void Init();
+    void enterEvent(QEvent* e);
+    void closeEvent(QCloseEvent* e);
+    void activateSelection();
+
+private :
+
+    GEOM::GEOM_Object_var      myObject;
+    QPushButton*               mySelBtn;
+    QLineEdit*                 mySelName;
+
 };
 
 #endif // DIALOGBOX_BlocksGUI_PropagateDlg_H
