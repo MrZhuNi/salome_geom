@@ -164,6 +164,12 @@ def MakePlane(p1,d1,trimsize):
     anObj._set_Name(ior)
     return anObj
 
+def MakeSketcher(Cmd): 
+    anObj = geom.MakeSketcher(Cmd)
+    ior = orb.object_to_string(anObj)
+    anObj._set_Name(ior)
+    return anObj
+
 # -----------------------------------------------------------------------------
 # Create Geometry 3D
 # -----------------------------------------------------------------------------

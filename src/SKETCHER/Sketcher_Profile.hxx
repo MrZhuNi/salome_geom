@@ -21,33 +21,34 @@
 //
 //
 //
-//  File   : GEOM_SketcherStatus.h
-//  Author : Nicolas REJNERI
+//  File   : Sketcher_Profile.h
+//  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header$
+//  $Header: 
 
-enum TransitionStatus {
-	NOCONSTRAINT, // no constraint between consecutive edges
-	TANGENT,      // arc and segment are tangent
-	PERPENDICULAR,// arc is tangent to the perpendicular to the segment
-	ANGLE,        // Angular constraint between 2 segments
-	LENGTH_FIXED, // Length of segment has been fixed 
-	X_FIXED,      // X coordinate for segment has been fixed
-	Y_FIXED       // Y coordinate for segment has been fixed
-	};
+#include <gp_Pnt.hxx>
+#include <gp_Dir.hxx>
+#include <TopoDS_Shape.hxx>
 
-enum TypeOfParameter {
-	ANGLE_PARAMETER,
-	LENGTH_PARAMETER,
-	RADIUS_PARAMETER,
-	XVALUE_PARAMETER,
-	YVALUE_PARAMETER
-	};
+class Sketcher_Profile
+{
 
-enum SketchStatus {
-	BEGIN_SKETCH, // Begin sketch; no edges created yet
-	SEGMENT,      // Current mode for creation is segment
-	ARC_CHORD,    // Current mode for creation is arc by chord
-	ARC_CHORD_END,// Chord validated, waiting for radius or center
-	END_SKETCH    // End sketch
+public:
+  Sketcher_Profile();
+  Sketcher_Profile(const char* aCmd);
+
+private:
+  gp_Pnt myLastPoint;
+  gp_Dir myLastDir;
+
+  TopoDS_Shape myShape;
+  bool myOK;
+
+public:
+  gp_Pnt GetLastPoint(){return myLastPoint;};
+  gp_Dir GetLastDir(){return myLastDir;};
+
+  const TopoDS_Shape& GetShape(){return myShape;};
+  bool IsDone(){return myOK;};
+
 };
