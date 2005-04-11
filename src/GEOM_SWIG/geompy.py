@@ -40,7 +40,7 @@ gg = ImportComponentGUI("GEOM")
 
 #SRN: modified on Mar 18, 2005
 
-myStudy   = None
+#myStudy   = None
 myBuilder = None
 myStudyId = 0
 BasicOp  = None
