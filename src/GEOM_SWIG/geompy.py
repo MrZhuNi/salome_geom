@@ -40,9 +40,9 @@ gg = ImportComponentGUI("GEOM")
 
 #SRN: modified on Mar 18, 2005
 
-geomStudy   = None
-geomBuilder = None
-geomStudyId = 0
+myStudy   = None
+myBuilder = None
+myStudyId = 0
 BasicOp  = None
 CurvesOp = None
 PrimOp   = None
@@ -58,40 +58,40 @@ GroupOp  = None
 					       
 def init_geom(theStudy):
 
-    global geomStudy, geomBuilder, geomStudyId, BasicOp, CurvesOp, PrimOp, ShapesOp, HealOp
+    global myStudy, myBuilder, myStudyId, BasicOp, CurvesOp, PrimOp, ShapesOp, HealOp
     global InsertOp, BoolOp, TrsfOp, LocalOp, MeasuOp, BlocksOp, GroupOp
     
-    geomStudy = theStudy
-    geomStudyId = geomStudy._get_StudyId()
-    geomBuilder = geomStudy.NewBuilder()
-    father = geomStudy.FindComponent("GEOM")
+    myStudy = theStudy
+    myStudyId = myStudy._get_StudyId()
+    myBuilder = myStudy.NewBuilder()
+    father = myStudy.FindComponent("GEOM")
     if father is None:
-        father = geomBuilder.NewComponent("GEOM")
-        A1 = geomBuilder.FindOrCreateAttribute(father, "AttributeName")
+        father = myBuilder.NewComponent("GEOM")
+        A1 = myBuilder.FindOrCreateAttribute(father, "AttributeName")
         FName = A1._narrow(SALOMEDS.AttributeName)
         FName.SetValue("Geometry")
-      	A2 = geomBuilder.FindOrCreateAttribute(father, "AttributePixMap")
+      	A2 = myBuilder.FindOrCreateAttribute(father, "AttributePixMap")
       	aPixmap = A2._narrow(SALOMEDS.AttributePixMap)
 	aPixmap.SetPixMap("ICON_OBJBROWSER_Geometry")
-	geomBuilder.DefineComponentInstance(father,geom)
+	myBuilder.DefineComponentInstance(father,geom)
         pass
 	 
     # -----------------------------------------------------------------------------
     # Assign Operations Interfaces
     # -----------------------------------------------------------------------------
 
-    BasicOp  = geom.GetIBasicOperations    (geomStudyId)
-    CurvesOp = geom.GetICurvesOperations   (geomStudyId)
-    PrimOp   = geom.GetI3DPrimOperations   (geomStudyId)
-    ShapesOp = geom.GetIShapesOperations   (geomStudyId)
-    HealOp   = geom.GetIHealingOperations  (geomStudyId)
-    InsertOp = geom.GetIInsertOperations   (geomStudyId)
-    BoolOp   = geom.GetIBooleanOperations  (geomStudyId)
-    TrsfOp   = geom.GetITransformOperations(geomStudyId)
-    LocalOp  = geom.GetILocalOperations    (geomStudyId)
-    MeasuOp  = geom.GetIMeasureOperations  (geomStudyId)
-    BlocksOp = geom.GetIBlocksOperations   (geomStudyId)
-    GroupOp  = geom.GetIGroupOperations   (geomStudyId) 
+    BasicOp  = geom.GetIBasicOperations    (myStudyId)
+    CurvesOp = geom.GetICurvesOperations   (myStudyId)
+    PrimOp   = geom.GetI3DPrimOperations   (myStudyId)
+    ShapesOp = geom.GetIShapesOperations   (myStudyId)
+    HealOp   = geom.GetIHealingOperations  (myStudyId)
+    InsertOp = geom.GetIInsertOperations   (myStudyId)
+    BoolOp   = geom.GetIBooleanOperations  (myStudyId)
+    TrsfOp   = geom.GetITransformOperations(myStudyId)
+    LocalOp  = geom.GetILocalOperations    (myStudyId)
+    MeasuOp  = geom.GetIMeasureOperations  (myStudyId)
+    BlocksOp = geom.GetIBlocksOperations   (myStudyId)
+    GroupOp  = geom.GetIGroupOperations   (myStudyId) 
     pass
 
 init_geom(myStudy)
@@ -117,7 +117,7 @@ def addToStudy(aShape, aName):
      *  Example: see GEOM_TestAll.py
     """
     try:
-        aSObject = geom.AddInStudy(geomStudy, aShape, aName, None)
+        aSObject = geom.AddInStudy(myStudy, aShape, aName, None)
     except:
         print "addToStudy() failed"
         return ""
@@ -130,7 +130,7 @@ def addToStudyInFather(aFather, aShape, aName):
      *  Example: see GEOM_TestAll.py
     """
     try:
-        aSObject = geom.AddInStudy(geomStudy, aShape, aName, aFather)
+        aSObject = geom.AddInStudy(myStudy, aShape, aName, aFather)
     except:
         print "addToStudyInFather() failed"
         return ""
