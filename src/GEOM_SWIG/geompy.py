@@ -40,9 +40,10 @@ gg = ImportComponentGUI("GEOM")
 
 #SRN: modified on Mar 18, 2005
 
-#myStudy   = None
 myBuilder = None
 myStudyId = 0
+father    = None
+
 BasicOp  = None
 CurvesOp = None
 PrimOp   = None
@@ -59,7 +60,7 @@ GroupOp  = None
 def init_geom(theStudy):
 
     global myStudy, myBuilder, myStudyId, BasicOp, CurvesOp, PrimOp, ShapesOp, HealOp
-    global InsertOp, BoolOp, TrsfOp, LocalOp, MeasuOp, BlocksOp, GroupOp
+    global InsertOp, BoolOp, TrsfOp, LocalOp, MeasuOp, BlocksOp, GroupOp, father
     
     myStudy = theStudy
     myStudyId = myStudy._get_StudyId()
