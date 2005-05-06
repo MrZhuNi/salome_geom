@@ -25,23 +25,18 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
     return new Engines::TMPFile(0);  
 
   Resource_DataMapOfAsciiStringAsciiString aMap;
-  TCollection_AsciiString s("qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM0987654321_");
 
   SALOMEDS::ChildIterator_var Itr = aStudy->NewChildIterator(aSO);
   for(Itr->InitEx(true); Itr->More(); Itr->Next()) {
     SALOMEDS::SObject_var aValue = Itr->Value();
-    char* IOR = aValue->GetIOR();
-    if(strlen(IOR) > 0) {
+    CORBA::String_var IOR = aValue->GetIOR();
+    if(strlen(IOR.in()) > 0) {
       CORBA::Object_var obj = _orb->string_to_object(IOR);
       GEOM::GEOM_Object_var GO = GEOM::GEOM_Object::_narrow(obj);
       if(!CORBA::is_nil(GO)) {
-	TCollection_AsciiString aName(aValue->GetName());
-        int p, p2=1, e = aName.Length();
-	while ((p = aName.FirstLocationNotInSet(s, p2, e))) {
-	   aName.SetValue(p, '_');
-	   p2=p;
-	}  
-	aMap.Bind(TCollection_AsciiString(GO->GetEntry()), aName);
+        CORBA::String_var aName = aValue->GetName();
+        CORBA::String_var anEntry = GO->GetEntry();
+	aMap.Bind( (char*)anEntry.in(), (char*)aName.in() );
       }
     }
   }
