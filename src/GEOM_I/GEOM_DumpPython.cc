@@ -5,6 +5,7 @@ using namespace std;
 #include <TCollection_ExtendedString.hxx>
 #include <TColStd_HSequenceOfAsciiString.hxx>
 #include <Resource_DataMapOfAsciiStringAsciiString.hxx>
+#include "SALOMEDSImpl_Study.hxx"
 
 //=======================================================================
 //function : DumpPython
@@ -45,8 +46,9 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
     }
   }
 
-  bool aValidScript;
-  TCollection_AsciiString aScript = _impl->DumpPython(aStudy->StudyId(), aMap, isPublished, aValidScript);
+  TCollection_AsciiString aScript =
+    SALOMEDSImpl_Study::GetDumpStudyComment("GEOM") + "\n\n" +
+      _impl->DumpPython(aStudy->StudyId(), aMap, isPublished, isValidScript);
 
   int aLen = aScript.Length(); 
   unsigned char* aBuffer = new unsigned char[aLen+1];
@@ -54,7 +56,6 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 
   CORBA::Octet* anOctetBuf =  (CORBA::Octet*)aBuffer;
   Engines::TMPFile_var aStreamFile = new Engines::TMPFile(aLen+1, aLen+1, anOctetBuf, 1); 
-  isValidScript = aValidScript;
 
   return aStreamFile._retn(); 
 }
