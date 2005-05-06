@@ -337,7 +337,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexa
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aBlock << " = geompy.MakeHexa("
-    << theFace1 << ", " << theFace2 << ", " << theFace3 << ")"
+    << theFace1 << ", " << theFace2 << ", " << theFace3 << ", "
       << theFace4 << ", " << theFace5 << ", " << theFace6 << ")";
 
   SetErrorCode(OK);
