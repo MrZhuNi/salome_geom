@@ -400,10 +400,11 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 
   Handle(TColStd_HSequenceOfInteger) aSeq = FindEntries(aScript);
   Standard_Integer aLen = aSeq->Length(), objectCounter = 0, aStart = 1, aScriptLength = aScript.Length();
-  Resource_DataMapOfAsciiStringAsciiString aNameToEntry;
+  Resource_DataMapOfAsciiStringAsciiString aNameToEntry, anEntryToBadName;
 
   //Replace entries by the names
-  TCollection_AsciiString anUpdatedScript, anEntry, aName, aBaseName("geomObj_");
+  TCollection_AsciiString anUpdatedScript, anEntry, aName, aBaseName("geomObj_"),
+    allowedChars ("qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM0987654321_");
   if(aLen == 0) anUpdatedScript = aScript;
 
   for(Standard_Integer i = 1; i <= aLen; i+=2) {
@@ -411,14 +412,31 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     anEntry = aScript.SubString(aSeq->Value(i), aSeq->Value(i+1));
     if(theObjectNames.IsBound(anEntry)) {
       aName = theObjectNames.Find(anEntry);
+      // check validity of aName
+      bool isValidName = true;
+      if ( aName.IsIntegerValue() ) { // aName must not start with a digit
+        aName.Insert( 1, 'a' );
+        isValidName = false;
+      }
+      int p, p2=1; // replace not allowed chars
+      while ((p = aName.FirstLocationNotInSet(allowedChars, p2, aName.Length()))) {
+        aName.SetValue(p, '_');
+        p2=p;
+        isValidName = false;
+      }
       if ( aNameToEntry.IsBound( aName ) && anEntry != aNameToEntry( aName ))
-      {  // diff objects have same name - make a new name
+      {  // diff objects have same name - make a new name by appending a digit
         TCollection_AsciiString aName2;
         Standard_Integer i = 0;
         do {
           aName2 = aName + "_" + ++i;
         } while ( aNameToEntry.IsBound( aName2 ) && anEntry != aNameToEntry( aName2 ));
         aName = aName2;
+        isValidName = false;
+      }
+      if ( !isValidName ) {
+        if ( isPublished )
+          anEntryToBadName.Bind( anEntry, theObjectNames.Find(anEntry) );
         theObjectNames( anEntry ) = aName;
       }
     }
@@ -450,12 +468,14 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       if ( !aEntry2StEntry.IsBound( aEntry ))
         continue; // was not published
       TCollection_AsciiString aCommand("\n\tgeompy."), aFatherEntry;
+
       // find a father entry
       const TCollection_AsciiString& aStudyEntry = aEntry2StEntry( aEntry );
       TCollection_AsciiString aFatherStudyEntry =
         aStudyEntry.SubString( 1, aStudyEntry.SearchFromEnd(":") - 1 );
       if ( aStEntry2Entry.IsBound( aFatherStudyEntry ))
         aFatherEntry = aStEntry2Entry( aFatherStudyEntry );
+
       // make a command
       if ( !aFatherEntry.IsEmpty() && theObjectNames.IsBound( aFatherEntry )) {
         aCommand += "addToStudyInFather( ";
@@ -463,7 +483,11 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       }
       else
         aCommand += "addToStudy( ";
-      aCommand += aName + ", \"" + aName + "\" )";
+      if ( anEntryToBadName.IsBound( aEntry ))
+        aCommand += aName + ", \"" + anEntryToBadName( aEntry ) + "\" )";
+      else 
+        aCommand += aName + ", \"" + aName + "\" )";
+
       // bind a command to the last digit of the entry
       int tag =
         aEntry.SubString( aEntry.SearchFromEnd(":")+1, aEntry.Length() ).IntegerValue();
@@ -473,7 +497,6 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     // add publishing commands to the script
     map< int, string >::iterator anEntryToCommand = anEntryToCommandMap.begin();
     for ( ; anEntryToCommand != anEntryToCommandMap.end(); ++anEntryToCommand ) {
-      //cout << anEntryToCommand->first << endl;
       anUpdatedScript += (char*)anEntryToCommand->second.c_str();
     }
   }
