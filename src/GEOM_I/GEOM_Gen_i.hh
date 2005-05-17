@@ -13,8 +13,6 @@
 
 #include "SALOME_NamingService.hxx"
 
-#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
-
 #include "GEOM_IBasicOperations_i.hh"
 #include "GEOM_ITransformOperations_i.hh"
 #include "GEOM_I3DPrimOperations_i.hh"
