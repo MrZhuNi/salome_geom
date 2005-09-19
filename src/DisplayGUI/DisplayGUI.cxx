@@ -51,7 +51,7 @@
 #include <SOCC_Prs.h>
 
 #include <SalomeApp_Application.h>
-#include <SalomeApp_SelectionMgr.h>
+#include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Study.h>
 
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
@@ -231,7 +231,7 @@ void DisplayGUI::Display()
   if ( !anActiveStudy ) return;
   
   //get SalomeApp selection manager
-  SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   if ( !aSelMgr ) return;
   
   SALOME_ListIO aList;
@@ -287,7 +287,7 @@ void DisplayGUI::Erase()
   if ( !anActiveStudy ) return;
   
   //get SalomeApp selection manager
-  SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   if ( !aSelMgr ) return;
   
   SALOME_ListIO aList;
@@ -410,7 +410,7 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( !app ) return;
 
-  SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   if ( !aSelMgr ) return;
   
   SUIT_OverrideCursor();
