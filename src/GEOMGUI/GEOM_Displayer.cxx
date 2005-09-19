@@ -51,7 +51,7 @@
 
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Application.h>
-#include <SalomeApp_SelectionMgr.h>
+#include <LightApp_SelectionMgr.h>
 #include <SalomeApp_TypeFilter.h>
 #include <SalomeApp_Tools.h>
 
@@ -879,7 +879,7 @@ void GEOM_Displayer::LocalSelection( const Handle(SALOME_InteractiveObject)& the
   if ( !app )
     return;
 
-  SalomeApp_SelectionMgr* sm = app->selectionMgr();
+  LightApp_SelectionMgr* sm = app->selectionMgr();
 
   // remove all filters from selection
   sm->clearFilters();
@@ -930,7 +930,7 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
   vf->GlobalSelection( update );
 
   // Set selection filters in accordance with current mode
-  SalomeApp_SelectionMgr* sm = app->selectionMgr();
+  LightApp_SelectionMgr* sm = app->selectionMgr();
   if ( !sm )
     return;
 
@@ -1103,7 +1103,7 @@ bool GEOM_Displayer::ToActivate() const
  *  Removes from selection temporary objects
  */
 //=================================================================
-void GEOM_Displayer::clearTemporary( SalomeApp_SelectionMgr* theSelMgr )
+void GEOM_Displayer::clearTemporary( LightApp_SelectionMgr* theSelMgr )
 {
   SALOME_ListIO selected, toSelect;
   theSelMgr->selectedObjects( selected );

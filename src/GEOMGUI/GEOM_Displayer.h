@@ -48,7 +48,7 @@
 typedef std::list<GEOM::GEOM_Object_ptr> ObjectList;
 
 class TColStd_MapOfInteger;
-class SalomeApp_SelectionMgr;
+class LightApp_SelectionMgr;
 class SalomeApp_Study;
 class SUIT_SelectionFilter;
 //class SALOME_Selection;
@@ -171,7 +171,7 @@ protected:
   /* Resets internal data */
   void        internalReset();
 
-  void        clearTemporary( SalomeApp_SelectionMgr* theSelMgr );
+  void        clearTemporary( LightApp_SelectionMgr* theSelMgr );
 
   SUIT_SelectionFilter* getFilter( const int theMode );
   
