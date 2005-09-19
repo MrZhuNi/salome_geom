@@ -30,29 +30,28 @@
 #include "GeometryGUI.h"
 #include "GEOM_Displayer.h"
 
-#include <SUIT_Desktop.h>
-#include <SUIT_Session.h>
-#include <SUIT_ViewWindow.h>
-#include <SUIT_OverrideCursor.h>
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+#include "SUIT_ViewWindow.h"
+#include "SUIT_OverrideCursor.h"
 
-#include <VTKViewer_ViewWindow.h>
-#include <VTKViewer_RenderWindowInteractor.h>
-#include <OCCViewer_ViewManager.h>
-#include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewWindow.h>
+#include "VTKViewer_ViewWindow.h"
+#include "OCCViewer_ViewManager.h"
+#include "OCCViewer_ViewModel.h"
+#include "OCCViewer_ViewWindow.h"
 
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include "SALOME_ListIteratorOfListIO.hxx"
 
-#include <SVTK_ViewWindow.h>
-#include <SVTK_RenderWindowInteractor.h>
-#include <SVTK_ViewModel.h>
-#include <SOCC_ViewModel.h>
-#include <SVTK_Prs.h>
-#include <SOCC_Prs.h>
+#include "SVTK_ViewWindow.h"
+#include "SVTK_View.h"
+#include "SVTK_ViewModel.h"
+#include "SOCC_ViewModel.h"
+#include "SVTK_Prs.h"
+#include "SOCC_Prs.h"
 
-#include <SalomeApp_Application.h>
-#include <SalomeApp_SelectionMgr.h>
-#include <SalomeApp_Study.h>
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "SalomeApp_Study.h"
 
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 
@@ -339,8 +338,8 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
   if ( !viewWindow ) 
     viewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
   if ( viewWindow->getViewManager()->getType() == VTKViewer_Viewer::Type() ) {
-    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewWindow*)viewWindow)->getRWInteractor();
-    myRenderInter->SetDisplayMode( mode );
+    SVTK_View* aView = ((SVTK_ViewWindow*)viewWindow)->getView();
+    aView->SetDisplayMode( mode );
   } 
   else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
     OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
@@ -375,8 +374,8 @@ int DisplayGUI::GetDisplayMode( SUIT_ViewWindow* viewWindow )
   if ( !viewWindow ) 
     viewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
   if ( viewWindow->getViewManager()->getType() == VTKViewer_Viewer::Type() ) {
-    VTKViewer_RenderWindowInteractor* myRenderInter= ((VTKViewer_ViewWindow*)viewWindow)->getRWInteractor();
-    dispMode = myRenderInter->GetDisplayMode();
+    SVTK_View* aView = ((SVTK_ViewWindow*)viewWindow)->getView();
+    dispMode = aView->GetDisplayMode();
   } 
   else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
     OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
@@ -419,7 +418,7 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
   
   if ( viewWindow->getViewManager()->getType() == VTKViewer_Viewer::Type() ) {
     SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( viewWindow );
-    SVTK_RenderWindowInteractor* rwi = vw->getRWInteractor();
+    SVTK_View* aView = vw->getView();
 
     aSelMgr->selectedObjects( aList );
     SALOME_ListIteratorOfListIO It( aList );
@@ -429,12 +428,12 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
       SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( stvkViewer->CreatePrs( It.Value()->getEntry() ) );
       if ( vtkPrs && !vtkPrs->IsNull() ) {
 	if ( mode == 0 )
-	  rwi->ChangeRepresentationToWireframe( vtkPrs->GetObjects() );
+	  aView->ChangeRepresentationToWireframe( vtkPrs->GetObjects() );
 	else if ( mode == 1 )
-	  rwi->ChangeRepresentationToSurface( vtkPrs->GetObjects() );
+	  aView->ChangeRepresentationToSurface( vtkPrs->GetObjects() );
       }
     }
-    rwi->Render();
+    aView->Repaint();
   }
   else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
     OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();

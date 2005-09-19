@@ -38,28 +38,28 @@
 #include "GEOM_Actor.h"
 #include "GEOMBase.h"
 
-#include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include "SALOME_ListIO.hxx"
+#include "SALOME_ListIteratorOfListIO.hxx"
 
-#include <VTKViewer_ViewModel.h>
-#include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewWindow.h>
+#include "VTKViewer_ViewModel.h"
+#include "OCCViewer_ViewModel.h"
+#include "OCCViewer_ViewWindow.h"
 
-#include <SVTK_ViewWindow.h>
-#include <SVTK_RenderWindowInteractor.h>
+#include "SVTK_ViewWindow.h"
+#include "SVTK_View.h"
 
-#include <SUIT_ViewManager.h>
-#include <SUIT_Application.h>
-#include <SUIT_Desktop.h>
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_Session.h>
-#include <SUIT_OverrideCursor.h>
-#include <SUIT_MessageBox.h>
+#include "SUIT_ViewManager.h"
+#include "SUIT_Application.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_ResourceMgr.h"
+#include "SUIT_Session.h"
+#include "SUIT_OverrideCursor.h"
+#include "SUIT_MessageBox.h"
 
-#include <SalomeApp_Application.h>
-#include <SalomeApp_SelectionMgr.h>
-#include <SalomeApp_Study.h>
-#include <SalomeApp_Module.h>
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
+#include "SalomeApp_Study.h"
+#include "SalomeApp_Module.h"
 
 #include "SALOMEDSClient.hxx"
 
@@ -236,13 +236,13 @@ void GEOMToolsGUI::OnColor()
 	  SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
 	  if ( !vtkVW )
 	    return;
-	  SVTK_RenderWindowInteractor* rwi = vtkVW->getRWInteractor();
-	  QColor initcolor = rwi->GetColor( selected.First()  );
+	  SVTK_View* aView = vtkVW->getView();
+	  QColor initcolor = aView->GetColor( selected.First()  );
 	  QColor c = QColorDialog::getColor( QColor(), app->desktop() );
 	  if ( c.isValid() ) {
 	    SUIT_OverrideCursor();
 	    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-	      rwi->SetColor( It.Value(), c );
+	      aView->SetColor( It.Value(), c );
 	    }
 	  }
 	} // if ( isVTK )

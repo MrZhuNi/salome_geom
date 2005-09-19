@@ -30,25 +30,25 @@
 #include "GEOMBase.h"
 #include "GEOM_AISShape.hxx"
 
-#include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include "SALOME_ListIO.hxx"
+#include "SALOME_ListIteratorOfListIO.hxx"
 
-#include <VTKViewer_ViewModel.h>
-#include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewWindow.h>
+#include "VTKViewer_ViewModel.h"
+#include "OCCViewer_ViewModel.h"
+#include "OCCViewer_ViewWindow.h"
 
-#include <SVTK_ViewWindow.h>
-#include <SVTK_RenderWindowInteractor.h>
+#include "SVTK_ViewWindow.h"
+#include "SVTK_View.h"
 
-#include <SUIT_ViewManager.h>
-#include <SUIT_Application.h>
-#include <SUIT_Desktop.h>
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_Session.h>
-#include <SUIT_OverrideCursor.h>
+#include "SUIT_ViewManager.h"
+#include "SUIT_Application.h"
+#include "SUIT_Desktop.h"
+#include "SUIT_ResourceMgr.h"
+#include "SUIT_Session.h"
+#include "SUIT_OverrideCursor.h"
 
-#include <SalomeApp_Application.h>
-#include <SalomeApp_SelectionMgr.h>
+#include "SalomeApp_Application.h"
+#include "SalomeApp_SelectionMgr.h"
 
 #include <qframe.h>
 #include <qlabel.h>
@@ -205,19 +205,19 @@ void GEOMToolsGUI_TransparencyDlg::ValueHasChanged( int newValue )
     SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
     if ( !vtkVW )
       return;
-    SVTK_RenderWindowInteractor* rwi = vtkVW->getRWInteractor();
+    SVTK_View* aView = vtkVW->getView();
     if ( myFirstInit ) {	
       myFirstInit = false;
-      float transp = (rwi->GetTransparency(FirstIOS))*10.0;
+      float transp = (aView->GetTransparency(FirstIOS))*10.0;
       mySlider->setValue(int(transp));
       return;
     }
 
     SUIT_OverrideCursor();
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-      rwi->SetTransparency( It.Value(), newValue/10.0 );
+      aView->SetTransparency( It.Value(), newValue/10.0 );
     }
-    rwi->Render();
+    aView->Repaint();
   } // if ( isVTK )
 	
   else if ( isOCC ) {

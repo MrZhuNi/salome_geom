@@ -31,22 +31,22 @@
 
 #include "GeometryGUI.h"
 
-#include <SUIT_Session.h>
-#include <SalomeApp_Application.h>
-#include <SalomeApp_Study.h>
-#include <SalomeApp_ImportOperation.h>
+#include "SUIT_Session.h"
+#include "SalomeApp_Application.h"
+#include "SalomeApp_Study.h"
+#include "SalomeApp_ImportOperation.h"
 
-#include <OB_Browser.h>
+#include "OB_Browser.h"
 
-#include <OCCViewer_ViewWindow.h>
-#include <OCCViewer_ViewManager.h>
-#include <SOCC_ViewModel.h>
+#include "OCCViewer_ViewWindow.h"
+#include "OCCViewer_ViewManager.h"
+#include "SOCC_ViewModel.h"
 
-#include <VTKViewer_ViewWindow.h>
-#include <VTKViewer_ViewModel.h>
-#include <VTKViewer_RenderWindowInteractor.h>
-#include <SVTK_ViewWindow.h>
-#include <SVTK_RenderWindowInteractor.h>
+#include "VTKViewer_ViewWindow.h"
+#include "VTKViewer_ViewModel.h"
+#include "VTKViewer_RenderWindowInteractor.h"
+#include "SVTK_ViewWindow.h"
+#include "SVTK_View.h"
 
 #include "GEOM_Actor.h"
 #include "GEOM_Client.hxx"
@@ -54,7 +54,7 @@
 #include "GEOM_AssemblyBuilder.h"
 #include "GEOM_InteractiveObject.hxx"
 
-#include <SALOME_Event.hxx>
+#include "SALOME_Event.hxx"
 
 #include "utilities.h"
 
@@ -173,10 +173,9 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
                                         "GEOM",
                                         const_cast<char*>( obj->GetID().c_str()));
 
-	  if (SVTK_ViewWindow* svtkViewWindow = GetSVTKViewWindow(app)) {
-
-	    SVTK_RenderWindowInteractor* aRenderInter= svtkViewWindow->getRWInteractor();
-	    int aMode = aRenderInter->GetDisplayMode();
+	  if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(app)) {
+	    SVTK_View* aView = aViewWindow->getView();
+	    int aMode = aView->GetDisplayMode();
 
 	    vtkActorCollection* theActors =
               GEOM_AssemblyBuilder::BuildActors(Shape,0,aMode,true);
@@ -185,10 +184,9 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
 	      GEOM_Actor* GActor = GEOM_Actor::SafeDownCast(anActor);
 	      GActor->setName(const_cast<char*>(aNameValue.c_str()));
 	      GActor->setIO(anIO);
-	      aRenderInter->Display(GActor);
+	      aView->Display(GActor);
 	    }
-	    aRenderInter->Update();
-	    cout << 8.2 << endl;   
+	    aView->Repaint();
 	  } else if (OCCViewer_Viewer* occViewer = GetOCCViewer(app)) {
 	    Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
 	    Handle(GEOM_AISShape) aSh =
@@ -399,10 +397,10 @@ void GEOM_Swig::setDisplayMode(const char* theEntry, int theMode)
       myApp(theApp), myIO(theIO), myParam(theParam)
     {}
     virtual void Execute(){
-      if(SVTK_ViewWindow* svtkViewWindow = GetSVTKViewWindow(myApp)){
-	SVTK_RenderWindowInteractor* myRenderInter= svtkViewWindow->getRWInteractor();
-	myRenderInter->SetDisplayMode(myIO,myParam);
-	myRenderInter->Update();
+      if(SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(myApp)){
+	SVTK_View* aView = aViewWindow->getView();
+	aView->SetDisplayMode(myIO,myParam);
+	aView->Repaint();
       }
       else if(OCCViewer_Viewer* occViewer = GetOCCViewer(myApp)) {
 	SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>( occViewer );
@@ -433,10 +431,10 @@ void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue)
       myApp(theApp), myIO(theIO), myParam(theParam)
     {}
     virtual void Execute(){
-      if(SVTK_ViewWindow* svtkViewWindow = GetSVTKViewWindow(myApp)){
-	SVTK_RenderWindowInteractor* myRenderInter= svtkViewWindow->getRWInteractor();
-	myRenderInter->SetColor(myIO,myParam);
-	myRenderInter->Update();
+      if(SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(myApp)){
+	SVTK_View* aView = aViewWindow->getView();
+	aView->SetColor(myIO,myParam);
+	aView->Repaint();
       }else if(OCCViewer_Viewer* occViewer = GetOCCViewer(myApp)){
 	Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
 	AIS_ListOfInteractive List;
@@ -480,10 +478,10 @@ void GEOM_Swig::setTransparency(const char* theEntry, float transp)
       myApp(theApp), myIO(theIO), myParam(theParam)
     {}
     virtual void Execute(){
-      if(SVTK_ViewWindow* svtkViewWindow = GetSVTKViewWindow(myApp)){
-	SVTK_RenderWindowInteractor* myRenderInter= svtkViewWindow->getRWInteractor();
-	myRenderInter->SetTransparency(myIO,myParam);
-	myRenderInter->Update();
+      if(SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(myApp)){
+	SVTK_View* aView = aViewWindow->getView();
+	aView->SetTransparency(myIO,myParam);
+	aView->Repaint();
       }else if(OCCViewer_Viewer* occViewer = GetOCCViewer(myApp)) {
 	SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>( occViewer );
 	if (soccViewer)
