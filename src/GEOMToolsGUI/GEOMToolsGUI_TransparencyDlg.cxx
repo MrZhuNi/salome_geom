@@ -33,22 +33,22 @@
 #include "SALOME_ListIO.hxx"
 #include "SALOME_ListIteratorOfListIO.hxx"
 
-#include "VTKViewer_ViewModel.h"
-#include "OCCViewer_ViewModel.h"
-#include "OCCViewer_ViewWindow.h"
+#include <SVTK_ViewModel.h>
+#include <SVTK_ViewWindow.h>
+#include <SVTK_View.h>
 
-#include "SVTK_ViewWindow.h"
-#include "SVTK_View.h"
+#include <OCCViewer_ViewModel.h>
+#include <OCCViewer_ViewWindow.h>
 
-#include "SUIT_ViewManager.h"
-#include "SUIT_Application.h"
-#include "SUIT_Desktop.h"
-#include "SUIT_ResourceMgr.h"
-#include "SUIT_Session.h"
-#include "SUIT_OverrideCursor.h"
+#include <SUIT_ViewManager.h>
+#include <SUIT_Application.h>
+#include <SUIT_Desktop.h>
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SUIT_OverrideCursor.h>
 
-#include "SalomeApp_Application.h"
-#include "SalomeApp_SelectionMgr.h"
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
 #include <qframe.h>
 #include <qlabel.h>
@@ -185,7 +185,7 @@ void GEOMToolsGUI_TransparencyDlg::ValueHasChanged( int newValue )
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( !app )
     return;
-  SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   if ( !aSelMgr )
     return;
   SALOME_ListIO selected;
@@ -199,7 +199,7 @@ void GEOMToolsGUI_TransparencyDlg::ValueHasChanged( int newValue )
 	
   SUIT_ViewWindow* window = app->desktop()->activeWindow();
   bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-  bool isVTK = ( window && window->getViewManager()->getType() == VTKViewer_Viewer::Type() );
+  bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
 
   if ( isVTK ) {
     SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );

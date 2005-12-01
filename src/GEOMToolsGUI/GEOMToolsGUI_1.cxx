@@ -41,25 +41,25 @@
 #include "SALOME_ListIO.hxx"
 #include "SALOME_ListIteratorOfListIO.hxx"
 
-#include "VTKViewer_ViewModel.h"
-#include "OCCViewer_ViewModel.h"
-#include "OCCViewer_ViewWindow.h"
+#include <SVTK_ViewModel.h>
+#include <SVTK_ViewWindow.h>
+#include <SVTK_View.h>
 
-#include "SVTK_ViewWindow.h"
-#include "SVTK_View.h"
+#include <OCCViewer_ViewModel.h>
+#include <OCCViewer_ViewWindow.h>
 
-#include "SUIT_ViewManager.h"
-#include "SUIT_Application.h"
-#include "SUIT_Desktop.h"
-#include "SUIT_ResourceMgr.h"
-#include "SUIT_Session.h"
-#include "SUIT_OverrideCursor.h"
-#include "SUIT_MessageBox.h"
+#include <SUIT_ViewManager.h>
+#include <SUIT_Application.h>
+#include <SUIT_Desktop.h>
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SUIT_OverrideCursor.h>
+#include <SUIT_MessageBox.h>
 
-#include "SalomeApp_Application.h"
-#include "SalomeApp_SelectionMgr.h"
-#include "SalomeApp_Study.h"
-#include "SalomeApp_Module.h"
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
+#include <SalomeApp_Study.h>
+#include <SalomeApp_Module.h>
 
 #include "SALOMEDSClient.hxx"
 
@@ -100,7 +100,7 @@ void GEOMToolsGUI::OnSettingsColor()
   if( aDialogColor.isValid() )
   {
     QString type = desk->activeWindow()->getViewManager()->getType();
-    if( type != OCCViewer_Viewer::Type() && type != VTKViewer_Viewer::Type() )
+    if( type != OCCViewer_Viewer::Type() && type != SVTK_Viewer::Type() )
       MESSAGE("Settings Color is not supported for current Viewer");
 
     resMgr->setValue( "Geometry", "SettingsShadingColor", aDialogColor );
@@ -170,7 +170,7 @@ void GEOMToolsGUI::OnRename()
   SALOME_ListIO selected;
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( app ) {
-    SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
     SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
     if ( aSelMgr && appStudy ) {
       aSelMgr->selectedObjects( selected );
@@ -225,13 +225,13 @@ void GEOMToolsGUI::OnColor()
   SALOME_ListIO selected;
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( app ) {
-    SalomeApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
     if ( aSelMgr ) {
       aSelMgr->selectedObjects( selected );
       if ( !selected.IsEmpty() ) {
 	SUIT_ViewWindow* window = app->desktop()->activeWindow();
 	bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-	bool isVTK = ( window && window->getViewManager()->getType() == VTKViewer_Viewer::Type() );
+	bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
 	if ( isVTK ) {
 	  SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
 	  if ( !vtkVW )
