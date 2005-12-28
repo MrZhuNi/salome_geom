@@ -1,0 +1,146 @@
+//  GEOM GEOMGUI : GUI for Geometry component
+//
+//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
+// 
+//  This library is free software; you can redistribute it and/or 
+//  modify it under the terms of the GNU Lesser General Public 
+//  License as published by the Free Software Foundation; either 
+//  version 2.1 of the License. 
+// 
+//  This library is distributed in the hope that it will be useful, 
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//  Lesser General Public License for more details. 
+// 
+//  You should have received a copy of the GNU Lesser General Public 
+//  License along with this library; if not, write to the Free Software 
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
+// 
+//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+//
+//
+//
+//  File   : RepairGUI.cxx
+//  Author : Damien COQUERET
+//  Module : GEOM
+//  $Header$
+
+#include "RepairGUI.h"
+
+#include "SUIT_Desktop.h"
+#include "SUIT_Session.h"
+
+#include "RepairGUI_SewingDlg.h"        // Method SEWING
+#include "RepairGUI_SuppressFacesDlg.h" // Method SUPPRESS FACES
+#include "RepairGUI_RemoveHolesDlg.h"   // Method SUPPRESS HOLE
+#include "RepairGUI_ShapeProcessDlg.h"  // Method PROCESS SHAPE
+#include "RepairGUI_CloseContourDlg.h"  // Method CLOSE CONTOUR
+#include "RepairGUI_RemoveIntWiresDlg.h"// Method REMOVE INTERNAL WIRES
+#include "RepairGUI_DivideEdgeDlg.h"    // Method DEVIDE EDGE
+#include "RepairGUI_FreeBoundDlg.h"     // Method FREE BOUNDARIES
+#include "RepairGUI_FreeFacesDlg.h"     // Method FREE FACES
+#include "RepairGUI_GlueDlg.h"          // Method GLUE FACES
+
+#include "utilities.h"
+
+using namespace std;
+
+RepairGUI* RepairGUI::myGUIObject = 0;
+
+//=======================================================================
+// function : GetRepairGUI()
+// purpose  : Get the only RepairGUI object [ static ]
+//=======================================================================
+RepairGUI* RepairGUI::GetRepairGUI( GeometryGUI* parent )
+{
+  if ( myGUIObject == 0 ) {
+    // init RepairGUI only once
+    myGUIObject = new RepairGUI( parent );
+  }
+  return myGUIObject;
+}
+
+//=======================================================================
+// function : RepairGUI()
+// purpose  : Constructor
+//=======================================================================
+RepairGUI::RepairGUI( GeometryGUI* parent ) : GEOMGUI( parent )
+{
+}
+
+
+//=======================================================================
+// function : ~RepairGUI()
+// purpose  : Destructor
+//=======================================================================
+RepairGUI::~RepairGUI()
+{
+}
+
+
+//=======================================================================
+// function : OnGUIEvent()
+// purpose  : 
+//=======================================================================
+bool RepairGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
+{
+  getGeometryGUI()->EmitSignalDeactivateDialog();
+  
+  QDialog* aDlg = NULL;
+  switch (theCommandID) {
+    case 601: // SEWING
+      aDlg = new RepairGUI_SewingDlg( parent, "" );
+      break;
+    case 602: // GLUE FACES
+      aDlg = new RepairGUI_GlueDlg( parent, "" );
+      break;
+    case 603: // SUPPRESS FACES
+      aDlg = new RepairGUI_SuppressFacesDlg( parent, "" );
+      break;
+    case 604: // SUPPRESS HOLES
+      aDlg = new RepairGUI_RemoveHolesDlg( parent, "" );
+      break;
+    case 605: // SHAPE PROCESSING
+      aDlg = new RepairGUI_ShapeProcessDlg( parent, "" );
+      break;
+    case 606: // CLOSE CONTOUR
+      aDlg = new RepairGUI_CloseContourDlg( parent, "" );
+      break;
+    case 607: // REMOVE INTERNAL WIRES
+      aDlg = new RepairGUI_RemoveIntWiresDlg( parent, "" );
+      break;
+    case 608: // ADD POINT ON EDGE
+      aDlg = new RepairGUI_DivideEdgeDlg( getGeometryGUI(), parent, "" );
+      break;
+    case 609: // FREE BOUNDARIES
+      aDlg = new RepairGUI_FreeBoundDlg( getGeometryGUI(), parent );
+      break;    
+    case 610: // FREE FACES
+      aDlg = new RepairGUI_FreeFacesDlg( getGeometryGUI(), parent, "" );
+      break;    
+    default:
+      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+      break;
+  }
+
+  if ( aDlg )
+    aDlg->show();
+    
+  return true;
+}
+
+
+//=====================================================================================
+// EXPORTED METHODS
+//=====================================================================================
+extern "C"
+{
+#ifdef WNT
+	__declspec( dllexport )
+#endif
+  GEOMGUI* GetLibGUI( GeometryGUI* parent )
+  {
+    return RepairGUI::GetRepairGUI( parent );
+  }
+}
