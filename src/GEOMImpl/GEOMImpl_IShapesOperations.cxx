@@ -325,7 +325,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShell
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidShells
                              (list<Handle(GEOM_Object)> theShapes)
 {
-  return MakeShape(theShapes, GEOM_SOLID, SOLID_SHELLS, "MakeSolidShells");
+  return MakeShape(theShapes, GEOM_SOLID, SOLID_SHELLS, "MakeSolid");
 }
 
 //=============================================================================
