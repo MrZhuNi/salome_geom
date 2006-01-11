@@ -42,9 +42,7 @@
 #include "OCCViewer_ViewManager.h"
 #include "SOCC_ViewModel.h"
 
-#include "VTKViewer_ViewWindow.h"
-#include "VTKViewer_ViewModel.h"
-#include "VTKViewer_RenderWindowInteractor.h"
+#include "SVTK_ViewModel.h"
 #include "SVTK_ViewWindow.h"
 #include "SVTK_View.h"
 
@@ -98,7 +96,7 @@ inline OCCViewer_Viewer* GetOCCViewer(SUIT_Application* theApp){
 
 inline SVTK_ViewWindow* GetSVTKViewWindow(SUIT_Application* theApp){
   SUIT_ViewWindow* window = theApp->desktop()->activeWindow();
-  if(window && window->getViewManager()->getType() == VTKViewer_Viewer::Type())
+  if(window && window->getViewManager()->getType() == SVTK_Viewer::Type())
     return dynamic_cast<SVTK_ViewWindow*>( window );
 
   return 0;
@@ -135,19 +133,28 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
       _PTR(StudyBuilder) aStudyBuilder = aStudy->NewBuilder();
 
       GEOM::GEOM_Gen_var Geom = GeometryGUI::GetGeomGen();
+      if (CORBA::is_nil(Geom)) {
+        GeometryGUI::InitGeomGen();
+        Geom = GeometryGUI::GetGeomGen();
+      }
       if (CORBA::is_nil(Geom))
         return;
 
       string aFatherIOR;
       _PTR(SComponent) father = aStudy->FindComponent("GEOM");
-      aStudyBuilder->DefineComponentInstance
-        (father, SalomeApp_Application::orb()->object_to_string(Geom));
-      father->ComponentIOR(aFatherIOR);
+      if (!father)
+        return;
+      if (!father->ComponentIOR(aFatherIOR)) {
+        aStudyBuilder->LoadWith(father, SalomeApp_Application::orb()->object_to_string(Geom));
+        father->ComponentIOR(aFatherIOR);
+      }
 
       _PTR(SObject) obj = aStudy->FindObjectID(myEntry);
-      _PTR(GenericAttribute) anAttr;
+      if (!obj)
+        return;
 
       // Create new actor
+      _PTR(GenericAttribute) anAttr;
       if (!obj->FindAttribute(anAttr, "AttributeIOR"))
         return;
       _PTR(AttributeIOR) anIOR(anAttr);
@@ -155,7 +162,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
 
       GEOM::GEOM_Object_var aShape = Geom->GetIORFromString(anIORValue.c_str());
       TopoDS_Shape Shape = ShapeReader.GetShape(Geom,aShape);
-      if (obj) {
+      if (!Shape.IsNull()) {
         if (obj->FindAttribute(anAttr, "AttributeName")) {
           _PTR(AttributeName) aName (anAttr);
           string aNameValue = aName->Value();
@@ -216,17 +223,17 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
     {
       public:
 	TEventUpdateBrowser() {}
-	virtual void Execute() {  
+	virtual void Execute() {
           SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>(SUIT_Session::session()->activeApplication());
           if (app) {
 	    CAM_Module* module = app->module("Geometry");
 	    SalomeApp_Module* appMod = dynamic_cast<SalomeApp_Module*>(module);
 	    if (appMod) appMod->updateObjBrowser(true);
-	  }  
+	  }
         }
     };
-    
-  ProcessVoidEvent(new TEventUpdateBrowser ());      	
+
+  ProcessVoidEvent(new TEventUpdateBrowser ());
 }
 
 
