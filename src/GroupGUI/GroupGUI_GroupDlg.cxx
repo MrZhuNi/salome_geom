@@ -544,7 +544,7 @@ void GroupGUI_GroupDlg::updateState()
       ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr()->GetIndexes( firstIObject(), aMapIndex );
   }
   
-  if ( !aMapIndex.Extent() ) // try to find out and process the object browser selection
+  if ( !aMapIndex.Extent() && !CORBA::is_nil( myMainObj ) ) // try to find out and process the object browser selection
     {
       isAdd = true;
       GEOM::ListOfGO anObjects;
