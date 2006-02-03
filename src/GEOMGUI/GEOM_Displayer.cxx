@@ -83,6 +83,7 @@
 
 // VTK Includes
 #include <vtkActorCollection.h>
+#include <vtkProperty.h>
 
 // STL Includes
 #include <cstring>
