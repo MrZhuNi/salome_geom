@@ -323,6 +323,8 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
 
     // try to find out and process the object browser selection
     if ( !aMapIndex.Extent() ) {
+      globalSelection( GEOM_ALLSHAPES );
+      
       GEOM::ListOfGO anObjects;
       GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), anObjects);
       GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
@@ -334,6 +336,9 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
             aMapIndex.Add( anIndex );
         }
       }
+      
+      if ( !myMainObj->_is_nil() )
+      	localSelection( myMainObj, getShapeType() );
     }
 
     if (aMapIndex.Extent() >= 1) {
