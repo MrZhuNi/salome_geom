@@ -661,8 +661,8 @@ bool GroupGUI_GroupDlg::isValid( QString& theMessage )
     RETURN_WITH_MSG( !CORBA::is_nil( myMainObj ), tr( "NO_GROUP" ) )
   }
 
-  const char* aName = getNewObjectName();
-  RETURN_WITH_MSG  ( aName && strlen( aName ), tr( "EMPTY_NAME" ) )
+  QString aName (getNewObjectName());
+  RETURN_WITH_MSG  ( !aName.stripWhiteSpace().isEmpty(), tr( "EMPTY_NAME" ) )
 
   RETURN_WITH_MSG  ( myIdList->count(), tr( "EMPTY_LIST" ) )
   return true;
