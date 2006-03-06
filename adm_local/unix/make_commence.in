@@ -255,7 +255,7 @@ ac_cc_warnings.m4                 check_swig.m4
 
 ACLOCAL_GUI = \
 check_vtk.m4	                  check_opengl.m4    check_qt.m4        \
-check_GUI.m4	                  check_full_GUI.m4
+check_GUI.m4	                  check_corba_in_GUI.m4
 
 $(top_srcdir)/aclocal.m4: $(ACLOCAL_SRC:%=@KERNEL_ROOT_DIR@/salome_adm/unix/config_files/%) \
                           $(ACLOCAL_GUI:%=@GUI_ROOT_DIR@/adm_local/unix/config_files/%)
