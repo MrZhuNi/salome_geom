@@ -29,6 +29,8 @@
 #ifndef ENTITYGUI_H
 #define ENTITYGUI_H
 
+#include "GEOM_EntityGUI.hxx"
+
 #include "GEOMGUI.h"
 #include "GEOMBase.h"
 
@@ -38,7 +40,7 @@
 // class    : EntityGUI
 // purpose  :
 //=================================================================================
-class EntityGUI : public GEOMGUI
+class GEOM_ENTITYGUI_EXPORT EntityGUI : public GEOMGUI
 {
 protected:
   EntityGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation

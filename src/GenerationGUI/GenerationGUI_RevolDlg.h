@@ -29,6 +29,8 @@
 #ifndef DIALOGBOX_REVOLUTION_H
 #define DIALOGBOX_REVOLUTION_H
 
+#include "GenerationGUI.h"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel1Spin2Check.h"
 
@@ -38,7 +40,7 @@
 // class    : GenerationGUI_RevolDlg
 // purpose  :
 //=================================================================================
-class GenerationGUI_RevolDlg : public GEOMBase_Skeleton
+class GENERATIONGUI_EXPORT GenerationGUI_RevolDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 

@@ -28,6 +28,8 @@
 #ifndef DLGREF_SKELETON_QTD_H
 #define DLGREF_SKELETON_QTD_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include <qvariant.h>
 #include <qdialog.h>
 class QVBoxLayout; 
@@ -40,13 +42,7 @@ class QLineEdit;
 class QPushButton;
 class QRadioButton;
 
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define DLGREF_WNT_EXPORT __declspec( dllexport )
-#else
-#define DLGREF_WNT_EXPORT
-#endif
-
-class DLGREF_WNT_EXPORT DlgRef_Skeleton_QTD : public QDialog
+class GEOM_DLGREF_EXPORT DlgRef_Skeleton_QTD : public QDialog
 { 
     Q_OBJECT
 

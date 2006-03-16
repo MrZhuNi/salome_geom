@@ -669,9 +669,7 @@ bool EntityGUI::OnSubShapeGetSelected(const TopoDS_Shape& ShapeTopo, const char*
 //=====================================================================================
 extern "C"
 {
-#ifdef WNT
-	__declspec( dllexport )
-#endif
+GEOM_ENTITYGUI_EXPORT
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
     return EntityGUI::GetEntityGUI( parent );

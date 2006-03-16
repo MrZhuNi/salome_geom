@@ -29,13 +29,15 @@
 #ifndef MEASUREGUI_H
 #define MEASUREGUI_H
 
+#include "GEOM_MeasureGUI.hxx"
+
 #include "GEOMGUI.h"
 
 //=================================================================================
 // class    : MeasureGUI
 // purpose  :
 //=================================================================================
-class MeasureGUI : public GEOMGUI
+class GEOM_MEASUREGUI_EXPORT MeasureGUI : public GEOMGUI
 {
 protected:
                               MeasureGUI( GeometryGUI* parent ); 

@@ -12,6 +12,8 @@
 #ifndef GEOMToolsGUI_NAMEDLG_H
 #define GEOMToolsGUI_NAMEDLG_H
 
+#include "GEOM_ToolsGUI.hxx"
+
 #include <qdialog.h>
 
 class QLineEdit;
@@ -21,7 +23,7 @@ class QPushButton;
 // class    : GEOMToolsGUI_NameDlg
 // purpose  : Common <Rename> dialog box class
 //=================================================================================
-class GEOMToolsGUI_NameDlg : public QDialog
+class GEOMTOOLSGUI_EXPORT GEOMToolsGUI_NameDlg : public QDialog
 { 
   Q_OBJECT
 

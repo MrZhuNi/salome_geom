@@ -108,9 +108,7 @@ bool BuildGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 //=====================================================================================
 extern "C"
 {
-#ifdef WNT
-	__declspec( dllexport )
-#endif
+ GEOM_BUILDGUI_EXPORT
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
     return BuildGUI::GetBuildGUI( parent );

@@ -29,6 +29,8 @@
 #ifndef DIALOGBOX_PIPE_H
 #define DIALOGBOX_PIPE_H
 
+#include "GenerationGUI.h"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_2Sel_QTD.h"
 
@@ -36,7 +38,7 @@
 // class    : GenerationGUI_PipeDlg
 // purpose  :
 //=================================================================================
-class GenerationGUI_PipeDlg : public GEOMBase_Skeleton
+class GENERATIONGUI_EXPORT GenerationGUI_PipeDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 

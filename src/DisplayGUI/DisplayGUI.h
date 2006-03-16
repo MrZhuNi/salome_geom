@@ -31,15 +31,23 @@
 
 #include "GEOMGUI.h"
 #include "GEOMBase.h"
-//#ifdef WNT
-//#include <SALOME_WNT.hxx>
-//#else
-//#define SALOME_WNT_EXPORT
-//#endif
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define DISPLAYGUI_WNT_EXPORT __declspec( dllexport )
+
+#ifdef WNT
+ #if defined DISPLAYGUI_EXPORTS
+  #if defined WIN32
+   #define GEOM_DISPLAYGUI_EXPORT __declspec( dllexport )
+  #else
+   #define GEOM_DISPLAYGUI_EXPORT
+  #endif
+ #else
+  #if defined WIN32
+   #define GEOM_DISPLAYGUI_EXPORT __declspec( dllimport )
+  #else
+   #define GEOM_DISPLAYGUI_EXPORT
+  #endif
+ #endif
 #else
-#define DISPLAYGUI_WNT_EXPORT
+ #define GEOM_DISPLAYGUI_EXPORT
 #endif
 //=================================================================================
 // class    : GEOMBase_Display
@@ -47,7 +55,7 @@
 //=================================================================================
 //class QAD_ViewFrame;
 class SUIT_ViewWindow;
-class DisplayGUI : public GEOMGUI
+class GEOM_DISPLAYGUI_EXPORT DisplayGUI : public GEOMGUI
 {
 protected:
   DisplayGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation

@@ -9,7 +9,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
 #include "Partition_Loop2d.ixx"
 
 #include "utilities.h"
@@ -47,6 +46,8 @@ using namespace std;
 #include <TopoDS_Wire.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Pnt2d.hxx>
+
+using namespace std;
 
 //=======================================================================
 //function : Partition_Loop2d

@@ -28,6 +28,8 @@
 #ifndef MEASUREGUI_SKELETON_QTD_H
 #define MEASUREGUI_SKELETON_QTD_H
 
+#include "GEOM_MeasureGUI.hxx"
+
 #include <qvariant.h>
 #include <qdialog.h>
 class QVBoxLayout; 
@@ -38,7 +40,7 @@ class QGroupBox;
 class QPushButton;
 class QRadioButton;
 
-class MeasureGUI_Skeleton_QTD : public QDialog
+class GEOM_MEASUREGUI_EXPORT MeasureGUI_Skeleton_QTD : public QDialog
 { 
     Q_OBJECT
 

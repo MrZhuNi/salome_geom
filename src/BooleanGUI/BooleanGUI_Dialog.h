@@ -29,6 +29,8 @@
 #ifndef BooleanGUI_Dialog_H
 #define BooleanGUI_Dialog_H
 
+#include "BooleanGUI.h" //for wnt defines
+
 #include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel_QTD;
@@ -37,7 +39,7 @@ class DlgRef_2Sel_QTD;
 // class    : BooleanGUI_Dialog
 // purpose  :
 //=================================================================================
-class BooleanGUI_Dialog : public GEOMBase_Skeleton
+class GEOM_BOOLEANGUI_EXPORT BooleanGUI_Dialog : public GEOMBase_Skeleton
 {
     Q_OBJECT
 

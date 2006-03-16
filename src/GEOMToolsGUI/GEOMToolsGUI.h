@@ -29,22 +29,20 @@
 #ifndef GEOMTOOLSGUI_H
 #define GEOMTOOLSGUI_H
 
+#include "GEOM_ToolsGUI.hxx"
+
 #include "GEOMGUI.h"
 
 #include <SALOMEDSClient.hxx>
 #include <SALOME_ListIO.hxx>
 
 #include <CORBA.h>
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define GEOMTOOLSGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define GEOMTOOLSGUI_WNT_EXPORT
-#endif
+
 //=================================================================================
 // class    : GEOMToolsGUI
 // purpose  :
 //=================================================================================
-class GEOMTOOLSGUI_WNT_EXPORT GEOMToolsGUI : public GEOMGUI
+class GEOMTOOLSGUI_EXPORT GEOMToolsGUI : public GEOMGUI
 {
 public :
   GEOMToolsGUI( GeometryGUI* ); // hide constructor to avoid direct creation

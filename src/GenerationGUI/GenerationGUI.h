@@ -29,13 +29,31 @@
 #ifndef GENERATIONGUI_H
 #define GENERATIONGUI_H
 
+#ifdef WNT
+ #if defined GENERATIONGUI_EXPORTS
+  #if defined WIN32
+   #define GENERATIONGUI_EXPORT __declspec( dllexport )
+  #else
+   #define GENERATIONGUI_EXPORT
+  #endif
+ #else
+  #if defined WIN32
+   #define GENERATIONGUI_EXPORT __declspec( dllimport )
+  #else
+   #define GENERATIONGUI_EXPORT
+  #endif
+ #endif
+#else
+ #define GENERATIONGUI_EXPORT
+#endif
+
 #include "GEOMGUI.h"
 
 //=================================================================================
 // class    : GenerationGUI
 // purpose  :
 //=================================================================================
-class GenerationGUI : public GEOMGUI
+class GENERATIONGUI_EXPORT GenerationGUI : public GEOMGUI
 {
 protected:
   GenerationGUI(GeometryGUI* parent); // hide constructor to avoid direct creation

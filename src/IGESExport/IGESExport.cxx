@@ -32,9 +32,21 @@
 #include <TopoDS_Shape.hxx>
 
 #ifdef WNT
-#include <SALOME_WNT.hxx>
+ #if defined IGESEXPORT_EXPORTS
+  #if defined WIN32
+   #define IGESEXPORT_EXPORT __declspec( dllexport )
+  #else
+   #define IGESEXPORT_EXPORT
+  #endif
+ #else
+  #if defined WIN32
+   #define IGESEXPORT_EXPORT __declspec( dllimport )
+  #else
+   #define IGESEXPORT_EXPORT
+  #endif
+ #endif
 #else
-#define SALOME_WNT_EXPORT
+ #define IGESEXPORT_EXPORT
 #endif
 
 //=============================================================================
@@ -45,7 +57,7 @@
 
 extern "C"
 {
-SALOME_WNT_EXPORT
+IGESEXPORT_EXPORT
   int Export(const TopoDS_Shape& theShape, const TCollection_AsciiString& theFileName)
   {
     MESSAGE("Export IGES into file " << theFileName.ToCString());

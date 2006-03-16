@@ -29,6 +29,8 @@
 #ifndef DIALOGBOX_WIRE_H
 #define DIALOGBOX_WIRE_H
 
+#include "GEOM_BuildGUI"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel_QTD.h"
 
@@ -36,7 +38,7 @@
 // class    : BuildGUI_WireDlg
 // purpose  :
 //=================================================================================
-class BuildGUI_WireDlg : public GEOMBase_Skeleton
+class GEOM_BUILDGUI_EXPORT BuildGUI_WireDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 

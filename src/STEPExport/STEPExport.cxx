@@ -32,9 +32,21 @@
 #include <TopoDS_Shape.hxx>
 
 #ifdef WNT
-#include <SALOME_WNT.hxx>
+ #if defined STEPEXPORT_EXPORTS
+  #if defined WIN32
+   #define STEPEXPORT_EXPORT __declspec( dllexport )
+  #else
+   #define STEPEXPORT_EXPORT
+  #endif
+ #else
+  #if defined WIN32
+   #define STEPEXPORT_EXPORT __declspec( dllimport )
+  #else
+   #define STEPEXPORT_EXPORT
+  #endif
+ #endif
 #else
-#define SALOME_WNT_EXPORT
+ #define STEPEXPORT_EXPORT
 #endif
 
 //=============================================================================
@@ -45,7 +57,7 @@
 
 extern "C"
 {
-SALOME_WNT_EXPORT
+STEPEXPORT_EXPORT
   int Export(const TopoDS_Shape& theShape, const TCollection_AsciiString& theFileName)
   {
     MESSAGE("Export STEP into file " << theFileName.ToCString());

@@ -29,6 +29,8 @@
 #ifndef DIALOGBOX_SUBSHAPE_H
 #define DIALOGBOX_SUBSHAPE_H
 
+#include "GEOM_EntityGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel1Check1List_QTD.h"
 
@@ -37,7 +39,7 @@
 // class    : EntityGUI_SubShapeDlg
 // purpose  :
 //=================================================================================
-class EntityGUI_SubShapeDlg : public GEOMBase_Skeleton
+class GEOM_ENTITYGUI_EXPORT EntityGUI_SubShapeDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 

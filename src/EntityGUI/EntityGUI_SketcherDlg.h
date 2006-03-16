@@ -29,6 +29,8 @@
 #ifndef ENTITYGUI_SKETCHERDLG_H
 #define ENTITYGUI_SKETCHERDLG_H
 
+#include "GEOM_EntityGUI.hxx"
+
 #include "GEOMBase_Helper.h"
 
 #include "EntityGUI_Skeleton_QTD.h"
@@ -58,7 +60,7 @@
 // class    : EntityGUI_Dlg
 // purpose  :
 //=================================================================================
-class EntityGUI_SketcherDlg : public EntityGUI_Skeleton_QTD, public GEOMBase_Helper
+class GEOM_ENTITYGUI_EXPORT EntityGUI_SketcherDlg : public EntityGUI_Skeleton_QTD, public GEOMBase_Helper
 { 
     Q_OBJECT
 

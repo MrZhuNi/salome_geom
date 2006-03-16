@@ -100,9 +100,7 @@ bool BooleanGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 //=====================================================================================
 extern "C"
 {
-#ifdef WNT
-	__declspec( dllexport )
-#endif
+GEOM_BOOLEANGUI_EXPORT
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
     return BooleanGUI::GetBooleanGUI( parent );

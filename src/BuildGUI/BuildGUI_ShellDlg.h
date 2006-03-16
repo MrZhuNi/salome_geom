@@ -29,6 +29,8 @@
 #ifndef DIALOGBOX_SHELL_H
 #define DIALOGBOX_SHELL_H
 
+#include "GEOM_BuildGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel_QTD.h"
 
@@ -36,7 +38,7 @@
 // class    : BuildGUI_ShellDlg
 // purpose  :
 //=================================================================================
-class BuildGUI_ShellDlg : public GEOMBase_Skeleton
+class GEOM_BUILDGUI_EXPORT BuildGUI_ShellDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
