@@ -126,9 +126,7 @@ bool BlocksGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 //=====================================================================================
 extern "C"
 {
-#ifdef WNT
-	__declspec( dllexport )
-#endif
+ GEOM_BLOCKSGUI_EXPORT
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
     return BlocksGUI::GetBlocksGUI( parent );

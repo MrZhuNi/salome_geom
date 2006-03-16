@@ -28,23 +28,19 @@
 #ifndef BASICGUI_CURVE_H
 #define BASICGUI_CURVE_H
 
+#include "GEOM_BasicGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel_QTD.h"
 
 #include "BasicGUI.h"
 #include <list>
-#if defined WNT && defined WIN32 && defined SALOME_WNT_EXPORTS
-#define BASICGUI_WNT_EXPORT __declspec( dllexport )
-#else
-#define BASICGUI_WNT_EXPORT
-#endif
-//#include "GEOM_ShapeTypeFilter.hxx"
 
 //=================================================================================
 // class    : BasicGUI_CurveDlg
 // purpose  :
 //=================================================================================
-class BasicGUI_CurveDlg : public GEOMBase_Skeleton
+class GEOM_BASICGUI_EXPORT BasicGUI_CurveDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 

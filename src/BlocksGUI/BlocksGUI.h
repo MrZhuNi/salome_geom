@@ -28,13 +28,15 @@
 #ifndef BLOCKSGUI_H
 #define BLOCKSGUI_H
 
+#include "GEOM_BlocksGUI.hxx"
+
 #include "GEOMGUI.h"
 
 //=================================================================================
 // class    : BlocksGUI
 // purpose  :
 //=================================================================================
-class BlocksGUI : public GEOMGUI
+class GEOM_BLOCKSGUI_EXPORT BlocksGUI : public GEOMGUI
 {
  protected:
   BlocksGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation

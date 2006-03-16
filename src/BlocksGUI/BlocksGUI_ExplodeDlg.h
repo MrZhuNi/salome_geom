@@ -28,6 +28,8 @@
 #ifndef DIALOGBOX_BLOCK_EXPLODE_H
 #define DIALOGBOX_BLOCK_EXPLODE_H
 
+#include "GEOM_BlocksGUI.hxx"
+
 #include "GEOMBase_Skeleton.h"
 
 class DlgRef_SpinBox;
@@ -38,7 +40,7 @@ class QCheckBox;
 // class    : BlocksGUI_ExplodeDlg
 // purpose  :
 //=================================================================================
-class BlocksGUI_ExplodeDlg : public GEOMBase_Skeleton
+class GEOM_BLOCKSGUI_EXPORT BlocksGUI_ExplodeDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 
