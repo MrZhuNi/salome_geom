@@ -37,21 +37,21 @@
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 #ifdef WNT
- #if defined STEPEXPORT_IMPORTS
+ #if defined STEPIMPORT_EXPORTS
   #if defined WIN32
-   #define STEPEXPORT_IMPORT __declspec( dllexport )
+   #define STEPIMPORT_EXPORT __declspec( dllexport )
   #else
-   #define STEPEXPORT_IMPORT
+   #define STEPIMPORT_EXPORT
   #endif
  #else
   #if defined WIN32
-   #define STEPEXPORT_IMPORT __declspec( dllimport )
+   #define STEPIMPORT_EXPORT __declspec( dllimport )
   #else
-   #define STEPEXPORT_IMPORT
+   #define STEPIMPORT_EXPORT
   #endif
  #endif
 #else
- #define STEPEXPORT_IMPORT
+ #define STEPIMPORT_EXPORT
 #endif
 
 //=============================================================================
@@ -62,7 +62,7 @@
 
 extern "C"
 {
-STEPEXPORT_IMPORT
+STEPIMPORT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
                        TCollection_AsciiString&       theError)
   {

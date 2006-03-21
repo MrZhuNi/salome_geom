@@ -29,7 +29,7 @@
 #ifndef DIALOGBOX_WIRE_H
 #define DIALOGBOX_WIRE_H
 
-#include "GEOM_BuildGUI"
+#include "GEOM_BuildGUI.hxx"
 
 #include "GEOMBase_Skeleton.h"
 #include "DlgRef_1Sel_QTD.h"

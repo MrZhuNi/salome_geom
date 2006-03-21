@@ -39,7 +39,7 @@
 // class    : BasicGUI_WorkingPlaneDlg
 // purpose  :
 //=================================================================================
-class GEOM_BASICGUI_EXPORT BASICGUI_WNT_EXPORT BasicGUI_WorkingPlaneDlg : public GEOMBase_Skeleton
+class GEOM_BASICGUI_EXPORT BasicGUI_WorkingPlaneDlg : public GEOMBase_Skeleton
 { 
     Q_OBJECT
 
