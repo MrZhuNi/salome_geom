@@ -121,6 +121,8 @@ BasicGUI_PointDlg::BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   myX->setPalette( aPal );
   myY->setPalette( aPal );
   myZ->setPalette( aPal );
+
+  setHelpFileName("point.htm");
  
   Init();
 }

@@ -88,6 +88,8 @@ MeasureGUI_BndBoxDlg::MeasureGUI_BndBoxDlg( GeometryGUI* GUI, QWidget* parent )
   
   /***************************************************************/
 
+  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Bounding_box";
+
   /* Initialisation */
   Init();
 }

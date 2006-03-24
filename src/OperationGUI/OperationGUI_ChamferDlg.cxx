@@ -149,6 +149,8 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg( QWidget* parent )
   for ( anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter )
     anIter.data()->RangeStepAndValidator( 0.001, 999.999, SpecificStep, 3 );
 
+  setHelpFileName("chamfer.htm");
+
   /* Initialisations */
   Init();
 }

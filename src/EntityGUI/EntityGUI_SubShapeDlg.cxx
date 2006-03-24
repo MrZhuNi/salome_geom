@@ -77,6 +77,8 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(QWidget* parent, const char* name, 
   Layout1->addWidget(GroupPoints, 1, 0);
   /***************************************************************/
 
+  setHelpFileName("explode.htm");
+
   Init();
 }
 

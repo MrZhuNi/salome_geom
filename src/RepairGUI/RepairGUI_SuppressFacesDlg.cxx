@@ -70,6 +70,8 @@ RepairGUI_SuppressFacesDlg::RepairGUI_SuppressFacesDlg(QWidget* parent, const ch
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
+  
+  setHelpFileName("suppress_faces.htm");
 
   Init();
 }

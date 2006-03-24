@@ -68,6 +68,8 @@ BuildGUI_SolidDlg::BuildGUI_SolidDlg(QWidget* parent, const char* name, bool mod
   Layout1->addWidget(GroupSolid, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("solid.htm");
+
   /* Initialisations */
   Init();
 }

@@ -77,8 +77,9 @@ TransformationGUI_MirrorDlg::TransformationGUI_MirrorDlg(QWidget* parent,  const
   GroupPoints->PushButton2->setPixmap(image3);
   GroupPoints->CheckButton1->setText(tr("GEOM_CREATE_COPY"));
   Layout1->addWidget(GroupPoints, 2, 0);
-  
   /***************************************************************/
+
+  setHelpFileName("mirror_image.htm");  
   
   Init();
 }

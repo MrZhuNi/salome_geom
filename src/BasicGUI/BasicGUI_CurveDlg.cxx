@@ -78,6 +78,8 @@ BasicGUI_CurveDlg::BasicGUI_CurveDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("curve.htm");
+
   Init();
 }
 

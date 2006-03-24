@@ -103,6 +103,8 @@ RepairGUI_RemoveHolesDlg::RepairGUI_RemoveHolesDlg(QWidget* parent, const char* 
   GroupPoints->getGroupBoxLayout()->addLayout( aDetectLay, 3, 0 );
   /***************************************************************/
 
+  setHelpFileName("suppress_holes.htm");
+
   Init();
 }
 

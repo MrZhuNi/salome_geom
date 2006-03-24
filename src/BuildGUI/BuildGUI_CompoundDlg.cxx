@@ -65,6 +65,8 @@ BuildGUI_CompoundDlg::BuildGUI_CompoundDlg(QWidget* parent, const char* name, bo
   Layout1->addWidget(GroupShapes, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("compound.htm");
+
   /* Initialisations */
   Init();
 }

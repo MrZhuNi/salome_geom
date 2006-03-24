@@ -53,6 +53,7 @@ public:
 private slots:
 
   void                                  onClose();
+  void                                  onHelp(); 
   void                                  onDeactivate();
   void                                  onActivate();
   void                                  onSelectionDone();
@@ -77,6 +78,7 @@ private:
   GeometryGUI*                          myGeomGUI;
   int                                   myNbClosed;
   int                                   myNbOpen;
+  QString                               myHelpFileName;
 };
 
 #endif // DIALOGBOX_WHATIS_H

@@ -77,6 +77,8 @@ OperationGUI_MaterialDlg::OperationGUI_MaterialDlg (QWidget* parent, const char*
 
   Layout1->addWidget(GroupPoints, 1, 0);
   /***************************************************************/
+
+  setHelpFileName("none.htm"); 
  
   Init();
 }

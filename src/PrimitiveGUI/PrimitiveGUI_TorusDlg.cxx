@@ -80,6 +80,8 @@ PrimitiveGUI_TorusDlg::PrimitiveGUI_TorusDlg(GeometryGUI* theGeometryGUI, QWidge
   Layout1->addWidget(GroupPoints, 2, 0);
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
+
+  setHelpFileName("turus.htm");  
   
   Init();
 }

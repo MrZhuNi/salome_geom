@@ -32,6 +32,7 @@
 #include "LightApp_SelectionMgr.h"
 #include "SalomeApp_Tools.h"
 
+#include "SUIT_MessageBox.h"
 #include "SUIT_Session.h"
 #include "SUIT_OverrideCursor.h"
 
@@ -97,10 +98,11 @@ RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg(GeometryGUI* GUI, QWidget* parent
   QFrame* aFrame = new QFrame( this );
   aFrame->setFrameStyle( QFrame::Box | QFrame::Sunken );
   QPushButton* aCloseBtn = new QPushButton( tr( "GEOM_BUT_CLOSE" ), aFrame );
+  QPushButton* aHelpBtn = new QPushButton( tr( "GEOM_BUT_HELP" ), aFrame );
   QHBoxLayout* aBtnLay = new QHBoxLayout( aFrame, MARGIN, SPACING );
-  aBtnLay->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ) );
   aBtnLay->addWidget( aCloseBtn );
   aBtnLay->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ) );
+  aBtnLay->addWidget( aHelpBtn );
 
   QVBoxLayout* aLay = new QVBoxLayout( this );
   aLay->setSpacing( SPACING );
@@ -109,7 +111,10 @@ RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg(GeometryGUI* GUI, QWidget* parent
   aLay->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ) );
   aLay->addWidget( aFrame );
   
+  myHelpFileName = "check_free_faces.htm";
+
   connect( aCloseBtn, SIGNAL( clicked() ), SLOT( onClose() ) );
+  connect( aHelpBtn, SIGNAL( clicked() ), SLOT( onHelp() ) );
   connect( mySelBtn,    SIGNAL( clicked() ),
            this,        SLOT  ( onSetEditCurrentArgument() ) );
   /***************************************************************/
@@ -138,6 +143,22 @@ void RepairGUI_FreeFacesDlg::onClose()
   myGeomGUI->SetActiveDialogBox( 0 );
   reject();
   erasePreview();
+}
+
+//=================================================================================
+// function : onHelp()
+// purpose  :
+//=================================================================================
+void RepairGUI_FreeFacesDlg::onHelp()
+{
+  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  if (app)
+    app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
+  else {
+    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
+			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").arg(1).arg(myHelpFileName),
+			   QObject::tr("BUT_OK"));
+  }
 }
 
 //=================================================================================

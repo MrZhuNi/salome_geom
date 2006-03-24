@@ -74,7 +74,9 @@ BlocksGUI_PropagateDlg::BlocksGUI_PropagateDlg(QWidget* parent, const char* name
   Layout1->addWidget(aMainGrp, 1, 0);
 
   /***************************************************************/
-
+  
+  setHelpFileName("propagate.htm");
+ 
   Init();
 }
 

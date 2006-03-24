@@ -94,6 +94,8 @@ RepairGUI_RemoveIntWiresDlg::RepairGUI_RemoveIntWiresDlg(QWidget* parent, const 
   GroupPoints->getGroupBoxLayout()->addLayout( aSelectWiresLay, 2, 0 );  
   /***************************************************************/
 
+  setHelpFileName("suppress_internal_wires.htm");
+
   Init();
 }
 

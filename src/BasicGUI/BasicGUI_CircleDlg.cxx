@@ -91,6 +91,8 @@ BasicGUI_CircleDlg::BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* par
   Layout1->addWidget( Group3Pnts, 2, 0 );
   /***************************************************************/
 
+  setHelpFileName("circle.htm");
+
   Init();
 }
 

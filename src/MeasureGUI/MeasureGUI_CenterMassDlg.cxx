@@ -80,6 +80,8 @@ MeasureGUI_CenterMassDlg::MeasureGUI_CenterMassDlg( QWidget* parent )
   Layout1->addWidget( myGrp, 2, 0 );
   /***************************************************************/
 
+  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Center_gravity";
+
   /* Initialisation */
   Init();
 }

@@ -88,6 +88,8 @@ BlocksGUI_BlockDlg::BlocksGUI_BlockDlg (QWidget* parent,
   Layout1->addWidget(Group6F, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("newentity_blocks.htm#HexahedralSolid");
+
   Init();
 }
 

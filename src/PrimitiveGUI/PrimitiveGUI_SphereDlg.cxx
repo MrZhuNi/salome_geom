@@ -77,6 +77,8 @@ PrimitiveGUI_SphereDlg::PrimitiveGUI_SphereDlg(GeometryGUI* theGeometryGUI, QWid
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("sphere.htm");
+
   Init();
 }
 

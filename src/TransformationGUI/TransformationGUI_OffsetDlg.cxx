@@ -75,6 +75,8 @@ TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg(QWidget* parent,  const
   Layout1->addWidget(GroupPoints, 2, 0);
   
   /***************************************************************/
+
+  setHelpFileName("offset_surface.htm");  
   
   Init();
 }

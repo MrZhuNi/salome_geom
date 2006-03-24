@@ -73,6 +73,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent, 
   buttonCancel->setText(tr("GEOM_BUT_CANCEL"));
   buttonEnd->setText(tr("GEOM_BUT_END_SKETCH"));
   buttonClose->setText(tr("GEOM_BUT_CLOSE_SKETCH"));
+  buttonHelp->setText(tr("GEOM_BUT_HELP"));
 
   GroupVal->close(TRUE);        
   GroupDest2->close(TRUE);
@@ -160,6 +161,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent, 
   connect(buttonEnd, SIGNAL(clicked()), this, SLOT(ClickOnEnd()));
   connect(buttonClose, SIGNAL(clicked()), this, SLOT(ClickOnEnd()));
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
+  connect(buttonHelp, SIGNAL( clicked() ), this, SLOT( ClickOnHelp()));
 
   connect(Group1Sel->buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
   connect(Group1Sel->buttonUndo, SIGNAL(clicked()), this, SLOT(ClickOnUndo()));
@@ -210,7 +212,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent, 
 
   connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
   connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-
+  
   Init();
 }
 
@@ -243,6 +245,8 @@ void EntityGUI_SketcherDlg::Init()
   myLastY1 = 0.0;
   myLastX2 = 0.0;
   myLastY2 = 0.0;
+
+  myHelpFileName = "sketcher.htm";
 
   /* Get setting of step value from file configuration */
   double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
@@ -685,6 +689,22 @@ bool EntityGUI_SketcherDlg::ClickOnApply()
   GEOMBase_Helper::displayPreview();
 
   return true;
+}
+
+//=================================================================================
+// function : ClickOnHelp()
+// purpose  :
+//=================================================================================
+void EntityGUI_SketcherDlg::ClickOnHelp()
+{
+  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  if (app) 
+    app->onHelpContextModule(myGeometryGUI ? app->moduleName(myGeometryGUI->moduleName()) : QString(""), myHelpFileName);
+  else {
+    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
+			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").arg(1).arg(myHelpFileName),
+			   QObject::tr("BUT_OK"));
+  }
 }
 
 //=================================================================================
@@ -1396,7 +1416,6 @@ bool EntityGUI_SketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
 
   return true;
 }
-
 
 
 

@@ -103,6 +103,8 @@ BasicGUI_WorkingPlaneDlg::BasicGUI_WorkingPlaneDlg(GeometryGUI* theGeometryGUI ,
   Layout1->addWidget(Group3, 1, 0);
   /***************************************************************/
 
+  setHelpFileName("working_plane.htm");
+
   Init();
 }
 

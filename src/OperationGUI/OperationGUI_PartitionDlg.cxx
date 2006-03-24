@@ -86,6 +86,8 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg(QWidget* parent, const char
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
+
+  setHelpFileName("partition.htm"); 
  
   Init();
 }

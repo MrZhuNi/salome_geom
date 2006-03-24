@@ -112,6 +112,8 @@ private :
 
     GeometryGUI*  myGeometryGUI;
 
+    QString myHelpFileName;
+
     enum SketchState {FIRST_POINT, NEXT_POINT};
 
     enum SketchType {PT_ABS, PT_RELATIVE, PT_SEL,
@@ -135,6 +137,7 @@ private slots:
     bool ClickOnApply();
     void ClickOnUndo();
     void ClickOnRedo();
+    void ClickOnHelp();
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
@@ -146,7 +149,7 @@ private slots:
     void Dir1Clicked(int constructorId);
     void Dir2Clicked(int constructorId);
     void ValueChangedInSpinBox(double newValue);
-
+    
 };
 
 #endif // ENTITYGUI_SKETCHERDLG_H

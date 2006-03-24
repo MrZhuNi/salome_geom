@@ -32,6 +32,7 @@
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
+#include "SUIT_MessageBox.h"
 
 #include <qpushbutton.h>
 
@@ -54,6 +55,7 @@ GEOMBase_Skeleton::GEOMBase_Skeleton(QWidget* parent, const char* name, bool mod
   buttonCancel->setText(tr("GEOM_BUT_CLOSE"));
   buttonOk->setText(tr("GEOM_BUT_OK"));
   buttonApply->setText(tr("GEOM_BUT_APPLY"));
+  buttonHelp->setText(tr("GEOM_BUT_HELP"));
 
   GroupMedium->close(TRUE);
   resize(0, 0);
@@ -95,6 +97,9 @@ void GEOMBase_Skeleton::Init()
     connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
     connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
   }
+
+  // connect help button on a private slot that displays help information
+  connect( buttonHelp, SIGNAL( clicked() ), this, SLOT( ClickOnHelp() ) );
   
   /* Move widget on the botton right corner of main widget */
 //   int x, y;
@@ -212,4 +217,29 @@ int GEOMBase_Skeleton::getConstructorId() const
   if ( GroupConstructors != NULL && GroupConstructors->selected() != NULL )
     return GroupConstructors->id( GroupConstructors->selected() );
   return -1;
+}
+
+//=================================================================================
+// function : ClickOnHelp()
+// purpose  :
+//=================================================================================
+void GEOMBase_Skeleton::ClickOnHelp()
+{
+  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  if (app) 
+    app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
+  else {
+    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
+			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").arg(1).arg(myHelpFileName),
+			   QObject::tr("BUT_OK"));
+  }
+}
+//=================================================================================
+//  function : setHelpFileName()
+//  purpose  : set name for help file html
+//=================================================================================
+
+void GEOMBase_Skeleton::setHelpFileName(const QString& theName)
+{
+    myHelpFileName = theName;
 }

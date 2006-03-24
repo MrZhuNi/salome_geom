@@ -119,6 +119,8 @@ BlocksGUI_TrsfDlg::BlocksGUI_TrsfDlg (QWidget* parent,
   Layout1->addWidget( myGrp2, 2, 0 );
   /***************************************************************/
 
+  setHelpFileName("multi_transformation.htm");
+
   Init();
 }
 

@@ -81,6 +81,8 @@ GenerationGUI_PipeDlg::GenerationGUI_PipeDlg(QWidget* parent, const char* name, 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("pipe_creation.htm");
+
   /* Initialisations */
   Init();
 }

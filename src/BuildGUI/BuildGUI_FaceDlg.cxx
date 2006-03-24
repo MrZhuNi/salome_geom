@@ -69,6 +69,8 @@ BuildGUI_FaceDlg::BuildGUI_FaceDlg(QWidget* parent, const char* name, bool modal
   Layout1->addWidget(GroupWire, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("face.htm");
+
   /* Initialisations */
   Init();
 }

@@ -55,6 +55,7 @@ using namespace std;
 RepairGUI_ShapeProcessDlg::RepairGUI_ShapeProcessDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
   :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
+  setHelpFileName("shape_processing.htm");
   init();
 }
 

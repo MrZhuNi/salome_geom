@@ -108,6 +108,8 @@ OperationGUI_FilletDlg::OperationGUI_FilletDlg( QWidget* parent )
   Group2->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
   Group3->SpinBox_DX->RangeStepAndValidator(0.001, 999.999, SpecificStep, 3);
 
+  setHelpFileName("fillet.htm");
+
   /* Initialisations */
   Init();
 }

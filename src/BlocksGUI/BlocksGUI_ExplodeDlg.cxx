@@ -108,6 +108,8 @@ BlocksGUI_ExplodeDlg::BlocksGUI_ExplodeDlg (QWidget* parent,
   Layout1->addWidget(myGrp1, 1, 0);
   /***************************************************************/
 
+  setHelpFileName("explode_on_blocks.htm");
+
   Init();
 }
 

@@ -117,6 +117,9 @@ MeasureGUI_CheckCompoundOfBlocksDlg::MeasureGUI_CheckCompoundOfBlocksDlg( Geomet
   Layout1->addWidget( myGrp, 1, 0 );
   connect( myErrorsLBox, SIGNAL( selectionChanged() ), SLOT( onErrorsListSelectionChanged() ) );
   connect( mySubShapesLBox, SIGNAL( selectionChanged() ), SLOT( onSubShapesListSelectionChanged() ) );
+
+  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Check_comp_blocks";
+
   /* Initialisation */
   Init();
 }

@@ -82,6 +82,8 @@ TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg(GeometryGUI* 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
   
+  setHelpFileName("translation.htm");
+  
   Init();
 }
 

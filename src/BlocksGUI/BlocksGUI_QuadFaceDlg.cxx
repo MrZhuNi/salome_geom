@@ -102,6 +102,8 @@ BlocksGUI_QuadFaceDlg::BlocksGUI_QuadFaceDlg (QWidget* parent,
   Layout1->addWidget(myGrp3, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("newentity_blocks.htm#QuadrangleFace");
+
   Init();
 }
 

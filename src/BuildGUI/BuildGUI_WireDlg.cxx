@@ -67,6 +67,8 @@ BuildGUI_WireDlg::BuildGUI_WireDlg(QWidget* parent, const char* name, bool modal
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("wire.htm");
+
   /* Initialisations */
   Init();
 }

@@ -67,6 +67,7 @@ private :
 private slots:
 
   void                                  onClose();
+  void                                  onHelp(); 
   void                                  onDeactivate();
   void                                  onActivate();
   void                                  onSelectionDone();
@@ -79,6 +80,7 @@ private :
     QPushButton*           mySelBtn;
     QLineEdit*             myEdit;
     GeometryGUI*           myGeomGUI;
+    QString                myHelpFileName;
 
 };
 

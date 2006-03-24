@@ -92,6 +92,8 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg (GeometryGUI* theGeometryGUI, Q
   GroupPoints->getGroupBoxLayout()->addLayout( aLay, 2, 0 );
   /***************************************************************/
 
+  setHelpFileName("add_point_on_edge.htm");
+
   Init();
 }
 

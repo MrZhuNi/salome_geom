@@ -101,6 +101,8 @@ RepairGUI_CloseContourDlg::RepairGUI_CloseContourDlg(QWidget* parent, const char
   GroupPoints->getGroupBoxLayout()->addMultiCellWidget(myIsVertexGr, 2, 2, 0, 2);
   /***************************************************************/
 
+  setHelpFileName("close_contour.htm");
+
   Init();
 }
 

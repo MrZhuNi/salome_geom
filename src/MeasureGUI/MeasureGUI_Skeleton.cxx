@@ -34,6 +34,7 @@
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 #include "SalomeApp_Tools.h"
+#include "SUIT_MessageBox.h"
 #include "SUIT_Session.h"
 #include "SUIT_OverrideCursor.h"
 
@@ -63,11 +64,13 @@ MeasureGUI_Skeleton::MeasureGUI_Skeleton( GeometryGUI*      GUI,
   mySelBtn = 0;
   mySelEdit = 0;
   myDisplayer = 0;
+  myHelpFileName = "";
   
   if ( !name )
     setName( "MeasureGUI_Skeleton" );
 
   buttonClose->setText( tr( "GEOM_BUT_CLOSE" ) );
+  buttonHelp->setText(tr("GEOM_BUT_HELP"));
 
   buttonClose->setAutoDefault( false );
 
@@ -100,6 +103,9 @@ void MeasureGUI_Skeleton::Init()
   
   connect( buttonClose, SIGNAL( clicked() ),
           this,         SLOT( ClickOnCancel() ) );
+
+  connect( buttonHelp,  SIGNAL( clicked() ), 
+	   this,        SLOT( ClickOnHelp() ) );
   
   connect( myGeomGUI,   SIGNAL( SignalDeactivateActiveDialog() ),
            this,        SLOT  ( DeactivateActiveDialog() ) );
@@ -136,6 +142,21 @@ void MeasureGUI_Skeleton::ClickOnCancel()
   close();
 }
 
+//=================================================================================
+// function : ClickOnHelp()
+// purpose  :
+//=================================================================================
+void MeasureGUI_Skeleton::ClickOnHelp()
+{
+  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  if (app) 
+    app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
+  else {
+    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
+			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").arg(1).arg(myHelpFileName),
+			   QObject::tr("BUT_OK"));
+  }
+}
 
 //=================================================================================
 // function : LineEditReturnPressed()

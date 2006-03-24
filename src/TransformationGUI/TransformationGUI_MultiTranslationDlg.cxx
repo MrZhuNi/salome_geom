@@ -99,6 +99,8 @@ TransformationGUI_MultiTranslationDlg::TransformationGUI_MultiTranslationDlg(Geo
   Layout1->addWidget(GroupDimensions, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("multi_translation.htm");
+
   Init();
 }
 

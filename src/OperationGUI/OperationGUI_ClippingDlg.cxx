@@ -122,6 +122,8 @@ OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( QWidget* parent, const char*
   //  connect( aGeomGUI, SIGNAL ( SignalDeactivateActiveDialog() ), this, SLOT( onDeactivate() ) ) ;
   //connect( aGeomGUI, SIGNAL ( SignalCloseAllDialogs() ), this, SLOT( ClickOnCancel() ) ) ;
 
+  setHelpFileName("none.htm");
+
   Init();
 }
 

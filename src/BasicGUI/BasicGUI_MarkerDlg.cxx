@@ -119,6 +119,8 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* th
   Layout1->addWidget( Group1, 2, 0 );
   Layout1->addWidget( Group2, 2, 0 );
 
+  setHelpFileName("local_coordinate_system.htm");
+  
   Init();
 }
 

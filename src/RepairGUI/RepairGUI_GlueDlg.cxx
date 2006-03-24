@@ -92,6 +92,8 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg(QWidget* parent, const char* name, bool mod
   GroupPoints->getGroupBoxLayout()->addLayout( aLay, 3, 0 );
   /***************************************************************/
 
+  setHelpFileName("glue_faces.htm");
+
   Init();
 }
 

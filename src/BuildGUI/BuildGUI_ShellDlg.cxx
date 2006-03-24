@@ -67,6 +67,8 @@ BuildGUI_ShellDlg::BuildGUI_ShellDlg(QWidget* parent, const char* name, bool mod
   Layout1->addWidget(GroupShell, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("shell.htm");
+
   /* Initialisations */
   Init();
 }

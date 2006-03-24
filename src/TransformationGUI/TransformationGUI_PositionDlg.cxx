@@ -85,6 +85,8 @@ TransformationGUI_PositionDlg::TransformationGUI_PositionDlg(QWidget* parent,  c
   Layout1->addWidget(Group1, 2, 0);
   
   /***************************************************************/
+
+  setHelpFileName("modify_the_location.htm");  
   
   Init();
 }

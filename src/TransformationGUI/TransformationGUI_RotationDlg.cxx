@@ -104,6 +104,8 @@ TransformationGUI_RotationDlg::TransformationGUI_RotationDlg(QWidget* parent,  c
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
+  setHelpFileName("rotation.htm");
+
   Init();
 }
 

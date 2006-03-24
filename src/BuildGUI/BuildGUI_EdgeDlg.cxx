@@ -74,6 +74,8 @@ BuildGUI_EdgeDlg::BuildGUI_EdgeDlg(QWidget* parent, const char* name, bool modal
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
 
+  setHelpFileName("edge.htm");
+
   /* Initialisations */
   Init();
 }

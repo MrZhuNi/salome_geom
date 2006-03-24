@@ -86,6 +86,8 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
 
   Layout1->addWidget( Group3Pnts, 2, 0 );
 
+  setHelpFileName("arc.htm");
+
   Init();
 }
 
