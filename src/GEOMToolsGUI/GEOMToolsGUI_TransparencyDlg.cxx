@@ -198,7 +198,8 @@ void GEOMToolsGUI_TransparencyDlg::ClickOnHelp()
   }
   else {
     SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
-			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").arg(1).arg(myHelpFileName),
+			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+			   arg(app->resourceMgr()->stringValue("ExternalBrowser", "application")).arg(myHelpFileName),
 			   QObject::tr("BUT_OK"));
   }
 }
