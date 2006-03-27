@@ -218,7 +218,10 @@ bool GroupGUI_GroupDlg::ClickOnApply()
     return false;
 
   if ( myMode == CreateGroup )
-    initName();
+    {
+      initName();
+      myIdList->clear();
+    }
   return true;
 }
 
