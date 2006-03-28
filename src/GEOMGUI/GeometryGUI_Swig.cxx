@@ -59,21 +59,25 @@
 #include "SALOMEDSClient.hxx"
 
 // OCCT Includes
-#include <TopExp_Explorer.hxx>
-#include <TopTools_MapOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <BRepAdaptor_Surface.hxx>
-#include <BRepAdaptor_Curve.hxx>
-#include <GeomAbs_CurveType.hxx>
-#include <GeomAbs_SurfaceType.hxx>
-#include <TopoDS.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Face.hxx>
-#include <TopoDS_Iterator.hxx>
+//#include <TopExp_Explorer.hxx>
+//#include <TopTools_MapOfShape.hxx>
+//#include <TopTools_ListOfShape.hxx>
+//#include <TopTools_ListIteratorOfListOfShape.hxx>
+//#include <GeomAbs_CurveType.hxx>
+//#include <GeomAbs_SurfaceType.hxx>
+//#include <TopoDS.hxx>
+#include <TopAbs.hxx>
+#include <TopoDS_Shape.hxx>
+//#include <TopoDS_Edge.hxx>
+//#include <TopoDS_Face.hxx>
+//#include <TopoDS_Iterator.hxx>
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
-#include <V3d_Viewer.hxx>
+//#include <V3d_Viewer.hxx>
+
+// IDL Headers
+#include <SALOMEconfig.h>
+#include CORBA_SERVER_HEADER(GEOM_Gen)
 
 using namespace std;
 
@@ -224,7 +228,8 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
       public:
 	TEventUpdateBrowser() {}
 	virtual void Execute() {
-          SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>(SUIT_Session::session()->activeApplication());
+          SalomeApp_Application* app =
+            dynamic_cast<SalomeApp_Application*>(SUIT_Session::session()->activeApplication());
           if (app) {
 	    CAM_Module* module = app->module("Geometry");
 	    SalomeApp_Module* appMod = dynamic_cast<SalomeApp_Module*>(module);
@@ -237,118 +242,45 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
 }
 
 
-int  GEOM_Swig::getIndexTopology(const char* SubIOR, const char* IOR)
+int GEOM_Swig::getIndexTopology(const char* SubIOR, const char* IOR)
 {
-  GEOM::GEOM_Gen_var Geom   = GeometryGUI::GetGeomGen();
-  if ( CORBA::is_nil( Geom ) )
+  GEOM::GEOM_Gen_var aGeomGen = GeometryGUI::GetGeomGen();
+  if (CORBA::is_nil(aGeomGen))
     return -1;
 
-  GEOM::GEOM_Object_var aMainShape = Geom->GetIORFromString(IOR);
-  TopoDS_Shape shape = ShapeReader.GetShape(Geom, aMainShape);
+  GEOM::GEOM_Object_var aMainShape = aGeomGen->GetIORFromString(IOR);
+  GEOM::GEOM_Object_var aSubShape  = aGeomGen->GetIORFromString(SubIOR);
+  if (CORBA::is_nil(aMainShape) || CORBA::is_nil(aSubShape))
+    return -1;
 
-  GEOM::GEOM_Object_var aSubShape = Geom->GetIORFromString(SubIOR);
-  TopoDS_Shape subshape = ShapeReader.GetShape(Geom, aSubShape);
+  GEOM::GEOM_IShapesOperations_var anIShapesOperations =
+    aGeomGen->GetIShapesOperations(aMainShape->GetStudyID());
+  if (CORBA::is_nil(anIShapesOperations))
+    return -1;
 
-  int index = 1;
-  if(subshape.ShapeType() == TopAbs_COMPOUND) {
-    TopoDS_Iterator it;
-    TopTools_ListOfShape CL;
-    CL.Append(shape);
-    TopTools_ListIteratorOfListOfShape itC;
-    for(itC.Initialize(CL); itC.More(); itC.Next()) {
-      for(it.Initialize(itC.Value()); it.More(); it.Next()) {
-	if (it.Value().ShapeType() == TopAbs_COMPOUND) {
-	  if (it.Value().IsSame(subshape))
-	    return index;
-	  else
-	    index++;
-	  CL.Append(it.Value());
-	}
-      }
-    }
-  }
-  else {
-    TopExp_Explorer Exp(shape, subshape.ShapeType());
-    TopTools_MapOfShape M;
-    while(Exp.More()) {
-      if(M.Add(Exp.Current())) {
-	if(Exp.Current().IsSame(subshape))
-	  return index;
-	index++;
-      }
-      Exp.Next();
-    }
-  }
-
-  return -1;
+  return anIShapesOperations->GetTopologyIndex(aMainShape, aSubShape);
 }
 
 const char* GEOM_Swig::getShapeTypeString(const char* IOR)
 {
-  GEOM::GEOM_Gen_var Geom   = GeometryGUI::GetGeomGen();
-  if ( CORBA::is_nil( Geom ) )
-    return 0;
+  TCollection_AsciiString aTypeName ("Shape of unknown type");
 
-  GEOM::GEOM_Object_var aShape = Geom->GetIORFromString(IOR);
-  TopoDS_Shape shape    = ShapeReader.GetShape(Geom, aShape);
-
-  if( shape.IsNull() ) {
-    return "Null Shape" ;
-  }
-
-  switch (shape.ShapeType() )
+  GEOM::GEOM_Gen_var aGeomGen = GeometryGUI::GetGeomGen();
+  if (!CORBA::is_nil(aGeomGen))
   {
-  case TopAbs_COMPOUND:
-    { return "Compound" ;}
-  case  TopAbs_COMPSOLID:
-    { return "Compound Solid" ;}
-  case TopAbs_SOLID:
-    { return "Solid" ;}
-  case TopAbs_SHELL:
-    { return "Shell" ;}
-  case TopAbs_FACE:
+    GEOM::GEOM_Object_var aShape = aGeomGen->GetIORFromString(IOR);
+    if (!CORBA::is_nil(aShape))
     {
-      BRepAdaptor_Surface surf(TopoDS::Face(shape));
-      if ( surf.GetType() == GeomAbs_Plane ) {
-	return "Plane" ;
-      } else if ( surf.GetType() == GeomAbs_Cylinder ) {
-	return "Cylindrical Face" ;
-      } else if ( surf.GetType() == GeomAbs_Sphere ) {
-	return "Spherical Face" ;
-      } else if ( surf.GetType() == GeomAbs_Torus ) {
-	return "Toroidal Face" ;
-      } else if ( surf.GetType() == GeomAbs_Cone ) {
-	return "Conical Face" ;
-      } else {
-	return "GEOM::FACE" ;
+      GEOM::GEOM_IShapesOperations_var anIShapesOperations =
+        aGeomGen->GetIShapesOperations(aShape->GetStudyID());
+      if (!CORBA::is_nil(anIShapesOperations))
+      {
+        aTypeName = anIShapesOperations->GetShapeTypeString(aShape);
       }
     }
-  case TopAbs_WIRE:
-    { return "Wire" ;}
-  case TopAbs_EDGE:
-    {
-      BRepAdaptor_Curve curv(TopoDS::Edge(shape));
-      if ( curv.GetType() == GeomAbs_Line ) {
-	if ( (Abs(curv.FirstParameter()) >= 1E6 ) ||
-	     (Abs(curv.LastParameter()) >= 1E6 )) {
-	  return "Line" ;
-	} else
-	  return "Edge" ;
-      } else if ( curv.GetType() == GeomAbs_Circle ) {
-	if ( curv.IsClosed() )
-	  return "Circle" ;
-	else
-	  return "Arc" ;
-      } else {
-	return "Edge" ;
-      }
-    }
-  case TopAbs_VERTEX:
-    { return "Vertex" ;}
-  case TopAbs_SHAPE:
-    { return "Shape" ;}
   }
-  return 0;
+
+  return CORBA::string_dup(aTypeName.ToCString());
 }
 
 
