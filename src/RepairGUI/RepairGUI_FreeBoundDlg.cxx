@@ -33,6 +33,7 @@
 #include "GEOMImpl_Types.hxx"
 
 #include "SalomeApp_Application.h"
+#include "LightApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 #include "SUIT_MessageBox.h"
 #include "SUIT_Session.h"
@@ -132,7 +133,7 @@ void RepairGUI_FreeBoundDlg::onClose()
 //=================================================================================
 void RepairGUI_FreeBoundDlg::onHelp()
 {
-  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
   if (app)
     app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
   else {

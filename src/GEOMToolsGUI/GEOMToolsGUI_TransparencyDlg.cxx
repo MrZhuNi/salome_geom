@@ -50,6 +50,7 @@
 #include <SUIT_OverrideCursor.h>
 
 #include <SalomeApp_Application.h>
+#include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
 #include <qframe.h>
@@ -191,7 +192,7 @@ void GEOMToolsGUI_TransparencyDlg::ClickOnClose()
 //=================================================================================
 void GEOMToolsGUI_TransparencyDlg::ClickOnHelp()
 {
-  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
   if (app) {
     GeometryGUI* aGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
     app->onHelpContextModule(aGeomGUI ? app->moduleName(aGeomGUI->moduleName()) : QString(""), myHelpFileName);

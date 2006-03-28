@@ -31,8 +31,9 @@
 #include "GEOM_Displayer.h"
 #include "GeometryGUI.h"
 
-#include "SalomeApp_Application.h"
+#include "LightApp_Application.h"
 #include "LightApp_SelectionMgr.h"
+#include "SalomeApp_Application.h"
 #include "SalomeApp_Tools.h"
 #include "SUIT_MessageBox.h"
 #include "SUIT_Session.h"
@@ -148,7 +149,7 @@ void MeasureGUI_Skeleton::ClickOnCancel()
 //=================================================================================
 void MeasureGUI_Skeleton::ClickOnHelp()
 {
-  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
   if (app) 
     app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
   else {

@@ -28,8 +28,9 @@
 
 #include "RepairGUI_FreeFacesDlg.h"
 
-#include "SalomeApp_Application.h"
+#include "LightApp_Application.h"
 #include "LightApp_SelectionMgr.h"
+#include "SalomeApp_Application.h"
 #include "SalomeApp_Tools.h"
 
 #include "SUIT_MessageBox.h"
@@ -151,7 +152,7 @@ void RepairGUI_FreeFacesDlg::onClose()
 //=================================================================================
 void RepairGUI_FreeFacesDlg::onHelp()
 {
-  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
   if (app)
     app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
   else {

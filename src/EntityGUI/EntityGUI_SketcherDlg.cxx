@@ -35,6 +35,7 @@
 #include "SUIT_MessageBox.h"
 #include "SUIT_ResourceMgr.h"
 #include "SalomeApp_Application.h"
+#include "LightApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 
 #include <qpushbutton.h>
@@ -697,7 +698,7 @@ bool EntityGUI_SketcherDlg::ClickOnApply()
 //=================================================================================
 void EntityGUI_SketcherDlg::ClickOnHelp()
 {
-  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
   if (app) 
     app->onHelpContextModule(myGeometryGUI ? app->moduleName(myGeometryGUI->moduleName()) : QString(""), myHelpFileName);
   else {

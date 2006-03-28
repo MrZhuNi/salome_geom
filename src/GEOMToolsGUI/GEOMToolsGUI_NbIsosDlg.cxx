@@ -29,7 +29,7 @@
 
 #include "GEOMToolsGUI_NbIsosDlg.h"
 #include "GeometryGUI.h"
-#include <SalomeApp_Application.h>
+#include <LightApp_Application.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_Session.h>
 #include <SUIT_Tools.h>
@@ -165,7 +165,7 @@ void GEOMToolsGUI_NbIsosDlg::setV( const int v )
 //=================================================================================
 void GEOMToolsGUI_NbIsosDlg::ClickOnHelp()
 {
-  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
+  LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
   if (app) {
     GeometryGUI* aGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
     app->onHelpContextModule(aGeomGUI ? app->moduleName(aGeomGUI->moduleName()) : QString(""), myHelpFileName);

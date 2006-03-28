@@ -31,6 +31,7 @@
 
 #include "SUIT_Session.h"
 #include "SalomeApp_Application.h"
+#include "LightApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 #include "SUIT_MessageBox.h"
 
@@ -225,15 +226,15 @@ int GEOMBase_Skeleton::getConstructorId() const
 //=================================================================================
 void GEOMBase_Skeleton::ClickOnHelp()
 {
-  SalomeApp_Application* app = (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
-  /*if (app) 
+  LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
+  if (app) 
     app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
-    else {*/
+  else {
     SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
 			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
 			   arg(app->resourceMgr()->stringValue("ExternalBrowser", "application")).arg(myHelpFileName),
 			   QObject::tr("BUT_OK"));
-    //}
+  }
 }
 //=================================================================================
 //  function : setHelpFileName()
