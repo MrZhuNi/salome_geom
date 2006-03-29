@@ -676,6 +676,8 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
 //=================================================================================
 bool EntityGUI_SketcherDlg::ClickOnApply()
 {
+  ((QPushButton*)sender())->setFocus();
+
   myCommand.append( GetNewCommand() );
   mySketchState = NEXT_POINT;
 
