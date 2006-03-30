@@ -47,12 +47,8 @@
 #include <TColStd_MapOfInteger.hxx>
 
 
-GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode,
-                                     QWidget* parent,
-                                     const char* name,
-                                     bool modal,
-                                     WFlags fl)
-  :GEOMBase_Skeleton( parent, "GroupGUI_GroupDlg", false,
+GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWidget* parent)
+  :GEOMBase_Skeleton( theGeometryGUI, parent, "GroupGUI_GroupDlg", false,
                       WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu),
    myMode( mode ),
    myBusy( false )
@@ -206,7 +202,6 @@ void GroupGUI_GroupDlg::ClickOnOk()
   if ( ClickOnApply() )
     ClickOnCancel();
 }
-
 
 //=================================================================================
 // function : ClickOnApply()

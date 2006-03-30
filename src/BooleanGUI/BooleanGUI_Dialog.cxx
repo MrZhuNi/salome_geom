@@ -45,8 +45,9 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, fl),
+BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, GeometryGUI* theGeometryGUI,
+                                      QWidget* parent, const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, fl),
    myOperation( theOperation )
 {
   QPixmap image0;
@@ -121,7 +122,6 @@ BooleanGUI_Dialog::BooleanGUI_Dialog( const int theOperation, QWidget* parent, c
 BooleanGUI_Dialog::~BooleanGUI_Dialog()
 {
 }
-
 
 
 //=================================================================================
@@ -218,7 +218,6 @@ void BooleanGUI_Dialog::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
 }
-
 
 
 //=================================================================================

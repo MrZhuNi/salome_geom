@@ -24,7 +24,6 @@
 //  File   : RepairGUI_FreeBoundDlg.h
 //  Author : Sergey LITONIN
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_WHATIS_H
 #define DIALOGBOX_WHATIS_H
@@ -47,11 +46,10 @@ class RepairGUI_FreeBoundDlg : public QDialog,
     Q_OBJECT
 
 public:
-                                        RepairGUI_FreeBoundDlg( GeometryGUI*, QWidget* );
-                                        ~RepairGUI_FreeBoundDlg();
+    RepairGUI_FreeBoundDlg(GeometryGUI*, QWidget*, const char* name = 0);
+    ~RepairGUI_FreeBoundDlg();
 
 private slots:
-
   void                                  onClose();
   void                                  onHelp(); 
   void                                  onDeactivate();
@@ -59,7 +57,6 @@ private slots:
   void                                  onSelectionDone();
                                                                                   
 private:
-
   void                                  Init();
   void                                  enterEvent( QEvent* e );
   void                                  closeEvent( QCloseEvent* e );
@@ -70,7 +67,6 @@ private:
   virtual bool                          isValid( QString& );
 
 private:
-
   QLineEdit*                            myEdit;
   QLabel*                               myClosedLbl;
   QLabel*                               myOpenLbl;
@@ -82,13 +78,3 @@ private:
 };
 
 #endif // DIALOGBOX_WHATIS_H
-
-
-
-
-
-
-
-
-
-

@@ -61,8 +61,10 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BasicGUI_WorkingPlaneDlg::BasicGUI_WorkingPlaneDlg(GeometryGUI* theGeometryGUI , QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu), myGeometryGUI(theGeometryGUI)
+BasicGUI_WorkingPlaneDlg::BasicGUI_WorkingPlaneDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                                   const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_WPLANE_FACE")));
@@ -124,9 +126,9 @@ void BasicGUI_WorkingPlaneDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = Group1->LineEdit1;
-  myWPlane = myGeometryGUI->GetWorkingPlane();
+  myWPlane = myGeomGUI->GetWorkingPlane();
 
-  // myGeometryGUI->SetState( 0 );
+  // myGeomGUI->SetState( 0 );
 
   myFace = GEOM::GEOM_Object::_nil();
   myVectX = GEOM::GEOM_Object::_nil();
@@ -139,8 +141,8 @@ void BasicGUI_WorkingPlaneDlg::Init()
 
    /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
   connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(ConstructorsClicked(int)));
 
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -170,7 +172,7 @@ void BasicGUI_WorkingPlaneDlg::Init()
 void BasicGUI_WorkingPlaneDlg::ConstructorsClicked(int constructorId)
 {
   disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
-  // myGeometryGUI->SetState( 0 );
+  // myGeomGUI->SetState( 0 );
 
   switch (constructorId)
     {
@@ -251,7 +253,7 @@ void BasicGUI_WorkingPlaneDlg::ClickOnOk()
 bool BasicGUI_WorkingPlaneDlg::ClickOnApply()
 {
   buttonApply->setFocus();
-  myGeometryGUI->application()->putInfo(tr(""));
+  myGeomGUI->application()->putInfo(tr(""));
   const int id = getConstructorId();
 
   if (id == 0) {
@@ -264,8 +266,8 @@ bool BasicGUI_WorkingPlaneDlg::ClickOnApply()
           gp_Pln aPln = aGPlane->Pln();
 
           myWPlane = aPln.Position();
-          myGeometryGUI->SetWorkingPlane(myWPlane);
-          myGeometryGUI->ActiveWorkingPlane();
+          myGeomGUI->SetWorkingPlane(myWPlane);
+          myGeomGUI->ActiveWorkingPlane();
           return true;
         }
       }
@@ -307,8 +309,8 @@ bool BasicGUI_WorkingPlaneDlg::ClickOnApply()
 
       myWPlane = gp_Ax3(BRep_Tool::Pnt(V1), aDirZ, aDirX);
 
-      myGeometryGUI->SetWorkingPlane(myWPlane);
-      myGeometryGUI->ActiveWorkingPlane();
+      myGeomGUI->SetWorkingPlane(myWPlane);
+      myGeomGUI->ActiveWorkingPlane();
       return true;
     }
   } else if (id == 2) {
@@ -330,8 +332,8 @@ bool BasicGUI_WorkingPlaneDlg::ClickOnApply()
 
     myWPlane = gp_Ax3(P1, aDirZ, aDirX);
 
-    myGeometryGUI->SetWorkingPlane(myWPlane);
-    myGeometryGUI->ActiveWorkingPlane();
+    myGeomGUI->SetWorkingPlane(myWPlane);
+    myGeomGUI->ActiveWorkingPlane();
     return true;
   }
   return false;
@@ -436,7 +438,7 @@ void BasicGUI_WorkingPlaneDlg::ActivateThisDialog( )
 //=================================================================================
 void BasicGUI_WorkingPlaneDlg::DeactivateActiveDialog()
 {
-  // myGeometryGUI->SetState( -1 );
+  // myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
@@ -465,6 +467,5 @@ void BasicGUI_WorkingPlaneDlg::enterEvent(QEvent* e)
 //=================================================================================
 void BasicGUI_WorkingPlaneDlg::closeEvent( QCloseEvent* e )
 {
-  // myGeometryGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
 }

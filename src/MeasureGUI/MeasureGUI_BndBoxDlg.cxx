@@ -191,22 +191,3 @@ SALOME_Prs* MeasureGUI_BndBoxDlg::buildPrs()
   return !aShape.IsNull() ? getDisplayer()->BuildPrs( aShape ) : 0;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

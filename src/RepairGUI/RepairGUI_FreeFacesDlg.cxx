@@ -66,11 +66,12 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg(GeometryGUI* GUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-:QDialog( parent, "RepairGUI_FreeBoundDlg", false,
-	  WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose ),
- GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
- myGeomGUI( GUI )
+RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg(GeometryGUI* GUI, QWidget* parent,
+                                               const char* name, bool modal, WFlags fl)
+  :QDialog(parent, "RepairGUI_FreeBoundDlg", false,
+           WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose),
+   GEOMBase_Helper(dynamic_cast<SUIT_Desktop*>(parent)),
+   myGeomGUI(GUI)
 {
   myDisplayer = 0;
 

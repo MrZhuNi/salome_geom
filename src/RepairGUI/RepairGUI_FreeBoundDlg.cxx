@@ -49,21 +49,20 @@
 #define SPACING 5
 #define MARGIN 10
 
-/*
-  Calss       : RepairGUI_FreeBoundDlg
+/*!
+  Class       : RepairGUI_FreeBoundDlg
   Description : Dialog for displaying free boundaries of selected face, shell or solid
 */
-
 
 //=================================================================================
 // function : RepairGUI_FreeBoundDlg
 // purpose  : Constructor
 //=================================================================================
-RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg( GeometryGUI* theGUI, QWidget* theParent )
+RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg(GeometryGUI* theGUI, QWidget* theParent, const char*)
 : QDialog( theParent, "RepairGUI_FreeBoundDlg", false,
 	   WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose ),
   GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( theParent ) ),
-  myGeomGUI ( theGUI )
+  myGeomGUI( theGUI )
 {
   setCaption( tr( "CAPTION" ) );
 
@@ -137,10 +136,10 @@ void RepairGUI_FreeBoundDlg::onHelp()
   if (app)
     app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
   else {
-    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
-			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			   arg(app->resourceMgr()->stringValue("ExternalBrowser", "application")).arg(myHelpFileName),
-			   QObject::tr("BUT_OK"));
+    SUIT_MessageBox::warn1
+      (0, tr("WRN_WARNING"), tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+       arg(app->resourceMgr()->stringValue("ExternalBrowser", "application")).arg(myHelpFileName),
+       tr("BUT_OK"));
   }
 }
 
@@ -152,7 +151,7 @@ void RepairGUI_FreeBoundDlg::onDeactivate()
 {
   setEnabled(false);
   globalSelection();
-  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   myGeomGUI->SetActiveDialogBox( 0 );
 }
 
@@ -191,7 +190,6 @@ void RepairGUI_FreeBoundDlg::onSelectionDone()
     myObj = anObj;
     displayPreview( false, true, true, 3 );
   }
-
 }
 
 //=================================================================================
@@ -300,6 +298,3 @@ bool RepairGUI_FreeBoundDlg::execute( ObjectList& objects )
 
   return result;
 }
-
-
-

@@ -29,6 +29,7 @@
 #include "EntityGUI_SketcherDlg.h"
 #include "Sketcher_Profile.hxx"
 #include "GEOM_Displayer.h"
+#include "GEOMBase.h"
 
 #include "SUIT_Desktop.h"
 #include "SUIT_Session.h"
@@ -62,8 +63,11 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent, const char* name, bool modal, WFlags fl)
-  :EntityGUI_Skeleton_QTD(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose), myIsAllAdded( false ),
+EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
+                                             const char* name, bool modal, WFlags fl)
+  :EntityGUI_Skeleton_QTD(parent, name, modal, WStyle_Customize |
+                          WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose),
+   myIsAllAdded( false ),
    GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
    myGeometryGUI( GUI )
 {

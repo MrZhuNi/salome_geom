@@ -47,8 +47,10 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_EdgeDlg::BuildGUI_EdgeDlg(QWidget* parent, const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(parent, name, modal, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BuildGUI_EdgeDlg::BuildGUI_EdgeDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
+                                   const char* name, bool modal, WFlags fl)
+  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
+                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_BUILD_EDGE")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
