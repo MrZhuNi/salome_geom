@@ -871,9 +871,7 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::GetObject (CORBA::Long theStudyID, const char*
 //=====================================================================================
 extern "C"
 {
-#ifdef WNT
-	__declspec( dllexport )
-#endif
+GEOM_I_EXPORT
   PortableServer::ObjectId * GEOMEngine_factory(CORBA::ORB_ptr orb,
 						PortableServer::POA_ptr poa,
 						PortableServer::ObjectId * contId,

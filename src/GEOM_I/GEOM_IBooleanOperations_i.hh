@@ -21,6 +21,7 @@
 #ifndef _GEOM_IBooleanOperations_i_HeaderFile
 #define _GEOM_IBooleanOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -30,7 +31,7 @@
 
 #include "GEOMImpl_IBooleanOperations.hxx"
 
-class GEOM_IBooleanOperations_i : 
+class GEOM_I_EXPORT GEOM_IBooleanOperations_i : 
     public virtual POA_GEOM::GEOM_IBooleanOperations,
     public virtual GEOM_IOperations_i
 {

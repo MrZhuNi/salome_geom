@@ -21,6 +21,7 @@
 #ifndef _GEOM_ITransformOperations_i_HeaderFile
 #define _GEOM_ITransformOperations_i_HeaderFile
 
+#include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
 
@@ -30,7 +31,7 @@
 
 #include "GEOMImpl_ITransformOperations.hxx"
 
-class GEOM_ITransformOperations_i :
+class GEOM_I_EXPORT GEOM_ITransformOperations_i :
     public virtual POA_GEOM::GEOM_ITransformOperations,
     public virtual GEOM_IOperations_i
 {
