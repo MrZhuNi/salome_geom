@@ -485,6 +485,7 @@ private:
   SALOME_NamingService *  name_service; 
   GEOM::GEOM_Gen_ptr      myGeomEngine;
   CORBA::Long             myStudyID;
+  CORBA::Long             myLastStudyID; // mkr : PAL10770
   PortableServer::POA_var myPOA;
   
   GEOM::GEOM_IBasicOperations_ptr     myBasicOp;

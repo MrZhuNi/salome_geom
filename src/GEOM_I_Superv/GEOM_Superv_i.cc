@@ -20,6 +20,12 @@
 
 #include "GEOM_Superv_i.hh"
 #include "SALOME_LifeCycleCORBA.hxx"
+
+#include CORBA_SERVER_HEADER(SALOME_Session)
+#include "SALOMEDSClient_ClientFactory.hxx"
+
+#define isNewStudy(a,b) (a > 0 && a != b)
+
 using namespace std;
 //=============================================================================
 //  constructor:
@@ -44,6 +50,7 @@ GEOM_Superv_i::GEOM_Superv_i(CORBA::ORB_ptr orb,
   setGeomEngine();
 
   myStudyID = -1;
+  myLastStudyID = -1;
 
   myBasicOp = GEOM::GEOM_IBasicOperations::_nil();
   my3DPrimOp = GEOM::GEOM_I3DPrimOperations::_nil();
@@ -93,7 +100,39 @@ void GEOM_Superv_i::setGeomEngine()
 //=============================================================================
 void GEOM_Superv_i::SetStudyID( CORBA::Long theId )
 {
-  myStudyID = theId;
+  // mkr : PAL10770 -->
+  myLastStudyID = myStudyID;
+
+  CORBA::Object_ptr anObject = name_service->Resolve("/Kernel/Session");
+  if ( !CORBA::is_nil(anObject) ) {
+    SALOME::Session_var aSession = SALOME::Session::_narrow(anObject);
+    if ( !CORBA::is_nil(aSession) ) {
+      int aStudyID = aSession->GetActiveStudyId();
+      if ( theId != aStudyID ) MESSAGE("Warning : given study ID theId="<<theId<<" is wrong and will be replaced by the value "<<aStudyID);
+      myStudyID = aStudyID;
+    }
+  }
+  
+  if ( isNewStudy(myLastStudyID,myStudyID) ) {
+    if (CORBA::is_nil(myGeomEngine)) setGeomEngine();
+    string anEngine = _orb->object_to_string( myGeomEngine );
+    
+    CORBA::Object_var anObj = name_service->Resolve("/myStudyManager");
+    if ( !CORBA::is_nil(anObj) ) {
+      SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow(anObj);
+      if ( !CORBA::is_nil(aStudyManager) ) {
+	_PTR(Study) aDSStudy = ClientFactory::Study(aStudyManager->GetStudyByID(myStudyID));
+	if ( aDSStudy ) {
+	  _PTR(SComponent) aSCO = aDSStudy->FindComponent(myGeomEngine->ComponentDataType());
+	  if ( aSCO ) {
+	    _PTR(StudyBuilder) aBuilder = aDSStudy->NewBuilder();
+	    if ( aBuilder ) aBuilder->LoadWith( aSCO, anEngine );
+	  }
+	}
+      }
+    }
+  }
+  // mkr : PAL10770 <--
 }
 
 //=============================================================================
@@ -176,7 +215,8 @@ void GEOM_Superv_i::getBasicOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IBasicOperations interface
-  myBasicOp = myGeomEngine->GetIBasicOperations(myStudyID);
+  if (CORBA::is_nil(myBasicOp) || isNewStudy(myLastStudyID,myStudyID))
+    myBasicOp = myGeomEngine->GetIBasicOperations(myStudyID);
 }
 
 //=============================================================================
@@ -187,7 +227,8 @@ void GEOM_Superv_i::get3DPrimOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_I3DPrimOperations interface
-  my3DPrimOp = myGeomEngine->GetI3DPrimOperations(myStudyID);
+  if (CORBA::is_nil(my3DPrimOp) || isNewStudy(myLastStudyID,myStudyID))
+    my3DPrimOp = myGeomEngine->GetI3DPrimOperations(myStudyID);
 }
 
 //=============================================================================
@@ -198,7 +239,8 @@ void GEOM_Superv_i::getBoolOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IBooleanOperations interface
-  myBoolOp = myGeomEngine->GetIBooleanOperations(myStudyID);
+  if (CORBA::is_nil(myBoolOp) || isNewStudy(myLastStudyID,myStudyID))
+    myBoolOp = myGeomEngine->GetIBooleanOperations(myStudyID);
 }
 
 //=============================================================================
@@ -209,7 +251,8 @@ void GEOM_Superv_i::getInsOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IInsertOperations interface
-  myInsOp = myGeomEngine->GetIInsertOperations(myStudyID);
+  if (CORBA::is_nil(myInsOp) || isNewStudy(myLastStudyID,myStudyID))
+    myInsOp = myGeomEngine->GetIInsertOperations(myStudyID);
 }
 
 //=============================================================================
@@ -220,7 +263,8 @@ void GEOM_Superv_i::getTransfOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_ITransformOperations interface
-  myTransfOp = myGeomEngine->GetITransformOperations(myStudyID);
+  if (CORBA::is_nil(myTransfOp) || isNewStudy(myLastStudyID,myStudyID))
+    myTransfOp = myGeomEngine->GetITransformOperations(myStudyID);
 }
 
 //=============================================================================
@@ -231,7 +275,8 @@ void GEOM_Superv_i::getShapesOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IShapesOperations interface
-  myShapesOp = myGeomEngine->GetIShapesOperations(myStudyID);
+  if (CORBA::is_nil(myShapesOp) || isNewStudy(myLastStudyID,myStudyID))
+    myShapesOp = myGeomEngine->GetIShapesOperations(myStudyID);
 }
 
 //=============================================================================
@@ -242,7 +287,8 @@ void GEOM_Superv_i::getBlocksOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IBlocksOperations interface
-  myBlocksOp = myGeomEngine->GetIBlocksOperations(myStudyID);
+  if (CORBA::is_nil(myBlocksOp) || isNewStudy(myLastStudyID,myStudyID))
+    myBlocksOp = myGeomEngine->GetIBlocksOperations(myStudyID);
 }
 
 //=============================================================================
@@ -253,7 +299,8 @@ void GEOM_Superv_i::getCurvesOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_ICurvesOperations interface
-  myCurvesOp = myGeomEngine->GetICurvesOperations(myStudyID);
+  if (CORBA::is_nil(myCurvesOp) || isNewStudy(myLastStudyID,myStudyID))
+    myCurvesOp = myGeomEngine->GetICurvesOperations(myStudyID);
 }
 
 //=============================================================================
@@ -264,7 +311,8 @@ void GEOM_Superv_i::getLocalOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_ILocalOperations interface
-  myLocalOp = myGeomEngine->GetILocalOperations(myStudyID);
+  if (CORBA::is_nil(myLocalOp) || isNewStudy(myLastStudyID,myStudyID))
+    myLocalOp = myGeomEngine->GetILocalOperations(myStudyID);
 }
 
 //=============================================================================
@@ -275,7 +323,8 @@ void GEOM_Superv_i::getGroupOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IGroupOperations interface
-  myGroupOp = myGeomEngine->GetIGroupOperations(myStudyID);
+  if (CORBA::is_nil(myGroupOp) || isNewStudy(myLastStudyID,myStudyID))
+    myGroupOp = myGeomEngine->GetIGroupOperations(myStudyID);
 }
 
 //=============================================================================
@@ -342,7 +391,8 @@ CORBA::Boolean GEOM_Superv_i::LoadASCII(SALOMEDS::SComponent_ptr theComponent,
 // purpose  :
 //============================================================================
 void GEOM_Superv_i::Close(SALOMEDS::SComponent_ptr theComponent)
-{}
+{
+}
 
 //============================================================================
 // function : ComponentDataType()
@@ -453,7 +503,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointXYZ(CORBA::Double theX,
 						  CORBA::Double theZ)
 {
   MESSAGE("GEOM_Superv_i::MakePointXYZ");
-  if (CORBA::is_nil(myBasicOp)) getBasicOp();
+  getBasicOp();
   // make vertex and return
   return myBasicOp->MakePointXYZ(theX, theY, theZ);
 }
@@ -467,7 +517,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointWithReference (GEOM::GEOM_Object_p
 							     CORBA::Double theZ)
 {
   MESSAGE("GEOM_Superv_i::MakePointWithReference");
-  if (CORBA::is_nil(myBasicOp)) getBasicOp();
+  getBasicOp();
   return myBasicOp->MakePointWithReference(theReference, theX, theY, theZ);
 }
 
@@ -478,7 +528,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnCurve (GEOM::GEOM_Object_ptr the
 						       CORBA::Double theParameter)
 {
   MESSAGE("GEOM_Superv_i::MakePointOnCurve");
-  if (CORBA::is_nil(myBasicOp)) getBasicOp();
+  getBasicOp();
   return myBasicOp->MakePointOnCurve(theRefCurve, theParameter);
 }
 
@@ -490,7 +540,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeVectorDXDYDZ (CORBA::Double theDX,
 						       CORBA::Double theDZ)
 {
   MESSAGE("GEOM_Superv_i::MakeVectorDXDYDZ");
-  if (CORBA::is_nil(myBasicOp)) getBasicOp();
+  getBasicOp();
   return myBasicOp->MakeVectorDXDYDZ(theDX, theDY, theDZ);
 }
 
@@ -501,7 +551,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeVectorTwoPnt (GEOM::GEOM_Object_ptr the
 						       GEOM::GEOM_Object_ptr thePnt2)
 {
   MESSAGE("GEOM_Superv_i::MakeVector");
-  if (CORBA::is_nil(myBasicOp)) getBasicOp();
+  getBasicOp();
   return myBasicOp->MakeVectorTwoPnt(thePnt1, thePnt2);
 }
 
@@ -512,7 +562,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeLineTwoPnt (GEOM::GEOM_Object_ptr thePn
 						     GEOM::GEOM_Object_ptr thePnt2)
 {
   MESSAGE("GEOM_Superv_i::MakeLineTwoPnt");
-  if (CORBA::is_nil(myBasicOp)) getBasicOp();
+  getBasicOp();
   return myBasicOp->MakeLineTwoPnt(thePnt1, thePnt2);
 }
 
@@ -525,7 +575,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlaneThreePnt (GEOM::GEOM_Object_ptr th
 							CORBA::Double theTrimSize)
 {
   MESSAGE("GEOM_Superv_i::MakePlaneThreePnt");
-  if (CORBA::is_nil(myBasicOp)) getBasicOp();
+  getBasicOp();
   return myBasicOp->MakePlaneThreePnt(thePnt1, thePnt2, thePnt3, theTrimSize);
 }
 
@@ -537,7 +587,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlanePntVec (GEOM::GEOM_Object_ptr theP
 						      CORBA::Double theTrimSize)
 {
   MESSAGE("GEOM_Superv_i::MakePlanePntVec");
-  if (CORBA::is_nil(myBasicOp)) getBasicOp();
+  getBasicOp();
   return myBasicOp->MakePlanePntVec(thePnt, theVec, theTrimSize);
 }
 
@@ -548,7 +598,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlaneFace (GEOM::GEOM_Object_ptr theFac
 						    CORBA::Double theTrimSize)
 {
   MESSAGE("GEOM_Superv_i::MakePlaneFace");
-  if (CORBA::is_nil(myBasicOp)) getBasicOp();
+  getBasicOp();
   return myBasicOp->MakePlaneFace(theFace, theTrimSize);
 }
 
@@ -561,7 +611,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMarker
  CORBA::Double theYDX, CORBA::Double theYDY, CORBA::Double theYDZ)
 {
   MESSAGE("GEOM_Superv_i::MakeMarker");
-  if (CORBA::is_nil(myBasicOp)) getBasicOp();
+  getBasicOp();
   return myBasicOp->MakeMarker(theOX, theOY, theOZ, theXDX, theXDY, theXDZ, theYDX, theYDY, theYDZ);
 }
 
@@ -577,8 +627,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBox (CORBA::Double theX1,
 					      CORBA::Double theZ2)
 {
   MESSAGE("GEOM_Superv_i::MakeBox");
-  if (CORBA::is_nil(myBasicOp)) getBasicOp();
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  getBasicOp();
+  get3DPrimOp();
   return my3DPrimOp->MakeBoxTwoPnt(myBasicOp->MakePointXYZ(theX1, theY1, theZ1),
 				   myBasicOp->MakePointXYZ(theX2, theY2, theZ2));
 }
@@ -591,7 +641,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoxDXDYDZ (CORBA::Double theDX,
 						    CORBA::Double theDZ)
 {
   MESSAGE("GEOM_Superv_i::MakeBoxDXDYDZ");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakeBoxDXDYDZ(theDX, theDY, theDZ);
 }
 
@@ -602,7 +652,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoxTwoPnt (GEOM::GEOM_Object_ptr thePnt
 						    GEOM::GEOM_Object_ptr thePnt2)
 {
   MESSAGE("GEOM_Superv_i::MakeBoxTwoPnt");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakeBoxTwoPnt(thePnt1, thePnt2);
 }
 
@@ -615,7 +665,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderPntVecRH (GEOM::GEOM_Object_ptr
 							   CORBA::Double theHeight)
 {
   MESSAGE("GEOM_Superv_i::MakeCylinderPntVecRH");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakeCylinderPntVecRH(thePnt, theAxis, theRadius, theHeight); 
 }
 
@@ -626,7 +676,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderRH (CORBA::Double theR,
 						     CORBA::Double theH)
 {
   MESSAGE("GEOM_Superv_i::MakeCylinderRH");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakeCylinderRH(theR, theH); 
 }
 
@@ -639,8 +689,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSphere  (CORBA::Double theX,
 						  CORBA::Double theRadius)
 {
   MESSAGE("GEOM_Superv_i::MakeSphepe");
-  if (CORBA::is_nil(myBasicOp)) getBasicOp();
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  getBasicOp();
+  get3DPrimOp();
   return my3DPrimOp->MakeSpherePntR(myBasicOp->MakePointXYZ(theX, theY, theZ), theRadius);
 }
 
@@ -650,7 +700,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSphere  (CORBA::Double theX,
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSphereR (CORBA::Double theR)
 {
   MESSAGE("GEOM_Superv_i::MakeSphereR");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakeSphereR(theR);
 }
 
@@ -661,7 +711,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSpherePntR (GEOM::GEOM_Object_ptr thePn
 						     CORBA::Double theR)
 {
   MESSAGE("GEOM_Superv_i::MakeSpherePntR");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakeSpherePntR(thePnt, theR);
 }
 
@@ -674,7 +724,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTorusPntVecRR (GEOM::GEOM_Object_ptr th
 							CORBA::Double theRMinor)
 {
   MESSAGE("GEOM_Superv_i::MakeTorusPntVecRR");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakeTorusPntVecRR(thePnt, theVec, theRMajor, theRMinor);
 }
 
@@ -685,7 +735,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTorusRR (CORBA::Double theRMajor,
 						  CORBA::Double theRMinor)
 {
   MESSAGE("GEOM_Superv_i::MakeTorusRR");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakeTorusRR(theRMajor, theRMinor);
 }
 
@@ -699,7 +749,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeConePntVecR1R2H (GEOM::GEOM_Object_ptr 
 							  CORBA::Double theHeight)
 {
   MESSAGE("GEOM_Superv_i::MakeConePntVecR1R2H");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakeConePntVecR1R2H(thePnt, theAxis, theR1, theR2, theHeight);
 }
 
@@ -711,7 +761,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeConeR1R2H (CORBA::Double theR1,
 						    CORBA::Double theHeight)
 {
   MESSAGE("GEOM_Superv_i::MakeConeR1R2H");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakeConeR1R2H(theR1, theR2, theHeight);
 }
 
@@ -723,7 +773,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismVecH (GEOM::GEOM_Object_ptr theBas
 						    CORBA::Double         theH)
 {
   MESSAGE("GEOM_Superv_i::MakePrismVecH");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakePrismVecH(theBase, theVec, theH);
 }
 
@@ -736,7 +786,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismTwoPnt (GEOM::GEOM_Object_ptr theB
 						      GEOM::GEOM_Object_ptr thePoint2)
 {
   MESSAGE("GEOM_Superv_i::MakePrismTwoPnt");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakePrismTwoPnt(theBase, thePoint1, thePoint2);
 }
 
@@ -747,7 +797,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipe (GEOM::GEOM_Object_ptr theBase,
 					       GEOM::GEOM_Object_ptr thePath)
 {
   MESSAGE("GEOM_Superv_i::MakePipe");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakePipe(theBase, thePath);
 }
 
@@ -759,7 +809,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeRevolutionAxisAngle (GEOM::GEOM_Object_
 							      CORBA::Double theAngle)
 {
   MESSAGE("GEOM_Superv_i::MakeRevolutionAxisAngle");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakeRevolutionAxisAngle(theBase, theAxis, theAngle);
 }
 
@@ -772,7 +822,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilling (GEOM::GEOM_Object_ptr theShape
 						  CORBA::Long theNbIter)
 {
   MESSAGE("GEOM_Superv_i::MakeFilling");
-  if (CORBA::is_nil(my3DPrimOp)) get3DPrimOp();
+  get3DPrimOp();
   return my3DPrimOp->MakeFilling(theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter);
 }
 
@@ -787,7 +837,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoolean (GEOM::GEOM_Object_ptr theShape
   // theOperation indicates the operation to be done:
   // 1 - Common, 2 - Cut, 3 - Fuse, 4 - Section
   MESSAGE("GEOM_Superv_i::MakeBoolean");
-  if (CORBA::is_nil(myBoolOp)) getBoolOp();
+  getBoolOp();
   return myBoolOp->MakeBoolean(theShape1, theShape2, theOperation);
 }
 
@@ -798,7 +848,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFuse (GEOM::GEOM_Object_ptr theShape1,
 					       GEOM::GEOM_Object_ptr theShape2)
 {
   MESSAGE("GEOM_Superv_i::MakeFuse");
-  if (CORBA::is_nil(myBoolOp)) getBoolOp();
+  getBoolOp();
   return myBoolOp->MakeBoolean(theShape1, theShape2, 3);
 }
 
@@ -825,7 +875,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePartition (GEOM::GEOM_List_ptr   theSha
   GEOM_List_i<GEOM::ListOfLong>* aListImplM = 
     dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theMaterials, myPOA).in());
   if (aListImplS && aListImplT && aListImplKI && aListImplRI && aListImplM) {
-    if (CORBA::is_nil(myBoolOp)) getBoolOp();
+    getBoolOp();
     return myBoolOp->MakePartition(aListImplS->GetList(), aListImplT->GetList(), 
 				   aListImplKI->GetList(), aListImplRI->GetList(),
 				   theLimit, theRemoveWebs, aListImplM->GetList());
@@ -840,7 +890,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeHalfPartition (GEOM::GEOM_Object_ptr th
 							GEOM::GEOM_Object_ptr thePlane)
 {
   MESSAGE("GEOM_Superv_i::MakeHalfPartition");
-  if (CORBA::is_nil(myBoolOp)) getBoolOp();
+  getBoolOp();
   return myBoolOp->MakeHalfPartition(theShape, thePlane);
 }
 
@@ -851,7 +901,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeHalfPartition (GEOM::GEOM_Object_ptr th
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCopy (GEOM::GEOM_Object_ptr theOriginal)
 {
   MESSAGE("GEOM_Superv_i::MakeCopy");
-  if (CORBA::is_nil(myInsOp)) getInsOp();
+  getInsOp();
   return myInsOp->MakeCopy(theOriginal);
 }
 
@@ -863,7 +913,7 @@ void GEOM_Superv_i::Export (GEOM::GEOM_Object_ptr theObject,
 			    const char*           theFormatName)
 {
   MESSAGE("GEOM_Superv_i::Export");
-  if (CORBA::is_nil(myInsOp)) getInsOp();
+  getInsOp();
   myInsOp->Export(theObject, theFileName, theFormatName);
 }
 
@@ -874,7 +924,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::Import (const char* theFileName,
 					     const char* theFormatName)
 {
   MESSAGE("GEOM_Superv_i::Import");
-  if (CORBA::is_nil(myInsOp)) getInsOp();
+  getInsOp();
   return myInsOp->Import(theFileName, theFormatName);
 }
 
@@ -885,7 +935,7 @@ void GEOM_Superv_i::ImportTranslators (GEOM::string_array_out theFormats,
 				       GEOM::string_array_out thePatterns)
 {
   MESSAGE("GEOM_Superv_i::ImportTranslators");
-  if (CORBA::is_nil(myInsOp)) getInsOp();
+  getInsOp();
   myInsOp->ImportTranslators(theFormats, thePatterns);
 }
 
@@ -896,7 +946,7 @@ void GEOM_Superv_i::ExportTranslators (GEOM::string_array_out theFormats,
 				       GEOM::string_array_out thePatterns)
 {
   MESSAGE("GEOM_Superv_i::ExportTranslators");
-  if (CORBA::is_nil(myInsOp)) getInsOp();
+  getInsOp();
   myInsOp->ExportTranslators(theFormats, thePatterns);
 }
 
@@ -909,7 +959,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateTwoPoints (GEOM::GEOM_Object_ptr t
 							 GEOM::GEOM_Object_ptr thePoint2)
 {
   MESSAGE("GEOM_Superv_i::TranslateTwoPoints");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->TranslateTwoPoints(theObject, thePoint1, thePoint2);
 }
 
@@ -921,7 +971,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateTwoPointsCopy (GEOM::GEOM_Object_p
 							     GEOM::GEOM_Object_ptr thePoint2)
 {
   MESSAGE("GEOM_Superv_i::TranslateTwoPointsCopy");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->TranslateTwoPointsCopy(theObject, thePoint1, thePoint2);
 }
 
@@ -934,7 +984,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateDXDYDZ (GEOM::GEOM_Object_ptr theO
 						      CORBA::Double theDZ)
 {
   MESSAGE("GEOM_Superv_i::TranslateDXDYDZ");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->TranslateDXDYDZ(theObject, theDX, theDY, theDZ);
 }
 
@@ -947,7 +997,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateDXDYDZCopy (GEOM::GEOM_Object_ptr 
 							  CORBA::Double theDZ)
 {
   MESSAGE("GEOM_Superv_i::TranslateDXDYDZCopy");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->TranslateDXDYDZCopy(theObject, theDX, theDY, theDZ);
 }
 
@@ -958,7 +1008,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateVector (GEOM::GEOM_Object_ptr theO
 						      GEOM::GEOM_Object_ptr theVector)
 {
   MESSAGE("GEOM_Superv_i::TranslateVector");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->TranslateVector(theObject, theVector);
 }
 
@@ -969,7 +1019,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateVectorCopy (GEOM::GEOM_Object_ptr 
 							  GEOM::GEOM_Object_ptr theVector)
 {
   MESSAGE("GEOM_Superv_i::TranslateVectorCopy");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->TranslateVectorCopy(theObject, theVector);
 }
 
@@ -982,7 +1032,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MultiTranslate1D (GEOM::GEOM_Object_ptr the
 						       CORBA::Long theNbTimes)
 {
   MESSAGE("GEOM_Superv_i::MultiTranslate1D");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->MultiTranslate1D(theObject, theVector, theStep, theNbTimes);
 }
 
@@ -998,7 +1048,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MultiTranslate2D (GEOM::GEOM_Object_ptr the
 						       CORBA::Long theNbTimes2)
 {
   MESSAGE("GEOM_Superv_i::MultiTranslate2D");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->MultiTranslate2D(theObject, theVector1, theStep1, theNbTimes1,
 				      theVector2, theStep2, theNbTimes2);
 }
@@ -1011,7 +1061,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::Rotate (GEOM::GEOM_Object_ptr theObject,
 					     CORBA::Double theAngle)
 {
   MESSAGE("GEOM_Superv_i::Rotate");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->Rotate(theObject, theAxis, theAngle);
 }
 
@@ -1023,7 +1073,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::RotateCopy (GEOM::GEOM_Object_ptr theObject
 						 CORBA::Double theAngle)
 {
   MESSAGE("GEOM_Superv_i::RotateCopy");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->RotateCopy(theObject, theAxis, theAngle);
 }
 
@@ -1035,7 +1085,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MultiRotate1D (GEOM::GEOM_Object_ptr theObj
 						    CORBA::Long theNbTimes)
 {
   MESSAGE("GEOM_Superv_i::MultiRotate1D");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->MultiRotate1D(theObject, theAxis, theNbTimes);
 }
 
@@ -1050,7 +1100,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MultiRotate2D (GEOM::GEOM_Object_ptr theObj
 						    CORBA::Long theNbTimes2)
 {
   MESSAGE("GEOM_Superv_i::MultiRotate2D");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->MultiRotate2D(theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2);
 }
 
@@ -1061,7 +1111,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPlane (GEOM::GEOM_Object_ptr theObjec
 						  GEOM::GEOM_Object_ptr thePlane)
 {
   MESSAGE("GEOM_Superv_i::MirrorPlane");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->MirrorPlane(theObject, thePlane);
 }
 
@@ -1072,7 +1122,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPlaneCopy (GEOM::GEOM_Object_ptr theO
 						      GEOM::GEOM_Object_ptr thePlane)
 {
   MESSAGE("GEOM_Superv_i::MirrorPlaneCopy");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->MirrorPlaneCopy(theObject, thePlane);
 }
 
@@ -1083,7 +1133,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorAxis (GEOM::GEOM_Object_ptr theObject
 						 GEOM::GEOM_Object_ptr theAxis)
 {
   MESSAGE("GEOM_Superv_i::MirrorAxis");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->MirrorAxis(theObject, theAxis);
 }
 
@@ -1094,7 +1144,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorAxisCopy (GEOM::GEOM_Object_ptr theOb
 						     GEOM::GEOM_Object_ptr theAxis)
 {
   MESSAGE("GEOM_Superv_i::MirrorAxisCopy");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->MirrorAxisCopy(theObject, theAxis);
 }
 
@@ -1105,7 +1155,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPoint (GEOM::GEOM_Object_ptr theObjec
 						  GEOM::GEOM_Object_ptr thePoint)
 {
   MESSAGE("GEOM_Superv_i::MirrorPoint");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->MirrorPoint(theObject, thePoint);
 }
 
@@ -1116,7 +1166,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPointCopy (GEOM::GEOM_Object_ptr theO
 						      GEOM::GEOM_Object_ptr thePoint)
 {
   MESSAGE("GEOM_Superv_i::MirrorPointCopy");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->MirrorPointCopy(theObject, thePoint);
 }
 
@@ -1127,7 +1177,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::OffsetShape (GEOM::GEOM_Object_ptr theObjec
 						  CORBA::Double theOffset)
 {
   MESSAGE("GEOM_Superv_i::OffsetShape");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->OffsetShape(theObject, theOffset);
 }
 
@@ -1138,7 +1188,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::OffsetShapeCopy (GEOM::GEOM_Object_ptr theO
 						      CORBA::Double theOffset)
 {
   MESSAGE("GEOM_Superv_i::OffsetShapeCopy");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->OffsetShapeCopy(theObject, theOffset);
 }
 
@@ -1150,7 +1200,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShape (GEOM::GEOM_Object_ptr theObject
 						 CORBA::Double theFactor)
 {
   MESSAGE("GEOM_Superv_i::ScaleShape");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->ScaleShape(theObject, thePoint, theFactor);
 }
 
@@ -1162,7 +1212,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeCopy (GEOM::GEOM_Object_ptr theOb
 						     CORBA::Double theFactor)
 {
   MESSAGE("GEOM_Superv_i::ScaleShapeCopy");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->ScaleShapeCopy(theObject, thePoint, theFactor);
 }
 
@@ -1174,7 +1224,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionShape (GEOM::GEOM_Object_ptr theObj
 						    GEOM::GEOM_Object_ptr theEndLCS)
 {
   MESSAGE("GEOM_Superv_i::PositionShape");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->PositionShape(theObject, theStartLCS, theEndLCS);
 }
 
@@ -1186,7 +1236,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionShapeCopy (GEOM::GEOM_Object_ptr th
 							GEOM::GEOM_Object_ptr theEndLCS)
 {
   MESSAGE("GEOM_Superv_i::PositionShapeCopy");
-  if (CORBA::is_nil(myTransfOp)) getTransfOp();
+  getTransfOp();
   return myTransfOp->PositionShapeCopy(theObject, theStartLCS, theEndLCS);
 }
 
@@ -1198,7 +1248,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeEdge (GEOM::GEOM_Object_ptr thePnt1,
 					       GEOM::GEOM_Object_ptr thePnt2)
 {
   MESSAGE("GEOM_Superv_i::MakeEdge");
-  if (CORBA::is_nil(myShapesOp)) getShapesOp();
+  getShapesOp();
   return myShapesOp->MakeEdge(thePnt1, thePnt2);
 }
 
@@ -1210,7 +1260,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeWire (GEOM::GEOM_List_ptr theEdgesAndWi
   MESSAGE("GEOM_Superv_i::MakeWire");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplEW = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theEdgesAndWires, myPOA).in())) {
-    if (CORBA::is_nil(myShapesOp)) getShapesOp();
+    getShapesOp();
     return myShapesOp->MakeWire(aListImplEW->GetList());
   }
   return NULL;
@@ -1223,7 +1273,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFace (GEOM::GEOM_Object_ptr theWire,
 					       CORBA::Boolean isPlanarWanted)
 {
   MESSAGE("GEOM_Superv_i::MakeFace");
-  if (CORBA::is_nil(myShapesOp)) getShapesOp();
+  getShapesOp();
   return myShapesOp->MakeFace(theWire, isPlanarWanted);
 }
 
@@ -1236,7 +1286,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceWires (GEOM::GEOM_List_ptr theWires
   MESSAGE("GEOM_Superv_i::MakeFaceWires");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplW = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theWires, myPOA).in())) {
-    if (CORBA::is_nil(myShapesOp)) getShapesOp();
+    getShapesOp();
     return myShapesOp->MakeFaceWires(aListImplW->GetList(), isPlanarWanted);
   }
   return NULL;
@@ -1250,7 +1300,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeShell (GEOM::GEOM_List_ptr theFacesAndS
   MESSAGE("GEOM_Superv_i::MakeShell");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplFS = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theFacesAndShells, myPOA).in())) {
-    if (CORBA::is_nil(myShapesOp)) getShapesOp();
+    getShapesOp();
     return myShapesOp->MakeShell(aListImplFS->GetList());
   }
   return NULL;
@@ -1262,7 +1312,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeShell (GEOM::GEOM_List_ptr theFacesAndS
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSolidShell (GEOM::GEOM_Object_ptr theShell)
 {
   MESSAGE("GEOM_Superv_i::MakeSolidShell");
-  if (CORBA::is_nil(myShapesOp)) getShapesOp();
+  getShapesOp();
   return myShapesOp->MakeSolidShell(theShell);
 }
 
@@ -1274,7 +1324,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSolidShells (GEOM::GEOM_List_ptr theShe
   MESSAGE("GEOM_Superv_i::MakeSolidShells");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplS = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theShells, myPOA).in())) {
-    if (CORBA::is_nil(myShapesOp)) getShapesOp();
+    getShapesOp();
     return myShapesOp->MakeSolidShells(aListImplS->GetList());
   }
   return NULL;
@@ -1288,7 +1338,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCompound (GEOM::GEOM_List_ptr theShapes
   MESSAGE("GEOM_Superv_i::MakeCompound");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImpl = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theShapes, myPOA).in())) {
-    if (CORBA::is_nil(myShapesOp)) getShapesOp();
+    getShapesOp();
     return myShapesOp->MakeCompound(aListImpl->GetList());
   }
   return NULL;
@@ -1301,7 +1351,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFaces (GEOM::GEOM_Object_ptr theSha
 								CORBA::Double   theTolerance)
 {
   MESSAGE("GEOM_Superv_i::MakeGlueFaces");
-  if (CORBA::is_nil(myShapesOp)) getShapesOp();
+  getShapesOp();
   return myShapesOp->MakeGlueFaces(theShape, theTolerance);
 }
 
@@ -1313,7 +1363,7 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakeExplode (GEOM::GEOM_Object_ptr theShape,
 						    CORBA::Boolean isSorted)
 {
   MESSAGE("GEOM_Superv_i::MakeExplode");
-  if (CORBA::is_nil(myShapesOp)) getShapesOp();
+  getShapesOp();
 
   GEOM::ListOfGO* aList = myShapesOp->MakeExplode(theShape, theShapeType, isSorted);
   GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aList));
@@ -1327,7 +1377,7 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakeExplode (GEOM::GEOM_Object_ptr theShape,
 CORBA::Long GEOM_Superv_i::NumberOfFaces (GEOM::GEOM_Object_ptr theShape)
 {
   MESSAGE("GEOM_Superv_i::NumberOfFaces");
-  if (CORBA::is_nil(myShapesOp)) getShapesOp();
+  getShapesOp();
   return myShapesOp->NumberOfFaces(theShape);
 }
 
@@ -1337,7 +1387,7 @@ CORBA::Long GEOM_Superv_i::NumberOfFaces (GEOM::GEOM_Object_ptr theShape)
 CORBA::Long GEOM_Superv_i::NumberOfEdges (GEOM::GEOM_Object_ptr theShape)
 {
   MESSAGE("GEOM_Superv_i::NumberOfEdges");
-  if (CORBA::is_nil(myShapesOp)) getShapesOp();
+  getShapesOp();
   return myShapesOp->NumberOfEdges(theShape);
 }
 
@@ -1347,7 +1397,7 @@ CORBA::Long GEOM_Superv_i::NumberOfEdges (GEOM::GEOM_Object_ptr theShape)
 GEOM::GEOM_Object_ptr GEOM_Superv_i::ChangeOrientation (GEOM::GEOM_Object_ptr theShape)
 {
   MESSAGE("GEOM_Superv_i::ChangeOrientation");
-  if (CORBA::is_nil(myShapesOp)) getShapesOp();
+  getShapesOp();
   return myShapesOp->ChangeOrientation(theShape);
 }
 
@@ -1362,7 +1412,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeQuad4Vertices (GEOM::GEOM_Object_ptr th
 							GEOM::GEOM_Object_ptr thePnt4)
 {
   MESSAGE("GEOM_Superv_i::MakeQuad4Vertices");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->MakeQuad4Vertices(thePnt1, thePnt2, thePnt3, thePnt4);
 }
 
@@ -1375,7 +1425,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeQuad (GEOM::GEOM_Object_ptr theEdge1,
 					       GEOM::GEOM_Object_ptr theEdge4)
 {
   MESSAGE("GEOM_Superv_i::MakeQuad");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->MakeQuad(theEdge1, theEdge2, theEdge3, theEdge4);
 }
 
@@ -1386,7 +1436,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeQuad2Edges (GEOM::GEOM_Object_ptr theEd
 						     GEOM::GEOM_Object_ptr theEdge2)
 {
   MESSAGE("GEOM_Superv_i::MakeQuad2Edges");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->MakeQuad2Edges(theEdge1, theEdge2);
 }
 
@@ -1401,7 +1451,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeHexa (GEOM::GEOM_Object_ptr theFace1,
 					       GEOM::GEOM_Object_ptr theFace6)
 {
   MESSAGE("GEOM_Superv_i::MakeHexa");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->MakeHexa(theFace1, theFace2, theFace3, theFace4, theFace5, theFace6);
 }
 
@@ -1412,7 +1462,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeHexa2Faces (GEOM::GEOM_Object_ptr theFa
 						     GEOM::GEOM_Object_ptr theFace2)
 {
   MESSAGE("GEOM_Superv_i::MakeHexa2Faces");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->MakeHexa2Faces(theFace1, theFace2);
 }
 
@@ -1426,7 +1476,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetPoint (GEOM::GEOM_Object_ptr theShape,
 					       CORBA::Double   theEpsilon)
 {
   MESSAGE("GEOM_Superv_i::GetPoint");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->GetPoint(theShape, theX, theY, theZ, theEpsilon);
 }
 
@@ -1438,7 +1488,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetEdge (GEOM::GEOM_Object_ptr theShape,
 					      GEOM::GEOM_Object_ptr thePoint2)
 {
   MESSAGE("GEOM_Superv_i::GetEdge");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->GetEdge(theShape, thePoint1, thePoint2);
 }
 
@@ -1449,7 +1499,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetEdgeNearPoint (GEOM::GEOM_Object_ptr the
 						       GEOM::GEOM_Object_ptr thePoint)
 {
   MESSAGE("GEOM_Superv_i::GetEdgeNearPoint");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->GetEdgeNearPoint(theShape, thePoint);
 }
 
@@ -1463,7 +1513,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetFaceByPoints (GEOM::GEOM_Object_ptr theS
 						      GEOM::GEOM_Object_ptr thePoint4)
 {
   MESSAGE("GEOM_Superv_i::GetFaceByPoints");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->GetFaceByPoints(theShape, thePoint1, thePoint2, thePoint3, thePoint4);
 }
 
@@ -1475,7 +1525,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetFaceByEdges (GEOM::GEOM_Object_ptr theSh
 						     GEOM::GEOM_Object_ptr theEdge2)
 {
   MESSAGE("GEOM_Superv_i::GetFaceByEdges");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->GetFaceByEdges(theShape, theEdge1, theEdge2);
 }
 
@@ -1486,7 +1536,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetOppositeFace (GEOM::GEOM_Object_ptr theB
 						      GEOM::GEOM_Object_ptr theFace)
 {
   MESSAGE("GEOM_Superv_i::GetOppositeFace");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->GetOppositeFace(theBlock, theFace);
 }
 
@@ -1497,7 +1547,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetFaceNearPoint (GEOM::GEOM_Object_ptr the
 						       GEOM::GEOM_Object_ptr thePoint)
 {
   MESSAGE("GEOM_Superv_i::GetFaceNearPoint");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->GetFaceNearPoint(theShape, thePoint);
 }
 
@@ -1508,7 +1558,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetFaceByNormale (GEOM::GEOM_Object_ptr the
 						       GEOM::GEOM_Object_ptr theVector)
 {
   MESSAGE("GEOM_Superv_i::GetFaceByNormale");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->GetFaceByNormale(theBlock, theVector);
 }
 
@@ -1521,7 +1571,7 @@ CORBA::Boolean GEOM_Superv_i::IsCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompo
 						  CORBA::Long&          theNbBlocks)
 {
   MESSAGE("GEOM_Superv_i::IsCompoundOfBlocks");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->IsCompoundOfBlocks(theCompound, theMinNbFaces, theMaxNbFaces, theNbBlocks);
 }
 
@@ -1533,7 +1583,7 @@ CORBA::Boolean GEOM_Superv_i::CheckCompoundOfBlocks
  GEOM::GEOM_IBlocksOperations::BCErrors_out theErrors)
 {
   MESSAGE("GEOM_Superv_i::CheckCompoundOfBlocks");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->CheckCompoundOfBlocks(theCompound, theErrors);
 }
 
@@ -1544,7 +1594,7 @@ char* GEOM_Superv_i::PrintBCErrors (GEOM::GEOM_Object_ptr theCompound,
 				    const GEOM::GEOM_IBlocksOperations::BCErrors& theErrors)
 {
   MESSAGE("GEOM_Superv_i::PrintBCErrors");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->PrintBCErrors(theCompound, theErrors);
 }
 
@@ -1556,7 +1606,7 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::ExplodeCompoundOfBlocks (GEOM::GEOM_Object_pt
 								CORBA::Long     theMaxNbFaces)
 {
   MESSAGE("GEOM_Superv_i::ExplodeCompoundOfBlocks");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   GEOM::ListOfGO* aBlocks = myBlocksOp->ExplodeCompoundOfBlocks(theCompound, theMinNbFaces, theMaxNbFaces);
   GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aBlocks));
   return aListPtr->_this();
@@ -1569,7 +1619,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetBlockNearPoint (GEOM::GEOM_Object_ptr th
 							GEOM::GEOM_Object_ptr thePoint)
 {
   MESSAGE("GEOM_Superv_i::GetBlockNearPoint");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->GetBlockNearPoint(theCompound, thePoint);
 }
 
@@ -1582,7 +1632,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetBlockByParts (GEOM::GEOM_Object_ptr theC
   MESSAGE("GEOM_Superv_i::GetBlockByParts");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theParts, myPOA).in())) {
-    if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+    getBlocksOp();
     return myBlocksOp->GetBlockByParts(theCompound, aListImplP->GetList());
   }
   return NULL;
@@ -1597,7 +1647,7 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetBlocksByParts (GEOM::GEOM_Object_ptr theCo
   MESSAGE("GEOM_Superv_i::GetBlocksByParts");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theParts, myPOA).in())) {
-    if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+    getBlocksOp();
     
     GEOM::ListOfGO* aBlocks = myBlocksOp->GetBlocksByParts(theCompound, aListImplP->GetList());
     GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aBlocks));
@@ -1615,7 +1665,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMultiTransformation1D (GEOM::GEOM_Objec
 								CORBA::Long     theNbTimes)
 {
   MESSAGE("GEOM_Superv_i::MakeMultiTransformation1D");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->MakeMultiTransformation1D(theBlock, theDirFace1, theDirFace2, theNbTimes);
 }
 
@@ -1632,7 +1682,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMultiTransformation2D
  CORBA::Long     theNbTimesV)
 {
   MESSAGE("GEOM_Superv_i::MakeMultiTransformation2D");
-  if (CORBA::is_nil(myBlocksOp)) getBlocksOp();
+  getBlocksOp();
   return myBlocksOp->MakeMultiTransformation2D(theBlock, 
 					       theDirFace1U, theDirFace2U, theNbTimesU,
 					       theDirFace1V, theDirFace2V, theNbTimesV);
@@ -1647,7 +1697,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCirclePntVecR (GEOM::GEOM_Object_ptr th
 							CORBA::Double theR)
 {
   MESSAGE("GEOM_Superv_i::MakeCirclePntVecR");
-  if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
+  getCurvesOp();
   return myCurvesOp->MakeCirclePntVecR(theCenter, theVector, theR);
 }
 
@@ -1659,7 +1709,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCircleThreePnt (GEOM::GEOM_Object_ptr t
 							 GEOM::GEOM_Object_ptr thePnt3)
 {
   MESSAGE("GEOM_Superv_i::MakeCircleThreePnt");
-  if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
+  getCurvesOp();
   return myCurvesOp->MakeCircleThreePnt(thePnt1, thePnt2, thePnt3);
 }
 
@@ -1672,7 +1722,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeEllipse (GEOM::GEOM_Object_ptr theCente
 						  CORBA::Double theRMinor)
 {
   MESSAGE("GEOM_Superv_i::MakeEllipse");
-  if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
+  getCurvesOp();
   return myCurvesOp->MakeEllipse(theCenter, theVector, theRMajor, theRMinor);
 }
 
@@ -1684,7 +1734,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArc (GEOM::GEOM_Object_ptr thePnt1,
 					      GEOM::GEOM_Object_ptr thePnt3)
 {
   MESSAGE("GEOM_Superv_i::MakeArc");
-  if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
+  getCurvesOp();
   return myCurvesOp->MakeArc(thePnt1, thePnt2, thePnt3);
 }
 
@@ -1696,7 +1746,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePolyline (GEOM::GEOM_List_ptr thePoints
   MESSAGE("GEOM_Superv_i::MakePolyline");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thePoints, myPOA).in())) {
-    if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
+    getCurvesOp();
     return myCurvesOp->MakePolyline(aListImplP->GetList());
   }
   return NULL;
@@ -1710,7 +1760,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineBezier (GEOM::GEOM_List_ptr thePo
   MESSAGE("GEOM_Superv_i::MakeSplineBezier");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thePoints, myPOA).in())) {
-    if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
+    getCurvesOp();
     return myCurvesOp->MakeSplineBezier(aListImplP->GetList());
   }
   return NULL;
@@ -1724,7 +1774,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineInterpolation (GEOM::GEOM_List_pt
   MESSAGE("GEOM_Superv_i::MakeSplineInterpolation");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thePoints, myPOA).in())) {
-    if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
+    getCurvesOp();
     return myCurvesOp->MakeSplineInterpolation(aListImplP->GetList());
   }
   return NULL;
@@ -1739,7 +1789,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSketcher (const char* theCommand,
   MESSAGE("GEOM_Superv_i::MakeSketcher");
   if (GEOM_List_i<GEOM::ListOfDouble>* aListImplWP = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfDouble>*>(GetServant(theWorkingPlane, myPOA).in())) {
-    if (CORBA::is_nil(myCurvesOp)) getCurvesOp();
+    getCurvesOp();
     return myCurvesOp->MakeSketcher(theCommand, aListImplWP->GetList());
   }
   return NULL;
@@ -1753,7 +1803,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletAll (GEOM::GEOM_Object_ptr theSha
 						    CORBA::Double theR)
 {
   MESSAGE("GEOM_Superv_i::MakeFilletAllMakeSketcher");
-  if (CORBA::is_nil(myLocalOp)) getLocalOp();
+  getLocalOp();
   return myLocalOp->MakeFilletAll(theShape, theR);
 }
 
@@ -1767,7 +1817,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletEdges (GEOM::GEOM_Object_ptr theS
   MESSAGE("GEOM_Superv_i::MakeFilletEdges");
   if (GEOM_List_i<GEOM::ListOfLong>* aListImplE = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theEdges, myPOA).in())) {
-    if (CORBA::is_nil(myLocalOp)) getLocalOp();
+    getLocalOp();
     return myLocalOp->MakeFilletEdges(theShape, theR, aListImplE->GetList());
   }
   return NULL;
@@ -1783,7 +1833,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFaces (GEOM::GEOM_Object_ptr theS
   MESSAGE("GEOM_Superv_i::MakeFilletFaces");
   if (GEOM_List_i<GEOM::ListOfLong>* aListImplF = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theFaces, myPOA).in())) {
-    if (CORBA::is_nil(myLocalOp)) getLocalOp();
+    getLocalOp();
     return myLocalOp->MakeFilletFaces(theShape, theR, aListImplF->GetList());
   }
   return NULL;
@@ -1795,7 +1845,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFaces (GEOM::GEOM_Object_ptr theS
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferAll (GEOM::GEOM_Object_ptr theShape, CORBA::Double theD)
 {
   MESSAGE("GEOM_Superv_i::MakeChamferAll");
-  if (CORBA::is_nil(myLocalOp)) getLocalOp();
+  getLocalOp();
   return myLocalOp->MakeChamferAll(theShape, theD);
 }
   
@@ -1807,7 +1857,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferEdge (GEOM::GEOM_Object_ptr theS
 						      CORBA::Long theFace1, CORBA::Long theFace2)
 {
   MESSAGE("GEOM_Superv_i::MakeChamferEdge");
-  if (CORBA::is_nil(myLocalOp)) getLocalOp();
+  getLocalOp();
   return myLocalOp->MakeChamferEdge(theShape, theD1, theD2, theFace1, theFace2);
 }
 
@@ -1821,7 +1871,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferFaces (GEOM::GEOM_Object_ptr the
   MESSAGE("GEOM_Superv_i::MakeChamferFaces");
   if (GEOM_List_i<GEOM::ListOfLong>* aListImplF = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theFaces, myPOA).in())) {
-    if (CORBA::is_nil(myLocalOp)) getLocalOp();
+    getLocalOp();
     return myLocalOp->MakeChamferFaces(theShape, theD1, theD2, aListImplF->GetList());
   }
   return NULL;
@@ -1836,7 +1886,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArchimede (GEOM::GEOM_Object_ptr theSha
 						    CORBA::Double theMeshingDeflection)
 {
   MESSAGE("GEOM_Superv_i::MakeArchimede");
-  if (CORBA::is_nil(myLocalOp)) getLocalOp();
+  getLocalOp();
   return myLocalOp->MakeArchimede(theShape, theWeight, theWaterDensity, theMeshingDeflection);
 }
 
@@ -1847,7 +1897,7 @@ CORBA::Long GEOM_Superv_i::GetSubShapeIndex (GEOM::GEOM_Object_ptr theShape,
 					     GEOM::GEOM_Object_ptr theSubShape)
 {
   MESSAGE("GEOM_Superv_i::GetSubShapeIndexMakeArchimede");
-  if (CORBA::is_nil(myLocalOp)) getLocalOp();
+  getLocalOp();
   return myLocalOp->GetSubShapeIndex(theShape, theSubShape);
 }
 
@@ -1859,7 +1909,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::CreateGroup (GEOM::GEOM_Object_ptr theMainS
 						  CORBA::Long theShapeType)
 {
   MESSAGE("GEOM_Superv_i::CreateGroup");
-  if (CORBA::is_nil(myGroupOp)) getGroupOp();
+  getGroupOp();
   return myGroupOp->CreateGroup(theMainShape, theShapeType);
 }
 
@@ -1870,7 +1920,7 @@ void GEOM_Superv_i::AddObject (GEOM::GEOM_Object_ptr theGroup,
 			       CORBA::Long theSubShapeId)
 {
   MESSAGE("GEOM_Superv_i::AddObject");
-  if (CORBA::is_nil(myGroupOp)) getGroupOp();
+  getGroupOp();
   myGroupOp->AddObject(theGroup, theSubShapeId);
 }
 
@@ -1881,7 +1931,7 @@ void GEOM_Superv_i::RemoveObject (GEOM::GEOM_Object_ptr theGroup,
 				  CORBA::Long theSubShapeId)
 {
   MESSAGE("GEOM_Superv_i::RemoveObject");
-  if (CORBA::is_nil(myGroupOp)) getGroupOp();
+  getGroupOp();
   myGroupOp->RemoveObject(theGroup, theSubShapeId);
 }
 
@@ -1891,7 +1941,7 @@ void GEOM_Superv_i::RemoveObject (GEOM::GEOM_Object_ptr theGroup,
 CORBA::Long GEOM_Superv_i::GetType (GEOM::GEOM_Object_ptr theGroup)
 {
   MESSAGE("GEOM_Superv_i::GetType");
-  if (CORBA::is_nil(myGroupOp)) getGroupOp();
+  getGroupOp();
   return myGroupOp->GetType(theGroup);
 }
 
@@ -1901,7 +1951,7 @@ CORBA::Long GEOM_Superv_i::GetType (GEOM::GEOM_Object_ptr theGroup)
 GEOM::GEOM_Object_ptr GEOM_Superv_i::GetMainShape (GEOM::GEOM_Object_ptr theGroup)
 {
   MESSAGE("GEOM_Superv_i::GetMainShape");
-  if (CORBA::is_nil(myGroupOp)) getGroupOp();
+  getGroupOp();
   return myGroupOp->GetMainShape(theGroup);
 }
 
@@ -1911,7 +1961,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetMainShape (GEOM::GEOM_Object_ptr theGrou
 GEOM::GEOM_List_ptr GEOM_Superv_i::GetObjects (GEOM::GEOM_Object_ptr theGroup)
 {
   MESSAGE("GEOM_Superv_i::GetObjects");
-  if (CORBA::is_nil(myGroupOp)) getGroupOp();
+  getGroupOp();
 
   GEOM::ListOfLong* aList = myGroupOp->GetObjects(theGroup);
   GEOM_List_i<GEOM::ListOfLong>* aListPtr = new GEOM_List_i<GEOM::ListOfLong>(*(aList));
