@@ -173,7 +173,7 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::CreateListOfLong()
 //  AddItemToListOfLong:
 //=============================================================================
 void GEOM_Superv_i::AddItemToListOfLong(GEOM::GEOM_List_ptr& theList, 
-					long                     theObject)
+					CORBA::Long theObject)
 {
   MESSAGE("GEOM_Superv_i::AddItemToListOfLong(...)");
   if (GEOM_List_i<GEOM::ListOfLong>* aList = 
@@ -197,7 +197,7 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::CreateListOfDouble()
 //  AddItemToListOfDouble:
 //=============================================================================
 void GEOM_Superv_i::AddItemToListOfDouble(GEOM::GEOM_List_ptr& theList, 
-					  double                   theObject)
+					  CORBA::Double theObject)
 {
   MESSAGE("GEOM_Superv_i::AddItemToListOfDouble(...)");
   if (GEOM_List_i<GEOM::ListOfDouble>* aList = 
@@ -344,7 +344,7 @@ PortableServer::ServantBase_var GEOM_Superv_i::GetServant(CORBA::Object_ptr     
 //============================================================================
 SALOMEDS::TMPFile* GEOM_Superv_i::Save(SALOMEDS::SComponent_ptr theComponent,
 				       const char* theURL,
-				       bool isMultiFile)
+				       CORBA::Boolean isMultiFile)
 {
   SALOMEDS::TMPFile_var aStreamFile;
   return aStreamFile._retn();
@@ -356,7 +356,7 @@ SALOMEDS::TMPFile* GEOM_Superv_i::Save(SALOMEDS::SComponent_ptr theComponent,
 //============================================================================ 
 SALOMEDS::TMPFile* GEOM_Superv_i::SaveASCII(SALOMEDS::SComponent_ptr theComponent,
 					    const char* theURL,
-					    bool isMultiFile)
+					    CORBA::Boolean isMultiFile)
 {
   SALOMEDS::TMPFile_var aStreamFile;
   return aStreamFile._retn();
@@ -369,7 +369,7 @@ SALOMEDS::TMPFile* GEOM_Superv_i::SaveASCII(SALOMEDS::SComponent_ptr theComponen
 CORBA::Boolean GEOM_Superv_i::Load(SALOMEDS::SComponent_ptr theComponent,
 				   const SALOMEDS::TMPFile& theStream,
 				   const char* theURL,
-				   bool isMultiFile)
+				   CORBA::Boolean isMultiFile)
 {
   return false;
 }
@@ -381,7 +381,7 @@ CORBA::Boolean GEOM_Superv_i::Load(SALOMEDS::SComponent_ptr theComponent,
 CORBA::Boolean GEOM_Superv_i::LoadASCII(SALOMEDS::SComponent_ptr theComponent,
 					const SALOMEDS::TMPFile& theStream,
 					const char* theURL,
-					bool isMultiFile)
+					CORBA::Boolean isMultiFile)
 {
   return false;
 }
@@ -433,7 +433,7 @@ char* GEOM_Superv_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
 // function : CanPublishInStudy
 // purpose  : 
 //============================================================================
-bool GEOM_Superv_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
+CORBA::Boolean GEOM_Superv_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
 {
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
