@@ -33,6 +33,7 @@
 #include "SUIT_ViewWindow.h"
 #include "SVTK_ViewWindow.h"
 #include "SVTK_ViewModel.h"
+
 #include "OCCViewer_ViewWindow.h"
 #include "OCCViewer_ViewPort3d.h"
 
@@ -50,6 +51,7 @@
 #include <qcombobox.h>
 
 // VTK Includes
+#include "VTKViewer.h"
 #include <vtkCamera.h>
 #include <vtkRenderer.h>
 
