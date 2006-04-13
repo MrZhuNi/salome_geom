@@ -108,8 +108,12 @@ void GEOM_Superv_i::SetStudyID( CORBA::Long theId )
     SALOME::Session_var aSession = SALOME::Session::_narrow(anObject);
     if ( !CORBA::is_nil(aSession) ) {
       int aStudyID = aSession->GetActiveStudyId();
-      if ( theId != aStudyID ) MESSAGE("Warning : given study ID theId="<<theId<<" is wrong and will be replaced by the value "<<aStudyID);
-      myStudyID = aStudyID;
+      if ( theId != aStudyID && aStudyID > 0) { // mkr : IPAL12128
+	MESSAGE("Warning : given study ID theId="<<theId<<" is wrong and will be replaced by the value "<<aStudyID);
+	myStudyID = aStudyID;
+      }
+      else
+	myStudyID = theId; // mkr : IPAL12128
     }
   }
   
