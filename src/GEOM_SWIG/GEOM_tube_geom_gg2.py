@@ -142,6 +142,9 @@ assemblageId = addToStudy(assemblage, "assemblage")
 #
 # Display
 #
+gg = ImportComponentGUI("GEOM")
+gg.initGeomGen()
+
 gg.createAndDisplayGO(baseId)
 gg.setTransparency(baseId,0.5)
 gg.setDisplayMode(baseId,1)
@@ -154,4 +157,3 @@ gg.createAndDisplayGO(weldId)
 gg.setTransparency(weldId,0.5)
 gg.setDisplayMode(weldId,1)
 gg.setColor(weldId,0,0,255)
-
