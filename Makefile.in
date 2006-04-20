@@ -21,6 +21,7 @@ GEOM_en.xml \
 GEOM_fr.xml \
 GEOM.config \
 GEOMCatalog.xml \
+SalomeApp.xml \
 GEOMDS_Resources \
 ImportExport \
 ShHealing \
