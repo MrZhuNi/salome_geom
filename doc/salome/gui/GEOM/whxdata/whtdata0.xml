@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='windows-1252' ?>
 <tocdata>
-<book name="GEOM module" >
-  <item name="Introduction to GEOM" url="files/introduction_to_geom.htm" />
+<book name="Geometry module" >
+  <item name="Introduction to Geometry" url="files/introduction_to_geom.htm" />
   <item name="Importing/exporting geometrical objects" url="files/salome2_sp3_geomtoolsgui_functions.htm" />
   <book name="Creating geometrical objects" >
     <book name="Creating Basic Geometric Objects" >
