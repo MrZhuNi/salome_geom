@@ -38,7 +38,16 @@
 GEOM_IOperations_i::GEOM_IOperations_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, ::GEOM_IOperations* theImpl)
 :SALOME::GenericObj_i( thePOA ), _impl(theImpl), _engine(theEngine)
 {
-  thePOA->activate_object(this);
+  // Win32 porting: the next line is dangerous - GEOM_IOperations_i is an intermediate 
+  // base class, therefore <this> is not completely constructed here ->
+  // passing it to activate_object() leads to unpredictable behavior 
+  // resulted from memory corruption ( Rational Purify reports ABR errors ).
+  // Moreover, all GEOM_IxxxOperation_i servant classes are activated implicitly 
+  // by GEOM_Gen_i::GetxxxOperations() methods.
+  // Therefore, this line is commented.
+  // In case if <thePOA> does not have ImplicitActivation policy, then
+  // activate_object() calls will be necessary in all GEOM_IxxxOperation_i constructors!
+  //thePOA->activate_object(this);
 }
 
 //=============================================================================
