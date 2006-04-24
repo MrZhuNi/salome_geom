@@ -35,6 +35,9 @@
 #include <TopoDS_Wire.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
+#include <BRepOffsetAPI_MakePipeShell.hxx>
+#include <TColStd_HSequenceOfTransient.hxx>
+#include <GEOMImpl_IPipeDiffSect.hxx>
 
 #include <Standard_NullObject.hxx>
 #include <Standard_TypeMismatch.hxx>
@@ -68,37 +71,115 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
 
-  GEOMImpl_IPipe aCI (aFunction);
+  GEOMImpl_IPipe* aCI= 0;
   Standard_Integer aType = aFunction->GetType();
+  if(aType == PIPE_BASE_PATH)
+    aCI = new GEOMImpl_IPipe(aFunction);
+  else if(aType == PIPE_DIFFERENT_SECTIONS)
+    aCI = new GEOMImpl_IPipeDiffSect(aFunction);
+  else
+    return 0;
 
+  Handle(GEOM_Function) aRefPath = aCI->GetPath();
+  TopoDS_Shape aShapePath = aRefPath->GetValue();
+
+  if (aShapePath.IsNull())
+  {
+    Standard_NullObject::Raise("MakePipe aborted : null path argument");
+    if(aCI) delete aCI;
+  }
+  
+  // Get path contour
+  TopoDS_Wire aWire;
+  if (aShapePath.ShapeType() == TopAbs_WIRE) {
+    aWire = TopoDS::Wire(aShapePath);
+  } 
+  else {
+    if (aShapePath.ShapeType() == TopAbs_EDGE) {
+        TopoDS_Edge anEdge = TopoDS::Edge(aShapePath);
+        aWire = BRepBuilderAPI_MakeWire(anEdge);
+    } 
+    else {
+      Standard_TypeMismatch::Raise("MakePipe aborted : path shape is neither a wire nor an edge");
+      if(aCI) delete aCI;
+    } 
+  }
+  
   TopoDS_Shape aShape;
 
   if (aType == PIPE_BASE_PATH) {
-    Handle(GEOM_Function) aRefBase = aCI.GetBase();
-    Handle(GEOM_Function) aRefPath = aCI.GetPath();
+     
+    Handle(GEOM_Function) aRefBase = aCI->GetBase();
+   
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
-    TopoDS_Shape aShapePath = aRefPath->GetValue();
-    if (aShapeBase.IsNull() || aShapePath.IsNull()) {
-      Standard_NullObject::Raise("MakePipe aborted : null shape argument");
-    }
-
-    // Get path contour
-    TopoDS_Wire aWire;
-    if (aShapePath.ShapeType() == TopAbs_WIRE) {
-      aWire = TopoDS::Wire(aShapePath);
-    } else {
-      if (aShapePath.ShapeType() == TopAbs_EDGE) {
-        TopoDS_Edge anEdge = TopoDS::Edge(aShapePath);
-        aWire = BRepBuilderAPI_MakeWire(anEdge);
-      } else {
-        Standard_TypeMismatch::Raise("MakePipe aborted : path shape is neither a wire nor an edge");
-      }
+    
+    if (aShapeBase.IsNull()) {
+      Standard_NullObject::Raise("MakePipe aborted : null base argument");
+      if(aCI) delete aCI;
     }
 
     // Make pipe
     aShape = BRepOffsetAPI_MakePipe(aWire, aShapeBase);
   }
-  else {
+
+  //building pipe with different sections
+  else if (aType == PIPE_DIFFERENT_SECTIONS) {
+    GEOMImpl_IPipeDiffSect* aCIDS = (GEOMImpl_IPipeDiffSect*)aCI;
+
+    BRepOffsetAPI_MakePipeShell aBuilder(aWire);
+    Handle(TColStd_HSequenceOfTransient) aBasesObjs = aCIDS->GetBases ();
+    Handle(TColStd_HSequenceOfTransient) aLocObjs = aCIDS->GetLocations ();
+    Standard_Boolean aWithContact = (aCIDS->GetWithContactMode());
+    Standard_Boolean aWithCorrect = (aCIDS->GetWithCorrectionMode());
+
+    Standard_Integer i =1, nbBases = aBasesObjs->Length(), 
+      nbLocs = (aLocObjs.IsNull() ? 0 :aLocObjs->Length());
+
+    if(nbLocs && nbLocs != nbBases)
+    {
+      Standard_ConstructionError::Raise("Invalid input data for building PIPE: number of sections is not equql to number of locations ");
+      if(aCI) delete aCI;
+    }
+    Standard_Integer nbAdded =0;
+    for( ; i <= nbBases; i++) {
+      Handle(Standard_Transient) anItem = aBasesObjs->Value(i);
+      if(anItem.IsNull())
+	continue;
+       Handle(GEOM_Function) aRefBase = Handle(GEOM_Function)::DownCast(anItem);
+       if(aRefBase.IsNull())
+	 continue;
+       TopoDS_Shape aShapeBase = aRefBase->GetValue();
+       if(aShapeBase.IsNull())
+	 continue;
+
+       if(nbLocs) {
+	 Handle(Standard_Transient) anItemLoc = aLocObjs->Value(i);
+	 if(anItemLoc.IsNull())
+	   continue;
+	 Handle(GEOM_Function) aRefLoc = Handle(GEOM_Function)::DownCast(anItemLoc);
+         TopoDS_Shape aShapeLoc = aRefLoc->GetValue();
+	 if(aShapeLoc.IsNull() || aShapeLoc.ShapeType() != TopAbs_VERTEX)
+	   continue;
+	 TopoDS_Vertex aVert = TopoDS::Vertex(aShapeLoc);
+	 aBuilder.Add(aShapeBase,aVert,aWithContact,aWithCorrect);
+	 nbAdded++;
+       }
+       else {
+	 aBuilder.Add(aShapeBase,aWithContact,aWithCorrect);
+	 nbAdded++;
+       }
+      
+    }
+    if(!nbAdded || !aBuilder.IsReady())
+    {
+      Standard_ConstructionError::Raise("Invalid input data for building PIPE: bases are invalid");
+      if(aCI) delete aCI;
+    }
+    
+    
+    aBuilder.Build();
+    aShape = aBuilder.Shape();
+    
   }
 
   if (aShape.IsNull()) return 0;
@@ -106,12 +187,13 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
   BRepCheck_Analyzer ana (aShape, Standard_False);
   if (!ana.IsValid()) {
     Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
+    if(aCI) delete aCI;
   }
 
   aFunction->SetValue(aShape);
 
   log.SetTouched(Label());
-
+  if(aCI) delete aCI;
   return 1;
 }
 
