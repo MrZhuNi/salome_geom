@@ -47,6 +47,9 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeVectorTwoPnt (Handle(GEOM_Object) thePnt1,
                                         Handle(GEOM_Object) thePnt2);
 
+  Standard_EXPORT Handle(GEOM_Object) MakeTangentOnCurve(const Handle(GEOM_Object)& theCurve, 
+							 double theParameter);
+
   // Line
   Standard_EXPORT Handle(GEOM_Object) MakeLineTwoPnt (Handle(GEOM_Object) thePnt1,
                                       Handle(GEOM_Object) thePnt2);

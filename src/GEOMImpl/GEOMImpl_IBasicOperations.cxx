@@ -221,6 +221,55 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurve
   return aPoint;
 }
 
+//=============================================================================
+/*!
+ *  MakeTangentOnCurve
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeTangentOnCurve
+                            (const Handle(GEOM_Object)& theCurve, double theParameter)
+{
+  SetErrorCode(KO);
+
+  if (theCurve.IsNull()) return NULL;
+
+  //Add a new Vector object
+  Handle(GEOM_Object) aVec = GetEngine()->AddObject(GetDocID(), GEOM_VECTOR);
+
+  //Add a new Point function for creation a point relativley another point
+  Handle(GEOM_Function) aFunction = aVec->AddFunction(GEOMImpl_VectorDriver::GetID(), VECTOR_TANGENT_CURVE_PAR);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_VectorDriver::GetID()) return NULL;
+
+  GEOMImpl_IVector aVI (aFunction);
+
+  Handle(GEOM_Function) aRefFunction = theCurve->GetLastFunction();
+  if (aRefFunction.IsNull()) return NULL;
+
+  aVI.SetCurve(aRefFunction);
+  aVI.SetParameter(theParameter);
+
+  //Compute the vector value
+  try {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Vector driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aVec << " = geompy.MakeTangentOnCurve("
+                               << theCurve << ", " << theParameter << ")";
+
+  SetErrorCode(OK);
+  return aVec;
+}
 
 //=============================================================================
 /*!
