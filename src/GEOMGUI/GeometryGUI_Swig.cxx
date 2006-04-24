@@ -45,6 +45,7 @@
 #include "SVTK_ViewModel.h"
 #include "SVTK_ViewWindow.h"
 #include "SVTK_View.h"
+#include "SVTK_Renderer.h"
 
 #include "GEOM_Actor.h"
 #include "GEOM_Client.hxx"
@@ -230,6 +231,35 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
   ProcessVoidEvent(new TEventUpdateBrowser ());
 }
 
+void GEOM_Swig::createAndDisplayFitAllGO (const char* Entry)
+{
+  class TEventFitAll: public SALOME_Event
+  {
+    public:
+      TEventFitAll() {}
+      virtual void Execute() {
+	SUIT_Application* app = SUIT_Session::session()->activeApplication();
+	if (!app) return;
+	
+	if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(app))
+	  {
+	    SVTK_View* aView = aViewWindow->getView();
+	    aView->GetRenderer()->OnFitAll();
+	  }
+	else if (OCCViewer_Viewer* occViewer = GetOCCViewer(app))
+	  {  
+	    Handle(V3d_Viewer) aViewer3d = occViewer->getViewer3d();
+	    aViewer3d->InitActiveViews();
+	    
+	    if (aViewer3d->MoreActiveViews())
+	      aViewer3d->ActiveView()->FitAll();
+	  }
+      }
+  };
+
+  createAndDisplayGO(Entry);
+  ProcessVoidEvent(new TEventFitAll());
+}
 
 int GEOM_Swig::getIndexTopology(const char* SubIOR, const char* IOR)
 {
