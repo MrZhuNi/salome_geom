@@ -52,6 +52,9 @@ class GEOM_IBasicOperations_i :
    GEOM::GEOM_Object_ptr MakePointOnCurve (GEOM::GEOM_Object_ptr theCurve,
 					   CORBA::Double theParameter);
 
+   GEOM::GEOM_Object_ptr MakeTangentOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
+					     CORBA::Double theParameter);
+
    GEOM::GEOM_Object_ptr MakeVectorDXDYDZ (CORBA::Double theDX,
 					   CORBA::Double theDY,
 					   CORBA::Double theDZ);
