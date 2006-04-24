@@ -142,6 +142,8 @@ public:
 						CORBA::Double theZ);
   GEOM::GEOM_Object_ptr MakePointOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
 					  CORBA::Double theParameter);
+  GEOM::GEOM_Object_ptr MakeTangentOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
+					     CORBA::Double theParameter);
   GEOM::GEOM_Object_ptr MakeVectorDXDYDZ (CORBA::Double theDX,
 					  CORBA::Double theDY,
 					  CORBA::Double theDZ);
@@ -218,6 +220,17 @@ public:
 				     CORBA::Long theMinDeg, CORBA::Long theMaxDeg,
 				     CORBA::Double theTol2D, CORBA::Double theTol3D,
 				     CORBA::Long theNbIter);
+
+  GEOM::GEOM_Object_ptr MakeThruSections(const GEOM::ListOfGO& theSeqSections,
+					 CORBA::Boolean theModeSolid,
+					 CORBA::Double thePreci,
+					 CORBA::Boolean theRuled);
+  
+  GEOM::GEOM_Object_ptr MakePipeWithDifferentSections(const GEOM::ListOfGO& theBases,
+						      const GEOM::ListOfGO& theLocations,
+						      GEOM::GEOM_Object_ptr thePath,
+						      CORBA::Boolean theWithContact,
+						      CORBA::Boolean theWithCorrections);
   
   //-----------------------------------------------------------//
   // BooleanOperations                                         //

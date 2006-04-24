@@ -72,6 +72,10 @@ module GEOM
 					in double theZ) ;
     GEOM_Object MakePointOnCurve (in GEOM_Object theRefCurve,
 				  in double theParameter) ;
+
+    GEOM_Object MakeTangentOnCurve (in GEOM_Object theRefCurve,
+				     in double theParameter);
+
     GEOM_Object MakeVectorDXDYDZ (in double theDX,
 				  in double theDY,
 				  in double theDZ) ;
@@ -148,7 +152,17 @@ module GEOM
 			     in long theMinDeg, in long theMaxDeg,
 			     in double theTol2D, in double theTol3D,
 			     in long theNbIter) ;
+    GEOM_Object MakeThruSections(in ListOfGO theSeqSections,
+				 in boolean theModeSolid,
+				 in double thePreci,
+                                 in boolean theRuled);
 
+    GEOM_Object MakePipeWithDifferentSections (in ListOfGO theSeqBases,
+					       in ListOfGO theLocations,
+					       in GEOM_Object thePath,
+					       in boolean theWithContact ,
+					       in boolean theWithCorrection );
+    
     //-----------------------------------------------------------//
     // BooleanOperations                                         //
     //-----------------------------------------------------------//
