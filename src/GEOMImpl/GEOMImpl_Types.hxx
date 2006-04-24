@@ -79,6 +79,8 @@
 
 #define GEOM_MARKER 39
 
+#define GEOM_THRUSECTIONS 40
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -93,6 +95,7 @@
 
 #define VECTOR_TWO_PNT  1
 #define VECTOR_DX_DY_DZ 2
+#define VECTOR_TANGENT_CURVE_PAR 3
 
 #define PLANE_PNT_VEC   1
 #define PLANE_FACE      2
@@ -152,6 +155,10 @@
 #define REVOLUTION_BASE_AXIS_ANGLE 1
 
 #define PIPE_BASE_PATH 1
+#define PIPE_DIFFERENT_SECTIONS 2
+
+#define THRUSECTIONS_RULED 1
+#define THRUSECTIONS_SMOOTHED 2
 
 #define BOOLEAN_COMMON  1
 #define BOOLEAN_CUT     2
