@@ -12,11 +12,12 @@
 import salome
 import geompy
 geomgui = salome.ImportComponentGUI("GEOM") 
-
+import salome_ComponentGUI
 def addToStudy(shape, name):
     i = geompy.addToStudy(shape, name)
     salome.sg.updateObjBrowser(0)
-    geomgui.createAndDisplayGO(i)
+    if not isinstance(geomgui, type(salome_ComponentGUI)):
+        geomgui.createAndDisplayGO(i)
     return i
 
 # Piece
