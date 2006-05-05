@@ -231,6 +231,68 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
 }
 
 
+void GEOM_Swig::eraseGO (const char* Entry, bool allWindows)
+{
+  class TEvent: public SALOME_Event
+  {
+    std::string myEntry;
+    bool myFromAllWindows;
+  public:
+    TEvent(const char* theEntry, bool fromAllWindows):
+      myEntry(theEntry), myFromAllWindows(fromAllWindows)
+    {}
+    virtual void Execute()
+    {
+      SUIT_Application* app = SUIT_Session::session()->activeApplication();
+      if (!app) return;
+      Handle (SALOME_InteractiveObject) aIO = new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
+
+      if (myFromAllWindows) {
+	QPtrList<SUIT_ViewWindow> aWindows = app->desktop()->windows();
+	SUIT_ViewWindow* aWin = 0;
+	for (aWin = aWindows.first(); aWin; aWin = aWindows.next()) {
+	  EraseObject(aWin, aIO);
+	}
+      } else {
+	SUIT_ViewWindow* aWin = app->desktop()->activeWindow();
+	if (aWin)
+	  EraseObject(aWin, aIO);
+      }
+    }
+
+  private:
+    void EraseObject(SUIT_ViewWindow* theWin, Handle (SALOME_InteractiveObject) theIO)
+    {
+      if (theWin->getViewManager()->getType() == OCCViewer_Viewer::Type()){
+	OCCViewer_ViewWindow* vw = dynamic_cast<OCCViewer_ViewWindow*>( theWin );
+	if ( vw ) {
+	  OCCViewer_ViewManager* vm = dynamic_cast<OCCViewer_ViewManager*>( vw->getViewManager() );
+	  if ( vm ) {
+	    SOCC_Viewer* aViewer = dynamic_cast<SOCC_Viewer*>(vm->getOCCViewer());
+	    if (aViewer) {
+	      SALOME_Prs* aPrs = aViewer->CreatePrs(myEntry.c_str());
+	      if (aPrs) {
+		SALOME_OCCPrs* aOccPrs =  dynamic_cast<SALOME_OCCPrs*>(aPrs);
+		if (aOccPrs) {
+		  aViewer->Erase(aOccPrs);
+		  aViewer->Repaint();
+		}
+	      }
+	    }
+	  }
+	}
+      } else if (theWin->getViewManager()->getType() == SVTK_Viewer::Type()){
+	SVTK_ViewWindow* aViewWindow = dynamic_cast<SVTK_ViewWindow*>( theWin );
+	if (aViewWindow) {
+	  aViewWindow->Erase(theIO);
+	}
+      }
+    }
+
+  };
+  ProcessVoidEvent(new TEvent(Entry, allWindows));
+}
+
 int GEOM_Swig::getIndexTopology(const char* SubIOR, const char* IOR)
 {
   GEOM::GEOM_Gen_var aGeomGen = GeometryGUI::GetGeomGen();

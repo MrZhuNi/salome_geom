@@ -50,6 +50,7 @@ public:
   ~GEOM_Swig();
 
   void createAndDisplayGO(const char* Entry);
+  void eraseGO(const char* Entry, bool allWindows);
   void setDisplayMode(const char* Entry, int mode);
   void setColor(const char* Entry, int red, int green, int blue);
   void setTransparency(const char* Entry, float transp);
