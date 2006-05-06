@@ -45,13 +45,19 @@ class GEOMImpl_IPipeDiffSect : public GEOMImpl_IPipe
   { _func->SetReferenceList(PIPEDS_LIST_BASES,theBases); }
 
   Handle(TColStd_HSequenceOfTransient) GetBases ()
-  { return _func->GetReferenceList(PIPEDS_LIST_BASES); }
+  { 
+    Handle(TColStd_HSequenceOfTransient) aBases = _func->GetReferenceList(PIPEDS_LIST_BASES);
+    return aBases; 
+   }
 
   void SetLocations (const Handle(TColStd_HSequenceOfTransient)& theLocations) 
   { _func->SetReferenceList(PIPEDS_LIST_LOCATIONS,theLocations); }
 
   Handle(TColStd_HSequenceOfTransient) GetLocations ()
-  { return _func->GetReferenceList(PIPEDS_LIST_BASES); }
+  { 
+    Handle(TColStd_HSequenceOfTransient) aLocs = _func->GetReferenceList(PIPEDS_LIST_LOCATIONS);
+    return aLocs; 
+  }
 
   //void SetPath (const Handle(GEOM_Function)& thePath) { _func->SetReference(PIPEDS_ARG_PATH, thePath); }
 
@@ -69,9 +75,6 @@ class GEOMImpl_IPipeDiffSect : public GEOMImpl_IPipe
   int GetWithCorrectionMode()
   { return _func->GetInteger(PIPEDS_ARG_WITHCORRECT); }
 
- private:
-
-  Handle(GEOM_Function) _func;
 };
 
 #endif

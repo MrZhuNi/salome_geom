@@ -39,7 +39,7 @@ class GEOMImpl_IPipe
   Handle(GEOM_Function) GetBase() { return _func->GetReference(PIPE_ARG_BASE); }
   Handle(GEOM_Function) GetPath() { return _func->GetReference(PIPE_ARG_PATH); }
 
- private:
+ protected:
 
   Handle(GEOM_Function) _func;
 };

@@ -556,8 +556,8 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeWithDifferentSections(co
 
   for (ind = 0; ind < aNbBases; ind++) {
     if (theBases[ind] == NULL) continue;
-    Handle(GEOM_Object) aBase = GetOperations()->GetEngine()->GetObject
-      (theBases[ind]->GetStudyID(), theBases[ind]->GetEntry());
+    Handle(GEOM_Object) aBase = GetOperations()->GetEngine()->GetObject(theBases[ind]->GetStudyID(), 
+			theBases[ind]->GetEntry());
     if(aBase.IsNull())
       continue;
     if(aNbLocs)

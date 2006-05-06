@@ -1056,9 +1056,9 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
 
   Standard_Integer nbBases = theBases->Length();
   
-  if (!nbBases) 
+  if (!nbBases)
     return anObj;
-
+  
   Standard_Integer nbLocs =  (theLocations.IsNull() ? 0 :theLocations->Length());
   //Add a new Pipe object
   Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
@@ -1100,7 +1100,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
       if(anItemLoc.IsNull())
 	continue;
     
-      Handle(GEOM_Object) aLoc = Handle(GEOM_Object)::DownCast(anItem);
+      Handle(GEOM_Object) aLoc = Handle(GEOM_Object)::DownCast(anItemLoc);
       if(aLoc.IsNull())
 	continue;
       Handle(GEOM_Function) aRefLoc = aLoc->GetLastFunction();
@@ -1114,17 +1114,16 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
   if(!aSeqBases->Length())
     return anObj;
 
-  
   aCI.SetBases(aSeqBases);
   aCI.SetLocations(aSeqLocs);
   aCI.SetPath(aRefPath);
   aCI.SetWithContactMode(theWithContact);
   aCI.SetWithCorrectionMode(theWithCorrections);
-
+  
   //Compute the Pipe value
   try {
     if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("ThruSections driver failed");
+      SetErrorCode("Pipe with defferent section driver failed");
       return anObj;
     }
   }
