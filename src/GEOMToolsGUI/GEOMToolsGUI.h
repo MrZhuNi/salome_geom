@@ -36,7 +36,7 @@
 #include <SALOMEDSClient.hxx>
 #include <SALOME_ListIO.hxx>
 
-#include <CORBA.h>
+#include <omniORB4/CORBA.h>
 
 //=================================================================================
 // class    : GEOMToolsGUI
