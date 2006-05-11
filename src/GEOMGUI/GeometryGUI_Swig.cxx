@@ -63,10 +63,13 @@
 #include <TopoDS_Shape.hxx>
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
+#include <AIS_Drawer.hxx>
 
 // IDL Headers
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
+
+#include <vtkRenderer.h>
 
 using namespace std;
 
@@ -480,6 +483,69 @@ void GEOM_Swig::setTransparency(const char* theEntry, float transp)
   };
 
   ProcessVoidEvent(new TEvent (theEntry, transp));
+}
+
+
+void GEOM_Swig::setDeflection(const char* theEntry, float theDeflect)
+{
+  class TEvent: public SALOME_Event {
+    std::string myEntry;
+    float myParam;
+  public:
+    TEvent(const char* theEntryArg, float theParam):
+      myEntry(theEntryArg), myParam(theParam)
+    {}
+    virtual void Execute() {
+      SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
+      if (!anApp) return;
+
+      Handle(SALOME_InteractiveObject) anIO =
+        new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
+
+      if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(anApp)) {
+	vtkActorCollection* aActors = aViewWindow->getRenderer()->GetActors();
+	aActors->InitTraversal();
+	while (vtkActor* aAct = aActors->GetNextActor()) {
+	  if (GEOM_Actor* aGeomActor = dynamic_cast<GEOM_Actor*>(aAct)) {
+	    if (aGeomActor->hasIO()) {
+	      Handle(SALOME_InteractiveObject) aNextIO = aGeomActor->getIO();
+	      if (aNextIO->isSame(anIO)) {
+		aGeomActor->setDeflection(myParam);
+		aViewWindow->Repaint();
+		return;
+	      }
+	    }
+	  }
+	}
+	//	aView->SetTransparency(anIO, myParam);
+	//aView->Repaint();
+      } else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
+	Handle(AIS_InteractiveContext) aContext = occViewer->getAISContext();
+	AIS_ListOfInteractive aAISList;
+	aContext->DisplayedObjects(aAISList);
+	AIS_ListIteratorOfListOfInteractive it(aAISList);
+	for (; it.More(); it.Next()) {
+	  Handle(SALOME_InteractiveObject) aObj = 
+	    Handle(SALOME_InteractiveObject)::DownCast(it.Value()->GetOwner());
+	  if ((!aObj.IsNull()) && aObj->hasEntry() && aObj->isSame(anIO)) {
+	    Handle(AIS_Shape) aShape = Handle(AIS_Shape)::DownCast(it.Value());
+	    if (!aShape.IsNull()) {
+	      Handle(AIS_Drawer) aDrawer = aShape->Attributes();
+	      if (aDrawer.IsNull())
+		aDrawer = new AIS_Drawer();
+	      aDrawer->SetDeviationCoefficient(myParam);
+	      aShape->SetAttributes(aDrawer);
+	      aContext->Redisplay(aShape, true, true);
+	      aContext->UpdateCurrentViewer();
+	      return;
+	    }
+	  }
+	}
+      }
+    }
+  };
+
+  ProcessVoidEvent(new TEvent (theEntry, theDeflect));
 }
 
 
