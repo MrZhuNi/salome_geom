@@ -30,6 +30,8 @@
 #include <BRepCheck_Analyzer.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
 
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
@@ -99,18 +101,27 @@ Standard_Integer GEOMImpl_ThruSectionsDriver::Execute(TFunction_Logbook& log) co
       continue;
 
     TopoDS_Shape aShapeSection = aSection->GetValue();
-    if(aShapeSection == TopAbs_WIRE)
+    TopAbs_ShapeEnum aTypeSect = aShapeSection.ShapeType();
+    if(aTypeSect == TopAbs_WIRE)
     {
-      TopoDS_Wire aWire = TopoDS::Wire(aShapeSection);
-      aBuilder.AddWire(aSectWire);
+      BRepBuilderAPI_MakeWire aTool;
+      
+      TopExp_Explorer aExp(aShapeSection,TopAbs_EDGE);
+      for( ; aExp.More() ; aExp.Next())
+	aTool.Add(TopoDS::Edge(aExp.Current()));
+      if(aTool.IsDone())
+      {
+	TopoDS_Wire aSectWire = aTool.Wire();//TopoDS::Wire(aShapeSection);
+	aBuilder.AddWire(aSectWire);
+      }
     }
-    else if(aShapeSection == TopAbs_EDGE) {
-      TopoDS_Edge anEdge = TopoDS::Edge(aShapePath);
+    else if(aTypeSect == TopAbs_EDGE) {
+      TopoDS_Edge anEdge = TopoDS::Edge(aShapeSection);
       TopoDS_Wire aWire = BRepBuilderAPI_MakeWire(anEdge);
       aBuilder.AddWire(aWire);
     }
-    else if(aShapeSection == TopAbs_VERTEX) {
-      TopoDS_Vertex aVert = TopoDS::Vertex(aShapePath);
+    else if(aTypeSect == TopAbs_VERTEX) {
+      TopoDS_Vertex aVert = TopoDS::Vertex(aShapeSection);
       aBuilder.AddVertex(aVert);
     }
     else
@@ -122,7 +133,7 @@ Standard_Integer GEOMImpl_ThruSectionsDriver::Execute(TFunction_Logbook& log) co
   //make surface by sections
   aBuilder.Build();
   TopoDS_Shape aShape = aBuilder.Shape();
- 
+
   if (aShape.IsNull()) return 0;
 
   BRepCheck_Analyzer ana (aShape, Standard_False);
