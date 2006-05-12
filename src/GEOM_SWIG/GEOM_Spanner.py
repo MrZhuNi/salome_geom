@@ -391,7 +391,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
 
     print "-------------------------- NumberOfSegments"
 
-    hypNbSeg3 = smesh.CreateHypothesis("NumberOfSegments", "libStdMeshersEngine.so")
+    hypNbSeg3 = smesh.CreateHypothesis("NumberOfSegments", "StdMeshersEngine")
     hypNbSeg3.SetNumberOfSegments(3)
     print hypNbSeg3.GetName()
     print hypNbSeg3.GetId()
@@ -403,7 +403,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
 
     print "-------------------------- LocalLength"
 
-    hypLen1 = smesh.CreateHypothesis("LocalLength", "libStdMeshersEngine.so")
+    hypLen1 = smesh.CreateHypothesis("LocalLength", "StdMeshersEngine")
     hypLen1.SetLength(10)
     print hypLen1.GetName()
     print hypLen1.GetId()
@@ -415,7 +415,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
 
     print "-------------------------- Propagation"
 
-    hypProp = smesh.CreateHypothesis("Propagation", "libStdMeshersEngine.so")
+    hypProp = smesh.CreateHypothesis("Propagation", "StdMeshersEngine")
     print hypProp.GetName()
     print hypProp.GetId()
 
@@ -425,7 +425,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
 
     #print "-------------------------- NumberOfSegments"
     #
-    #hypNbSeg15 = smesh.CreateHypothesis("NumberOfSegments", "libStdMeshersEngine.so")
+    #hypNbSeg15 = smesh.CreateHypothesis("NumberOfSegments", "StdMeshersEngine")
     #hypNbSeg15.SetNumberOfSegments(15)
     #print hypNbSeg15.GetName()
     #print hypNbSeg15.GetId()
@@ -437,7 +437,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
 
     print "-------------------------- Regular_1D"
 
-    algoReg = smesh.CreateHypothesis("Regular_1D", "libStdMeshersEngine.so")
+    algoReg = smesh.CreateHypothesis("Regular_1D", "StdMeshersEngine")
     listHyp = algoReg.GetCompatibleHypothesis()
     for hyp in listHyp:
         print hyp
@@ -450,7 +450,7 @@ def MakeSpanner (salome, geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh =
 
     print "-------------------------- Quadrangle_2D"
 
-    algoQuad = smesh.CreateHypothesis("Quadrangle_2D", "libStdMeshersEngine.so")
+    algoQuad = smesh.CreateHypothesis("Quadrangle_2D", "StdMeshersEngine")
     listHyp = algoQuad.GetCompatibleHypothesis()
     for hyp in listHyp:
         print hyp
