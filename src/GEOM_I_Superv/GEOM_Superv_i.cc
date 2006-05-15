@@ -630,6 +630,19 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMarker
   return myBasicOp->MakeMarker(theOX, theOY, theOZ, theXDX, theXDY, theXDZ, theYDX, theYDY, theYDZ);
 }
 
+//=============================================================================
+//  MakeTangentPlaneOnFace:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTangentPlaneOnFace (GEOM::GEOM_Object_ptr theFace, 
+						 CORBA::Double theParameterU,
+						 CORBA::Double theParameterV,
+						 CORBA::Double theTrimSize)
+{
+  MESSAGE("GEOM_Superv_i::MakeTangentPlaneOnFace");
+  getBasicOp();
+  return myBasicOp->MakeTangentPlaneOnFace(theFace, theParameterU,theParameterV,theTrimSize);
+}
+
 //================= Primitives Construction : 3DPrimOperations ================
 //=============================================================================
 //  MakeBox:

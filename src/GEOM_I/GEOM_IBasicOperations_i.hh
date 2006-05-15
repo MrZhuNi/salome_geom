@@ -84,6 +84,11 @@ class GEOM_IBasicOperations_i :
 				     CORBA::Double theXDX, CORBA::Double theXDY, CORBA::Double theXDZ,
 				     CORBA::Double theYDX, CORBA::Double theYDY, CORBA::Double theYDZ);
 
+   GEOM::GEOM_Object_ptr MakeTangentPlaneOnFace (GEOM::GEOM_Object_ptr theFace, 
+						 CORBA::Double theParameterU,
+						 CORBA::Double theParameterV,
+						 CORBA::Double theTrimSize);
+
    ::GEOMImpl_IBasicOperations* GetOperations() { return (::GEOMImpl_IBasicOperations*)GetImpl(); }
 };
 

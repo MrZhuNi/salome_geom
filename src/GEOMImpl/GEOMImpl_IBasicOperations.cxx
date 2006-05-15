@@ -690,3 +690,60 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarker
   SetErrorCode(OK);
   return aMarker;
 }
+
+//=============================================================================
+/*!
+ *  MakeTangentPlaneOnFace
+ */
+//=============================================================================
+
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeTangentPlaneOnFace(const Handle(GEOM_Object)& theFace,
+							              double theParamU,
+								      double theParamV,
+								      double theSize)
+{
+   SetErrorCode(KO);
+
+  if (theFace.IsNull()) return NULL;
+
+  //Add a new Plane object
+  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GetDocID(), GEOM_PLANE);
+
+  //Add a new Plane function
+  Handle(GEOM_Function) aFunction =
+    aPlane->AddFunction(GEOMImpl_PlaneDriver::GetID(), PLANE_TANGENT_FACE);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PlaneDriver::GetID()) return NULL;
+
+  GEOMImpl_IPlane aPI (aFunction);
+
+  Handle(GEOM_Function) aRef = theFace->GetLastFunction();
+  if (aRef.IsNull()) return NULL;
+
+  aPI.SetFace(aRef);
+  aPI.SetSize(theSize);
+  aPI.SetParameterU(theParamU);
+  aPI.SetParameterV(theParamV);
+
+  //Compute the Plane value
+  try {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Plane driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aPlane << " = geompy.MakeTangentPlaneOnFace("
+                               << theFace << ", " <<theParamU <<", "<<theParamV <<", "<< theSize << ")";
+
+  SetErrorCode(OK);
+  return aPlane;
+}
+
