@@ -92,6 +92,7 @@
 #define POINT_XYZ       1
 #define POINT_XYZ_REF   2
 #define POINT_CURVE_PAR 3
+//#define POINT_FACE_PAR 4
 
 #define VECTOR_TWO_PNT  1
 #define VECTOR_DX_DY_DZ 2
@@ -100,6 +101,7 @@
 #define PLANE_PNT_VEC   1
 #define PLANE_FACE      2
 #define PLANE_THREE_PNT 3
+#define PLANE_TANGENT_FACE 4
 
 #define LINE_TWO_PNT 1
 #define LINE_PNT_DIR 2
