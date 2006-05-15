@@ -86,7 +86,7 @@ Standard_Integer GEOMImpl_ThruSectionsDriver::Execute(TFunction_Logbook& log) co
     return 0;
 
   BRepOffsetAPI_ThruSections aBuilder(isSolid,aType == THRUSECTIONS_RULED,aPreci);
-  
+  aBuilder.CheckCompatibility(Standard_False);
   //added sections for building surface
   Standard_Integer i =1;
   Standard_Integer nbAdded =0;
@@ -104,7 +104,8 @@ Standard_Integer GEOMImpl_ThruSectionsDriver::Execute(TFunction_Logbook& log) co
     TopAbs_ShapeEnum aTypeSect = aShapeSection.ShapeType();
     if(aTypeSect == TopAbs_WIRE)
     {
-      BRepBuilderAPI_MakeWire aTool;
+      aBuilder.AddWire(TopoDS::Wire(aShapeSection));
+      /*BRepBuilderAPI_MakeWire aTool;
       
       TopExp_Explorer aExp(aShapeSection,TopAbs_EDGE);
       for( ; aExp.More() ; aExp.Next())
@@ -113,7 +114,7 @@ Standard_Integer GEOMImpl_ThruSectionsDriver::Execute(TFunction_Logbook& log) co
       {
 	TopoDS_Wire aSectWire = aTool.Wire();//TopoDS::Wire(aShapeSection);
 	aBuilder.AddWire(aSectWire);
-      }
+      }*/
     }
     else if(aTypeSect == TopAbs_EDGE) {
       TopoDS_Edge anEdge = TopoDS::Edge(aShapeSection);
@@ -134,12 +135,14 @@ Standard_Integer GEOMImpl_ThruSectionsDriver::Execute(TFunction_Logbook& log) co
   aBuilder.Build();
   TopoDS_Shape aShape = aBuilder.Shape();
 
-  if (aShape.IsNull()) return 0;
-
-  BRepCheck_Analyzer ana (aShape, Standard_False);
-  if (!ana.IsValid()) {
-    Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
+  if (aShape.IsNull()) {
+     return 0;
   }
+
+  //BRepCheck_Analyzer ana (aShape, Standard_False);
+  //if (!ana.IsValid()) {
+  //  Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
+  //}
 
   aFunction->SetValue(aShape);
 
