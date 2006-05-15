@@ -77,16 +77,22 @@ extern "C" {
 
 
 
-GEOM::GEOM_Gen_var GeometryGUI::myComponentGeom = GEOM::GEOM_Gen::_nil(); 
+GEOM::GEOM_Gen_var GeometryGUI::myComponentGeom = GEOM::GEOM_Gen::_nil();
 
-GEOM::GEOM_Gen_var   GeometryGUI::GetGeomGen()        { return GeometryGUI::myComponentGeom; }
+GEOM::GEOM_Gen_var GeometryGUI::GetGeomGen()
+{
+  // Bug 12290: exception in Mesh GUI on GEOMBase::GetShape() if Geometry GUI hasn't been loaded
+  if (CORBA::is_nil(myComponentGeom))
+    InitGeomGen();
+  return GeometryGUI::myComponentGeom;
+}
 
-bool GeometryGUI::InitGeomGen() 
+bool GeometryGUI::InitGeomGen()
 {
   GeometryGUI aGG;
-  if( CORBA::is_nil( myComponentGeom ) ) return false;   
-  return true; 
-}			   
+  if( CORBA::is_nil( myComponentGeom ) ) return false;
+  return true;
+}
 
 //=======================================================================
 // function : ClientSObjectToObject
@@ -726,8 +732,8 @@ void GeometryGUI::createGeomAction( const int id, const QString& po_id, const QS
 
 
 //=======================================================================
-// function : GeometryGUI::Deactivate()
-// purpose  : Called when GEOM module is deactivated [ static ]
+// function : GeometryGUI::initialize()
+// purpose  : Called when GEOM module is created
 //=======================================================================
 void GeometryGUI::initialize( CAM_Application* app )
 {
@@ -1099,8 +1105,8 @@ void GeometryGUI::initialize( CAM_Application* app )
 }
 
 //=======================================================================
-// function : GeometryGUI::Deactivate()
-// purpose  : Called when GEOM module is deactivated [ static ]
+// function : GeometryGUI::activateModule()
+// purpose  : Called when GEOM module is activated
 //=======================================================================
 bool GeometryGUI::activateModule( SUIT_Study* study )
 {
@@ -1115,8 +1121,14 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   setMenuShown( true );
   setToolShown( true );
 
-  connect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ), 
+  connect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
 	  this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
+
+  // Reset actions accelerator keys
+  //action(111)->setAccel(QKeySequence(CTRL + Key_I)); // Import
+  //action(121)->setAccel(QKeySequence(CTRL + Key_E)); // Export
+  action(111)->setEnabled(true); // Import
+  action(121)->setEnabled(true); // Export
 
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
@@ -1136,19 +1148,19 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
   for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
     sr->setEnabled(true);
-  
+
   // disable VTK selectors
   getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
   for ( LightApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
     sr->setEnabled(true);
-  
+
   return true;
 }
 
 
 //=======================================================================
-// function : GeometryGUI::Deactivate()
-// purpose  : Called when GEOM module is deactivated [ static ]
+// function : GeometryGUI::deactivateModule()
+// purpose  : Called when GEOM module is deactivated
 //=======================================================================
 bool GeometryGUI::deactivateModule( SUIT_Study* study )
 {
@@ -1163,6 +1175,12 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
     it.data()->deactivate();  
+
+  // Unset actions accelerator keys
+  //action(111)->setAccel(QKeySequence()); // Import
+  //action(121)->setAccel(QKeySequence()); // Export
+  action(111)->setEnabled(false); // Import
+  action(121)->setEnabled(false); // Export
 
   myOCCSelectors.clear();
   getApp()->selectionMgr()->setEnabled( true, OCCViewer_Viewer::Type() );
@@ -1485,7 +1503,7 @@ void GeometryGUI::BuildPresentation( const Handle(SALOME_InteractiveObject)& io,
 }
 
 //=======================================================================
-// function : setCommandsEnabled()
+// function : onWindowActivated()
 // purpose  : update menu items' status - disable non-OCC-viewer-compatible actions
 //=======================================================================
 void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )

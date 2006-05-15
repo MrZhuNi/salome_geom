@@ -50,19 +50,13 @@
 using namespace boost;
 using namespace std;
 
-EntityGUI* EntityGUI::myGUIObject = 0;
-
 //=======================================================================
 // function : GetEntityGUI()
 // purpose  : Get the only EntityGUI object [ static ]
 //=======================================================================
 EntityGUI* EntityGUI::GetEntityGUI( GeometryGUI* parent )
 {
-  if ( myGUIObject == 0 ) {
-    // init EntityGUI only once
-    myGUIObject = new EntityGUI( parent );
-  }
-  return myGUIObject;
+  return new EntityGUI( parent );
 }
 
 //=======================================================================

@@ -61,9 +61,6 @@ public :
   // AIS shape used only during topo/geom simulations
   Handle(AIS_Shape) mySimulationShape1;
   Handle(AIS_Shape) mySimulationShape2;
-
-private:
-  static EntityGUI* myGUIObject; //!< the only EntityGUI object
 };
 
 #endif
