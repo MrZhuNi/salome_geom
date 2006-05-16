@@ -105,16 +105,6 @@ Standard_Integer GEOMImpl_ThruSectionsDriver::Execute(TFunction_Logbook& log) co
     if(aTypeSect == TopAbs_WIRE)
     {
       aBuilder.AddWire(TopoDS::Wire(aShapeSection));
-      /*BRepBuilderAPI_MakeWire aTool;
-      
-      TopExp_Explorer aExp(aShapeSection,TopAbs_EDGE);
-      for( ; aExp.More() ; aExp.Next())
-	aTool.Add(TopoDS::Edge(aExp.Current()));
-      if(aTool.IsDone())
-      {
-	TopoDS_Wire aSectWire = aTool.Wire();//TopoDS::Wire(aShapeSection);
-	aBuilder.AddWire(aSectWire);
-      }*/
     }
     else if(aTypeSect == TopAbs_EDGE) {
       TopoDS_Edge anEdge = TopoDS::Edge(aShapeSection);
@@ -139,10 +129,10 @@ Standard_Integer GEOMImpl_ThruSectionsDriver::Execute(TFunction_Logbook& log) co
      return 0;
   }
 
-  //BRepCheck_Analyzer ana (aShape, Standard_False);
-  //if (!ana.IsValid()) {
-  //  Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
-  //}
+  BRepCheck_Analyzer ana (aShape, Standard_False);
+  if (!ana.IsValid()) {
+    Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
+  }
 
   aFunction->SetValue(aShape);
 
