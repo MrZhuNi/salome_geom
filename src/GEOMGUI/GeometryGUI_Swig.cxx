@@ -51,6 +51,7 @@
 #include "GEOM_AISShape.hxx"
 #include "GEOM_AssemblyBuilder.h"
 #include "GEOM_InteractiveObject.hxx"
+#include "GEOM_Displayer.h"
 
 #include "SALOME_Event.hxx"
 
@@ -177,7 +178,8 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
                                         "GEOM",
                                         const_cast<char*>( obj->GetID().c_str()));
 
-	  if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(app)) {
+	  GEOM_Displayer(ActiveStudy).Display(anIO, true);
+	  /*if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(app)) {
 	    SVTK_View* aView = aViewWindow->getView();
 	    int aMode = aView->GetDisplayMode();
 
@@ -199,15 +201,16 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
 	    aSh->setIO(anIO);
 	    ic->Display(aSh);
 	    ic->AddOrRemoveCurrentObject(aSh,true);
-	  }
+	    }*/
 	  // update object browser
-	  SalomeApp_Application* app = NULL; //dynamic_cast<SalomeApp_Application*>(app);
+	  // Already defined as a next operation
+	  /*	  SalomeApp_Application* app = NULL; //dynamic_cast<SalomeApp_Application*>(app);
 	  if (app) {
 	    CAM_Module* module = app->module("Geometry");
 	    SalomeApp_Module* appMod = dynamic_cast<SalomeApp_Module*>(module);
 	    if (appMod)
 	      appMod->updateObjBrowser(true);
-	  }
+	      }*/
 	}
       }
     }
@@ -484,9 +487,13 @@ void GEOM_Swig::eraseGO (const char* Entry, bool allWindows)
     {
       SUIT_Application* app = SUIT_Session::session()->activeApplication();
       if (!app) return;
+      SalomeApp_Study* ActiveStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+      if (!ActiveStudy) return;
+
       Handle (SALOME_InteractiveObject) aIO = new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
 
-      if (myFromAllWindows) {
+      GEOM_Displayer(ActiveStudy).Erase(aIO, true);
+      /*      if (myFromAllWindows) {
 	QPtrList<SUIT_ViewWindow> aWindows = app->desktop()->windows();
 	SUIT_ViewWindow* aWin = 0;
 	for (aWin = aWindows.first(); aWin; aWin = aWindows.next()) {
@@ -496,10 +503,10 @@ void GEOM_Swig::eraseGO (const char* Entry, bool allWindows)
 	SUIT_ViewWindow* aWin = app->desktop()->activeWindow();
 	if (aWin)
 	  EraseObject(aWin, aIO);
-      }
+	  }*/
     }
 
-  private:
+    /*  private:
     void EraseObject(SUIT_ViewWindow* theWin, Handle (SALOME_InteractiveObject) theIO)
     {
       if (theWin->getViewManager()->getType() == OCCViewer_Viewer::Type()){
@@ -526,7 +533,7 @@ void GEOM_Swig::eraseGO (const char* Entry, bool allWindows)
 	  aViewWindow->Erase(theIO);
 	}
       }
-    }
+      }*/
 
   };
   ProcessVoidEvent(new TEvent(Entry, allWindows));
