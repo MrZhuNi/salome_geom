@@ -203,14 +203,13 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
 	    ic->AddOrRemoveCurrentObject(aSh,true);
 	    }*/
 	  // update object browser
-	  // Already defined as a next operation
-	  /*	  SalomeApp_Application* app = NULL; //dynamic_cast<SalomeApp_Application*>(app);
+	  SalomeApp_Application* app = NULL; //dynamic_cast<SalomeApp_Application*>(app);
 	  if (app) {
 	    CAM_Module* module = app->module("Geometry");
 	    SalomeApp_Module* appMod = dynamic_cast<SalomeApp_Module*>(module);
 	    if (appMod)
 	      appMod->updateObjBrowser(true);
-	      }*/
+	  }
 	}
       }
     }
