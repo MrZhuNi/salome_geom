@@ -42,7 +42,9 @@
 #include <Standard_NullObject.hxx>
 #include <Standard_TypeMismatch.hxx>
 #include <Standard_ConstructionError.hxx>
-
+#include <ShapeFix_Shape.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
+#include <Precision.hxx>
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -85,7 +87,9 @@ Standard_Integer GEOMImpl_ThruSectionsDriver::Execute(TFunction_Logbook& log) co
   if(!aNbSections )
     return 0;
 
-  BRepOffsetAPI_ThruSections aBuilder(isSolid,aType == THRUSECTIONS_RULED,aPreci);
+  BRepOffsetAPI_ThruSections aBuilder(isSolid,aType ==THRUSECTIONS_RULED,aPreci);
+  
+ 
   aBuilder.CheckCompatibility(Standard_False);
   //added sections for building surface
   Standard_Integer i =1;
@@ -103,9 +107,8 @@ Standard_Integer GEOMImpl_ThruSectionsDriver::Execute(TFunction_Logbook& log) co
     TopoDS_Shape aShapeSection = aSection->GetValue();
     TopAbs_ShapeEnum aTypeSect = aShapeSection.ShapeType();
     if(aTypeSect == TopAbs_WIRE)
-    {
       aBuilder.AddWire(TopoDS::Wire(aShapeSection));
-    }
+
     else if(aTypeSect == TopAbs_EDGE) {
       TopoDS_Edge anEdge = TopoDS::Edge(aShapeSection);
       TopoDS_Wire aWire = BRepBuilderAPI_MakeWire(anEdge);
@@ -120,19 +123,27 @@ Standard_Integer GEOMImpl_ThruSectionsDriver::Execute(TFunction_Logbook& log) co
   }  
   if(!nbAdded)
      Standard_TypeMismatch::Raise("ThruSections aborted : invalid types of sections");
-  
   //make surface by sections
   aBuilder.Build();
   TopoDS_Shape aShape = aBuilder.Shape();
-
   if (aShape.IsNull()) {
-     return 0;
+    return 0;
   }
 
   BRepCheck_Analyzer ana (aShape, Standard_False);
   if (!ana.IsValid()) {
-    Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
+    //algoritm thru section creats on the arcs invalid shapes gka
+    ShapeFix_ShapeTolerance aSFT;
+    aSFT.LimitTolerance(aShape,Precision::Confusion(),Precision::Confusion());
+    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
+    aSfs->SetPrecision(Precision::Confusion());
+    aSfs->Perform();
+    aShape = aSfs->Shape();
+    //ana.Init(aShape, Standard_False);
+    //if (!ana.IsValid()) 
+    //  Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
   }
+
 
   aFunction->SetValue(aShape);
 
