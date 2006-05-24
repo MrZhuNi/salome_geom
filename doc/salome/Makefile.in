@@ -13,6 +13,8 @@ srcdir=@srcdir@
 VPATH=.:@srcdir@
 
 SUBDIRS= tui gui
+SUBDIRSGUI= gui
+SUBDIRSTUI= tui
 
 @COMMENCE@
 
@@ -20,7 +22,16 @@ docs:
 	@@SETX@; for d in $(SUBDIRS); do 	\
 	   (cd $$d && $(MAKE) $@) || exit 1; 	\
 	done; \
-	cp -f $(srcdir)/GEOM_index_v3.1.0.html GEOM_index_v3.1.0.html
+
+usr_docs:
+	@@SETX@; for d in $(SUBDIRSGUI); do 	\
+	   (cd $$d && $(MAKE) $@) || exit 1; 	\
+	done; \
+
+dev_docs:
+	@@SETX@; for d in $(SUBDIRSTUI); do 	\
+	   (cd $$d && $(MAKE) $@) || exit 1; 	\
+	done; \
 
 clean:
 	@@SETX@; for d in $(SUBDIRS); do 	\
@@ -36,10 +47,8 @@ install:
 	$(MAKE) docs
 	(cd tui && $(MAKE) install);
 	(cd gui && $(MAKE) install);
-	cp -f GEOM_index_v3.1.0.html $(docdir)
 
 uninstall:
 	@@SETX@; for d in $(SUBDIRS); do 	\
 	   (cd $$d && $(MAKE) $@) || exit 1; 	\
 	done; \
-	rm -fr $(docdir)/GEOM_index_v3.1.0.html

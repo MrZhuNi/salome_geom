@@ -65,6 +65,8 @@ docs:
 	cp -fr $(srcdir)/GEOM/HTML/ GEOM/
 	rm -fr INPUT
 
+dev_docs: docs
+
 clean:
 	rm -fr GEOM
 
