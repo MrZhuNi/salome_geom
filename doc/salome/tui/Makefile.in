@@ -23,8 +23,9 @@ PYTHON_SCRIPTS = \
 #PYTHON_SCRIPTS_PY2 = py2/geompy.py py2/GEOM_TestMeasures.py
 
 docs:
-	cp -fr $(srcdir)/GEOM ./INPUT
-	cp -fr ./GEOM/doxyfile ./GEOM/doxyfile_py ./INPUT
+	cp -fr $(srcdir)/GEOM ./INPUT; \
+	cp -fr ./GEOM/doxyfile ./GEOM/doxyfile_py ./INPUT; \
+	cp -fr ./GEOM/sources/static/tree.js ./INPUT/sources/static; \
 	cd INPUT; \
 	sed 's|../../../share/salome|$(root_srcdir)|' ./doxyfile > ./doxyfile1; \
 	sed 's|../../build/salome|$(top_builddir)|' ./doxyfile1 > ./doxyfile2; \
