@@ -26,6 +26,7 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 #include <TDocStd_Document.hxx>
+#include <TColStd_HSequenceOfTransient.hxx>
 
 class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
  public:
@@ -73,6 +74,17 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) MakeFilling (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg, double theTol2D, double theTol3D, int theNbIter);
 
+  Standard_EXPORT Handle(GEOM_Object) MakeThruSections(const Handle(TColStd_HSequenceOfTransient)& theSeqSections,
+						       bool theModeSolid,
+						       double thePreci,
+                                                       bool theRuled);
+
+  Standard_EXPORT Handle(GEOM_Object) MakePipeWithDifferentSections(
+						  const Handle(TColStd_HSequenceOfTransient)& theBases,
+						  const Handle(TColStd_HSequenceOfTransient)& theLocations,
+						  const Handle(GEOM_Object)& thePath,
+						  bool theWithContact,
+                                                  bool theWithCorrections);
 };
 
 #endif

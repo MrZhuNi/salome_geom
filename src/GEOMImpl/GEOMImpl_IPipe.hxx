@@ -19,6 +19,8 @@
 //
 //NOTE: This is an intreface to a function for the Pipe creation.
 
+#ifndef _GEOMImpl_IPIPE_HXX_
+#define _GEOMImpl_IPIPE_HXX_
 
 #include "GEOM_Function.hxx"
 
@@ -37,7 +39,9 @@ class GEOMImpl_IPipe
   Handle(GEOM_Function) GetBase() { return _func->GetReference(PIPE_ARG_BASE); }
   Handle(GEOM_Function) GetPath() { return _func->GetReference(PIPE_ARG_PATH); }
 
- private:
+ protected:
 
   Handle(GEOM_Function) _func;
 };
+
+#endif

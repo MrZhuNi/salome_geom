@@ -136,6 +136,37 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurve
   return GetObject(anObject);
 }
 
+//=============================================================================
+/*!
+ *  MakeTangentOnCurve
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeTangentOnCurve
+                  (GEOM::GEOM_Object_ptr theCurve,  CORBA::Double theParameter)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theCurve == NULL) return aGEOMObject._retn();
+
+  //Get the reference curve
+
+  Handle(GEOM_Object) aRefernce = GetOperations()->GetEngine()->GetObject
+    (theCurve->GetStudyID(), theCurve->GetEntry());
+  if (aRefernce.IsNull()) return aGEOMObject._retn();
+
+  //Create the point
+
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeTangentOnCurve(aRefernce, theParameter);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
 
 //=============================================================================
 /*!
@@ -388,3 +419,39 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeMarker
 
   return GetObject(anObject);
 }
+
+//=============================================================================
+/*!
+ *  MakeTangentPlaneOnFace
+ */
+//=============================================================================
+
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeTangentPlaneOnFace
+                     (GEOM::GEOM_Object_ptr theFace, 
+		      CORBA::Double theParameterU,
+		      CORBA::Double theParameterV,
+		      CORBA::Double theTrimSize)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theFace == NULL) return aGEOMObject._retn();
+
+  //Get the reference face
+
+  Handle(GEOM_Object) aRef = GetOperations()->GetEngine()->GetObject
+    (theFace->GetStudyID(), theFace->GetEntry());
+  if (aRef.IsNull()) return aGEOMObject._retn();
+
+  //Create the plane
+
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeTangentPlaneOnFace(aRef, theParameterU,theParameterV,theTrimSize);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+

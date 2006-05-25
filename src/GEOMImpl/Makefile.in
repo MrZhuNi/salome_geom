@@ -59,6 +59,7 @@ LIB_SRC = GEOMImpl_IBasicOperations.cxx \
 	  GEOMImpl_TorusDriver.cxx \
 	  GEOMImpl_PrismDriver.cxx \
 	  GEOMImpl_PipeDriver.cxx \
+	  GEOMImpl_ThruSectionsDriver.cxx \
 	  GEOMImpl_RevolutionDriver.cxx \
 	  GEOMImpl_ShapeDriver.cxx \
 	  GEOMImpl_BlockDriver.cxx \

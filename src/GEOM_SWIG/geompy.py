@@ -184,6 +184,20 @@ def MakeVertexOnCurve(theRefCurve, theParameter):
       print "MakePointOnCurve : ", BasicOp.GetErrorCode()
     return anObj
 
+def MakeTangentOnCurve(theRefCurve, theParameter):
+    """
+     *  Create a tangent, corresponding to the given parameter on the given curve.
+     *  \param theRefCurve The referenced curve.
+     *  \param theParameter Value of parameter on the referenced curve.
+     *  \return New GEOM_Object, containing the created tangent.
+
+     *  
+    """
+    anObj = BasicOp.MakeTangentOnCurve(theRefCurve, theParameter)
+    if BasicOp.IsDone() == 0:
+      print "MakeTangentOnCurve : ", BasicOp.GetErrorCode()
+    return anObj
+
 ## Create a vector with the given components.
 #  @param theDX X component of the vector.
 #  @param theDY Y component of the vector.
@@ -666,6 +680,45 @@ def MakeRevolution(theBase, theAxis, theAngle):
     anObj = PrimOp.MakeRevolutionAxisAngle(theBase, theAxis, theAngle)
     if PrimOp.IsDone() == 0:
       print "MakeRevolutionAxisAngle : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakeThruSections(theSeqSections,theModeSolid,thePreci,theRuled):
+    """
+     *  Create a shell or solid passing through set of sections.Sections should be wires,edges or vertices.
+     *  \param theSeqSections - set of specified sections.
+     *  \param theModeSolid - mode defining building solid or shell
+     *  \param thePreci - precision 3D used for smoothing by default 1.e-6
+     *  \param theRuled - mode defining type of the result surfaces (ruled or smoothed).
+     *  \return New GEOM_Object, containing the created shell or solid.
+
+     *  Example: see GEOM_TestAll.py
+    """
+    anObj = PrimOp.MakeThruSections(theSeqSections,theModeSolid,thePreci,theRuled)
+    if PrimOp.IsDone() == 0:
+      print "MakeThruSections : ", PrimOp.GetErrorCode()
+    return anObj
+
+def MakePipeWithDifferentSections(theSeqBases, theLocations,thePath,theWithContact,theWithCorrection):
+    """
+     *  Create a shape by extrusion of the profile shape along
+     *  the path shape. The path shape can be a wire or an edge.
+     *  the several profiles can be specified in the several locations of path.	
+     *  \param theSeqBases - list of  Bases shape to be extruded.
+     *  \param theLocations - list of locations on the path corresponding
+     *                        specified list of the Bases shapes. Number of locations
+     *                        should be equal to number of bases or list of locations can be empty.
+     *  \param thePath - Path shape to extrude the base shape along it.
+     *  \param theWithContact - the mode defining that the section is translated to be in
+     *                          contact with the spine.
+     *  \param - WithCorrection - defining that the section is rotated to be
+     *	                         orthogonal to the spine tangent in the correspondent point
+     *  \return New GEOM_Object, containing the created pipe.
+
+     *  Example: see GEOM_TestAll.py
+    """
+    anObj = PrimOp.MakePipeWithDifferentSections(theSeqBases, theLocations,thePath,theWithContact,theWithCorrection)
+    if PrimOp.IsDone() == 0:
+      print "MakePipeWithDifferentSections : ", PrimOp.GetErrorCode()
     return anObj
 
 # -----------------------------------------------------------------------------
