@@ -57,9 +57,9 @@ LIB_SERVER_IDL =
 
 # additionnal information to compil and link file
 
-CPPFLAGS += $(QT_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
-CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
+CPPFLAGS += $(QT_INCLUDES) $(OCC_INCLUDES) $(PYTHON_INCLUDES) $(KERNEL_CXXFLAGS)
+CXXFLAGS += $(KERNEL_CXXFLAGS)
 
-LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS += -lOCCViewer -lVTKViewer -lSalomeObject -lSalomeGUI -lGEOMClient -lGEOMObject $(KERNEL_LDFLAGS)
 
 @CONCLUDE@

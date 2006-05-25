@@ -37,9 +37,9 @@ LIB= libBREPImport.la
 LIB_SRC = BREPImport.cxx
 
 # additionnal information to compil and link file
-CPPFLAGS+= $(OCC_INCLUDES) -I${KERNEL_ROOT_DIR}/include/salome
-CXXFLAGS+= $(OCC_CXXFLAGS) -I${KERNEL_ROOT_DIR}/include/salome
+CPPFLAGS+= $(OCC_INCLUDES) $(KERNEL_CXXFLAGS)
+CXXFLAGS+= $(OCC_CXXFLAGS) $(KERNEL_CXXFLAGS)
 
-LDFLAGS+= $(CAS_LDPATH) -lTKBRep -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS+= $(CAS_LDPATH) -lTKBRep $(KERNEL_LDFLAGS)
 
 @CONCLUDE@
