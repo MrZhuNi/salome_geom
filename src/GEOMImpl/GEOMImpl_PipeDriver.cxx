@@ -203,7 +203,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     Standard_Integer nbShapes = aSeqBases.Length();
     Standard_Integer step = nbShapes/nbBases;
     
-    if(nbShapes < nbBases || fmod(nbShapes,nbBases))
+    if(nbShapes < nbBases || fmod((double)nbShapes, (double)nbBases))
     {
       if(aCI) delete aCI;
       Standard_ConstructionError::Raise("Invalid sections were specified for building pipe");
