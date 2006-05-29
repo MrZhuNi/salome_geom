@@ -18,15 +18,12 @@ SUBDIRSTUI= tui
 
 @COMMENCE@
 
-docs:
-	@@SETX@; for d in $(SUBDIRS); do 	\
-	   (cd $$d && $(MAKE) $@) || exit 1; 	\
-	done; \
-
 usr_docs:
 	@@SETX@; for d in $(SUBDIRSGUI); do 	\
 	   (cd $$d && $(MAKE) $@) || exit 1; 	\
 	done; \
+
+docs: usr_docs
 
 dev_docs:
 	@@SETX@; for d in $(SUBDIRSTUI); do 	\
@@ -35,20 +32,29 @@ dev_docs:
 
 clean:
 	@@SETX@; for d in $(SUBDIRS); do 	\
-	   (cd $$d && $(MAKE) $@) || exit 1; 	\
+	   if test -d $$d/GEOM; then		\
+	      (cd $$d && $(MAKE) $@) || exit 1;	\
+	   fi;                                  \
 	done
 
 distclean: clean
 	@@SETX@; for d in $(SUBDIRS); do 	\
-	   (cd $$d && $(MAKE) $@) || exit 1; 	\
+	   if test -d $$d/GEOM; then		\
+	      (cd $$d && $(MAKE) $@) || exit 1; \
+	   fi;                                  \
 	done
 
 install:
 	$(MAKE) docs
-	(cd tui && $(MAKE) install);
-	(cd gui && $(MAKE) install);
+	@@SETX@; for d in $(SUBDIRS); do 	\
+	   if test -d $$d/GEOM; then		\
+	      (cd $$d && $(MAKE) $@); 	        \
+	   fi;                                  \
+	done
 
 uninstall:
 	@@SETX@; for d in $(SUBDIRS); do 	\
-	   (cd $$d && $(MAKE) $@) || exit 1; 	\
+	   if test -d $$d/GEOM; then		\
+	      (cd $$d && $(MAKE) $@) || exit 1; \
+	   fi;                                  \
 	done; \

@@ -22,7 +22,7 @@ PYTHON_SCRIPTS = \
 
 #PYTHON_SCRIPTS_PY2 = py2/geompy.py py2/GEOM_TestMeasures.py
 
-docs:
+dev_docs:
 	cp -fr $(srcdir)/GEOM ./INPUT; \
 	cp -fr ./GEOM/doxyfile ./GEOM/doxyfile_py ./INPUT; \
 	cp -fr ./GEOM/sources/static/tree.js ./INPUT/sources/static; \
@@ -65,8 +65,6 @@ docs:
 	cp -fr $(srcdir)/GEOM/sources/ GEOM/
 	cp -fr $(srcdir)/GEOM/HTML/ GEOM/
 	rm -fr INPUT
-
-dev_docs: docs
 
 clean:
 	rm -fr GEOM
