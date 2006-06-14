@@ -16,23 +16,11 @@ if (navigator.appName !="Netscape")
 <!--
 img_whs1 { width:20px; height:20px; border-style:none; }
 p.whs2 { font-size:12pt; }
-p.whs3 { font-size:12pt; margin-left:0px; }
+p.whs3 { font-size:12pt; margin-left:40px; }
 img_whs4 { border:none; width:312px; height:367px; float:none; border-style:none; }
-p.whs5 { font-size:12pt; margin-left:40px; }
-img_whs6 { border:none; float:none; width:260px; height:230px; border-style:none; }
+img_whs5 { border:none; float:none; width:260px; height:230px; border-style:none; }
 -->
-</style><script type="text/javascript" language="JavaScript">
-<!--
-if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
-{
-  var strNSS = "<style type='text/css'>";
-  strNSS += "p.whs3 {margin-left:1pt; }";
-  strNSS +="</style>";
-  document.write(strNSS);
-}
-//-->
-</script>
-<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+</style><script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
 <!--
 function reDo() {
   if (innerWidth != origWidth || innerHeight != origHeight)
@@ -49,41 +37,46 @@ onerror = null;
 <style type="text/css">
 <!--
 div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+p.WebHelpNavBar { text-align:right; }
 -->
 </style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
 <script type="text/javascript" language="javascript" src="whver.js"></script>
 <script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
 <script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
 <script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
-</head>
-<body><script type="text/javascript" language="javascript1.2">
+<script type="text/javascript" language="javascript1.2">
 <!--
 if (window.gbWhTopic)
 {
-	if (window.addTocInfo)
+	if (window.setRelStartPage)
 	{
-	addTocInfo("GEOM module\nCreating geometrical objects\nGeneration of Complex Objects\nFilling");
-addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+	addTocInfo("Geometry module\nCreating geometrical objects\nCreating Complex Objects\nFilling");
+addButton("show",BTN_IMG,"Show","","","","",0,0,"whd_show0.gif","whd_show2.gif","whd_show1.gif");
+addButton("hide",BTN_IMG,"Hide","","","","",0,0,"whd_hide0.gif","whd_hide2.gif","whd_hide1.gif");
 
 	}
-	if (window.writeBtnStyle)
-		writeBtnStyle();
 
-	if (window.writeIntopicBar)
-		writeIntopicBar(1);
 
 	if (window.setRelStartPage)
 	{
-	setRelStartPage("geom.htm");
+	setRelStartPage("index.htm");
 
 		autoSync(1);
 		sendSyncInfo();
 		sendAveInfoOut();
 	}
+
 }
 else
 	if (window.gbIE4)
 		document.location.reload();
+//-->
+</script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(4);
 //-->
 </script>
 <h1><span style="font-size: 14pt;"><font size=4 style="font-size:14pt;"><img src="files/salome2_sp3_generationgui_functions_salome2_sp3_generationgui_functions_image58.gif" width="20px" height="20px" border="0" class="img_whs1"> &nbsp;</font></span>Filling 
@@ -132,9 +125,9 @@ else
 
 <p class="whs2">&nbsp;</p>
 
-<p class="whs5"><img src="pics/filling_compoundsn.png" x-maintain-ratio="TRUE" width="260px" height="230px" border="0" class="img_whs6"> <img src="pics/fillingsn.png" x-maintain-ratio="TRUE" width="260px" height="230px" border="0" class="img_whs6"> &nbsp;</p>
+<p class="whs3"><img src="pics/filling_compoundsn.png" x-maintain-ratio="TRUE" width="260px" height="230px" border="0" class="img_whs5"> <img src="pics/fillingsn.png" x-maintain-ratio="TRUE" width="260px" height="230px" border="0" class="img_whs5"> &nbsp;</p>
 
-<p class="whs5">&nbsp;</p>
+<p class="whs3">&nbsp;</p>
 
 <p class="whs2">Our TUI Scripts provide you with useful examples 
  of creation of <a href="complex_objects.htm#bookmark2">Complex Geometric 

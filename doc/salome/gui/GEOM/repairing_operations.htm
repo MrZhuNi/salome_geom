@@ -34,41 +34,46 @@ onerror = null;
 <style type="text/css">
 <!--
 div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+p.WebHelpNavBar { text-align:right; }
 -->
 </style><script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
 <script type="text/javascript" language="javascript" src="whver.js"></script>
 <script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
 <script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
 <script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
-</head>
-<body><script type="text/javascript" language="javascript1.2">
+<script type="text/javascript" language="javascript1.2">
 <!--
 if (window.gbWhTopic)
 {
-	if (window.addTocInfo)
+	if (window.setRelStartPage)
 	{
-	addTocInfo("GEOM module\nTUI Scripts\nTransformation\nRepairing Operations");
-addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+	addTocInfo("Geometry module\nTUI Scripts\nTransformation\nRepairing Operations");
+addButton("show",BTN_IMG,"Show","","","","",0,0,"whd_show0.gif","whd_show2.gif","whd_show1.gif");
+addButton("hide",BTN_IMG,"Hide","","","","",0,0,"whd_hide0.gif","whd_hide2.gif","whd_hide1.gif");
 
 	}
-	if (window.writeBtnStyle)
-		writeBtnStyle();
 
-	if (window.writeIntopicBar)
-		writeIntopicBar(1);
 
 	if (window.setRelStartPage)
 	{
-	setRelStartPage("geom.htm");
+	setRelStartPage("index.htm");
 
 		autoSync(1);
 		sendSyncInfo();
 		sendAveInfoOut();
 	}
+
 }
 else
 	if (window.gbIE4)
 		document.location.reload();
+//-->
+</script>
+</head>
+<body><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(4);
 //-->
 </script>
 <h1>Repairing Operations</h1>
@@ -625,9 +630,7 @@ else
 
 <p class="whs1">box1 = geompy.MakeBox(0,0,0,100,50,100)</p>
 
-<p class="whs1">box2 = </p>
-
-<p class="whs1">geompy.MakeBox(100,0,0,250,50,100)</p>
+<p class="whs1">box2 = <span style="font-family: 'Lucida Console', monospace;">geompy.MakeBox(100,0,0,250,50,100)</span></p>
 
 <p class="whs1">&nbsp;</p>
 
@@ -778,8 +781,8 @@ else
 
 <p class="whs2"># import from *.brep</p>
 
-<p class="whs1">ImportBREP = geompy.ImportBREP(&quot;ImportBREP 
- = <span style="font-family: 'Lucida Console', monospace;">geompy.ImportBREP(os.getenv(&quot;DATA_DIR&quot;)+&quot;/Shapes/Brep/flight_solid.brep&quot;)</span></p>
+<p class="whs1">ImportBREP = geompy.ImportBREP(&quot;<span 
+ style="font-family: 'Lucida Console', monospace;">os.getenv(&quot;DATA_DIR&quot;)+&quot;/Shapes/Brep/flight_solid.brep&quot;)</span></p>
 
 <p class="whs2">&nbsp;</p>
 
