@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -87,6 +87,8 @@ MeasureGUI_BndBoxDlg::MeasureGUI_BndBoxDlg( GeometryGUI* GUI, QWidget* parent )
   Layout1->addWidget( myGrp, 1, 0 );
   
   /***************************************************************/
+
+  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#Bounding_box";
 
   /* Initialisation */
   Init();
@@ -189,22 +191,3 @@ SALOME_Prs* MeasureGUI_BndBoxDlg::buildPrs()
   return !aShape.IsNull() ? getDisplayer()->BuildPrs( aShape ) : 0;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

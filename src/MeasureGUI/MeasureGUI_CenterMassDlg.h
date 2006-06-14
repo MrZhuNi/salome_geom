@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -43,11 +43,11 @@ class GEOM_MEASUREGUI_EXPORT MeasureGUI_CenterMassDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-                                        MeasureGUI_CenterMassDlg( QWidget* parent );
-                                        ~MeasureGUI_CenterMassDlg();
+    MeasureGUI_CenterMassDlg( GeometryGUI* GUI,
+			      QWidget*     parent );
+    ~MeasureGUI_CenterMassDlg();
 
 protected:
-                                        
     // redefined from GEOMBase_Helper
     virtual GEOM::GEOM_IOperations_ptr  createOperation();
     virtual bool                        isValid( QString& msg );
@@ -59,17 +59,15 @@ private slots:
     void                                ActivateThisDialog();
     void                                LineEditReturnPressed();
     void                                SelectionIntoArgument();
-    void                                SetEditCurrentArgument();    
+    void                                SetEditCurrentArgument();
 
 private:
-
     void                                Init( );
     void                                enterEvent( QEvent* e );
     void                                processObject();
     bool                                getParameters( double&, double&, double& );
 
 private:
-    
     GEOM::GEOM_Object_var               myObj;
     MeasureGUI_1Sel3LineEdit_QTD*       myGrp;
 };

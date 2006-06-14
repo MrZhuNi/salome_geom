@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -82,12 +82,12 @@ class GEOM_OBJECT_EXPORT GEOM_Actor : public SALOME_Actor {
   void SetShadingProperty(vtkProperty* Prop);
 
   // Opacity
-  void SetOpacity(float opa);
-  float GetOpacity();
+  void SetOpacity(vtkFloatingPointType opa);
+  vtkFloatingPointType GetOpacity();
 
   // Color
-  void SetColor(float r,float g,float b);
-  void GetColor(float& r,float& g,float& b);
+  void SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b);
+  void GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b);
 
   virtual bool IsInfinite() {return myIsInfinite;}  
  protected:

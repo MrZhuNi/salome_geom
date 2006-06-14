@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -192,9 +192,9 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       //a4bis->SetInteriorColor(myShadingColor);
       myDrawer->ShadingAspect()->SetColor(myShadingColor);
 
-	  // PAL12113: AIS_Shape::Compute() works correctly with shapes containing no faces
+      // PAL12113: AIS_Shape::Compute() works correctly with shapes containing no faces
       //StdPrs_ShadedShape::Add(aPrs,myshape,myDrawer);
-	  AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
+      AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
       break;
     }
   }

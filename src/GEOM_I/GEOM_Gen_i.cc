@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -47,6 +47,7 @@
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TopAbs_ShapeEnum.hxx>
+#include <OSD.hxx>
 
 #include "SALOMEDS_Tool.hxx"
 
@@ -67,6 +68,7 @@ GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr orb,
 
   _impl = new ::GEOMImpl_Gen;
 
+  OSD::SetSignal( true );
 }
 
 

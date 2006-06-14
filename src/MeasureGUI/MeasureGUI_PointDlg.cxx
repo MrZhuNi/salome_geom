@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -98,6 +98,8 @@ MeasureGUI_PointDlg::MeasureGUI_PointDlg( GeometryGUI* GUI, QWidget* parent )
   myZ->setReadOnly( true );
 
   Layout1->addWidget( aGrp, 1, 0 );
+
+  myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#PointCoord";
 
   Init();
 }

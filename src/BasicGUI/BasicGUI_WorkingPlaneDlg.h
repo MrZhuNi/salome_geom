@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -44,15 +44,14 @@ class GEOM_BASICGUI_EXPORT BasicGUI_WorkingPlaneDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_WorkingPlaneDlg( GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+    BasicGUI_WorkingPlaneDlg( GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			      const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
     ~BasicGUI_WorkingPlaneDlg();
     virtual void closeEvent( QCloseEvent* e );
 
 private:
     void Init();
     void enterEvent(QEvent* e);
-
-    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myFace;
     GEOM::GEOM_Object_var myVectX;

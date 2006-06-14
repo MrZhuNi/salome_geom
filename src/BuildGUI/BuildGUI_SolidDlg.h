@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : BuildGUI_SolidDlg.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
 
 #ifndef DIALOGBOX_SOLID_H
 #define DIALOGBOX_SOLID_H
@@ -43,7 +42,8 @@ class GEOM_BUILDGUI_EXPORT BuildGUI_SolidDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BuildGUI_SolidDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BuildGUI_SolidDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BuildGUI_SolidDlg();
 
 protected:
@@ -69,7 +69,6 @@ private slots:
     void SelectionIntoArgument();
     void ActivateThisDialog();
     void EnableNameField(bool toEnable);
-
 };
 
 #endif // DIALOGBOX_SOLID_H

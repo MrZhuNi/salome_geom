@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : BuildGUI_WireDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_WIRE_H
 #define DIALOGBOX_WIRE_H
@@ -43,7 +42,8 @@ class GEOM_BUILDGUI_EXPORT BuildGUI_WireDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BuildGUI_WireDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BuildGUI_WireDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		     const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BuildGUI_WireDlg();
 
 protected:
@@ -67,7 +67,6 @@ private slots:
     void ActivateThisDialog();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-
 };
 
 #endif // DIALOGBOX_WIRE_H

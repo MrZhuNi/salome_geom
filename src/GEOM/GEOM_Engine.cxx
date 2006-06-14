@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -474,7 +474,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   }
 
   //Add final part of the script
-  if(aSeq->Value(aLen) < aScriptLength)  anUpdatedScript += aScript.SubString(aSeq->Value(aLen)+1, aScriptLength);
+  if(aLen && aSeq->Value(aLen) < aScriptLength)  anUpdatedScript += aScript.SubString(aSeq->Value(aLen)+1, aScriptLength); // mkr : IPAL11865
  
   // Make script to publish in study
   if ( isPublished )

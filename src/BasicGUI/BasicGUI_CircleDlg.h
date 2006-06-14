@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : BasicGUI_CircleDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_CIRCLE_H
 #define DIALOGBOX_CIRCLE_H
@@ -41,12 +40,13 @@
 // class    : BasicGUI_CircleDlg
 // purpose  :
 //=================================================================================
-class GEOM_BASICGUI_EXPORT BasicGUI_CircleDlg : public GEOMBase_Skeleton
-{ 
+class BasicGUI_CircleDlg : public GEOMBase_Skeleton
+{
     Q_OBJECT
 
 public:
-    BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_CircleDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_CircleDlg();
 
 protected:
@@ -57,12 +57,10 @@ protected:
 
     virtual void closeEvent( QCloseEvent* e );    
 
-private :
+private:
     void   Init();
     void   enterEvent(QEvent* e);
     double getRadius() const;
-
-    GeometryGUI*  myGeometryGUI;
 
     GEOM::GEOM_Object_var myPoint, myDir, myPoint1, myPoint2, myPoint3;
 
@@ -83,7 +81,6 @@ private slots:
     void LineEditReturnPressed();
     void SetEditCurrentArgument();
     void ValueChangedInSpinBox();
-
 };
 
 #endif // DIALOGBOX_CIRCLE_H

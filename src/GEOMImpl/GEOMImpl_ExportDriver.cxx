@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #include <Standard_Stream.hxx>
@@ -48,7 +48,9 @@
 #define UnLoadLib( handle ) dlclose( handle );
 #endif
 
-typedef int (*funcPoint)(const TopoDS_Shape&, const TCollection_AsciiString&);
+typedef int (*funcPoint)(const TopoDS_Shape&,
+                         const TCollection_AsciiString&,
+                         const TCollection_AsciiString&);
 
 //=======================================================================
 //function : GetID
@@ -90,9 +92,10 @@ Standard_Integer GEOMImpl_ExportDriver::Execute(TFunction_Logbook& log) const
   aFunction->SetValue(aShape);
 
   // retrieve the file and format names
-  TCollection_AsciiString aFileName = aCI.GetFileName();
-  TCollection_AsciiString aLibName  = aCI.GetPluginName();
-  if (aFileName.IsEmpty() || aLibName.IsEmpty())
+  TCollection_AsciiString aFileName   = aCI.GetFileName();
+  TCollection_AsciiString aFormatName = aCI.GetFormatName();
+  TCollection_AsciiString aLibName    = aCI.GetPluginName();
+  if (aFileName.IsEmpty() || aFormatName.IsEmpty() || aLibName.IsEmpty())
     return 0;
 
   // load plugin library
@@ -105,7 +108,7 @@ Standard_Integer GEOMImpl_ExportDriver::Execute(TFunction_Logbook& log) const
     return 0;
 
   // perform the export
-  int res = fp( aShape, aFileName );
+  int res = fp( aShape, aFileName, aFormatName );
 
   // unload plugin library
   UnLoadLib( anExportLib );

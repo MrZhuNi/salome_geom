@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : OperationGUI_ClippingDlg.h
 //  Author : Michael Zorin
 //  Module : GEOM
-//  $Header: 
 
 #ifndef DIALOGBOX_CLIPPINGRANGE_H
 #define DIALOGBOX_CLIPPING_H
@@ -46,20 +45,19 @@ enum ViewerTypes { VTK, OCC, OTHER };
 class OperationGUI_ClippingDlg : public GEOMBase_Skeleton
 {
     Q_OBJECT
-    
-    public:
-    OperationGUI_ClippingDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
-    ~OperationGUI_ClippingDlg();
-    
-private :
 
+public:
+    OperationGUI_ClippingDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0);
+    ~OperationGUI_ClippingDlg();
+
+private:
     void Init();
 
     ViewerTypes myViewerType;
 
     virtual void closeEvent( QCloseEvent* e );
     void enterEvent(QEvent* e);
-    
+
     QGroupBox* GroupArguments;
     QLabel* TextLabelNear;
     DlgRef_SpinBox* SpinBox_Near;
@@ -71,10 +69,7 @@ private :
 private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
     void onActivate();
-    void DeactivateActiveDialog();
-    
     void onReset();
 };
 

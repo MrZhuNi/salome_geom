@@ -16,14 +16,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : BasicGUI_EllipseDlg.h
 //  Author : Nicolas REJNERI
 //  Module : GEOM
-//  $Header$
 
 #ifndef BASICGUI_ELLIPSE_H
 #define BASICGUI_ELLIPSE_H
@@ -44,7 +43,8 @@ class GEOM_BASICGUI_EXPORT BasicGUI_EllipseDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_EllipseDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_EllipseDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_EllipseDlg();
 
 protected:
@@ -58,8 +58,6 @@ protected:
 private :
     void Init();
     void enterEvent(QEvent* e);
-
-    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myPoint, myDir;
 

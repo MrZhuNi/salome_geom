@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : RepairGUI_FreeFacesDlg.h
 //  Author : VKN
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_FreeFaces_H
 #define DIALOGBOX_FreeFaces_H
@@ -47,7 +46,8 @@ class RepairGUI_FreeFacesDlg : public QDialog,
     Q_OBJECT
 
 public:
-    RepairGUI_FreeFacesDlg(GeometryGUI* GUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    RepairGUI_FreeFacesDlg(GeometryGUI* GUI, QWidget* parent = 0,
+			   const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~RepairGUI_FreeFacesDlg();
 
 protected:
@@ -56,30 +56,28 @@ protected:
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
 
-private :
-
+private:
     void Init();
     void enterEvent(QEvent* e);
     void closeEvent(QCloseEvent* e);
     void activateSelection();
-    GEOM_Displayer*           getDisplayer();
+    GEOM_Displayer* getDisplayer();
 
 private slots:
+    void onClose();
+    void onHelp(); 
+    void onDeactivate();
+    void onActivate();
+    void onSelectionDone();
+    void onSetEditCurrentArgument();
 
-  void                                  onClose();
-  void                                  onDeactivate();
-  void                                  onActivate();
-  void                                  onSelectionDone();
-  void                                  onSetEditCurrentArgument();
-
-private :
-
+private:
     GEOM_Displayer*        myDisplayer;
     GEOM::GEOM_Object_var  myObj;
     QPushButton*           mySelBtn;
     QLineEdit*             myEdit;
     GeometryGUI*           myGeomGUI;
-
+    QString                myHelpFileName;
 };
 
 #endif // DIALOGBOX_FreeFaces_H

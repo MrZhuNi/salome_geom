@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:	STEPImport.cxx
 // Created:	Wed May 19 14:41:10 2004
@@ -64,6 +64,7 @@ extern "C"
 {
 STEPIMPORT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
+                       const TCollection_AsciiString& /*theFormatName*/,
                        TCollection_AsciiString&       theError)
   {
     MESSAGE("Import STEP model from file " << theFileName.ToCString());

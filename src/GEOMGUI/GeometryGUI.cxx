@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -77,16 +77,22 @@ extern "C" {
 
 
 
-GEOM::GEOM_Gen_var GeometryGUI::myComponentGeom = GEOM::GEOM_Gen::_nil(); 
+GEOM::GEOM_Gen_var GeometryGUI::myComponentGeom = GEOM::GEOM_Gen::_nil();
 
-GEOM::GEOM_Gen_var   GeometryGUI::GetGeomGen()        { return GeometryGUI::myComponentGeom; }
+GEOM::GEOM_Gen_var GeometryGUI::GetGeomGen()
+{
+  // Bug 12290: exception in Mesh GUI on GEOMBase::GetShape() if Geometry GUI hasn't been loaded
+  if (CORBA::is_nil(myComponentGeom))
+    InitGeomGen();
+  return GeometryGUI::myComponentGeom;
+}
 
-bool GeometryGUI::InitGeomGen() 
+bool GeometryGUI::InitGeomGen()
 {
   GeometryGUI aGG;
-  if( CORBA::is_nil( myComponentGeom ) ) return false;   
-  return true; 
-}			   
+  if( CORBA::is_nil( myComponentGeom ) ) return false;
+  return true;
+}
 
 //=======================================================================
 // function : ClientSObjectToObject
@@ -334,7 +340,9 @@ void GeometryGUI::OnGUIEvent()
 //=======================================================================
 void GeometryGUI::OnGUIEvent( int id )
 {
-  SUIT_Desktop* desk = application()->desktop();
+  SUIT_Application* anApp = application();
+  if (!anApp) return;
+  SUIT_Desktop* desk = anApp->desktop();
 
   // check type of the active viewframe
   SUIT_ViewWindow* window = desk->activeWindow();
@@ -551,13 +559,16 @@ void GeometryGUI::OnGUIEvent( int id )
 // function : GeometryGUI::OnKeyPress()
 // purpose  : Called when any key is pressed by user [static]
 //=================================================================================
-bool GeometryGUI::OnKeyPress( QKeyEvent* pe, SUIT_ViewWindow* win )
+void GeometryGUI::OnKeyPress( SUIT_ViewWindow* win, QKeyEvent* pe )
 {
   GUIMap::Iterator it;
   bool bOk = true;
-  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
-    bOk = bOk && it.data()->OnKeyPress( pe, application()->desktop(), win );
-  return bOk;
+  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it ) {
+    SUIT_Application* anApp = application();
+    if (!anApp) return;
+    bOk = bOk && it.data()->OnKeyPress( pe, anApp->desktop(), win );
+  }
+//  return bOk;
 }
 
 
@@ -565,13 +576,16 @@ bool GeometryGUI::OnKeyPress( QKeyEvent* pe, SUIT_ViewWindow* win )
 // function : GeometryGUI::OnMouseMove()
 // purpose  : Manages mouse move events [static]
 //=================================================================================
-bool GeometryGUI::OnMouseMove( QMouseEvent* pe, SUIT_ViewWindow* win )
+void GeometryGUI::OnMouseMove( SUIT_ViewWindow* win, QMouseEvent* pe )
 {  
   GUIMap::Iterator it;
   bool bOk = true;
-  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
-    bOk = bOk && it.data()->OnMouseMove( pe, application()->desktop(), win );
-  return bOk;
+  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it ) {
+    SUIT_Application* anApp = application();
+    if (!anApp) return;
+    bOk = bOk && it.data()->OnMouseMove( pe, anApp->desktop(), win );
+  }
+//  return bOk;
 }
 
 
@@ -579,15 +593,18 @@ bool GeometryGUI::OnMouseMove( QMouseEvent* pe, SUIT_ViewWindow* win )
 // function : GeometryGUI::0nMousePress()
 // purpose  : Manage mouse press events [static]
 //=================================================================================
-bool GeometryGUI::OnMousePress( QMouseEvent* pe, SUIT_ViewWindow* win )
+void GeometryGUI::OnMousePress( SUIT_ViewWindow* win, QMouseEvent* pe )
 {
   GUIMap::Iterator it;
   // OnMousePress() should return false if this event should be processed further
   // (see OCCViewer_Viewer3d::onMousePress() for explanation)
   bool processed = false;
-  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
-    processed = processed || it.data()->OnMousePress( pe, application()->desktop(), win );
-  return processed;
+  for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it ) {
+    SUIT_Application* anApp = application();
+    if (!anApp) return;
+    processed = processed || it.data()->OnMousePress( pe, anApp->desktop(), win );
+  }
+//  return processed;
 }
 
 /*
@@ -726,8 +743,8 @@ void GeometryGUI::createGeomAction( const int id, const QString& po_id, const QS
 
 
 //=======================================================================
-// function : GeometryGUI::Deactivate()
-// purpose  : Called when GEOM module is deactivated [ static ]
+// function : GeometryGUI::initialize()
+// purpose  : Called when GEOM module is created
 //=======================================================================
 void GeometryGUI::initialize( CAM_Application* app )
 {
@@ -1099,8 +1116,8 @@ void GeometryGUI::initialize( CAM_Application* app )
 }
 
 //=======================================================================
-// function : GeometryGUI::Deactivate()
-// purpose  : Called when GEOM module is deactivated [ static ]
+// function : GeometryGUI::activateModule()
+// purpose  : Called when GEOM module is activated
 //=======================================================================
 bool GeometryGUI::activateModule( SUIT_Study* study )
 {
@@ -1115,12 +1132,14 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   setMenuShown( true );
   setToolShown( true );
 
-  connect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ), 
+  connect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
 	  this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
-  connect( (STD_Application*)application(), SIGNAL( viewManagerAdded( SUIT_ViewManager* ) ),
-          this, SLOT( onViewManagerAdded( SUIT_ViewManager* ) ) );
-  connect( (STD_Application*)application(), SIGNAL( viewManagerRemoved( SUIT_ViewManager* ) ),
-          this, SLOT( onViewManagerRemoved( SUIT_ViewManager* ) ) );
+
+  // Reset actions accelerator keys
+  //action(111)->setAccel(QKeySequence(CTRL + Key_I)); // Import
+  //action(121)->setAccel(QKeySequence(CTRL + Key_E)); // Export
+  action(111)->setEnabled(true); // Import
+  action(121)->setEnabled(true); // Export
 
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
@@ -1140,19 +1159,19 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
   for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
     sr->setEnabled(true);
-  
+
   // disable VTK selectors
   getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
   for ( LightApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
     sr->setEnabled(true);
-  
+
   return true;
 }
 
 
 //=======================================================================
-// function : GeometryGUI::Deactivate()
-// purpose  : Called when GEOM module is deactivated [ static ]
+// function : GeometryGUI::deactivateModule()
+// purpose  : Called when GEOM module is deactivated
 //=======================================================================
 bool GeometryGUI::deactivateModule( SUIT_Study* study )
 {
@@ -1161,16 +1180,18 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
 
   disconnect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ), 
 	     this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
-  disconnect( (STD_Application*)application(), SIGNAL( viewManagerAdded( SUIT_ViewManager* ) ),
-	     this, SLOT( onViewManagerAdded( SUIT_ViewManager* ) ) );
-  disconnect( (STD_Application*)application(), SIGNAL( viewManagerRemoved( SUIT_ViewManager* ) ),
-	     this, SLOT( onViewManagerRemoved( SUIT_ViewManager* ) ) );
 
   EmitSignalCloseAllDialogs();
 
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
     it.data()->deactivate();  
+
+  // Unset actions accelerator keys
+  //action(111)->setAccel(QKeySequence()); // Import
+  //action(121)->setAccel(QKeySequence()); // Export
+  action(111)->setEnabled(false); // Import
+  action(121)->setEnabled(false); // Export
 
   myOCCSelectors.clear();
   getApp()->selectionMgr()->setEnabled( true, OCCViewer_Viewer::Type() );
@@ -1493,7 +1514,7 @@ void GeometryGUI::BuildPresentation( const Handle(SALOME_InteractiveObject)& io,
 }
 
 //=======================================================================
-// function : setCommandsEnabled()
+// function : onWindowActivated()
 // purpose  : update menu items' status - disable non-OCC-viewer-compatible actions
 //=======================================================================
 void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
@@ -1535,6 +1556,15 @@ void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
 {
   if ( vm->getType() == OCCViewer_Viewer::Type() )
   {
+    qDebug( "connect" );
+    connect( vm, SIGNAL( keyPress  ( SUIT_ViewWindow*, QKeyEvent* ) ),
+	     this, SLOT( OnKeyPress( SUIT_ViewWindow*, QKeyEvent* ) ) );
+    connect( vm, SIGNAL( mousePress( SUIT_ViewWindow*, QMouseEvent* ) ),
+	     this, SLOT( OnMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
+    connect( vm, SIGNAL( mouseMove ( SUIT_ViewWindow*, QMouseEvent* ) ),
+	     this, SLOT( OnMouseMove( SUIT_ViewWindow*, QMouseEvent* ) ) );
+
+
     LightApp_SelectionMgr* sm = getApp()->selectionMgr();
     myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
 

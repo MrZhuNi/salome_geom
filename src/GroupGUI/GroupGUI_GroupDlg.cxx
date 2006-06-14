@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.salome-platform.org or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -47,12 +47,8 @@
 #include <TColStd_MapOfInteger.hxx>
 
 
-GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode,
-                                     QWidget* parent,
-                                     const char* name,
-                                     bool modal,
-                                     WFlags fl)
-  :GEOMBase_Skeleton( parent, "GroupGUI_GroupDlg", false,
+GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWidget* parent)
+  :GEOMBase_Skeleton( theGeometryGUI, parent, "GroupGUI_GroupDlg", false,
                       WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu),
    myMode( mode ),
    myBusy( false )
@@ -114,6 +110,8 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode,
   aMedLayout->addMultiCellWidget( myIdList, 2, 3, 0, 2 );
   aMedLayout->addWidget( myAddBtn, 2, 3 );
   aMedLayout->addWidget( myRemBtn, 3, 3 );
+
+  setHelpFileName("working_with_groups.htm");
 
   Init();
 }
@@ -205,7 +203,6 @@ void GroupGUI_GroupDlg::ClickOnOk()
     ClickOnCancel();
 }
 
-
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
@@ -216,7 +213,10 @@ bool GroupGUI_GroupDlg::ClickOnApply()
     return false;
 
   if ( myMode == CreateGroup )
-    initName();
+    {
+      initName();
+      myIdList->clear();
+    }
   return true;
 }
 
@@ -323,6 +323,8 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
 
     // try to find out and process the object browser selection
     if ( !aMapIndex.Extent() ) {
+      globalSelection( GEOM_ALLSHAPES );
+      
       GEOM::ListOfGO anObjects;
       GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), anObjects);
       GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations( getStudyId() );
@@ -334,6 +336,9 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
             aMapIndex.Add( anIndex );
         }
       }
+      
+      if ( !myMainObj->_is_nil() )
+      	localSelection( myMainObj, getShapeType() );
     }
 
     if (aMapIndex.Extent() >= 1) {
@@ -656,8 +661,8 @@ bool GroupGUI_GroupDlg::isValid( QString& theMessage )
     RETURN_WITH_MSG( !CORBA::is_nil( myMainObj ), tr( "NO_GROUP" ) )
   }
 
-  const char* aName = getNewObjectName();
-  RETURN_WITH_MSG  ( aName && strlen( aName ), tr( "EMPTY_NAME" ) )
+  QString aName (getNewObjectName());
+  RETURN_WITH_MSG  ( !aName.stripWhiteSpace().isEmpty(), tr( "EMPTY_NAME" ) )
 
   RETURN_WITH_MSG  ( myIdList->count(), tr( "EMPTY_LIST" ) )
   return true;

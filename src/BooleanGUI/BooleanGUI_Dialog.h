@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : BooleanGUI_Dialog.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef BooleanGUI_Dialog_H
 #define BooleanGUI_Dialog_H
@@ -44,7 +43,8 @@ class GEOM_BOOLEANGUI_EXPORT BooleanGUI_Dialog : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BooleanGUI_Dialog( const int theOperation, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BooleanGUI_Dialog( const int theOperation, GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BooleanGUI_Dialog();
 
 protected:
@@ -71,7 +71,6 @@ private slots:
     void SelectionIntoArgument();
     void LineEditReturnPressed();
     void ActivateThisDialog();
-
 };
 
 #endif // BooleanGUI_Dialog_H

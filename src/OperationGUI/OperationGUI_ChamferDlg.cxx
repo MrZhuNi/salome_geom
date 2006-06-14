@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : OperationGUI_ChamferDlg.cxx
 //  Author : Damien COQUERET
 //  Module : GEOM
-
 //  $Header$
 
 #include "OperationGUI_ChamferDlg.h"
@@ -51,9 +50,9 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-OperationGUI_ChamferDlg::OperationGUI_ChamferDlg( QWidget* parent )
-: GEOMBase_Skeleton(parent, "ChamferDlg", false,
-    WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QWidget* parent)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, "ChamferDlg", false,
+                      WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
 {
   myConstructorId = -1;
 
@@ -149,6 +148,8 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg( QWidget* parent )
   for ( anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter )
     anIter.data()->RangeStepAndValidator( 0.001, 999.999, SpecificStep, 3 );
 
+  setHelpFileName("chamfer.htm");
+
   /* Initialisations */
   Init();
 }
@@ -203,16 +204,14 @@ void OperationGUI_ChamferDlg::Init()
              this, SLOT( ValueChangedInSpinBox( double ) ) );
 
   // selection
-  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  connect(myGeomGUI->getApp()->selectionMgr(), 
+          SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_CHAMFER" ) );
 
   myGrp2->hide();
   myGrp3->hide();
   myGrp1->show();
-
-  this->show();
 }
 
 
@@ -223,14 +222,14 @@ void OperationGUI_ChamferDlg::Init()
 void OperationGUI_ChamferDlg::ConstructorsClicked( int constructorId )
 {
    // Activate next widget
-  if ( SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
-       != OCCViewer_Viewer::Type() )
-    {
-      RadioButton1->setChecked( true );
-      return;
-    }
-  
-  if ( myConstructorId == constructorId )
+  if (myGeomGUI->getApp()->desktop()->activeWindow()->getViewManager()->getType() 
+      != OCCViewer_Viewer::Type())
+  {
+    RadioButton1->setChecked( true );
+    return;
+  }
+
+  if (myConstructorId == constructorId)
     return;
 
   // Get values from previous widget
@@ -460,17 +459,6 @@ void OperationGUI_ChamferDlg::SetEditCurrentArgument()
     }
 
   activateSelection();
-}
-
-
-//=================================================================================
-// function : DeactivateActiveDialog()
-// purpose  :
-//=================================================================================
-void OperationGUI_ChamferDlg::DeactivateActiveDialog()
-{
-  // disconnect selection
-  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 

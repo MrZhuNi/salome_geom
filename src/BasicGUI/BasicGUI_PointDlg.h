@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : BasicGUI_PointDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_POINT_H
 #define DIALOGBOX_POINT_H
@@ -48,13 +47,14 @@ class GEOM_BASICGUI_EXPORT BasicGUI_PointDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		      const char* name = 0, bool modal = FALSE, WFlags fl = 0);
 
     ~BasicGUI_PointDlg();
 
     bool acceptMouseEvent() const { return ( getConstructorId() == 0 );  };
     void OnPointSelected( const gp_Pnt& ); // called by BasicGUI::OnMousePress()
-    
+
 protected:
     // redefined from GEOMBase_Helper
     virtual GEOM::GEOM_IOperations_ptr createOperation();
@@ -67,8 +67,6 @@ private :
     void Init();
     void enterEvent(QEvent* e);
     double getParameter() const;
-
-    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myEdge;
     GEOM::GEOM_Object_var myRefPoint; 

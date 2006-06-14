@@ -16,14 +16,13 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org or email : webmaster.salome@opencascade.org
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : BlocksGUI_ExplodeDlg.h
 //  Author : Julia DOROVSKIKH
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_BLOCK_EXPLODE_H
 #define DIALOGBOX_BLOCK_EXPLODE_H
@@ -45,8 +44,7 @@ class GEOM_BLOCKSGUI_EXPORT BlocksGUI_ExplodeDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  BlocksGUI_ExplodeDlg (QWidget* parent,
-			bool modal = FALSE);
+  BlocksGUI_ExplodeDlg (GeometryGUI*, QWidget* parent, bool modal = FALSE);
   ~BlocksGUI_ExplodeDlg();
 
 protected:

@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : RepairGUI_FreeBoundDlg.h
 //  Author : Sergey LITONIN
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_WHATIS_H
 #define DIALOGBOX_WHATIS_H
@@ -47,18 +46,17 @@ class RepairGUI_FreeBoundDlg : public QDialog,
     Q_OBJECT
 
 public:
-                                        RepairGUI_FreeBoundDlg( GeometryGUI*, QWidget* );
-                                        ~RepairGUI_FreeBoundDlg();
+    RepairGUI_FreeBoundDlg(GeometryGUI*, QWidget*, const char* name = 0);
+    ~RepairGUI_FreeBoundDlg();
 
 private slots:
-
   void                                  onClose();
+  void                                  onHelp(); 
   void                                  onDeactivate();
   void                                  onActivate();
   void                                  onSelectionDone();
                                                                                   
 private:
-
   void                                  Init();
   void                                  enterEvent( QEvent* e );
   void                                  closeEvent( QCloseEvent* e );
@@ -69,7 +67,6 @@ private:
   virtual bool                          isValid( QString& );
 
 private:
-
   QLineEdit*                            myEdit;
   QLabel*                               myClosedLbl;
   QLabel*                               myOpenLbl;
@@ -77,16 +74,7 @@ private:
   GeometryGUI*                          myGeomGUI;
   int                                   myNbClosed;
   int                                   myNbOpen;
+  QString                               myHelpFileName;
 };
 
 #endif // DIALOGBOX_WHATIS_H
-
-
-
-
-
-
-
-
-
-

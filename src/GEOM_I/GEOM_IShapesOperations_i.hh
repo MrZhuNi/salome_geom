@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #ifndef _GEOM_IShapesOperations_i_HeaderFile
@@ -73,6 +73,14 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 
   GEOM::GEOM_Object_ptr GetSubShape (GEOM::GEOM_Object_ptr theMainShape,
 				     CORBA::Long           theID);
+
+  CORBA::Long GetSubShapeIndex (GEOM::GEOM_Object_ptr theMainShape,
+				GEOM::GEOM_Object_ptr theSubShape);
+
+  CORBA::Long GetTopologyIndex (GEOM::GEOM_Object_ptr theMainShape,
+				GEOM::GEOM_Object_ptr theSubShape);
+
+  char* GetShapeTypeString (GEOM::GEOM_Object_ptr theShape);
 
   CORBA::Long NumberOfFaces (GEOM::GEOM_Object_ptr theShape);
   CORBA::Long NumberOfEdges (GEOM::GEOM_Object_ptr theShape);

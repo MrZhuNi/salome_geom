@@ -16,14 +16,13 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org or email : webmaster.salome@opencascade.org
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : BlocksGUI_TrsfDlg.h
 //  Author : Julia DOROVSKIKH
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_BLOCK_MULTITRSF_H
 #define DIALOGBOX_BLOCK_MULTITRSF_H
@@ -48,8 +47,7 @@ class GEOM_BLOCKSGUI_EXPORT BlocksGUI_TrsfDlg : public GEOMBase_Skeleton
   enum { SpinBox1, SpinBox2U, SpinBox2V };
 
 public:
-  BlocksGUI_TrsfDlg (QWidget* parent,
-		     bool modal = FALSE);
+  BlocksGUI_TrsfDlg (GeometryGUI*, QWidget* parent, bool modal = FALSE);
   ~BlocksGUI_TrsfDlg();
 
 protected:
@@ -83,7 +81,6 @@ private slots:
   void ClickOnOk();
   bool ClickOnApply();
   void ActivateThisDialog();
-//  void DeactivateActiveDialog();
   void ConstructorsClicked (int constructorId);
 
   void SelectionIntoArgument();

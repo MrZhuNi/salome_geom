@@ -15,7 +15,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
 #ifndef _GEOM_PYTHONDUMP_HXX_
 #define _GEOM_PYTHONDUMP_HXX_
@@ -49,8 +49,18 @@ namespace GEOM
     Standard_EXPORT TPythonDump& operator<< (float theArg);
     Standard_EXPORT TPythonDump& operator<< (const void* theArg);
     Standard_EXPORT TPythonDump& operator<< (const char* theArg);
+    Standard_EXPORT TPythonDump& operator<< (const TopAbs_ShapeEnum theArg);
     Standard_EXPORT TPythonDump& operator<< (const Handle(GEOM_Object)& theObject);
   };
+
+  /*! Returns an object from two given, which has the latest entry
+   */
+  Standard_EXPORT Handle(GEOM_Object) GetCreatedLast (const Handle(GEOM_Object)& theObj1,
+                                      const Handle(GEOM_Object)& theObj2);
+
+  /*! Returns an object from \a theObjects, which has the latest entry
+   */
+  Standard_EXPORT Handle(GEOM_Object) GetCreatedLast (const Handle(TColStd_HSequenceOfTransient)& theObjects);
 }
 
 #endif

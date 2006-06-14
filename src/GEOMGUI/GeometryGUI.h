@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -101,10 +101,6 @@ public:
 
   void                        OnGUIEvent( int id );
 
-  virtual bool                OnKeyPress( QKeyEvent*, SUIT_ViewWindow* );
-  virtual bool                OnMousePress( QMouseEvent*, SUIT_ViewWindow* );
-  virtual bool                OnMouseMove( QMouseEvent*, SUIT_ViewWindow* );
-
 //  virtual bool                SetSettings();
 //  virtual void                SupportedViewType ( int* buffer, int bufferSize );
   virtual void                BuildPresentation( const Handle(SALOME_InteractiveObject)&, SUIT_ViewWindow* = 0 );
@@ -129,11 +125,16 @@ public:
 public slots:
   virtual bool                deactivateModule( SUIT_Study* );
   virtual bool                activateModule( SUIT_Study* );
+  virtual void                OnKeyPress  ( SUIT_ViewWindow*, QKeyEvent*   );
+  virtual void                OnMousePress( SUIT_ViewWindow*, QMouseEvent* );
+  virtual void                OnMouseMove ( SUIT_ViewWindow*, QMouseEvent* );
+
+protected slots:
+  virtual void                onViewManagerAdded( SUIT_ViewManager* );
+  virtual void                onViewManagerRemoved( SUIT_ViewManager* );
 
 private slots:
   void                        OnGUIEvent();
-  void                        onViewManagerAdded( SUIT_ViewManager* );
-  void                        onViewManagerRemoved( SUIT_ViewManager* );
   void                        onWindowActivated( SUIT_ViewWindow* );
 
 signals :

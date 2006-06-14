@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : GenerationGUI_PipeDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_PIPE_H
 #define DIALOGBOX_PIPE_H
@@ -43,7 +42,8 @@ class GENERATIONGUI_EXPORT GenerationGUI_PipeDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    GenerationGUI_PipeDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    GenerationGUI_PipeDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			  const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~GenerationGUI_PipeDlg();
 
 protected:
@@ -59,7 +59,7 @@ private:
     GEOM::GEOM_Object_var myBase; /* Base shape */
     GEOM::GEOM_Object_var myPath; /* Shape, defining the path */
     bool myOkBase;
-    bool myOkPath             ;   /* to check when arguments are defined */
+    bool myOkPath; /* to check when arguments are defined */
 
     DlgRef_2Sel_QTD* GroupPoints;
 
@@ -70,7 +70,6 @@ private slots:
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-
 };
 
 #endif // DIALOGBOX_PIPE_H

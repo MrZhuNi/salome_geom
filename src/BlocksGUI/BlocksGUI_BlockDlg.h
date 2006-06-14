@@ -16,14 +16,13 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org or email : webmaster.salome@opencascade.org
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : BlocksGUI_BlockDlg.h
 //  Author : Julia DOROVSKIKH
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_BLOCK_H
 #define DIALOGBOX_BLOCK_H
@@ -44,7 +43,7 @@ class GEOM_BLOCKSGUI_EXPORT BlocksGUI_BlockDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  BlocksGUI_BlockDlg (QWidget* parent,
+  BlocksGUI_BlockDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
 		      bool modal = FALSE);
   ~BlocksGUI_BlockDlg();
 
@@ -71,7 +70,6 @@ private slots:
   void ClickOnOk();
   bool ClickOnApply();
   void ActivateThisDialog();
-//  void DeactivateActiveDialog();
   void ConstructorsClicked (int constructorId);
 
   void SelectionIntoArgument();

@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include <Standard_OStream.hxx>
 
@@ -253,9 +253,9 @@ SALOMEDS::TMPFile* GEOM_Object_i::GetShapeStream()
 //function : getShape
 //purpose  : return the TopoDS_Shape when client and servant are colocated, be careful
 //=======================================================================
-long GEOM_Object_i::getShape() {
+CORBA::Long GEOM_Object_i::getShape() {
   _geom = _impl->GetValue();
-  return((long)(&_geom));
+  return CORBA::Long(size_t(&_geom));
 }
 
 //=============================================================================

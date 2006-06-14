@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include <Standard_Stream.hxx>
 
@@ -248,7 +248,7 @@ char* GEOM_IMeasureOperations_i::WhatIs (GEOM::GEOM_Object_ptr theShape)
 
   // Get shape parameters
   TCollection_AsciiString aDescription = GetOperations()->WhatIs(aShape);
-  return strdup(aDescription.ToCString());
+  return CORBA::string_dup(aDescription.ToCString());
 }
 
 //=============================================================================

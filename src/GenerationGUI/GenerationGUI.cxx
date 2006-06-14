@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -85,7 +85,7 @@ bool GenerationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
     case 4031: aDlg = new GenerationGUI_PrismDlg   ( getGeometryGUI(), parent, ""); break;
     case 4032: aDlg = new GenerationGUI_RevolDlg   ( getGeometryGUI(), parent, ""); break;
     case 4033: aDlg = new GenerationGUI_FillingDlg ( getGeometryGUI(), parent, ""); break;
-    case 4034: aDlg = new GenerationGUI_PipeDlg    ( parent, ""); break;
+    case 4034: aDlg = new GenerationGUI_PipeDlg    ( getGeometryGUI(), parent, ""); break;
     
     default: SUIT_Session::session()->activeApplication()->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); break;
   }

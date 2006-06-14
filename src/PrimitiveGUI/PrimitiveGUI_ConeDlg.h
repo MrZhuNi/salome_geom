@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : PrimitiveGUI_ConeDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_CONE_H
 #define DIALOGBOX_CONE_H
@@ -42,7 +41,8 @@ class PrimitiveGUI_ConeDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    PrimitiveGUI_ConeDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    PrimitiveGUI_ConeDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			 const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~PrimitiveGUI_ConeDlg();
 
 protected:
@@ -60,8 +60,6 @@ private:
     double getRadius2() const;
     double getHeight() const;
 
-    GeometryGUI* myGeometryGUI;
-    
     GEOM::GEOM_Object_var myPoint, myDir;
     
     DlgRef_2Sel3Spin* GroupPoints;
@@ -78,7 +76,6 @@ private slots:
     void SetEditCurrentArgument();
     void ConstructorsClicked(int);
     void ValueChangedInSpinBox();
-
 };
 
 #endif // DIALOGBOX_CONE_H

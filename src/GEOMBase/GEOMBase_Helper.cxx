@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org or email : webmaster.salome@opencascade.org
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -109,7 +109,8 @@ GEOMBase_Helper::~GEOMBase_Helper()
 
   globalSelection( GEOM_ALLOBJECTS, true );
 
-  delete myDisplayer;
+  if (myDisplayer)
+    delete myDisplayer;
 }
 
 //================================================================
@@ -758,13 +759,21 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
       else {
 	const int nbObjs = objects.size();
 	bool withChildren = false;
+        int aNumber = 1;
 	for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) {
 	  if ( publish ) {
-	    QString aName("");
-	    if ( nbObjs > 1 )
-	      aName = strlen( getNewObjectName() ) ? GEOMBase::GetDefaultName( getNewObjectName() ) : GEOMBase::GetDefaultName( getPrefix( *it ) );
-	    else {
-	      aName = getNewObjectName();
+	    QString aName = getNewObjectName();
+	    if ( nbObjs > 1 ) {
+              if (aName.isEmpty())
+                aName = getPrefix(*it);
+              if (nbObjs <= 30) {
+                // Try to find a unique name
+                aName = GEOMBase::GetDefaultName(aName);
+              } else {
+                // Don't check name uniqueness in case of numerous objects
+                aName = aName + "_" + QString::number(aNumber++);
+              }
+	    } else {
 	      // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
 	      if ( aName.isEmpty() )
 		aName = GEOMBase::GetDefaultName( getPrefix( *it ) );

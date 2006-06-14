@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include <Standard_Stream.hxx>
 
@@ -259,7 +259,7 @@ TCollection_AsciiString GEOM_Object::GetAuxData()
 bool GEOM_Object::IsMainShape()
 {
   Handle(GEOM_Function) aFunction = GetFunction(1);
-  if(aFunction == NULL || aFunction->GetDriverGUID() != GetSubShapeID()) return true;
+  if(aFunction.IsNull() || aFunction->GetDriverGUID() != GetSubShapeID()) return true; // mkr : IPAL9921
   return false;
 }
 

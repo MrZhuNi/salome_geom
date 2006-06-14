@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -89,7 +89,7 @@ bool BooleanGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   else
     return false;
 
-  QDialog* aDlg = new BooleanGUI_Dialog( anOperation, parent, "");
+  QDialog* aDlg = new BooleanGUI_Dialog( anOperation, getGeometryGUI(), parent, "");
   aDlg->show();
    
   return true;

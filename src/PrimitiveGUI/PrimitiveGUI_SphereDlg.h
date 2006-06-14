@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : PrimitiveGUI_SphereDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_SPHERE_H
 #define DIALOGBOX_SPHERE_H
@@ -43,7 +42,8 @@ class PrimitiveGUI_SphereDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    PrimitiveGUI_SphereDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    PrimitiveGUI_SphereDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			   const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~PrimitiveGUI_SphereDlg();
 
 protected:
@@ -54,13 +54,11 @@ protected:
 
     virtual void closeEvent( QCloseEvent* e );
 
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
     double getRadius() const;
 
-    GeometryGUI* myGeometryGUI;
-       
     GEOM::GEOM_Object_var myPoint; /* Center point */
     
     DlgRef_1Sel1Spin* GroupPoints;

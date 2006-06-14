@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : OperationGUI_ArchimedeDlg.h
 //  Author : Nicolas REJNERI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_ARCHIMEDE_H
 #define DIALOGBOX_ARCHIMEDE_H
@@ -42,13 +41,11 @@ class OperationGUI_ArchimedeDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    OperationGUI_ArchimedeDlg( GeometryGUI* theGeometryGUI, QWidget* parent );
+    OperationGUI_ArchimedeDlg(GeometryGUI* theGeometryGUI, QWidget* parent);
     ~OperationGUI_ArchimedeDlg();
 
 protected:
-
     // redefined from GEOMBase_Helper
-    
     virtual GEOM::GEOM_IOperations_ptr  createOperation();
     virtual bool                        isValid( QString& msg );
     virtual bool                        execute( ObjectList& objects );    
@@ -61,7 +58,6 @@ private:
     GEOM::GEOM_Object_var               myShape;
     DlgRef_1Sel3Spin*                   GroupPoints;
     double                              myStep;
-    GeometryGUI*                        myGeometryGUI;
 
 private slots:
     void                                ClickOnOk();

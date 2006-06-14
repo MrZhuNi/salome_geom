@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #ifndef _GEOMImpl_IShapesOperations_HXX_
@@ -71,7 +71,15 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations {
                                                      const Standard_Boolean isSorted);
 
   Standard_EXPORT Handle(GEOM_Object) GetSubShape (Handle(GEOM_Object)    theMainShape,
-                                   const Standard_Integer theID);
+                                                   const Standard_Integer theID);
+
+  Standard_EXPORT Standard_Integer GetSubShapeIndex (Handle(GEOM_Object) theMainShape,
+                                                     Handle(GEOM_Object) theSubShape);
+
+  Standard_EXPORT Standard_Integer GetTopologyIndex (Handle(GEOM_Object) theMainShape,
+                                                     Handle(GEOM_Object) theSubShape);
+
+  Standard_EXPORT TCollection_AsciiString GetShapeTypeString (Handle(GEOM_Object) theShape);
 
   Standard_EXPORT Standard_Integer NumberOfFaces (Handle(GEOM_Object) theShape);
   Standard_EXPORT Standard_Integer NumberOfEdges (Handle(GEOM_Object) theShape);

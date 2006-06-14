@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : PrimitiveGUI_TorusDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_TORUS_H
 #define DIALOGBOX_TORUS_H
@@ -43,7 +42,8 @@ class PrimitiveGUI_TorusDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    PrimitiveGUI_TorusDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    PrimitiveGUI_TorusDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			  const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~PrimitiveGUI_TorusDlg();
 
 protected:
@@ -53,20 +53,18 @@ protected:
     virtual bool execute( ObjectList& objects );
 
     virtual void closeEvent( QCloseEvent* e );
-    
+
 private:
     void Init();
     void enterEvent(QEvent* e);
     double getRadius1() const;
     double getRadius2() const;
 
-    GeometryGUI* myGeometryGUI;
-    
     GEOM::GEOM_Object_var myPoint, myDir;
-    
+
     DlgRef_2Sel2Spin* GroupPoints;
     DlgRef_2Spin* GroupDimensions;
-    
+
     private slots:
     void ClickOnOk();
     bool ClickOnApply();
@@ -78,7 +76,6 @@ private:
     void SetEditCurrentArgument();
     void ConstructorsClicked(int);
     void ValueChangedInSpinBox();
-
 };
 
 #endif // DIALOGBOX_TORUS_H

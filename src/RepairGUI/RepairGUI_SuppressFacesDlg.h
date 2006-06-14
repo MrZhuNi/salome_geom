@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : RepairGUI_SuppressFacesDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_SUPPRESSFACES_H
 #define DIALOGBOX_SUPPRESSFACES_H
@@ -43,7 +42,8 @@ class RepairGUI_SuppressFacesDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    RepairGUI_SuppressFacesDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    RepairGUI_SuppressFacesDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~RepairGUI_SuppressFacesDlg();
 
 protected:
@@ -57,25 +57,23 @@ private :
     void enterEvent(QEvent* e);
     void closeEvent(QCloseEvent* e);
 
-		GEOM::ListOfGO_var myObjects;
-		QValueList<GEOM::short_array> myFaces;
-		// GEOM::short_array-s contain indexes of selected faces,
-		// index of a GEOM::short_array in myFaces list equals to index of
-		// GEOM::GEOM_Object in myObjects list to which the faces belong to.
-		
-		void Convert( const TColStd_IndexedMapOfInteger&, GEOM::short_array& );
+    GEOM::ListOfGO_var myObjects;
+    QValueList<GEOM::short_array> myFaces;
+    // GEOM::short_array-s contain indexes of selected faces,
+    // index of a GEOM::short_array in myFaces list equals to index of
+    // GEOM::GEOM_Object in myObjects list to which the faces belong to.
 
-		void initSelection();
-		
+    void Convert( const TColStd_IndexedMapOfInteger&, GEOM::short_array& );
+
+    void initSelection();
+
     DlgRef_1Sel_QTD* GroupPoints;
 
 private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
-    
+
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
 
     void LineEditReturnPressed();
     void SelectionIntoArgument();

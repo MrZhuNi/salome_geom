@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:	BREPImport.cxx
 // Created:	Wed May 19 14:29:52 2004
@@ -58,6 +58,7 @@ extern "C"
 {
 BREPIMPORT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
+                       const TCollection_AsciiString& /*theFormatName*/,
                        TCollection_AsciiString&       theError)
   {
     MESSAGE("Import BREP from file " << theFileName);

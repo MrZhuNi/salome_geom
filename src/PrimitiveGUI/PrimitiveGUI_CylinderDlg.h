@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : PrimitiveGUI_CylinderDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_CYLINDER_H
 #define DIALOGBOX_CYLINDER_H
@@ -43,7 +42,8 @@ class PrimitiveGUI_CylinderDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    PrimitiveGUI_CylinderDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    PrimitiveGUI_CylinderDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+			     const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~PrimitiveGUI_CylinderDlg();
 
 protected:
@@ -60,8 +60,6 @@ private:
     double getRadius() const;
     double getHeight() const;
 
-    GeometryGUI* myGeometryGUI;
-        
     GEOM::GEOM_Object_var myPoint, myDir;
       
     DlgRef_2Sel2Spin* GroupPoints;

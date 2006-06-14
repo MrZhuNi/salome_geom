@@ -15,7 +15,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef __GEOM_SUPERV_I_H__
 #define __GEOM_SUPERV_I_H__
@@ -66,21 +66,21 @@ public:
   //-----------------------------------------------------------//
   GEOM::GEOM_List_ptr CreateListOfGO();
   void AddItemToListOfGO(GEOM::GEOM_List_ptr& theList, 
-			 GEOM::GEOM_Object_ptr    theObject);
+			 GEOM::GEOM_Object_ptr theObject);
 
   //-----------------------------------------------------------//
   // Create ListOfLong and add items to it                     // 
   //-----------------------------------------------------------//
   GEOM::GEOM_List_ptr CreateListOfLong();
   void AddItemToListOfLong(GEOM::GEOM_List_ptr& theList, 
-			   long    theObject);
+			   CORBA::Long theObject);
   
   //-----------------------------------------------------------//
   // Create ListOfDouble and add items to it                   // 
   //-----------------------------------------------------------//
   GEOM::GEOM_List_ptr CreateListOfDouble();
   void AddItemToListOfDouble(GEOM::GEOM_List_ptr& theList, 
-			     double    theObject);
+			     CORBA::Double theObject);
 
   //-----------------------------------------------------------------------//
   // Inherited methods from SALOMEDS::Driver                               //
@@ -88,21 +88,21 @@ public:
 
   SALOMEDS::TMPFile* Save(SALOMEDS::SComponent_ptr theComponent,
 			  const char* theURL,
-			  bool isMultiFile);
+			  CORBA::Boolean isMultiFile);
 
   SALOMEDS::TMPFile* SaveASCII(SALOMEDS::SComponent_ptr theComponent,
 			       const char* theURL,
-			       bool isMultiFile);
+			       CORBA::Boolean isMultiFile);
   
   CORBA::Boolean Load(SALOMEDS::SComponent_ptr theComponent,
 		      const SALOMEDS::TMPFile& theStream,
 		      const char* theURL,
-		      bool isMultiFile);
+		      CORBA::Boolean isMultiFile);
 
   CORBA::Boolean LoadASCII(SALOMEDS::SComponent_ptr theComponent,
 			   const SALOMEDS::TMPFile& theStream,
 			   const char* theURL,
-			   bool isMultiFile);
+			   CORBA::Boolean isMultiFile);
 
   void Close(SALOMEDS::SComponent_ptr theComponent);
   char* ComponentDataType();
@@ -117,7 +117,7 @@ public:
 			       CORBA::Boolean isMultiFile,
 			       CORBA::Boolean isASCII);
 
-  bool CanPublishInStudy(CORBA::Object_ptr theIOR);
+  CORBA::Boolean CanPublishInStudy(CORBA::Object_ptr theIOR);
   SALOMEDS::SObject_ptr PublishInStudy(SALOMEDS::Study_ptr theStudy,
 				       SALOMEDS::SObject_ptr theSObject,
 				       CORBA::Object_ptr theObject,
@@ -142,6 +142,8 @@ public:
 						CORBA::Double theZ);
   GEOM::GEOM_Object_ptr MakePointOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
 					  CORBA::Double theParameter);
+  GEOM::GEOM_Object_ptr MakeTangentOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
+					     CORBA::Double theParameter);
   GEOM::GEOM_Object_ptr MakeVectorDXDYDZ (CORBA::Double theDX,
 					  CORBA::Double theDY,
 					  CORBA::Double theDZ);
@@ -161,6 +163,11 @@ public:
   GEOM::GEOM_Object_ptr MakeMarker (CORBA::Double theOX , CORBA::Double theOY , CORBA::Double theOZ,
 				    CORBA::Double theXDX, CORBA::Double theXDY, CORBA::Double theXDZ,
 				    CORBA::Double theYDX, CORBA::Double theYDY, CORBA::Double theYDZ);
+
+  GEOM::GEOM_Object_ptr MakeTangentPlaneOnFace (GEOM::GEOM_Object_ptr theFace, 
+						 CORBA::Double theParameterU,
+						 CORBA::Double theParameterV,
+						 CORBA::Double theTrimSize);
 
   //-----------------------------------------------------------//
   // Primitives Construction : 3DPrimOperations                //
@@ -218,6 +225,17 @@ public:
 				     CORBA::Long theMinDeg, CORBA::Long theMaxDeg,
 				     CORBA::Double theTol2D, CORBA::Double theTol3D,
 				     CORBA::Long theNbIter);
+
+  GEOM::GEOM_Object_ptr MakeThruSections(const GEOM::ListOfGO& theSeqSections,
+					 CORBA::Boolean theModeSolid,
+					 CORBA::Double thePreci,
+					 CORBA::Boolean theRuled);
+  
+  GEOM::GEOM_Object_ptr MakePipeWithDifferentSections(const GEOM::ListOfGO& theBases,
+						      const GEOM::ListOfGO& theLocations,
+						      GEOM::GEOM_Object_ptr thePath,
+						      CORBA::Boolean theWithContact,
+						      CORBA::Boolean theWithCorrections);
   
   //-----------------------------------------------------------//
   // BooleanOperations                                         //
@@ -485,6 +503,7 @@ private:
   SALOME_NamingService *  name_service; 
   GEOM::GEOM_Gen_ptr      myGeomEngine;
   CORBA::Long             myStudyID;
+  CORBA::Long             myLastStudyID; // mkr : PAL10770
   PortableServer::POA_var myPOA;
   
   GEOM::GEOM_IBasicOperations_ptr     myBasicOp;

@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : RepairGUI_RemoveIntWiresDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_RemoveIntWires_H
 #define DIALOGBOX_RemoveIntWires_H
@@ -48,7 +47,8 @@ class RepairGUI_RemoveIntWiresDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    RepairGUI_RemoveIntWiresDlg(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    RepairGUI_RemoveIntWiresDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+				const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~RepairGUI_RemoveIntWiresDlg();
 
 protected:
@@ -57,14 +57,14 @@ protected:
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
 
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
     void closeEvent(QCloseEvent* e);
     void initSelection();
 
-		GEOM::GEOM_Object_var myObject;
-		GEOM::short_array_var myWiresInd;
+    GEOM::GEOM_Object_var myObject;
+    GEOM::short_array_var myWiresInd;
 
     DlgRef_1Sel_Ext* GroupPoints;
     QCheckBox*       myAllChk;
@@ -75,10 +75,8 @@ private :
 private slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
 
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
 
     void LineEditReturnPressed();
     void SelectionIntoArgument();

@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : RepairGUI_DivideEdgeDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_DivideEdge_H
 #define DIALOGBOX_DivideEdge_H
@@ -57,7 +56,7 @@ protected:
     virtual bool isValid( QString& );
     virtual bool execute( ObjectList& objects );
 
-private :
+private:
     void Init();
     void enterEvent(QEvent* e);
     void closeEvent(QCloseEvent* e);
@@ -75,10 +74,8 @@ private :
 protected slots:
     void ClickOnOk();
     bool ClickOnApply();
-    void ClickOnCancel();
 
     void ActivateThisDialog();
-    void DeactivateActiveDialog();
 
     void LineEditReturnPressed();
     void SelectionIntoArgument();

@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-//  See http://www.opencascade.org/SALOME/ or email : webmaster.salome@opencascade.org 
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : BasicGUI_VectorDlg.h
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
 
 #ifndef DIALOGBOX_VECTOR_H
 #define DIALOGBOX_VECTOR_H
@@ -46,9 +45,10 @@ class GEOM_BASICGUI_EXPORT BasicGUI_VectorDlg : public GEOMBase_Skeleton
     Q_OBJECT
 
 public:
-    BasicGUI_VectorDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0);
+    BasicGUI_VectorDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
+		       const char* name = 0, bool modal = FALSE, WFlags fl = 0);
     ~BasicGUI_VectorDlg();
-    
+
 protected:
     // redefined from GEOMBase_Helper
     virtual GEOM::GEOM_IOperations_ptr createOperation();
@@ -58,8 +58,6 @@ protected:
 private :
     void Init();
     void enterEvent(QEvent* e);
-
-    GeometryGUI* myGeometryGUI;
 
     GEOM::GEOM_Object_var myPoint1;   
     GEOM::GEOM_Object_var myPoint2;
@@ -71,7 +69,7 @@ private slots:
     void ClickOnOk();
     void ClickOnCancel();
     bool ClickOnApply();
-    
+
     void ActivateThisDialog();
     void DeactivateActiveDialog();
     
