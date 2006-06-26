@@ -10,7 +10,7 @@ IGES.Export: libIGESExport
 IGES.Pattern: IGES Files ( *.iges *.igs )
 IGES.ExportPattern: IGES 5.1 Files ( *.iges *.igs )
 
-IGES_5_3.Export: libIGESExport.so
+IGES_5_3.Export: libIGESExport
 IGES_5_3.Pattern: IGES 5.3 Files ( *.iges *.igs )
 
 STEP.Import: libSTEPImport
