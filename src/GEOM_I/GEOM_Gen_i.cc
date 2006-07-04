@@ -247,7 +247,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     aShapeName = aNewShapeName;
   }
   else // MOST PROBABLY CALLED FROM GEOM GUI (ALREADY WITH VALID NAME)
-    aShapeName = TCollection_AsciiString(strdup(theName));
+    aShapeName = TCollection_AsciiString((char *)theName);
 
   //Set the study entry as a name of  the published GEOM_Object
   aShape->SetStudyEntry(aResultSO->GetID());
