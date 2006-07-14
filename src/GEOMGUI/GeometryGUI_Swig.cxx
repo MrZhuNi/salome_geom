@@ -143,7 +143,8 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry)
       if (!father)
         return;
       if (!father->ComponentIOR(aFatherIOR)) {
-        aStudyBuilder->LoadWith(father, SalomeApp_Application::orb()->object_to_string(Geom));
+        CORBA::String_var objStr = SalomeApp_Application::orb()->object_to_string(Geom);
+        aStudyBuilder->LoadWith(father, objStr.in());
         father->ComponentIOR(aFatherIOR);
       }
 

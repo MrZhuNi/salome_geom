@@ -1610,9 +1610,14 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
 
 QString GeometryGUI::engineIOR() const
 {
+  QString anIOR = QString::null;
   if ( !CORBA::is_nil( GetGeomGen() ) )
-    return QString( getApp()->orb()->object_to_string( GetGeomGen() ) );
-  return QString( "" );
+  {
+    CORBA::String_var objStr = getApp()->orb()->object_to_string( GetGeomGen() );
+    anIOR = QString( objStr.in() );
+    free( objStr );
+  }
+  return anIOR;
 }
 
 LightApp_Selection* GeometryGUI::createSelection() const

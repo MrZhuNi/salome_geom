@@ -119,7 +119,7 @@ void GEOM_Superv_i::SetStudyID( CORBA::Long theId )
   
   if ( isNewStudy(myLastStudyID,myStudyID) ) {
     if (CORBA::is_nil(myGeomEngine)) setGeomEngine();
-    string anEngine = _orb->object_to_string( myGeomEngine );
+    CORBA::String_var anEngine = _orb->object_to_string( myGeomEngine );
     
     CORBA::Object_var anObj = name_service->Resolve("/myStudyManager");
     if ( !CORBA::is_nil(anObj) ) {
@@ -130,7 +130,7 @@ void GEOM_Superv_i::SetStudyID( CORBA::Long theId )
 	  _PTR(SComponent) aSCO = aDSStudy->FindComponent(myGeomEngine->ComponentDataType());
 	  if ( aSCO ) {
 	    _PTR(StudyBuilder) aBuilder = aDSStudy->NewBuilder();
-	    if ( aBuilder ) aBuilder->LoadWith( aSCO, anEngine );
+	    if ( aBuilder ) aBuilder->LoadWith( aSCO, string( anEngine.in() ) );
 	  }
 	}
       }

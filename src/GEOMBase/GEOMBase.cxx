@@ -940,10 +940,10 @@ QString GEOMBase::GetName( GEOM::GEOM_Object_ptr theObj )
 
   if ( appStudy )
   {
-    string anIOR = SalomeApp_Application::orb()->object_to_string( theObj );
-    if ( anIOR != "" )
+    CORBA::String_var anIOR = SalomeApp_Application::orb()->object_to_string( theObj );
+    if ( strcmp(anIOR.in(), "") != 0 )
     {
-      _PTR(SObject) aSObj ( appStudy->studyDS()->FindObjectIOR( anIOR ) );
+      _PTR(SObject) aSObj ( appStudy->studyDS()->FindObjectIOR( string( anIOR ) ) );
 
       _PTR(GenericAttribute) anAttr;
 

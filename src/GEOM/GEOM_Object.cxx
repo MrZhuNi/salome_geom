@@ -220,8 +220,12 @@ char* GEOM_Object::GetName()
   Handle(TDataStd_Name) aNameAttr;
   if(!_label.FindAttribute(TDataStd_Name::GetID(), aNameAttr)) return NULL;
   
+  // do not 
   TCollection_AsciiString aName(aNameAttr->Get());
-  return aName.ToCString();
+  // do not return pointer of local variable
+  // return aName.ToCString();
+  // the following code could lead to memory leak, so take care about recieved pointer
+  return strdup(aName.ToCString());
 }
 
 //=============================================================================

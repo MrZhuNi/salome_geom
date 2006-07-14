@@ -174,11 +174,11 @@ static string getEntry( GEOM::GEOM_Object_ptr object )
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
   if ( app )
   {
-    string IOR = app->orb()->object_to_string( object );
-    if ( IOR != "" )
+    CORBA::String_var IOR = app->orb()->object_to_string( object );
+    if ( strcmp(IOR.in(), "") != 0 )
     {
       SalomeApp_Study* study = ( SalomeApp_Study* )app->activeStudy();
-      _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
+      _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( string(IOR) ) );
       if ( SO )
 	return SO->GetID();
     }
@@ -196,11 +196,11 @@ static string getName( GEOM::GEOM_Object_ptr object )
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
   if ( app )
   {
-    string IOR = app->orb()->object_to_string( object );
-    if ( IOR != "" )
+    CORBA::String_var IOR = app->orb()->object_to_string( object );
+    if ( strcmp(IOR.in(), "") != 0 )
     {
       SalomeApp_Study* study = ( SalomeApp_Study* )app->activeStudy();
-      _PTR(SObject) aSObj ( study->studyDS()->FindObjectIOR( IOR ) );
+      _PTR(SObject) aSObj ( study->studyDS()->FindObjectIOR( string(IOR) ) );
 
       _PTR(GenericAttribute) anAttr;
 

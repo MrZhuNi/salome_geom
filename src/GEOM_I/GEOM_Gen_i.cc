@@ -119,7 +119,7 @@ char* GEOM_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
   GEOM::GEOM_Object_var obj = GetObject(anObject->GetDocID(), anEntry.ToCString());
 
   CORBA::String_var aPersRefString = _orb->object_to_string(obj);
-  return strdup(aPersRefString);
+  return strdup(aPersRefString.in());
 }
 
 //============================================================================
@@ -173,8 +173,8 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   }
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeIOR");
   SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-  char *aGeomObjIOR = _orb->object_to_string(theObject);
-  anIOR->SetValue(strdup(aGeomObjIOR));
+  CORBA::String_var aGeomObjIOR = _orb->object_to_string(theObject);
+  anIOR->SetValue( aGeomObjIOR .in() );
 
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributePixMap");
   SALOMEDS::AttributePixMap_var aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
@@ -229,7 +229,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     aShapeName = "Vertex_";
   }
   //if (strlen(theName) == 0) aShapeName += TCollection_AsciiString(aResultSO->Tag());
-  //else aShapeName = TCollection_AsciiString(strdup(theName));
+  //else aShapeName = TCollection_AsciiString((char *)theName);
 
   // asv : 11.11.04 Introducing a more sofisticated method of name creation, just as
   //       it is done in GUI in GEOMBase::GetDefaultName() - not just add a Tag() == number
@@ -339,7 +339,7 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
   if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.c_str(), aSeq.in(), true);
 
   SALOMEDS::Study_var Study = theComponent->GetStudy();
-  TCollection_AsciiString name( strdup(Study->Name()) );
+  TCollection_AsciiString name( (char *)(Study->Name() ) );
 
   return true;
 }
@@ -457,7 +457,8 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
   // Add IORAttribute to the Study and set IOR of the created GEOM_Object to it
   SALOMEDS::GenericAttribute_var anAttr = aStudyBuilder->FindOrCreateAttribute(aNewSO, "AttributeIOR");
   SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-  anIOR->SetValue(_orb->object_to_string(obj));
+  CORBA::String_var objStr = _orb->object_to_string(obj);
+  anIOR->SetValue(objStr.in());
 
   // Return the created in the Study SObject
   return aNewSO._retn();
@@ -482,11 +483,11 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy(SALOMEDS::Study_ptr theStudy, GEOM:
   if(theObject->_is_nil() || theStudy->_is_nil()) return aResultSO;
 
   SALOMEDS::StudyBuilder_var aStudyBuilder = theStudy->NewBuilder();
-  char* IOR;
+  CORBA::String_var IOR;
 
   if(!theFather->_is_nil()) {
     IOR = _orb->object_to_string(theFather);
-    SALOMEDS::SObject_var aFatherSO = theStudy->FindObjectIOR(IOR);
+    SALOMEDS::SObject_var aFatherSO = theStudy->FindObjectIOR(IOR.in());
     if(aFatherSO->_is_nil()) return aResultSO._retn();
     aResultSO = aStudyBuilder->NewObject(aFatherSO);
     //aStudyBuilder->Addreference(aResultSO, aResultSO);
@@ -504,7 +505,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy(SALOMEDS::Study_ptr theStudy, GEOM:
     GEOM::GEOM_Object_var anObject = aList[i];
     if(anObject->_is_nil()) continue;
     IOR = _orb->object_to_string(anObject);
-    SALOMEDS::SObject_var aSO =  theStudy->FindObjectIOR(IOR);
+    SALOMEDS::SObject_var aSO =  theStudy->FindObjectIOR(IOR.in());
     if(aSO->_is_nil()) continue;
     SALOMEDS::SObject_var aSubSO = aStudyBuilder->NewObject(aResultSO);
     aStudyBuilder->Addreference(aSubSO, aSO);
@@ -519,8 +520,9 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy(SALOMEDS::Study_ptr theStudy, GEOM:
 //============================================================================
 void GEOM_Gen_i::register_name(char * name)
 {
-  GEOM::GEOM_Gen_ptr g = GEOM::GEOM_Gen::_narrow(_this());
-  name_service->Register(g, strdup(name));
+  CORBA::Object_var obj = _this();
+  GEOM::GEOM_Gen_var g = GEOM::GEOM_Gen::_narrow(obj);
+  name_service->Register(g, name);
 }
 
 //============================================================================
@@ -862,8 +864,9 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::GetObject (CORBA::Long theStudyID, const char*
   GEOM_Object_i* servant = new GEOM_Object_i (_poa, engine, handle_object);
 
   obj = servant->_this();
-  stringIOR = _orb->object_to_string(obj);
-  handle_object->SetIOR(stringIOR);
+  CORBA::String_var objStr = _orb->object_to_string(obj);
+  TCollection_AsciiString anAscii( (char *)objStr.in() );
+  handle_object->SetIOR( anAscii );
   return obj._retn();
 }
 

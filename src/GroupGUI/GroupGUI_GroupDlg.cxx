@@ -606,8 +606,10 @@ void GroupGUI_GroupDlg::highlightSubShapes()
     return;
 
   Standard_Boolean isOk;
+  char* objIOR = GEOMBase::GetIORFromObject( myMainObj );
   Handle(GEOM_AISShape) aSh =
-    GEOMBase::ConvertIORinGEOMAISShape( GEOMBase::GetIORFromObject( myMainObj ), isOk, true );
+    GEOMBase::ConvertIORinGEOMAISShape( objIOR, isOk, true );
+  free( objIOR );
   if ( !isOk || aSh.IsNull() )
     return;
 
@@ -703,7 +705,9 @@ bool GroupGUI_GroupDlg::execute( ObjectList& objects )
 
   SalomeApp_Study* study = getStudy();
   if ( study ) {
-    string IOR = GEOMBase::GetIORFromObject( aGroup );
+    char* objIOR = GEOMBase::GetIORFromObject( aGroup );
+    string IOR( objIOR );
+    free( objIOR );
     if ( IOR != "" ) {
       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
       if ( SO ) {

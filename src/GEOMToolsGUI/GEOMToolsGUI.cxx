@@ -248,8 +248,8 @@ void GEOMToolsGUI::OnEditDelete()
 	// VSR 17/11/04: check if all objects selected belong to GEOM component --> start
 	// modifications of ASV 01.06.05
 	QString parentComp = getParentComponent( aStudy, selected );
-	const char* geomIOR = app->orb()->object_to_string( GeometryGUI::GetGeomGen() );
-	QString geomComp = getParentComponent( aStudy->FindObjectIOR( geomIOR ) );
+  CORBA::String_var geomIOR = app->orb()->object_to_string( GeometryGUI::GetGeomGen() );
+	QString geomComp = getParentComponent( aStudy->FindObjectIOR( geomIOR.in() ) );
 
 	if ( parentComp != geomComp )  {
 	  SUIT_MessageBox::warn1 ( app->desktop(),
