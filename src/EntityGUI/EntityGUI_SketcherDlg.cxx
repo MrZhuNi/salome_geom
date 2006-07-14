@@ -1358,7 +1358,8 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
   getDisplayer()->SetToActivate( activate );
 
   // Make a reference to GEOM_Object
-  getDisplayer()->SetName( myGeometryGUI->getApp()->orb()->object_to_string( object ) );
+  CORBA::String_var objStr = myGeometryGUI->getApp()->orb()->object_to_string( object );
+  getDisplayer()->SetName( objStr.in() );
 
   // Create wire from applayed object
   TopoDS_Shape anApplyedWire, aLastSegment;
