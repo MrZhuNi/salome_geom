@@ -1615,7 +1615,7 @@ QString GeometryGUI::engineIOR() const
   {
     CORBA::String_var objStr = getApp()->orb()->object_to_string( GetGeomGen() );
     anIOR = QString( objStr.in() );
-    free( objStr );
+//    free( objStr ); ASV : 26.07.06 : commented out because it raises exception and blocks application
   }
   return anIOR;
 }
