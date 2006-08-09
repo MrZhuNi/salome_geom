@@ -139,11 +139,11 @@ LIB_MOC = \
 		DlgRef_3Sel1Spin.h \
 		DlgRef_1Sel_Ext.h \
 		DlgRef_3Check_QTD.h \
-		DlgRef_6Sel_QTD.h \
-		GEOM_DlgRef.hxx
+		DlgRef_6Sel_QTD.h
 
 # header files 
-EXPORT_HEADERS= $(LIB_MOC)
+EXPORT_HEADERS= $(LIB_MOC) \
+		GEOM_DlgRef.hxx
 
 LIB_CLIENT_IDL = 
 

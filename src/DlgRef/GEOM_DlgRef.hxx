@@ -41,7 +41,7 @@
   #endif
  #endif
 #else
- #define GEOM_OBJECT_EXPORT
+ #define GEOM_DLGREF_EXPORT
 #endif
 
 #endif
