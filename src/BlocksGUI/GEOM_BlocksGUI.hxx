@@ -41,7 +41,7 @@
   #endif
  #endif
 #else
- #define GEOM_BASICGUI_EXPORT
+ #define GEOM_BLOCKSGUI_EXPORT
 #endif
 
 #endif

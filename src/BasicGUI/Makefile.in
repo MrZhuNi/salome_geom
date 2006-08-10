@@ -35,7 +35,8 @@ VPATH=.:@srcdir@:@top_srcdir@/idl
 @COMMENCE@
 
 # header files 
-EXPORT_HEADERS= BasicGUI_PointDlg.h
+EXPORT_HEADERS= BasicGUI_PointDlg.h \
+		GEOM_BasicGUI.hxx
 
 # Libraries targets
 LIB = libBasicGUI.la 

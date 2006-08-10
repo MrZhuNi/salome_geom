@@ -29,8 +29,6 @@
 
 #include "GEOM_BlocksGUI.hxx"
 
-#include "GEOM_BasicGUI.hxx"
-
 #include "GEOMBase_Skeleton.h"
 
 class DlgRef_SpinBox;
