@@ -40,7 +40,7 @@ EXPORT_HEADERS = GEOM_Actor.h \
 		 Handle_GEOM_InteractiveObject.hxx \
 		 GEOM_AISTrihedron.hxx \
 		 GEOM_VTKTrihedron.hxx \
-		 GEOM_OBJECT.hxx
+		 GEOM_OBJECT_defs.hxx
 
 # Libraries targets
 
