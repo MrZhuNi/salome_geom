@@ -36,6 +36,7 @@
 
 #include "utilities.h"
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 //=============================================================================
@@ -105,6 +106,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean (Handle(GEOM_Object
 
   //Compute the Boolean value
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Boolean driver failed");
       return NULL;
@@ -260,6 +262,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
 
   //Compute the Partition
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Partition driver failed");
       return NULL;
@@ -330,6 +333,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
 
   //Compute the Partition value
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Partition driver failed");
       return NULL;

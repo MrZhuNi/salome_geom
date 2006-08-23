@@ -51,6 +51,7 @@
 #include <TopoDS_TShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 //=============================================================================
@@ -106,6 +107,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletAll
 
   //Compute the Fillet value
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Fillet driver failed");
       return NULL;
@@ -164,6 +166,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
 
   //Compute the Fillet value
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Fillet driver failed");
       return NULL;
@@ -230,6 +233,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
 
   //Compute the Fillet value
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Fillet driver failed");
       return NULL;
@@ -287,6 +291,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferAll (Handle(GEOM_Objec
 
   //Compute the Chamfer value
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Chamfer driver failed");
       return NULL;
@@ -341,6 +346,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdge
 
   //Compute the Chamfer value
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Chamfer driver failed");
       return NULL;
@@ -402,6 +408,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
 
   //Compute the Chamfer value
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Chamfer driver failed");
       return NULL;
@@ -463,6 +470,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeArchimede (Handle(GEOM_Object
 
   //Compute the Archimede value
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Archimede driver failed");
       return NULL;

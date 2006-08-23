@@ -34,6 +34,7 @@
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Shape.hxx>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 #ifdef WNT
@@ -64,6 +65,7 @@ SALOME_WNT_EXPORT
     BRep_Builder B;
     B.MakeCompound( compound );
     try {
+      OCC_CATCH_SIGNALS;
       IFSelect_ReturnStatus status = aReader.ReadFile(theFileName.ToCString());
 
       if (status == IFSelect_RetDone) {

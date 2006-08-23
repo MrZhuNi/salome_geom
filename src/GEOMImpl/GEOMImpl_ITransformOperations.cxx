@@ -49,6 +49,7 @@
 
 #include <GEOMImpl_Types.hxx>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 //=============================================================================
@@ -109,6 +110,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateTwoPoints
 
   //Compute the translation
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -159,6 +161,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateDXDYDZ
 
   //Compute the translation
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -212,6 +215,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateTwoPointsCopy
 
   //Compute the translation
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -264,6 +268,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateDXDYDZCopy
 
   //Compute the translation
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -316,6 +321,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVector
 
   //Compute the translation
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -367,6 +373,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVectorCopy
 
   //Compute the translation
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -420,6 +427,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Translate1D
 
   //Compute the translation
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -480,6 +488,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Translate2D (Handle(GEOM_Obje
 
   //Compute the translation
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -533,6 +542,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPlane
 
   //Compute the mirror
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Mirror driver failed");
       return NULL;
@@ -583,6 +593,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPlaneCopy
 
   //Compute the mirror
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Mirror driver failed");
       return NULL;
@@ -634,6 +645,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPoint
 
   //Compute the mirror
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Mirror driver failed");
       return NULL;
@@ -684,6 +696,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPointCopy
 
   //Compute the mirror
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Mirror driver failed");
       return NULL;
@@ -735,6 +748,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorAxis
 
   //Compute the mirror
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Mirror driver failed");
       return NULL;
@@ -785,6 +799,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorAxisCopy
 
   //Compute the mirror
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Mirror driver failed");
       return NULL;
@@ -834,6 +849,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShape
 
   //Compute the offset
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Offset driver failed");
       return NULL;
@@ -885,6 +901,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
 
   //Compute the offset
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Offset driver failed");
       return NULL;
@@ -938,6 +955,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShape
 
   //Compute the scale
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Scale driver failed");
       return NULL;
@@ -990,6 +1008,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeCopy
 
   //Compute the scale
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Scale driver failed");
       return NULL;
@@ -1044,6 +1063,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShape
 
   //Compute the Position
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Position driver failed");
       return NULL;
@@ -1100,6 +1120,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShapeCopy
 
   //Compute the position
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Position driver failed");
       return NULL;
@@ -1153,6 +1174,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate (Handle(GEOM_Object) t
 
   //Compute the translation
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Rotate driver failed");
       return NULL;
@@ -1203,6 +1225,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateCopy (Handle(GEOM_Objec
 
   //Compute the translation
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Rotate driver failed");
       return NULL;
@@ -1255,6 +1278,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate1D (Handle(GEOM_Object)
 
   //Compute the translation
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Rotate driver failed");
       return NULL;
@@ -1313,6 +1337,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate2D (Handle(GEOM_Object)
 
   //Compute the translation
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Rotate driver failed");
       return NULL;

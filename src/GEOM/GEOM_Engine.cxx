@@ -55,6 +55,7 @@
 #include <map>
 #include <string>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 static GEOM_Engine* TheEngine = NULL;
@@ -214,6 +215,7 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   aSSI.SetIndices(theIndices);
 
   try {
+    OCC_CATCH_SIGNALS;
     GEOM_Solver aSolver (GEOM_Engine::GetEngine());
     if (!aSolver.ComputeFunction(aFunction)) {
       MESSAGE("GEOM_Engine::AddSubShape Error: Can't build a sub shape");

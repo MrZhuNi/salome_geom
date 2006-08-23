@@ -42,6 +42,7 @@
 
 #include <GEOMImpl_Types.hxx>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 //=============================================================================
@@ -98,6 +99,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::MakeCopy(Handle(GEOM_Object) the
 
   //Compute the Copy value
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Copy driver failed");
       return NULL;
@@ -155,6 +157,7 @@ void GEOMImpl_IInsertOperations::Export
 
   //Perform the Export
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Export driver failed");
       return;
@@ -210,6 +213,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
 
   //Perform the Import
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Import driver failed");
       return NULL;

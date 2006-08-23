@@ -49,6 +49,7 @@
 
 #include <TDF_Tool.hxx>
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 
@@ -134,8 +135,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ShapeProcess (Handle(GEOM_Objec
   }
 
   //Compute the translation
-  try
-  {
+  try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Shape Healing algorithm failed");
@@ -341,8 +342,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces
   HI.SetOriginal( aLastFunction );
 
   //Compute the translation
-  try
-  {
+  try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -410,8 +411,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour
   HI.SetOriginal( aLastFunction );
 
   //Compute the translation
-  try
-  {
+  try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -477,8 +478,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveIntWires
   HI.SetOriginal( aLastFunction );
 
   //Compute the translation
-  try
-  {
+  try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -543,8 +544,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FillHoles (Handle(GEOM_Object) 
   HI.SetOriginal( aLastFunction );
 
   //Compute the translation
-  try
-  {
+  try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -609,8 +610,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
   HI.SetOriginal( aLastFunction );
 
   //Compute the translation
-  try
-  {
+  try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -670,8 +671,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
   HI.SetOriginal( aLastFunction );
 
   //Compute the translation
-  try
-  {
+  try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -812,6 +813,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientation (Handle(GEOM_
 
   //Compute the translation
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Healing driver failed");
       return NULL;
@@ -867,6 +869,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
 
   //Compute the translation
   try {
+    OCC_CATCH_SIGNALS;
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Healing driver failed");
       return NULL;
