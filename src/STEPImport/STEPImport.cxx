@@ -65,7 +65,9 @@ SALOME_WNT_EXPORT
     BRep_Builder B;
     B.MakeCompound( compound );
     try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
       OCC_CATCH_SIGNALS;
+#endif
       IFSelect_ReturnStatus status = aReader.ReadFile(theFileName.ToCString());
 
       if (status == IFSelect_RetDone) {

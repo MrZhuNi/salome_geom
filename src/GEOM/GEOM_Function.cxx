@@ -166,7 +166,9 @@ TopoDS_Shape GEOM_Function::GetValue()
   if(anObject.IsNull()) return aShape;
   if(!anObject->IsMainShape()) {
     try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
      OCC_CATCH_SIGNALS;
+#endif
      GEOM_Solver aSolver(GEOM_Engine::GetEngine());
       if (!aSolver.ComputeFunction(this)) {
 	MESSAGE("GEOM_Object::GetValue Error : Can't build a sub shape");

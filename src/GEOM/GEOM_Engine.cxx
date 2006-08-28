@@ -215,7 +215,9 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   aSSI.SetIndices(theIndices);
 
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     GEOM_Solver aSolver (GEOM_Engine::GetEngine());
     if (!aSolver.ComputeFunction(aFunction)) {
       MESSAGE("GEOM_Engine::AddSubShape Error: Can't build a sub shape");

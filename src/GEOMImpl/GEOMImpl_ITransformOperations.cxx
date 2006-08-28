@@ -110,7 +110,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateTwoPoints
 
   //Compute the translation
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -161,7 +163,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateDXDYDZ
 
   //Compute the translation
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -215,7 +219,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateTwoPointsCopy
 
   //Compute the translation
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -268,7 +274,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateDXDYDZCopy
 
   //Compute the translation
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -321,7 +329,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVector
 
   //Compute the translation
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -373,7 +383,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVectorCopy
 
   //Compute the translation
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -427,7 +439,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Translate1D
 
   //Compute the translation
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -488,7 +502,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Translate2D (Handle(GEOM_Obje
 
   //Compute the translation
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Translation driver failed");
       return NULL;
@@ -542,7 +558,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPlane
 
   //Compute the mirror
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Mirror driver failed");
       return NULL;
@@ -593,7 +611,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPlaneCopy
 
   //Compute the mirror
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Mirror driver failed");
       return NULL;
@@ -645,7 +665,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPoint
 
   //Compute the mirror
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Mirror driver failed");
       return NULL;
@@ -696,7 +718,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPointCopy
 
   //Compute the mirror
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Mirror driver failed");
       return NULL;
@@ -748,7 +772,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorAxis
 
   //Compute the mirror
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Mirror driver failed");
       return NULL;
@@ -799,7 +825,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorAxisCopy
 
   //Compute the mirror
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Mirror driver failed");
       return NULL;
@@ -849,7 +877,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShape
 
   //Compute the offset
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Offset driver failed");
       return NULL;
@@ -901,7 +931,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
 
   //Compute the offset
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Offset driver failed");
       return NULL;
@@ -955,7 +987,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShape
 
   //Compute the scale
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Scale driver failed");
       return NULL;
@@ -1008,7 +1042,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeCopy
 
   //Compute the scale
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Scale driver failed");
       return NULL;
@@ -1063,7 +1099,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShape
 
   //Compute the Position
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Position driver failed");
       return NULL;
@@ -1120,7 +1158,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShapeCopy
 
   //Compute the position
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Position driver failed");
       return NULL;
@@ -1174,7 +1214,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate (Handle(GEOM_Object) t
 
   //Compute the translation
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Rotate driver failed");
       return NULL;
@@ -1225,7 +1267,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateCopy (Handle(GEOM_Objec
 
   //Compute the translation
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Rotate driver failed");
       return NULL;
@@ -1278,7 +1322,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate1D (Handle(GEOM_Object)
 
   //Compute the translation
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Rotate driver failed");
       return NULL;
@@ -1337,7 +1383,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate2D (Handle(GEOM_Object)
 
   //Compute the translation
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Rotate driver failed");
       return NULL;

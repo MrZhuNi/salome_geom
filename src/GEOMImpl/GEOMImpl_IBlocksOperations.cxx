@@ -162,7 +162,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad
 
   //Compute the Face value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Block driver failed to compute a face");
       return NULL;
@@ -218,7 +220,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad2Edges
 
   //Compute the Face value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Block driver failed to compute a face");
       return NULL;
@@ -281,7 +285,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad4Vertices
 
   //Compute the Face value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Block driver failed to compute a face");
       return NULL;
@@ -351,7 +357,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexa
 
   //Compute the Block value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Block driver failed to compute a block");
       return NULL;
@@ -408,7 +416,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexa2Faces
 
   //Compute the Block value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Block driver failed to compute a block");
       return NULL;
@@ -462,7 +472,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeBlockCompound
 
   //Compute the Blocks Compound value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Block driver failed to compute a blocks compound");
       return NULL;
@@ -592,7 +604,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetEdge
 
   //Compute the Edge value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     TopTools_IndexedDataMapOfShapeListOfShape MVE;
     GEOMImpl_Block6Explorer::MapShapesAndAncestors
       (aBlockOrComp, TopAbs_VERTEX, TopAbs_EDGE, MVE);
@@ -696,7 +710,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetEdgeNearPoint
 
   //Compute the Edge value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     TopoDS_Shape aShape;
 
     TopoDS_Vertex aVert = TopoDS::Vertex(anArg);
@@ -826,7 +842,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByPoints
 
   //Compute the Face value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     TopoDS_Shape aShape;
 
     TopTools_IndexedDataMapOfShapeListOfShape MVF;
@@ -959,7 +977,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByEdges
 
   //Compute the Face value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     TopoDS_Shape aShape;
 
     TopTools_IndexedDataMapOfShapeListOfShape MEF;
@@ -1082,7 +1102,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetOppositeFace
 
   //Compute the Face value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     TopoDS_Shape aShape;
 
     GEOMImpl_Block6Explorer aBlockTool;
@@ -1146,7 +1168,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
 
   //Compute the Face value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     TopoDS_Shape aShape;
 
     TopoDS_Vertex aVert = TopoDS::Vertex(anArg);
@@ -1336,7 +1360,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByNormale
 
   //Compute the Face value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     TopoDS_Shape aShape;
 
     TopoDS_Edge anEdge = TopoDS::Edge(anArg);
@@ -1450,7 +1476,9 @@ Standard_Boolean GEOMImpl_IBlocksOperations::IsCompoundOfBlocks
   //Check
   isCompOfBlocks = Standard_True;
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     TopTools_MapOfShape mapShape;
     TopExp_Explorer exp (aBlockOrComp, TopAbs_SOLID);
     for (; exp.More(); exp.Next()) {
@@ -2303,7 +2331,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
 
   //Compute the fixed shape
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Block driver failed to remove extra edges of the given shape");
       return NULL;
@@ -2353,7 +2383,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::CheckAndImprove
 
   //Compute the fixed shape
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Block driver failed to improve the given blocks compound");
       return NULL;
@@ -2403,7 +2435,9 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::ExplodeCompound
 
   // Explode
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     TopExp_Explorer exp (aBlockOrComp, TopAbs_SOLID);
     for (; exp.More(); exp.Next()) {
       if (mapShape.Add(exp.Current())) {
@@ -2496,7 +2530,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetBlockNearPoint
 
   //Compute the Block value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     TopoDS_Shape aShape;
 
     TopoDS_Vertex aVert = TopoDS::Vertex(anArg);
@@ -2673,7 +2709,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetBlockByParts
 
   //Compute the Block value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     // 1. Explode compound on solids
     TopTools_MapOfShape mapShape;
     Standard_Integer nbSolids = 0;
@@ -2790,7 +2828,9 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::GetBlocksByPart
 
   //Get the Blocks
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     TopTools_MapOfShape mapShape;
     Standard_Integer nbSolids = 0;
     TopExp_Explorer exp (aBlockOrComp, TopAbs_SOLID);
@@ -2911,7 +2951,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeMultiTransformation1D
 
   //Compute the transformation
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Block driver failed to make multi-transformation");
       return NULL;
@@ -2973,7 +3015,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeMultiTransformation2D
 
   //Compute the transformation
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Block driver failed to make multi-transformation");
       return NULL;

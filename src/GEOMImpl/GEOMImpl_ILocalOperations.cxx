@@ -107,7 +107,9 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletAll
 
   //Compute the Fillet value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Fillet driver failed");
       return NULL;
@@ -166,7 +168,9 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
 
   //Compute the Fillet value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Fillet driver failed");
       return NULL;
@@ -233,7 +237,9 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
 
   //Compute the Fillet value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Fillet driver failed");
       return NULL;
@@ -291,7 +297,9 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferAll (Handle(GEOM_Objec
 
   //Compute the Chamfer value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Chamfer driver failed");
       return NULL;
@@ -346,7 +354,9 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdge
 
   //Compute the Chamfer value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Chamfer driver failed");
       return NULL;
@@ -408,7 +418,9 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
 
   //Compute the Chamfer value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Chamfer driver failed");
       return NULL;
@@ -470,7 +482,9 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeArchimede (Handle(GEOM_Object
 
   //Compute the Archimede value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Archimede driver failed");
       return NULL;
