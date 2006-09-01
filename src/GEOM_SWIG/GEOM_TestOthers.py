@@ -30,32 +30,36 @@ def TestExportImport (geompy, shape):
 
   print "Test Export/Import ...",
 
+  tmpDir = os.getenv("TEMP")
+  if tmpDir == None:
+    tmpDir = "/tmp"
+
   # Files for Export/Import testing
-  fileExportImport = "/tmp/testExportImport.brep"
-  fileExportImportBREP = "/tmp/testExportImportBREP.brep"
-  fileExportImportIGES = "/tmp/testExportImportIGES.iges"
-  fileExportImportSTEP = "/tmp/testExportImportSTEP.step"
+  fileExportImport = tmpDir + "/testExportImport.brep"
+  fileExportImportBREP = tmpDir + "/testExportImportBREP.brep"
+  fileExportImportIGES = tmpDir + "/testExportImportIGES.iges"
+  fileExportImportSTEP = tmpDir + "/testExportImportSTEP.step"
 
   if os.access(fileExportImport, os.F_OK):
     if os.access(fileExportImport, os.W_OK):
       os.remove(fileExportImport)
     else:
-      fileExportImport = "/tmp/testExportImport1.brep"
+      fileExportImport = tmpDir + "/testExportImport1.brep"
 
     if os.access(fileExportImportBREP, os.W_OK):
       os.remove(fileExportImportBREP)
     else:
-      fileExportImportBREP = "/tmp/testExportImportBREP1.brep"
+      fileExportImportBREP = tmpDir + "/testExportImportBREP1.brep"
 
     if os.access(fileExportImportIGES, os.W_OK):
       os.remove(fileExportImportIGES)
     else:
-      fileExportImportIGES = "/tmp/testExportImportIGES1.iges"
+      fileExportImportIGES = tmpDir + "/testExportImportIGES1.iges"
 
     if os.access(fileExportImportSTEP, os.W_OK):
       os.remove(fileExportImportSTEP)
     else:
-      fileExportImportSTEP = "/tmp/testExportImportSTEP1.step"
+      fileExportImportSTEP = tmpDir + "/testExportImportSTEP1.step"
 
   # Export
   geompy.Export(shape, fileExportImport, "BREP")
