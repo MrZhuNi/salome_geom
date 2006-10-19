@@ -522,8 +522,8 @@ msgid "GEOM_MIRROR"
 msgstr "Mirror"
 
 #Prism
-msgid "GEOM_PRISM"
-msgstr "Prism"
+msgid "GEOM_EXTRUSION"
+msgstr "Extrusion"
 
 #Sub Shapes
 msgid "GEOM_SUB_SHAPE"
@@ -650,6 +650,10 @@ msgstr "Face"
 #Faces
 msgid "GEOM_FACES"
 msgstr "Faces"
+
+#Face or LCS
+msgid "GEOM_FACE_OR_LCS"
+msgstr "Face or LCS"
 
 #Line
 msgid "GEOM_LINE"
@@ -899,7 +903,7 @@ msgstr "Create A Face"
 
 #: GeometryGUI_FaceDlg.cxx:78
 msgid "GEOM_FACE_FFW"
-msgstr "Face from a wire"
+msgstr "Face from a closed wire and edge"
 
 #: GeometryGUI_FaceDlg.cxx:103
 msgid "GEOM_FACE_OPT"
@@ -907,7 +911,7 @@ msgstr "Try to create a planar face"
 
 #: GeometryGUI_FillingDlg.cxx:53
 msgid "GEOM_FILLING_TITLE"
-msgstr "Filling Surface With Curves"
+msgstr "Filling Surface With Edges"
 
 #: GeometryGUI_FillingDlg.cxx:112
 msgid "GEOM_FILLING_ARG"
@@ -927,7 +931,7 @@ msgstr "Tol. 2D :"
 
 #: GeometryGUI_FillingDlg.cxx:170
 msgid "GEOM_FILLING_COMPOUND"
-msgstr "Curves Comp."
+msgstr "Edges compound"
 
 #: GeometryGUI_FillingDlg.cxx:184
 msgid "GEOM_FILLING_TOL_3D"
@@ -1052,12 +1056,15 @@ msgid "GEOM_PLANE_PV"
 msgstr "Point + Vector"
 
 #: GeometryGUI_PrismDlg.cxx:54
-msgid "GEOM_PRISM_TITLE"
-msgstr "Prism Construction"
+msgid "GEOM_EXTRUSION_TITLE"
+msgstr "Construction by Extrusion"
 
 #: GeometryGUI_PrismDlg.cxx:83
-msgid "GEOM_PRISM_BSV"
+msgid "GEOM_EXTRUSION_BSV"
 msgstr "Base Shape + Vector"
+
+msgid "GEOM_EXTRUSION_BSV_2P"
+msgstr "Base Shape + 2 Points"
 
 #: GeometryGUI_PropertiesDlg.cxx:56
 msgid "GEOM_PROPERTIES_TITLE"
@@ -1226,7 +1233,7 @@ msgstr "Working Plane Selection"
 
 #: GeometryGUI_WorkingPlaneDlg.cxx:107
 msgid "GEOM_WPLANE_FACE"
-msgstr "Plane Or Planar Face"
+msgstr "Plane, Planar Face or LCS"
 
 #: GeometryGUI_WorkingPlaneDlg.cxx:107
 msgid "GEOM_WPLANE_VECTOR"
@@ -1639,6 +1646,12 @@ msgstr "Free boundaries"
 msgid "GEOM_FREE_FACES"
 msgstr "Free faces"
 
+msgid "GEOM_CHANGE_ORIENTATION_TITLE"
+msgstr "Change orientation"
+
+msgid "GEOM_CHANGE_ORIENTATION"
+msgstr "Objects to change orientation"
+
 msgid "GEOM_BY_PARAMETER"
 msgstr "By parameter"
 
@@ -1710,6 +1723,9 @@ msgstr "Point Coordinates"
 
 msgid "MeasureGUI_PointDlg::COORDINATES"
 msgstr "Point and its coordinates"
+
+msgid "MeasureGUI_1Sel1TextView1Check_QTD::CHECK_SHAPE_GEOMETRY"
+msgstr "Check also geometry"
 
 msgid "GroupGUI_GroupDlg::CREATE_GROUP_TITLE"
 msgstr "Create Group"
@@ -1982,6 +1998,9 @@ msgstr "ProcessShape"
 msgid "SUPRESS_FACE_NEW_OBJ_NAME"
 msgstr "SupressFaces"
 
+msgid "CHANGE_ORIENTATION_NEW_OBJ_NAME"
+msgstr "Invert"
+
 msgid "NON_GEOM_OBJECTS_SELECTED"
 msgstr "There are objects selected which do not belong to %1 component."
 
@@ -2200,13 +2219,13 @@ msgid "STB_FILLING"
 msgstr "Create a filling"
 
 msgid "TOP_PIPE"
-msgstr "Create a pipe"
+msgstr "Extrusion along a path"
 
 msgid "MEN_PIPE"
-msgstr "Pipe"
+msgstr "Extrusion along a path"
 
 msgid "STB_PIPE"
-msgstr "Create a pipe"
+msgstr "Create a shape by Extrusion along a path"
 
 msgid "MEN_GROUP"
 msgstr "Group"
@@ -2607,6 +2626,15 @@ msgstr "Check free faces"
 msgid "STB_CHECK_FREE_FACES"
 msgstr "Check free faces"
 
+msgid "TOP_CHANGE_ORIENTATION"
+msgstr "Change orientation"
+
+msgid "MEN_CHANGE_ORIENTATION"
+msgstr "Change orientation"
+
+msgid "STB_CHANGE_ORIENTATION"
+msgstr "Change orientation"
+
 msgid "MEN_MEASURES"
 msgstr "Measures"
 
@@ -2907,6 +2935,21 @@ msgstr "General"
 msgid "PREF_SHADING_COLOR"
 msgstr "Default shading color"
 
+msgid "PREF_WIREFRAME_COLOR"
+msgstr "Default wireframe color"
+
+msgid "PREF_FREE_BOUND_COLOR"
+msgstr "Color of free boundaries"
+
+msgid "PREF_LINE_COLOR"
+msgstr "Color of edges, vectors, wires"
+
+msgid "PREF_POINT_COLOR"
+msgstr "Color of points"
+
+msgid "PREF_ISOS_COLOR"
+msgstr "Color of isolines"
+
 msgid "PREF_STEP_VALUE"
 msgstr "Step value for spin boxes"
 
@@ -2915,3 +2958,9 @@ msgstr "Default display mode"
 
 msgid "PREF_TAB_SETTINGS"
 msgstr "Settings"
+
+msgid "ERROR_SHAPE_TYPE"
+msgstr "Object of incorrect type selected!\nPlease, select face, shell or solid and try again"
+
+msgid "DEP_OBJECT"
+msgstr "Selected object has been used to create another one\n It can't be deleted "

@@ -40,7 +40,7 @@
 // class    : BasicGUI_CircleDlg
 // purpose  :
 //=================================================================================
-class BasicGUI_CircleDlg : public GEOMBase_Skeleton
+class GEOM_BASICGUI_EXPORT BasicGUI_CircleDlg : public GEOMBase_Skeleton
 {
     Q_OBJECT
 

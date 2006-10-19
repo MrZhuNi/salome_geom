@@ -56,37 +56,6 @@ typedef TopoDS_Shape (*funcPoint)(const TCollection_AsciiString&,
                                   const TCollection_AsciiString&,
                                   TCollection_AsciiString&);
 
-//This class is workaround of BUG OCC13051
-//It's stored all loaded libraries for import and unload that in destructor
-class DLL_Collector
-{
-  typedef NCollection_DataMap<TCollection_AsciiString,LibHandle> DLL_Collector_Map;
-  DLL_Collector_Map myMapOfDLL;
-public:
-  DLL_Collector(){};
-  ~DLL_Collector()
-  {
-    DLL_Collector_Map::Iterator Iter( myMapOfDLL );
-    for( ; Iter.More(); Iter.Next() )
-      UnLoadLib( Iter.Value() );
-  }
-
-public:
-  LibHandle LoadDLL( const TCollection_AsciiString& theLibName )
-  {
-    if ( myMapOfDLL.IsBound( theLibName ) )
-      return myMapOfDLL( theLibName );
-
-    LibHandle res = LoadLib( theLibName.ToCString() );
-    if ( res )
-      myMapOfDLL.Bind( theLibName, res );
-
-    return res;
-  }
-};
-
-static DLL_Collector GlobalCollector;
-
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -126,7 +95,7 @@ Standard_Integer GEOMImpl_ImportDriver::Execute(TFunction_Logbook& log) const
     return 0;
 
   // load plugin library  
-  LibHandle anImportLib = GlobalCollector.LoadDLL( aLibName ); //This is workaround of BUG OCC13051
+  LibHandle anImportLib = LoadLib( aLibName.ToCString() ); //This is workaround of BUG OCC13051
   funcPoint fp = 0;
   if ( anImportLib )
     fp = (funcPoint)GetProc( anImportLib, "Import" );

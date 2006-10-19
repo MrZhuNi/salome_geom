@@ -58,6 +58,7 @@ private:
 
 protected:
     void closeEvent(QCloseEvent* e);
+    void keyPressEvent(QKeyEvent* e);
 
     /*! initialize "Name" field with a string "thePrefix_X" (Vertex_3)
      */

@@ -37,7 +37,6 @@
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepPrimAPI_MakeRevol.hxx>
 #include <TopExp_Explorer.hxx>
-#include <Standard_ErrorHandler.hxx>
 #include "GEOMImpl_Types.hxx"
 
 #include <qlabel.h>
@@ -115,7 +114,7 @@ void GenerationGUI_RevolDlg::Init()
 
   double SpecificStep = 5;
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(-999.999, 999.999, SpecificStep, 3);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, SpecificStep, 3);
   GroupPoints->SpinBox_DX->SetValue(45.0);
 
   /* signals and slots connections */

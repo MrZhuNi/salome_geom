@@ -36,6 +36,7 @@
 
 #include "utilities.h"
 
+#include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 //=============================================================================
@@ -105,6 +106,9 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean (Handle(GEOM_Object
 
   //Compute the Boolean value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Boolean driver failed");
       return NULL;
@@ -251,6 +255,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
     if (theMaterials.IsNull()) {
       Handle(TColStd_HArray1OfInteger) aMaterials =
         new TColStd_HArray1OfInteger (1, aShapesSeq->Length());
+      aMaterials->Init(0);
       aCI.SetMaterials(aMaterials);
     } else {
       aCI.SetMaterials(theMaterials);
@@ -259,6 +264,9 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
 
   //Compute the Partition
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Partition driver failed");
       return NULL;
@@ -329,6 +337,9 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
 
   //Compute the Partition value
   try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Partition driver failed");
       return NULL;

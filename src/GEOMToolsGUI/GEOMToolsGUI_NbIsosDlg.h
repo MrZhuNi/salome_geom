@@ -54,7 +54,10 @@ public:
     void      setV( const int );
 
 private slots:
-    void ClickOnHelp();
+    void      ClickOnHelp();
+
+private:
+    void      keyPressEvent(QKeyEvent*);
 
 private:
     QSpinBox* SpinBoxU;

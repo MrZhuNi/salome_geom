@@ -41,20 +41,6 @@
 
 #include "SalomeApp_Application.h"
 
-BlocksGUI* BlocksGUI::myGUIObject = 0;
-
-//=======================================================================
-// function : GetBlocksGUI()
-// purpose  : Get the only BlocksGUI object [ static ]
-//=======================================================================
-BlocksGUI* BlocksGUI::GetBlocksGUI( GeometryGUI* parent )
-{
-  if ( myGUIObject == 0 )
-    myGUIObject = new BlocksGUI( parent );
-
-  return myGUIObject;
-}
-
 //=======================================================================
 // function : BlocksGUI()
 // purpose  : Constructor
@@ -108,6 +94,6 @@ extern "C"
  GEOM_BLOCKSGUI_EXPORT
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
-    return BlocksGUI::GetBlocksGUI( parent );
+    return new BlocksGUI( parent );
   }
 }

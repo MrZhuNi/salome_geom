@@ -26,7 +26,10 @@
 #  Module : GEOM
 #  $Header$
 
+import salome
+salome.salome_init()
 from salome import *
+
 import GEOM
 
 """
@@ -273,7 +276,7 @@ def MakePlaneThreePnt(thePnt1, thePnt2, thePnt3, theTrimSize):
     return anObj
 
 ## Create a plane, similar to the existing one, but with another size of representing face.
-#  @param theFace Referenced plane.
+#  @param theFace Referenced plane or LCS(Marker).
 #  @param theTrimSize New half size of a side of quadrangle face, representing the plane.
 #  @return New GEOM_Object, containing the created plane.
 #
@@ -452,7 +455,7 @@ def MakeSketcher(theCommand, theWorkingPlane = [0,0,0, 0,0,1, 1,0,0]):
 #  For format of the description string see the previous method.\n
 #  @param theCommand String, defining the sketcher in local
 #                    coordinates of the working plane.
-#  @param theWorkingPlane Planar Face of the working plane.
+#  @param theWorkingPlane Planar Face or LCS(Marker) of the working plane.
 #  @return New GEOM_Object, containing the created wire.
 def MakeSketcherOnPlane(theCommand, theWorkingPlane):
     anObj = CurvesOp.MakeSketcherOnPlane(theCommand, theWorkingPlane)
@@ -741,7 +744,7 @@ def MakeWire(theEdgesAndWires):
     return anObj
 
 ## Create a face on the given wire.
-#  @param theWire Wire to build the face on.
+#  @param theWire closed Wire or Edge to build the face on.
 #  @param isPlanarWanted If TRUE, only planar face will be built.
 #                        If impossible, NULL object will be returned.
 #  @return New GEOM_Object, containing the created face.
@@ -754,7 +757,7 @@ def MakeFace(theWire, isPlanarWanted):
     return anObj
 
 ## Create a face on the given wires set.
-#  @param theWires List of wires to build the face on.
+#  @param theWires List of closed wires or edges to build the face on.
 #  @param isPlanarWanted If TRUE, only planar face will be built.
 #                        If impossible, NULL object will be returned.
 #  @return New GEOM_Object, containing the created face.
@@ -898,6 +901,33 @@ def GetShapesOnPlaneIDs(theShape, theShapeType, theAx1, theState):
     return aList
 
 ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+#  the specified plane by the certain way, defined through \a theState parameter.
+#  @param theShape Shape to find sub-shapes of.
+#  @param theShapeType Type of sub-shapes to be retrieved.
+#  @param theAx1 Vector (or line, or linear edge), specifying normal
+#                direction of the plane to find shapes on.
+#  @param thePnt Point specifying location of the plane to find shapes on.
+#  @param theState The state of the subshapes to find. It can be one of
+#   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
+#  @return List of all found sub-shapes.
+#
+#  Example: see GEOM_TestOthers.py
+def GetShapesOnPlaneWithLocation(theShape, theShapeType, theAx1, thePnt, theState):
+    aList = ShapesOp.GetShapesOnPlaneWithLocation(theShape, theShapeType, theAx1, thePnt, theState)
+    if ShapesOp.IsDone() == 0:
+      print "GetShapesOnPlaneWithLocation : ", ShapesOp.GetErrorCode()
+    return aList
+
+## Works like the above method, but returns list of sub-shapes indices
+#
+#  Example: see GEOM_TestOthers.py
+def GetShapesOnPlaneWithLocationIDs(theShape, theShapeType, theAx1, thePnt, theState):
+    aList = ShapesOp.GetShapesOnPlaneWithLocationIDs(theShape, theShapeType, theAx1, thePnt, theState)
+    if ShapesOp.IsDone() == 0:
+        print "GetShapesOnPlaneWithLocationIDs : ", ShapesOp.GetErrorCode()
+    return aList
+
+## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
 #  the specified cylinder by the certain way, defined through \a theState parameter.
 #  @param theShape Shape to find sub-shapes of.
 #  @param theShapeType Type of sub-shapes to be retrieved.
@@ -954,8 +984,10 @@ def GetShapesOnSphereIDs(theShape, theShapeType, theCenter, theRadius, theState)
 #  the specified quadrangle by the certain way, defined through \a theState parameter.
 #  @param theShape Shape to find sub-shapes of.
 #  @param theShapeType Type of sub-shapes to be retrieved.
-#  @param theCenter Point, specifying center of the sphere to find shapes on.
-#  @param theRadius Radius of the sphere to find shapes on.
+#  @param theTopLeftPoint Point, specifying top left corner of a quadrangle
+#  @param theTopRigthPoint Point, specifying top right corner of a quadrangle
+#  @param theBottomLeftPoint Point, specifying bottom left corner of a quadrangle
+#  @param theBottomRigthPoint Point, specifying bottom right corner of a quadrangle
 #  @param theState The state of the subshapes to find. It can be one of
 #   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
 #  @return List of all found sub-shapes.
@@ -1058,7 +1090,7 @@ def SubShapeAllSortedIDs(aShape, aType):
     ListIDs = ShapesOp.SubShapeAllIDs(aShape,aType,1)
     if ShapesOp.IsDone() == 0:
       print "SubShapeAllSortedIDs : ", ShapesOp.GetErrorCode()
-    return ListObj
+    return ListIDs
 
 ## Obtain a compound of sub-shapes of <aShape>,
 #  selected by they indices in list of all sub-shapes of type <aType>.
@@ -1195,6 +1227,23 @@ def DivideEdge(theObject, theEdgeIndex, theValue, isByParameter):
     anObj = HealOp.DivideEdge(theObject, theEdgeIndex, theValue, isByParameter)
     if HealOp.IsDone() == 0:
       print "DivideEdge : ", HealOp.GetErrorCode()
+    return anObj
+
+## Change orientation of the given object.
+#  @param theObject Shape to be processed.
+#  @update given shape
+def ChangeOrientationShell(theObject):
+    theObject = HealOp.ChangeOrientation(theObject)
+    if HealOp.IsDone() == 0:
+      print "ChangeOrientation : ", HealOp.GetErrorCode()
+
+## Change orientation of the given object.
+#  @param theObject Shape to be processed.
+#  @return New GEOM_Object, containing processed shape.
+def ChangeOrientationShellCopy(theObject):
+    anObj = HealOp.ChangeOrientationCopy(theObject)
+    if HealOp.IsDone() == 0:
+      print "ChangeOrientation : ", HealOp.GetErrorCode()
     return anObj
 
 ## Get a list of wires (wrapped in GEOM_Object-s),
@@ -1449,8 +1498,16 @@ def MakeMirrorByPoint(theObject, thePoint):
       print "MirrorPointCopy : ", TrsfOp.GetErrorCode()
     return anObj
 
-## Modify the Location of the given object by LCS
-#  creating its copy before the setting
+## Modify the Location of the given object by LCS,
+#  creating its copy before the setting.
+#  @param theObject The object to be displaced.
+#  @param theStartLCS Coordinate system to perform displacement from it.
+#                     If \a theStartLCS is NULL, displacement
+#                     will be performed from global CS.
+#                     If \a theObject itself is used as \a theStartLCS,
+#                     its location will be changed to \a theEndLCS.
+#  @param theEndLCS Coordinate system to perform displacement to it.
+#  @return New GEOM_Object, containing the displaced shape.
 #
 #  Example: see GEOM_TestAll.py
 def MakePosition(theObject, theStartLCS, theEndLCS):
@@ -1775,18 +1832,43 @@ def MakeCDG(theShape):
 
 ## Check a topology of the given shape.
 #  @param theShape Shape to check validity of.
-#  @return TRUE, if the shape "seems to be valid" from the topological point of view.
+#  @param theIsCheckGeom If FALSE, only the shape's topology will be checked,
+#                        if TRUE, the shape's geometry will be checked also.
+#  @return TRUE, if the shape "seems to be valid".
 #  If theShape is invalid, prints a description of problem.
 #
 #  Example: see GEOM_TestMeasures.py
-def CheckShape(theShape):
-    (IsValid, Status) = MeasuOp.CheckShape(theShape)
+def CheckShape(theShape, theIsCheckGeom = 0):
+    if theIsCheckGeom:
+        (IsValid, Status) = MeasuOp.CheckShapeWithGeometry(theShape)
+    else:
+        (IsValid, Status) = MeasuOp.CheckShape(theShape)
+
     if MeasuOp.IsDone() == 0:
       print "CheckShape : ", MeasuOp.GetErrorCode()
     else:
       if IsValid == 0:
         print Status
     return IsValid
+
+## Get position (LCS) of theShape.
+#
+#  Origin of the LCS is situated at the shape's center of mass.
+#  Axes of the LCS are obtained from shape's location or,
+#  if the shape is a planar face, from position of its plane.
+#
+#  @param theShape Shape to calculate position of.
+#  @return [Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz].
+#          Ox,Oy,Oz: Coordinates of shape's LCS origin.
+#          Zx,Zy,Zz: Coordinates of shape's LCS normal(main) direction.
+#          Xx,Xy,Xz: Coordinates of shape's LCS X direction.
+#
+#  Example: see GEOM_TestMeasures.py
+def GetPosition(theShape):
+    aTuple = MeasuOp.GetPosition(theShape)
+    if MeasuOp.IsDone() == 0:
+      print "GetPosition : ", MeasuOp.GetErrorCode()
+    return aTuple
 
 # -----------------------------------------------------------------------------
 # Import/Export objects
@@ -2039,7 +2121,8 @@ def CheckCompoundOfBlocks(theCompound):
     return IsValid
 
 ## Remove all seam and degenerated edges from \a theShape.
-#  Unite faces and edges, sharing one surface.
+#  Unite faces and edges, sharing one surface. It means that
+#  this faces must have references to one C++ surface object (handle).
 #  @param theShape The compound or single solid to remove irregular edges from.
 #  @return Improved shape.
 #

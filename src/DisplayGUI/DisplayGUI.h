@@ -17,14 +17,13 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : DisplayGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header$
 
 #ifndef DISPLAYGUI_H
 #define DISPLAYGUI_H
@@ -33,22 +32,15 @@
 #include "GEOMBase.h"
 
 #ifdef WNT
- #if defined DISPLAYGUI_EXPORTS
-  #if defined WIN32
-   #define GEOM_DISPLAYGUI_EXPORT __declspec( dllexport )
-  #else
-   #define GEOM_DISPLAYGUI_EXPORT
-  #endif
- #else
-  #if defined WIN32
-   #define GEOM_DISPLAYGUI_EXPORT __declspec( dllimport )
-  #else
-   #define GEOM_DISPLAYGUI_EXPORT
-  #endif
- #endif
+# if defined DISPLAYGUI_EXPORTS
+#  define GEOM_DISPLAYGUI_EXPORT __declspec( dllexport )
+# else
+#  define GEOM_DISPLAYGUI_EXPORT __declspec( dllimport )
+# endif
 #else
- #define GEOM_DISPLAYGUI_EXPORT
+# define GEOM_DISPLAYGUI_EXPORT
 #endif
+
 //=================================================================================
 // class    : GEOMBase_Display
 // purpose  :
@@ -57,14 +49,9 @@
 class SUIT_ViewWindow;
 class GEOM_DISPLAYGUI_EXPORT DisplayGUI : public GEOMGUI
 {
-protected:
-  DisplayGUI( GeometryGUI* parent ); // hide constructor to avoid direct creation
-
-public :
+public:
+  DisplayGUI( GeometryGUI* parent );
   ~DisplayGUI();
-
-  // Get the only DisplayGUI object
-  static DisplayGUI* GetDisplayGUI( GeometryGUI* parent );
 
   // Dispatch menu command
   bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
@@ -92,9 +79,6 @@ public :
   // Set display mode for selected objects in the viewer given
   // (current viewer if <viewWindow> = 0 )
   void ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindo = 0 );
-
-private:
-  static DisplayGUI* myGUIObject;        // the only DisplayGUI object
 };
 
 #endif

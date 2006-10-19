@@ -48,6 +48,9 @@ public:
   GEOMToolsGUI_TransparencyDlg( QWidget* parent );    
   ~GEOMToolsGUI_TransparencyDlg();
 
+private:
+  void      keyPressEvent(QKeyEvent*);
+
 private :
   bool      myFirstInit ;   /* Inform for the first init  */
   QSlider*  mySlider; 

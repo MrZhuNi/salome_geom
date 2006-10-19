@@ -135,6 +135,8 @@
 
 #define POSITION_SHAPE      1
 #define POSITION_SHAPE_COPY 2
+#define POSITION_SHAPE_FROM_GLOBAL      3
+#define POSITION_SHAPE_FROM_GLOBAL_COPY 4
 
 #define TORUS_RR         1
 #define TORUS_PNT_VEC_RR 2
@@ -204,13 +206,14 @@
 #define ARCHIMEDE_TYPE 1
 
 // Shape Healing operators
-#define SHAPE_PROCESS     1
-#define SUPPRESS_FACES    2
-#define CLOSE_CONTOUR     3
-#define REMOVE_INT_WIRES  4
-#define FILL_HOLES        5
-#define SEWING            6
-#define DIVIDE_EDGE       7
+#define SHAPE_PROCESS      1
+#define SUPPRESS_FACES     2
+#define CLOSE_CONTOUR      3
+#define REMOVE_INT_WIRES   4
+#define FILL_HOLES         5
+#define SEWING             6
+#define DIVIDE_EDGE        7
+#define CHANGE_ORIENTATION 8
 
 #define BASIC_FILLING 1
 

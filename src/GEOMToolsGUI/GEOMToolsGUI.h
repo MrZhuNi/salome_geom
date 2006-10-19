@@ -32,11 +32,16 @@
 #include "GEOM_ToolsGUI.hxx"
 
 #include "GEOMGUI.h"
+#include "GEOM_Displayer.h"
+
+#include <SALOME_Prs.h>
 
 #include <SALOMEDSClient.hxx>
 #include <SALOME_ListIO.hxx>
 
-#include <omniORB4/CORBA.h>
+#include <CORBA.h>
+
+#include <qptrlist.h>
 
 //=================================================================================
 // class    : GEOMToolsGUI
@@ -74,6 +79,12 @@ private:
   // if objects belong to different Components, a NULL string is returned.
   QString getParentComponent( _PTR( Study ), const SALOME_ListIO& );
   QString getParentComponent( _PTR(SObject) );
+
+  // Recursive deletion of object with children
+  void RemoveObjectWithChildren(_PTR(SObject) obj,
+				_PTR(Study) aStudy,
+				QPtrList<SALOME_View> views,
+				GEOM_Displayer* disp);
 };
 
 #endif

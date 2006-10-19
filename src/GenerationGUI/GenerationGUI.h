@@ -17,34 +17,25 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
 //  File   : GenerationGUI.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header$
 
 #ifndef GENERATIONGUI_H
 #define GENERATIONGUI_H
 
 #ifdef WNT
- #if defined GENERATIONGUI_EXPORTS
-  #if defined WIN32
-   #define GENERATIONGUI_EXPORT __declspec( dllexport )
-  #else
-   #define GENERATIONGUI_EXPORT
-  #endif
- #else
-  #if defined WIN32
-   #define GENERATIONGUI_EXPORT __declspec( dllimport )
-  #else
-   #define GENERATIONGUI_EXPORT
-  #endif
- #endif
+# if defined GENERATIONGUI_EXPORTS
+#  define GENERATIONGUI_EXPORT __declspec( dllexport )
+# else
+#  define GENERATIONGUI_EXPORT __declspec( dllimport )
+# endif
 #else
- #define GENERATIONGUI_EXPORT
+# define GENERATIONGUI_EXPORT
 #endif
 
 #include "GEOMGUI.h"
@@ -55,19 +46,11 @@
 //=================================================================================
 class GENERATIONGUI_EXPORT GenerationGUI : public GEOMGUI
 {
-protected:
-  GenerationGUI(GeometryGUI* parent); // hide constructor to avoid direct creation
-
-public :
+public:
+  GenerationGUI(GeometryGUI* parent);
   ~GenerationGUI();
 
-  // Get the only GenerationGUI object
-  static GenerationGUI* GetGenerationGUI(GeometryGUI* parent);
-
   bool OnGUIEvent( int theCommandID, SUIT_Desktop* parent );
-
-private:
-  static GenerationGUI* myGUIObject; // the only GenerationGUI object
 };
 
 #endif
