@@ -1,18 +1,18 @@
 // Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -43,8 +43,6 @@
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTTools_Tools.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
-
-
   
 //=======================================================================
 // function: PerformVV
@@ -77,9 +75,17 @@
       aWhat=n1;
       aWith=n2;
       SortTypes(aWhat, aWith);
+      //
       if (!bJustAddInterference) {
-	const TopoDS_Shape& aS1=myDS->GetShape(aWhat);
-	const TopoDS_Shape& aS2=myDS->GetShape(aWith);
+	const TopoDS_Shape aS1=myDS->GetShape(aWhat);//mpv
+	const TopoDS_Shape aS2=myDS->GetShape(aWith);//mpv
+	//
+	// Modified  Thu Sep 14 14:35:18 2006 
+	// Contribution of Samtech www.samcef.com BEGIN
+	if (aS1.IsSame(aS2)) {
+	  continue;
+	}
+	// Contribution of Samtech www.samcef.com END
 	//
 	const TopoDS_Vertex& aV1=TopoDS::Vertex(aS1);
 	const TopoDS_Vertex& aV2=TopoDS::Vertex(aS2);
@@ -127,7 +133,7 @@
     aNbV=aChain.Extent();
     for (j=1; j<=aNbV; ++j) {
       aIdV=aChain(j);
-      const TopoDS_Shape& aV=myDS->Shape(aIdV);
+      const TopoDS_Shape aV=myDS->Shape(aIdV);//mpv
       if (!aM.Contains(aV)) {
 	aM.Add(aV);
 	aLV.Append(aV);
