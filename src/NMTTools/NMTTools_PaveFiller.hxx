@@ -53,6 +53,9 @@
 #ifndef _NMTTools_IndexedDataMapOfIndexedMapOfInteger_HeaderFile
 #include <NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx>
 #endif
+#ifndef _TColStd_DataMapOfIntegerInteger_HeaderFile
+#include <TColStd_DataMapOfIntegerInteger.hxx>
+#endif
 #ifndef _TopAbs_ShapeEnum_HeaderFile
 #include <TopAbs_ShapeEnum.hxx>
 #endif
@@ -402,6 +405,7 @@ BOPTools_SplitShapesPool mySplitShapesPool;
 IntTools_Context myContext;
 BOPTools_SSIntersectionAttribute mySectionAttribute;
 NMTTools_IndexedDataMapOfIndexedMapOfInteger myAloneVertices;
+TColStd_DataMapOfIntegerInteger myVSD;
 
 
 private: 

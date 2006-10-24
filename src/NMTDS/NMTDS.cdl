@@ -78,4 +78,16 @@ is
     	Map from TCollection(PassKeyBoolean from NMTDS, 
     	    	    	     PassKeyMapHasher from NMTDS);   
     -- Contribution of Samtech www.samcef.com END
+
+
+    class IndexedDataMapOfShapeBox  
+    	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
+	    		    		         	 Box from Bnd,
+	    		    		         	 ShapeMapHasher from TopTools);
+    class IndexedDataMapOfIntegerShape  
+    	instantiates IndexedDataMap from TCollection   	(Integer from Standard,
+	    		    		         	 Shape from TopoDS,
+	    		    		         	 MapIntegerHasher from TColStd); 
+
+ 
 end NMTDS;

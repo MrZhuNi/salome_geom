@@ -40,11 +40,15 @@ LIB = libNMTDS.la
 LIB_SRC = \
 	NMTDS_CArray1OfIndexRange_0.cxx \
 	NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerIndexedDataMapOfShapeInteger_0.cxx \
+	NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape_0.cxx \
+	NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBox_0.cxx \
 	NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger_0.cxx \
+	NMTDS_IndexedDataMapOfIntegerShape_0.cxx  \
+	NMTDS_IndexedDataMapOfShapeBox_0.cxx \
 	NMTDS_IndexRange.cxx \
 	NMTDS_Iterator.cxx \
-	NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors_0.cxx \
-	NMTDS_ListIteratorOfListOfPassKey_0.cxx \
+	NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors_0.cxx  \
+	NMTDS_ListIteratorOfListOfPassKey_0.cxx  \
 	NMTDS_ListIteratorOfListOfPassKeyBoolean_0.cxx \
 	NMTDS_ListNodeOfListOfIndexedDataMapOfShapeAncestorsSuccessors_0.cxx \
 	NMTDS_ListNodeOfListOfPassKey_0.cxx \
@@ -69,6 +73,8 @@ LIB_SERVER_IDL =
 # header files 
 EXPORT_HEADERS = \
 	Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerIndexedDataMapOfShapeInteger.hxx \
+	Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape.hxx \
+	Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx \
 	Handle_NMTDS_ListNodeOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx \
 	Handle_NMTDS_ListNodeOfListOfPassKeyBoolean.hxx \
 	Handle_NMTDS_ListNodeOfListOfPassKey.hxx \
@@ -76,7 +82,11 @@ EXPORT_HEADERS = \
 	Handle_NMTDS_StdMapNodeOfMapOfPassKey.hxx \
 	NMTDS_CArray1OfIndexRange.hxx \
 	NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerIndexedDataMapOfShapeInteger.hxx \
+	NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape.hxx \
+	NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx \
 	NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger.hxx \
+	NMTDS_IndexedDataMapOfIntegerShape.hxx \
+	NMTDS_IndexedDataMapOfShapeBox.hxx \
 	NMTDS_IndexRange.hxx \
 	NMTDS_Iterator.hxx \
 	NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx \
@@ -90,7 +100,7 @@ EXPORT_HEADERS = \
 	NMTDS_ListOfPassKey.hxx \
 	NMTDS_MapIteratorOfMapOfPassKeyBoolean.hxx \
 	NMTDS_MapIteratorOfMapOfPassKey.hxx \
-	NMTDS_MapOfPassKeyBoolean.hxx \
+	NMTDS_MapOfPassKeyBoolean.hxx  \
 	NMTDS_MapOfPassKey.hxx \
 	NMTDS_PassKeyBoolean.hxx \
 	NMTDS_PassKey.hxx \

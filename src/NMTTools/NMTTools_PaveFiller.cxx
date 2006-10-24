@@ -27,7 +27,7 @@
 #include <BOPTColStd_Failure.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTTools_DEProcessor.hxx>
-//
+
 //
 //=======================================================================
 // function: NMTTools_PaveFiller::NMTTools_PaveFiller
@@ -192,7 +192,9 @@
     //
     // 2.VE
     myPavePool.Resize (myNbEdges);
+    
     PrepareEdges();
+
     PerformVE();
     //
     // 3.VF
@@ -215,12 +217,15 @@
     //
     // 5.EF
     PreparePaveBlocks(TopAbs_EDGE, TopAbs_FACE);
+
     PerformEF();
     //
     RefinePavePool();
     //
     myPavePoolNew.Destroy();
+    
     MakeSplitEdges();
+
     UpdateCommonBlocks();
     //
     // 6. FF

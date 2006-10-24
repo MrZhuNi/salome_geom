@@ -32,6 +32,9 @@
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>
 #endif
+#ifndef _TColStd_DataMapOfIntegerListOfInteger_HeaderFile
+#include <TColStd_DataMapOfIntegerListOfInteger.hxx>
+#endif
 #ifndef _TopAbs_ShapeEnum_HeaderFile
 #include <TopAbs_ShapeEnum.hxx>
 #endif
@@ -39,6 +42,7 @@
 #include <Standard_Boolean.hxx>
 #endif
 class NMTDS_ShapesDataStructure;
+class TColStd_DataMapOfIntegerListOfInteger;
 
 
 #ifndef _Standard_HeaderFile
@@ -97,6 +101,9 @@ Standard_EXPORT   void Prepare() ;
 Standard_EXPORT   Standard_Integer ExpectedLength() const;
 
 
+Standard_EXPORT  const TColStd_DataMapOfIntegerListOfInteger& SDVertices() const;
+
+
 
 
 
@@ -113,6 +120,7 @@ NMTDS_ListOfPassKeyBoolean myLists[6];
 NMTDS_ListIteratorOfListOfPassKeyBoolean myIterator;
 NMTDS_ListOfPassKeyBoolean myEmptyList;
 Standard_Integer myLength;
+TColStd_DataMapOfIntegerListOfInteger myMVSD;
 
 
 private: 

@@ -75,11 +75,14 @@ LIB_SERVER_IDL =
 
 # header files 
 EXPORT_HEADERS = \
+	Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerIndexedDataMapOfShapeInteger.hxx \
+	Handle_NMTDS_ListNodeOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx \
 	Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger.hxx \
 	Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape.hxx \
 	Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapePaveBlock.hxx \
 	Handle_NMTTools_ListNodeOfListOfCommonBlock.hxx \
 	Handle_NMTTools_ListNodeOfListOfCoupleOfShape.hxx \
+	NMTDS_Iterator.hxx \
 	NMTTools_CommonBlockAPI.hxx \
 	NMTTools_CommonBlock.hxx \
 	NMTTools_CommonBlockPool.hxx \

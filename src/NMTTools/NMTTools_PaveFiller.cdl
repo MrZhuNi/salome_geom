@@ -31,7 +31,8 @@ uses
     -- Modified to add new definitions Thu Sep 14 14:35:18 2006 
     -- Contribution of Samtech www.samcef.com BEGIN   
     ListOfInteger from TColStd, 
-    -- Contribution of Samtech www.samcef.com END
+    -- Contribution of Samtech www.samcef.com END 
+    DataMapOfIntegerInteger from TColStd,
     Pnt from gp,
     ShapeEnum  from  TopAbs, 
     Vertex     from  TopoDS, 
@@ -518,5 +519,8 @@ fields
     -- 
     myContext          :  Context from IntTools                 is protected; 
     mySectionAttribute :  SSIntersectionAttribute from BOPTools is protected; 
-    myAloneVertices    :  IndexedDataMapOfIndexedMapOfInteger from NMTTools is protected;  
+    myAloneVertices    :  IndexedDataMapOfIndexedMapOfInteger from NMTTools is protected;   
+    --
+    myVSD              :  DataMapOfIntegerInteger from TColStd is protected;
+    --
 end PaveFiller;

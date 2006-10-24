@@ -27,7 +27,8 @@ class Iterator from NMTDS
 
 	---Purpose: 
 
-uses 
+uses  
+    DataMapOfIntegerListOfInteger from TColStd,
     ShapeEnum from TopAbs, 
     ShapesDataStructure  from NMTDS,
     PShapesDataStructure from NMTDS,
@@ -63,13 +64,20 @@ is
     Prepare(me:out); 
      
     ExpectedLength(me) 
-    	returns Integer from Standard; 
+    	returns Integer from Standard;  
 	 
+    SDVertices(me) 
+    	returns DataMapOfIntegerListOfInteger from TColStd; 
+    ---C++:return const & 
+
+ 
 fields
     myPDS      :PShapesDataStructure from NMTDS     is protected; 
     myLists    :ListOfPassKeyBoolean from NMTDS [6] is protected;  
     myIterator :ListIteratorOfListOfPassKeyBoolean from NMTDS is protected; 
     myEmptyList:ListOfPassKeyBoolean from NMTDS is protected; 
     myLength   :Integer from Standard is protected; 
-     
+    --
+    myMVSD     :DataMapOfIntegerListOfInteger from TColStd is protected;     
+
 end Iterator;
