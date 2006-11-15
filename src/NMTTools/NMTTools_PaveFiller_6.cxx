@@ -269,7 +269,7 @@ static
   //
   // Modified  Thu Sep 14 14:35:18 2006 
   // Contribution of Samtech www.samcef.com BEGIN
-  Standard_Boolean bIsExistingPaveBlock, bIsValidIn2D;//, bIsCoincided;
+  Standard_Boolean bIsExistingPaveBlock, bIsValidIn2D, bIsCoincided;
   // Contribution of Samtech www.samcef.com END
   //
   Standard_Integer i, aNbFFs, nF1, nF2, aBid=0;
@@ -285,7 +285,7 @@ static
   //
   NMTTools_DataMapOfIntegerListOfPaveBlock aMFInOn;
   NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock aItMF;
-  //
+  //---
   {
     Standard_Integer aNbS, aNbF, nF, aNbOn, nSp;
     TopAbs_ShapeEnum aType;
@@ -364,6 +364,7 @@ static
       aLPB.Append(aLPBX);
     }
   }
+  //---
   //
   // 1. Produce Section Edges from intersection curves
   //    between each pair of faces
@@ -381,6 +382,7 @@ static
     //
     BOPTools_ListOfPaveBlock aLPB;
     //
+    //---
     {
       BOPTools_ListIteratorOfListOfPaveBlock anItPB;
       NMTTools_MapOfPaveBlock aMPB;
@@ -409,6 +411,7 @@ static
 	}
       }
     }
+    //---
     //
     TopTools_ListOfShape aLSE;
     TColStd_ListOfInteger aLNE;
@@ -468,17 +471,25 @@ static
 	}
 	//
 	// 1
+	
 	bIsExistingPaveBlock=IsExistingPaveBlock(aPBNew, aLPB, aTolR3D);
 	if (bIsExistingPaveBlock) {
 	  continue;
 	}
+	//
+	//modified by NIZNHY-PKV Thu Nov  9 14:16:12 2006f
+	bIsCoincided=CheckCoincidence(aPBNew, aLPB);
+	if(bIsCoincided) {
+	  continue;
+	}
+	//modified by NIZNHY-PKV Thu Nov  9 14:16:15 2006t
 	//
 	// Modified  
 	// to provide checking whether aPBNew already exists in list
 	// of section edges aLSE
 	// Thu Sep 14 14:35:18 2006 
 	// Contribution of Samtech www.samcef.com BEGIN
-	// 3
+	// 2
 	bIsExistingPaveBlock=IsExistingPaveBlock(aPBNew, aLSE, aTolR3D);
 	if (bIsExistingPaveBlock) {
 	  continue;
@@ -492,7 +503,6 @@ static
 	  continue;
 	}
 	//
-	//aBC.AppendNewBlock(aPBNew);
 	//
 	// Make Section Edge  
 	TopoDS_Edge aES;
@@ -1277,8 +1287,7 @@ void SharedEdges1(const TopoDS_Face& aF1,
     }
   }
 }
-//modified by NIZNHY-PKV Tue Oct 24 12:00:50 2006 
-// it seems that the method is not used  
+
 //=======================================================================
 // function: CheckCoincidence
 // purpose: 
@@ -1291,6 +1300,7 @@ void SharedEdges1(const TopoDS_Face& aF1,
   Standard_Real aTE;
   Standard_Integer nV11, nV12, nV21, nV22, iVV, iVE, nE2;
   Standard_Integer iV, iCount, iCountExt;
+  BOPTools_ListIteratorOfListOfPaveBlock anIt;
   // V11
   const BOPTools_Pave& aPave11=aPBNew.Pave1();
   nV11=aPave11.Index();
@@ -1303,9 +1313,7 @@ void SharedEdges1(const TopoDS_Face& aF1,
   //
   iCountExt=1;
   iCount=0;
-  BOPTools_ListIteratorOfListOfPaveBlock anIt(aLPBFF);
-  
-  //
+  anIt.Initialize(aLPBFF);
   for (; anIt.More(); anIt.Next()) {
     iCount=0;
     //
@@ -1313,13 +1321,20 @@ void SharedEdges1(const TopoDS_Face& aF1,
     // V21
     const BOPTools_Pave& aPave21=aPBR.Pave1();
     nV21=aPave21.Index();
-    const TopoDS_Vertex& aV21=TopoDS::Vertex(myDS->Shape(nV21));
+    
     // V22
     const BOPTools_Pave& aPave22=aPBR.Pave2();
     nV22=aPave22.Index();
-    const TopoDS_Vertex& aV22=TopoDS::Vertex(myDS->Shape(nV22));
+    //modified by NIZNHY-PKV Wed Nov 15 13:08:13 2006f
+    if (nV11==nV21 || nV11==nV22 || nV12==nV21 || nV12==nV22) {
+      continue;
+    }
+    //modified by NIZNHY-PKV Wed Nov 15 13:08:15 2006t
     // E2
     nE2=aPBR.Edge();
+    //
+    const TopoDS_Vertex& aV21=TopoDS::Vertex(myDS->Shape(nV21));
+    const TopoDS_Vertex& aV22=TopoDS::Vertex(myDS->Shape(nV22));
     const TopoDS_Edge& aE2=TopoDS::Edge(myDS->Shape(nE2));
     //
     // VV
