@@ -320,9 +320,13 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
     TopoDS_Shape aShape;
     if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
     {
+      TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+      if (myEditCurrentArgument == GroupPntVecR->LineEdit2)
+        aNeedType = TopAbs_EDGE;
+
       TColStd_IndexedMapOfInteger aMap;
       aSelMgr->GetIndexes(anIO, aMap);
-      if (aMap.Extent() == 1)
+      if (aMap.Extent() == 1) // Local Selection
       {
         GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
         int anIndex = aMap(1);
@@ -332,9 +336,20 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
         aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
         aSelMgr->clearSelected(); // ???
 
-        aName += QString("_subshape_%1").arg(anIndex);
+        if (aNeedType == TopAbs_EDGE)
+          aName += QString("_edge_%1").arg(anIndex);
+        else
+          aName += QString("_vertex_%1").arg(anIndex);
+      }
+      else // Global Selection
+      {
+        if (aShape.ShapeType() != aNeedType) {
+          aSelectedObject = GEOM::GEOM_Object::_nil();
+          aName = "";
+        }
       }
     }
+
     myEditCurrentArgument->setText(aName);
 
     if      (myEditCurrentArgument == GroupPntVecR->LineEdit1)     myPoint  = aSelectedObject;
@@ -410,7 +425,8 @@ void BasicGUI_CircleDlg::LineEditReturnPressed()
 void BasicGUI_CircleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  globalSelection( GEOM_POINT );
+  globalSelection();
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
 
@@ -483,7 +499,7 @@ static bool isEqual( const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Obje
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BasicGUI_CircleDlg::isValid( QString& msg )
+bool BasicGUI_CircleDlg::isValid(QString& msg)
 {
   const int id = getConstructorId();
   if ( id == 0 )
@@ -501,7 +517,7 @@ bool BasicGUI_CircleDlg::isValid( QString& msg )
 // function : execute
 // purpose  :
 //=================================================================================
-bool BasicGUI_CircleDlg::execute( ObjectList& objects )
+bool BasicGUI_CircleDlg::execute(ObjectList& objects)
 {
   bool res = false;
 
@@ -539,7 +555,7 @@ bool BasicGUI_CircleDlg::execute( ObjectList& objects )
 // function : closeEvent
 // purpose  :
 //=================================================================================
-void BasicGUI_CircleDlg::closeEvent( QCloseEvent* e )
+void BasicGUI_CircleDlg::closeEvent (QCloseEvent* e)
 {
-  GEOMBase_Skeleton::closeEvent( e );
+  GEOMBase_Skeleton::closeEvent(e);
 }
