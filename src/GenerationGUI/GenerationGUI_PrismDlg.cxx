@@ -289,8 +289,8 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
     if (!testResult)
       return;
 
-    myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
     TopoDS_Shape aShape;
+    QString aName = GEOMBase::GetName( aSelectedObject );    
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
       {
 	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -301,10 +301,8 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
 	    GEOM::GEOM_IShapesOperations_var aShapesOp =
 	      getGeomEngine()->GetIShapesOperations( getStudyId() );
 	    int anIndex = aMap( 1 );
-	    TopTools_IndexedMapOfShape aShapes;
-	    TopExp::MapShapes( aShape, aShapes );
-	    aShape = aShapes.FindKey( anIndex );
 	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	    aName.append( ":edge_" + QString::number( anIndex ) );
 	    aSelMgr->clearSelected();
 	  }
       }
@@ -317,7 +315,7 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
       myVec = aSelectedObject;
       myOkVec = true;
     }
-    myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
+    myEditCurrentArgument->setText( aName );
   }
   else // getConstructorId()==1 - extrusion using 2 points
   {
@@ -343,8 +341,9 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
     if (!testResult || CORBA::is_nil( aSelectedObject ))
       return;
 
-    myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
+    QString aName = GEOMBase::GetName( aSelectedObject );
     TopoDS_Shape aShape;
+
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
       {
 	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -355,13 +354,13 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
 	    GEOM::GEOM_IShapesOperations_var aShapesOp =
 	      getGeomEngine()->GetIShapesOperations( getStudyId() );
 	    int anIndex = aMap( 1 );
-	    TopTools_IndexedMapOfShape aShapes;
-	    TopExp::MapShapes( aShape, aShapes );
-	    aShape = aShapes.FindKey( anIndex );
 	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	    aName.append( ":vertex_" + QString::number( anIndex ) );
 	    aSelMgr->clearSelected();
 	  }
       }
+
+    myEditCurrentArgument->setText( aName );
 
     if (myEditCurrentArgument == GroupPoints2->LineEdit1) {
       myBase = aSelectedObject;
@@ -408,6 +407,7 @@ void GenerationGUI_PrismDlg::LineEditReturnPressed()
 void GenerationGUI_PrismDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection( GEOM_POINT ); // to break previous local selection
 
   if (send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
@@ -417,9 +417,7 @@ void GenerationGUI_PrismDlg::SetEditCurrentArgument()
   else if (send == GroupPoints->PushButton2) {
     GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    //    globalSelection( GEOM_LINE );
-    GEOM::GEOM_Object_var anObj;
-    localSelection( anObj, TopAbs_EDGE );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if (send == GroupPoints2->PushButton1) {
     GroupPoints2->LineEdit1->setFocus();

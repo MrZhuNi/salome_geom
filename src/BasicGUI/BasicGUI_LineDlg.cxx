@@ -200,6 +200,7 @@ void BasicGUI_LineDlg::ConstructorsClicked(int constructorId)
   {
   case 0:
     {
+      globalSelection(GEOM_POINT); // to break previous local selection
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
       myEditCurrentArgument = GroupPoints->LineEdit1;
       myEditCurrentArgument->setText("");
@@ -211,6 +212,7 @@ void BasicGUI_LineDlg::ConstructorsClicked(int constructorId)
     }
   case 1:
     {
+      globalSelection(GEOM_PLANE);  // to break previous local selection
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
       myEditCurrentArgument = GroupFaces->LineEdit1;
       myEditCurrentArgument->setText("");
@@ -249,8 +251,9 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   {
-    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     TopoDS_Shape aShape;
+    QString aName = GEOMBase::GetName( aSelectedObject );
+
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
       {
 	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -261,13 +264,17 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
 	    GEOM::GEOM_IShapesOperations_var aShapesOp =
 		      getGeomEngine()->GetIShapesOperations( getStudyId() );
 	    int anIndex = aMap( 1 );
-	    TopTools_IndexedMapOfShape aShapes;
-	    TopExp::MapShapes( aShape, aShapes );
-	    aShape = aShapes.FindKey( anIndex );
+	    if ( myEditCurrentArgument == GroupFaces->LineEdit1 ||
+		 myEditCurrentArgument == GroupFaces->LineEdit2 )
+	      aName.append( ":face_" + QString::number( anIndex ) );
+	    else
+	      aName.append( ":vertex_" + QString::number( anIndex ) );
 	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 	    aSelMgr->clearSelected();
 	  }
       }
+    myEditCurrentArgument->setText( aName );
+
     if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint1 = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myPoint2 = aSelectedObject;
     else if ( myEditCurrentArgument == GroupFaces->LineEdit1 )  myFace1 = aSelectedObject;
@@ -321,7 +328,6 @@ void BasicGUI_LineDlg::ActivateThisDialog()
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   // myGeomGUI->SetState( 0 );
-  //  globalSelection( GEOM_POINT );
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
   myEditCurrentArgument = GroupPoints->LineEdit1;

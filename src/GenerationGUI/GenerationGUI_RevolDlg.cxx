@@ -221,6 +221,7 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+  QString aName = GEOMBase::GetName( aSelectedObject );
   
   if (!testResult)
     return;
@@ -250,9 +251,7 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
 		  GEOM::GEOM_IShapesOperations_var aShapesOp =
 		    getGeomEngine()->GetIShapesOperations( getStudyId() );
 		  int anIndex = aMap( 1 );
-		  TopTools_IndexedMapOfShape aShapes;
-		  TopExp::MapShapes( aShape, aShapes );
-		  aShape = aShapes.FindKey( anIndex );
+		  aName.append( ":edge_" + QString::number( anIndex ) );
 		  myAxis = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 		  aSelMgr->clearSelected();
 		}
@@ -263,7 +262,7 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
 	  }
       }
   }
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  myEditCurrentArgument->setText( aName );
 
   displayPreview();
 }
@@ -286,8 +285,7 @@ void GenerationGUI_RevolDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
     //globalSelection( GEOM_LINE );
-    GEOM::GEOM_Object_var anObj;
-    localSelection( anObj, TopAbs_EDGE );
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
   }
   SelectionIntoArgument();
 }

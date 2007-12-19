@@ -199,6 +199,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
       return;
     
     myBase = aSelectedObject;
+    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     myOkBase = true;
   }
   else if(myEditCurrentArgument == GroupPoints->LineEdit2) {
@@ -211,28 +212,25 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
       {
 	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
 	TColStd_IndexedMapOfInteger aMap;
+	QString aName = GEOMBase::GetName( aSelectedObject );
 	aSelMgr->GetIndexes( firstIObject(), aMap );
 	if ( aMap.Extent() == 1 )
 	  {
 	    GEOM::GEOM_IShapesOperations_var aShapesOp =
 	      getGeomEngine()->GetIShapesOperations( getStudyId() );
 	    int anIndex = aMap( 1 );
-	    TopTools_IndexedMapOfShape aShapes;
-	    TopExp::MapShapes( S, aShapes );
-	    S = aShapes.FindKey( anIndex );
-	    if ( S.ShapeType() == TopAbs_WIRE || S.ShapeType() == TopAbs_EDGE ) {
-	      myPath = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	      myOkPath = true;
-	      aSelMgr->clearSelected();
-	    }
+	    myPath = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	    aName.append( ":edge_" + QString::number( anIndex ) );
+	    myOkPath = true;
+	    aSelMgr->clearSelected();
 	  }
-	else if ( S.ShapeType() == TopAbs_WIRE || S.ShapeType() == TopAbs_EDGE ) {
+	else {
 	    myPath = aSelectedObject;
 	    myOkPath = true;
 	  }
+	myEditCurrentArgument->setText( aName );
       }
   }
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
   
   displayPreview();
 }

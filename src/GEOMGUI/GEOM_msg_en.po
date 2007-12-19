@@ -239,7 +239,7 @@ msgstr "Warning"
 
 #: GeometryGUI.cxx:3854
 msgid "GEOM_REALLY_DELETE"
-msgstr "Do you really want to delete this %1 object(s): %2"
+msgstr "Do you really want to delete this %1 object(s):"
 
 #
 #==============================================================================

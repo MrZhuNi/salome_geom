@@ -254,8 +254,8 @@ void PrimitiveGUI_BoxDlg::SelectionIntoArgument()
   if(!testResult || CORBA::is_nil( aSelectedObject ))
     return;
 
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
   TopoDS_Shape aShape;
+  QString aName = GEOMBase::GetName( aSelectedObject );
   if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
     {
       LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -266,13 +266,14 @@ void PrimitiveGUI_BoxDlg::SelectionIntoArgument()
 	  GEOM::GEOM_IShapesOperations_var aShapesOp =
 	    getGeomEngine()->GetIShapesOperations( getStudyId() );
 	  int anIndex = aMap( 1 );
-	  TopTools_IndexedMapOfShape aShapes;
-	  TopExp::MapShapes( aShape, aShapes );
-	  aShape = aShapes.FindKey( anIndex );
+	  aName.append( ":vertex_" + QString::number( anIndex ) );	  
 	  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 	  aSelMgr->clearSelected();
 	}
     }
+
+  myEditCurrentArgument->setText( aName );
+
   if(myEditCurrentArgument == GroupPoints->LineEdit1)
     myPoint1 = aSelectedObject;
   else if(myEditCurrentArgument == GroupPoints->LineEdit2)

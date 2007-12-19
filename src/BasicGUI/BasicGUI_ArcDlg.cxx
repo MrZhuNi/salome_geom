@@ -287,9 +287,9 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   {
-    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     // Get Selected object if selected subshape
     TopoDS_Shape aShape;
+    QString aName = GEOMBase::GetName( aSelectedObject );
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
       {
 	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -300,13 +300,14 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 	    GEOM::GEOM_IShapesOperations_var aShapesOp =
 	      getGeomEngine()->GetIShapesOperations( getStudyId() );
 	    int anIndex = aMap( 1 );
-	    TopTools_IndexedMapOfShape aShapes;
-	    TopExp::MapShapes( aShape, aShapes );
-	    aShape = aShapes.FindKey( anIndex );
 	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 	    aSelMgr->clearSelected();
+	    aName.append( ":vertex_" + QString::number( anIndex ) );
 	  }
       }
+
+    myEditCurrentArgument->setText( aName );
+
     switch (getConstructorId())
     {
       case 0:

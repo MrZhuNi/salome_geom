@@ -276,7 +276,8 @@ void PrimitiveGUI_ConeDlg::SelectionIntoArgument()
     return;
 
   TopoDS_Shape aShape;
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  QString aName = GEOMBase::GetName( aSelectedObject );
+
   if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
     {
       LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -287,13 +288,16 @@ void PrimitiveGUI_ConeDlg::SelectionIntoArgument()
 	  GEOM::GEOM_IShapesOperations_var aShapesOp =
 	    getGeomEngine()->GetIShapesOperations( getStudyId() );
 	  int anIndex = aMap( 1 );
-	  TopTools_IndexedMapOfShape aShapes;
-	  TopExp::MapShapes( aShape, aShapes );
-	  aShape = aShapes.FindKey( anIndex );
+	  if ( myEditCurrentArgument == GroupPoints->LineEdit2  )
+	    aName.append( ":edge_" + QString::number( anIndex ) );
+	  else
+	    aName.append( ":vertex_" + QString::number( anIndex ) );
 	  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 	  aSelMgr->clearSelected();
 	}
     }
+  myEditCurrentArgument->setText( aName );
+
   if (myEditCurrentArgument == GroupPoints->LineEdit1)
     myPoint = aSelectedObject;
   else if (myEditCurrentArgument == GroupPoints->LineEdit2) 
@@ -313,14 +317,13 @@ void PrimitiveGUI_ConeDlg::SetEditCurrentArgument()
   
   if(send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    //    globalSelection( GEOM_POINT );
+    globalSelection( GEOM_POINT ); // to break prvious local selection
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    //    globalSelection( GEOM_LINE );
-    GEOM::GEOM_Object_var anObj;
-    localSelection( anObj, TopAbs_EDGE );
+    globalSelection( GEOM_LINE );// to break prvious local selection
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   
   myEditCurrentArgument->setFocus();

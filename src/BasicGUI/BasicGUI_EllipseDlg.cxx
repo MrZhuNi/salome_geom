@@ -108,8 +108,7 @@ void BasicGUI_EllipseDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
-  //  globalSelection( GEOM_POINT );
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX); //Select Vertex on All Shapes
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
 
   myPoint = myDir = GEOM::GEOM_Object::_nil();
 
@@ -214,9 +213,10 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   {  
-    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     // Get Selected object if selected subshape
     TopoDS_Shape aShape;
+    QString aName = GEOMBase::GetName( aSelectedObject );
+
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
       {
 	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -227,13 +227,17 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
 	    GEOM::GEOM_IShapesOperations_var aShapesOp =
 	      getGeomEngine()->GetIShapesOperations( getStudyId() );
 	    int anIndex = aMap( 1 );
-	    TopTools_IndexedMapOfShape aShapes;
-	    TopExp::MapShapes( aShape, aShapes );
-	    aShape = aShapes.FindKey( anIndex );
 	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	    if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+	      aName.append( ":edge_" + QString::number( anIndex ) );
+	    else
+	      aName.append( ":vertex_" + QString::number( anIndex ) );
 	    aSelMgr->clearSelected();
 	  }
       }
+
+    myEditCurrentArgument->setText( aName );
+
     if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myDir   = aSelectedObject;
   }
@@ -249,6 +253,7 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
 void BasicGUI_EllipseDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection( GEOM_POINT );
 
   if      ( send == GroupPoints->PushButton1 ) myEditCurrentArgument = GroupPoints->LineEdit1;
   else if ( send == GroupPoints->PushButton2 ) myEditCurrentArgument = GroupPoints->LineEdit2;

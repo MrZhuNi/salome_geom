@@ -240,6 +240,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
   {
   case 0:
     {
+      globalSelection( GEOM_POINT); // to break previous local selection
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
       GroupRefPoint->hide();
@@ -254,7 +255,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       myEditCurrentArgument = GroupRefPoint->LineEdit1;
       myEditCurrentArgument->setText("");
       myRefPoint = GEOM::GEOM_Object::_nil();
-
+      globalSelection( GEOM_POINT); // to break previous local selection
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
       GroupXYZ->hide();
@@ -269,7 +270,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       myEditCurrentArgument = GroupOnCurve->LineEdit1;
       myEditCurrentArgument->setText("");
       myEdge = GEOM::GEOM_Object::_nil();
-
+      globalSelection( GEOM_LINE); // to break previous local selection
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
 
       GroupXYZ->hide();
@@ -286,7 +287,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       GroupLineIntersection->LineEdit2->setText("");
       myLine1 = GEOM::GEOM_Object::_nil();
       myLine2 = GEOM::GEOM_Object::_nil();
-
+      globalSelection( GEOM_EDGE); // to break previous local selection
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
 
       GroupXYZ->hide();
@@ -373,25 +374,30 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
     {
       TopoDS_Shape aShape;
       if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
-      {
-        LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-        TColStd_IndexedMapOfInteger aMap;
-        aSelMgr->GetIndexes( firstIObject(), aMap );
-        if ( aMap.Extent() == 1 )
-        {
-          GEOM::GEOM_IShapesOperations_var aShapesOp =
-            getGeomEngine()->GetIShapesOperations( getStudyId() );
-          int anIndex = aMap( 1 );
-          TopTools_IndexedMapOfShape aShapes;
-          TopExp::MapShapes( aShape, aShapes );
-          aShape = aShapes.FindKey( anIndex );
-          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-        }
-      }
+	{
+	  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	  TColStd_IndexedMapOfInteger aMap;
+	  aSelMgr->GetIndexes( firstIObject(), aMap );
+	  if ( aMap.Extent() == 1 )
+	    {
+	      GEOM::GEOM_IShapesOperations_var aShapesOp =
+		getGeomEngine()->GetIShapesOperations( getStudyId() );
+	      int anIndex = aMap( 1 );
+	      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	      if ( id == 2 || id == 3 )
+		aName.append( ":edge_" + QString::number( anIndex ) );
+	      else
+		aName.append( ":vertex_" + QString::number( anIndex ) );
+	      aSelMgr->clearSelected();
+	    }
+	}
+
       if ( id == 0 )
       {
-        if ( aShape.IsNull() || aShape.ShapeType() != TopAbs_VERTEX )
-          return;
+	GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE );
+
+	if ( aShape.IsNull() || aShape.ShapeType() != TopAbs_VERTEX )
+	  return;
 
         gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
         GroupXYZ->SpinBox_DX->SetValue( aPnt.X() );
@@ -449,6 +455,7 @@ void BasicGUI_PointDlg::LineEditReturnPressed()
 void BasicGUI_PointDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection( GEOM_POINT); // to break previous local selection
 
   if ( send == GroupRefPoint->PushButton1 )
   {

@@ -262,7 +262,7 @@ void PrimitiveGUI_TorusDlg::SelectionIntoArgument()
   if (!testResult || CORBA::is_nil( aSelectedObject ))
     return;
 
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  QString aName = GEOMBase::GetName( aSelectedObject );
   TopoDS_Shape aShape;
   if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
     {
@@ -274,13 +274,16 @@ void PrimitiveGUI_TorusDlg::SelectionIntoArgument()
 	  GEOM::GEOM_IShapesOperations_var aShapesOp =
 	    getGeomEngine()->GetIShapesOperations( getStudyId() );
 	  int anIndex = aMap( 1 );
-	  TopTools_IndexedMapOfShape aShapes;
-	  TopExp::MapShapes( aShape, aShapes );
-	  aShape = aShapes.FindKey( anIndex );
+	  if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+	    aName.append( ":edge_" + QString::number( anIndex ) );
+	  else
+	    aName.append( ":vertex_" + QString::number( anIndex ) );
 	  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 	  aSelMgr->clearSelected();
 	}
     }
+  myEditCurrentArgument->setText( aName );
+
   if (myEditCurrentArgument == GroupPoints->LineEdit1)
     myPoint = aSelectedObject;
   else if (myEditCurrentArgument == GroupPoints->LineEdit2)
@@ -313,6 +316,7 @@ void PrimitiveGUI_TorusDlg::LineEditReturnPressed()
 void PrimitiveGUI_TorusDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection( GEOM_POINT ); // to break previous local selection
 
   if (send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;

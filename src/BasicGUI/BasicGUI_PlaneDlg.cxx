@@ -216,6 +216,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked(int constructorId)
 				GroupPntDir->LineEdit2->setText(tr(""));
 
 				/* for the first argument */
+				globalSelection( GEOM_POINT ); // to break previous local selection
 				localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 				break;
       }
@@ -232,6 +233,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked(int constructorId)
 				Group3Pnts->LineEdit3->setText("");
 
 				/* for the first argument */
+				globalSelection( GEOM_POINT ); // to break previous local selection
 				localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 				break;
       }
@@ -246,7 +248,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked(int constructorId)
 				GroupFace->LineEdit1->setText(tr(""));
 
 				/* for the first argument */
-				//globalSelection( GEOM_PLANE );
+				globalSelection( GEOM_PLANE );
                                 TColStd_MapOfInteger aMap;
                                 aMap.Add( GEOM_PLANE );
                                 aMap.Add( GEOM_MARKER );
@@ -319,8 +321,9 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
   if ( !CORBA::is_nil( aSelectedObject ) && aRes )
   {
-    myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
     TopoDS_Shape aShape;
+    QString aName = GEOMBase::GetName( aSelectedObject );
+
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
       {
 	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -331,13 +334,17 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
 	    GEOM::GEOM_IShapesOperations_var aShapesOp =
 	      getGeomEngine()->GetIShapesOperations( getStudyId() );
 	    int anIndex = aMap( 1 );
-	    TopTools_IndexedMapOfShape aShapes;
-	    TopExp::MapShapes( aShape, aShapes );
-	    aShape = aShapes.FindKey( anIndex );
 	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	    if ( myEditCurrentArgument == GroupPntDir->LineEdit2 )
+	      aName.append( ":edge_" + QString::number( anIndex ) );
+	    else
+	      aName.append( ":vertex_" + QString::number( anIndex ) );
+
 	    aSelMgr->clearSelected();
 	  }
       }
+    myEditCurrentArgument->setText( aName );
+
     if      ( myEditCurrentArgument == GroupPntDir->LineEdit1 ) myPoint  = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) myDir    = aSelectedObject;
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )  myPoint1 = aSelectedObject;
@@ -356,6 +363,7 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
 void BasicGUI_PlaneDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection( GEOM_POINT );
 
   if      ( send == GroupPntDir->PushButton1 ) myEditCurrentArgument = GroupPntDir->LineEdit1;
   else if ( send == GroupPntDir->PushButton2 ) myEditCurrentArgument = GroupPntDir->LineEdit2;
@@ -366,12 +374,10 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
 
   myEditCurrentArgument->setFocus();
 
-  if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) {
-    GEOM::GEOM_Object_var anObj;
-    localSelection( anObj, TopAbs_EDGE );
-  }
+  if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) 
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
   else if ( myEditCurrentArgument == GroupFace->LineEdit1 ) {
-    //globalSelection( GEOM_PLANE );
+    globalSelection( GEOM_PLANE );
     TColStd_MapOfInteger aMap;
     aMap.Add( GEOM_PLANE );
     aMap.Add( GEOM_MARKER );

@@ -244,7 +244,7 @@ void PrimitiveGUI_SphereDlg::SelectionIntoArgument()
   if (!testResult || CORBA::is_nil( aSelectedObject ))
     return;
 
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  QString aName = GEOMBase::GetName( aSelectedObject );
   TopoDS_Shape aShape;
   if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
     {
@@ -256,13 +256,13 @@ void PrimitiveGUI_SphereDlg::SelectionIntoArgument()
 	  GEOM::GEOM_IShapesOperations_var aShapesOp =
 	    getGeomEngine()->GetIShapesOperations( getStudyId() );
 	  int anIndex = aMap( 1 );
-	  TopTools_IndexedMapOfShape aShapes;
-	  TopExp::MapShapes( aShape, aShapes );
-	  aShape = aShapes.FindKey( anIndex );
+	  aName.append( ":vertex_" + QString::number( anIndex ) );
 	  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 	  aSelMgr->clearSelected();
 	}
     }
+
+  myEditCurrentArgument->setText( aName );
   myPoint = aSelectedObject;
  
   displayPreview();
