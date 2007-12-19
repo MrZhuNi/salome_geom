@@ -293,10 +293,10 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
   QString aName;
 
   const int id = getConstructorId();
-  if ( IObjectCount() != 1 ) {
-    if(id == 0)
+  if (IObjectCount() != 1) {
+    if (id == 0)
       myFace = GEOM::GEOM_Object::_nil();
-    else if(id == 1) {
+    else if (id == 1) {
       if (myEditCurrentArgument == Group2->LineEdit1)
         myVectX = GEOM::GEOM_Object::_nil();
       else if (myEditCurrentArgument == Group2->LineEdit2)
@@ -309,52 +309,52 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
   Standard_Boolean aRes = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), aRes);
 
-  if(!aRes || CORBA::is_nil( aSelectedObject ))
+  if (!aRes || CORBA::is_nil(aSelectedObject))
     return;
 
-  aName = GEOMBase::GetName( aSelectedObject );
+  aName = GEOMBase::GetName(aSelectedObject);
 
-  if(myEditCurrentArgument == Group1->LineEdit1)
+  if (myEditCurrentArgument == Group1->LineEdit1)
     myFace = aSelectedObject;
-  else if(myEditCurrentArgument == Group2->LineEdit1 || myEditCurrentArgument == Group2->LineEdit2)  {
-      if ( aRes && !aSelectedObject->_is_nil() )
-	{
-	  TopoDS_Shape aShape;
-	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
-	    {
-	      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-	      TColStd_IndexedMapOfInteger aMap;
-	      aSelMgr->GetIndexes( firstIObject(), aMap );
-		if ( aMap.Extent() == 1 )
-		  {
-		    GEOM::GEOM_IShapesOperations_var aShapesOp =
-		      getGeomEngine()->GetIShapesOperations( getStudyId() );
-		    int anIndex = aMap( 1 );
-		    TopTools_IndexedMapOfShape aShapes;
-		    TopExp::MapShapes( aShape, aShapes );
-		    aShape = aShapes.FindKey( anIndex );
-		    aName = aName + " Edge_" + QString::number( anIndex );
-		    if(myEditCurrentArgument == Group2->LineEdit1)
-		      myVectX = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-		    else
-		      myVectZ = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-		  }
-		else {
-		  if(myEditCurrentArgument == Group2->LineEdit1)
-		    myVectX = aSelectedObject;
-		  else
-		    myVectZ = aSelectedObject;
-		}
-		aSelMgr->clearSelected();
-	    }
-	}
+  else if (myEditCurrentArgument == Group2->LineEdit1 || myEditCurrentArgument == Group2->LineEdit2)
+  {
+    if ( aRes && !aSelectedObject->_is_nil() )
+    {
+      TopoDS_Shape aShape;
+      if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+      {
+        LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+        TColStd_IndexedMapOfInteger aMap;
+        aSelMgr->GetIndexes( firstIObject(), aMap );
+        if ( aMap.Extent() == 1 )
+        {
+          GEOM::GEOM_IShapesOperations_var aShapesOp =
+            getGeomEngine()->GetIShapesOperations( getStudyId() );
+          int anIndex = aMap( 1 );
+          TopTools_IndexedMapOfShape aShapes;
+          TopExp::MapShapes( aShape, aShapes );
+          aShape = aShapes.FindKey( anIndex );
+          aName = aName + ":edge_" + QString::number( anIndex );
+          if(myEditCurrentArgument == Group2->LineEdit1)
+            myVectX = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+          else
+            myVectZ = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+        }
+        else {
+          if (myEditCurrentArgument == Group2->LineEdit1)
+            myVectX = aSelectedObject;
+          else
+            myVectZ = aSelectedObject;
+        }
+        aSelMgr->clearSelected();
+      }
     }
+  }
 
   myEditCurrentArgument->setText( aName );
-  
+
   updateWPlane();
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -364,16 +364,16 @@ void BasicGUI_WorkingPlaneDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
 
-  if(send == Group1->PushButton1) {
+  if (send == Group1->PushButton1) {
     myEditCurrentArgument = Group1->LineEdit1;
     globalSelection( GEOM_PLANE );
   }
-  else if(send == Group2->PushButton1) {
+  else if (send == Group2->PushButton1) {
     myEditCurrentArgument = Group2->LineEdit1;
     GEOM::GEOM_Object_var anObj;
     localSelection( anObj, TopAbs_EDGE );
   }
-  else if(send == Group2->PushButton2) {
+  else if (send == Group2->PushButton2) {
     myEditCurrentArgument = Group2->LineEdit2;
     GEOM::GEOM_Object_var anObj;
     localSelection( anObj, TopAbs_EDGE );
@@ -382,7 +382,6 @@ void BasicGUI_WorkingPlaneDlg::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
 }
-
 
 //=================================================================================
 // function : LineEditReturnPressed()
@@ -397,7 +396,6 @@ void BasicGUI_WorkingPlaneDlg::LineEditReturnPressed()
   }
 }
 
-
 //=================================================================================
 // function : onReverse()
 // purpose  :
@@ -406,7 +404,6 @@ void BasicGUI_WorkingPlaneDlg::onReverse()
 {
   updateWPlane();
 }
-
 
 //=================================================================================
 // function : ActivateThisDialog()
@@ -421,21 +418,19 @@ void BasicGUI_WorkingPlaneDlg::ActivateThisDialog( )
   ConstructorsClicked( getConstructorId() );
 }
 
-
 //=================================================================================
 // function : DeactivateActiveDialog()
 // purpose  : public slot to deactivate if active
 //=================================================================================
 void BasicGUI_WorkingPlaneDlg::DeactivateActiveDialog()
 {
-  // myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
-//=======================================================================
+//=================================================================================
 // function : ClickOnCancel()
 // purpose  :
-//=======================================================================
+//=================================================================================
 void BasicGUI_WorkingPlaneDlg::ClickOnCancel()
 {
   GEOMBase_Skeleton::ClickOnCancel();
@@ -459,7 +454,6 @@ void BasicGUI_WorkingPlaneDlg::closeEvent( QCloseEvent* e )
 {
   GEOMBase_Skeleton::closeEvent( e );
 }
-
 
 //=================================================================================
 // function : updateWPlane
@@ -498,8 +492,8 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
 	showError( "Wrong shape selected (has to be a planar face)" );
       return false;
     }
-
-  } else if (id == 1) { // by two vectors (Ox & Oz)
+  }
+  else if (id == 1) { // by two vectors (Ox & Oz)
     if ( CORBA::is_nil( myVectX ) || CORBA::is_nil( myVectZ ) ) {
       if(!showPreview)
 	showError( "Two vectors have to be selected" );
@@ -555,8 +549,8 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
     }
 
     myWPlane = gp_Ax3(BRep_Tool::Pnt(VX1), aDirZ, aDirX);
-
-  } else if (id == 2) { // by selection from standard (OXY or OYZ, or OZX)
+  }
+  else if (id == 2) { // by selection from standard (OXY or OYZ, or OZX)
     gp_Ax2 anAx2;
 
     if      (aOriginType == 1) anAx2 = gp::XOY();
@@ -564,25 +558,26 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
     else if (aOriginType == 0) anAx2 = gp::ZOX();
 
     myWPlane = gp_Ax3(anAx2);
-
-  } else {
+  }
+  else {
     return false;
   }
-  
+
   if (myReverseCB->isChecked())
-    {
-      myWPlane.YReverse();
-      myWPlane.ZReverse();
-    }
-  
+  {
+    myWPlane.YReverse();
+    myWPlane.ZReverse();
+  }
+
   if (showPreview)
-    {
-      GEOM::GEOM_IBasicOperations_var aBasicOp = getGeomEngine()->GetIBasicOperations( getStudyId() );
-      GEOM::GEOM_Object_var anObj = aBasicOp->MakeMarker(  myWPlane.Location().X(), myWPlane.Location().Y(), myWPlane.Location().Z(),
-							   myWPlane.XDirection().X(), myWPlane.XDirection().Y(), myWPlane.XDirection().Z(),
-							   myWPlane.YDirection().X(), myWPlane.YDirection().Y(), myWPlane.YDirection().Z() );
-      displayPreview(anObj);
-    }
+  {
+    GEOM::GEOM_IBasicOperations_var aBasicOp = getGeomEngine()->GetIBasicOperations(getStudyId());
+    GEOM::GEOM_Object_var anObj = aBasicOp->MakeMarker
+      (myWPlane.Location().X()  , myWPlane.Location().Y()  , myWPlane.Location().Z(),
+       myWPlane.XDirection().X(), myWPlane.XDirection().Y(), myWPlane.XDirection().Z(),
+       myWPlane.YDirection().X(), myWPlane.YDirection().Y(), myWPlane.YDirection().Z());
+    displayPreview(anObj);
+  }
 
   return true;
 }

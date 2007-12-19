@@ -16,7 +16,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -108,11 +108,10 @@ void BasicGUI_EllipseDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
+  globalSelection(); // close local contexts, if any
   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
 
   myPoint = myDir = GEOM::GEOM_Object::_nil();
-
-  // myGeomGUI->SetState( 0 );
 
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
@@ -143,15 +142,16 @@ void BasicGUI_EllipseDlg::Init()
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupPoints->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)),
+          GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
+  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)),
+          GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
   
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName( tr( "GEOM_ELLIPSE" ) );
 }
-
 
 //=================================================================================
 // function : ClickOnOk()
@@ -162,7 +162,6 @@ void BasicGUI_EllipseDlg::ClickOnOk()
   if ( ClickOnApply() )
     ClickOnCancel();
 }
-
 
 //=================================================================================
 // function : ClickOnApply()
@@ -180,8 +179,10 @@ bool BasicGUI_EllipseDlg::ClickOnApply()
   GroupPoints->LineEdit1->setText( "" );
   GroupPoints->LineEdit2->setText( "" );
   myEditCurrentArgument = GroupPoints->LineEdit1;
-  globalSelection( GEOM_POINT );
-  
+  //globalSelection(GEOM_POINT);
+  globalSelection(); // close local contexts, if any
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+
   return true;
 }
 
@@ -210,33 +211,46 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
   }
 
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
-  if ( !CORBA::is_nil( aSelectedObject ) && aRes )
+  Handle(SALOME_InteractiveObject) anIO = firstIObject();
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), aRes);
+  if (!CORBA::is_nil(aSelectedObject) && aRes)
   {  
+    QString aName = GEOMBase::GetName(aSelectedObject);
+
     // Get Selected object if selected subshape
     TopoDS_Shape aShape;
-    QString aName = GEOMBase::GetName( aSelectedObject );
 
-    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
+    {
+      TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+      if (myEditCurrentArgument == GroupPoints->LineEdit2)
+        aNeedType = TopAbs_EDGE;
+
+      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes(anIO, aMap);
+      if (aMap.Extent() == 1)
       {
-	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-	TColStd_IndexedMapOfInteger aMap;
-	aSelMgr->GetIndexes( firstIObject(), aMap );
-	if ( aMap.Extent() == 1 )
-	  {
-	    GEOM::GEOM_IShapesOperations_var aShapesOp =
-	      getGeomEngine()->GetIShapesOperations( getStudyId() );
-	    int anIndex = aMap( 1 );
-	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	    if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
-	      aName.append( ":edge_" + QString::number( anIndex ) );
-	    else
-	      aName.append( ":vertex_" + QString::number( anIndex ) );
-	    aSelMgr->clearSelected();
-	  }
-      }
+        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+        int anIndex = aMap(1);
+        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+        aSelMgr->clearSelected(); // ???
 
-    myEditCurrentArgument->setText( aName );
+        if (aNeedType == TopAbs_EDGE)
+          aName += QString(":edge_%1").arg(anIndex);
+        else
+          aName += QString(":vertex_%1").arg(anIndex);
+      }
+      else // Global Selection
+      {
+        if (aShape.ShapeType() != aNeedType) {
+          aSelectedObject = GEOM::GEOM_Object::_nil();
+          aName = "";
+        }
+      }
+    }
+
+    myEditCurrentArgument->setText(aName);
 
     if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myDir   = aSelectedObject;
@@ -259,6 +273,7 @@ void BasicGUI_EllipseDlg::SetEditCurrentArgument()
   else if ( send == GroupPoints->PushButton2 ) myEditCurrentArgument = GroupPoints->LineEdit2;
   
   myEditCurrentArgument->setFocus();
+  globalSelection(); // close local contexts, if any
   if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
     localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
   else
@@ -289,9 +304,9 @@ void BasicGUI_EllipseDlg::LineEditReturnPressed()
 void BasicGUI_EllipseDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
+
   GroupPoints->LineEdit1->setFocus();
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
@@ -299,7 +314,9 @@ void BasicGUI_EllipseDlg::ActivateThisDialog()
   GroupPoints->LineEdit2->setText( "" );
 
   myPoint = myDir = GEOM::GEOM_Object::_nil();
-  globalSelection( GEOM_POINT );
+  //globalSelection( GEOM_POINT );
+  globalSelection(); // close local contexts, if any
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
 }
 
 //=================================================================================

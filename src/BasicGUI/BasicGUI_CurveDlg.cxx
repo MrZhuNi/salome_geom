@@ -16,7 +16,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -113,8 +113,9 @@ void BasicGUI_CurveDlg::Init()
   myPoints = new GEOM::ListOfGO();
   myPoints->length( 0 );
 
-  //  globalSelection( GEOM_POINT );
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  globalSelection(GEOM_POINT);
+  //globalSelection(); // close local contexts, if any
+  //localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
@@ -128,7 +129,7 @@ void BasicGUI_CurveDlg::Init()
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
 
   initName( tr( "GEOM_CURVE" ) );
@@ -233,6 +234,7 @@ static int isPointInList(list<GEOM::GEOM_Object_var>& thePoints,
 
   return -1;
 }
+
 //=================================================================================
 /*! function : removeUnnecessaryPnt()
  *  purpose  : Remove unnecessary points from list \a theOldPoints
@@ -346,7 +348,7 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
 
   int k=0;
   for (list<GEOM::GEOM_Object_var>::iterator j=aList.begin();j!=aList.end();j++)
-      myPoints[k++] = *j;
+    myPoints[k++] = *j;
 
   if(IOC == 0)
     myOrderedSel.clear();
@@ -374,13 +376,12 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
 void BasicGUI_CurveDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 
-  // myGeomGUI->SetState( 0 );
-
-  //  globalSelection( GEOM_POINT );
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  globalSelection(GEOM_POINT);
+  //globalSelection(); // close local contexts, if any
+  //localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   ConstructorsClicked( getConstructorId() );
 }
 

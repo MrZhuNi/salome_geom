@@ -161,8 +161,8 @@ void BasicGUI_ArcDlg::Init()
 
   connect(Group3Pnts2->CheckButton1, SIGNAL(stateChanged(int)), this, SLOT(ReverseSense(int)));
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
-          SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_ARC" ));
   ConstructorsClicked( 0 );
@@ -181,6 +181,7 @@ void BasicGUI_ArcDlg::ConstructorsClicked (int constructorId)
   {
   case 0:
     {
+      globalSelection(); // close local contexts, if any
       localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX); //Select Vertex on All Shapes
 
       Group3Pnts->show();
@@ -197,6 +198,7 @@ void BasicGUI_ArcDlg::ConstructorsClicked (int constructorId)
     }
   case 1:
     {
+      globalSelection(); // close local contexts, if any
       localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX); //Select Vertex on All Shapes
 
       Group3Pnts->hide();
@@ -247,7 +249,6 @@ bool BasicGUI_ArcDlg::ClickOnApply()
   return true;
 }
 
-
 //=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection as changed or other case
@@ -259,7 +260,7 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 
   myEditCurrentArgument->setText("");
 
-  if ( IObjectCount() != 1 )
+  if (IObjectCount() != 1)
   {
     switch (getConstructorId())
     {
@@ -284,29 +285,37 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 
   // nbSel == 1
   Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
-  if ( !CORBA::is_nil( aSelectedObject ) && aRes )
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), aRes);
+  if (!CORBA::is_nil(aSelectedObject) && aRes)
   {
+    QString aName = GEOMBase::GetName(aSelectedObject);
+
     // Get Selected object if selected subshape
     TopoDS_Shape aShape;
-    QString aName = GEOMBase::GetName( aSelectedObject );
-    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
+    {
+      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes(firstIObject(), aMap);
+      if (aMap.Extent() == 1) // Local Selection
       {
-	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-	TColStd_IndexedMapOfInteger aMap;
-	aSelMgr->GetIndexes( firstIObject(), aMap );
-	if ( aMap.Extent() == 1 )
-	  {
-	    GEOM::GEOM_IShapesOperations_var aShapesOp =
-	      getGeomEngine()->GetIShapesOperations( getStudyId() );
-	    int anIndex = aMap( 1 );
-	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	    aSelMgr->clearSelected();
-	    aName.append( ":vertex_" + QString::number( anIndex ) );
-	  }
-      }
+        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+        int anIndex = aMap(1);
+        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+        aSelMgr->clearSelected(); // ???
 
-    myEditCurrentArgument->setText( aName );
+        aName += QString(":vertex_%1").arg(anIndex);
+      }
+      else // Global Selection
+      {
+        if (aShape.ShapeType() != TopAbs_VERTEX) {
+          aSelectedObject = GEOM::GEOM_Object::_nil();
+          aName = "";
+        }
+      }
+    }
+
+    myEditCurrentArgument->setText(aName);
 
     switch (getConstructorId())
     {
@@ -329,7 +338,6 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 
   displayPreview();
 }
-
 
 //=================================================================================
 // function : LineEditReturnPressed()
