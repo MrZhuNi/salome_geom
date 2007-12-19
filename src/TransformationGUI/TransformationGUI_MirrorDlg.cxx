@@ -241,11 +241,19 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
       if(!testResult || CORBA::is_nil( myArgument ))
 	return;
 
+      aName = GEOMBase::GetName( aSelectedObject );
+
       if ( testResult && !aSelectedObject->_is_nil() )
 	{
 	  TopoDS_Shape aShape;
 	  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
 	    {
+	      TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+	      if (getConstructorId() == 1)
+		aNeedType = TopAbs_EDGE;
+	      else if (getConstructorId() == 2)
+		aNeedType = TopAbs_FACE;
+	      
 	      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
 	      TColStd_IndexedMapOfInteger aMap;
 	      aSelMgr->GetIndexes( firstIObject(), aMap );
@@ -254,15 +262,23 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
 		    GEOM::GEOM_IShapesOperations_var aShapesOp =
 		      getGeomEngine()->GetIShapesOperations( getStudyId() );
 		    int anIndex = aMap( 1 );
-		    TopTools_IndexedMapOfShape aShapes;
-		    TopExp::MapShapes( aShape, aShapes );
-		    aShape = aShapes.FindKey( anIndex );
+		    int id = getConstructorId();
+		    if (aNeedType == TopAbs_VERTEX)
+		      aName += QString(":vertex_%1").arg(anIndex);
+		    else
+		      aName += QString(":edge_%1").arg(anIndex);
+
 		    myArgument = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 		    aSelMgr->clearSelected();
-		  }
+		}
+	      else {
+		if (aShape.ShapeType() != aNeedType) {
+		  myArgument = GEOM::GEOM_Object::_nil();
+		  aName = "";
+		}
+	      }
 	    }
 	}
-      aName = GEOMBase::GetName( aSelectedObject );
     }
   myEditCurrentArgument->setText( aName );
    
@@ -293,10 +309,10 @@ void TransformationGUI_MirrorDlg::LineEditReturnPressed()
 void TransformationGUI_MirrorDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection();
   
   if(send == GroupPoints->PushButton1){
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection();
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
@@ -304,15 +320,12 @@ void TransformationGUI_MirrorDlg::SetEditCurrentArgument()
       {
       case 0:
 	{
-	  //	  globalSelection( GEOM_POINT );
 	  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 	  break;
 	}
       case 1:
 	{
-	  //globalSelection( GEOM_LINE );
-	  GEOM::GEOM_Object_var anObj;
-	  localSelection( anObj, TopAbs_EDGE );
+	  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
 	  break;
 	}
       case 2:

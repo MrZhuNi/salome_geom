@@ -305,6 +305,8 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
   if ( !testResult || CORBA::is_nil( aSelectedObject ) || !GEOMBase::IsShape( aSelectedObject ) )
     return;
 
+  QString aName = GEOMBase::GetName( aSelectedObject );
+
   if (myEditCurrentArgument == GroupPoints->LineEdit1 ||
       myEditCurrentArgument == GroupDimensions->LineEdit1)
     myBase = aSelectedObject;
@@ -325,25 +327,27 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
 		    GEOM::GEOM_IShapesOperations_var aShapesOp =
 		      getGeomEngine()->GetIShapesOperations( getStudyId() );
 		    int anIndex = aMap( 1 );
-		    TopTools_IndexedMapOfShape aShapes;
-		    TopExp::MapShapes( aShape, aShapes );
-		    aShape = aShapes.FindKey( anIndex );
-		    aSelMgr->clearSelected();
+		    aName += QString(":edge_%1").arg(anIndex);
 		    if ( myEditCurrentArgument == GroupDimensions->LineEdit3 )
 		      myVectorV = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 		    else
 		      myVectorU = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 		  }
-		else
+		else {
+		  if (aShape.ShapeType() != TopAbs_EDGE) {
+		    aSelectedObject = GEOM::GEOM_Object::_nil();
+		    aName = "";
+		  }
 		  if ( myEditCurrentArgument == GroupDimensions->LineEdit3 )
 		    myVectorV = aSelectedObject;
 		  else
 		    myVectorU = aSelectedObject;
+		}
 	    }
 	}
     }
 
-  myEditCurrentArgument->setText( GEOMBase::GetName( aSelectedObject ) );
+  myEditCurrentArgument->setText( aName );
 
   displayPreview();	
 }
@@ -356,32 +360,25 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
 void TransformationGUI_MultiTranslationDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection( GEOM_ALLSHAPES );
 
   if(send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection( GEOM_ALLSHAPES );
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    //    globalSelection( GEOM_LINE  );
-    GEOM::GEOM_Object_var anObj;
-    localSelection( anObj, TopAbs_EDGE );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if(send == GroupDimensions->PushButton1) {
     myEditCurrentArgument = GroupDimensions->LineEdit1;
-    globalSelection( GEOM_ALLSHAPES );
   }
   else if(send == GroupDimensions->PushButton2) {
     myEditCurrentArgument = GroupDimensions->LineEdit2;
-    //    globalSelection( GEOM_LINE  );
-    GEOM::GEOM_Object_var anObj;
-    localSelection( anObj, TopAbs_EDGE );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if(send == GroupDimensions->PushButton3) {
     myEditCurrentArgument = GroupDimensions->LineEdit3;
-    //    globalSelection( GEOM_LINE  );
-    GEOM::GEOM_Object_var anObj;
-    localSelection( anObj, TopAbs_EDGE );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
 
   myEditCurrentArgument->setFocus();

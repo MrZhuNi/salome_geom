@@ -273,6 +273,10 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
       TopoDS_Shape aShape;
       if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
 	{
+	  TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+	  if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0)
+	    aNeedType = TopAbs_EDGE;
+
 	  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
 	  TColStd_IndexedMapOfInteger aMap;
 	  aSelMgr->GetIndexes( firstIObject(), aMap );
@@ -281,12 +285,19 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
 	      GEOM::GEOM_IShapesOperations_var aShapesOp =
 		getGeomEngine()->GetIShapesOperations( getStudyId() );
 	      int anIndex = aMap( 1 );
-	      TopTools_IndexedMapOfShape aShapes;
-	      TopExp::MapShapes( aShape, aShapes );
-	      aShape = aShapes.FindKey( anIndex );
+	      if (aNeedType == TopAbs_EDGE)
+		aName += QString(":edge_%1").arg(anIndex);
+	      else
+		aName += QString(":vertex_%1").arg(anIndex);
 	      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 	      aSelMgr->clearSelected();
 	    }
+	  else {
+	    if (aShape.ShapeType() != aNeedType) {
+	      aSelectedObject = GEOM::GEOM_Object::_nil();
+	      aName = "";
+	    }
+	  }
 	}
      
       if(myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0)
@@ -312,18 +323,15 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
 void TransformationGUI_RotationDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection();
 
   if(send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection();
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    if (getConstructorId() == 0) {
-      //globalSelection( GEOM_LINE );
-      GEOM::GEOM_Object_var anObj;
-      localSelection( anObj, TopAbs_EDGE );
-    }
+    if (getConstructorId() == 0)
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
     else
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }

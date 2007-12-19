@@ -287,6 +287,10 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
     aName = GEOMBase::GetName( aSelectedObject );
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
       {
+	TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+	if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 2)
+	  aNeedType = TopAbs_EDGE;
+
 	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
 	TColStd_IndexedMapOfInteger aMap;
 	aSelMgr->GetIndexes( firstIObject(), aMap );
@@ -294,13 +298,19 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
 	  {
 	    GEOM::GEOM_IShapesOperations_var aShapesOp =
 	      getGeomEngine()->GetIShapesOperations( getStudyId() );
-		    int anIndex = aMap( 1 );
-		    TopTools_IndexedMapOfShape aShapes;
-		    TopExp::MapShapes( aShape, aShapes );
-		    aShape = aShapes.FindKey( anIndex );
-		    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-		    aSelMgr->clearSelected();
-	  }
+	    int anIndex = aMap( 1 );
+	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	    if (aNeedType == TopAbs_EDGE)
+	      aName += QString(":edge_%1").arg(anIndex);
+	    else
+	      aName += QString(":vertex_%1").arg(anIndex);
+	  } else // Global Selection
+	    {
+	      if (aShape.ShapeType() != aNeedType) {
+		aSelectedObject = GEOM::GEOM_Object::_nil();
+		aName = "";
+	      }
+	    }
       }
     
     if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1)
@@ -338,10 +348,10 @@ void TransformationGUI_TranslationDlg::LineEditReturnPressed()
 void TransformationGUI_TranslationDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection();
 
   if (send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection();
   }
   else if (send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;

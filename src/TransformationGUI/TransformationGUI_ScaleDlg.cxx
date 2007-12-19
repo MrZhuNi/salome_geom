@@ -214,12 +214,16 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
 	      GEOM::GEOM_IShapesOperations_var aShapesOp =
 		      getGeomEngine()->GetIShapesOperations( getStudyId() );
 	      int anIndex = aMap( 1 );
-	      TopTools_IndexedMapOfShape aShapes;
-	      TopExp::MapShapes( aShape, aShapes );
-	      aShape = aShapes.FindKey( anIndex );
+	      aName += QString(":vertex_%1").arg(anIndex);
 	      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 	      aSelMgr->clearSelected();
 	    }
+	  else {
+	    if (aShape.ShapeType() != TopAbs_VERTEX) {
+	      aSelectedObject = GEOM::GEOM_Object::_nil();
+	      aName = "";
+	    }
+	  }
 	}
 
       myPoint = aSelectedObject;
@@ -257,10 +261,10 @@ void TransformationGUI_ScaleDlg::LineEditReturnPressed()
 void TransformationGUI_ScaleDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection();
 
   if(send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection();
   }
   else if(send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
