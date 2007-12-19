@@ -289,6 +289,7 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
     if (!testResult)
       return;
 
+    bool myOk = true;
     TopoDS_Shape aShape;
     QString aName = GEOMBase::GetName( aSelectedObject );    
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
@@ -305,15 +306,22 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
 	    aName.append( ":edge_" + QString::number( anIndex ) );
 	    aSelMgr->clearSelected();
 	  }
+	else {
+	  if (aShape.ShapeType() != TopAbs_EDGE && myEditCurrentArgument == GroupPoints->LineEdit2) {
+	    aSelectedObject = GEOM::GEOM_Object::_nil();
+	    aName = "";
+	    myOk = false;
+	  }
+	}
       }
-
+ 
     if (myEditCurrentArgument == GroupPoints->LineEdit1) {
       myBase = aSelectedObject;
       myOkBase = true;
     }
-    else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2 && myOk) {
+      myOkVec = true;      
       myVec = aSelectedObject;
-      myOkVec = true;
     }
     myEditCurrentArgument->setText( aName );
   }
@@ -343,9 +351,10 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
 
     QString aName = GEOMBase::GetName( aSelectedObject );
     TopoDS_Shape aShape;
-
+    bool myOk = true;
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
       {
+
 	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
 	TColStd_IndexedMapOfInteger aMap;
 	aSelMgr->GetIndexes( firstIObject(), aMap );
@@ -358,21 +367,29 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
 	    aName.append( ":vertex_" + QString::number( anIndex ) );
 	    aSelMgr->clearSelected();
 	  }
+	else {
+	  if ( (aShape.ShapeType() != TopAbs_EDGE && myEditCurrentArgument == GroupPoints2->LineEdit2 ) ||
+	       (aShape.ShapeType() != TopAbs_EDGE && myEditCurrentArgument == GroupPoints2->LineEdit3 )) {
+	    aSelectedObject = GEOM::GEOM_Object::_nil();
+	    aName = "";
+	    myOk = false;
+	  }
+	}
       }
-
+  
     myEditCurrentArgument->setText( aName );
 
     if (myEditCurrentArgument == GroupPoints2->LineEdit1) {
       myBase = aSelectedObject;
       myOkBase = true;
     }
-    else if (myEditCurrentArgument == GroupPoints2->LineEdit2) {
-      myPoint1 = aSelectedObject;
+    else if (myEditCurrentArgument == GroupPoints2->LineEdit2 && myOk) {
       myOkPnt1 = true;
+      myPoint1 = aSelectedObject;
     }
-    else if (myEditCurrentArgument == GroupPoints2->LineEdit3) {
-      myPoint2 = aSelectedObject;
+    else if (myEditCurrentArgument == GroupPoints2->LineEdit3 && myOk) {
       myOkPnt2 = true;
+      myPoint2 = aSelectedObject;
     }
 
   }
@@ -407,12 +424,11 @@ void GenerationGUI_PrismDlg::LineEditReturnPressed()
 void GenerationGUI_PrismDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  globalSelection( GEOM_POINT ); // to break previous local selection
+  globalSelection( GEOM_ALLSHAPES );
 
   if (send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection( GEOM_ALLSHAPES );
   }
   else if (send == GroupPoints->PushButton2) {
     GroupPoints->LineEdit2->setFocus();
@@ -422,7 +438,6 @@ void GenerationGUI_PrismDlg::SetEditCurrentArgument()
   else if (send == GroupPoints2->PushButton1) {
     GroupPoints2->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints2->LineEdit1;
-    globalSelection( GEOM_ALLSHAPES );
   }
   else if (send == GroupPoints2->PushButton2) {
     GroupPoints2->LineEdit2->setFocus();

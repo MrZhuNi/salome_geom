@@ -253,12 +253,17 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
 		  int anIndex = aMap( 1 );
 		  aName.append( ":edge_" + QString::number( anIndex ) );
 		  myAxis = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-		  aSelMgr->clearSelected();
+		  myOkAxis = true;
 		}
-	      else
+	      else {
+		myOkAxis = true;
+		if (aShape.ShapeType() != TopAbs_EDGE) {
+		  aSelectedObject = GEOM::GEOM_Object::_nil();
+		  aName = "";
+		  myOkAxis = false;
+		}
 		myAxis = aSelectedObject;
-
-	      myOkAxis = true;
+	      }
 	  }
       }
   }
@@ -284,7 +289,6 @@ void GenerationGUI_RevolDlg::SetEditCurrentArgument()
   else if(send == GroupPoints->PushButton2) {
     GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    //globalSelection( GEOM_LINE );
     localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
   }
   SelectionIntoArgument();

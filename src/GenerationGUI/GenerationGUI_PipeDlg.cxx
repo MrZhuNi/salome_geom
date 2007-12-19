@@ -207,12 +207,14 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     
     if( !GEOMBase::GetShape(aSelectedObject, S) ) 
       return;
+
+    QString aName = GEOMBase::GetName( aSelectedObject );
     
     if ( testResult && !aSelectedObject->_is_nil() && aSelectedObject != myBase)
       {
 	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
 	TColStd_IndexedMapOfInteger aMap;
-	QString aName = GEOMBase::GetName( aSelectedObject );
+
 	aSelMgr->GetIndexes( firstIObject(), aMap );
 	if ( aMap.Extent() == 1 )
 	  {
@@ -225,11 +227,16 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
 	    aSelMgr->clearSelected();
 	  }
 	else {
-	    myPath = aSelectedObject;
-	    myOkPath = true;
+	  myOkPath = true;
+	  if (S.ShapeType() != TopAbs_EDGE) {
+	    aSelectedObject = GEOM::GEOM_Object::_nil();
+	    aName = "";
+	    myOkPath = false;
 	  }
-	myEditCurrentArgument->setText( aName );
+	  myPath = aSelectedObject;
+	}
       }
+    myEditCurrentArgument->setText( aName );
   }
   
   displayPreview();
@@ -243,17 +250,18 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
 void GenerationGUI_PipeDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
+  globalSelection();
 
   if(send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
-    myEditCurrentArgument = GroupPoints->LineEdit1;
     globalSelection( GEOM_ALLSHAPES );
+    myEditCurrentArgument = GroupPoints->LineEdit1;
   }
   else if(send == GroupPoints->PushButton2) {
     GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    GEOM::GEOM_Object_var anObj;
-    localSelection( anObj, TopAbs_EDGE );
+    globalSelection();
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
   }
   SelectionIntoArgument();
 }
