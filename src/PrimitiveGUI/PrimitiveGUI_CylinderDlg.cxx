@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -159,7 +159,7 @@ void PrimitiveGUI_CylinderDlg::Init()
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DX, SLOT(SetStep(double)));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
   
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
   
   initName( tr( "GEOM_CYLINDER" ) );
@@ -173,13 +173,13 @@ void PrimitiveGUI_CylinderDlg::Init()
 //=================================================================================
 void PrimitiveGUI_CylinderDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
     
-  switch(constructorId)
+  switch (constructorId)
     { 
     case 0 :
       {
-	//	globalSelection( GEOM_POINT );
+        globalSelection( GEOM_POINT ); // to break previous local selection
 	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
 	GroupDimensions->hide();
@@ -191,7 +191,7 @@ void PrimitiveGUI_CylinderDlg::ConstructorsClicked(int constructorId)
 	GroupPoints->LineEdit2->setText(tr(""));
 	myPoint = myDir = GEOM::GEOM_Object::_nil();
 
-	connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	connect(myGeomGUI->getApp()->selectionMgr(), 
 		SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
@@ -250,48 +250,61 @@ void PrimitiveGUI_CylinderDlg::ClickOnCancel()
 //=================================================================================
 void PrimitiveGUI_CylinderDlg::SelectionIntoArgument()
 {
-  if ( getConstructorId() != 0 )
+  if (getConstructorId() != 0)
     return;
 
   myEditCurrentArgument->setText("");
-  
-  if(IObjectCount() != 1) 
-    {
-      if(myEditCurrentArgument == GroupPoints->LineEdit1)
-	myPoint = GEOM::GEOM_Object::_nil();
-      else if (myEditCurrentArgument == GroupPoints->LineEdit2)
-	myDir = GEOM::GEOM_Object::_nil();
-      return;
-    }
-  
+
+  if (IObjectCount() != 1) 
+  {
+    if (myEditCurrentArgument == GroupPoints->LineEdit1)
+      myPoint = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2)
+      myDir = GEOM::GEOM_Object::_nil();
+    return;
+  }
+
   /* nbSel == 1 */
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
-    
-  if(!testResult || CORBA::is_nil( aSelectedObject ))
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult);
+
+  if (!testResult || CORBA::is_nil(aSelectedObject))
     return;
 
-  QString aName = GEOMBase::GetName( aSelectedObject );
+  QString aName = GEOMBase::GetName(aSelectedObject);
   TopoDS_Shape aShape;
-  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+  if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
+  {
+    TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+    if (myEditCurrentArgument == GroupPoints->LineEdit2)
+      aNeedType = TopAbs_EDGE;
+
+    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+    TColStd_IndexedMapOfInteger aMap;
+    aSelMgr->GetIndexes(firstIObject(), aMap);
+    if (aMap.Extent() == 1) // Local Selection
     {
-      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-      TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes( firstIObject(), aMap );
-      if ( aMap.Extent() == 1 )
-	{
-	  GEOM::GEOM_IShapesOperations_var aShapesOp =
-	    getGeomEngine()->GetIShapesOperations( getStudyId() );
-	  int anIndex = aMap( 1 );
-	  if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
-	    aName.append( ":edge_" + QString::number( anIndex ) );
-	  else
-	    aName.append( ":vertex_" + QString::number( anIndex ) );
-	  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	  aSelMgr->clearSelected();
-	}
+      GEOM::GEOM_IShapesOperations_var aShapesOp =
+        getGeomEngine()->GetIShapesOperations(getStudyId());
+      int anIndex = aMap(1);
+      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+      aSelMgr->clearSelected(); // ???
+
+      if (aNeedType == TopAbs_EDGE)
+        aName.append(":edge_" + QString::number(anIndex));
+      else
+        aName.append(":vertex_" + QString::number(anIndex));
     }
-  myEditCurrentArgument->setText( aName );
+    else // Global Selection
+    {
+      if (aShape.ShapeType() != aNeedType) {
+        aSelectedObject = GEOM::GEOM_Object::_nil();
+        aName = "";
+      }
+    }
+  }
+
+  myEditCurrentArgument->setText(aName);
 
   if (myEditCurrentArgument == GroupPoints->LineEdit1)
     myPoint = aSelectedObject;
@@ -299,7 +312,6 @@ void PrimitiveGUI_CylinderDlg::SelectionIntoArgument()
     myDir = aSelectedObject;
   displayPreview();
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -309,12 +321,12 @@ void PrimitiveGUI_CylinderDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
   
-  if(send == GroupPoints->PushButton1) {
+  if (send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
     globalSelection( GEOM_POINT ); // to break previous local selection
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
-  else if(send == GroupPoints->PushButton2) {
+  else if (send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
     globalSelection( GEOM_LINE );  // to break previous local selection
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
@@ -340,7 +352,6 @@ void PrimitiveGUI_CylinderDlg::LineEditReturnPressed()
     }
 }
 
-
 //=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
@@ -348,12 +359,11 @@ void PrimitiveGUI_CylinderDlg::LineEditReturnPressed()
 void PrimitiveGUI_CylinderDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  
-  ConstructorsClicked( getConstructorId() );
-}
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 
+  ConstructorsClicked(getConstructorId());
+}
 
 //=================================================================================
 // function : enterEvent()
@@ -463,7 +473,6 @@ double PrimitiveGUI_CylinderDlg::getRadius() const
     return GroupDimensions->SpinBox_DX->GetValue();
   return 0;
 }
-
 
 //=================================================================================
 // function : getHeight()

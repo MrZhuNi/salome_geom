@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software 
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
 // 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //
 //
@@ -166,7 +166,7 @@ void PrimitiveGUI_ConeDlg::Init()
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DY, SLOT(SetStep(double)));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupDimensions->SpinBox_DZ, SLOT(SetStep(double)));
   
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect(myGeomGUI->getApp()->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
   
   initName( tr( "GEOM_CONE" ) );
@@ -180,14 +180,15 @@ void PrimitiveGUI_ConeDlg::Init()
 //=================================================================================
 void PrimitiveGUI_ConeDlg::ConstructorsClicked(int constructorId)
 {
-  disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0);
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   
   switch(constructorId)
     { 
     case 0 :
       {
 	//	globalSelection( GEOM_POINT );
-	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+        globalSelection(); // to break prvious local selection
+	localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
 	GroupDimensions->hide();
 	resize(0, 0);
 	GroupPoints->show();
@@ -197,7 +198,7 @@ void PrimitiveGUI_ConeDlg::ConstructorsClicked(int constructorId)
 	GroupPoints->LineEdit2->setText(tr(""));
 	myPoint = myDir = GEOM::GEOM_Object::_nil();
 	
-	connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	connect(myGeomGUI->getApp()->selectionMgr(), 
 		SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 	break;
       }
@@ -256,17 +257,17 @@ void PrimitiveGUI_ConeDlg::ClickOnCancel()
 //=================================================================================
 void PrimitiveGUI_ConeDlg::SelectionIntoArgument()
 {
-  if ( getConstructorId() != 0 )
+  if (getConstructorId() != 0)
     return;
 
-  if(IObjectCount() != 1)
-    {
-      if(myEditCurrentArgument == GroupPoints->LineEdit1)
-	myPoint = GEOM::GEOM_Object::_nil();
-      else if (myEditCurrentArgument == GroupPoints->LineEdit2)
-	myDir = GEOM::GEOM_Object::_nil();
-      return;
-    }
+  if (IObjectCount() != 1)
+  {
+    if (myEditCurrentArgument == GroupPoints->LineEdit1)
+      myPoint = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2)
+      myDir = GEOM::GEOM_Object::_nil();
+    return;
+  }
 
   /* nbSel == 1 */
   Standard_Boolean testResult = Standard_False;
@@ -278,34 +279,47 @@ void PrimitiveGUI_ConeDlg::SelectionIntoArgument()
   TopoDS_Shape aShape;
   QString aName = GEOMBase::GetName( aSelectedObject );
 
-  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
+  if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
+  {
+    TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+    if (myEditCurrentArgument == GroupPoints->LineEdit2)
+      aNeedType = TopAbs_EDGE;
+
+    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+    TColStd_IndexedMapOfInteger aMap;
+    aSelMgr->GetIndexes( firstIObject(), aMap );
+    if (aMap.Extent() == 1)
     {
-      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-      TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes( firstIObject(), aMap );
-      if ( aMap.Extent() == 1 )
-	{
-	  GEOM::GEOM_IShapesOperations_var aShapesOp =
-	    getGeomEngine()->GetIShapesOperations( getStudyId() );
-	  int anIndex = aMap( 1 );
-	  if ( myEditCurrentArgument == GroupPoints->LineEdit2  )
-	    aName.append( ":edge_" + QString::number( anIndex ) );
-	  else
-	    aName.append( ":vertex_" + QString::number( anIndex ) );
-	  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	  aSelMgr->clearSelected();
-	}
+      GEOM::GEOM_IShapesOperations_var aShapesOp =
+        getGeomEngine()->GetIShapesOperations(getStudyId());
+      int anIndex = aMap(1);
+
+      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+      aSelMgr->clearSelected(); // ???
+
+      if (aNeedType == TopAbs_EDGE)
+        aName.append(":edge_" + QString::number(anIndex));
+      else
+        aName.append(":vertex_" + QString::number(anIndex));
     }
-  myEditCurrentArgument->setText( aName );
+    else
+    {
+      if (aShape.ShapeType() != aNeedType) {
+        aSelectedObject = GEOM::GEOM_Object::_nil();
+        aName = "";
+      }
+    }
+  }
+
+  myEditCurrentArgument->setText(aName);
 
   if (myEditCurrentArgument == GroupPoints->LineEdit1)
     myPoint = aSelectedObject;
-  else if (myEditCurrentArgument == GroupPoints->LineEdit2) 
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2)
     myDir = aSelectedObject;
- 
+
   displayPreview();
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -346,7 +360,6 @@ void PrimitiveGUI_ConeDlg::LineEditReturnPressed()
     }
 }
 
-
 //=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
@@ -354,12 +367,11 @@ void PrimitiveGUI_ConeDlg::LineEditReturnPressed()
 void PrimitiveGUI_ConeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  
-  ConstructorsClicked( getConstructorId() );
-}
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 
+  ConstructorsClicked(getConstructorId());
+}
 
 //=================================================================================
 // function : DeactivateActiveDialog()
