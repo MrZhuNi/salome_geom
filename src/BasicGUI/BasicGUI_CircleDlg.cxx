@@ -181,7 +181,7 @@ void BasicGUI_CircleDlg::Init()
           GroupPntVecR->SpinBox_DX, SLOT(SetStep(double)));
 
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-          this, SLOT(SelectionIntoArgument())) ;
+          this, SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_CIRCLE" ) );
 
@@ -273,10 +273,10 @@ bool BasicGUI_CircleDlg::ClickOnApply()
   return true;
 }
 
-//=======================================================================
+//=================================================================================
 // function : ClickOnCancel()
 // purpose  :
-//=======================================================================
+//=================================================================================
 void BasicGUI_CircleDlg::ClickOnCancel()
 {
   GEOMBase_Skeleton::ClickOnCancel();
@@ -337,9 +337,9 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
         aSelMgr->clearSelected(); // ???
 
         if (aNeedType == TopAbs_EDGE)
-          aName += QString("_edge_%1").arg(anIndex);
+          aName += QString(":edge_%1").arg(anIndex);
         else
-          aName += QString("_vertex_%1").arg(anIndex);
+          aName += QString(":vertex_%1").arg(anIndex);
       }
       else // Global Selection
       {
@@ -417,7 +417,6 @@ void BasicGUI_CircleDlg::LineEditReturnPressed()
   }
 }
 
-
 //=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
@@ -425,14 +424,11 @@ void BasicGUI_CircleDlg::LineEditReturnPressed()
 void BasicGUI_CircleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  globalSelection();
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
 
   ConstructorsClicked( getConstructorId() );
 }
-
 
 //=================================================================================
 // function : enterEvent()
