@@ -284,7 +284,7 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
     // nbSel == 1
     Standard_Boolean testResult = Standard_False;
     GEOM::GEOM_Object_ptr aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+      GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
 
     if (!testResult)
       return;
@@ -353,31 +353,31 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
     TopoDS_Shape aShape;
     bool myOk = true;
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() )
-      {
-
+    {
 	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
 	TColStd_IndexedMapOfInteger aMap;
 	aSelMgr->GetIndexes( firstIObject(), aMap );
-	if ( aMap.Extent() == 1 )
-	  {
-	    GEOM::GEOM_IShapesOperations_var aShapesOp =
-	      getGeomEngine()->GetIShapesOperations( getStudyId() );
-	    int anIndex = aMap( 1 );
-	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	    aName.append( ":vertex_" + QString::number( anIndex ) );
-	    aSelMgr->clearSelected();
-	  }
-	else {
-	  if ( (aShape.ShapeType() != TopAbs_EDGE && myEditCurrentArgument == GroupPoints2->LineEdit2 ) ||
-	       (aShape.ShapeType() != TopAbs_EDGE && myEditCurrentArgument == GroupPoints2->LineEdit3 )) {
+	if (aMap.Extent() == 1)
+        {
+          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+          int anIndex = aMap(1);
+          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+          aName.append(":vertex_" + QString::number(anIndex));
+          aSelMgr->clearSelected();
+        }
+	else
+        {
+	  if ((aShape.ShapeType() != TopAbs_VERTEX && myEditCurrentArgument == GroupPoints2->LineEdit2) ||
+              (aShape.ShapeType() != TopAbs_VERTEX && myEditCurrentArgument == GroupPoints2->LineEdit3))
+          {
 	    aSelectedObject = GEOM::GEOM_Object::_nil();
 	    aName = "";
 	    myOk = false;
 	  }
 	}
-      }
-  
-    myEditCurrentArgument->setText( aName );
+    }
+
+    myEditCurrentArgument->setText(aName);
 
     if (myEditCurrentArgument == GroupPoints2->LineEdit1) {
       myBase = aSelectedObject;
@@ -391,12 +391,10 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
       myOkPnt2 = true;
       myPoint2 = aSelectedObject;
     }
-
   }
 
   displayPreview();
 }
-
 
 //=================================================================================
 // function : LineEditReturnPressed()
