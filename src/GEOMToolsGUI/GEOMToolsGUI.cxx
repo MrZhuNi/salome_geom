@@ -317,6 +317,7 @@ void GEOMToolsGUI::OnEditDelete()
 	// VSR 17/11/04: check if all objects selected belong to GEOM component <-- finish
 	QString aNameList;
 	int nbSel = 0;
+	//Get Main Objects Names
 	Handle(SALOME_InteractiveObject) anIObject;
 	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() )
 	  {
@@ -335,8 +336,25 @@ void GEOMToolsGUI::OnEditDelete()
 	  if (aName != "" && aName.ref(0) != '*') {
 	    aNameList.append("    - " +  aName + "\n");
 	    nbSel++;
+	    //append childs child
+	    for (_PTR(ChildIterator) iitt(aStudy->NewChildIterator(child)); iitt->More(); iitt->Next()) {
+	      _PTR(SObject) childchild(iitt->Value());
+	      QString aName = childchild->GetName();
+	      if (aName != "" && aName.ref(0) != '*') {
+		aNameList.append("    - " +  aName + "\n");
+		nbSel++;
+		for (_PTR(ChildIterator) itt(aStudy->NewChildIterator(childchild)); itt->More(); itt->Next()) {
+		  _PTR(SObject) childs(itt->Value());
+		  QString aName = childs->GetName();
+		  if (aName != "" && aName.ref(0) != '*') {
+		    aNameList.append("    - " +  aName + "\n");
+		    nbSel++;
+		  }
+		}
+	      }
+	    }
 	  }
-	}
+	} //end of child append
 
        GEOMBase_aWarningDlg* Dialog = new GEOMBase_aWarningDlg( app->desktop(),  QObject::tr( "GEOM_WRN_WARNING" ), aNameList, nbSel);
        int r = Dialog->exec();
