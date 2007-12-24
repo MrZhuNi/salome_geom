@@ -113,9 +113,8 @@ void BasicGUI_CurveDlg::Init()
   myPoints = new GEOM::ListOfGO();
   myPoints->length( 0 );
 
-  globalSelection(GEOM_POINT);
-  //globalSelection(); // close local contexts, if any
-  //localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+  globalSelection(); // close local contexts, if any
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
 
   /* signals and slots connections */
   connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
@@ -379,9 +378,8 @@ void BasicGUI_CurveDlg::ActivateThisDialog()
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
 
-  globalSelection(GEOM_POINT);
-  //globalSelection(); // close local contexts, if any
-  //localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  globalSelection(); // close local contexts, if any
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   ConstructorsClicked( getConstructorId() );
 }
 
