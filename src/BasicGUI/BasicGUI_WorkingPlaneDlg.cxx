@@ -223,7 +223,7 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked(int constructorId)
 
         myEditCurrentArgument = Group2->LineEdit1;
         Group2->LineEdit1->setText("");
-         Group2->LineEdit2->setText("");
+	Group2->LineEdit2->setText("");
         myVectX = GEOM::GEOM_Object::_nil();
         myVectZ = GEOM::GEOM_Object::_nil();
 
@@ -328,17 +328,15 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
         aSelMgr->GetIndexes( firstIObject(), aMap );
         if ( aMap.Extent() == 1 )
         {
-          GEOM::GEOM_IShapesOperations_var aShapesOp =
-            getGeomEngine()->GetIShapesOperations( getStudyId() );
           int anIndex = aMap( 1 );
-          TopTools_IndexedMapOfShape aShapes;
-          TopExp::MapShapes( aShape, aShapes );
-          aShape = aShapes.FindKey( anIndex );
           aName = aName + ":edge_" + QString::number( anIndex );
-          if(myEditCurrentArgument == Group2->LineEdit1)
-            myVectX = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-          else
-            myVectZ = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+
+	  GEOM::GEOM_IShapesOperations_var aShapesOp =
+	    getGeomEngine()->GetIShapesOperations( getStudyId() );
+	  if(myEditCurrentArgument == Group2->LineEdit1)
+	    myVectX = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	  else
+	    myVectZ = aShapesOp->GetSubShape(aSelectedObject, anIndex);
         }
         else {
           if (myEditCurrentArgument == Group2->LineEdit1)
@@ -581,3 +579,4 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
 
   return true;
 }
+

@@ -260,12 +260,19 @@ void PrimitiveGUI_BoxDlg::SelectionIntoArgument()
     aSelMgr->GetIndexes(firstIObject(), aMap);
     if (aMap.Extent() == 1) // Local Selection
     {
-      GEOM::GEOM_IShapesOperations_var aShapesOp =
-        getGeomEngine()->GetIShapesOperations( getStudyId() );
       int anIndex = aMap( 1 );
       aName.append( ":vertex_" + QString::number( anIndex ) );	  
-      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-      aSelMgr->clearSelected(); // ???
+
+      //Find SubShape Object in Father
+      GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+      
+      if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	GEOM::GEOM_IShapesOperations_var aShapesOp =
+	  getGeomEngine()->GetIShapesOperations( getStudyId() );
+	aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+      }
+      else
+	aSelectedObject = aFindedObject; // get Object from study	
     }
     else // Global Selection
     {
@@ -423,4 +430,19 @@ bool PrimitiveGUI_BoxDlg::execute( ObjectList& objects )
 void  PrimitiveGUI_BoxDlg::closeEvent( QCloseEvent* e )
 {
   GEOMBase_Skeleton::closeEvent( e );
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void PrimitiveGUI_BoxDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+  if ( getConstructorId() == 0 ) 
+  {
+    objMap[GroupPoints->LineEdit1->text()] = myPoint1;
+    objMap[GroupPoints->LineEdit2->text()] = myPoint2;
+    addSubshapesToFather( objMap );
+  }
 }

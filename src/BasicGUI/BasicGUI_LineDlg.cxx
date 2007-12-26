@@ -172,6 +172,7 @@ void BasicGUI_LineDlg::ClickOnCancel()
 //=================================================================================
 bool BasicGUI_LineDlg::ClickOnApply()
 {
+
   if ( !onAccept() )
     return false;
 
@@ -244,7 +245,7 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
   if (!CORBA::is_nil(aSelectedObject) && aRes)
   {
     QString aName = GEOMBase::GetName(aSelectedObject);
-
+    
     TopoDS_Shape aShape;
     if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
     {
@@ -258,15 +259,21 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
       aSelMgr->GetIndexes(firstIObject(), aMap);
       if (aMap.Extent() == 1) // Local Selection
       {
-        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-        int anIndex = aMap( 1 );
-        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-        aSelMgr->clearSelected(); // ???
-
+	int anIndex = aMap( 1 );
         if (aNeedType == TopAbs_FACE)
           aName += QString(":face_%1").arg(anIndex);
         else
           aName += QString(":vertex_%1").arg(anIndex);
+
+	//Find SubShape Object in Father
+	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+
+	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+	  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	}
+	else
+	  aSelectedObject = aFindedObject; // get Object from study
       }
       else // Global Selection
       {
@@ -409,4 +416,21 @@ bool BasicGUI_LineDlg::execute( ObjectList& objects )
 void BasicGUI_LineDlg::closeEvent( QCloseEvent* e )
 {
   GEOMBase_Skeleton::closeEvent( e );
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void BasicGUI_LineDlg::addSubshapesToStudy()
+{
+  if (getConstructorId() != 0)
+    return;
+
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+  objMap[GroupPoints->LineEdit1->text()] = myPoint1;
+  objMap[GroupPoints->LineEdit2->text()] = myPoint2;
+
+  addSubshapesToFather( objMap );
 }

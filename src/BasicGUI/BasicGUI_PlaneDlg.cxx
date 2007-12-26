@@ -335,17 +335,24 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
       aSelMgr->GetIndexes(firstIObject(), aMap);
       if (aMap.Extent() == 1) // Local Selection
       {
-        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-        int anIndex = aMap(1);
-        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-        aSelMgr->clearSelected(); // ???
 
+        int anIndex = aMap(1);
         if (aNeedType == TopAbs_EDGE)
           aName += QString(":edge_%1").arg(anIndex);
         else if (aNeedType == TopAbs_FACE)
           aName += QString(":face_%1").arg(anIndex);
         else
           aName += QString(":vertex_%1").arg(anIndex);
+
+	//Find SubShape Object in Father
+	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+
+	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	} 
+	else
+	  aSelectedObject = aFindedObject; // get Object from study
       }
       else // Global Selection
       {
@@ -563,3 +570,28 @@ void BasicGUI_PlaneDlg::closeEvent( QCloseEvent* e )
   GEOMBase_Skeleton::closeEvent( e );
 }
 
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void BasicGUI_PlaneDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+switch (getConstructorId())
+  {
+  case 0:
+    objMap[GroupPntDir->LineEdit1->text()] = myPoint;
+    objMap[GroupPntDir->LineEdit2->text()] = myDir;
+    break;
+  case 1:
+    objMap[Group3Pnts->LineEdit1->text()] = myPoint1;
+    objMap[Group3Pnts->LineEdit2->text()] = myPoint2;
+    objMap[Group3Pnts->LineEdit3->text()] = myPoint3;
+    break;
+  case 2:
+    objMap[GroupFace->LineEdit1->text()] = myFace;
+    break;
+  }
+ addSubshapesToFather( objMap );
+}

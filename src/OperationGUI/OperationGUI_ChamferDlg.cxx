@@ -725,7 +725,7 @@ void OperationGUI_ChamferDlg::activateSelection()
 		 myEditCurrentArgument == mySelName[ Faces ] ) )
     localSelection( myShape, TopAbs_FACE );
   else if (!myShape->_is_nil() && myEditCurrentArgument == mySelName[ Edges ] )
-	localSelection( myShape, TopAbs_EDGE );
+    localSelection( myShape, TopAbs_EDGE );
   else
   {
     TColStd_MapOfInteger aMap;

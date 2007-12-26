@@ -324,14 +324,26 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
 	      aSelMgr->GetIndexes( firstIObject(), aMap );
 		if ( aMap.Extent() == 1 )
 		  {
-		    GEOM::GEOM_IShapesOperations_var aShapesOp =
-		      getGeomEngine()->GetIShapesOperations( getStudyId() );
 		    int anIndex = aMap( 1 );
 		    aName += QString(":edge_%1").arg(anIndex);
-		    if ( myEditCurrentArgument == GroupDimensions->LineEdit3 )
-		      myVectorV = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-		    else
-		      myVectorU = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+
+		    //Find SubShape Object in Father
+		    GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
+		    
+		    if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+		      GEOM::GEOM_IShapesOperations_var aShapesOp =
+			getGeomEngine()->GetIShapesOperations( getStudyId() );
+		      if ( myEditCurrentArgument == GroupDimensions->LineEdit3 )
+			myVectorV = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		      else
+			myVectorU = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		    }
+		    else {
+		      if ( myEditCurrentArgument == GroupDimensions->LineEdit3 )
+			myVectorV = aFindedObject;
+		      else
+			myVectorU = aFindedObject;
+		    }
 		  }
 		else {
 		  if (aShape.ShapeType() != TopAbs_EDGE) {
@@ -569,4 +581,25 @@ void  TransformationGUI_MultiTranslationDlg::closeEvent( QCloseEvent* e )
 {
   // myGeomGUI->SetState( -1 );
   GEOMBase_Skeleton::closeEvent( e );
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void TransformationGUI_MultiTranslationDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+  
+  switch (getConstructorId())
+    {
+    case 0:
+      objMap[GroupPoints->LineEdit2->text()] = myVectorU;
+      break;
+    case 1:
+      objMap[GroupDimensions->LineEdit2->text()] = myVectorU;
+      objMap[GroupDimensions->LineEdit3->text()] = myVectorV;
+      break;
+    }
+  addSubshapesToFather( objMap );
 }

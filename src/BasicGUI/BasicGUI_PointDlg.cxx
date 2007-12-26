@@ -386,15 +386,21 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
         aSelMgr->GetIndexes(firstIObject(), aMap);
         if (aMap.Extent() == 1) // Local Selection
         {
-          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
           int anIndex = aMap(1);
-          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-          aSelMgr->clearSelected(); // ???
-
           if (aNeedType == TopAbs_EDGE)
             aName += QString(":edge_%1").arg(anIndex);
           else
             aName += QString(":vertex_%1").arg(anIndex);
+
+	  //Find SubShape Object in Father
+	  GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+	  
+	  if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	    GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	  }
+	  else
+	    aSelectedObject = aFindedObject; // get Object from study
         }
         else // Global Selection
         {
@@ -668,4 +674,30 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
 void BasicGUI_PointDlg::closeEvent( QCloseEvent* e )
 {
   GEOMBase_Skeleton::closeEvent( e );
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void BasicGUI_PointDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+switch (getConstructorId())
+  {
+  case 0:
+    break;
+  case 1:
+    objMap[GroupRefPoint->LineEdit1->text()] = myRefPoint;
+    break;
+  case 2:
+    objMap[GroupOnCurve->LineEdit1->text()] = myEdge;
+    break;
+  case 3:
+    objMap[GroupLineIntersection->LineEdit1->text()] = myLine1;
+    objMap[GroupLineIntersection->LineEdit2->text()] = myLine2;
+    break;
+  }
+ addSubshapesToFather( objMap );
 }

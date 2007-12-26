@@ -296,14 +296,22 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
 	aSelMgr->GetIndexes( firstIObject(), aMap );
 	if ( aMap.Extent() == 1 )
 	  {
-	    GEOM::GEOM_IShapesOperations_var aShapesOp =
-	      getGeomEngine()->GetIShapesOperations( getStudyId() );
 	    int anIndex = aMap( 1 );
-	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 	    if (aNeedType == TopAbs_EDGE)
 	      aName += QString(":edge_%1").arg(anIndex);
 	    else
 	      aName += QString(":vertex_%1").arg(anIndex);
+
+	    //Find SubShape Object in Father
+	    GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
+	    
+	    if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	      GEOM::GEOM_IShapesOperations_var aShapesOp =
+		getGeomEngine()->GetIShapesOperations( getStudyId() );
+	      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	    }
+	    else
+	      aSelectedObject = aFindedObject;
 	  } else // Global Selection
 	    {
 	      if (aShape.ShapeType() != aNeedType) {
@@ -538,4 +546,30 @@ bool TransformationGUI_TranslationDlg::execute( ObjectList& objects )
 void TransformationGUI_TranslationDlg::CreateCopyModeChanged(bool isCreateCopy)
 {
   GroupBoxName->setEnabled(isCreateCopy);
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void TransformationGUI_TranslationDlg::addSubshapesToStudy()
+{
+  bool toCreateCopy = IsPreview() || GroupPoints->CheckBox1->isChecked();
+  if (toCreateCopy) {
+    QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+    switch (getConstructorId())
+      {
+      case 0:
+	return;
+      case 1:
+	objMap[GroupPoints->LineEdit2->text()] = myPoint1;
+	objMap[GroupPoints->LineEdit3->text()] = myPoint2;
+	break;
+      case 2:
+	objMap[GroupPoints->LineEdit2->text()] = myVector;
+	break;
+      }
+    addSubshapesToFather( objMap );
+  }
 }

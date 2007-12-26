@@ -328,18 +328,21 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
       aSelMgr->GetIndexes(anIO, aMap);
       if (aMap.Extent() == 1) // Local Selection
       {
-        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
         int anIndex = aMap(1);
-        TopTools_IndexedMapOfShape aShapes;
-        TopExp::MapShapes(aShape, aShapes);
-        aShape = aShapes.FindKey(anIndex);
-        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-        aSelMgr->clearSelected(); // ???
-
         if (aNeedType == TopAbs_EDGE)
           aName += QString(":edge_%1").arg(anIndex);
         else
           aName += QString(":vertex_%1").arg(anIndex);
+
+	//Find SubShape Object in Father
+	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+
+	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+	  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	}
+	else
+	  aSelectedObject = aFindedObject; // get Object from study
       }
       else // Global Selection
       {
@@ -554,4 +557,32 @@ bool BasicGUI_CircleDlg::execute(ObjectList& objects)
 void BasicGUI_CircleDlg::closeEvent (QCloseEvent* e)
 {
   GEOMBase_Skeleton::closeEvent(e);
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void BasicGUI_CircleDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+switch (getConstructorId())
+  {
+  case 0:
+    objMap[GroupPntVecR->LineEdit1->text()] = myPoint;
+    objMap[GroupPntVecR->LineEdit2->text()] = myDir;
+    break;
+  case 1:
+    objMap[Group3Pnts->LineEdit1->text()] = myPoint1;
+    objMap[Group3Pnts->LineEdit2->text()] = myPoint2;
+    objMap[Group3Pnts->LineEdit3->text()] = myPoint3;
+    break;
+  case 2:
+    objMap[GroupCenter2Pnts->LineEdit1->text()] = myPoint4;
+    objMap[GroupCenter2Pnts->LineEdit2->text()] = myPoint5;
+    objMap[GroupCenter2Pnts->LineEdit3->text()] = myPoint6;
+    break;
+  }
+ addSubshapesToFather( objMap );
 }

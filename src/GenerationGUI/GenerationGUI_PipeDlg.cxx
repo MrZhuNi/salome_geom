@@ -218,13 +218,22 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
 	aSelMgr->GetIndexes( firstIObject(), aMap );
 	if ( aMap.Extent() == 1 )
 	  {
-	    GEOM::GEOM_IShapesOperations_var aShapesOp =
-	      getGeomEngine()->GetIShapesOperations( getStudyId() );
 	    int anIndex = aMap( 1 );
-	    myPath = aShapesOp->GetSubShape(aSelectedObject, anIndex);
 	    aName.append( ":edge_" + QString::number( anIndex ) );
-	    myOkPath = true;
-	    aSelMgr->clearSelected();
+
+	    //Find SubShape Object in Father
+	    GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+	    
+	    if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+	      GEOM::GEOM_IShapesOperations_var aShapesOp =
+		getGeomEngine()->GetIShapesOperations( getStudyId() );
+	      myPath = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	      myOkPath = true;
+	    }
+	    else {  // get Object from study
+	      myPath = aFindedObject;
+	      myOkPath = true;
+	    }
 	  }
 	else {
 	  myOkPath = true;
@@ -343,5 +352,16 @@ bool GenerationGUI_PipeDlg::execute( ObjectList& objects )
   return true;
 }
 
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void GenerationGUI_PipeDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
 
+  objMap[GroupPoints->LineEdit2->text()] = myPath;
+
+  addSubshapesToFather( objMap );
+}
 

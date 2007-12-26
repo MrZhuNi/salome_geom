@@ -211,12 +211,20 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
 	  aSelMgr->GetIndexes( firstIObject(), aMap );
 	  if ( aMap.Extent() == 1 )
 	    {
-	      GEOM::GEOM_IShapesOperations_var aShapesOp =
-		      getGeomEngine()->GetIShapesOperations( getStudyId() );
 	      int anIndex = aMap( 1 );
 	      aName += QString(":vertex_%1").arg(anIndex);
-	      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	      aSelMgr->clearSelected();
+
+	      //Find SubShape Object in Father
+	      GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
+	      
+	      if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+		GEOM::GEOM_IShapesOperations_var aShapesOp =
+		  getGeomEngine()->GetIShapesOperations( getStudyId() );
+		aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		aSelMgr->clearSelected();
+	      }
+	      else
+		aSelectedObject = aFindedObject; // get Object from study
 	    }
 	  else {
 	    if (aShape.ShapeType() != TopAbs_VERTEX) {
@@ -390,4 +398,20 @@ double TransformationGUI_ScaleDlg::GetFactor() const
 void TransformationGUI_ScaleDlg::CreateCopyModeChanged(bool isCreateCopy)
 {
   this->GroupBoxName->setEnabled(isCreateCopy);
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void TransformationGUI_ScaleDlg::addSubshapesToStudy()
+{
+  bool toCreateCopy = IsPreview() || GroupPoints->CheckButton1->isChecked();
+  if (toCreateCopy) {
+    QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+    objMap[GroupPoints->LineEdit2->text()] = myPoint;
+
+    addSubshapesToFather( objMap );
+  }
 }

@@ -57,6 +57,7 @@ protected:
     virtual bool execute( ObjectList& objects );
 
     virtual void closeEvent( QCloseEvent* e );
+    virtual void addSubshapesToStudy();
     
 private :
     void Init();

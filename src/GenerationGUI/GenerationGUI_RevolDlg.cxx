@@ -248,12 +248,23 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
 	      aSelMgr->GetIndexes( firstIObject(), aMap );
 	      if ( aMap.Extent() == 1 )
 		{
-		  GEOM::GEOM_IShapesOperations_var aShapesOp =
-		    getGeomEngine()->GetIShapesOperations( getStudyId() );
+
 		  int anIndex = aMap( 1 );
 		  aName.append( ":edge_" + QString::number( anIndex ) );
-		  myAxis = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-		  myOkAxis = true;
+
+		  //Find SubShape Object in Father
+		  GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+		  
+		  if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+		    GEOM::GEOM_IShapesOperations_var aShapesOp =
+		      getGeomEngine()->GetIShapesOperations( getStudyId() );
+		    myAxis = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		    myOkAxis = true;
+		  }
+		  else {
+		    myAxis = aFindedObject;
+		    myOkAxis = true;
+		  }
 		}
 	      else {
 		myOkAxis = true;
@@ -416,4 +427,17 @@ void GenerationGUI_RevolDlg::onBothway()
   myBothway = !anOldValue;
   GroupPoints->CheckButton2->setEnabled(!myBothway);  
   displayPreview();
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void GenerationGUI_RevolDlg::addSubshapesToStudy()
+{
+  QMap<QString, GEOM::GEOM_Object_var> objMap;
+
+  objMap[GroupPoints->LineEdit2->text()] = myAxis;
+
+  addSubshapesToFather( objMap );
 }

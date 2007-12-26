@@ -451,14 +451,14 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 
           if (!aMap.IsEmpty()) {
             int anIndex = aMap(1);
-            TopTools_IndexedMapOfShape aShapes;
-            TopExp::MapShapes(aShape, aShapes);
-            aShape = aShapes.FindKey(anIndex);
-
             if (aNeedType == TopAbs_EDGE)
               aName += QString("_edge_%1").arg(anIndex);
             else
               aName += QString("_vertex_%1").arg(anIndex);
+
+            TopTools_IndexedMapOfShape aShapes;
+            TopExp::MapShapes(aShape, aShapes);
+            aShape = aShapes.FindKey(anIndex);
           }
 
           if (myEditCurrentArgument == Group2->LineEdit1) {
