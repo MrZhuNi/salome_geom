@@ -1063,7 +1063,7 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr
 //================================================================  
 void GEOMBase_Helper::addSubshapesToStudy()
 {
-  //Impemented in Dialogs, called from Accept method
+  //Impemented in Dialogs, called from Accept method in Helper
 }
 
 //================================================================
@@ -1084,12 +1084,14 @@ void GEOMBase_Helper::addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>
     {
       if ( !anOp->_is_nil() ) {
 	GEOM::GEOM_Object_var aFatherObj = anOp->GetMainShape( it.data() );
-	GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aFatherObj, it.key() );
+	if ( !aFatherObj->_is_nil() ) {
+	  GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aFatherObj, it.key() );
       
-	//Add Object to study if its not exist
-	if ( aFindedObject == GEOM::GEOM_Object::_nil() )
-	  GeometryGUI::GetGeomGen()->AddInStudy(GeometryGUI::ClientStudyToStudy(aDStudy),
-					      it.data(), it.key(), aFatherObj );
+	  //Add Object to study if its not exist
+	  if ( aFindedObject == GEOM::GEOM_Object::_nil() )
+	    GeometryGUI::GetGeomGen()->AddInStudy(GeometryGUI::ClientStudyToStudy(aDStudy),
+						  it.data(), it.key(), aFatherObj );
+	}
       }
       else {
 	//cout << " anOperations is NULL! " << endl;
