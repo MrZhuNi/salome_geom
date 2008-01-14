@@ -144,7 +144,7 @@ void BasicGUI_CurveDlg::ConstructorsClicked( int id )
   QString aTitle = tr( id == 0 ? "GEOM_POLYLINE" : id == 1 ? "GEOM_BEZIER" : "GEOM_INTERPOL" );
   GroupConstructors->setTitle( aTitle );
 	
-	myPoints = new GEOM::ListOfGO();
+  myPoints = new GEOM::ListOfGO();
   myPoints->length( 0 );  
 
   myEditCurrentArgument->setText("");
@@ -198,6 +198,9 @@ bool BasicGUI_CurveDlg::ClickOnApply()
 
   initName();
   ConstructorsClicked( getConstructorId() );
+  globalSelection(); // close local contexts, if any
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+
   return true;
 }
 
