@@ -405,6 +405,7 @@ void EntityGUI_SubShapeDlg::ResetStateOfDialog()
 //=================================================================================
 void EntityGUI_SubShapeDlg::SubShapeToggled()
 {
+  globalSelection(); // to break previous selection
   if ( isAllSubShapes() )
     globalSelection( GEOM_ALLSHAPES );
   else
