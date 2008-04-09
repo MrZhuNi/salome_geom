@@ -58,7 +58,10 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+using namespace std;
+
 static GEOM_Engine* TheEngine = NULL;
+
 
 static TCollection_AsciiString BuildIDFromObject(Handle(GEOM_Object)& theObject)
 {

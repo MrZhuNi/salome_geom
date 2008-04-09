@@ -32,7 +32,6 @@
 
 #include <vector>
 
-
 class GEOMAlgo_FinderShapeOnQuad: public GEOMAlgo_FinderShapeOn1
 {
 public:
@@ -51,10 +50,10 @@ protected:
 
 private:
 
-  bool                         myConcaveQuad;
-  vector<bool>                 myConcaveSide;
-  vector<gp_Pnt>               myPoints;
-  vector<GeomAdaptor_Surface>  myPlanes;
-  gp_Vec                       myQuadNormal;
+  bool                              myConcaveQuad;
+  std::vector<bool>                 myConcaveSide;
+  std::vector<gp_Pnt>               myPoints;
+  std::vector<GeomAdaptor_Surface>  myPlanes;
+  gp_Vec                            myQuadNormal;
 };
 #endif

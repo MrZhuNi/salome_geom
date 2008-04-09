@@ -10,6 +10,8 @@
 #ifndef DLGREF_2SEL3SPIN2RB_QTD_H
 #define DLGREF_2SEL3SPIN2RB_QTD_H
 
+#include "GEOM_DlgRef.hxx"
+
 #include <qvariant.h>
 #include <qwidget.h>
 
@@ -24,7 +26,7 @@ class QLabel;
 class QRadioButton;
 class QSpinBox;
 
-class DlgRef_2Sel3Spin2Rb_QTD : public QWidget
+class GEOM_DLGREF_EXPORT DlgRef_2Sel3Spin2Rb_QTD : public QWidget
 {
     Q_OBJECT
 
