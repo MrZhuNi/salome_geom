@@ -1,6 +1,7 @@
 #ifndef GEOM_WIREFRAME_FACE_H 
 #define GEOM_WIREFRAME_FACE_H 
  
+#include "GEOM_OBJECT_defs.hxx"
 #include "GEOM_FaceSource.h" 
 
 #include <GeomAbs_IsoType.hxx>
@@ -9,7 +10,7 @@
 #include <vtkPolyDataSource.h> 
  
  
-class VTK_EXPORT GEOM_WireframeFace: public GEOM_FaceSource 
+class GEOM_OBJECT_EXPORT GEOM_WireframeFace: public GEOM_FaceSource 
 { 
 public: 
   vtkTypeMacro(GEOM_WireframeFace,GEOM_FaceSource); 

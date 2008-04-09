@@ -17,10 +17,7 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-#include <Standard_OStream.hxx>
-
 #include <GEOM_Object_i.hh>
-//#include <GEOM_Gen_i.hh>
 #include <GEOM_ISubShape.hxx>
 #include <GEOMImpl_Types.hxx>
 
@@ -34,6 +31,7 @@
 #include <TDF_Label.hxx>
 #include <TCollection_AsciiString.hxx>
 
+#include <Standard_OStream.hxx>
 #include <BRepTools_ShapeSet.hxx>
 #include <BRepTools.hxx>
 #include <TopAbs.hxx>

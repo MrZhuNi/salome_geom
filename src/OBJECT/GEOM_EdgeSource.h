@@ -1,6 +1,7 @@
 #ifndef GEOM_EDGESOURCE_H 
 #define GEOM_EDGESOURCE_H 
- 
+
+#include "GEOM_OBJECT_defs.hxx"
 #include "GEOM_DeviceActor.h" 
  
 #include <TopoDS_Edge.hxx> 
@@ -11,7 +12,7 @@ typedef NCollection_Set<TopoDS_Edge> TEdgeSet;
 #include <vtkPolyDataSource.h> 
  
  
-class VTK_EXPORT GEOM_EdgeSource: public vtkPolyDataSource 
+class GEOM_OBJECT_EXPORT GEOM_EdgeSource: public vtkPolyDataSource 
 { 
 public: 
   vtkTypeMacro(GEOM_EdgeSource,vtkPolyDataSource); 

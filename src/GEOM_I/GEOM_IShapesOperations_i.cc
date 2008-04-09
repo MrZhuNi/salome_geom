@@ -17,7 +17,8 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-#include <Standard_Stream.hxx>
+#include "GEOM_Object.hxx"
+#include "GEOMImpl_IShapesOperations.hxx"
 
 #include "GEOM_IShapesOperations_i.hh"
 
@@ -25,11 +26,14 @@
 #include "OpUtil.hxx"
 #include "Utils_ExceptHandlers.hxx"
 
-#include "GEOM_Engine.hxx"
-#include "GEOM_Object.hxx"
-
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
+
+#include <list>
+
+using namespace std;
+
+//#define GetObjectA GetObject
 
 //=============================================================================
 /*!

@@ -127,6 +127,8 @@
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <Precision.hxx>
 
+using namespace std;
+
 //=============================================================================
 /*!
  *   constructor:

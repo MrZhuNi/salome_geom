@@ -1,6 +1,7 @@
 #ifndef GEOM_VERTEXSOURCE_H 
 #define GEOM_VERTEXSOURCE_H 
  
+#include "GEOM_OBJECT_defs.hxx"
 #include "GEOM_DeviceActor.h" 
  
 #include <TopoDS_Vertex.hxx> 
@@ -11,7 +12,7 @@ typedef NCollection_Set<TopoDS_Vertex> TVertexSet;
 #include <vtkPolyDataSource.h> 
  
  
-class VTK_EXPORT GEOM_VertexSource: public vtkPolyDataSource 
+class GEOM_OBJECT_EXPORT GEOM_VertexSource: public vtkPolyDataSource 
 { 
 public: 
   vtkTypeMacro(GEOM_VertexSource,vtkPolyDataSource); 

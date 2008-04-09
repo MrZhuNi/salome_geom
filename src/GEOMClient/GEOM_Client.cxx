@@ -53,10 +53,14 @@
 #include <unistd.h>
 #endif
 
+#include <string>
+
 #include CORBA_SERVER_HEADER(SALOMEDS)
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
 #define HST_CLIENT_LEN 256
+
+using namespace std;
 
 
 

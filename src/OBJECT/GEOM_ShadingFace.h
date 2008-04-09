@@ -1,10 +1,11 @@
 #ifndef GEOM_SHADINGFACE_H 
 #define GEOM_SHADINGFACE_H 
- 
+
+#include "GEOM_OBJECT_defs.hxx"
 #include "GEOM_FaceSource.h" 
  
  
-class VTK_EXPORT GEOM_ShadingFace: public GEOM_FaceSource 
+class GEOM_OBJECT_EXPORT GEOM_ShadingFace: public GEOM_FaceSource 
 { 
 public: 
   vtkTypeMacro(GEOM_ShadingFace,GEOM_FaceSource); 

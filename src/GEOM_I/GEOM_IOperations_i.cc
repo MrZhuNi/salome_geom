@@ -18,14 +18,13 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include "GEOM_IOperations_i.hh"
-
-#include "GEOM_Engine.hxx"
+#include "GEOM_Object.hxx"
+#include "GEOM_IOperations.hxx"
 
 #include "utilities.h"
 #include "OpUtil.hxx"
 #include "Utils_ExceptHandlers.hxx"
 
-#include <Standard_Stream.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TDF_Tool.hxx>
 

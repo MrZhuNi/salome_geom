@@ -29,6 +29,8 @@
 #ifndef GEOMBase_aWarningDLG_H
 #define GEOMBase_aWarningDLG_H
 
+#include "GEOM_GEOMBase.hxx"
+
 #include <qdialog.h>
 #include <qwidget.h>
 
@@ -39,7 +41,7 @@ class QPushButton;
 // class    : GEOMBase_aWarningDlg
 // purpose  :
 //=================================================================================
-class GEOMBase_aWarningDlg : public QDialog
+class GEOMBASE_EXPORT GEOMBase_aWarningDlg : public QDialog
 { 
     Q_OBJECT
 

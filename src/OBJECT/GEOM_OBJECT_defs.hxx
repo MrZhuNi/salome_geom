@@ -27,21 +27,13 @@
 #define _GEOM_OBJECT_defs_HXX_
 
 #ifdef WNT
- #if defined OBJECT_EXPORTS
-  #if defined WIN32
-   #define GEOM_OBJECT_EXPORT __declspec( dllexport )
-  #else
-   #define GEOM_OBJECT_EXPORT
-  #endif
- #else
-  #if defined WIN32
-   #define GEOM_OBJECT_EXPORT __declspec( dllimport )
-  #else
-   #define GEOM_OBJECT_EXPORT
-  #endif
- #endif
+# if defined GEOM_OBJECT_EXPORTS
+#   define GEOM_OBJECT_EXPORT __declspec( dllexport )
+# else
+#   define GEOM_OBJECT_EXPORT __declspec( dllimport )
+# endif
 #else
- #define GEOM_OBJECT_EXPORT
+# define GEOM_OBJECT_EXPORT
 #endif
 
 #endif

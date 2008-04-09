@@ -1,6 +1,7 @@
 #ifndef GEOM_DEVICEACTOR_H 
 #define GEOM_DEVICEACTOR_H 
- 
+
+#include "GEOM_OBJECT_defs.hxx"
 #include "GEOM_SmartPtr.h" 
  
 class vtkPoints; 
@@ -24,7 +25,7 @@ class vtkRenderer;
 #include <vtkObject.h> 
  
  
-class VTK_EXPORT GEOM_DeviceActor: public vtkObject 
+class GEOM_OBJECT_EXPORT GEOM_DeviceActor: public vtkObject 
 {  
 public: 
   vtkTypeMacro(GEOM_DeviceActor,vtkObject); 

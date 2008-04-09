@@ -46,6 +46,9 @@
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TColStd_MapOfInteger.hxx>
 
+#include <string>
+using namespace std;
+
 
 GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWidget* parent)
   :GEOMBase_Skeleton( theGeometryGUI, parent, "GroupGUI_GroupDlg", false,

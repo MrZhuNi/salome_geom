@@ -21,13 +21,12 @@
 #ifndef _GEOM_IShapesOperations_i_HeaderFile
 #define _GEOM_IShapesOperations_i_HeaderFile
 
-#include "GEOMImpl_Gen.hxx"
+#include "GEOM_GEOM_I.hxx"
 
 #include <SALOMEconfig.h>
-
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 #include "GEOM_IOperations_i.hh"
-#include "GEOM_Object_i.hh"
+#include "GEOMImpl_Gen.hxx"
 
 #include "GEOMImpl_IShapesOperations.hxx"
 

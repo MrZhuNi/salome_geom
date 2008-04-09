@@ -17,16 +17,17 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 #ifndef _GEOM_IOperations_i_HeaderFile
 #define _GEOM_IOperations_i_HeaderFile
+
+#include "GEOM_GEOM_I.hxx"
 
 #include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>
-
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 #include "SALOME_GenericObj_i.hh" 
+
 #include "GEOM_IOperations.hxx"
 #include "GEOM_Object_i.hh" 
 #include "GEOM_Object.hxx"

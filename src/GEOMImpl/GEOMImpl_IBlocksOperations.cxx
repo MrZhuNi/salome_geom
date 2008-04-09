@@ -97,6 +97,8 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+using namespace std;
+
 //=============================================================================
 /*!
  *   constructor:

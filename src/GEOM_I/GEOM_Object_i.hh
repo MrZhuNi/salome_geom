@@ -23,17 +23,16 @@
 
 #include "GEOM_GEOM_I.hxx"
 
-#include "GEOMImpl_Gen.hxx"
-
 #include <SALOMEconfig.h>
-#include CORBA_CLIENT_HEADER(SALOMEDS)
 #include CORBA_SERVER_HEADER(GEOM_Gen)
-
+#include CORBA_CLIENT_HEADER(SALOMEDS)
 #include "SALOME_GenericObj_i.hh"
 
+#include "GEOMImpl_Gen.hxx"
 #include "GEOM_Object.hxx"
 
 #include <TopoDS_Shape.hxx>
+
 
 class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public virtual SALOME::GenericObj_i
 {

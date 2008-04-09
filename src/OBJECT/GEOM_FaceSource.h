@@ -1,6 +1,7 @@
 #ifndef GEOM_FACESOURCE_H 
 #define GEOM_FACESOURCE_H 
  
+#include "GEOM_OBJECT_defs.hxx"
 #include "GEOM_DeviceActor.h" 
  
 #include <gp_Pnt.hxx>
@@ -15,7 +16,7 @@ class GEOM_FaceSource;
 typedef GEOM_SmartPtr<GEOM_FaceSource> PFaceSource; 
  
  
-class VTK_EXPORT GEOM_FaceSource: public vtkPolyDataSource 
+class GEOM_OBJECT_EXPORT GEOM_FaceSource: public vtkPolyDataSource 
 { 
 public: 
   vtkTypeMacro(GEOM_FaceSource,vtkPolyDataSource); 
