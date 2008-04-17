@@ -1224,13 +1224,15 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   for ( vm = VTKViewManagers.first(); vm; vm = VTKViewManagers.next() )
     myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
 
-  // disable OCC selectors
-  //getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
+  // disable OCC selectors except myOCCSelectors
+  getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() ); // PAL19290
+  //getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() ); PAL18352
   for ( GEOMGUI_OCCSelector* sr = myOCCSelectors.first(); sr; sr = myOCCSelectors.next() )
     sr->setEnabled(true);
 
-  // disable VTK selectors
-  //getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
+  // disable VTK selectors except myVTKSelectors
+  getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() ); // PAL19290
+  //getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() ); PAL18352
   for ( LightApp_VTKSelector* sr = myVTKSelectors.first(); sr; sr = myVTKSelectors.next() )
     sr->setEnabled(true);
 
