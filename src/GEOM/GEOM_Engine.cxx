@@ -117,7 +117,6 @@ GEOM_Engine::GEOM_Engine()
 
   _OCAFApp = new GEOM_Application();
   _UndoLimit = 10;
-  //_lastObjectTag = 0;
 }
 
 /*!
@@ -397,20 +396,22 @@ bool GEOM_Engine::Load(int theDocID, char* theFileName)
 //=============================================================================
 void GEOM_Engine::Close(int theDocID)
 {
-  if(_mapIDDocument.IsBound(theDocID)) {
+  if (_mapIDDocument.IsBound(theDocID)) {
     Handle(TDocStd_Document) aDoc = Handle(TDocStd_Document)::DownCast(_mapIDDocument(theDocID));
 
     //Remove all GEOM Objects associated to the given document
     TColStd_SequenceOfAsciiString aSeq;
-    GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It(_objects);
-    for(; It.More(); It.Next()) {
-      TCollection_AsciiString anObjID(It.Key());
+    GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It (_objects);
+    for (; It.More(); It.Next()) {
+      TCollection_AsciiString anObjID (It.Key());
       Standard_Integer anID = ExtractDocID(anObjID);
-      if(theDocID == anID) aSeq.Append(It.Key());
+      if (theDocID == anID) aSeq.Append(It.Key());
     }
-    for(Standard_Integer i=1; i<=aSeq.Length(); i++) _objects.UnBind(aSeq.Value(i));
+    for (Standard_Integer i=1; i<=aSeq.Length(); i++) _objects.UnBind(aSeq.Value(i));
 
-   _mapIDDocument.UnBind(theDocID);
+    _lastCleared.Nullify();
+
+    _mapIDDocument.UnBind(theDocID);
     _OCAFApp->Close(aDoc);
     aDoc.Nullify();
   }
@@ -571,7 +572,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   // Make script to publish in study
   if ( isPublished )
   {
-    map< int, string > anEntryToCommandMap; // sort publishing commands by object entry
+    std::map< int, std::string > anEntryToCommandMap; // sort publishing commands by object entry
     for (anEntryToNameIt.Initialize( theObjectNames );
          anEntryToNameIt.More();
          anEntryToNameIt.Next())
@@ -604,11 +605,11 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       // bind a command to the last digit of the entry
       int tag =
         aEntry.SubString( aEntry.SearchFromEnd(":")+1, aEntry.Length() ).IntegerValue();
-      anEntryToCommandMap.insert( make_pair( tag, aCommand.ToCString() ));
+      anEntryToCommandMap.insert( std::make_pair( tag, aCommand.ToCString() ));
     }
 
     // add publishing commands to the script
-    map< int, string >::iterator anEntryToCommand = anEntryToCommandMap.begin();
+    std::map< int, std::string >::iterator anEntryToCommand = anEntryToCommandMap.begin();
     for ( ; anEntryToCommand != anEntryToCommandMap.end(); ++anEntryToCommand ) {
       anUpdatedScript += (char*)anEntryToCommand->second.c_str();
     }

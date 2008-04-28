@@ -23,6 +23,8 @@
 // Project   : SALOME
 // $Header$
 
+using namespace std;
+
 #include <Standard_Stream.hxx>
 
 #include "GEOMImpl_IShapesOperations.hxx"
@@ -640,7 +642,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueFaces
   Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
   GEOM::TPythonDump pd (aFunction, /*append=*/true);
   pd << "[" << anAsciiList.ToCString();
-  pd << "] = geompy.GetGlueFaces" << theShape << ", " << theTolerance << ")";
+  pd << "] = geompy.GetGlueFaces(" << theShape << ", " << theTolerance << ")";
 
   SetErrorCode(OK);
 
