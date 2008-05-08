@@ -29,7 +29,6 @@
 #include <strstream>
 
 #include "Utils_CorbaException.hxx"
-#include "OpUtil.hxx"
 #include "Utils_ExceptHandlers.hxx"
 #include "utilities.h"
 
@@ -289,7 +288,7 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
 				    bool isMultiFile) {
   SALOMEDS::TMPFile_var aStreamFile;
   // Get a temporary directory to store a file
-  std::string aTmpDir = (isMultiFile)?theURL:SALOMEDS_Tool::GetTmpDir();
+  std::string aTmpDir = (isMultiFile)?theURL : SALOMEDS_Tool::GetTmpDir();
 
   // OCCT BUG: cannot save a document (in current folder)
   // if directory name is empty

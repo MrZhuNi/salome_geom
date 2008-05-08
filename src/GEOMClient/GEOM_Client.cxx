@@ -26,8 +26,6 @@
 //  Module : GEOM
 //  $Header$
 
-using namespace std;
-
 #include <Standard_Stream.hxx>
 
 #include <Standard_Stream.hxx>

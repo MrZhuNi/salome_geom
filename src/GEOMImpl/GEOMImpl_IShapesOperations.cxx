@@ -23,8 +23,6 @@
 // Project   : SALOME
 // $Header$
 
-using namespace std;
-
 #include <Standard_Stream.hxx>
 
 #include "GEOMImpl_IShapesOperations.hxx"
