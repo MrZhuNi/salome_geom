@@ -27,6 +27,15 @@
 
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
+#include <sys/time.h>
+static long tt0;
+static long tcount=0;
+static long cumul;
+#define START_TIMING timeval tv; gettimeofday(&tv,0);tt0=tv.tv_usec+tv.tv_sec*1000000;
+#define END_TIMING(NUMBER) \
+  tcount=tcount+1;gettimeofday(&tv,0);cumul=cumul+tv.tv_usec+tv.tv_sec*1000000 -tt0; \
+  if(tcount==NUMBER){ std::cerr << __FILE__ << __LINE__ << " temps CPU(mus): " << cumul << std::endl; tcount=0;cumul=0; }
+
 
 //=============================================================================
 /*!
@@ -111,6 +120,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeBoxTwoPnt
 GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderRH (CORBA::Double theR,
 								CORBA::Double theH)
 {
+  START_TIMING
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
@@ -121,6 +131,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderRH (CORBA::Double th
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
+  END_TIMING(200)
   return GetObject(anObject);
 }
 
@@ -134,6 +145,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderPntVecRH
 		       CORBA::Double theR, CORBA::Double theH)
 {
   GEOM::GEOM_Object_var aGEOMObject;
+  //START_TIMING
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -153,6 +165,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderPntVecRH
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
+  //END_TIMING(200)
   return GetObject(anObject);
 }
 

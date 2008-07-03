@@ -97,6 +97,18 @@
 
 #include "GEOMImpl_Types.hxx"
 
+#include "OCCViewer_ViewModel.h"
+#include "SALOME_InteractiveObject.hxx"
+#include <sys/time.h>
+static long tt0;
+static long tcount=0;
+static long cumul;
+#define START_TIMING timeval tv; gettimeofday(&tv,0);tt0=tv.tv_usec+tv.tv_sec*1000000;
+#define END_TIMING(NUMBER) \
+  tcount=tcount+1;gettimeofday(&tv,0);cumul=cumul+tv.tv_usec+tv.tv_sec*1000000 -tt0; \
+  if(tcount==NUMBER){ std::cerr << __FILE__ << __LINE__ << " temps CPU(mus): " << cumul << std::endl; tcount=0;cumul=0; }
+
+
 using namespace std;
 
 //================================================================
@@ -305,11 +317,13 @@ void GEOM_Displayer::Display( const Handle(SALOME_InteractiveObject)& theIO,
 			     const bool updateViewer,
 			     SALOME_View* theViewFrame )
 {
+  //START_TIMING
   SALOME_View* vf = theViewFrame ? theViewFrame : GetActiveView();
   if ( vf )
   {
     SALOME_Prs* prs = buildPresentation( theIO->getEntry(), vf );
 
+  //END_TIMING(1)
     if ( prs )
     {
       vf->BeforeDisplay( this );
@@ -785,6 +799,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 //=================================================================
 void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 {
+  START_TIMING
   SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
   if ( !vtkPrs || myShape.IsNull() )
     return;
@@ -880,6 +895,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
     aProp->Delete();
 
   theActors->Delete();
+  END_TIMING(50)
 }
 
 //=================================================================
@@ -954,7 +970,12 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
 
   if ( myViewFrame )
   {
+    //CCAR
+#if 1
+    prs = LightApp_Displayer::buildPresentation( QString(), theViewFrame );
+#else
     prs = LightApp_Displayer::buildPresentation( entry, theViewFrame );
+#endif
     if ( prs )
     {
       Handle( SALOME_InteractiveObject ) theIO = new SALOME_InteractiveObject();

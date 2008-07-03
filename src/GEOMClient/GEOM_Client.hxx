@@ -70,6 +70,8 @@ class TopoDS_Shape;
  #define GEOMCLIENT_EXPORT
 #endif
 
+#include <TCollection_AsciiString.hxx>
+#include <map>
 //=====================================================================
 // GEOM_Client : class definition
 //=====================================================================
@@ -116,6 +118,7 @@ private:
   //
   TColStd_SequenceOfAsciiString myIORs ;
   TopTools_SequenceOfShape myShapes ;
+  std::map< TCollection_AsciiString , int > _myIndexes;
   long  pid_client;
 };
 

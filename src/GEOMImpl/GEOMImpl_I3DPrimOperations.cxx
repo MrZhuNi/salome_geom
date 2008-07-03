@@ -63,6 +63,15 @@
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
+#include <sys/time.h>
+static long tt0;
+static long tcount=0;
+static long cumul;
+#define START_TIMING timeval tv; gettimeofday(&tv,0);tt0=tv.tv_usec+tv.tv_sec*1000000;
+#define END_TIMING(NUMBER) \
+  tcount=tcount+1;gettimeofday(&tv,0);cumul=cumul+tv.tv_usec+tv.tv_sec*1000000 -tt0; \
+  if(tcount==NUMBER){ std::cerr << __FILE__ << __LINE__ << " temps CPU(mus): " << cumul << std::endl; tcount=0;cumul=0; }
+
 
 //=============================================================================
 /*!
@@ -251,6 +260,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
                                                                       Handle(GEOM_Object) theVec,
                                                                       double theR, double theH)
 {
+  START_TIMING
+
   SetErrorCode(KO);
 
   if (thePnt.IsNull() || theVec.IsNull()) return NULL;
@@ -299,6 +310,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
     << thePnt << ", " << theVec << ", " << theR << ", " << theH << ")";
 
   SetErrorCode(OK);
+  END_TIMING(200)
   return aCylinder;
 }
 

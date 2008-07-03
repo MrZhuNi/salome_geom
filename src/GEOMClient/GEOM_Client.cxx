@@ -60,6 +60,14 @@ using namespace std;
 
 #define HST_CLIENT_LEN 256
 
+#include <sys/time.h>
+static long tt0;
+static long tcount=0;
+static long cumul;
+#define START_TIMING timeval tv; gettimeofday(&tv,0);tt0=tv.tv_usec+tv.tv_sec*1000000;
+#define END_TIMING(NUMBER) \
+  tcount=tcount+1;gettimeofday(&tv,0);cumul=cumul+tv.tv_usec+tv.tv_sec*1000000 -tt0; \
+  if(tcount==NUMBER){ std::cerr << __FILE__ << __LINE__ << " temps CPU(mus): " << cumul << std::endl; tcount=0;cumul=0; }
 
 
 //=======================================================================
@@ -120,6 +128,17 @@ GEOM_Client::GEOM_Client(Engines::Container_ptr client)
 //=======================================================================
 Standard_Integer GEOM_Client::Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S )
 {
+  //CCAR
+#if 1
+  if(_myIndexes.count(IOR)==0)
+    return 0;
+  else
+    {
+      Standard_Integer i =_myIndexes[IOR];
+      S = myShapes.Value(i);
+      return i;
+    }
+#else
   for ( Standard_Integer i = 1; i<= myIORs.Length(); i++ ) {
     if (myIORs.Value(i).IsEqual(IOR)) {
       S = myShapes.Value(i);
@@ -127,6 +146,7 @@ Standard_Integer GEOM_Client::Find( const TCollection_AsciiString& IOR, TopoDS_S
     }
   }
   return 0;
+#endif
 }
 
 //=======================================================================
@@ -152,6 +172,7 @@ void GEOM_Client::Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& 
 {
   myIORs.Append(IOR);
   myShapes.Append(S);
+  _myIndexes[IOR]=_myIndexes.size()+1;
 }
 
 //=======================================================================
@@ -168,6 +189,7 @@ void GEOM_Client::RemoveShapeFromBuffer( const TCollection_AsciiString& IOR)
   if( anIndex != 0 ) {
     myIORs.Remove(anIndex) ;
     myShapes.Remove(anIndex) ;
+    _myIndexes.erase(IOR);
   }
   return ;
 }
@@ -183,6 +205,7 @@ void GEOM_Client::ClearClientBuffer()
     return ;
   myIORs.Clear() ;
   myShapes.Clear() ;
+  _myIndexes.clear();
   return ;
 }
 
@@ -202,6 +225,7 @@ unsigned int GEOM_Client::BufferLength()
 //=======================================================================
 TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape )
 {
+ START_TIMING
   TopoDS_Shape S;
   TCollection_AsciiString IOR = geom->GetStringFromIOR(aShape);
   Standard_Integer anIndex = Find(IOR, S);
@@ -212,6 +236,7 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
   if (aShape->IsMainShape()) {
     S = Load(geom, aShape);
     Bind(IOR, S);
+END_TIMING(200)
     return S;
   }
 
@@ -241,5 +266,6 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
     S = aCompound;
   }
   Bind(IOR, S);
+END_TIMING(200)
   return S;
 }

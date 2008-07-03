@@ -51,6 +51,15 @@
 #include <TopoDS_Iterator.hxx>
 
 #include "utilities.h"
+#include <sys/time.h>
+static long tt0;
+static long tcount=0;
+static long cumul;
+#define START_TIMING timeval tv; gettimeofday(&tv,0);tt0=tv.tv_usec+tv.tv_sec*1000000;
+#define END_TIMING(NUMBER) \
+    tcount=tcount+1;gettimeofday(&tv,0);cumul=cumul+tv.tv_usec+tv.tv_sec*1000000 -tt0; \
+  if(tcount==NUMBER){ std::cerr << __FILE__ << __LINE__ << " temps CPU(mus): " << cumul << std::endl; tcount=0;cumul=0; }
+
 
 using namespace std;
 // SALOME
@@ -254,7 +263,9 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
     
     for (ex.Init(myShape, TopAbs_FACE); ex.More(); ex.Next()) {
       
+  START_TIMING
       GEOM_Actor* FaceActor = GEOM_Actor::New();
+  END_TIMING(450)
       FaceActor->SetShadingProperty(FaceProp);
       FaceActor->SetWireframeProperty(IsoProp);
 
