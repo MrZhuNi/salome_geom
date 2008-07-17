@@ -716,7 +716,7 @@ public:
 
 namespace DlgRef
 {
-  QString PrintDoubleValue( double, int = 16 );
+  DLGREF_EXPORT QString PrintDoubleValue( double, int = 16 );
 };
 
 #endif // GEOM_DLGREF_H
