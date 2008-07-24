@@ -51,6 +51,20 @@ dev_docs:
 	cp -fr $(srcdir)/GEOM/sources/ GEOM/ ; \
 	rm -fr INPUT
 
+docs: dev_docs
+
+clean-local:
+	rm -fr `ls | grep -v "Makefile"`
+	rm -fr GEOM
+
+install-data-local: dev_docs
+	mkdir -p $(docdir)/tui
+	cp -rf GEOM $(docdir)/tui
+	-find $(PWD) -name CVS -prune -exec rm -rf {} \;
+
+uninstall-local:
+	rm -rf $(docdir)/tui/GEOM
+
 doctuidir=$(docdir)/tui/GEOM
 
 nodist_doctui_DATA= GEOM/doxyfile
