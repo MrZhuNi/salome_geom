@@ -427,7 +427,10 @@ GEOM::GEOM_IOperations_ptr PrimitiveGUI_BoxDlg::createOperation()
 //=================================================================================
 bool PrimitiveGUI_BoxDlg::isValid (QString&)
 {
-  return getConstructorId() == 0 ? !(myPoint1->_is_nil() || myPoint2->_is_nil()) : true;
+  return getConstructorId() == 0 ? !(myPoint1->_is_nil() || myPoint2->_is_nil()) :
+    GroupDimensions->SpinBox_DX->isValid() &&
+    GroupDimensions->SpinBox_DY->isValid() &&
+    GroupDimensions->SpinBox_DZ->isValid();
 }
 
 //=================================================================================
@@ -454,6 +457,12 @@ bool PrimitiveGUI_BoxDlg::execute (ObjectList& objects)
       double x = GroupDimensions->SpinBox_DX->value();
       double y = GroupDimensions->SpinBox_DY->value();
       double z = GroupDimensions->SpinBox_DZ->value();
+
+      QStringList aParameters;
+      aParameters << GroupDimensions->SpinBox_DX->text();
+      aParameters << GroupDimensions->SpinBox_DY->text();
+      aParameters << GroupDimensions->SpinBox_DZ->text();
+      getOperation()->SetParameters( aParameters.join( ":" ).toLatin1().constData() );
 
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->MakeBoxDXDYDZ(x, y, z);
       res = true;

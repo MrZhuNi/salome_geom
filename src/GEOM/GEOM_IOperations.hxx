@@ -65,6 +65,16 @@ class GEOM_IOperations
     return (char*) _errorCode.ToCString();    
   }
   
+  //Sets a parameters of the operation
+  Standard_EXPORT void SetParameters(const TCollection_AsciiString& theParameters) {
+    _parameters = theParameters;    
+  } 
+ 
+  //Returns a parameters of the operation
+  Standard_EXPORT char* GetParameters() {
+    return (char*) _parameters.ToCString();    
+  }
+
   //Returns a pointer to  GEOM_Engine which this operation interface is associated
   Standard_EXPORT GEOM_Engine* GetEngine() { return _engine; }
 
@@ -80,7 +90,7 @@ class GEOM_IOperations
   GEOM_Engine*   _engine;
   GEOM_Solver*   _solver;
   int                     _docID;
-
+  TCollection_AsciiString _parameters;
 };
 
 #endif
