@@ -81,11 +81,16 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual bool IsShape();
 
+  virtual void SetParameters(const char* theParameters);
+
+  virtual char* GetParameters();
+
   Handle(GEOM_Object) GetImpl() { return _impl; }
 
  private:
 
   GEOM::GEOM_Gen_var _engine;
+  TCollection_AsciiString _parameters;
   Handle(GEOM_Object) _impl;
   TopoDS_Shape _geom;
 };

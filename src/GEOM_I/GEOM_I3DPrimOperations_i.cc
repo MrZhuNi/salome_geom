@@ -68,7 +68,8 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeBoxDXDYDZ (CORBA::Double the
   Handle(GEOM_Object) anObject = GetOperations()->MakeBoxDXDYDZ(theDX, theDY, theDZ);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
- 
+  GetObject(anObject)->SetParameters(GetParameters());
+    
   return GetObject(anObject);
 }
 

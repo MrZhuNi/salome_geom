@@ -219,6 +219,14 @@ class GEOM_Object : public MMgt_TShared
   //Returns an auxiliary data
   Standard_EXPORT TCollection_AsciiString GetAuxData();
 
+  //Set a notebook variables used for object creation
+  Standard_EXPORT void SetParameters(const TCollection_AsciiString& theParameters)
+  {_parameters = theParameters;}
+
+  //Get a notebook variables used for object creation
+  Standard_EXPORT TCollection_AsciiString GetParameters() const
+  {return _parameters;}
+
   //###########################################################
   // Sub shape methods
   //###########################################################
@@ -270,6 +278,7 @@ class GEOM_Object : public MMgt_TShared
   Handle(TDataStd_TreeNode) _root;
   TDF_Label                 _label;
   TCollection_AsciiString   _ior;
+  TCollection_AsciiString   _parameters;
 };
 
 #endif

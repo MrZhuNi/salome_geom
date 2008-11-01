@@ -272,6 +272,32 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeName");
   SALOMEDS::AttributeName_var aNameAttrib = SALOMEDS::AttributeName::_narrow(anAttr);
   aNameAttrib->SetValue(aShapeName.ToCString());
+
+  //Set NoteBook variables used in the object creation
+  TCollection_AsciiString aParams(aShape->GetParameters());
+  if(!aParams.IsEmpty()) {
+    TCollection_AsciiString aVars;
+    int nbVars = 0;
+    int n = 1;
+    TCollection_AsciiString aParam = aParams.Token(":",1);
+    while( aParam.Length() != 0 ) {
+      aParam = aParams.Token(":",n);
+      if(theStudy->IsVariable(aParam.ToCString())){
+	aVars+=aParam;
+	nbVars++;
+      }
+      if(aParam.Length() == 0)
+	break;
+      aVars+=":";
+      n++;
+    }
+    aVars.Remove(aVars.Length(),1);
+    if(nbVars > 0 ) {
+      anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeString");
+      SALOMEDS::AttributeString_var aStringAttrib = SALOMEDS::AttributeString::_narrow(anAttr);
+      aStringAttrib->SetValue(aVars.ToCString());
+    }
+  }
   
   //Set a name of the GEOM object
   aShape->SetName(theName);

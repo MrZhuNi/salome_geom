@@ -360,3 +360,14 @@ bool GEOM_Object_i::IsShape()
 {
   return !_impl->GetValue().IsNull() && _impl->GetType() != GEOM_MARKER;
 }
+
+void GEOM_Object_i::SetParameters(const char* theParameters)
+{
+  _impl->SetParameters((char*)theParameters);
+}
+
+char* GEOM_Object_i::GetParameters()
+{
+  return CORBA::string_dup(_impl->GetParameters().ToCString());
+}
+
