@@ -38,6 +38,8 @@ ImportExport			\
 ShHealing			\
 angle.png			\
 arc.png				\
+arccenter.png			\
+arcofellipse.png		\
 archimede.png			\
 axisinertia.png			\
 basicproperties.png		\
@@ -203,7 +205,6 @@ free_faces.png			\
 propagate.png			\
 redo.png			\
 undo.png			\
-arccenter.png			\
 glue2.png			\
 remove_extra_edges.png		\
 coordsys.png			\

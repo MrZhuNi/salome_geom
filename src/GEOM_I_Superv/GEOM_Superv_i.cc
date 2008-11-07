@@ -2546,6 +2546,21 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArcCenter (GEOM::GEOM_Object_ptr theCen
 }
 
 //=============================================================================
+//  MakeArcOfEllipse:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArcOfEllipse (GEOM::GEOM_Object_ptr thePnt1,
+						       GEOM::GEOM_Object_ptr thePnt2,
+						       GEOM::GEOM_Object_ptr thePnt3)
+{
+  beginService( " GEOM_Superv_i::MakeArcOfEllipse" );
+  MESSAGE("GEOM_Superv_i::MakeArcOfEllipse");
+  getCurvesOp();
+  GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeArcOfEllipse(thePnt1, thePnt2, thePnt3);
+  endService( " GEOM_Superv_i::MakeArcOfEllipse" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakePolyline:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePolyline (GEOM::GEOM_List_ptr thePoints)

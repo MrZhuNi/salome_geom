@@ -58,6 +58,7 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
   QPixmap image0( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_ARC" ) ) );
   QPixmap image1( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_ARC_CENTER" ) ) );
   QPixmap image2( aResMgr->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap image3( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_ARC_OF_ELLIPSE" ) ) );
 
   setWindowTitle( tr( "GEOM_ARC_TITLE" ) );
 
@@ -65,8 +66,7 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_ARC" ) );
   mainFrame()->RadioButton1->setIcon( image0 );
   mainFrame()->RadioButton2->setIcon( image1 );
-  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
-  mainFrame()->RadioButton3->close();
+  mainFrame()->RadioButton3->setIcon( image3 );
 
   Group3Pnts = new DlgRef_3Sel( centralWidget() );
 
@@ -109,10 +109,30 @@ BasicGUI_ArcDlg::BasicGUI_ArcDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
   
   Group3Pnts2->CheckButton1->setText( tr( "GEOM_REVERSE" ) );
 
+  Group3Pnts3 = new DlgRef_3Sel( centralWidget() );
+
+  Group3Pnts3->GroupBox1->setTitle( tr( "GEOM_POINTS" ) );
+  Group3Pnts3->TextLabel1->setText( tr( "GEOM_CENTER_POINT" ) );
+  Group3Pnts3->TextLabel2->setText( tr( "GEOM_POINT_I" ).arg( 1 ) );
+  Group3Pnts3->TextLabel3->setText( tr( "GEOM_POINT_I" ).arg( 2 ) );
+
+  Group3Pnts3->LineEdit1->setReadOnly( true );
+  Group3Pnts3->LineEdit2->setReadOnly( true );
+  Group3Pnts3->LineEdit3->setReadOnly( true );
+
+  Group3Pnts3->LineEdit1->setEnabled(true);
+  Group3Pnts3->LineEdit2->setEnabled(false);
+  Group3Pnts3->LineEdit3->setEnabled(false);
+
+  Group3Pnts3->PushButton1->setIcon(image2);
+  Group3Pnts3->PushButton2->setIcon(image2);
+  Group3Pnts3->PushButton3->setIcon(image2);
+
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( Group3Pnts );
   layout->addWidget( Group3Pnts2 );
+  layout->addWidget( Group3Pnts3 );
 
   setHelpFileName( "create_arc_page.html" );
 
@@ -166,8 +186,16 @@ void BasicGUI_ArcDlg::Init()
   connect( Group3Pnts2->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( Group3Pnts2->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( Group3Pnts2->LineEdit3, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  
+
   connect( Group3Pnts2->CheckButton1, SIGNAL( toggled( bool ) ), this, SLOT( ReverseSense() ) );
+
+  connect( Group3Pnts3->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( Group3Pnts3->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( Group3Pnts3->PushButton3, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+
+  connect( Group3Pnts3->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( Group3Pnts3->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( Group3Pnts3->LineEdit3, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
 	   this, SLOT( SelectionIntoArgument() ) );
@@ -211,9 +239,6 @@ bool BasicGUI_ArcDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_ArcDlg::SelectionIntoArgument()
 {
-  if ( getConstructorId() != 0 && getConstructorId() != 1 )
-    return;
-  
   myEditCurrentArgument->setText( "" );
 
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -232,6 +257,12 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
       if      ( myEditCurrentArgument == Group3Pnts2->LineEdit1 )   myPoint1 = GEOM::GEOM_Object::_nil();
       else if ( myEditCurrentArgument == Group3Pnts2->LineEdit2 )   myPoint2 = GEOM::GEOM_Object::_nil();
       else if ( myEditCurrentArgument == Group3Pnts2->LineEdit3 )   myPoint3 = GEOM::GEOM_Object::_nil();
+      return;
+      break;
+    case 2:
+      if      ( myEditCurrentArgument == Group3Pnts3->LineEdit1 )   myPoint1 = GEOM::GEOM_Object::_nil();
+      else if ( myEditCurrentArgument == Group3Pnts3->LineEdit2 )   myPoint2 = GEOM::GEOM_Object::_nil();
+      else if ( myEditCurrentArgument == Group3Pnts3->LineEdit3 )   myPoint3 = GEOM::GEOM_Object::_nil();
       return;
       break;
     }
@@ -314,6 +345,23 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
 	  Group3Pnts2->PushButton1->click();
       }
       break;
+    case 2:
+      if ( myEditCurrentArgument == Group3Pnts3->LineEdit1 ) {
+	myPoint1 = aSelectedObject;
+	if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+	  Group3Pnts3->PushButton2->click();
+      }
+      else if ( myEditCurrentArgument == Group3Pnts3->LineEdit2 ) {
+	myPoint2 = aSelectedObject;
+	if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
+	  Group3Pnts3->PushButton3->click();
+      }
+      else if ( myEditCurrentArgument == Group3Pnts3->LineEdit3 ) {
+	myPoint3 = aSelectedObject;
+	if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
+	  Group3Pnts3->PushButton1->click();
+      }
+      break;
     }
   }
 
@@ -384,6 +432,32 @@ void BasicGUI_ArcDlg::SetEditCurrentArgument()
       Group3Pnts2->LineEdit3->setEnabled(true);
     }
     break;
+  case 2:
+    if ( send == Group3Pnts3->PushButton1 ) {
+      myEditCurrentArgument = Group3Pnts3->LineEdit1;
+      Group3Pnts3->PushButton2->setDown(false);
+      Group3Pnts3->PushButton3->setDown(false);
+      Group3Pnts3->LineEdit1->setEnabled(true);
+      Group3Pnts3->LineEdit2->setEnabled(false);
+      Group3Pnts3->LineEdit3->setEnabled(false);
+    }
+    else if ( send == Group3Pnts3->PushButton2 ) {
+      myEditCurrentArgument = Group3Pnts3->LineEdit2;
+      Group3Pnts3->PushButton1->setDown(false);
+      Group3Pnts3->PushButton3->setDown(false);
+      Group3Pnts3->LineEdit1->setEnabled(false);
+      Group3Pnts3->LineEdit2->setEnabled(true);
+      Group3Pnts3->LineEdit3->setEnabled(false);
+    }
+    else if ( send == Group3Pnts3->PushButton3 ) {
+      myEditCurrentArgument = Group3Pnts3->LineEdit3;
+      Group3Pnts3->PushButton1->setDown(false);
+      Group3Pnts3->PushButton2->setDown(false);
+      Group3Pnts3->LineEdit1->setEnabled(false);
+      Group3Pnts3->LineEdit2->setEnabled(false);
+      Group3Pnts3->LineEdit3->setEnabled(true);
+    }
+    break;
   }
   myEditCurrentArgument->setFocus();
   //  SelectionIntoArgument();
@@ -400,7 +474,8 @@ void BasicGUI_ArcDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
   if ( send == Group3Pnts->LineEdit1 || send == Group3Pnts->LineEdit2 || send == Group3Pnts->LineEdit3 ||
-       send == Group3Pnts2->LineEdit1 || send == Group3Pnts2->LineEdit2 || send == Group3Pnts2->LineEdit3 ) {
+       send == Group3Pnts2->LineEdit1 || send == Group3Pnts2->LineEdit2 || send == Group3Pnts2->LineEdit3 ||
+       send == Group3Pnts3->LineEdit1 || send == Group3Pnts3->LineEdit2 || send == Group3Pnts3->LineEdit3 ) {
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
@@ -474,6 +549,14 @@ bool BasicGUI_ArcDlg::isValid( QString& msg )
 	return false;
       break;
     }
+  case 2:
+    {
+      if (Group3Pnts3->LineEdit1->text().trimmed().isEmpty() ||
+	  Group3Pnts3->LineEdit2->text().trimmed().isEmpty() ||
+	  Group3Pnts3->LineEdit3->text().trimmed().isEmpty())
+	return false;
+      break;
+    }
   }
   return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
     !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
@@ -506,6 +589,14 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
       }
       break;
     }
+  case 2:
+    {
+      if ( !CORBA::is_nil( myPoint1 ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) ) {
+	anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeArcOfEllipse( myPoint1, myPoint2, myPoint3 );
+	res = true;
+      }
+      break;
+    }
   }
   if ( !anObj->_is_nil() ) {
     objects.push_back( anObj._retn() );
@@ -527,8 +618,9 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
       globalSelection(); // close local contexts, if any
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX ); //Select Vertex on All Shapes
 
-      Group3Pnts2->hide();
       Group3Pnts->show();
+      Group3Pnts2->hide();
+      Group3Pnts3->hide();
       Group3Pnts->PushButton1->setDown(true);
       Group3Pnts->PushButton2->setDown(false);
       Group3Pnts->PushButton3->setDown(false);
@@ -550,6 +642,7 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
 
       Group3Pnts->hide();
       Group3Pnts2->show();
+      Group3Pnts3->hide();
       Group3Pnts2->PushButton1->setDown(true);
       Group3Pnts2->PushButton2->setDown(false);
       Group3Pnts2->PushButton3->setDown(false);
@@ -562,6 +655,28 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
       myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
       
       myEditCurrentArgument = Group3Pnts2->LineEdit1;
+      break;
+    }
+  case 2:
+    {
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX ); //Select Vertex on All Shapes
+
+      Group3Pnts->hide();
+      Group3Pnts2->hide();
+      Group3Pnts3->show();
+      Group3Pnts3->PushButton1->setDown(true);
+      Group3Pnts3->PushButton2->setDown(false);
+      Group3Pnts3->PushButton3->setDown(false);
+      Group3Pnts3->LineEdit1->setText( "" );
+      Group3Pnts3->LineEdit2->setText( "" );
+      Group3Pnts3->LineEdit3->setText( "" );
+      Group3Pnts3->LineEdit1->setEnabled(true);
+      Group3Pnts3->LineEdit2->setEnabled(false);
+      Group3Pnts3->LineEdit3->setEnabled(false);
+      myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
+
+      myEditCurrentArgument = Group3Pnts3->LineEdit1;
       break;
     }
   }
@@ -607,6 +722,11 @@ void BasicGUI_ArcDlg::addSubshapesToStudy()
     objMap[Group3Pnts2->LineEdit1->text()] = myPoint1;
     objMap[Group3Pnts2->LineEdit2->text()] = myPoint2;
     objMap[Group3Pnts2->LineEdit3->text()] = myPoint3;
+    break;
+  case 2:
+    objMap[Group3Pnts3->LineEdit1->text()] = myPoint1;
+    objMap[Group3Pnts3->LineEdit2->text()] = myPoint2;
+    objMap[Group3Pnts3->LineEdit3->text()] = myPoint3;
     break;
   }
   addSubshapesToFather( objMap );

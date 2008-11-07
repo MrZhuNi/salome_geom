@@ -64,6 +64,10 @@ class GEOM_I_EXPORT GEOM_ICurvesOperations_i :
                                        GEOM::GEOM_Object_ptr thePnt2,
                                        GEOM::GEOM_Object_ptr thePnt3,
                                        bool theSense);
+
+  GEOM::GEOM_Object_ptr MakeArcOfEllipse (GEOM::GEOM_Object_ptr thePnt1,
+					  GEOM::GEOM_Object_ptr thePnt2,
+					  GEOM::GEOM_Object_ptr thePnt3);
   
   GEOM::GEOM_Object_ptr MakePolyline (const GEOM::ListOfGO& thePoints);
 

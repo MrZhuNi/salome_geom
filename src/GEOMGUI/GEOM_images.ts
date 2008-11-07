@@ -18,6 +18,10 @@
             <source>ICON_DLG_ARC_CENTER</source>
             <translation>arccenter.png</translation>
         </message>
+	<message>
+            <source>ICON_DLG_ARC_OF_ELLIPSE</source>
+            <translation>arcofellipse.png</translation>
+        </message>
         <message>
             <source>ICON_DLG_BASICPROPERTIES</source>
             <translation>basicproperties.png</translation>

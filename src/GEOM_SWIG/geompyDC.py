@@ -492,6 +492,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeArcCenter(thePnt1, thePnt2, thePnt3, theSense)
             RaiseIfFailed("MakeArcCenter", self.CurvesOp)
             return anObj
+	
+        ##  Create an arc of ellipse, of center and two points.
+        #  @param theCenter Center of the arc.
+        #  @param thePnt1 defines major radius of the arc by distance from Pnt1 to Pnt2.
+        #  @param thePnt2 defines plane of ellipse and minor radius as distance from Pnt3 to line from Pnt1 to Pnt2.
+        #  @return New GEOM_Object, containing the created arc.
+        #
+        #  @ref swig_MakeArc "Example"
+        def MakeArcOfEllipse(self,theCenter, thePnt1, thePnt2):
+            # Example: see GEOM_TestAll.py
+            anObj = self.CurvesOp.MakeArcOfEllipse(theCenter, thePnt1, thePnt2)
+            RaiseIfFailed("MakeArcOfEllipse", self.CurvesOp)
+            return anObj
 
         ## Create a circle with given center, normal vector and radius.
         #  @param thePnt Circle center.

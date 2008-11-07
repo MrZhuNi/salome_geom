@@ -85,6 +85,8 @@
 
 #define GEOM_SHAPES_ON_SHAPE 42
 
+#define GEOM_ELLIPSE_ARC 43
+
 
 //GEOM_Function types
 
@@ -213,8 +215,9 @@
 
 #define ELLIPSE_PNT_VEC_RR 1
 
-#define CIRC_ARC_THREE_PNT 1
-#define CIRC_ARC_CENTER    2
+#define CIRC_ARC_THREE_PNT         1
+#define CIRC_ARC_CENTER            2
+#define ELLIPSE_ARC_CENTER_TWO_PNT 3
 
 #define FILLET_SHAPE_ALL      1
 #define FILLET_SHAPE_EDGES    2

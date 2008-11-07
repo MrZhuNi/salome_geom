@@ -92,6 +92,7 @@ def TestAll (geompy, math):
 
   Arc      = geompy.MakeArc(py, pz, px)                   #(3 GEOM_Object_ptr)->GEOM_Object_ptr
   Arc2     = geompy.MakeArcCenter(py, pz, px,0)           #(3 GEOM_Object_ptr,Boolean)->GEOM_Object_ptr
+  Arc3     = geompy.MakeArcOfEllipse(p0, px, pz)          #(3 GEOM_Object_ptr,Boolean)->GEOM_Object_ptr
   Circle   = geompy.MakeCircle(p0, vz, radius1)           #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Circle1  = geompy.MakeCircleThreePnt(p0, pxyz, px)      #(3 GEOM_Object_ptr)->GEOM_Object_ptr
   Circle2  = geompy.MakeCircleCenter2Pnt(p0, pxyz, py)    #(3 GEOM_Object_ptr)->GEOM_Object_ptr
@@ -292,6 +293,8 @@ def TestAll (geompy, math):
   id_Plane1 = geompy.addToStudy(Plane1,  "Plane by 3 points")
 
   id_Arc      = geompy.addToStudy(Arc,      "Arc")
+  id_Arc2     = geompy.addToStudy(Arc2,     "Arc2")
+  id_Arc3     = geompy.addToStudy(Arc3,     "Arc3")
   id_Circle   = geompy.addToStudy(Circle,   "Circle")
   id_Circle1  = geompy.addToStudy(Circle1,  "Circle by 3 points")
   id_Circle2  = geompy.addToStudy(Circle2,  "Circle by center and 2 points")

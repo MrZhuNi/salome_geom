@@ -511,6 +511,67 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcCenter (Handle(GEOM_Objec
 
 //=============================================================================
 /*!
+ *  MakeArcOfEllipse
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcOfEllipse (Handle(GEOM_Object) thePnt1,
+								  Handle(GEOM_Object) thePnt2,
+								  Handle(GEOM_Object) thePnt3)
+{
+  SetErrorCode(KO);
+
+  if (thePnt1.IsNull() || thePnt2.IsNull() || thePnt3.IsNull()) return NULL;
+
+  //Add a new Circle Arc object
+  Handle(GEOM_Object) anArc = GetEngine()->AddObject(GetDocID(), GEOM_ELLIPSE_ARC);
+
+  //Add a new Circle Arc function
+  Handle(GEOM_Function) aFunction =
+      anArc->AddFunction(GEOMImpl_ArcDriver::GetID(), ELLIPSE_ARC_CENTER_TWO_PNT);
+
+  if (aFunction.IsNull()) return NULL;
+  
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ArcDriver::GetID()) return NULL;
+  GEOMImpl_IArc aCI (aFunction);
+
+  Handle(GEOM_Function) aRefPnt1 = thePnt1->GetLastFunction();
+  Handle(GEOM_Function) aRefPnt2 = thePnt2->GetLastFunction();
+  Handle(GEOM_Function) aRefPnt3 = thePnt3->GetLastFunction();
+  
+
+  if (aRefPnt1.IsNull() || aRefPnt2.IsNull() || aRefPnt3.IsNull()) return NULL;
+
+  aCI.SetPoint1(aRefPnt1);
+  aCI.SetPoint2(aRefPnt2);
+  aCI.SetPoint3(aRefPnt3);
+  
+  //Compute the Arc value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Arc driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << anArc << " = geompy.MakeArcOfEllipse("
+    << thePnt1 << ", " << thePnt2 << ", " << thePnt3 << ")";
+
+  SetErrorCode(OK);
+  return anArc;
+}
+
+//=============================================================================
+/*!
  *  MakeSplineBezier
  */
 //=============================================================================

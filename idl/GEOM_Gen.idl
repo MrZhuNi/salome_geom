@@ -2095,6 +2095,17 @@ module GEOM
                                in GEOM_Object thePnt1,
                                in GEOM_Object thePnt2,
                                in boolean theSense);
+			       
+    /*!
+     *  Create an arc of ellipse of center C and two points P1 P2.
+     *  \param theCenter Center point of the arc.
+     *  \param thePnt1 Major radius is distance from center to Pnt1.
+     *  \param thePnt2 define a plane and Minor radius as a shortest distance from Pnt2 to vector Center->Pnt1.
+     *  \return New GEOM_Object, containing the created arc.
+     */
+    GEOM_Object MakeArcOfEllipse (in GEOM_Object theCenter,
+			          in GEOM_Object thePnt1,
+			          in GEOM_Object thePnt2);
 
 
     /*!
