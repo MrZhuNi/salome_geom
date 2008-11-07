@@ -49,6 +49,7 @@
 #include <TColStd_MapOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 
+
 #include <Interface_DataMapIteratorOfDataMapOfIntegerTransient.hxx>
 #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
 
@@ -57,6 +58,16 @@
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
+
+#define COMMA ','
+#define O_BRACKET '('
+#define C_BRACKET ')'
+
+#ifdef _DEBUG_
+static int MYDEBUG = 0;
+#else
+static int MYDEBUG = 0;
+#endif
 
 static GEOM_Engine* TheEngine = NULL;
 
@@ -84,9 +95,16 @@ static Standard_Integer ExtractDocID(TCollection_AsciiString& theID)
 
 void ProcessFunction(Handle(GEOM_Function)& theFunction, 
 		     TCollection_AsciiString& theScript,
+                     Resource_DataMapOfAsciiStringAsciiString& theVariableNames,
 		     TColStd_MapOfTransient& theProcessed);
 
+void ReplaceVariables(TCollection_AsciiString& theCommand, 
+                      Resource_DataMapOfAsciiStringAsciiString& theVariableNames);
+
+
+
 Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theString);
+
 
 //=============================================================================
 /*!
@@ -421,6 +439,7 @@ void GEOM_Engine::Close(int theDocID)
 //=============================================================================
 TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 						Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+						Resource_DataMapOfAsciiStringAsciiString& theVariableNames,
 						bool isPublished,
 						bool& aValidScript)
 {
@@ -450,7 +469,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 	MESSAGE ( "Null function !!!!" );
 	continue;
       }
-      ProcessFunction(aFunction, aScript, aMap);
+      ProcessFunction(aFunction, aScript,theVariableNames,aMap);
     }
   }
 
@@ -675,6 +694,7 @@ Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
 //===========================================================================
 void ProcessFunction(Handle(GEOM_Function)& theFunction, 
 		     TCollection_AsciiString& theScript,
+                     Resource_DataMapOfAsciiStringAsciiString& theVariableNames,
 		     TColStd_MapOfTransient& theProcessed)
 {
   if(theFunction.IsNull() || theProcessed.Contains(theFunction)) return;
@@ -698,8 +718,11 @@ void ProcessFunction(Handle(GEOM_Function)& theFunction,
   //Check if its internal function which doesn't requires dumping
   if(aDescr == "None") return;
 
+  //Replace parameter by notebook variables
+  ReplaceVariables(aDescr,theVariableNames);
   theScript += "\n\t";
   theScript += aDescr;
+
  
   theProcessed.Add(theFunction);
   return;
@@ -740,4 +763,141 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
   }
 
   return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  ReplaceVariables: Replace parameters of the function by variales from 
+ *                    Notebook if need
+ */
+//=============================================================================
+void ReplaceVariables(TCollection_AsciiString& theCommand, 
+                      Resource_DataMapOfAsciiStringAsciiString& theVariableNames)
+{
+  //Get Entry of the result object
+  TCollection_AsciiString anEntry = theCommand.Token("=",1);
+  
+  //Remove white spaces
+  anEntry.RightAdjust();
+  anEntry.LeftAdjust();
+  if(MYDEBUG)
+    cout<<"Result entry : '" <<anEntry<<"'"<<endl;
+    
+  //Find variables used for object construction
+  TCollection_AsciiString aVariables;
+  if(theVariableNames.IsBound(anEntry)) 
+    aVariables = theVariableNames.Find(anEntry);
+
+  if(aVariables.IsEmpty()) {
+    if(MYDEBUG)
+      cout<<"Valiables list empty!!!"<<endl;
+    return;
+  }
+
+  if(MYDEBUG)
+    cout<<"Variables : '" <<aVariables<<"'"<<endl;
+
+  //Calculate number of variables, that mast be replaced
+  Standard_Integer aNbReplacedParams = 1,aPos;
+  TColStd_HSequenceOfInteger aPositions;
+  while(aPos = aVariables.Location(aNbReplacedParams,':',1,aVariables.Length())) {
+    aPositions.Append(aPos);
+    aNbReplacedParams++;
+  }
+
+  if(MYDEBUG)
+    cout<<"Number of replaced variables : " <<aNbReplacedParams<<endl;
+
+  if(MYDEBUG)
+    {
+      for(Standard_Integer i = 1;i<=aPositions.Length();i++)
+        cout<<"Positions ["<<i<<"] = "<<aPositions.Value(i)<<endl;
+    }
+
+  //Calculate total number of parameter
+  Standard_Integer aTotalNbParams = 1;
+  while(theCommand.Location(aTotalNbParams,COMMA,1,theCommand.Length()))
+    aTotalNbParams++;
+
+
+  if(MYDEBUG)
+    cout<<"Total Number of parameters : " <<aTotalNbParams<<endl;
+
+  //Get Variables names 
+  TColStd_SequenceOfAsciiString aVarSeq;
+  TCollection_AsciiString aVar;
+  Standard_Integer i = 1;
+  while(i <= aNbReplacedParams){
+    
+    if(i == 1)
+      aVar = (aPositions.Value(i) == 1) ? TCollection_AsciiString() : aVariables.SubString(1, aPositions.Value(i)-1);
+    else if(i == aNbReplacedParams) {
+      Standard_Integer aLen = aVariables.Length();
+      Standard_Integer aPos = aPositions.Value(i-1);
+      aVar = (aPos == aLen) ? TCollection_AsciiString() : aVariables.SubString(aPos+1, aLen);
+    }
+    else {
+      Standard_Integer aPrevPos = aPositions.Value(i-1);
+      Standard_Integer aCurrentPos = aPositions.Value(i);
+      aVar = (aCurrentPos - aPrevPos == 1) ? TCollection_AsciiString() : aVariables.SubString(aPrevPos+1, aCurrentPos-1);
+    }
+    if(MYDEBUG)
+      cout<<"Variable ["<<i<<"] = '"<<aVar<<"'"<<endl;
+    
+    //Add current varibale
+    aVarSeq.Append(aVar);
+    i++;
+  }
+
+  //Replace parameters by variables
+  Standard_Integer aStartPos = 0;
+  Standard_Integer aEndPos = 0;
+  Standard_Integer iVar = 1;
+  for(Standard_Integer i=1;i <= aTotalNbParams;i++) {
+        
+    //Replace first parameter (bettwen '(' character and first ',' character)
+    if(i == 1) 
+      {
+        aStartPos = theCommand.Location(O_BRACKET, 1, theCommand.Length()) + 1;
+        aEndPos = theCommand.Location(COMMA, 1, theCommand.Length());
+      }
+    //Replace last parameter (bettwen ',' character and ')' character)
+    else if(i == aVarSeq.Length())
+      {
+        aStartPos = theCommand.Location(i-1, COMMA, 1, theCommand.Length()) + 2;
+        aEndPos = theCommand.Location(C_BRACKET, 1, theCommand.Length());
+      }
+    //Replace other parameters (bettwen two ',' characters)
+    else if(i != 1 && i != aVarSeq.Length())
+      {
+        aStartPos = theCommand.Location(i-1, COMMA, 1, theCommand.Length()) + 2;
+        aEndPos = theCommand.Location(i, COMMA, 1, theCommand.Length());
+      }
+
+    TCollection_AsciiString aParameter = theCommand.SubString(aStartPos, aStartPos);
+
+    if(MYDEBUG)
+      cout<<"Current parameter "<<aParameter<<endl;
+
+    aVar = aVarSeq.Value(iVar);
+    
+    //If parameter is entry, skip it
+    aVar.RightAdjust();
+    aVar.LeftAdjust();
+    if(theVariableNames.IsBound(aVar))
+      continue;
+
+      
+    if(aVar.IsEmpty()) {
+      iVar++;
+      continue;
+    }
+    
+    aVar.InsertBefore(1,"\"");
+    aVar.InsertAfter(aVar.Length(),"\"");
+
+    theCommand.Remove(aStartPos, aEndPos - aStartPos);
+    theCommand.Insert(aStartPos,aVar);    
+    iVar++;
+  }
 }

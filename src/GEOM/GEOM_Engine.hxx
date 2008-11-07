@@ -84,6 +84,7 @@ class GEOM_Engine
 
   Standard_EXPORT TCollection_AsciiString DumpPython(int theDocID, 
 				     Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                                     Resource_DataMapOfAsciiStringAsciiString& theVariableNames,
 				     bool isPublished, 
 				     bool& aValidScript);
 

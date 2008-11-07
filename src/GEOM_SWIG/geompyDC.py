@@ -80,6 +80,8 @@ import salome
 salome.salome_init()
 from salome import *
 
+from salome_notebook import *
+
 import GEOM
 import math
 
@@ -92,6 +94,29 @@ ShapeType = {"COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE"
 def RaiseIfFailed (Method_name, Operation):
     if Operation.IsDone() == 0 and Operation.GetErrorCode() != "NOT_FOUND_ANY":
         raise RuntimeError, Method_name + " : " + Operation.GetErrorCode()
+    
+## Return list of variables value from salome notebook
+## @ingroup l1_geompy_auxiliary    
+def ParseParameters(*parameters):
+    Result = []
+    StringResult = ""
+    for parameter in parameters:
+        if isinstance(parameter,str):
+            if notebook.isVariable(parameter):
+                Result.append(notebook.get(parameter))
+                pass
+            pass
+        else:
+            Result.append(parameter)
+            pass
+        
+        StringResult = StringResult + str(parameter)
+        StringResult = StringResult + ":"
+        pass
+    StringResult = StringResult[:len(StringResult)-1]
+    Result.append(StringResult)
+    return Result
+    
 
 ## Kinds of shape enumeration
 #  @ingroup l1_geompy_auxiliary
@@ -684,6 +709,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_box "Example"
         def MakeBoxDXDYDZ(self,theDX, theDY, theDZ):
             # Example: see GEOM_TestAll.py
+            theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
+            self.PrimOp.SetParameters(Parameters)
             anObj = self.PrimOp.MakeBoxDXDYDZ(theDX, theDY, theDZ)
             RaiseIfFailed("MakeBoxDXDYDZ", self.PrimOp)
             return anObj
