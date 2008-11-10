@@ -425,12 +425,16 @@ GEOM::GEOM_IOperations_ptr PrimitiveGUI_BoxDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool PrimitiveGUI_BoxDlg::isValid (QString&)
+bool PrimitiveGUI_BoxDlg::isValid (QString& msg)
 {
-  return getConstructorId() == 0 ? !(myPoint1->_is_nil() || myPoint2->_is_nil()) :
-    GroupDimensions->SpinBox_DX->isValid() &&
-    GroupDimensions->SpinBox_DY->isValid() &&
-    GroupDimensions->SpinBox_DZ->isValid();
+  bool ok = true;
+  if( getConstructorId() == 1 )
+  {
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+  }
+  return getConstructorId() == 0 ? !(myPoint1->_is_nil() || myPoint2->_is_nil()) : ok;
 }
 
 //=================================================================================
