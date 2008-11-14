@@ -85,6 +85,7 @@ class GEOM_Engine
   Standard_EXPORT TCollection_AsciiString DumpPython(int theDocID, 
 				     Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
                                      Resource_DataMapOfAsciiStringAsciiString& theVariableNames,
+                                     TColStd_HSequenceOfAsciiString&           theStudyVariables,
 				     bool isPublished, 
 				     bool& aValidScript);
 
@@ -94,7 +95,7 @@ class GEOM_Engine
 
  protected:
   Standard_EXPORT static void SetEngine(GEOM_Engine* theEngine);       
-
+  
  private:
 
   Handle(GEOM_Application)  _OCAFApp;

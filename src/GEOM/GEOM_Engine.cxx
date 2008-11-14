@@ -96,10 +96,12 @@ static Standard_Integer ExtractDocID(TCollection_AsciiString& theID)
 void ProcessFunction(Handle(GEOM_Function)& theFunction, 
 		     TCollection_AsciiString& theScript,
                      Resource_DataMapOfAsciiStringAsciiString& theVariableNames,
+                     TColStd_HSequenceOfAsciiString& theStudyVariables,
 		     TColStd_MapOfTransient& theProcessed);
 
 void ReplaceVariables(TCollection_AsciiString& theCommand, 
-                      Resource_DataMapOfAsciiStringAsciiString& theVariableNames);
+                      Resource_DataMapOfAsciiStringAsciiString& theVariableNames,
+                      TColStd_HSequenceOfAsciiString& theStudyVariables);
 
 
 
@@ -440,6 +442,7 @@ void GEOM_Engine::Close(int theDocID)
 TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 						Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
 						Resource_DataMapOfAsciiStringAsciiString& theVariableNames,
+                                                TColStd_HSequenceOfAsciiString& theStudyVariables,
 						bool isPublished,
 						bool& aValidScript)
 {
@@ -469,7 +472,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 	MESSAGE ( "Null function !!!!" );
 	continue;
       }
-      ProcessFunction(aFunction, aScript,theVariableNames,aMap);
+      ProcessFunction(aFunction, aScript, theVariableNames, theStudyVariables ,aMap);
     }
   }
 
@@ -695,6 +698,7 @@ Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
 void ProcessFunction(Handle(GEOM_Function)& theFunction, 
 		     TCollection_AsciiString& theScript,
                      Resource_DataMapOfAsciiStringAsciiString& theVariableNames,
+                     TColStd_HSequenceOfAsciiString& theStudyVariables,
 		     TColStd_MapOfTransient& theProcessed)
 {
   if(theFunction.IsNull() || theProcessed.Contains(theFunction)) return;
@@ -719,7 +723,7 @@ void ProcessFunction(Handle(GEOM_Function)& theFunction,
   if(aDescr == "None") return;
 
   //Replace parameter by notebook variables
-  ReplaceVariables(aDescr,theVariableNames);
+  ReplaceVariables(aDescr,theVariableNames,theStudyVariables);
   theScript += "\n\t";
   theScript += aDescr;
 
@@ -772,11 +776,12 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
  */
 //=============================================================================
 void ReplaceVariables(TCollection_AsciiString& theCommand, 
-                      Resource_DataMapOfAsciiStringAsciiString& theVariableNames)
+                      Resource_DataMapOfAsciiStringAsciiString& theVariableNames,
+                      TColStd_HSequenceOfAsciiString& theStudyVariables)
 {
   //Get Entry of the result object
   TCollection_AsciiString anEntry = theCommand.Token("=",1);
-  
+
   //Remove white spaces
   anEntry.RightAdjust();
   anEntry.LeftAdjust();
@@ -874,11 +879,6 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
         aEndPos = theCommand.Location(i, COMMA, 1, theCommand.Length());
       }
 
-    TCollection_AsciiString aParameter = theCommand.SubString(aStartPos, aStartPos);
-
-    if(MYDEBUG)
-      cout<<"Current parameter "<<aParameter<<endl;
-
     aVar = aVarSeq.Value(iVar);
     
     //If parameter is entry, skip it
@@ -892,9 +892,17 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       iVar++;
       continue;
     }
-    
-    aVar.InsertBefore(1,"\"");
-    aVar.InsertAfter(aVar.Length(),"\"");
+
+    bool isVar = false;
+    for(Standard_Integer i = 1; i <= theStudyVariables.Length();i++)
+      if(theStudyVariables.Value(i).IsEqual(aVar)) {
+        isVar = true;
+        break;
+      }
+    if(isVar) {
+      aVar.InsertBefore(1,"\"");
+      aVar.InsertAfter(aVar.Length(),"\"");
+    }
 
     theCommand.Remove(aStartPos, aEndPos - aStartPos);
     theCommand.Insert(aStartPos,aVar);    
