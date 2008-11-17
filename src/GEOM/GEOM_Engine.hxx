@@ -32,6 +32,20 @@
 #include <TColStd_HSequenceOfAsciiString.hxx>
 #include <TDF_Label.hxx>
 
+#include <map>
+#include <vector>
+
+struct TVariable{
+  TCollection_AsciiString myVariable;
+  bool isVariable;
+
+  TVariable(const TCollection_AsciiString& theVariable, bool theFlag = true):
+    myVariable(theVariable),
+    isVariable(theFlag){}
+};
+
+typedef std::map<TCollection_AsciiString, std::vector<TVariable> > TVariablesList;
+
 class GEOM_Engine
 {
  public:
@@ -84,8 +98,7 @@ class GEOM_Engine
 
   Standard_EXPORT TCollection_AsciiString DumpPython(int theDocID, 
 				     Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
-                                     Resource_DataMapOfAsciiStringAsciiString& theVariableNames,
-                                     TColStd_HSequenceOfAsciiString&           theStudyVariables,
+                                     TVariablesList theVariables,
 				     bool isPublished, 
 				     bool& aValidScript);
 

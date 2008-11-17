@@ -280,8 +280,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_point "Example"
         def MakeVertex(self,theX, theY, theZ):
             # Example: see GEOM_TestAll.py
+            theX,theY,theZ,Parameters = ParseParameters(theX, theY, theZ)
             anObj = self.BasicOp.MakePointXYZ(theX, theY, theZ)
             RaiseIfFailed("MakePointXYZ", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a point, distant from the referenced point
@@ -295,8 +297,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_point "Example"
         def MakeVertexWithRef(self,theReference, theX, theY, theZ):
             # Example: see GEOM_TestAll.py
+            theX,theY,theZ,Parameters = ParseParameters(theX, theY, theZ)
             anObj = self.BasicOp.MakePointWithReference(theReference, theX, theY, theZ)
             RaiseIfFailed("MakePointWithReference", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a point, corresponding to the given parameter on the given curve.
@@ -307,8 +311,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_point "Example"
         def MakeVertexOnCurve(self,theRefCurve, theParameter):
             # Example: see GEOM_TestAll.py
+            theParameter, Parameters = ParseParameters(theParameter)
             anObj = self.BasicOp.MakePointOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakePointOnCurve", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a point, corresponding to the given parameters on the
@@ -320,9 +326,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref swig_MakeVertexOnSurface "Example"
         def MakeVertexOnSurface(self, theRefSurf, theUParameter, theVParameter):
+            theUParameter, theVParameter, Parameters = ParseParameters(theParameter)
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakePointOnSurface(theRefSurf, theUParameter, theVParameter)
             RaiseIfFailed("MakePointOnSurface", self.BasicOp)
+            anObj.SetParameters(Parameters);
             return anObj
 
         ## Create a point on intersection of two lines.

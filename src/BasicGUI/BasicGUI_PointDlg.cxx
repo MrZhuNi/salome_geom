@@ -687,19 +687,36 @@ GEOM::GEOM_IOperations_ptr BasicGUI_PointDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BasicGUI_PointDlg::isValid( QString& /*msg*/ )
+bool BasicGUI_PointDlg::isValid( QString& msg )
 {
   const int id = getConstructorId();
-  if ( id == 0 )
-    return true;
-  else if ( id == 1 )
-    return !myRefPoint->_is_nil();
-  else if ( id == 2 )
-    return !myEdge->_is_nil();
+  if ( id == 0 ) {
+    bool ok = true;
+    ok = GroupXYZ->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupXYZ->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupXYZ->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+    return ok;
+  }
+  else if ( id == 1 ) {
+    bool ok = true;
+    ok = GroupRefPoint->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupRefPoint->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupRefPoint->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+
+    return !myRefPoint->_is_nil() && ok;
+  }
+  else if ( id == 2 ) {
+    return !myEdge->_is_nil() && GroupOnCurve->SpinBox_DX->isValid( msg, !IsPreview() );
+  }
   else if ( id == 3 )
     return ( !myLine1->_is_nil() && !myLine2->_is_nil() );
-  else if ( id == 4 )
-    return !myFace->_is_nil();
+  else if ( id == 4 ) {
+    bool ok = true;
+    ok = GroupOnSurface->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupOnSurface->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    return !myFace->_is_nil() && ok;
+    
+  }
   return false;
 }
 
@@ -712,6 +729,7 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
   bool res = false;
 
   GEOM::GEOM_Object_var anObj;
+  QStringList aParameters;
 
   switch ( getConstructorId() ) {
   case 0 :
@@ -719,6 +737,10 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
       double x = GroupXYZ->SpinBox_DX->value();
       double y = GroupXYZ->SpinBox_DY->value();
       double z = GroupXYZ->SpinBox_DZ->value();
+
+      aParameters << GroupXYZ->SpinBox_DX->text();
+      aParameters << GroupXYZ->SpinBox_DY->text();
+      aParameters << GroupXYZ->SpinBox_DZ->text();
       
       anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePointXYZ( x, y, z );
       res = true;
@@ -729,6 +751,10 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
       double dx = GroupRefPoint->SpinBox_DX->value();
       double dy = GroupRefPoint->SpinBox_DY->value();
       double dz = GroupRefPoint->SpinBox_DZ->value();
+
+      aParameters << GroupRefPoint->SpinBox_DX->text();
+      aParameters << GroupRefPoint->SpinBox_DY->text();
+      aParameters << GroupRefPoint->SpinBox_DZ->text();
       
       anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->
 	MakePointWithReference( myRefPoint, dx, dy, dz );
@@ -738,6 +764,7 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
   case 2 :
     anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->
       MakePointOnCurve( myEdge, getParameter() );
+    aParameters<<GroupOnCurve->SpinBox_DX->text();
     res = true;
     break;
   case 3 :
@@ -748,10 +775,20 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
   case 4 :
     anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->
       MakePointOnSurface( myFace, getUParameter(), getVParameter() );
+    aParameters<<GroupOnSurface->SpinBox_DX->text();
+    aParameters<<GroupOnSurface->SpinBox_DY->text();
     res = true;
     break;
   }
   
+  if(!anObj->_is_nil() && (getConstructorId()==0 || 
+                           getConstructorId() == 1 ||
+                           getConstructorId() == 2 ||
+                           getConstructorId() == 4) ) {
+    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+  }
+  
+
   if ( getConstructorId() == 1 || getConstructorId() == 2 ||
        getConstructorId() == 4 ) {
     TopoDS_Shape aShape;
