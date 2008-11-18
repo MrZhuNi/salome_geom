@@ -63,6 +63,7 @@
 #define COMMA ','
 #define O_BRACKET '('
 #define C_BRACKET ')'
+#define PY_NULL "None"
 
 #ifdef _DEBUG_
 static int MYDEBUG = 0;
@@ -844,19 +845,20 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     aVar = theCommand.SubString(aStartPos, aEndPos-1);
     if(MYDEBUG) 
       cout<<"Current variable 1: '"<< aVar <<"'"<<endl;
-    //If parameter is entry, skip it
+
     aVar.RightAdjust();
     aVar.LeftAdjust();
-
+    
     if(MYDEBUG) 
       cout<<"Current variable 2: '"<< aVar <<"'"<<endl;
     
-    if(theVariables.find(aVar) != theVariables.end())
+    //If parameter is entry or 'None', skip it
+    if(theVariables.find(aVar) != theVariables.end() || aVar == PY_NULL)
       continue;
-
+    
     aReplasedVar = aVariables[iVar].myVariable;
-   
-      
+    
+    
     if(aReplasedVar.IsEmpty()) {
       iVar++;
       continue;
