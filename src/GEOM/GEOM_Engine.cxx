@@ -828,7 +828,10 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     if(i == 1)
       {
         aStartPos = theCommand.Location(O_BRACKET, 1, theCommand.Length()) + 1;
-        aEndPos = theCommand.Location(COMMA, 1, theCommand.Length());
+	if(aTotalNbParams != 1 )
+	  aEndPos = theCommand.Location(COMMA, 1, theCommand.Length());
+	else
+	  aEndPos = theCommand.Location(C_BRACKET, 1, theCommand.Length());	
       }
     //Replace last parameter (bettwen ',' character and ')' character)
     else if(i == aTotalNbParams)
