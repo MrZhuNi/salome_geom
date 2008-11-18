@@ -462,13 +462,14 @@ bool PrimitiveGUI_BoxDlg::execute (ObjectList& objects)
       double y = GroupDimensions->SpinBox_DY->value();
       double z = GroupDimensions->SpinBox_DZ->value();
 
+      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->MakeBoxDXDYDZ(x, y, z);
+
       QStringList aParameters;
       aParameters << GroupDimensions->SpinBox_DX->text();
       aParameters << GroupDimensions->SpinBox_DY->text();
       aParameters << GroupDimensions->SpinBox_DZ->text();
-      getOperation()->SetParameters( aParameters.join( ":" ).toLatin1().constData() );
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
 
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->MakeBoxDXDYDZ(x, y, z);
       res = true;
     }
     break;

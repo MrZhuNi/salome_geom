@@ -541,13 +541,19 @@ static bool isEqual (const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Obje
 // function : isValid
 // purpose  :
 //=================================================================================
-bool PrimitiveGUI_DiskDlg::isValid (QString&)
+bool PrimitiveGUI_DiskDlg::isValid (QString& msg)
 {
+  bool ok = true;
+  if( getConstructorId() == 0 )
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+  else if( getConstructorId() == 1 )
+    ok = GroupPntVecR->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+
   const int id = getConstructorId();
   if (id == 0)
-    return true;
+    return ok;
   else if (id == 1)
-    return !myPoint->_is_nil() && !myDir->_is_nil() && getRadius() > 0;
+    return !myPoint->_is_nil() && !myDir->_is_nil() && getRadius() > 0 && ok;
   else if (id == 2)
     return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
       !isEqual(myPoint1, myPoint2) && !isEqual(myPoint1, myPoint3) && !isEqual(myPoint2, myPoint3);
@@ -561,6 +567,7 @@ bool PrimitiveGUI_DiskDlg::isValid (QString&)
 bool PrimitiveGUI_DiskDlg::execute (ObjectList& objects)
 {
   bool res = false;
+  QStringList aParameters;
 
   GEOM::GEOM_Object_var anObj;
 
@@ -568,11 +575,19 @@ bool PrimitiveGUI_DiskDlg::execute (ObjectList& objects)
   case 0:
     anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
       MakeDiskR(getRadius(), myOrientationType);
+
+    aParameters << GroupDimensions->SpinBox_DX->text();
+    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+
     res = true;
     break;
   case 1:
     anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
       MakeDiskPntVecR(myPoint, myDir, getRadius());
+
+    aParameters << GroupPntVecR->SpinBox_DX->text();
+    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+
     res = true;
     break;
   case 2:

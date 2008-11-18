@@ -30,6 +30,7 @@
 #include <GeometryGUI.h>
 
 #include <SalomeApp_Application.h>
+#include <SalomeApp_DoubleSpinBox.h>
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 #include <SUIT_Desktop.h>
@@ -136,8 +137,18 @@ void GEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox,
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
 }
-
+// TODO: to replace these method:
 void GEOMBase_Skeleton::initSpinBox( QDoubleSpinBox* spinBox, 
+				     double min,  double max, 
+				     double step, int decimals )
+{
+  spinBox->setDecimals( decimals ); // it's necessary to set decimals before the range setting,
+                                    // by default Qt rounds boundaries to 2 decimals at setRange
+  spinBox->setRange( min, max );
+  spinBox->setSingleStep( step );
+}
+// TODO: by the following:
+void GEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox, 
 				     double min,  double max, 
 				     double step, int decimals )
 {

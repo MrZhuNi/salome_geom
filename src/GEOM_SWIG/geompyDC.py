@@ -732,9 +732,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakeBoxDXDYDZ(self,theDX, theDY, theDZ):
             # Example: see GEOM_TestAll.py
             theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
-            self.PrimOp.SetParameters(Parameters)
             anObj = self.PrimOp.MakeBoxDXDYDZ(theDX, theDY, theDZ)
             RaiseIfFailed("MakeBoxDXDYDZ", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a box with two specified opposite vertices,
@@ -760,8 +760,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_face "Example"
         def MakeFaceHW(self,theH, theW, theOrientation):
             # Example: see GEOM_TestAll.py
+            theH,theW,Parameters = ParseParameters(theH, theW)
             anObj = self.PrimOp.MakeFaceHW(theH, theW, theOrientation)
             RaiseIfFailed("MakeFaceHW", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a face from another plane and two sizes,
@@ -775,8 +777,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_face "Example"
         def MakeFaceObjHW(self, theObj, theH, theW):
             # Example: see GEOM_TestAll.py
+            theH,theW,Parameters = ParseParameters(theH, theW)
             anObj = self.PrimOp.MakeFaceObjHW(theObj, theH, theW)
             RaiseIfFailed("MakeFaceObjHW", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a disk with given center, normal vector and radius.
@@ -788,8 +792,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_disk "Example"
         def MakeDiskPntVecR(self,thePnt, theVec, theR):
             # Example: see GEOM_TestAll.py
+            theR,Parameters = ParseParameters(theR)
             anObj = self.PrimOp.MakeDiskPntVecR(thePnt, theVec, theR)
             RaiseIfFailed("MakeDiskPntVecR", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a disk, passing through three given points
@@ -811,8 +817,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_face "Example"
         def MakeDiskR(self,theR, theOrientation):
             # Example: see GEOM_TestAll.py
+            theR,Parameters = ParseParameters(theR)
             anObj = self.PrimOp.MakeDiskR(theR, theOrientation)
             RaiseIfFailed("MakeDiskR", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a cylinder with given base point, axis, radius and height.
@@ -825,8 +833,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_cylinder "Example"
         def MakeCylinder(self,thePnt, theAxis, theR, theH):
             # Example: see GEOM_TestAll.py
+            theR,theH,Parameters = ParseParameters(theR, theH)
             anObj = self.PrimOp.MakeCylinderPntVecRH(thePnt, theAxis, theR, theH)
             RaiseIfFailed("MakeCylinderPntVecRH", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a cylinder with given radius and height at
@@ -839,8 +849,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_cylinder "Example"
         def MakeCylinderRH(self,theR, theH):
             # Example: see GEOM_TestAll.py
+            theR,theH,Parameters = ParseParameters(theR, theH)
             anObj = self.PrimOp.MakeCylinderRH(theR, theH)
             RaiseIfFailed("MakeCylinderRH", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a sphere with given center and radius.
@@ -851,8 +863,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_sphere "Example"
         def MakeSpherePntR(self, thePnt, theR):
             # Example: see GEOM_TestAll.py
+            theR,Parameters = ParseParameters(theR)
             anObj = self.PrimOp.MakeSpherePntR(thePnt, theR)
             RaiseIfFailed("MakeSpherePntR", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a sphere with given center and radius.
@@ -874,8 +888,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_sphere "Example"
         def MakeSphereR(self, theR):
             # Example: see GEOM_TestAll.py
+            theR,Parameters = ParseParameters(theR)
             anObj = self.PrimOp.MakeSphereR(theR)
             RaiseIfFailed("MakeSphereR", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a cone with given base point, axis, height and radiuses.
@@ -891,8 +907,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_cone "Example"
         def MakeCone(self,thePnt, theAxis, theR1, theR2, theH):
             # Example: see GEOM_TestAll.py
+            theR1,theR2,theH,Parameters = ParseParameters(theR1,theR2,theH)
             anObj = self.PrimOp.MakeConePntVecR1R2H(thePnt, theAxis, theR1, theR2, theH)
             RaiseIfFailed("MakeConePntVecR1R2H", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a cone with given height and radiuses at
@@ -908,8 +926,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_cone "Example"
         def MakeConeR1R2H(self,theR1, theR2, theH):
             # Example: see GEOM_TestAll.py
+            theR1,theR2,theH,Parameters = ParseParameters(theR1,theR2,theH)
             anObj = self.PrimOp.MakeConeR1R2H(theR1, theR2, theH)
             RaiseIfFailed("MakeConeR1R2H", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a torus with given center, normal vector and radiuses.
@@ -922,8 +942,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_torus "Example"
         def MakeTorus(self, thePnt, theVec, theRMajor, theRMinor):
             # Example: see GEOM_TestAll.py
+            theRMajor,theRMinor,Parameters = ParseParameters(theRMajor,theRMinor)
             anObj = self.PrimOp.MakeTorusPntVecRR(thePnt, theVec, theRMajor, theRMinor)
             RaiseIfFailed("MakeTorusPntVecRR", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a torus with given radiuses at the origin of coordinate system.
@@ -934,8 +956,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_torus "Example"
         def MakeTorusRR(self, theRMajor, theRMinor):
             # Example: see GEOM_TestAll.py
+            theRMajor,theRMinor,Parameters = ParseParameters(theRMajor,theRMinor)
             anObj = self.PrimOp.MakeTorusRR(theRMajor, theRMinor)
             RaiseIfFailed("MakeTorusRR", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         # end of l3_3d_primitives

@@ -378,7 +378,12 @@ GEOM::GEOM_IOperations_ptr PrimitiveGUI_SphereDlg::createOperation()
 //=================================================================================
 bool PrimitiveGUI_SphereDlg::isValid( QString& msg  )
 {
-  return getConstructorId() == 0 ? !myPoint->_is_nil() : true;
+  bool ok = true;
+  if( getConstructorId() == 0 )
+    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+  else if( getConstructorId() == 1 )
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+  return getConstructorId() == 0 ? !myPoint->_is_nil() && ok : ok;
 }
 
 //=================================================================================
@@ -396,6 +401,11 @@ bool PrimitiveGUI_SphereDlg::execute( ObjectList& objects )
     {
       if ( !CORBA::is_nil( myPoint ) ) {
 	anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeSpherePntR( myPoint, getRadius() );
+
+	QStringList aParameters;
+	aParameters << GroupPoints->SpinBox_DX->text();
+	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+
 	res = true;
       }
       break;
@@ -403,6 +413,11 @@ bool PrimitiveGUI_SphereDlg::execute( ObjectList& objects )
   case 1 :
     {
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow( getOperation() )->MakeSphereR( getRadius() );
+
+      QStringList aParameters;
+      aParameters << GroupDimensions->SpinBox_DX->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+
       res = true;
       break;
     }

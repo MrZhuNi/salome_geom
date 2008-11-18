@@ -429,9 +429,20 @@ GEOM::GEOM_IOperations_ptr PrimitiveGUI_TorusDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool PrimitiveGUI_TorusDlg::isValid (QString&)
+bool PrimitiveGUI_TorusDlg::isValid (QString& msg)
 {
-  return getConstructorId() == 0 ? !(myPoint->_is_nil() || myDir->_is_nil()) : true;
+  bool ok = true;
+  if( getConstructorId() == 0 )
+  {
+    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+  }
+  else if( getConstructorId() == 1 )
+  {
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+  }
+  return getConstructorId() == 0 ? !(myPoint->_is_nil() || myDir->_is_nil()) && ok : ok;
 }
 
 //=================================================================================
@@ -449,12 +460,24 @@ bool PrimitiveGUI_TorusDlg::execute (ObjectList& objects)
     if (!CORBA::is_nil(myPoint) && !CORBA::is_nil(myDir)) {
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
         MakeTorusPntVecRR(myPoint, myDir, getRadius1(), getRadius2());
+
+      QStringList aParameters;
+      aParameters << GroupPoints->SpinBox_DX->text();
+      aParameters << GroupPoints->SpinBox_DY->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+
       res = true;
     }
     break;
   case 1:
     anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
       MakeTorusRR(getRadius1(), getRadius2());
+
+    QStringList aParameters;
+    aParameters << GroupDimensions->SpinBox_DX->text();
+    aParameters << GroupDimensions->SpinBox_DY->text();
+    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+
     res = true;
     break;
   }
