@@ -326,7 +326,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref swig_MakeVertexOnSurface "Example"
         def MakeVertexOnSurface(self, theRefSurf, theUParameter, theVParameter):
-            theUParameter, theVParameter, Parameters = ParseParameters(theParameter)
+            theUParameter, theVParameter, Parameters = ParseParameters(theUParameter, theVParameter)
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakePointOnSurface(theRefSurf, theUParameter, theVParameter)
             RaiseIfFailed("MakePointOnSurface", self.BasicOp)
@@ -364,8 +364,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_vector "Example"
         def MakeVectorDXDYDZ(self,theDX, theDY, theDZ):
             # Example: see GEOM_TestAll.py
+            theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
             anObj = self.BasicOp.MakeVectorDXDYDZ(theDX, theDY, theDZ)
             RaiseIfFailed("MakeVectorDXDYDZ", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a vector between two points.
@@ -427,8 +429,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_plane "Example"
         def MakePlane(self,thePnt, theVec, theTrimSize):
             # Example: see GEOM_TestAll.py
+            theTrimSize, Parameters = ParseParameters(theTrimSize);
             anObj = self.BasicOp.MakePlanePntVec(thePnt, theVec, theTrimSize)
             RaiseIfFailed("MakePlanePntVec", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a plane, passing through the three given points
@@ -441,8 +445,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_plane "Example"
         def MakePlaneThreePnt(self,thePnt1, thePnt2, thePnt3, theTrimSize):
             # Example: see GEOM_TestAll.py
+            theTrimSize, Parameters = ParseParameters(theTrimSize);
             anObj = self.BasicOp.MakePlaneThreePnt(thePnt1, thePnt2, thePnt3, theTrimSize)
             RaiseIfFailed("MakePlaneThreePnt", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a plane, similar to the existing one, but with another size of representing face.
@@ -453,8 +459,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_plane "Example"
         def MakePlaneFace(self,theFace, theTrimSize):
             # Example: see GEOM_TestAll.py
+            theTrimSize, Parameters = ParseParameters(theTrimSize);
             anObj = self.BasicOp.MakePlaneFace(theFace, theTrimSize)
             RaiseIfFailed("MakePlaneFace", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a local coordinate system.
@@ -466,8 +474,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref swig_MakeMarker "Example"
         def MakeMarker(self, OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ):
             # Example: see GEOM_TestAll.py
+            OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ, Parameters = ParseParameters(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ);  
             anObj = self.BasicOp.MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ)
             RaiseIfFailed("MakeMarker", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a local coordinate system.
@@ -535,8 +545,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_circle "Example"
         def MakeCircle(self, thePnt, theVec, theR):
             # Example: see GEOM_TestAll.py
+            theR, Parameters = ParseParameters(theR)
             anObj = self.CurvesOp.MakeCirclePntVecR(thePnt, theVec, theR)
             RaiseIfFailed("MakeCirclePntVecR", self.CurvesOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a circle with given radius.
@@ -583,8 +595,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_ellipse "Example"
         def MakeEllipse(self, thePnt, theVec, theRMajor, theRMinor):
             # Example: see GEOM_TestAll.py
+            theRMajor, theRMinor, Parameters = ParseParameters(theRMajor, theRMinor)
             anObj = self.CurvesOp.MakeEllipse(thePnt, theVec, theRMajor, theRMinor)
             RaiseIfFailed("MakeEllipse", self.CurvesOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create an ellipse with given radiuses.
