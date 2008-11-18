@@ -343,6 +343,10 @@ module GEOM
     GEOM_Object PositionShapeCopy (in GEOM_Object theObject,
 				   in GEOM_Object theStartLCS,
 				   in GEOM_Object theEndLCS) ;
+    GEOM_Object PositionAlongPath (in GEOM_Object theObject,
+				   in GEOM_Object thePath,
+				   in double theDistance,
+				   in boolean theCopy);
 
     //-----------------------------------------------------------//
     // ShapesOperations                                          //

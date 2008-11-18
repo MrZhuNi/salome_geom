@@ -1564,6 +1564,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_START_LCS</source>
             <translation>Start LCS</translation>
         </message>
+	<message>
+            <source>SELECT_UNPUBLISHED_EDGES</source>
+            <translation>Select unpublished edges</translation>
+        </message>
         <message>
             <source>GEOM_STEP</source>
             <translation>Step :</translation>

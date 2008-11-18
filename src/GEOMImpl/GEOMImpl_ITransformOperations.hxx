@@ -118,6 +118,11 @@ class GEOMImpl_ITransformOperations : public GEOM_IOperations
                                                          Handle(GEOM_Object) theStartLCS,
                                                          Handle(GEOM_Object) theEndLCS);
 
+  Standard_EXPORT Handle(GEOM_Object) PositionAlongPath (Handle(GEOM_Object) theObject,
+                                                         Handle(GEOM_Object) thePath,
+                                                         double theDistance,
+							 bool   theCopy);
+
   Standard_EXPORT Handle(GEOM_Object) Rotate (Handle(GEOM_Object) theObject,
                                               Handle(GEOM_Object) theAxis,
                                               double theAngle);

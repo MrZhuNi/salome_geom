@@ -362,6 +362,10 @@
             <source>ICON_DLG_POSITION2</source>
             <translation>position2.png</translation>
         </message>
+	<message>
+            <source>ICON_DLG_POSITION3</source>
+            <translation>position3.png</translation>
+        </message>
         <message>
             <source>ICON_DLG_PRISM</source>
             <translation>prism.png</translation>

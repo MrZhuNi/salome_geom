@@ -419,6 +419,10 @@ public:
   GEOM::GEOM_Object_ptr PositionShapeCopy (GEOM::GEOM_Object_ptr theObject,
 					   GEOM::GEOM_Object_ptr theStartLCS,
 					   GEOM::GEOM_Object_ptr theEndLCS);
+  GEOM::GEOM_Object_ptr PositionAlongPath (GEOM::GEOM_Object_ptr theObject,
+					   GEOM::GEOM_Object_ptr thePath,
+					   CORBA::Double         theDistance,
+					   CORBA::Boolean        theCopy);
 
   //-----------------------------------------------------------//
   // ShapesOperations                                          //

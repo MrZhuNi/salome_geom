@@ -29,19 +29,30 @@
 
 // OCCT Includes
 #include <BRepBuilderAPI_Transform.hxx>
+#include <GCPnts_AbscissaPoint.hxx>
+#include <ShHealOper_EdgeDivide.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepTools_WireExplorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Wire.hxx>
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
 #include <gp_Pln.hxx>
 #include <Geom_Plane.hxx>
+#include <Geom_Curve.hxx>
 #include <GProp_GProps.hxx>
 #include <BRepGProp.hxx>
+#include <ShapeAnalysis_Edge.hxx>
+#include <GeomAdaptor_Curve.hxx>
 
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
+#include <gp_Vec.hxx>
+#include <TopExp.hxx>
 
 //=======================================================================
 //function : GetID
@@ -125,6 +136,106 @@ Standard_Integer GEOMImpl_PositionDriver::Execute(TFunction_Logbook& log) const
 
     // Set transformation
     aTrsf.SetDisplacement(aStartAx3, aDestAx3);
+
+    // Perform transformation
+    BRepBuilderAPI_Transform aBRepTrsf (aShapeBase, aTrsf, Standard_False);
+    aShape = aBRepTrsf.Shape();
+  }
+  else if (aType == POSITION_ALONG_PATH) {
+    Handle(GEOM_Function) aRefShape = aCI.GetShape();
+    Handle(GEOM_Function) aPathShape = aCI.GetPath();
+    double aValue = aCI.GetDistance();
+
+    TopoDS_Shape aShapeBase = aRefShape->GetValue();
+    TopoDS_Shape aPath = aPathShape->GetValue();
+
+    if (aShapeBase.IsNull() || aPath.IsNull())
+      return 0;
+
+    TopoDS_Shape aTrimmedPath;
+    gp_Trsf aTrsf;
+    Handle(Geom_Curve) aCurve;    
+    Standard_Real aFirst =0.,aLast=0.;
+    Standard_Real aParam = 0.;
+    Standard_Real aLength = 0.;
+   
+    if ( aPath.ShapeType() == TopAbs_EDGE ) {
+      TopoDS_Edge anEdge = TopoDS::Edge(aPath);
+      // Computation by Parameter
+      BRep_Tool::Range(anEdge,aFirst,aLast);
+      aCurve = BRep_Tool::Curve(anEdge,aFirst,aLast);
+      aParam = aFirst + aValue*(aLast - aFirst);
+    } else if ( aPath.ShapeType() == TopAbs_WIRE ) {
+      TopExp_Explorer ex;
+      TopTools_SequenceOfShape Edges;
+      Standard_Real nbEdges = 0.;
+      BRepTools_WireExplorer aWE (TopoDS::Wire(aPath));
+      for (; aWE.More(); aWE.Next(), nbEdges++)
+	Edges.Append(aWE.Current());
+
+      Standard_Real aSummOfLen =0.;
+      Standard_Real aCurLen =0.;
+      GeomAdaptor_Curve aAdC;
+      for(int i=1; i<=Edges.Length(); i++) {
+	TopoDS_Edge anEdge = TopoDS::Edge(Edges.Value(i));
+	BRep_Tool::Range(anEdge,aFirst,aLast);
+	aCurve = BRep_Tool::Curve(anEdge,aFirst,aLast);
+	aAdC.Load(aCurve,aFirst,aLast);
+	aCurLen = GCPnts_AbscissaPoint::Length(aAdC,aFirst,aLast); 
+	aSummOfLen += aCurLen;
+      }
+
+      Standard_Real aWireLen = aSummOfLen*aValue;
+      aSummOfLen = 0;
+      for(int i=1; i<=Edges.Length(); i++) {
+	TopoDS_Edge anEdge = TopoDS::Edge(Edges.Value(i));
+	BRep_Tool::Range(anEdge,aFirst,aLast);
+	aCurve = BRep_Tool::Curve(anEdge,aFirst,aLast);
+	aAdC.Load(aCurve,aFirst,aLast);
+	aCurLen = GCPnts_AbscissaPoint::Length(aAdC,aFirst,aLast); 
+
+	if ( aWireLen > (aSummOfLen + aCurLen) ) {
+	  aSummOfLen += aCurLen; // Transform a Base object along this Edge
+	  gp_Pnt aP1, aP2;
+	  gp_Vec aStartVec1, aStartVec2, aDestVec1, aDestVec2;
+	  aCurve->D2(aFirst, aP1, aStartVec1, aStartVec2 );
+	  aCurve->D2(aLast, aP2, aDestVec1, aDestVec2 );
+	  gp_Trsf aCurTrsf;
+	  if (aStartVec2.Magnitude() < gp::Resolution() || aDestVec2.Magnitude() < gp::Resolution()) // one of the second derivatives is null
+	    aCurTrsf.SetTranslation(aP1, aP2);
+	  else {
+	    gp_Ax3 aStartAx3(aP1, aStartVec1, aStartVec2);
+	    gp_Ax3 aDestAx3(aP2, aDestVec1, aDestVec2);
+	    aCurTrsf.SetDisplacement(aStartAx3, aDestAx3);
+	  }
+	  aTrsf.PreMultiply(aCurTrsf);
+	}
+	else {
+	  aLength = aWireLen - aSummOfLen;
+	  GCPnts_AbscissaPoint anAbsc(aAdC,aLength,aFirst);
+	  if(anAbsc.IsDone()) 
+	    aParam = anAbsc.Parameter();
+	  break;
+	}
+      }
+    } else
+      return 0; // Unknown Type
+
+    gp_Pnt aP1, aP2;
+    gp_Vec aStartVec1, aStartVec2, aDestVec1, aDestVec2;
+    aCurve->D2(aFirst, aP1, aStartVec1, aStartVec2 );
+    aCurve->D2(aParam, aP2, aDestVec1, aDestVec2 );
+    gp_Trsf aCurTrsf;
+
+    if (aStartVec2.Magnitude() < gp::Resolution() || aDestVec2.Magnitude() < gp::Resolution()) // one of the second derivatives is null
+      aCurTrsf.SetTranslation(aP1, aP2);
+    else {
+      gp_Ax3 aStartAx3(aP1, aStartVec1, aStartVec2);
+      gp_Ax3 aDestAx3(aP2, aDestVec1, aDestVec2);
+      aCurTrsf.SetDisplacement(aStartAx3, aDestAx3);
+    }
+    
+    aTrsf.PreMultiply(aCurTrsf);
 
     // Perform transformation
     BRepBuilderAPI_Transform aBRepTrsf (aShapeBase, aTrsf, Standard_False);

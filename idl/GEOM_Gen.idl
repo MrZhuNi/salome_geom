@@ -794,6 +794,20 @@ module GEOM
 				   in GEOM_Object theEndLCS);
 
     /*!
+     *  Modify the Location of the given object by Path,
+     *  \param  theObject The object to be displaced.
+     *  \param  thePath Wire or Edge along that the object will be translated.
+     *	\param  theDistance progress of Path (0 = actual location, 1 = end of path location).
+     *	\param  theCopy is a true or false parameter. true is to create a copy, false to move the object.
+     *  \return New GEOM_Object, containing the displaced shape.
+     */
+
+    GEOM_Object PositionAlongPath (in GEOM_Object theObject,
+				   in GEOM_Object thePath,
+				   in double theDistance,
+				   in boolean theCopy);
+
+    /*!
      *  Recompute the shape from its arguments.
      *  \param theObject The object to be recomputed.
      *  \return theObject.

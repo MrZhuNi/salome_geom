@@ -184,6 +184,7 @@ marker2.png			\
 marker3.png			\
 position.png			\
 position2.png			\
+position3.png                   \
 free_bound.png			\
 point_coord.png			\
 point3.png			\

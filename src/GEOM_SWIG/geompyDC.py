@@ -2231,6 +2231,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("PositionShapeCopy", self.TrsfOp)
             return anObj
 
+        ## Modify the Location of the given object by Path,
+        #  @param  theObject The object to be displaced.
+        #  @param  thePath Wire or Edge along that the object will be translated.
+	#  @param  theDistance progress of Path (0 = start location, 1 = end of path location).
+        #  @return New GEOM_Object, containing the displaced shape.
+        #
+        #  @ref tui_modify_location "Example"
+        def PositionAlongPath(self,theObject, thePath, theDistance, theCopy):
+            # Example: see GEOM_TestAll.py
+            anObj = self.TrsfOp.PositionAlongPath(theObject, thePath, theDistance, theCopy)
+            RaiseIfFailed("PositionAlongPath", self.TrsfOp)
+            return anObj
+
         ## Create new object as offset of the given one.
         #  @param theObject The base object for the offset.
         #  @param theOffset Offset value.
