@@ -110,11 +110,11 @@ BlocksGUI_TrsfDlg::~BlocksGUI_TrsfDlg()
 void BlocksGUI_TrsfDlg::Init()
 {
   // Set range of spinboxes
-  double SpecificStep = 1.0;
-  QMap<int, SalomeApp_DoubleSpinBox*>::iterator anIter;
+  int SpecificStep = 1;
+  QMap<int, SalomeApp_IntSpinBox*>::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter) {
     //anIter.data()->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
-    initSpinBox(anIter.value(), 1.0, MAX_NUMBER, SpecificStep, 3);
+    initSpinBox(anIter.value(), 1, MAX_NUMBER, SpecificStep);
   }
 
   // signals and slots connections
@@ -127,9 +127,9 @@ void BlocksGUI_TrsfDlg::Init()
   for (anIterBtn = mySelBtn.begin(); anIterBtn != mySelBtn.end(); ++anIterBtn)
     connect(anIterBtn.value(), SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  QMap<int, SalomeApp_DoubleSpinBox*>::iterator anIterSpin;
+  QMap<int, SalomeApp_IntSpinBox*>::iterator anIterSpin;
   for (anIterSpin = mySpinBox.begin(); anIterSpin != mySpinBox.end(); ++anIterSpin)
-    connect(anIterSpin.value(), SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+    connect(anIterSpin.value(), SIGNAL(valueChanged(int)), this, SLOT(ValueChangedInSpinBox(int)));
 
   // init controls and fields
   initName(tr("GEOM_BLOCK_MULTITRSF"));
@@ -164,14 +164,14 @@ void BlocksGUI_TrsfDlg::ConstructorsClicked (int constructorId)
   case 0:
     myGrp2->hide();
     myGrp1->show();
-    mySpinBox[SpinBox1]->setValue(2.0);
+    mySpinBox[SpinBox1]->setValue(2);
     mySelBtn[MainObj1]->click();
     break;
   case 1:
     myGrp1->hide();
     myGrp2->show();
-    mySpinBox[SpinBox2U]->setValue(2.0);
-    mySpinBox[SpinBox2V]->setValue(2.0);
+    mySpinBox[SpinBox2U]->setValue(2);
+    mySpinBox[SpinBox2V]->setValue(2);
     mySelBtn[MainObj2]->click();
     break;
   default:
@@ -406,7 +406,7 @@ void BlocksGUI_TrsfDlg::enterEvent (QEvent*)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BlocksGUI_TrsfDlg::ValueChangedInSpinBox(double)
+void BlocksGUI_TrsfDlg::ValueChangedInSpinBox(int)
 {
   displayPreview();
 }
@@ -449,7 +449,7 @@ void BlocksGUI_TrsfDlg::createSpinWg (const QString& theLbl,
                                       const int      theId)
 {
   QLabel* lab = new QLabel(theLbl, theParent);
-  mySpinBox[theId] = new SalomeApp_DoubleSpinBox(theParent);
+  mySpinBox[theId] = new SalomeApp_IntSpinBox(theParent);
   QGridLayout* l = 0;
   if (!theParent->layout()) {
     l = new QGridLayout(theParent);
@@ -580,7 +580,7 @@ bool BlocksGUI_TrsfDlg::execute (ObjectList& objects)
     anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
       MakeMultiTransformation1D(myShape,
                                 myFaces[Face1], myFaces[Face2],
-                                (int)mySpinBox[SpinBox1]->value());
+                                mySpinBox[SpinBox1]->value());
     if (!anObj->_is_nil())
     {
       QStringList aParameters;
@@ -594,9 +594,9 @@ bool BlocksGUI_TrsfDlg::execute (ObjectList& objects)
     anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
       MakeMultiTransformation2D (myShape,
                                  myFaces[Face1U], myFaces[Face2U],
-                                 (int)mySpinBox[SpinBox2U]->value(),
+                                 mySpinBox[SpinBox2U]->value(),
                                  myFaces[Face1V], myFaces[Face2V],
-                                 (int)mySpinBox[SpinBox2V]->value());
+                                 mySpinBox[SpinBox2V]->value());
     if (!anObj->_is_nil())
     {
       QStringList aParameters;

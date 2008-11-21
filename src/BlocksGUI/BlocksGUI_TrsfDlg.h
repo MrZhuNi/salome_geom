@@ -29,7 +29,7 @@
 
 #include <QMap>
 
-class SalomeApp_DoubleSpinBox;
+class SalomeApp_IntSpinBox;
 class QGroupBox;
 class QPushButton;
 class QLineEdit;
@@ -78,7 +78,7 @@ private:
 
   QMap<int, QPushButton*>            mySelBtn;
   QMap<int, QLineEdit*>              mySelName;
-  QMap<int, SalomeApp_DoubleSpinBox*> mySpinBox;
+  QMap<int, SalomeApp_IntSpinBox*>   mySpinBox;
 
 private slots:
   void                               ClickOnOk();
@@ -89,7 +89,7 @@ private slots:
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
 
-  void                               ValueChangedInSpinBox (double);
+  void                               ValueChangedInSpinBox (int);
 };
 
 #endif // BLOCKSGUI_TRSFDLG_H
