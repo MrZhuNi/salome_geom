@@ -128,7 +128,7 @@
        </widget>
       </item>
       <item row="2" column="2" >
-       <widget class="QtxDoubleSpinBox" name="SpinBox_DX" />
+       <widget class="SalomeApp_DoubleSpinBox" name="SpinBox_DX" />
       </item>
       <item row="3" column="0" >
        <widget class="QRadioButton" name="RadioButton2" >
@@ -154,7 +154,7 @@
        </widget>
       </item>
       <item row="3" column="2" >
-       <widget class="QtxDoubleSpinBox" name="SpinBox_DY" >
+       <widget class="SalomeApp_DoubleSpinBox" name="SpinBox_DY" >
         <property name="enabled" >
          <bool>false</bool>
         </property>
@@ -177,7 +177,7 @@
        </widget>
       </item>
       <item row="3" column="4" >
-       <widget class="QtxDoubleSpinBox" name="SpinBox_DZ" >
+       <widget class="SalomeApp_DoubleSpinBox" name="SpinBox_DZ" >
         <property name="enabled" >
          <bool>false</bool>
         </property>
@@ -190,9 +190,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QtxDoubleSpinBox</class>
+   <class>SalomeApp_DoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header location="global" >QtxDoubleSpinBox.h</header>
+   <header location="global" >SalomeApp_DoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

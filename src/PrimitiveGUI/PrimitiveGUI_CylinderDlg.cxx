@@ -445,6 +445,7 @@ bool PrimitiveGUI_CylinderDlg::isValid (QString& msg)
     ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
     ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
   }
+  ok = fabs( getHeight() ) > Precision::Confusion() && ok;
   return getConstructorId() == 0 ? !(myPoint->_is_nil() || myDir->_is_nil()) && ok : ok;
 }
 
@@ -463,24 +464,26 @@ bool PrimitiveGUI_CylinderDlg::execute (ObjectList& objects)
     if (!CORBA::is_nil(myPoint) && !CORBA::is_nil(myDir)) {
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
         MakeCylinderPntVecRH(myPoint, myDir, getRadius(), getHeight());
-
-      QStringList aParameters;
-      aParameters << GroupPoints->SpinBox_DX->text();
-      aParameters << GroupPoints->SpinBox_DY->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
-
+      if (!anObj->_is_nil())
+      {
+	QStringList aParameters;
+	aParameters << GroupPoints->SpinBox_DX->text();
+	aParameters << GroupPoints->SpinBox_DY->text();
+	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      }
       res = true;
     }
     break;
   case 1:
     anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
       MakeCylinderRH(getRadius(), getHeight());
-
-    QStringList aParameters;
-    aParameters << GroupDimensions->SpinBox_DX->text();
-    aParameters << GroupDimensions->SpinBox_DY->text();
-    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
-
+    if (!anObj->_is_nil())
+    {
+      QStringList aParameters;
+      aParameters << GroupDimensions->SpinBox_DX->text();
+      aParameters << GroupDimensions->SpinBox_DY->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
     res = true;
     break;
   }

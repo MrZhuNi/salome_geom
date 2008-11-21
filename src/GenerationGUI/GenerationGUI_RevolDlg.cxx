@@ -389,9 +389,10 @@ GEOM::GEOM_IOperations_ptr GenerationGUI_RevolDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool GenerationGUI_RevolDlg::isValid (QString&)
+bool GenerationGUI_RevolDlg::isValid (QString& msg)
 {
-  return myOkBase && myOkAxis;
+  bool ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() );
+  return myOkBase && myOkAxis && ok;
 }
 
 //=================================================================================
@@ -412,7 +413,13 @@ bool GenerationGUI_RevolDlg::execute (ObjectList& objects)
   }
 
   if (!anObj->_is_nil())
+  {
+    QStringList aParameters;
+    aParameters << GroupPoints->SpinBox_DX->text();
+    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+
     objects.push_back(anObj._retn());
+  }
 
   return true;
 }

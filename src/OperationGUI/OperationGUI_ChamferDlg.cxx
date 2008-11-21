@@ -84,7 +84,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg (GeometryGUI* theGeometryGUI, Q
 
   int row = aLayout->rowCount();
   aLayout->addWidget(new QLabel(tr("D"), myGrp1), row, 0);
-  aLayout->addWidget((mySpinBox[ SpinBox1 ] = new QDoubleSpinBox(myGrp1)), row++, 2);
+  aLayout->addWidget((mySpinBox[ SpinBox1 ] = new SalomeApp_DoubleSpinBox(myGrp1)), row++, 2);
   aLayout->setRowStretch(row, 10);
 
   // Create second group
@@ -145,7 +145,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg (GeometryGUI* theGeometryGUI, Q
 
   // Set range of spinboxes
   double SpecificStep = 10.0;
-  QMap< int, QDoubleSpinBox* >::iterator anIter;
+  QMap< int, SalomeApp_DoubleSpinBox* >::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter) {
     if (anIter.key() == SpinBox44 || anIter.key() == SpinBox34 || anIter.key() == SpinBox24)
       initSpinBox(anIter.value(), 0.001, 89.999, 5, 0);
@@ -175,7 +175,7 @@ OperationGUI_ChamferDlg::~OperationGUI_ChamferDlg()
 void OperationGUI_ChamferDlg::Init()
 {
   // Set Initial values of spinboxes
-  QMap< int, QDoubleSpinBox* >::iterator anIter;
+  QMap< int, SalomeApp_DoubleSpinBox* >::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter)
     anIter.value()->setValue(5);
 
@@ -213,7 +213,7 @@ void OperationGUI_ChamferDlg::Init()
             this, SLOT(LineEditReturnPressed()));
 
   // spin boxes
-  QMap< int, QDoubleSpinBox* >::iterator anIterSpin;
+  QMap< int, SalomeApp_DoubleSpinBox* >::iterator anIterSpin;
   for (anIterSpin = mySpinBox.begin(); anIterSpin != mySpinBox.end(); ++anIterSpin)
     connect(anIterSpin.value(), SIGNAL(valueChanged(double)),
             this, SLOT(ValueChangedInSpinBox(double)));
@@ -249,26 +249,26 @@ void OperationGUI_ChamferDlg::ConstructorsClicked (int constructorId)
   //disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
 
   // Get values from previous widget
-  double D1 = 5, D2 = 5, D = 5, Angle = 5;
+  QString D1 = "5", D2 = "5", D = "5", Angle = "5";
   if (myConstructorId == 0)
-    D1 = D2 = mySpinBox[ SpinBox1 ]->value();
+    D1 = D2 = mySpinBox[ SpinBox1 ]->text();
   else if (myConstructorId == 1) {
-    D1 = mySpinBox[ SpinBox21 ]->value();
-    D2 = mySpinBox[ SpinBox22 ]->value();
-    D =  mySpinBox[ SpinBox23 ]->value();
-    Angle = mySpinBox[ SpinBox24 ]->value();
+    D1 = mySpinBox[ SpinBox21 ]->text();
+    D2 = mySpinBox[ SpinBox22 ]->text();
+    D =  mySpinBox[ SpinBox23 ]->text();
+    Angle = mySpinBox[ SpinBox24 ]->text();
   }
   else if (myConstructorId == 2) {
-    D1 = mySpinBox[ SpinBox31 ]->value();
-    D2 = mySpinBox[ SpinBox32 ]->value();
-    D =  mySpinBox[ SpinBox33 ]->value();
-    Angle = mySpinBox[ SpinBox34 ]->value();
+    D1 = mySpinBox[ SpinBox31 ]->text();
+    D2 = mySpinBox[ SpinBox32 ]->text();
+    D =  mySpinBox[ SpinBox33 ]->text();
+    Angle = mySpinBox[ SpinBox34 ]->text();
   }
   else if (myConstructorId == 3) {
-    D1 = mySpinBox[ SpinBox41 ]->value();
-    D2 = mySpinBox[ SpinBox42 ]->value();
-    D =  mySpinBox[ SpinBox43 ]->value();
-    Angle = mySpinBox[ SpinBox44 ]->value();
+    D1 = mySpinBox[ SpinBox41 ]->text();
+    D2 = mySpinBox[ SpinBox42 ]->text();
+    D =  mySpinBox[ SpinBox43 ]->text();
+    Angle = mySpinBox[ SpinBox44 ]->text();
   }
 
   myConstructorId = constructorId;
@@ -279,38 +279,38 @@ void OperationGUI_ChamferDlg::ConstructorsClicked (int constructorId)
     myGrp3->hide();
     myGrp4->hide();
     myGrp1->show();
-    mySpinBox[ SpinBox1 ]->setValue(D1);
+    mySpinBox[ SpinBox1 ]->setText(D1);
     break;
   case 1:
     myGrp1->hide();
     myGrp3->hide();
     myGrp4->hide();
     myGrp2->show();
-    mySpinBox[ SpinBox21 ]->setValue(D1);
-    mySpinBox[ SpinBox22 ]->setValue(D2);
-    mySpinBox[ SpinBox23 ]->setValue(D);
-    mySpinBox[ SpinBox24 ]->setValue(Angle);
+    mySpinBox[ SpinBox21 ]->setText(D1);
+    mySpinBox[ SpinBox22 ]->setText(D2);
+    mySpinBox[ SpinBox23 ]->setText(D);
+    mySpinBox[ SpinBox24 ]->setText(Angle);
     break;
   case 2:
     myGrp1->hide();
     myGrp2->hide();
     myGrp4->hide();
     myGrp3->show();
-    mySpinBox[ SpinBox31 ]->setValue(D1);
-    mySpinBox[ SpinBox32 ]->setValue(D2);
-    mySpinBox[ SpinBox32 ]->setValue(D2);
-    mySpinBox[ SpinBox33 ]->setValue(D);
-    mySpinBox[ SpinBox34 ]->setValue(Angle);
+    mySpinBox[ SpinBox31 ]->setText(D1);
+    mySpinBox[ SpinBox32 ]->setText(D2);
+    mySpinBox[ SpinBox32 ]->setText(D2);
+    mySpinBox[ SpinBox33 ]->setText(D);
+    mySpinBox[ SpinBox34 ]->setText(Angle);
     break;
   case 3:
     myGrp1->hide();
     myGrp2->hide();
     myGrp3->hide();
     myGrp4->show();
-    mySpinBox[ SpinBox41 ]->setValue(D1);
-    mySpinBox[ SpinBox42 ]->setValue(D2);
-    mySpinBox[ SpinBox43 ]->setValue(D);
-    mySpinBox[ SpinBox44 ]->setValue(Angle);
+    mySpinBox[ SpinBox41 ]->setText(D1);
+    mySpinBox[ SpinBox42 ]->setText(D2);
+    mySpinBox[ SpinBox43 ]->setText(D);
+    mySpinBox[ SpinBox44 ]->setText(Angle);
     break;
   default:
     break;
@@ -641,8 +641,8 @@ void OperationGUI_ChamferDlg::createRadioWg(const QString& theLbl1,
   myRadioButton[ theRbId ] = new QRadioButton(theParent);
   QLabel* lab1 = new QLabel(theLbl1, theParent);
   QLabel* lab2 = new QLabel(theLbl2, theParent);
-  mySpinBox[ theSpin1Id ]  = new QDoubleSpinBox(theParent);
-  mySpinBox[ theSpin2Id ]  = new QDoubleSpinBox(theParent);
+  mySpinBox[ theSpin1Id ]  = new SalomeApp_DoubleSpinBox(theParent);
+  mySpinBox[ theSpin2Id ]  = new SalomeApp_DoubleSpinBox(theParent);
   int row = theLayout->rowCount();
   theLayout->addWidget(myRadioButton[ theRbId ], row, 0);
   theLayout->addWidget(lab1,                     row, 2);
@@ -738,14 +738,50 @@ GEOM::GEOM_IOperations_ptr OperationGUI_ChamferDlg::createOperation()
 // function : isValid()
 // purpose  : Verify validity of input data
 //=================================================================================
-bool OperationGUI_ChamferDlg::isValid (QString&)
+bool OperationGUI_ChamferDlg::isValid (QString& msg)
 {
+  bool ok = true;
   switch (getConstructorId())
   {
-    case 0: return !myShape->_is_nil();
-    case 1: return !myShape->_is_nil() && myFace[ Face1 ] > 0 && myFace[ Face2 ] > 0;
-    case 2: return !myShape->_is_nil() && myFaces.Extent() > 0;
-    case 3: return !myShape->_is_nil() && myEdges.Extent() > 0;
+    case 0:
+      ok = mySpinBox[ SpinBox1 ]->isValid( msg, !IsPreview() );
+      return !myShape->_is_nil() && ok;
+    case 1:
+      if (myRadioButton[ RadioButton21 ]->isChecked())
+      {
+	ok = mySpinBox[ SpinBox21 ]->isValid( msg, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox22 ]->isValid( msg, !IsPreview() ) && ok;
+      }
+      else
+      {
+	ok = mySpinBox[ SpinBox23 ]->isValid( msg, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox24 ]->isValid( msg, !IsPreview() ) && ok;
+      }
+      return !myShape->_is_nil() && myFace[ Face1 ] > 0 && myFace[ Face2 ] > 0 && ok;
+    case 2:
+      if (myRadioButton[ RadioButton31 ]->isChecked())
+      {
+	ok = mySpinBox[ SpinBox31 ]->isValid( msg, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox32 ]->isValid( msg, !IsPreview() ) && ok;
+      }
+      else
+      {
+	ok = mySpinBox[ SpinBox33 ]->isValid( msg, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox34 ]->isValid( msg, !IsPreview() ) && ok;
+      }
+      return !myShape->_is_nil() && myFaces.Extent() > 0 && ok;
+    case 3:
+      if (myRadioButton[ RadioButton41 ]->isChecked())
+      {
+	ok = mySpinBox[ SpinBox41 ]->isValid( msg, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox42 ]->isValid( msg, !IsPreview() ) && ok;
+      }
+      else
+      {
+	ok = mySpinBox[ SpinBox43 ]->isValid( msg, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox44 ]->isValid( msg, !IsPreview() ) && ok;
+      }
+      return !myShape->_is_nil() && myEdges.Extent() > 0 && ok;
     default: return false;
   }
 }
@@ -756,6 +792,7 @@ bool OperationGUI_ChamferDlg::isValid (QString&)
 //=================================================================================
 bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
 {
+  QStringList aParameters;
   GEOM::GEOM_Object_var anObj;
   bool flag = (myRadioButton[ RadioButton21 ]->isChecked() &&
                myRadioButton[ RadioButton31 ]->isChecked() &&
@@ -765,6 +802,8 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
   if (anId == 0) {
     anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
       MakeChamferAll(myShape, mySpinBox[ SpinBox1 ]->value());
+    if (!anObj->_is_nil())
+      aParameters << mySpinBox[ SpinBox1 ]->text();
   }
   else if (anId == 1) {
     if (flag) {
@@ -774,6 +813,11 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
                         mySpinBox[ SpinBox22 ]->value(),
                         myFace[ Face1 ],
                         myFace[ Face2 ]);
+      if (!anObj->_is_nil())
+      {
+	aParameters << mySpinBox[ SpinBox21 ]->text();
+	aParameters << mySpinBox[ SpinBox22 ]->text();
+      }
     }
     else {
       anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
@@ -782,6 +826,11 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
                           mySpinBox[ SpinBox24 ]->value() * PI180,
                           myFace[ Face1 ],
                           myFace[ Face2 ]);
+      if (!anObj->_is_nil())
+      {
+	aParameters << mySpinBox[ SpinBox23 ]->text();
+	aParameters << mySpinBox[ SpinBox24 ]->text();
+      }
     }
   }
   else if (anId == 2)
@@ -792,18 +841,30 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
     for (int i = 1, n = myFaces.Extent(); i <= n; i++)
       anArray[ i - 1 ] = myFaces(i);
 
-    if (flag)
-    anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-      MakeChamferFaces(myShape,
-                       mySpinBox[ SpinBox31 ]->value(),
-                       mySpinBox[ SpinBox32 ]->value(),
-                       anArray);
-    else
-    anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-      MakeChamferFacesAD(myShape,
-                         mySpinBox[ SpinBox33 ]->value(),
-                         mySpinBox[ SpinBox34 ]->value() * PI180,
-                         anArray);
+    if (flag) {
+      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
+	MakeChamferFaces(myShape,
+			 mySpinBox[ SpinBox31 ]->value(),
+			 mySpinBox[ SpinBox32 ]->value(),
+			 anArray);
+      if (!anObj->_is_nil())
+      {
+	aParameters << mySpinBox[ SpinBox31 ]->text();
+	aParameters << mySpinBox[ SpinBox32 ]->text();
+      }
+    }
+    else {
+      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
+	MakeChamferFacesAD(myShape,
+			   mySpinBox[ SpinBox33 ]->value(),
+			   mySpinBox[ SpinBox34 ]->value() * PI180,
+			   anArray);
+      if (!anObj->_is_nil())
+      {
+	aParameters << mySpinBox[ SpinBox33 ]->text();
+	aParameters << mySpinBox[ SpinBox34 ]->text();
+      }
+    }
   }
   else if (anId == 3) {
     GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
@@ -816,6 +877,11 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
                          mySpinBox[ SpinBox41 ]->value(),
                          mySpinBox[ SpinBox42 ]->value(),
                          anArray);
+      if (!anObj->_is_nil())
+      {
+	aParameters << mySpinBox[ SpinBox41 ]->text();
+	aParameters << mySpinBox[ SpinBox42 ]->text();
+      }
     }
     else {
       anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
@@ -823,11 +889,19 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
                            mySpinBox[ SpinBox43 ]->value(),
                            mySpinBox[ SpinBox44 ]->value() * PI180,
                            anArray);
+      if (!anObj->_is_nil())
+      {
+	aParameters << mySpinBox[ SpinBox43 ]->text();
+	aParameters << mySpinBox[ SpinBox44 ]->text();
+      }
     }
   }
 
   if (!anObj->_is_nil())
+  {
+    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
     objects.push_back(anObj._retn());
+  }
 
   return true;
 }

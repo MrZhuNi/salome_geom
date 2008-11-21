@@ -460,24 +460,26 @@ bool PrimitiveGUI_TorusDlg::execute (ObjectList& objects)
     if (!CORBA::is_nil(myPoint) && !CORBA::is_nil(myDir)) {
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
         MakeTorusPntVecRR(myPoint, myDir, getRadius1(), getRadius2());
-
-      QStringList aParameters;
-      aParameters << GroupPoints->SpinBox_DX->text();
-      aParameters << GroupPoints->SpinBox_DY->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
-
+      if (!anObj->_is_nil())
+      {
+	QStringList aParameters;
+	aParameters << GroupPoints->SpinBox_DX->text();
+	aParameters << GroupPoints->SpinBox_DY->text();
+	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      }
       res = true;
     }
     break;
   case 1:
     anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
       MakeTorusRR(getRadius1(), getRadius2());
-
-    QStringList aParameters;
-    aParameters << GroupDimensions->SpinBox_DX->text();
-    aParameters << GroupDimensions->SpinBox_DY->text();
-    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
-
+    if (!anObj->_is_nil())
+    {
+      QStringList aParameters;
+      aParameters << GroupDimensions->SpinBox_DX->text();
+      aParameters << GroupDimensions->SpinBox_DY->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
     res = true;
     break;
   }

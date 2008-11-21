@@ -81,7 +81,7 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   GroupPoints->LineEdit1->setReadOnly( true );
   
   QLabel* aTolLab = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints->Box );
-  myTolEdt = new QDoubleSpinBox( GroupPoints->Box );
+  myTolEdt = new SalomeApp_DoubleSpinBox( GroupPoints->Box );
   initSpinBox( myTolEdt,  0, 100, 1e-7, 7 );
   myTolEdt->setValue( DEFAULT_TOLERANCE_VALUE );
 
@@ -98,7 +98,7 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   GroupPoints2->LineEdit1->setReadOnly( true );
 
   QLabel* aTolLab2 = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints2->Box );
-  myTolEdt2 = new QDoubleSpinBox( GroupPoints2->Box );
+  myTolEdt2 = new SalomeApp_DoubleSpinBox( GroupPoints2->Box );
   initSpinBox( myTolEdt2, 0, 100, 1e-7, 7 );
   myTolEdt2->setValue( DEFAULT_TOLERANCE_VALUE );
 
@@ -380,17 +380,22 @@ GEOM::GEOM_IOperations_ptr RepairGUI_GlueDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool RepairGUI_GlueDlg::isValid( QString& )
+bool RepairGUI_GlueDlg::isValid( QString& msg )
 {
+  bool ok = true;
   double v = 0;
   switch ( getConstructorId() )
   {
   case 0:
-    v = myTolEdt->value();  break;
+    v = myTolEdt->value();
+    ok = myTolEdt->isValid( msg, !IsPreview() );
+    break;
   case 1:
-    v = myTolEdt2->value(); break;
+    v = myTolEdt2->value(); 
+    ok = myTolEdt2->isValid( msg, !IsPreview() );
+    break;
   }
-  return !myObject->_is_nil() && ( IsPreview() || v > 0. );
+  return !myObject->_is_nil() && ( IsPreview() || v > 0. ) && ok;
 }
 
 //=================================================================================
@@ -409,7 +414,13 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
         ( getOperation() )->MakeGlueFaces( myObject, myTolEdt->value(), true );
       aResult = !anObj->_is_nil();
       if ( aResult )
+      {
+	QStringList aParameters;
+	aParameters << myTolEdt->text();
+	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+
         objects.push_back( anObj._retn() );
+      }
       break;
     }
   case 1:
@@ -456,7 +467,13 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
       aResult = !anObj->_is_nil();
 
       if ( aResult )
+      {
+	QStringList aParameters;
+	aParameters << myTolEdt2->text();
+	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+
         objects.push_back( anObj._retn() );
+      }
 
       // Remove from engine useless objects
       clearTemporary();

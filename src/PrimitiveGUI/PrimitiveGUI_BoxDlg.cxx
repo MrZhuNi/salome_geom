@@ -433,6 +433,10 @@ bool PrimitiveGUI_BoxDlg::isValid (QString& msg)
     ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
     ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
     ok = GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+
+    ok = fabs( GroupDimensions->SpinBox_DX->value() ) > Precision::Confusion() && ok;
+    ok = fabs( GroupDimensions->SpinBox_DY->value() ) > Precision::Confusion() && ok;
+    ok = fabs( GroupDimensions->SpinBox_DZ->value() ) > Precision::Confusion() && ok;
   }
   return getConstructorId() == 0 ? !(myPoint1->_is_nil() || myPoint2->_is_nil()) : ok;
 }
@@ -463,13 +467,14 @@ bool PrimitiveGUI_BoxDlg::execute (ObjectList& objects)
       double z = GroupDimensions->SpinBox_DZ->value();
 
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->MakeBoxDXDYDZ(x, y, z);
-
-      QStringList aParameters;
-      aParameters << GroupDimensions->SpinBox_DX->text();
-      aParameters << GroupDimensions->SpinBox_DY->text();
-      aParameters << GroupDimensions->SpinBox_DZ->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
-
+      if (!anObj->_is_nil())
+      {
+	QStringList aParameters;
+	aParameters << GroupDimensions->SpinBox_DX->text();
+	aParameters << GroupDimensions->SpinBox_DY->text();
+	aParameters << GroupDimensions->SpinBox_DZ->text();
+	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      }
       res = true;
     }
     break;

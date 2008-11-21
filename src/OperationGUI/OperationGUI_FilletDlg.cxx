@@ -217,19 +217,19 @@ void OperationGUI_FilletDlg::ConstructorsClicked (int constructorId)
     return;
 
   // Get radius from previous widget
-  double R = 5, R1 = 5, R2 = 5;
+  QString R = "5", R1 = "5", R2 = "5";
   if      (myConstructorId == 0) {
-    R = Group1->SpinBox_DX->value();
+    R = Group1->SpinBox_DX->text();
   }
   else if (myConstructorId == 1) {
-    R = Group2->SpinBox_DX->value();
-    R1 = Group2->SpinBox_DY->value();
-    R2 = Group2->SpinBox_DZ->value();
+    R = Group2->SpinBox_DX->text();
+    R1 = Group2->SpinBox_DY->text();
+    R2 = Group2->SpinBox_DZ->text();
   }
   else {
-    R = Group3->SpinBox_DX->value();
-    R1 = Group3->SpinBox_DY->value();
-    R2 = Group3->SpinBox_DZ->value();
+    R = Group3->SpinBox_DX->text();
+    R1 = Group3->SpinBox_DY->text();
+    R2 = Group3->SpinBox_DZ->text();
   }
 
   myConstructorId = constructorId;
@@ -239,23 +239,23 @@ void OperationGUI_FilletDlg::ConstructorsClicked (int constructorId)
     Group2->hide();
     Group3->hide();
     Group1->show();
-    Group1->SpinBox_DX->setValue(R);
+    Group1->SpinBox_DX->setText(R);
     break;
   case 1:
     Group1->hide();
     Group3->hide();
     Group2->show();
-    Group2->SpinBox_DX->setValue(R);
-    Group2->SpinBox_DY->setValue(R1);
-    Group2->SpinBox_DZ->setValue(R2);
+    Group2->SpinBox_DX->setText(R);
+    Group2->SpinBox_DY->setText(R1);
+    Group2->SpinBox_DZ->setText(R2);
     break;
   case 2:
     Group1->hide();
     Group2->hide();
     Group3->show();
-    Group3->SpinBox_DX->setValue(R);
-    Group3->SpinBox_DY->setValue(R1);
-    Group3->SpinBox_DZ->setValue(R2);
+    Group3->SpinBox_DX->setText(R);
+    Group3->SpinBox_DY->setText(R1);
+    Group3->SpinBox_DZ->setText(R2);
     break;
   default:
     break;
@@ -585,13 +585,32 @@ GEOM::GEOM_IOperations_ptr OperationGUI_FilletDlg::createOperation()
 // function : isValid()
 // purpose  : Verify validity of input data
 //=================================================================================
-bool OperationGUI_FilletDlg::isValid (QString&)
+bool OperationGUI_FilletDlg::isValid (QString& msg)
 {
+  bool ok = true;
   switch (getConstructorId())
   {
-    case 0: return !myShape->_is_nil();
-    case 1: return !myShape->_is_nil() && myEdges.Extent() > 0;
-    case 2: return !myShape->_is_nil() && myFaces.Extent() > 0;
+    case 0:
+      ok = Group1->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+      return !myShape->_is_nil() && ok;
+    case 1:
+      if (Group2->RadioButton1->isChecked())
+	ok = Group2->SpinBox_DX->isValid( msg, !IsPreview() );
+      else
+      {
+	ok = Group2->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+	ok = Group2->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+      }
+      return !myShape->_is_nil() && myEdges.Extent() > 0 && ok;
+    case 2:
+      if (Group3->RadioButton1->isChecked())
+	ok = Group3->SpinBox_DX->isValid( msg, !IsPreview() );
+      else
+      {
+	ok = Group3->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+	ok = Group3->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+      }
+      return !myShape->_is_nil() && myFaces.Extent() > 0 && ok;
     default: return false;
   }
 }
@@ -602,12 +621,16 @@ bool OperationGUI_FilletDlg::isValid (QString&)
 //=================================================================================
 bool OperationGUI_FilletDlg::execute (ObjectList& objects)
 {
+  QStringList aParameters;
   GEOM::GEOM_Object_var anObj;
 
   int anId = getConstructorId();
-  if (anId == 0)
+  if (anId == 0) {
     anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
       MakeFilletAll(myShape, getRadius());
+    if (!anObj->_is_nil())
+      aParameters << Group1->SpinBox_DX->text();
+  }
   else if (anId == 1) {
     GEOM::ListOfLong_var aList = new GEOM::ListOfLong;
     aList->length(myEdges.Extent());
@@ -616,14 +639,25 @@ bool OperationGUI_FilletDlg::execute (ObjectList& objects)
       aList[ i - 1 ] = myEdges(i);
 
     if (Group2->RadioButton1->isChecked())
+    {
       anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
         MakeFilletEdges(myShape, getRadius(), aList);
+      if (!anObj->_is_nil())
+	aParameters << Group2->SpinBox_DX->text();
+    }
     else
+    {
       anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
         MakeFilletEdgesR1R2(myShape,
                             Group2->SpinBox_DY->value(),
                             Group2->SpinBox_DZ->value(),
                             aList);
+      if (!anObj->_is_nil())
+      {
+	aParameters << Group2->SpinBox_DY->text();
+	aParameters << Group2->SpinBox_DZ->text();
+      }
+    }
   }
   else if (anId == 2) {
     GEOM::ListOfLong_var aList = new GEOM::ListOfLong;
@@ -635,17 +669,27 @@ bool OperationGUI_FilletDlg::execute (ObjectList& objects)
     if (Group3->RadioButton1->isChecked()) {
       anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
         MakeFilletFaces(myShape, getRadius(), aList);
+      if (!anObj->_is_nil())
+	aParameters << Group3->SpinBox_DX->text();
     }
     else {
       anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
         MakeFilletFacesR1R2(myShape,
                             Group3->SpinBox_DY->value(),
                             Group3->SpinBox_DZ->value(), aList);
+      if (!anObj->_is_nil())
+      {
+	aParameters << Group3->SpinBox_DY->text();
+	aParameters << Group3->SpinBox_DZ->text();
+      }
     }
   }
 
   if (!anObj->_is_nil())
+  {
+    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
     objects.push_back(anObj._retn());
+  }
 
   return true;
 }

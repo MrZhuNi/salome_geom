@@ -83,7 +83,7 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg( GeometryGUI* theGeometryGUI, Q
   myIsParameterGr->addButton( rb2, 1 );
   rb1->setChecked( true );
 
-  myValEdt = new QDoubleSpinBox( GroupPoints->Box );
+  myValEdt = new SalomeApp_DoubleSpinBox( GroupPoints->Box );
   initSpinBox( myValEdt, 0., 1., 0.1, 3 );
   myValEdt->setValue( 0.5 );
   QLabel* aLbl1 = new QLabel( tr( "GEOM_VALUE" ), GroupPoints->Box );
@@ -338,9 +338,9 @@ GEOM::GEOM_IOperations_ptr RepairGUI_DivideEdgeDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool RepairGUI_DivideEdgeDlg::isValid( QString& )
+bool RepairGUI_DivideEdgeDlg::isValid( QString& msg )
 {
-  return !myObject->_is_nil();
+  return !myObject->_is_nil() && myValEdt->isValid( msg, !IsPreview() );
 }
 
 //=================================================================================
@@ -353,7 +353,15 @@ bool RepairGUI_DivideEdgeDlg::execute( ObjectList& objects )
     ( myObject, -1, myValEdt->value(), getIsByParameter() );
   bool aResult = !anObj->_is_nil();
   if ( aResult )
+  {
+    QStringList aParameters;
+    aParameters << "";
+    aParameters << myValEdt->text();
+    aParameters << "";
+    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+
     objects.push_back( anObj._retn() );
+  }
 
   return aResult;
 }

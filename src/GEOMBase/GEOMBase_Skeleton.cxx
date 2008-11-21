@@ -152,6 +152,7 @@ void GEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox,
 				     double min,  double max, 
 				     double step, int decimals )
 {
+  spinBox->setPrecision( decimals );
   spinBox->setDecimals( decimals ); // it's necessary to set decimals before the range setting,
                                     // by default Qt rounds boundaries to 2 decimals at setRange
   spinBox->setRange( min, max );

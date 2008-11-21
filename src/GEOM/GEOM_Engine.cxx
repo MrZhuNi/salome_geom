@@ -63,6 +63,8 @@
 #define COMMA ','
 #define O_BRACKET '('
 #define C_BRACKET ')'
+#define O_SQR_BRACKET '['
+#define C_SQR_BRACKET ']'
 #define PY_NULL "None"
 
 #ifdef _DEBUG_
@@ -778,8 +780,8 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
 void ReplaceVariables(TCollection_AsciiString& theCommand, 
                       TVariablesList theVariables)
 {
-  //Get Entry of the result object
-  TCollection_AsciiString anEntry = theCommand.Token("=",1);
+  if (MYDEBUG)
+    cout<<"Command : "<<theCommand<<endl;
 
   if (MYDEBUG) {
     cout<<"All Entries:"<<endl;
@@ -787,93 +789,145 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     for(;it != theVariables.end();it++)
       cout<<"\t'"<<(*it).first<<"'"<<endl;
   }
-  
-  //Remove white spaces
-  anEntry.RightAdjust();
-  anEntry.LeftAdjust();
-  if(MYDEBUG)
-    cout<<"Result entry : '" <<anEntry<<"'"<<endl;
-    
-  //Find variables used for object construction
-  vector<TVariable> aVariables;
-  TVariablesList::const_iterator it = theVariables.find(anEntry);
-  if( it != theVariables.end() ) 
-    aVariables = (*it).second;
 
-  if(aVariables.empty()) {
+  //Additional case - multi-row commands
+  int aCommandIndex = 1;
+  while( aCommandIndex < 10 ) { // tmp check
+    TCollection_AsciiString aCommand = theCommand.Token("\n",aCommandIndex);
+    if( aCommand.Length() == 0 )
+      break;
+
+    if (MYDEBUG)
+      cout<<"Sub-command : "<<aCommand<<endl;
+
+    Standard_Integer aStartCommandPos = theCommand.Location(aCommand,1,theCommand.Length());
+    Standard_Integer aEndCommandPos = aStartCommandPos + aCommand.Length();
+
+    //Get Entry of the result object
+    TCollection_AsciiString anEntry = aCommand.Token("=",1);
+
+    //Remove white spaces
+    anEntry.RightAdjust();
+    anEntry.LeftAdjust();
     if(MYDEBUG)
-      cout<<"Valiables list empty!!!"<<endl;
-    return;
-  }
-  
-  if(MYDEBUG) {
-    cout<<"Variables from SObject:"<<endl;
-    for (int i = 0; i < aVariables.size();i++)
-      cout<<"\t Variable["<<i<<"]"<<aVariables[i].myVariable<<endl;
-  }
+      cout<<"Result entry : '" <<anEntry<<"'"<<endl;
 
-  //Calculate total number of parameter
-  Standard_Integer aTotalNbParams = 1;
-  while(theCommand.Location(aTotalNbParams,COMMA,1,theCommand.Length()))
-    aTotalNbParams++;
+    //Check if result is list of entries - enough to get the first entry in this case
+    int aNbEntries = 1;
+    if( anEntry.Value( 1 ) == O_SQR_BRACKET && anEntry.Value( anEntry.Length() ) == C_SQR_BRACKET ) {
+      while(anEntry.Location(aNbEntries,COMMA,1,anEntry.Length()))
+	aNbEntries++;
+      TCollection_AsciiString aSeparator(COMMA);
+      anEntry = anEntry.Token(aSeparator.ToCString(),1);
+      anEntry.Remove( 1, 1 );
+      anEntry.RightAdjust();
+      anEntry.LeftAdjust();
+      if(MYDEBUG)
+	cout<<"Sub-entry : '" <<anEntry<<"'"<<endl;
+    }
+    
+    //Find variables used for object construction
+    vector<TVariable> aVariables;
+    TVariablesList::const_iterator it = theVariables.find(anEntry);
+    if( it != theVariables.end() ) 
+      aVariables = (*it).second;
+
+    if(aVariables.empty()) {
+      if(MYDEBUG)
+	cout<<"Valiables list empty!!!"<<endl;
+      aCommandIndex++;
+      continue;
+    }
   
-  //Replace parameters by variables
-  Standard_Integer aStartPos = 0;
-  Standard_Integer aEndPos = 0;
-  int iVar = 0;
-  TCollection_AsciiString aReplasedVar, aVar;
-  for(Standard_Integer i=1;i <= aTotalNbParams;i++) {
-        
-    //Replace first parameter (bettwen '(' character and first ',' character)
-    if(i == 1)
+    if(MYDEBUG) {
+      cout<<"Variables from SObject:"<<endl;
+      for (int i = 0; i < aVariables.size();i++)
+	cout<<"\t Variable["<<i<<"] = "<<aVariables[i].myVariable<<endl;
+    }
+
+    //Calculate total number of parameters
+    Standard_Integer aTotalNbParams = 1;
+    while(aCommand.Location(aTotalNbParams,COMMA,1,aCommand.Length()))
+      aTotalNbParams++;
+
+    if(MYDEBUG)
+      cout<<"aTotalNbParams = "<<aTotalNbParams<<endl;
+
+    Standard_Integer aFirstParam = aNbEntries;
+
+    //Replace parameters by variables
+    Standard_Integer aStartPos = 0;
+    Standard_Integer aEndPos = 0;
+    int iVar = 0;
+    TCollection_AsciiString aReplasedVar, aVar;
+    for(Standard_Integer i=aFirstParam;i <= aTotalNbParams;i++) {
+      //Replace first parameter (bettwen '(' character and first ',' character)
+      if(i == aFirstParam)
       {
-        aStartPos = theCommand.Location(O_BRACKET, 1, theCommand.Length()) + 1;
-	if(aTotalNbParams != 1 )
-	  aEndPos = theCommand.Location(COMMA, 1, theCommand.Length());
+	aStartPos = aCommand.Location(O_BRACKET, 1, aCommand.Length()) + 1;
+	if(aTotalNbParams - aNbEntries > 0 )
+	  aEndPos = aCommand.Location(aFirstParam, COMMA, 1, aCommand.Length());
 	else
-	  aEndPos = theCommand.Location(C_BRACKET, 1, theCommand.Length());	
+	  aEndPos = aCommand.Location(C_BRACKET, 1, aCommand.Length());	
       }
-    //Replace last parameter (bettwen ',' character and ')' character)
-    else if(i == aTotalNbParams)
+      //Replace last parameter (bettwen ',' character and ')' character)
+      else if(i == aTotalNbParams)
       {
-        aStartPos = theCommand.Location(i-1, COMMA, 1, theCommand.Length()) + 2;
-        aEndPos = theCommand.Location(C_BRACKET, 1, theCommand.Length());
+	aStartPos = aCommand.Location(i-1, COMMA, 1, aCommand.Length()) + 2;
+	aEndPos = aCommand.Location(C_BRACKET, 1, aCommand.Length());
       }
-    //Replace other parameters (bettwen two ',' characters)
-    else if(i != 1 && i != aTotalNbParams )
+      //Replace other parameters (bettwen two ',' characters)
+      else if(i != aFirstParam && i != aTotalNbParams )
       {
-        aStartPos = theCommand.Location(i-1, COMMA, 1, theCommand.Length()) + 2;
-        aEndPos = theCommand.Location(i, COMMA, 1, theCommand.Length());
+	aStartPos = aCommand.Location(i-1, COMMA, 1, aCommand.Length()) + 2;
+	aEndPos = aCommand.Location(i, COMMA, 1, aCommand.Length());
       }
-    aVar = theCommand.SubString(aStartPos, aEndPos-1);
-    if(MYDEBUG) 
-      cout<<"Current variable 1: '"<< aVar <<"'"<<endl;
 
-    aVar.RightAdjust();
-    aVar.LeftAdjust();
+      if( aCommand.Value( aStartPos ) == O_SQR_BRACKET )
+	aStartPos++;
+      if( aCommand.Value( aEndPos-1 ) == C_SQR_BRACKET )
+	aEndPos--;
+
+      if(MYDEBUG) 
+	cout<<"aStartPos = "<<aStartPos<<", aEndPos = "<<aEndPos<<endl;
+
+      aVar = aCommand.SubString(aStartPos, aEndPos-1);
+      aVar.RightAdjust();
+      aVar.LeftAdjust();
     
-    if(MYDEBUG) 
-      cout<<"Current variable 2: '"<< aVar <<"'"<<endl;
+      if(MYDEBUG) 
+	cout<<"Variable: '"<< aVar <<"'"<<endl;
     
-    //If parameter is entry or 'None', skip it
-    if(theVariables.find(aVar) != theVariables.end() || aVar == PY_NULL)
-      continue;
+      //If parameter is entry or 'None', skip it
+      if(theVariables.find(aVar) != theVariables.end() || aVar == PY_NULL)
+	continue;
+
+      if(iVar >= aVariables.size())
+	continue;
+
+      aReplasedVar = aVariables[iVar].myVariable;
     
-    aReplasedVar = aVariables[iVar].myVariable;
-    
-    
-    if(aReplasedVar.IsEmpty()) {
+      if(aReplasedVar.IsEmpty()) {
+	iVar++;
+	continue;
+      }
+
+      if(aVariables[iVar].isVariable) {
+	aReplasedVar.InsertBefore(1,"\"");
+	aReplasedVar.InsertAfter(aReplasedVar.Length(),"\"");
+      }
+
+      aCommand.Remove(aStartPos, aEndPos - aStartPos);
+      aCommand.Insert(aStartPos, aReplasedVar);
       iVar++;
-      continue;
     }
 
-    if(aVariables[iVar].isVariable) {
-      aReplasedVar.InsertBefore(1,"\"");
-      aReplasedVar.InsertAfter(aReplasedVar.Length(),"\"");
-    }
+    theCommand.Remove(aStartCommandPos, aEndCommandPos - aStartCommandPos);
+    theCommand.Insert(aStartCommandPos, aCommand);
 
-    theCommand.Remove(aStartPos, aEndPos - aStartPos);
-    theCommand.Insert(aStartPos,aReplasedVar);
-    iVar++;
+    aCommandIndex++;
   }
+
+  if (MYDEBUG)
+    cout<<"Command : "<<theCommand<<endl;
 }

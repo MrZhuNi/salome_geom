@@ -31,8 +31,8 @@
 #include <QMap>
 
 class DlgRef_1Sel;
-class QSpinBox;
-class QDoubleSpinBox;
+class SalomeApp_IntSpinBox;
+class SalomeApp_DoubleSpinBox;
 class QComboBox;
 class QCheckBox;
 class QListWidget;
@@ -64,12 +64,15 @@ private:
   GEOM::string_array*                getParameters( const GEOM::string_array& );
   GEOM::string_array*                getValues( const GEOM::string_array& );
 
+  QStringList                        getTexts( const GEOM::string_array& );
+
   void                               enterEvent( QEvent* );
 
   QWidget*                           getControl( const QString&  );
   void                               setValue( QWidget*, const QString& ); // initialize the given control in the proper way
   // (analize its class and convert the value string)
   QString                            getValue( QWidget* ) const; // retrieve value of the control in the proper way
+  QString                            getText( QWidget* ) const; // retrieve text of the control (for spin-boxes only)
 
   //QDict<QString,QWidget*>            myCtrlMap;  // map of controls (values) of parameters
   void                               initParamsValues(); // initialize the data structures
@@ -84,38 +87,38 @@ private:
   DlgRef_1Sel*                       mySelectWdgt;
   QListWidget*                       myOpList;
   
-  QDoubleSpinBox*                    myFixShapeTol3D;
-  QDoubleSpinBox*                    myFixShapeMaxTol3D;
+  SalomeApp_DoubleSpinBox*           myFixShapeTol3D;
+  SalomeApp_DoubleSpinBox*           myFixShapeMaxTol3D;
 
-  QDoubleSpinBox*                    myFixFaceSizeTol;
+  SalomeApp_DoubleSpinBox*           myFixFaceSizeTol;
   
-  QDoubleSpinBox*                    myDropSmallEdgesTol3D;
+  SalomeApp_DoubleSpinBox*           myDropSmallEdgesTol3D;
 
-  QDoubleSpinBox*                    mySplitAngleAngle;
-  QDoubleSpinBox*                    mySplitAngleMaxTol;
+  SalomeApp_DoubleSpinBox*           mySplitAngleAngle;
+  SalomeApp_DoubleSpinBox*           mySplitAngleMaxTol;
   
-  QSpinBox*                          mySplitClosedFacesNum;
+  SalomeApp_IntSpinBox*              mySplitClosedFacesNum;
   
-  QDoubleSpinBox*                    mySplitContTol3D;
+  SalomeApp_DoubleSpinBox*           mySplitContTol3D;
   QComboBox*                         mySplitContSurfCont;
   QComboBox*                         mySplitContCurvCont;
   
   QCheckBox*                         myBSplineSurfModeChk;
   QCheckBox*                         myBSpline3DCurveChk;
   QCheckBox*                         myBSpline2DCurveChk;
-  QDoubleSpinBox*                    myBSplineTol3D;
-  QDoubleSpinBox*                    myBSplineTol2D;
-  QSpinBox*                          myBSplineDegree;
-  QSpinBox*                          myBSplineSegments;
+  SalomeApp_DoubleSpinBox*           myBSplineTol3D;
+  SalomeApp_DoubleSpinBox*           myBSplineTol2D;
+  SalomeApp_IntSpinBox*              myBSplineDegree;
+  SalomeApp_IntSpinBox*              myBSplineSegments;
   QComboBox*                         myBSpline2DCont;
   QComboBox*                         myBSpline3DCont;
   
   QCheckBox*                         myToBezierSurfModeChk;
   QCheckBox*                         myToBezier3DCurveChk;
   QCheckBox*                         myToBezier2DCurveChk;
-  QDoubleSpinBox*                    myToBezierMaxTol;
+  SalomeApp_DoubleSpinBox*           myToBezierMaxTol;
   
-  QDoubleSpinBox*                    mySameParameterTol3D;
+  SalomeApp_DoubleSpinBox*           mySameParameterTol3D;
   
 private slots:
   void                               onOk();

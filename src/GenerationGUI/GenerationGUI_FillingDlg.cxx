@@ -336,9 +336,16 @@ GEOM::GEOM_IOperations_ptr GenerationGUI_FillingDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool GenerationGUI_FillingDlg::isValid( QString& )
+bool GenerationGUI_FillingDlg::isValid( QString& msg )
 {
-  return myOkCompound > 0;
+  bool ok = true;
+  ok = GroupPoints->SpinBox1->isValid( msg, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox2->isValid( msg, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox3->isValid( msg, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox4->isValid( msg, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox5->isValid( msg, !IsPreview() ) && ok;
+
+  return myOkCompound > 0 && ok;
 }
 
 //=================================================================================
@@ -351,9 +358,18 @@ bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
 
   anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation() )->MakeFilling(
     myCompound, myMinDeg, myMaxDeg, myTol2D, myTol3D, myNbIter, myIsApprox );
-
   if ( !anObj->_is_nil() )
+  {
+    QStringList aParameters;
+    aParameters << GroupPoints->SpinBox1->text();
+    aParameters << GroupPoints->SpinBox2->text();
+    aParameters << GroupPoints->SpinBox3->text();
+    aParameters << GroupPoints->SpinBox4->text();
+    aParameters << GroupPoints->SpinBox5->text();
+    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+
     objects.push_back( anObj._retn() );
+  }
 
   return true;
 }

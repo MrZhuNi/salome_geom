@@ -497,11 +497,12 @@ bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
     anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
       MakeFaceHW(GroupDimensions->SpinBox_DX->value(),
                  GroupDimensions->SpinBox_DY->value(), myOrientationType);
-
-    aParameters << GroupDimensions->SpinBox_DX->text();
-    aParameters << GroupDimensions->SpinBox_DY->text();
-    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
-
+    if (!anObj->_is_nil())
+    {
+      aParameters << GroupDimensions->SpinBox_DX->text();
+      aParameters << GroupDimensions->SpinBox_DY->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
     res = true;
     break;
   case 1:
@@ -511,11 +512,12 @@ bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
     else if (GroupType->RadioButton2->isChecked())
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
         MakeFaceObjHW(myFace, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value());
-
-    aParameters << GroupPlane->SpinBox_DX->text();
-    aParameters << GroupPlane->SpinBox_DY->text();
-    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
-
+    if (!anObj->_is_nil())
+    {
+      aParameters << GroupPlane->SpinBox_DX->text();
+      aParameters << GroupPlane->SpinBox_DY->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
     res = true;
     break;
   }
