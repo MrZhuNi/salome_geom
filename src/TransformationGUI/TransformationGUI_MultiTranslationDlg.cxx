@@ -184,6 +184,13 @@ void TransformationGUI_MultiTranslationDlg::Init()
   connect(GroupDimensions->SpinBox_DX2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupDimensions->SpinBox_DY2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
+  connect(GroupPoints->SpinBox_DX,      SIGNAL(textChanged(const QString& )), 
+          this, SLOT(TextValueChangedInSpinBox(const QString& )));
+  connect(GroupDimensions->SpinBox_DX1, SIGNAL(textChanged(const QString& )), 
+          this, SLOT(TextValueChangedInSpinBox(const QString& )));
+  connect(GroupDimensions->SpinBox_DX2, SIGNAL(textChanged(const QString& )), 
+          this, SLOT(TextValueChangedInSpinBox(const QString& )));
+  
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
 
   connect(GroupPoints->CheckButton1,     SIGNAL(toggled(bool)), this, SLOT(ReverseStepU()));
@@ -506,13 +513,46 @@ void TransformationGUI_MultiTranslationDlg::enterEvent (QEvent*)
 }
 
 //=================================================================================
+// function : TextValueChangedInSpinBox
+// purpose  :
+//=================================================================================
+void TransformationGUI_MultiTranslationDlg::TextValueChangedInSpinBox( const QString& s)
+{
+  QObject* send = (QObject*)sender();
+  bool isDigit = true;
+  
+  switch (getConstructorId()) {
+  case 0: 
+    GroupPoints->SpinBox_DX->text().toDouble(&isDigit);
+    if(!isDigit){
+      GroupPoints->CheckButton1->setChecked(false);
+    }
+    GroupPoints->CheckButton1->setEnabled(isDigit);
+    break;
+  case 1: 
+    if (send == GroupDimensions->SpinBox_DX1) {
+      GroupDimensions->SpinBox_DX1->text().toDouble(&isDigit);
+      if(!isDigit) 
+        GroupDimensions->CheckButton1->setChecked(false);
+      GroupDimensions->CheckButton1->setEnabled(isDigit);
+    }
+    else if(send == GroupDimensions->SpinBox_DX2){
+      GroupDimensions->SpinBox_DX2->text().toDouble(&isDigit);
+      if(!isDigit) 
+        GroupDimensions->CheckButton2->setChecked(false);
+      GroupDimensions->CheckButton2->setEnabled(isDigit);
+    }
+    break;
+  }
+}
+
+//=================================================================================
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
 void TransformationGUI_MultiTranslationDlg::ValueChangedInSpinBox (double newValue)
 {
   QObject* send = (QObject*)sender();
-
   switch (getConstructorId()) {
   case 0:
     if (send == GroupPoints->SpinBox_DX)
@@ -579,14 +619,24 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_MultiTranslationDlg::createOperatio
 // function : isValid
 // purpose  :
 //=================================================================================
-bool TransformationGUI_MultiTranslationDlg::isValid (QString& /*msg*/)
+bool TransformationGUI_MultiTranslationDlg::isValid (QString& msg)
 {
   int aConstructorId = getConstructorId();
-
-  if (aConstructorId == 0)
-    return !(myBase->_is_nil() || myVectorU->_is_nil());
-  else if (aConstructorId == 1)
-    return !(myBase->_is_nil() || myVectorU->_is_nil() || myVectorV->_is_nil());
+  
+  if (aConstructorId == 0) {
+    bool ok = true;
+    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    return !(myBase->_is_nil() || myVectorU->_is_nil()) && ok;
+  }
+  else if (aConstructorId == 1) {
+    bool ok = true;
+    ok = GroupDimensions->SpinBox_DX1->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY1->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DX2->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY2->isValid( msg, !IsPreview() ) && ok;
+    return !(myBase->_is_nil() || myVectorU->_is_nil() || myVectorV->_is_nil()) && ok;
+  }
   return 0;
 }
 
@@ -600,11 +650,17 @@ bool TransformationGUI_MultiTranslationDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  QStringList aParameters;
+
   switch (getConstructorId()) {
   case 0:
     if (!CORBA::is_nil(myBase) && !CORBA::is_nil(myVectorU)) {
       anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
         MultiTranslate1D(myBase, myVectorU, myStepU, myNbTimesU);
+      if(!IsPreview()) {
+        aParameters<<GroupPoints->SpinBox_DX->text();
+        aParameters<<GroupPoints->SpinBox_DY->text();
+      }
       res = true;
     }
     break;
@@ -614,13 +670,22 @@ bool TransformationGUI_MultiTranslationDlg::execute (ObjectList& objects)
       anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
         MultiTranslate2D(myBase, myVectorU, myStepU, myNbTimesU,
                           myVectorV, myStepV, myNbTimesV);
+      if(!IsPreview()) {
+        aParameters<<GroupDimensions->SpinBox_DX1->text();
+        aParameters<<GroupDimensions->SpinBox_DY1->text();
+        aParameters<<GroupDimensions->SpinBox_DX2->text();
+        aParameters<<GroupDimensions->SpinBox_DY2->text();
+      }
       res = true;
     }
     break;
   }
 
-  if (!anObj->_is_nil())
+  if (!anObj->_is_nil()) {
+    if(!IsPreview())
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
     objects.push_back(anObj._retn());
+  }
 
   return res;
 }

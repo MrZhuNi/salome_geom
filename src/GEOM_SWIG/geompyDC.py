@@ -104,8 +104,8 @@ def ParseParameters(*parameters):
         if isinstance(parameter,str):
             if notebook.isVariable(parameter):
                 Result.append(notebook.get(parameter))
-                pass
-            pass
+            else:
+                raise RuntimeError, "Variable with name '" + parameter + "' doesn't exist!!!"
         else:
             Result.append(parameter)
             pass

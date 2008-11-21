@@ -74,6 +74,7 @@ private slots:
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox();
+  void                               TextValueChangedInSpinBox( const QString& );
   void                               CreateCopyModeChanged( bool );
   void                               ConstructorsClicked( int );
   void                               onReverse();

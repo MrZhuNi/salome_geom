@@ -516,19 +516,25 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_TranslationDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool TransformationGUI_TranslationDlg::isValid (QString& /*msg*/)
+bool TransformationGUI_TranslationDlg::isValid (QString& msg)
 {
   int aConstructorId = getConstructorId();
 
   if (myObjects.length() < 1) return false;
 
   switch (aConstructorId) {
-  case 0:
-    return true;
+  case 0: 
+    {
+      bool ok = true;
+      ok = GroupPoints->SpinBox1->isValid( msg, !IsPreview() ) && ok;
+      ok = GroupPoints->SpinBox2->isValid( msg, !IsPreview() ) && ok;
+      ok = GroupPoints->SpinBox3->isValid( msg, !IsPreview() ) && ok;
+      return ok;
+    }
   case 1:
     return !(myPoint1->_is_nil() || myPoint2->_is_nil());
   case 2:
-    return !(myVector->_is_nil());
+    return !(myVector->_is_nil()) && GroupPoints->SpinBox3->isValid( msg, !IsPreview() );
   default:
     break;
   }
@@ -553,13 +559,21 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
       double dy = GroupPoints->SpinBox2->value();
       double dz = GroupPoints->SpinBox3->value();
 
+      QStringList aParameters;
+      aParameters<<GroupPoints->SpinBox1->text();
+      aParameters<<GroupPoints->SpinBox2->text();
+      aParameters<<GroupPoints->SpinBox3->text();
+
       if (toCreateCopy) {
         for (int i = 0; i < myObjects.length(); i++) {
           myCurrObject = myObjects[i];
           anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
             TranslateDXDYDZCopy(myObjects[i], dx, dy, dz);
-          if (!anObj->_is_nil())
+          if (!anObj->_is_nil()) {
+            if(!IsPreview())
+              anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
             objects.push_back(anObj._retn());
+          }
         }
       }
       else {
@@ -599,6 +613,7 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
     }
   case 2:
     {
+      QStringList aParameters;
       bool byDistance = GroupPoints->CheckBox1->isChecked();
       if (byDistance) {
         double aDistance = GroupPoints->SpinBox3->value();
@@ -606,8 +621,12 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
           myCurrObject = myObjects[i];
           anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
             TranslateVectorDistance(myObjects[i], myVector, aDistance, toCreateCopy);
-          if (!anObj->_is_nil())
+          if (!anObj->_is_nil()) {
+            if(toCreateCopy)
+              if(!IsPreview())
+                anObj->SetParameters(GroupPoints->SpinBox3->text().toLatin1().constData());
             objects.push_back(anObj._retn());
+          }
         }
       }
       else {
