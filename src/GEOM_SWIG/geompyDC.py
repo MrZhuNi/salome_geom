@@ -2189,7 +2189,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_translation "Example"
         def MakeTranslation(self,theObject, theDX, theDY, theDZ):
             # Example: see GEOM_TestAll.py
+            theDX, theDY, theDZ, Parameters = ParseParameters(theDX, theDY, theDZ)
             anObj = self.TrsfOp.TranslateDXDYDZCopy(theObject, theDX, theDY, theDZ)
+            anObj.SetParameters(Parameters)
             RaiseIfFailed("TranslateDXDYDZ", self.TrsfOp)
             return anObj
 
@@ -2216,8 +2218,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_translation "Example"
         def MakeTranslationVectorDistance(self, theObject, theVector, theDistance):
             # Example: see GEOM_TestAll.py
+            theDistance,Parameters = ParseParameters(theDistance)
             anObj = self.TrsfOp.TranslateVectorDistance(theObject, theVector, theDistance, 1)
             RaiseIfFailed("TranslateVectorDistance", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Rotate the given object around the given axis
@@ -2230,8 +2234,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_rotation "Example"
         def MakeRotation(self,theObject, theAxis, theAngle):
             # Example: see GEOM_TestAll.py
+            flag = False
+            if isinstance(theAngle,str):
+                flag = True
+            theAngle, Parameters = ParseParameters(theAngle)
+            if flag:
+                theAngle = theAngle*math.pi/180.0
             anObj = self.TrsfOp.RotateCopy(theObject, theAxis, theAngle)
             RaiseIfFailed("RotateCopy", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Rotate given object around vector perpendicular to plane
@@ -2259,8 +2270,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_scale "Example"
         def MakeScaleTransform(self, theObject, thePoint, theFactor):
             # Example: see GEOM_TestAll.py
+            theFactor, Parameters = ParseParameters(theFactor)
             anObj = self.TrsfOp.ScaleShapeCopy(theObject, thePoint, theFactor)
             RaiseIfFailed("ScaleShapeCopy", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Scale the given object by different factors along coordinate axes,
@@ -2274,9 +2287,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref swig_scale "Example"
         def MakeScaleAlongAxes(self, theObject, thePoint, theFactorX, theFactorY, theFactorZ):
             # Example: see GEOM_TestAll.py
+            theFactorX, theFactorY, theFactorZ, Parameters = ParseParameters(theFactorX, theFactorY, theFactorZ)
             anObj = self.TrsfOp.ScaleShapeAlongAxesCopy(theObject, thePoint,
                                                         theFactorX, theFactorY, theFactorZ)
             RaiseIfFailed("MakeScaleAlongAxes", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create an object, symmetrical
@@ -2344,8 +2359,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_offset "Example"
         def MakeOffset(self,theObject, theOffset):
             # Example: see GEOM_TestAll.py
+            theOffset, Parameters = ParseParameters(theOffset)
             anObj = self.TrsfOp.OffsetShapeCopy(theObject, theOffset)
             RaiseIfFailed("OffsetShapeCopy", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         # -----------------------------------------------------------------------------
@@ -2363,8 +2380,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_multi_translation "Example"
         def MakeMultiTranslation1D(self,theObject, theVector, theStep, theNbTimes):
             # Example: see GEOM_TestAll.py
+            theStep, theNbTimes, Parameters = ParseParameters(theStep, theNbTimes)
             anObj = self.TrsfOp.MultiTranslate1D(theObject, theVector, theStep, theNbTimes)
             RaiseIfFailed("MultiTranslate1D", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Conseqently apply two specified translations to theObject specified number of times.
@@ -2382,9 +2401,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakeMultiTranslation2D(self,theObject, theVector1, theStep1, theNbTimes1,
                                    theVector2, theStep2, theNbTimes2):
             # Example: see GEOM_TestAll.py
+            theStep1,theNbTimes1,theStep2,theNbTimes2, Parameters = ParseParameters(theStep1,theNbTimes1,theStep2,theNbTimes2)
             anObj = self.TrsfOp.MultiTranslate2D(theObject, theVector1, theStep1, theNbTimes1,
                                                  theVector2, theStep2, theNbTimes2)
             RaiseIfFailed("MultiTranslate2D", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Rotate the given object around the given axis a given number times.
@@ -2398,8 +2419,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_multi_rotation "Example"
         def MultiRotate1D(self,theObject, theAxis, theNbTimes):
             # Example: see GEOM_TestAll.py
+            theAxis, theNbTimes, Parameters = ParseParameters(theAxis, theNbTimes)
             anObj = self.TrsfOp.MultiRotate1D(theObject, theAxis, theNbTimes)
             RaiseIfFailed("MultiRotate1D", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Rotate the given object around the
@@ -2419,8 +2442,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_multi_rotation "Example"
         def MultiRotate2D(self,theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2):
             # Example: see GEOM_TestAll.py
+            theAngle, theNbTimes1, theStep, theNbTimes2, Parameters = ParseParameters(theAngle, theNbTimes1, theStep, theNbTimes2)
             anObj = self.TrsfOp.MultiRotate2D(theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2)
             RaiseIfFailed("MultiRotate2D", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## The same, as MultiRotate1D(), but axis is given by direction and point

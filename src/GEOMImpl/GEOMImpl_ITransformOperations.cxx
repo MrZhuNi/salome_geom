@@ -1206,7 +1206,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeAlongAxes (Handle(G
 
   //Make a Python command
   if (doCopy) {
-    GEOM::TPythonDump(aFunction) << "geompy.MakeScaleAlongAxes("
+    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeScaleAlongAxes("
                                  << theObject << ", " << thePoint << ", "
                                  << theFactorX << ", " << theFactorY << ", " << theFactorZ << ")";
     return aCopy;
