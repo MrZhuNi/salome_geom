@@ -404,7 +404,7 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
       }
     }
     else {
-      if (S.ShapeType() != TopAbs_EDGE) {
+      if (S.ShapeType() != TopAbs_EDGE && S.ShapeType() != TopAbs_WIRE) {
 	aSelectedObject = GEOM::GEOM_Object::_nil();
 	aName = "";
 	return;
