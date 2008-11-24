@@ -73,11 +73,14 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 	vector<TVariable> aVariables;
 	if(aValue->FindAttribute(anAttr,"AttributeString")){
 	  anAttrStr = SALOMEDS::AttributeString::_narrow(anAttr);
-	  SALOMEDS::ListOfStrings_var aListOfVars = aStudy->ParseVariables(anAttrStr->Value());
-	  for(int i = 0;i < aListOfVars->length();i++) {
-	    bool isVar = aStudy->IsVariable(aListOfVars[i].in());
-	    TVariable aVar = TVariable( (char*)aListOfVars[i].in(), isVar );
-	    aVariables.push_back(aVar);
+	  SALOMEDS::ListOfListOfStrings_var aSections = aStudy->ParseVariables(anAttrStr->Value());
+	  for(int i = 0; i < aSections->length(); i++) {
+	    SALOMEDS::ListOfStrings aListOfVars = aSections[i];
+	    for(int j = 0; j < aListOfVars.length(); j++) {
+	      bool isVar = aStudy->IsVariable(aListOfVars[j].in());
+	      TVariable aVar = TVariable( (char*)aListOfVars[j].in(), isVar );
+	      aVariables.push_back(aVar);
+	    }
 	  }
 	}
 	aVariableMap.insert(pair<TCollection_AsciiString,vector<TVariable> >((char*)anEntry,aVariables));
