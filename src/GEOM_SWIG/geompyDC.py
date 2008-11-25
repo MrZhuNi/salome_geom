@@ -134,8 +134,40 @@ def ParseList(list):
         StringResult = StringResult + ":"
         pass
     StringResult = StringResult[:len(StringResult)-1]
-    return Result,StringResult
+    return Result, StringResult
     
+## Return list of variables value from salome notebook
+## @ingroup l1_geompy_auxiliary    
+def ParseSketcherCommand(command):
+    Result = ""
+    StringResult = ""
+    sections = command.split(":")
+    for section in sections:
+        parameters = section.split(" ")
+        paramIndex = 1
+        for parameter in parameters:
+            if paramIndex > 1 and parameter.find("'") != -1:
+                parameter = parameter.replace("'","")
+                if notebook.isVariable(parameter):
+                    Result = Result + str(notebook.get(parameter)) + " "
+                    pass
+                else:
+                    raise RuntimeError, "Variable with name '" + parameter + "' doesn't exist!!!"
+                    pass
+                pass
+            else:
+                Result = Result + str(parameter) + " "
+                pass
+            if paramIndex > 1:
+                StringResult = StringResult + parameter
+                StringResult = StringResult + ":"
+                pass
+            paramIndex = paramIndex + 1
+            pass
+        Result = Result[:len(Result)-1] + ":"
+        pass
+    Result = Result[:len(Result)-1]
+    return Result, StringResult
 
 ## Kinds of shape enumeration
 #  @ingroup l1_geompy_auxiliary
@@ -706,8 +738,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_sketcher_page "Example"
         def MakeSketcher(self, theCommand, theWorkingPlane = [0,0,0, 0,0,1, 1,0,0]):
             # Example: see GEOM_TestAll.py
+            theCommand,Parameters = ParseSketcherCommand(theCommand)
             anObj = self.CurvesOp.MakeSketcher(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcher", self.CurvesOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a sketcher (wire or face), following the textual description,

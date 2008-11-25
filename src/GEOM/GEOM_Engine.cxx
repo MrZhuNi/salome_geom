@@ -859,7 +859,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     Standard_Integer aStartPos = 0;
     Standard_Integer aEndPos = 0;
     int iVar = 0;
-    TCollection_AsciiString aReplasedVar, aVar;
+    TCollection_AsciiString aVar, aReplacedVar;
     for(Standard_Integer i=aFirstParam;i <= aTotalNbParams;i++) {
       //Replace first parameter (bettwen '(' character and first ',' character)
       if(i == aFirstParam)
@@ -897,7 +897,85 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     
       if(MYDEBUG) 
 	cout<<"Variable: '"<< aVar <<"'"<<endl;
-    
+
+      // specific case for sketcher
+      if(aVar.Location( TCollection_AsciiString("Sketcher:"), 1, aVar.Length() ) != 0) {
+	Standard_Integer aNbSections = 1;
+	while( aVar.Location( aNbSections, ':', 1, aVar.Length() ) )
+	  aNbSections++;
+	aNbSections--;
+
+	int aStartSectionPos = 0, aEndSectionPos = 0;
+	TCollection_AsciiString aSection, aReplacedSection;
+	for(Standard_Integer aSectionIndex = 1; aSectionIndex <= aNbSections; aSectionIndex++) {
+	  aStartSectionPos = aVar.Location( aSectionIndex, ':', 1, aVar.Length() ) + 1;
+	  if( aSectionIndex != aNbSections )
+	    aEndSectionPos = aVar.Location( aSectionIndex + 1, ':', 1, aVar.Length() );
+	  else
+	    aEndSectionPos = aVar.Length();
+
+	  aSection = aVar.SubString(aStartSectionPos, aEndSectionPos-1);
+	  if(MYDEBUG) 
+	    cout<<"aSection: "<<aSection<<endl;
+
+	  Standard_Integer aNbParams = 1;
+	  while( aSection.Location( aNbParams, ' ', 1, aSection.Length() ) )
+	    aNbParams++;
+	  aNbParams--;
+
+	  int aStartParamPos = 0, aEndParamPos = 0;
+	  TCollection_AsciiString aParameter, aReplacedParameter;
+	  for(Standard_Integer aParamIndex = 1; aParamIndex <= aNbParams; aParamIndex++) {
+	    aStartParamPos = aSection.Location( aParamIndex, ' ', 1, aSection.Length() ) + 1;
+	    if( aParamIndex != aNbParams )
+	      aEndParamPos = aSection.Location( aParamIndex + 1, ' ', 1, aSection.Length() );
+	    else
+	      aEndParamPos = aSection.Length() + 1;
+
+	    aParameter = aSection.SubString(aStartParamPos, aEndParamPos-1);
+	    if(MYDEBUG) 
+	      cout<<"aParameter: "<<aParameter<<endl;
+
+	    if(iVar >= aVariables.size())
+	      continue;
+
+	    aReplacedParameter = aVariables[iVar].myVariable;
+	    if(aReplacedParameter.IsEmpty()) {
+	      iVar++;
+	      continue;
+	    }
+
+	    if(aVariables[iVar].isVariable) {
+	      aReplacedParameter.InsertBefore(1,"'");
+	      aReplacedParameter.InsertAfter(aReplacedParameter.Length(),"'");
+	    }
+
+	    if(MYDEBUG) 
+	      cout<<"aSection before : "<<aSection<<endl;
+	    aSection.Remove(aStartParamPos, aEndParamPos - aStartParamPos);
+	    aSection.Insert(aStartParamPos, aReplacedParameter);
+	    if(MYDEBUG) 
+	      cout<<"aSection after  : "<<aSection<<endl<<endl;
+	    iVar++;
+	  }
+	  if(MYDEBUG) 
+	    cout<<"aVar before : "<<aVar<<endl;
+	  aVar.Remove(aStartSectionPos, aEndSectionPos - aStartSectionPos);
+	  aVar.Insert(aStartSectionPos, aSection);
+	  if(MYDEBUG) 
+	    cout<<"aVar after  : "<<aVar<<endl<<endl;
+	}
+
+	if(MYDEBUG) 
+	  cout<<"aCommand before : "<<aCommand<<endl;
+	aCommand.Remove(aStartPos, aEndPos - aStartPos);
+	aCommand.Insert(aStartPos, aVar);
+	if(MYDEBUG) 
+	  cout<<"aCommand after  : "<<aCommand<<endl;
+
+	break;
+      } // end of specific case for sketcher
+
       //If parameter is entry or 'None', skip it
       if(theVariables.find(aVar) != theVariables.end() || aVar == PY_NULL)
 	continue;
@@ -905,20 +983,19 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       if(iVar >= aVariables.size())
 	continue;
 
-      aReplasedVar = aVariables[iVar].myVariable;
-    
-      if(aReplasedVar.IsEmpty()) {
+      aReplacedVar = aVariables[iVar].myVariable;
+      if(aReplacedVar.IsEmpty()) {
 	iVar++;
 	continue;
       }
 
       if(aVariables[iVar].isVariable) {
-	aReplasedVar.InsertBefore(1,"\"");
-	aReplasedVar.InsertAfter(aReplasedVar.Length(),"\"");
+	aReplacedVar.InsertBefore(1,"\"");
+	aReplacedVar.InsertAfter(aReplacedVar.Length(),"\"");
       }
 
       aCommand.Remove(aStartPos, aEndPos - aStartPos);
-      aCommand.Insert(aStartPos, aReplasedVar);
+      aCommand.Insert(aStartPos, aReplacedVar);
       iVar++;
     }
 
