@@ -575,7 +575,7 @@ bool PrimitiveGUI_DiskDlg::execute (ObjectList& objects)
   case 0:
     anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
       MakeDiskR(getRadius(), myOrientationType);
-    if (!anObj->_is_nil())
+    if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupDimensions->SpinBox_DX->text();
       anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
@@ -585,7 +585,7 @@ bool PrimitiveGUI_DiskDlg::execute (ObjectList& objects)
   case 1:
     anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
       MakeDiskPntVecR(myPoint, myDir, getRadius());
-    if (!anObj->_is_nil())
+    if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupPntVecR->SpinBox_DX->text();
       anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));

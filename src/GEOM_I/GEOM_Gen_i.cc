@@ -274,27 +274,22 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   aNameAttrib->SetValue(aShapeName.ToCString());
 
   //Set NoteBook variables used in the object creation
-  bool isFound = false;
   TCollection_AsciiString aVars;
   SALOMEDS::ListOfListOfStrings_var aSections = theStudy->ParseVariables(aShape->GetParameters());
   for(int i = 0, n = aSections->length(); i < n; i++) {
     SALOMEDS::ListOfStrings aListOfVars = aSections[i];
     for(int j = 0, m = aListOfVars.length(); j < m; j++) {
-      if(theStudy->IsVariable(aListOfVars[j].in())) {
+      if(theStudy->IsVariable(aListOfVars[j].in()))
 	aVars += TCollection_AsciiString(aListOfVars[j].in());
-	isFound = true;
-      }
       if(j != m-1)
 	aVars += ":";
     }
     if(i != n-1)
       aVars += "|";
   }
-  if(isFound) {
-    anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeString");
-    SALOMEDS::AttributeString_var aStringAttrib = SALOMEDS::AttributeString::_narrow(anAttr);
-    aStringAttrib->SetValue(aVars.ToCString());
-  }
+  anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeString");
+  SALOMEDS::AttributeString_var aStringAttrib = SALOMEDS::AttributeString::_narrow(anAttr);
+  aStringAttrib->SetValue(aVars.ToCString());
 
   //Set a name of the GEOM object
   aShape->SetName(theName);

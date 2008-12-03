@@ -494,7 +494,7 @@ bool BasicGUI_VectorDlg::execute( ObjectList& objects )
       aParameters << GroupDimensions->SpinBox_DZ->text();
       anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakeVectorDXDYDZ( dx, dy, dz );
 
-      if ( !anObj->_is_nil() )
+      if ( !anObj->_is_nil() && !IsPreview() )
         anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
       
       res = true;

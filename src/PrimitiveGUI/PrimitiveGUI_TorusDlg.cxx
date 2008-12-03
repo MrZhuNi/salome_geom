@@ -460,7 +460,7 @@ bool PrimitiveGUI_TorusDlg::execute (ObjectList& objects)
     if (!CORBA::is_nil(myPoint) && !CORBA::is_nil(myDir)) {
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
         MakeTorusPntVecRR(myPoint, myDir, getRadius1(), getRadius2());
-      if (!anObj->_is_nil())
+      if (!anObj->_is_nil() && !IsPreview())
       {
 	QStringList aParameters;
 	aParameters << GroupPoints->SpinBox_DX->text();
@@ -473,7 +473,7 @@ bool PrimitiveGUI_TorusDlg::execute (ObjectList& objects)
   case 1:
     anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
       MakeTorusRR(getRadius1(), getRadius2());
-    if (!anObj->_is_nil())
+    if (!anObj->_is_nil() && !IsPreview())
     {
       QStringList aParameters;
       aParameters << GroupDimensions->SpinBox_DX->text();

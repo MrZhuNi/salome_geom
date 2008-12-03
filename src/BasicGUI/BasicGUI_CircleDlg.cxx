@@ -647,7 +647,7 @@ bool BasicGUI_CircleDlg::execute( ObjectList& objects )
       QStringList aParameters;
       aParameters << GroupPntVecR->SpinBox_DX->text();
       anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeCirclePntVecR( myPoint, myDir, getRadius() );
-      if ( !anObj->_is_nil() )
+      if ( !anObj->_is_nil() && !IsPreview() )
         anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
       res = true;
       break;

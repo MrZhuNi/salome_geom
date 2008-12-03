@@ -581,8 +581,13 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
           myCurrObject = myObjects[i];
           anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
             TranslateDXDYDZ(myObjects[i], dx, dy, dz);
-          if (!anObj->_is_nil())
+          if (!anObj->_is_nil()) {
+            if(!IsPreview()) {
+              anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+	      updateAttributes(anObj, aParameters);
+	    }
             objects.push_back(anObj._retn());
+	  }
         }
       }
       res = true;
@@ -614,6 +619,7 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
   case 2:
     {
       QStringList aParameters;
+      aParameters<<GroupPoints->SpinBox3->text();
       bool byDistance = GroupPoints->CheckBox1->isChecked();
       if (byDistance) {
         double aDistance = GroupPoints->SpinBox3->value();
@@ -622,9 +628,10 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
           anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
             TranslateVectorDistance(myObjects[i], myVector, aDistance, toCreateCopy);
           if (!anObj->_is_nil()) {
-            if(toCreateCopy)
-              if(!IsPreview())
-                anObj->SetParameters(GroupPoints->SpinBox3->text().toLatin1().constData());
+	    if(!IsPreview()) {
+	      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+	      updateAttributes(anObj, aParameters);
+	    }
             objects.push_back(anObj._retn());
           }
         }

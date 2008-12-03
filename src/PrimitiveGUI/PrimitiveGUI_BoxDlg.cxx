@@ -467,7 +467,7 @@ bool PrimitiveGUI_BoxDlg::execute (ObjectList& objects)
       double z = GroupDimensions->SpinBox_DZ->value();
 
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->MakeBoxDXDYDZ(x, y, z);
-      if (!anObj->_is_nil())
+      if (!anObj->_is_nil() && !IsPreview())
       {
 	QStringList aParameters;
 	aParameters << GroupDimensions->SpinBox_DX->text();

@@ -413,7 +413,7 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
       GEOM::GEOM_Object_var anObj = GEOM::GEOM_IShapesOperations::_narrow
         ( getOperation() )->MakeGlueFaces( myObject, myTolEdt->value(), true );
       aResult = !anObj->_is_nil();
-      if ( aResult )
+      if ( aResult && !IsPreview() )
       {
 	QStringList aParameters;
 	aParameters << myTolEdt->text();
@@ -468,10 +468,12 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
 
       if ( aResult )
       {
-	QStringList aParameters;
-	aParameters << myTolEdt2->text();
-	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
-
+	if ( !IsPreview() )
+	{
+	  QStringList aParameters;
+	  aParameters << myTolEdt2->text();
+	  anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+	}
         objects.push_back( anObj._retn() );
       }
 

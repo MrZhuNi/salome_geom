@@ -464,7 +464,7 @@ bool PrimitiveGUI_CylinderDlg::execute (ObjectList& objects)
     if (!CORBA::is_nil(myPoint) && !CORBA::is_nil(myDir)) {
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
         MakeCylinderPntVecRH(myPoint, myDir, getRadius(), getHeight());
-      if (!anObj->_is_nil())
+      if (!anObj->_is_nil() && !IsPreview())
       {
 	QStringList aParameters;
 	aParameters << GroupPoints->SpinBox_DX->text();
@@ -477,7 +477,7 @@ bool PrimitiveGUI_CylinderDlg::execute (ObjectList& objects)
   case 1:
     anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
       MakeCylinderRH(getRadius(), getHeight());
-    if (!anObj->_is_nil())
+    if (!anObj->_is_nil() && !IsPreview())
     {
       QStringList aParameters;
       aParameters << GroupDimensions->SpinBox_DX->text();

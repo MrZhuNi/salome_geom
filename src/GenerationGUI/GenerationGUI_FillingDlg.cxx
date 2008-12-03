@@ -360,14 +360,16 @@ bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
     myCompound, myMinDeg, myMaxDeg, myTol2D, myTol3D, myNbIter, myIsApprox );
   if ( !anObj->_is_nil() )
   {
-    QStringList aParameters;
-    aParameters << GroupPoints->SpinBox1->text();
-    aParameters << GroupPoints->SpinBox2->text();
-    aParameters << GroupPoints->SpinBox3->text();
-    aParameters << GroupPoints->SpinBox4->text();
-    aParameters << GroupPoints->SpinBox5->text();
-    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
-
+    if ( !IsPreview() )
+    {
+      QStringList aParameters;
+      aParameters << GroupPoints->SpinBox1->text();
+      aParameters << GroupPoints->SpinBox2->text();
+      aParameters << GroupPoints->SpinBox3->text();
+      aParameters << GroupPoints->SpinBox4->text();
+      aParameters << GroupPoints->SpinBox5->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
     objects.push_back( anObj._retn() );
   }
 

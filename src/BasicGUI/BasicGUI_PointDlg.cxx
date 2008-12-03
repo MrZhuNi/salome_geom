@@ -781,10 +781,10 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
     break;
   }
   
-  if(!anObj->_is_nil() && (getConstructorId()==0 || 
-                           getConstructorId() == 1 ||
-                           getConstructorId() == 2 ||
-                           getConstructorId() == 4) ) {
+  if(!anObj->_is_nil() && !IsPreview() && (getConstructorId()==0 || 
+					   getConstructorId() == 1 ||
+					   getConstructorId() == 2 ||
+					   getConstructorId() == 4) ) {
     anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
   }
   

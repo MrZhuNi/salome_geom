@@ -530,6 +530,8 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
   switch (getConstructorId()) {
   case 0:
     {
+      QStringList aParameters;
+      aParameters<<GroupPoints->SpinBox_DX->text();
       if (toCreateCopy) {
         for (int i = 0; i < myObjects.length(); i++) {
           myCurrObject = myObjects[i];
@@ -537,7 +539,7 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
             RotateCopy(myObjects[i], myAxis, GetAngle() * PI180);
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
-              anObj->SetParameters(GroupPoints->SpinBox_DX->text().toLatin1().constData());
+              anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
             }
             objects.push_back(anObj._retn());
           }
@@ -548,8 +550,13 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
           myCurrObject = myObjects[i];
           anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
             Rotate(myObjects[i], myAxis, GetAngle() * PI180);
-          if (!anObj->_is_nil())
+          if (!anObj->_is_nil()) {
+            if(!IsPreview()) {
+              anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+	      updateAttributes(anObj, aParameters);
+	    }
             objects.push_back(anObj._retn());
+	  }
         }
       }
       res = true;

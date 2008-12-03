@@ -652,7 +652,8 @@ bool BasicGUI_PlaneDlg::execute( ObjectList& objects )
   }
   
   if ( !anObj->_is_nil() ) {
-    anObj->SetParameters(getSizeAsString().toLatin1().constData());
+    if ( !IsPreview() )
+      anObj->SetParameters(getSizeAsString().toLatin1().constData());
     objects.push_back( anObj._retn() );
   }
   return res;

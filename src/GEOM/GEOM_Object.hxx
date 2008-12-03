@@ -220,12 +220,10 @@ class GEOM_Object : public MMgt_TShared
   Standard_EXPORT TCollection_AsciiString GetAuxData();
 
   //Set a notebook variables used for object creation
-  Standard_EXPORT void SetParameters(const TCollection_AsciiString& theParameters)
-  {_parameters = theParameters;}
+  Standard_EXPORT void SetParameters(const TCollection_AsciiString& theParameters);
 
   //Get a notebook variables used for object creation
-  Standard_EXPORT TCollection_AsciiString GetParameters() const
-  {return _parameters;}
+  Standard_EXPORT TCollection_AsciiString GetParameters() const;
 
   //###########################################################
   // Sub shape methods

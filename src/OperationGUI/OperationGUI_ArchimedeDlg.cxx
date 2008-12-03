@@ -274,12 +274,14 @@ bool OperationGUI_ArchimedeDlg::execute( ObjectList& objects )
 
   if ( !anObj->_is_nil() )
   {
-    QStringList aParameters;
-    aParameters << GroupPoints->SpinBox_DX->text();
-    aParameters << GroupPoints->SpinBox_DY->text();
-    aParameters << GroupPoints->SpinBox_DZ->text();
-    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
-
+    if ( !IsPreview() )
+    {
+      QStringList aParameters;
+      aParameters << GroupPoints->SpinBox_DX->text();
+      aParameters << GroupPoints->SpinBox_DY->text();
+      aParameters << GroupPoints->SpinBox_DZ->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
     objects.push_back( anObj._retn() );
   }
 

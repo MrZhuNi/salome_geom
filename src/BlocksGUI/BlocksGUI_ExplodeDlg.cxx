@@ -450,7 +450,8 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
       CORBA::String_var objStr = myGeomGUI->getApp()->orb()->object_to_string( *anIter );
       if ( selected.contains( QString( objStr.in() ) ) )
       {
-	(*anIter)->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+	if ( !IsPreview() )
+	  (*anIter)->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
         objects.push_back( *anIter );
       }
       else
@@ -469,7 +470,8 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
     for ( int i = 0, n = aList->length(); i < n; i++ )
     {
       GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_duplicate( aList[i] );
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      if ( !IsPreview() )
+	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
       objects.push_back( anObj._retn() );
     }
   }

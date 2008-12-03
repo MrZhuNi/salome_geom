@@ -70,20 +70,22 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 	//Find attribute with list of used notebook variables
 	SALOMEDS::GenericAttribute_var anAttr;
 	SALOMEDS::AttributeString_var anAttrStr;
-	vector<TVariable> aVariables;
 	if(aValue->FindAttribute(anAttr,"AttributeString")){
 	  anAttrStr = SALOMEDS::AttributeString::_narrow(anAttr);
 	  SALOMEDS::ListOfListOfStrings_var aSections = aStudy->ParseVariables(anAttrStr->Value());
+	  ObjectStates* aStates = new ObjectStates();
 	  for(int i = 0; i < aSections->length(); i++) {
+	    TState aState;
 	    SALOMEDS::ListOfStrings aListOfVars = aSections[i];
 	    for(int j = 0; j < aListOfVars.length(); j++) {
 	      bool isVar = aStudy->IsVariable(aListOfVars[j].in());
 	      TVariable aVar = TVariable( (char*)aListOfVars[j].in(), isVar );
-	      aVariables.push_back(aVar);
+	      aState.push_back(aVar);
 	    }
+	    aStates->AddState(aState);
 	  }
+	  aVariableMap.insert(pair<TCollection_AsciiString,ObjectStates*>(TCollection_AsciiString(anEntry),aStates));
 	}
-	aVariableMap.insert(pair<TCollection_AsciiString,vector<TVariable> >((char*)anEntry,aVariables));
       }
     }
   }

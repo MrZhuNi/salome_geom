@@ -736,7 +736,8 @@ bool BasicGUI_MarkerDlg::execute( ObjectList& objects )
   aParameters<<myData[ DZ2 ]->text();
   
   if ( !anObj->_is_nil() ) {
-    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    if ( !IsPreview() )
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
     objects.push_back( anObj._retn() );
   }
 

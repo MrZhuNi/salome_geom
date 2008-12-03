@@ -637,17 +637,19 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
       anErrorObjNames << GEOMBase::GetName( obj );
     else
     {
-      QStringList aParameters;
+      if ( !IsPreview() )
+      {
+	QStringList aParameters;
 
-      for ( int i = 0; i < anOperators->length(); i++ )
-	aParameters << QString( anOperators[i] );
+	for ( int i = 0; i < anOperators->length(); i++ )
+	  aParameters << QString( anOperators[i] );
 
-      for ( int i = 0; i < aParams->length(); i++ )
-	aParameters << QString( aParams[i] );
+	for ( int i = 0; i < aParams->length(); i++ )
+	  aParameters << QString( aParams[i] );
 
-      aParameters << getTexts( aParams );
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
-
+	aParameters << getTexts( aParams );
+	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      }
       objects.push_back( anObj._retn() );
     }
   }

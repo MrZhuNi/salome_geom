@@ -298,10 +298,12 @@ bool RepairGUI_SewingDlg::execute( ObjectList& objects )
     aResult = !anObj->_is_nil();
     if ( aResult )
     {
-      QStringList aParameters;
-      aParameters << myTolEdt->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
-
+      if ( !IsPreview() )
+      {
+	QStringList aParameters;
+	aParameters << myTolEdt->text();
+	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      }
       objects.push_back( anObj._retn() );
     }
   }

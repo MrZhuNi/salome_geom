@@ -289,17 +289,6 @@ module GEOM
      *  Aborts the previously opened transaction
      */
     void AbortOperation();
-
-    /*!
-     *  Set list of parameters
-     *  \param theParameters is a string containing the list of parameters separated by ":" symbol
-     */
-    void SetParameters (in string theParameters);
-
-    /*!
-     *  Get list of parameters
-     */
-    string GetParameters();
   };
 
   /*!

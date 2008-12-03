@@ -60,11 +60,10 @@ private:
 
 protected:
     void                initSpinBox( QSpinBox*, int, int, int = 1 );
-    // TODO: to replace these method:
-    void                initSpinBox( QDoubleSpinBox*, double, double, double = 0.1, int = 3 );
-    // TODO: by the following:
     void                initSpinBox( SalomeApp_DoubleSpinBox*, double, double, double = 0.1, int = 3 );
     
+    void                updateAttributes( GEOM::GEOM_Object_ptr, const QStringList& );
+
     void                closeEvent( QCloseEvent* );
     void                keyPressEvent( QKeyEvent* );
 

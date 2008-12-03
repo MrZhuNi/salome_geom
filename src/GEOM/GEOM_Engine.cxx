@@ -804,7 +804,14 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     Standard_Integer aEndCommandPos = aStartCommandPos + aCommand.Length();
 
     //Get Entry of the result object
-    TCollection_AsciiString anEntry = aCommand.Token("=",1);
+    TCollection_AsciiString anEntry;
+    if( aCommand.Search("=") != -1 ) // command returns an object
+      anEntry = aCommand.Token("=",1);
+    else { // command modifies the object
+      int aStartEntryPos = aCommand.Location(1,'(',1,aCommand.Length());
+      int aEndEntryPos = aCommand.Location(1,',',aStartEntryPos,aCommand.Length());
+      anEntry = aCommand.SubString(aStartEntryPos+1, aEndEntryPos-1);
+    }
 
     //Remove white spaces
     anEntry.RightAdjust();
@@ -827,18 +834,20 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     }
     
     //Find variables used for object construction
-    vector<TVariable> aVariables;
+    ObjectStates* aStates = 0;
     TVariablesList::const_iterator it = theVariables.find(anEntry);
-    if( it != theVariables.end() ) 
-      aVariables = (*it).second;
+    if( it != theVariables.end() )
+      aStates = (*it).second;
 
-    if(aVariables.empty()) {
+    if(!aStates) {
       if(MYDEBUG)
 	cout<<"Valiables list empty!!!"<<endl;
       aCommandIndex++;
       continue;
     }
-  
+
+    TState aVariables = aStates->GetCurrectState();
+
     if(MYDEBUG) {
       cout<<"Variables from SObject:"<<endl;
       for (int i = 0; i < aVariables.size();i++)
@@ -977,7 +986,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       } // end of specific case for sketcher
 
       //If parameter is entry or 'None', skip it
-      if(theVariables.find(aVar) != theVariables.end() || aVar == PY_NULL)
+      if(theVariables.find(aVar) != theVariables.end() || aVar.Search(":") != -1 || aVar == PY_NULL)
 	continue;
 
       if(iVar >= aVariables.size())
@@ -1003,8 +1012,63 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     theCommand.Insert(aStartCommandPos, aCommand);
 
     aCommandIndex++;
+
+    aStates->IncrementState();
   }
 
   if (MYDEBUG)
     cout<<"Command : "<<theCommand<<endl;
+}
+
+//================================================================================
+/*!
+ * \brief Constructor
+ */
+//================================================================================
+ObjectStates::ObjectStates()
+{
+  _dumpstate = 0;
+}
+
+//================================================================================
+/*!
+ * \brief Destructor
+ */
+//================================================================================
+ObjectStates::~ObjectStates()
+{
+}
+
+//================================================================================
+/*!
+ * \brief Return current object state
+ * \retval state - Object state (vector of notebook variable)
+ */
+//================================================================================
+TState ObjectStates::GetCurrectState() const
+{
+  if(_states.size() > _dumpstate)
+    return _states[_dumpstate];
+  return TState();
+}
+
+//================================================================================
+/*!
+ * \brief Add new object state 
+ * \param theState - Object state (vector of notebook variable)
+ */
+//================================================================================
+void ObjectStates::AddState(const TState &theState)
+{
+  _states.push_back(theState);
+}
+
+//================================================================================
+/*!
+ * \brief Increment object state
+ */
+//================================================================================
+void ObjectStates::IncrementState()
+{
+  _dumpstate++;
 }

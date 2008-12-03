@@ -31,6 +31,7 @@
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_DoubleSpinBox.h>
+#include <SalomeApp_Study.h>
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 #include <SUIT_Desktop.h>
@@ -131,23 +132,21 @@ void GEOMBase_Skeleton::Init()
   myMainFrame->GroupBoxPublish->hide();
 }
 
+//=================================================================================
+// function : initSpinBox()
+// purpose  : 
+//=================================================================================
 void GEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox, 
 				     int min,  int max, int step )
 {
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
 }
-// TODO: to replace these method:
-void GEOMBase_Skeleton::initSpinBox( QDoubleSpinBox* spinBox, 
-				     double min,  double max, 
-				     double step, int decimals )
-{
-  spinBox->setDecimals( decimals ); // it's necessary to set decimals before the range setting,
-                                    // by default Qt rounds boundaries to 2 decimals at setRange
-  spinBox->setRange( min, max );
-  spinBox->setSingleStep( step );
-}
-// TODO: by the following:
+
+//=================================================================================
+// function : initSpinBox()
+// purpose  : 
+//=================================================================================
 void GEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox, 
 				     double min,  double max, 
 				     double step, int decimals )
@@ -157,6 +156,33 @@ void GEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox,
                                     // by default Qt rounds boundaries to 2 decimals at setRange
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
+}
+
+//=================================================================================
+// function : updateAttributes()
+// purpose  : Workaround for Translation and Rotation operations with unchecked option "Create a copy".
+//            In this case PublishInStudy isn't called, so we need to update object's attributes manually
+//=================================================================================
+void GEOMBase_Skeleton::updateAttributes( GEOM::GEOM_Object_ptr theObj,
+					  const QStringList& theParameters)
+{
+  SALOMEDS::Study_var aStudy = GeometryGUI::ClientStudyToStudy(getStudy()->studyDS());
+  SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
+  SALOMEDS::SObject_var aSObject = aStudy->FindObjectID(theObj->GetStudyEntry());
+  SALOMEDS::GenericAttribute_var anAttr = aStudyBuilder->FindOrCreateAttribute(aSObject, "AttributeString");
+  SALOMEDS::AttributeString_var aStringAttrib = SALOMEDS::AttributeString::_narrow(anAttr);
+
+  std::string aValue = aStringAttrib->Value();
+  if( aValue != "" )
+    aValue += "|";
+  for( int i = 0, n = theParameters.count(); i < n; i++ ) {
+    std::string aParameter = theParameters[i].toStdString();
+    if(aStudy->IsVariable(aParameter.c_str()))
+      aValue += aParameter;
+    if(i != n-1)
+      aValue += ":";
+  }
+  aStringAttrib->SetValue(aValue.c_str());
 }
 
 //=================================================================================

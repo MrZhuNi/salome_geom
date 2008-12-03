@@ -429,9 +429,9 @@ bool BasicGUI_EllipseDlg::execute( ObjectList& objects )
   aParameters<<GroupPoints->SpinBox_DY->text();
   
   GEOM::GEOM_Object_var anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeEllipse( myPoint, myDir, aMajorR, aMinorR );
-  for(int i = 0;i< aParameters.size();i++)
-  anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
   if ( !anObj->_is_nil() ) {
+    if ( !IsPreview() )
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
     objects.push_back( anObj._retn() );
   }
   return true;

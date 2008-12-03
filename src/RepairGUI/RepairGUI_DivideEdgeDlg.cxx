@@ -354,12 +354,14 @@ bool RepairGUI_DivideEdgeDlg::execute( ObjectList& objects )
   bool aResult = !anObj->_is_nil();
   if ( aResult )
   {
-    QStringList aParameters;
-    aParameters << "";
-    aParameters << myValEdt->text();
-    aParameters << "";
-    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
-
+    if ( !IsPreview() )
+    {
+      QStringList aParameters;
+      aParameters << "";
+      aParameters << myValEdt->text();
+      aParameters << "";
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
     objects.push_back( anObj._retn() );
   }
 

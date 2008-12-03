@@ -687,7 +687,8 @@ bool OperationGUI_FilletDlg::execute (ObjectList& objects)
 
   if (!anObj->_is_nil())
   {
-    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    if (!IsPreview())
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
     objects.push_back(anObj._retn());
   }
 

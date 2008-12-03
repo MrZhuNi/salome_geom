@@ -497,7 +497,7 @@ bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
     anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
       MakeFaceHW(GroupDimensions->SpinBox_DX->value(),
                  GroupDimensions->SpinBox_DY->value(), myOrientationType);
-    if (!anObj->_is_nil())
+    if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupDimensions->SpinBox_DX->text();
       aParameters << GroupDimensions->SpinBox_DY->text();
@@ -512,7 +512,7 @@ bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
     else if (GroupType->RadioButton2->isChecked())
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
         MakeFaceObjHW(myFace, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value());
-    if (!anObj->_is_nil())
+    if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupPlane->SpinBox_DX->text();
       aParameters << GroupPlane->SpinBox_DY->text();

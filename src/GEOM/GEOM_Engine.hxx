@@ -44,7 +44,27 @@ struct TVariable{
     isVariable(theFlag){}
 };
 
-typedef std::map<TCollection_AsciiString, std::vector<TVariable> > TVariablesList;
+typedef std::vector<TVariable> TState;
+typedef std::vector<TState>    TAllStates;
+
+class ObjectStates
+{
+public:
+  ObjectStates();
+  ~ObjectStates();
+
+  TAllStates GetAllStates() const { return _states; }
+
+  TState GetCurrectState() const;
+  void AddState(const TState &theState);
+  void IncrementState();
+
+private:
+  TAllStates              _states;
+  int                     _dumpstate;
+};
+
+typedef std::map<TCollection_AsciiString, ObjectStates* > TVariablesList;
 
 class GEOM_Engine
 {

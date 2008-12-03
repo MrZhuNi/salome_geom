@@ -2214,6 +2214,20 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("TranslateTwoPointsCopy", self.TrsfOp)
             return anObj
 
+        ## Translate the given object along the vector, specified by its components.
+        #  @param theObject The object to be translated.
+        #  @param theDX,theDY,theDZ Components of translation vector.
+        #  @return Translated GEOM_Object.
+        #
+        #  @ref tui_translation "Example"
+        def TranslateDXDYDZ(self,theObject, theDX, theDY, theDZ):
+            # Example: see GEOM_TestAll.py
+            theDX, theDY, theDZ, Parameters = ParseParameters(theDX, theDY, theDZ)
+            anObj = self.TrsfOp.TranslateDXDYDZ(theObject, theDX, theDY, theDZ)
+            anObj.SetParameters(Parameters)
+            RaiseIfFailed("TranslateDXDYDZ", self.TrsfOp)
+            return anObj
+
         ## Translate the given object along the vector, specified
         #  by its components, creating its copy before the translation.
         #  @param theObject The object to be translated.
@@ -2242,6 +2256,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("TranslateVectorCopy", self.TrsfOp)
             return anObj
 
+        ## Translate the given object along the given vector on given distance.
+        #  @param theObject The object to be translated.
+        #  @param theVector The translation vector.
+        #  @param theDistance The translation distance.
+        #  @param theCopy Flag used to translate object itself or create a copy.
+        #  @return Translated GEOM_Object.
+        #
+        #  @ref tui_translation "Example"
+        def TranslateVectorDistance(self, theObject, theVector, theDistance, theCopy):
+            # Example: see GEOM_TestAll.py
+            theDistance,Parameters = ParseParameters(theDistance)
+            anObj = self.TrsfOp.TranslateVectorDistance(theObject, theVector, theDistance, theCopy)
+            RaiseIfFailed("TranslateVectorDistance", self.TrsfOp)
+            anObj.SetParameters(Parameters)
+            return anObj
+
         ## Translate the given object along the given vector on given distance,
         #  creating its copy before the translation.
         #  @param theObject The object to be translated.
@@ -2255,6 +2285,26 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theDistance,Parameters = ParseParameters(theDistance)
             anObj = self.TrsfOp.TranslateVectorDistance(theObject, theVector, theDistance, 1)
             RaiseIfFailed("TranslateVectorDistance", self.TrsfOp)
+            anObj.SetParameters(Parameters)
+            return anObj
+
+        ## Rotate the given object around the given axis on the given angle.
+        #  @param theObject The object to be rotated.
+        #  @param theAxis Rotation axis.
+        #  @param theAngle Rotation angle in radians.
+        #  @return Rotated GEOM_Object.
+        #
+        #  @ref tui_rotation "Example"
+        def Rotate(self,theObject, theAxis, theAngle):
+            # Example: see GEOM_TestAll.py
+            flag = False
+            if isinstance(theAngle,str):
+                flag = True
+            theAngle, Parameters = ParseParameters(theAngle)
+            if flag:
+                theAngle = theAngle*math.pi/180.0
+            anObj = self.TrsfOp.Rotate(theObject, theAxis, theAngle)
+            RaiseIfFailed("RotateCopy", self.TrsfOp)
             anObj.SetParameters(Parameters)
             return anObj
 

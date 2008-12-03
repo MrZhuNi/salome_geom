@@ -581,7 +581,7 @@ bool BlocksGUI_TrsfDlg::execute (ObjectList& objects)
       MakeMultiTransformation1D(myShape,
                                 myFaces[Face1], myFaces[Face2],
                                 mySpinBox[SpinBox1]->value());
-    if (!anObj->_is_nil())
+    if (!anObj->_is_nil() && !IsPreview())
     {
       QStringList aParameters;
       aParameters << "" << "";
@@ -597,7 +597,7 @@ bool BlocksGUI_TrsfDlg::execute (ObjectList& objects)
                                  mySpinBox[SpinBox2U]->value(),
                                  myFaces[Face1V], myFaces[Face2V],
                                  mySpinBox[SpinBox2V]->value());
-    if (!anObj->_is_nil())
+    if (!anObj->_is_nil() && !IsPreview())
     {
       QStringList aParameters;
       aParameters << "" << "";

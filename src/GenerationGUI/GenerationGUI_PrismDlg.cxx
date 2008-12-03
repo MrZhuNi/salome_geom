@@ -662,7 +662,7 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
         MakePrismVecH2Ways(myBase, myVec, getHeight());
     }
 
-    if (!anObj->_is_nil())
+    if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupPoints->SpinBox_DX->text();
       anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
@@ -693,7 +693,7 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
         MakePrismDXDYDZ2Ways(myBase, dx, dy, dz);
     }
 
-    if (!anObj->_is_nil())
+    if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupPoints3->SpinBox_DX->text();
       aParameters << GroupPoints3->SpinBox_DY->text();

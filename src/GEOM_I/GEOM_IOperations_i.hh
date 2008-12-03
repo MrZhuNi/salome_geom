@@ -53,10 +53,6 @@ class GEOM_I_EXPORT GEOM_IOperations_i : public virtual POA_GEOM::GEOM_IOperatio
 
   virtual void AbortOperation();
 
-  virtual void SetParameters(const char* theParameters);
-  
-  virtual char* GetParameters();
-
 
    ::GEOM_IOperations* GetImpl() { return _impl; }
 
