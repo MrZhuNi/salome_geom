@@ -613,16 +613,19 @@ bool BasicGUI_PlaneDlg::isValid( QString& msg )
     return false;
   }
 
-  if ( id == 0 )
-    return !CORBA::is_nil( myPoint ) && !CORBA::is_nil( myDir ) && 
-      GroupPntDir->SpinBox_DX->isValid( msg, !IsPreview() );
-  else if ( id == 1 ) {
-    return !CORBA::is_nil( myPoint1  ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) &&
-      !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 ) &&
-      Group3Pnts->SpinBox_DX->isValid( msg, !IsPreview() );;
+  if ( id == 0 ) { 
+    bool ok = GroupPntDir->SpinBox_DX->isValid( msg, !IsPreview() );
+    return !CORBA::is_nil( myPoint ) && !CORBA::is_nil( myDir ) && ok;
   }
-  else if ( id == 2 )
-    return !CORBA::is_nil( myFace ) && GroupFace->SpinBox_DX->isValid( msg, !IsPreview() );
+  else if ( id == 1 ) {
+    bool ok = Group3Pnts->SpinBox_DX->isValid( msg, !IsPreview() );
+    return !CORBA::is_nil( myPoint1  ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) &&
+      !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 ) && ok;
+  }
+  else if ( id == 2 ) {
+    bool ok = GroupFace->SpinBox_DX->isValid( msg, !IsPreview() );
+    return !CORBA::is_nil( myFace ) && ok;
+  }
   return false;
 }
 

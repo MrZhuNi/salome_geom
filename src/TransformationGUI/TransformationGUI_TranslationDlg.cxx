@@ -520,8 +520,6 @@ bool TransformationGUI_TranslationDlg::isValid (QString& msg)
 {
   int aConstructorId = getConstructorId();
 
-  if (myObjects.length() < 1) return false;
-
   switch (aConstructorId) {
   case 0: 
     {
@@ -529,12 +527,15 @@ bool TransformationGUI_TranslationDlg::isValid (QString& msg)
       ok = GroupPoints->SpinBox1->isValid( msg, !IsPreview() ) && ok;
       ok = GroupPoints->SpinBox2->isValid( msg, !IsPreview() ) && ok;
       ok = GroupPoints->SpinBox3->isValid( msg, !IsPreview() ) && ok;
-      return ok;
+      return myObjects.length() > 0 && ok;
     }
   case 1:
-    return !(myPoint1->_is_nil() || myPoint2->_is_nil());
+    return myObjects.length() > 0 && !(myPoint1->_is_nil() || myPoint2->_is_nil());
   case 2:
-    return !(myVector->_is_nil()) && GroupPoints->SpinBox3->isValid( msg, !IsPreview() );
+    {
+      bool ok = GroupPoints->SpinBox3->isValid( msg, !IsPreview() );
+      return myObjects.length() > 0 && !(myVector->_is_nil()) && ok;
+    }
   default:
     break;
   }

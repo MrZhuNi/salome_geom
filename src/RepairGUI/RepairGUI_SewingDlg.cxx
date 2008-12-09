@@ -266,7 +266,8 @@ GEOM::GEOM_IOperations_ptr RepairGUI_SewingDlg::createOperation()
 bool RepairGUI_SewingDlg::isValid( QString& msg )
 {
   myClosed = -1;
-  return !myObject->_is_nil() && ( IsPreview() || myTolEdt->value() > 0. ) && myTolEdt->isValid( msg, !IsPreview() );
+  bool ok = myTolEdt->isValid( msg, !IsPreview() );
+  return !myObject->_is_nil() && ( IsPreview() || myTolEdt->value() > 0. ) && ok;
 }
 
 //=================================================================================

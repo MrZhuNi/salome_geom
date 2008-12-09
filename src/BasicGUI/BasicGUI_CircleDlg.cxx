@@ -617,11 +617,13 @@ static bool isEqual( const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Obje
 bool BasicGUI_CircleDlg::isValid( QString& msg )
 {
   const int id = getConstructorId();
-  if ( id == 0 )
+  if ( id == 0 ) {
     //return !myPoint->_is_nil() && !myDir->_is_nil() && getRadius() > 0;
     //nil point means origin of global CS
     //nil vector means Z axis
-    return getRadius() > 0 && GroupPntVecR->SpinBox_DX->isValid(msg, !IsPreview());
+    bool ok = GroupPntVecR->SpinBox_DX->isValid(msg, !IsPreview());
+    return getRadius() > 0 && ok;
+  }
   else if ( id == 1 )
     return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
       !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );

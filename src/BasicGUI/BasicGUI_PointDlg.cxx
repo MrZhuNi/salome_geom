@@ -706,7 +706,8 @@ bool BasicGUI_PointDlg::isValid( QString& msg )
     return !myRefPoint->_is_nil() && ok;
   }
   else if ( id == 2 ) {
-    return !myEdge->_is_nil() && GroupOnCurve->SpinBox_DX->isValid( msg, !IsPreview() );
+    bool ok = GroupOnCurve->SpinBox_DX->isValid( msg, !IsPreview() );
+    return !myEdge->_is_nil() && ok;
   }
   else if ( id == 3 )
     return ( !myLine1->_is_nil() && !myLine2->_is_nil() );

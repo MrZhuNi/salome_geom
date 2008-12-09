@@ -340,7 +340,8 @@ GEOM::GEOM_IOperations_ptr RepairGUI_DivideEdgeDlg::createOperation()
 //=================================================================================
 bool RepairGUI_DivideEdgeDlg::isValid( QString& msg )
 {
-  return !myObject->_is_nil() && myValEdt->isValid( msg, !IsPreview() );
+  bool ok = myValEdt->isValid( msg, !IsPreview() );
+  return !myObject->_is_nil() && ok;
 }
 
 //=================================================================================

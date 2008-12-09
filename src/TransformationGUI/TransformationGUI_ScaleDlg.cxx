@@ -460,20 +460,20 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_ScaleDlg::createOperation()
 //=================================================================================
 bool TransformationGUI_ScaleDlg::isValid (QString& msg)
 {
-  if (myObjects.length() > 0 && fabs(SpinBox_FX->value()) > 0.00001)
-  {
-    // && !myPoint->_is_nil()
-    if (getConstructorId() == 0) {
-      return SpinBox_FX->isValid( msg, !IsPreview() );
-    }
-    if (fabs(SpinBox_FY->value()) > 0.00001 &&
-        fabs(SpinBox_FZ->value()) > 0.00001 &&
-        SpinBox_FX->isValid( msg, !IsPreview()) &&
-        SpinBox_FY->isValid( msg, !IsPreview()) &&
-        SpinBox_FZ->isValid( msg, !IsPreview()))
-      return true;
+  // && !myPoint->_is_nil()
+  if (getConstructorId() == 0) {
+    bool ok = SpinBox_FX->isValid( msg, !IsPreview() );
+    return myObjects.length() > 0 && fabs(SpinBox_FX->value()) > 0.00001 && ok;
   }
-  return false;
+
+  bool ok = true;
+  ok = SpinBox_FX->isValid( msg, !IsPreview() ) && ok;
+  ok = SpinBox_FY->isValid( msg, !IsPreview() ) && ok;
+  ok = SpinBox_FZ->isValid( msg, !IsPreview() ) && ok;
+  return myObjects.length() > 0 &&
+    fabs(SpinBox_FX->value()) > 0.00001 &&
+    fabs(SpinBox_FY->value()) > 0.00001 &&
+    fabs(SpinBox_FZ->value()) > 0.00001 && ok;
 }
 
 //=================================================================================

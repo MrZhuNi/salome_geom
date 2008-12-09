@@ -501,14 +501,14 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_RotationDlg::createOperation()
 //=================================================================================
 bool TransformationGUI_RotationDlg::isValid (QString& msg)
 {
-  if (myObjects.length() < 1) return false;
-
   switch (getConstructorId()) {
-  case 0:
-    return !(myAxis->_is_nil()) && GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() );
+  case 0: {
+    bool ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() );
+    return myObjects.length() > 0 && !(myAxis->_is_nil()) && ok;
     break;
+  }
   case 1:
-    return !(myCentPoint->_is_nil() || myPoint1->_is_nil() || myPoint2->_is_nil());
+    return myObjects.length() > 0 && !(myCentPoint->_is_nil() || myPoint1->_is_nil() || myPoint2->_is_nil());
     break;
   default:
     break;
