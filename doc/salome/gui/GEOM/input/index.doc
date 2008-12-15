@@ -4,6 +4,7 @@
 
 <ul>
 <li>\subpage introduction_page</li>
+<li>\subpage using_notebook_geom_page</li>
 <li>\subpage import_export_geom_obj_page</li>
 <li>\subpage create_geom_obj_page</li>
 <ul>
