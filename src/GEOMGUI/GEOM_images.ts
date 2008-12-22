@@ -894,6 +894,10 @@
             <source>ICO_SKETCH</source>
             <translation>sketch.png</translation>
         </message>
+	<message>
+            <source>ICO_3DSKETCH</source>
+            <translation>3dsketch.png</translation>
+        </message>
         <message>
             <source>ICO_SOLID</source>
             <translation>build_solid.png</translation>

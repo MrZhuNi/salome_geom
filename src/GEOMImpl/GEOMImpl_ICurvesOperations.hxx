@@ -69,6 +69,7 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) MakeSketcher (const char* theCommand,
                                                     list<double> theWorkingPlane);
+  Standard_EXPORT Handle(GEOM_Object) Make3DSketcher (list<double> theCoordinates);
   Standard_EXPORT Handle(GEOM_Object) MakeSketcherOnPlane (const char* theCommand,
                                                            Handle(GEOM_Object) theWorkingPlane);
 };

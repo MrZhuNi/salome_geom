@@ -2178,6 +2178,16 @@ module GEOM
      *  \return New GEOM_Object, containing the created wire.
      */
     GEOM_Object MakeSketcher (in string theCommand, in ListOfDouble theWorkingPlane);
+    
+    /*!
+     *  Create a 3D sketcher, following the numerical description,
+     *  passed through points created by \a theCoordinates argument. \n
+     *  Format of the description string have to be the following:
+     *
+     *  "Make3DSketcher[x1, y1, z1, x2, y2, z2, ..., xN, yN, zN]"
+     */
+    
+    GEOM_Object Make3DSketcher (in ListOfDouble theCoordinates);
 
       /*!
      *  Create a sketcher (wire or face), following the textual description,

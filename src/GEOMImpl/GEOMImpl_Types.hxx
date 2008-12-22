@@ -87,6 +87,7 @@
 
 #define GEOM_ELLIPSE_ARC 43
 
+#define GEOM_3DSKETCHER 44
 
 //GEOM_Function types
 

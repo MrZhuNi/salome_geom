@@ -102,6 +102,7 @@ def TestAll (geompy, math):
   Interpol = geompy.MakeInterpol([px, py, p200, pxyz])    #(List of GEOM_Object_ptr)->GEOM_Object_ptr
   Sketcher = geompy.MakeSketcher("Sketcher:F -100 -100:TT 250 -100:R 0:C 100 150:R 0:L 300:WW",
                                  [100,0,0, 1,1,1, -1,1,0]) #(String, List of Doubles)->GEOM_Object_ptr
+  Sketcher3d = geompy.Make3DSketcher([0,0,0, 50,50,50, 0,50,50, 10,0,0])
 
   #Test point on curve creation
   p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25) #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
@@ -304,6 +305,7 @@ def TestAll (geompy, math):
   id_Bezier   = geompy.addToStudy(Bezier,   "Bezier")
   id_Interpol = geompy.addToStudy(Interpol, "Interpol")
   id_Sketcher = geompy.addToStudy(Sketcher, "Sketcher")
+  id_Sketcher3d = geompy.addToStudy(Sketcher3d, "Sketcher 3D")
 
   id_p_on_arc  = geompy.addToStudy(p_on_arc,  "Vertex on Arc (0.25)")
   id_p_on_l1l2 = geompy.addToStudy(p_on_l1l2, "Vertex on Lines Intersection")

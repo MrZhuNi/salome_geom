@@ -76,6 +76,8 @@ class GEOM_I_EXPORT GEOM_ICurvesOperations_i :
   GEOM::GEOM_Object_ptr MakeSplineInterpolation (const GEOM::ListOfGO& thePoints);
 
   GEOM::GEOM_Object_ptr MakeSketcher (const char* theCommand, const GEOM::ListOfDouble& theWorkingPlane);
+  
+  GEOM::GEOM_Object_ptr Make3DSketcher (const GEOM::ListOfDouble& theCoordinates);
 
   GEOM::GEOM_Object_ptr MakeSketcherOnPlane (const char* theCommand, GEOM::GEOM_Object_ptr theWorkingPlane);
 

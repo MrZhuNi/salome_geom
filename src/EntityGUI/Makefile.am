@@ -34,17 +34,20 @@ salomeinclude_HEADERS =			\
 	EntityGUI.h			\
 	EntityGUI_Widgets.h		\
 	EntityGUI_SketcherDlg.h		\
+	EntityGUI_3DSketcherDlg.h	\
 	EntityGUI_SubShapeDlg.h	
 
 dist_libEntityGUI_la_SOURCES = 		\
 	EntityGUI.cxx			\
 	EntityGUI_Widgets.cxx		\
 	EntityGUI_SketcherDlg.cxx	\
+	EntityGUI_3DSketcherDlg.cxx	\
 	EntityGUI_SubShapeDlg.cxx
 
 MOC_FILES =				\
 	EntityGUI_Widgets_moc.cxx	\
 	EntityGUI_SketcherDlg_moc.cxx	\
+	EntityGUI_3DSketcherDlg_moc.cxx	\
 	EntityGUI_SubShapeDlg_moc.cxx
 
 nodist_libEntityGUI_la_SOURCES =	\

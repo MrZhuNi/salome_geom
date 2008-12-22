@@ -670,6 +670,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeSketcherOnPlane(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcherOnPlane", self.CurvesOp)
             return anObj
+	    
+	## Create a sketcher wire, following the numerical description,
+        #  passed through <VAR>theCoordinates</VAR> argument. \n
+	#  @param theCoordinates double values, defining points to create a wire,
+        #                                                      passing from it.
+        #  @return New GEOM_Object, containing the created wire.
+        #
+        #  @ref tui_sketcher_page "Example"
+        def Make3DSketcher(self, theCoordinates):
+            anObj = self.CurvesOp.Make3DSketcher(theCoordinates)
+            RaiseIfFailed("Make3DSketcher", self.CurvesOp)
+            return anObj
 
         # end of l3_sketcher
         ## @}

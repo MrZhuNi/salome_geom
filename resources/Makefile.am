@@ -36,6 +36,7 @@ Plugin				\
 GEOMDS_Resources		\
 ImportExport			\
 ShHealing			\
+3dsketch.png			\
 angle.png			\
 arc.png				\
 arccenter.png			\

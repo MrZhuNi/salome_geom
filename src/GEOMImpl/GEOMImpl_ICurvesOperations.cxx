@@ -21,6 +21,8 @@
 
 #include <GEOMImpl_ICurvesOperations.hxx>
 
+#include <TColStd_HArray1OfReal.hxx>
+
 #include <GEOM_Function.hxx>
 #include <GEOM_PythonDump.hxx>
 
@@ -32,6 +34,7 @@
 #include <GEOMImpl_EllipseDriver.hxx>
 #include <GEOMImpl_ArcDriver.hxx>
 #include <GEOMImpl_SketcherDriver.hxx>
+#include <GEOMImpl_3DSketcherDriver.hxx>
 
 #include <GEOMImpl_IPolyline.hxx>
 #include <GEOMImpl_ICircle.hxx>
@@ -39,6 +42,7 @@
 #include <GEOMImpl_IEllipse.hxx>
 #include <GEOMImpl_IArc.hxx>
 #include <GEOMImpl_ISketcher.hxx>
+#include <GEOMImpl_I3DSketcher.hxx>
 
 #include "utilities.h"
 
@@ -766,6 +770,73 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
 
   SetErrorCode(OK);
   return aSketcher;
+}
+
+//=============================================================================
+/*!
+ *  Make3DSketcher
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcher (list<double> theCoordinates)
+{
+  SetErrorCode(KO);
+
+  //Add a new Sketcher object
+  Handle(GEOM_Object) a3DSketcher = GetEngine()->AddObject(GetDocID(), GEOM_3DSKETCHER);
+
+  //Add a new Sketcher function
+  Handle(GEOM_Function) aFunction =
+    a3DSketcher->AddFunction(GEOMImpl_3DSketcherDriver::GetID(), GEOM_3DSKETCHER);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_3DSketcherDriver::GetID()) return NULL;
+
+  GEOMImpl_I3DSketcher aCI (aFunction);
+
+  int nbOfCoords = 0;
+  list<double>::iterator it = theCoordinates.begin();
+  for (; it != theCoordinates.end(); it++)
+    nbOfCoords++;
+
+  Handle(TColStd_HArray1OfReal) aCoordsArray = new TColStd_HArray1OfReal (1, nbOfCoords);
+
+  it = theCoordinates.begin();
+  int ind = 1;
+  for (; it != theCoordinates.end(); it++, ind++)
+    aCoordsArray->SetValue(ind, *it);
+
+  aCI.SetCoordinates(aCoordsArray);
+    
+  //Compute the Sketcher value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("3D Sketcher driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << a3DSketcher << " = geompy.Make3DSketcher([";
+
+  it = theCoordinates.begin();
+  pd << (*it++);
+  while (it != theCoordinates.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return a3DSketcher;
 }
 
 //=============================================================================

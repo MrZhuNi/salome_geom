@@ -36,6 +36,7 @@
 <li>\subpage work_with_groups_page</li>
 <li>\subpage build_by_blocks_page</li>
 <li>\subpage create_sketcher_page</li>
+<li>\subpage create_3dsketcher_page</li>
 <li>\subpage create_adv_obj_page</li>
 <ul>
 <li>\ref create_explode_page</li>

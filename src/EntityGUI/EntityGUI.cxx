@@ -37,6 +37,7 @@
 #include <TopoDS_Shape.hxx>
 
 #include "EntityGUI_SketcherDlg.h" // Sketcher
+#include "EntityGUI_3DSketcherDlg.h" // Sketcher
 #include "EntityGUI_SubShapeDlg.h" // Method SUBSHAPE
 
 //=======================================================================
@@ -74,6 +75,9 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case 404: // SKETCHER
     getGeometryGUI()->ActiveWorkingPlane();
     aDlg = new EntityGUI_SketcherDlg( getGeometryGUI(), parent );
+    break;
+  case 405: // 3D SKETCHER
+    aDlg = new EntityGUI_3DSketcherDlg( getGeometryGUI(), parent );
     break;
   case 407: // EXPLODE : use ic
     aDlg = new EntityGUI_SubShapeDlg( getGeometryGUI(), parent );

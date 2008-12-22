@@ -441,6 +441,7 @@ void GeometryGUI::OnGUIEvent( int id )
 #endif
   }
   else if( id == 404 ||   // MENU ENTITY - SKETCHER
+           id == 405 ||   // MENU ENTITY - 3D SKETCHER
 	   id == 407 ) {  // MENU ENTITY - EXPLODE
 #ifndef WNT
 	library = getLibrary( "libEntityGUI.so" );
@@ -797,6 +798,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 9999, "HEX_SOLID" );
 
   createGeomAction( 404, "SKETCH" );
+  createGeomAction( 405, "3DSKETCH" );
   createGeomAction( 407, "EXPLODE" );
 
   createGeomAction( 4081, "EDGE" );
@@ -945,6 +947,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createMenu( separator(), newEntId, -1 );
   createMenu( 404, newEntId, -1 );
+  createMenu( 405, newEntId, -1 );
   createMenu( separator(), newEntId, -1 );
   createMenu( 407, newEntId, -1 );
 

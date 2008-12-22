@@ -40,6 +40,7 @@
 <li>\ref work_with_groups_page</li>
 <li>\ref build_by_blocks_page</li>
 <li>\ref create_sketcher_page</li>
+<li>\ref create_3dsketcher_page</li>
 <li>\ref create_adv_obj_page</li>
 <ul>
 <li>\ref create_explode_page</li>
@@ -122,6 +123,7 @@
 <li>\ref tui_working_with_groups_page</li>
 <li>\ref tui_building_by_blocks_page</li>
 <li>\ref tui_sketcher_page</li>
+<li>\ref tui_3dsketcher_page</li>
 <li>\ref tui_advanced_geom_objs_page</li>
 </ul>
 <li>\ref tui_transformation_page</li>

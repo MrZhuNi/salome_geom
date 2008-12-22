@@ -444,6 +444,31 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher
   return GetObject(anObject);
 }
 
+//=============================================================================
+/*!
+ *  Make3DSketcher
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::Make3DSketcher
+            (const GEOM::ListOfDouble& theCoordinates)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  int ind = 0;
+  int aLen = theCoordinates.length();
+  list<double> aCoords;
+  for (; ind < aLen; ind++)
+    aCoords.push_back(theCoordinates[ind]);
+
+  // Make Sketcher
+  Handle(GEOM_Object) anObject =
+    GetOperations()->Make3DSketcher(aCoords);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return GEOM::GEOM_Object::_nil();
+
+  return GetObject(anObject);
+}
 
 //=============================================================================
 /*!

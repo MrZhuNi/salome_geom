@@ -1432,6 +1432,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_SKETCHER_DY2</source>
             <translation>DY :</translation>
         </message>
+	<message>
+            <source>GEOM_SKETCHER_DZ2</source>
+            <translation>DZ :</translation>
+        </message>
         <message>
             <source>GEOM_SKETCHER_EL</source>
             <translation>Element Type</translation>
@@ -1480,6 +1484,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_SKETCHER_TITLE</source>
             <translation>Sketch Construction</translation>
         </message>
+	<message>
+            <source>GEOM_3DSKETCHER_TITLE</source>
+            <translation>3D Sketch Construction</translation>
+        </message>
         <message>
             <source>GEOM_SKETCHER_TYPE</source>
             <translation>Type</translation>
@@ -1527,6 +1535,18 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_SKETCHER_Y3</source>
             <translation>Abs. Y :</translation>
+        </message>
+	<message>
+            <source>GEOM_SKETCHER_Z2</source>
+            <translation>Z :</translation>
+        </message>
+	<message>
+            <source>GEOM_3DSKETCHER</source>
+            <translation>3D Sketcher</translation>
+        </message>
+	<message>
+            <source>GEOM_COORDINATES_TYPE</source>
+            <translation>Coordinates Type</translation>
         </message>
         <message>
             <source>GEOM_SOLID</source>
@@ -2323,6 +2343,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>MEN_SKETCH</source>
             <translation>Sketch</translation>
+        </message>
+	<message>
+            <source>MEN_3DSKETCH</source>
+            <translation>3D Sketch</translation>
         </message>
         <message>
             <source>MEN_SOLID</source>

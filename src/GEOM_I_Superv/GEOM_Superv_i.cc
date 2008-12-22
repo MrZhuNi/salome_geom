@@ -2649,6 +2649,24 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSketcher (const char* theCommand,
   return NULL;
 }
 
+//=============================================================================
+//  Make3DSketcher:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::Make3DSketcher ( GEOM::GEOM_List_ptr theCoordinates)
+{
+  beginService( " GEOM_Superv_i::Make3DSketcher" );
+  MESSAGE("GEOM_Superv_i::Make3DSketcher");
+  if (GEOM_List_i<GEOM::ListOfDouble>* aListImpl = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfDouble>*>(GetServant(theCoordinates, myPOA).in())) {
+    getCurvesOp();
+    GEOM::GEOM_Object_ptr anObj = myCurvesOp->Make3DSketcher(aListImpl->GetList());
+    endService( " GEOM_Superv_i::Make3DSketcher" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::Make3DSketcher" );
+  return NULL;
+}
+
 //=============================== LocalOperations =============================
 //=============================================================================
 //  MakeFilletAll:
