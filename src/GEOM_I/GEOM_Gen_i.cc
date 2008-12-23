@@ -159,7 +159,6 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   Unexpect aCatch(SALOME_SalomeException);
   SALOMEDS::SObject_var aResultSO;
   if(CORBA::is_nil(theObject) || theStudy->_is_nil()) return aResultSO;
-
   GEOM::GEOM_Object_var aShape = GEOM::GEOM_Object::_narrow(theObject);
   if(aShape->_is_nil()) return aResultSO;
 
@@ -1306,6 +1305,153 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::GetObject (CORBA::Long theStudyID, const char*
   return obj._retn();
 }
 
+//=================================================================================
+// function : hasObjectInfo()
+// purpose  : shows if module provides information for its objects
+//=================================================================================
+bool GEOM_Gen_i::hasObjectInfo()
+{
+  return true;
+}
+
+//=================================================================================
+// function : getObjectInfo()
+// purpose  : returns an information for a given object by its entry
+//=================================================================================
+char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
+{
+  GEOM::GEOM_Object_var aGeomObject;
+ 
+  CORBA::Object_var aSMObject = name_service->Resolve( "/myStudyManager" );
+  SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow( aSMObject );
+  SALOMEDS::Study_var aStudy = aStudyManager->GetStudyByID( studyId );
+  SALOMEDS::SObject_var aSObj = aStudy->FindObjectID( entry );
+  SALOMEDS::GenericAttribute_var anAttr;
+  if (!aSObj->_is_nil() && aSObj->FindAttribute(anAttr, "AttributeIOR")) {
+    SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
+    CORBA::String_var aVal = anIOR->Value();
+    CORBA::Object_var anObject = aStudy->ConvertIORToObject(aVal);
+    aGeomObject = GEOM::GEOM_Object::_narrow(anObject);
+  }
+  
+  char* aTypeInfo = "Object";
+  if ( !aGeomObject->_is_nil() ) {
+    GEOM::GEOM_IKindOfShape::shape_kind aKind;
+    GEOM::ListOfLong_var anInts;
+    GEOM::ListOfDouble_var aDbls;
+
+    GEOM::GEOM_IMeasureOperations_var anOp = GetIMeasureOperations( studyId );
+    aKind = anOp->KindOfShape( aGeomObject, anInts, aDbls );
+
+    if ( anOp->IsDone() ) {
+      switch ( aKind ) {
+      case GEOM::GEOM_IKindOfShape::COMPOUND:
+	aTypeInfo = "Compound";
+	break;
+      case GEOM::GEOM_IKindOfShape::COMPSOLID:
+	aTypeInfo = "CompSolid";
+	break;
+      case GEOM::GEOM_IKindOfShape::SHELL:
+	aTypeInfo = "Shell";
+	break;
+      case GEOM::GEOM_IKindOfShape::WIRE:
+	if ( anInts[0] == 1 )
+	  aTypeInfo = "Closed Wire";
+	else if ( anInts[0] == 2 )
+	  aTypeInfo = "Opened Wire";
+	else
+	  aTypeInfo = "Wire";
+	break;
+	// SOLIDs
+      case GEOM::GEOM_IKindOfShape::SPHERE:
+	aTypeInfo = "Sphere";
+	break;
+      case GEOM::GEOM_IKindOfShape::CYLINDER:
+	aTypeInfo = "Cylinder";
+	break;
+      case GEOM::GEOM_IKindOfShape::BOX:
+      case GEOM::GEOM_IKindOfShape::ROTATED_BOX:
+	aTypeInfo = "Box";
+	break;
+      case GEOM::GEOM_IKindOfShape::TORUS:
+	aTypeInfo = "Torus";
+	break;
+      case GEOM::GEOM_IKindOfShape::CONE:
+	aTypeInfo = "Cone";
+	break;
+      case GEOM::GEOM_IKindOfShape::POLYHEDRON:
+	aTypeInfo = "Polyhedron";
+	break;
+      case GEOM::GEOM_IKindOfShape::SOLID:
+	aTypeInfo = "Solid";
+	break;
+	// FACEs
+      case GEOM::GEOM_IKindOfShape::SPHERE2D:
+	aTypeInfo = "Spherical Face";
+	break;
+      case GEOM::GEOM_IKindOfShape::CYLINDER2D:
+	aTypeInfo = "Cylindrical Face";
+	break;
+      case GEOM::GEOM_IKindOfShape::TORUS2D:
+	aTypeInfo = "Toroidal Face";
+	break;
+      case GEOM::GEOM_IKindOfShape::CONE2D:
+	aTypeInfo = "Conical Face";
+	break;
+      case GEOM::GEOM_IKindOfShape::DISK_CIRCLE:
+	aTypeInfo = "Disk";
+	break;
+      case GEOM::GEOM_IKindOfShape::DISK_ELLIPSE:
+	aTypeInfo = "Elliptical Face";
+	break;
+      case GEOM::GEOM_IKindOfShape::POLYGON:
+	aTypeInfo = "Polygon";
+	break;
+      case GEOM::GEOM_IKindOfShape::PLANE:
+	aTypeInfo = "Plane";
+	break;
+      case GEOM::GEOM_IKindOfShape::PLANAR:
+	aTypeInfo = "Planar Face";
+	break;
+      case GEOM::GEOM_IKindOfShape::FACE:
+	aTypeInfo = "Face";
+	break;
+	// EDGEs
+      case GEOM::GEOM_IKindOfShape::CIRCLE:
+	aTypeInfo = "Circle";
+	break;
+      case GEOM::GEOM_IKindOfShape::ARC_CIRCLE:
+	aTypeInfo = "Ark";
+	break;
+      case GEOM::GEOM_IKindOfShape::ELLIPSE:
+	aTypeInfo = "Ellipse";
+	break;
+      case GEOM::GEOM_IKindOfShape::ARC_ELLIPSE:
+	aTypeInfo = "Arc Ellipse";
+	break;
+      case GEOM::GEOM_IKindOfShape::LINE:
+	aTypeInfo = "Line";
+	break;
+      case GEOM::GEOM_IKindOfShape::SEGMENT:
+	aTypeInfo = "Segment";
+	break;
+      case GEOM::GEOM_IKindOfShape::EDGE:
+	aTypeInfo = "Edge";
+	break;
+      case GEOM::GEOM_IKindOfShape::VERTEX:
+	aTypeInfo = "Vertex";
+	break;
+      default:
+	break;
+      }
+    }
+  }
+    
+  char anInfo [strlen("Module ") + strlen(ComponentDataType()) + strlen(", ") + strlen(aTypeInfo)];
+  sprintf(anInfo, "Module %s, %s", ComponentDataType(), aTypeInfo);
+  
+  return CORBA::string_dup(anInfo);
+}
 
 //=====================================================================================
 // EXPORTED METHODS
