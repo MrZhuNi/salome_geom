@@ -2767,6 +2767,26 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFacesR1R2 (GEOM::GEOM_Object_ptr 
 }
 
 //=============================================================================
+//  MakeFillet2D:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFillet2D (GEOM::GEOM_Object_ptr theShape, 
+						   CORBA::Double theR,
+						   GEOM::GEOM_List_ptr theVertexes)
+{
+  beginService( " GEOM_Superv_i::MakeFillet2D" );
+  MESSAGE("GEOM_Superv_i::MakeFillet2D");
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplV = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theVertexes, myPOA).in())) {
+    getLocalOp();
+    GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeFillet2D(theShape, theR, aListImplV->GetList());
+    endService( " GEOM_Superv_i::MakeFillet2D" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::MakeFillet2D" );
+  return NULL;
+}
+
+//=============================================================================
 //  MakeChamferAll:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferAll (GEOM::GEOM_Object_ptr theShape, CORBA::Double theD)

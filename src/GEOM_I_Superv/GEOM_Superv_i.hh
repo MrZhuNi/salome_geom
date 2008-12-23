@@ -584,6 +584,8 @@ public:
 					 GEOM::GEOM_List_ptr theFaces);
   GEOM::GEOM_Object_ptr MakeFilletFacesR1R2 (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR1,
 					     CORBA::Double theR2, GEOM::GEOM_List_ptr theFaces);
+  GEOM::GEOM_Object_ptr MakeFillet2D (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
+				      GEOM::GEOM_List_ptr theVertexes);
   GEOM::GEOM_Object_ptr MakeChamferAll (GEOM::GEOM_Object_ptr theShape, CORBA::Double theD);
   GEOM::GEOM_Object_ptr MakeChamferEdge (GEOM::GEOM_Object_ptr theShape,
 					 CORBA::Double theD1, CORBA::Double theD2,

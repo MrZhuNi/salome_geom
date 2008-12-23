@@ -11,6 +11,7 @@
 <li>\subpage offset_operation_page</li>
 <li>\subpage multi_translation_operation_page</li>
 <li>\subpage multi_rotation_operation_page</li>
+<li>\subpage fillet2d_operation_page</li>
 <li>\subpage fillet_operation_page</li>
 <li>\subpage chamfer_operation_page</li>
 </ul>

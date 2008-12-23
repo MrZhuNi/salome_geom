@@ -86,6 +86,7 @@
 <li>\ref offset_operation_page</li>
 <li>\ref multi_translation_operation_page</li>
 <li>\ref multi_rotation_operation_page</li>
+<li>\ref fillet2d_operation_page</li>
 <li>\ref fillet_operation_page</li>
 <li>\ref chamfer_operation_page</li>
 </ul>

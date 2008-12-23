@@ -45,8 +45,9 @@
 #define GEOM_ELLIPSE  18
 #define GEOM_CIRC_ARC 19
 
-#define GEOM_FILLET  20
-#define GEOM_CHAMFER 21
+#define GEOM_FILLET    20
+#define GEOM_FILLET_2D 45
+#define GEOM_CHAMFER   21
 
 #define GEOM_EDGE  22
 #define GEOM_WIRE  23
@@ -226,6 +227,8 @@
 #define FILLET_SHAPE_FACES    3
 #define FILLET_SHAPE_EDGES_2R 4
 #define FILLET_SHAPE_FACES_2R 5
+
+#define FILLET_2D_SHAPE_VERTEXES      1
 
 #define CHAMFER_SHAPE_ALL      1
 #define CHAMFER_SHAPE_EDGE     2

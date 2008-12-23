@@ -580,6 +580,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_FILLET</source>
             <translation>Fillet</translation>
         </message>
+	<message>
+            <source>GEOM_FILLET_2D</source>
+            <translation>Fillet 2D</translation>
+        </message>
         <message>
             <source>GEOM_FILLET_ABORT</source>
             <translation>Fillet can't be computed with radius %1</translation>
@@ -596,9 +600,17 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_FILLET_FACES</source>
             <translation>Fillet On Faces From Shape</translation>
         </message>
+	<message>
+            <source>GEOM_FILLET_VERTEXES</source>
+            <translation>Fillet On Vertexes From Face</translation>
+        </message>
         <message>
             <source>GEOM_FILLET_TITLE</source>
             <translation>Fillet Construction</translation>
+        </message>
+	<message>
+            <source>GEOM_FILLET_2D_TITLE</source>
+            <translation>2D Fillet Construction</translation>
         </message>
         <message>
             <source>GEOM_FILLING</source>
@@ -1812,6 +1824,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_VERTEX</source>
             <translation>Vertex</translation>
         </message>
+	<message>
+            <source>GEOM_VERTEXES</source>
+            <translation>Vertexes</translation>
+        </message>
         <message>
             <source>GEOM_WATER_DENSITY</source>
             <translation>Water Density :</translation>
@@ -2119,6 +2135,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>MEN_FILLET</source>
             <translation>Fillet</translation>
+        </message>
+	<message>
+            <source>MEN_FILLET_2D</source>
+            <translation>Fillet 2D</translation>
         </message>
         <message>
             <source>MEN_FILLING</source>

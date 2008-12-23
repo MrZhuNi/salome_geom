@@ -202,6 +202,10 @@
             <source>ICON_DLG_FILLET</source>
             <translation>fillet.png</translation>
         </message>
+	<message>
+            <source>ICON_DLG_FILLET_2D</source>
+            <translation>fillet2d.png</translation>
+        </message>
         <message>
             <source>ICON_DLG_FILLET_ALL</source>
             <translation>filletall.png</translation>
@@ -737,6 +741,10 @@
         <message>
             <source>ICO_FILLET</source>
             <translation>fillet.png</translation>
+        </message>
+	<message>
+            <source>ICO_FILLET_2D</source>
+            <translation>fillet2d.png</translation>
         </message>
         <message>
             <source>ICO_FILLING</source>

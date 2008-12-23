@@ -512,6 +512,9 @@ module GEOM
 				     in double      theR1,
 				     in double      theR2,
 				     in GEOM_List   theFaces) ;
+    GEOM_Object MakeFillet2D (in GEOM_Object theShape,
+			      in double      theR,
+			      in GEOM_List   theVertexes) ;
     GEOM_Object MakeChamferAll (in GEOM_Object theShape,
 				in double      theD) ;
     GEOM_Object MakeChamferEdge (in GEOM_Object theShape,

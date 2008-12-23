@@ -27,9 +27,11 @@
 #include <GEOMImpl_Types.hxx>
 
 #include <GEOMImpl_FilletDriver.hxx>
+#include <GEOMImpl_Fillet2dDriver.hxx>
 #include <GEOMImpl_ChamferDriver.hxx>
 
 #include <GEOMImpl_IFillet.hxx>
+#include <GEOMImpl_IFillet2d.hxx>
 #include <GEOMImpl_IChamfer.hxx>
 
 #include <GEOMImpl_IArchimede.hxx>
@@ -406,6 +408,75 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFacesR1R2
 
   SetErrorCode(OK);
   return aFillet;
+}
+
+//=============================================================================
+/*!
+ *  MakeFillet2D
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFillet2D
+       (Handle(GEOM_Object) theShape, double theR, std::list<int> theVertexes)
+{
+  SetErrorCode(KO);
+
+  //Add a new Fillet object
+  Handle(GEOM_Object) aFillet2D = GetEngine()->AddObject(GetDocID(), GEOM_FILLET_2D);
+
+  //Add a new Fillet function
+  Handle(GEOM_Function) aFunction =
+    aFillet2D->AddFunction(GEOMImpl_Fillet2dDriver::GetID(), FILLET_2D_SHAPE_VERTEXES);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_Fillet2dDriver::GetID()) return NULL;
+
+  GEOMImpl_IFillet2d aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aCI.SetShape(aRefShape);
+  aCI.SetR(theR);
+  int aLen = theVertexes.size();
+  aCI.SetLength(aLen);
+
+  int ind = 1;
+  std::list<int>::iterator it = theVertexes.begin();
+  for (; it != theVertexes.end(); it++, ind++) {
+    aCI.SetVertex(ind, (*it));
+  }
+
+  //Compute the Fillet value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("2D Fillet driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aFillet2D << " = geompy.MakeFillet2D(" << theShape
+    << ", " << theR << ", [";
+
+  it = theVertexes.begin();
+  pd << (*it++);
+  while (it != theVertexes.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return aFillet2D;
 }
 
 //=============================================================================

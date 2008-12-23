@@ -2244,10 +2244,24 @@ module GEOM
     GEOM_Object MakeFilletFaces (in GEOM_Object theShape,
 				 in double      theR,
 				 in ListOfLong  theFaces);
+				 
     GEOM_Object MakeFilletFacesR1R2 (in GEOM_Object theShape,
 				     in double      theR1,
 				     in double      theR2,
 				     in ListOfLong  theFaces);
+				     
+    /*!
+     *  Perform a fillet on face of the specified vertexes of the given shape.
+     *  \param theShape Shape, to perform fillet on.
+     *  \param theR Fillet radius.
+     *  \param theVertexes Global indices of vertexes to perform fillet on.
+     *    \note Global index of sub-shape can be obtained, using method
+     *          <VAR>GEOM_IShapesOperations.GetSubShapeIndex()</VAR>.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeFillet2D (in GEOM_Object theShape,
+			      in double      theR,
+			      in ListOfLong  theVertexes);
 
     /*!
      *  Perform a symmetric chamfer on all edges of the given shape.

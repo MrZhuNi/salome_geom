@@ -235,6 +235,7 @@ def TestAll (geompy, math):
   IDlist_f = [f_ind_1, f_ind_2]
   
   #Local operations
+  Fillet2d = geompy.MakeFillet2D(Face3, radius, [4, 7, 9]) #(GEOM_Object_ptr, Double, ListOfLong)->GEOM_Object_ptr
   Fillet   = geompy.MakeFillet (Prism, radius, ShapeTypeEdge,
                                 IDlist_e) #(GEOM_Object_ptr, Double, Short, ListOfLong)->GEOM_Object_ptr
   Fillet2  = geompy.MakeFilletR1R2 (Prism, 7., 13., ShapeTypeEdge,
@@ -381,6 +382,7 @@ def TestAll (geompy, math):
 
   id_Fillet   = geompy.addToStudy(Fillet,   "Fillet")
   id_Fillet2  = geompy.addToStudy(Fillet2,  "Fillet2")
+  id_Fillet2d = geompy.addToStudy(Fillet2d, "Fillet2D")
 
   id_Chamfer  = geompy.addToStudy(Chamfer,  "Chamfer on Edge")
   id_Chamfer2 = geompy.addToStudy(Chamfer2, "Chamfer on Faces")

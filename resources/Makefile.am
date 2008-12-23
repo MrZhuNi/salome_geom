@@ -87,6 +87,7 @@ eraseall.png			\
 face_hw.png			\
 face_vechw.png			\
 fillet.png			\
+fillet2d.png			\
 filletall.png			\
 filletedge.png			\
 filletface.png			\
