@@ -1326,6 +1326,10 @@ char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
   SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow( aSMObject );
   SALOMEDS::Study_var aStudy = aStudyManager->GetStudyByID( studyId );
   SALOMEDS::SObject_var aSObj = aStudy->FindObjectID( entry );
+  SALOMEDS::SObject_var aResultSObj;
+  if (aSObj->ReferencedObject(aResultSObj))
+    aSObj = aResultSObj;
+
   SALOMEDS::GenericAttribute_var anAttr;
   if (!aSObj->_is_nil() && aSObj->FindAttribute(anAttr, "AttributeIOR")) {
     SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
