@@ -67,6 +67,7 @@ dist_salomescript_DATA =		\
 	GEOM_tube_geom_gg2.py		\
 	GEOM_Nut.py			\
 	GEOM_Sketcher.py		\
+	GEOM_ObjectInfo.py              \
 	PAL_MESH_019_020_geometry.py	\
 	PAL_MESH_028_geometry.py	\
 	PAL_MESH_030_geometry.py	\
