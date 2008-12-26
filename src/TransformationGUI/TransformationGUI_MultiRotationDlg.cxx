@@ -127,14 +127,14 @@ void TransformationGUI_MultiRotationDlg::Init()
   double SpecificStep1 = 5;
   double SpecificStep2 = 1;
   // min, max, step and decimals for spin boxes & initial values
-  initSpinBox(GroupPoints->SpinBox_DX, 1.0, MAX_NUMBER, SpecificStep2, 10);
+  initSpinBox(GroupPoints->SpinBox_DX, 1.0, 999, SpecificStep2, 10);
   GroupPoints->SpinBox_DX->setValue(myNbTimes1);
   GroupPoints->SpinBox_DX->setDecimals(0);
 
   initSpinBox(GroupDimensions->SpinBox_DX1, COORD_MIN, COORD_MAX, SpecificStep1, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DY1, 1.0, MAX_NUMBER, SpecificStep2, 10);
+  initSpinBox(GroupDimensions->SpinBox_DY1, 1.0, 999, SpecificStep2, 10);
   initSpinBox(GroupDimensions->SpinBox_DX2, COORD_MIN, COORD_MAX, step, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DY2, 1.0, MAX_NUMBER, SpecificStep2, 10);
+  initSpinBox(GroupDimensions->SpinBox_DY2, 1.0, 999, SpecificStep2, 10);
   GroupDimensions->SpinBox_DX1->setValue(myAng);
   GroupDimensions->SpinBox_DY1->setValue(myNbTimes1);
   GroupDimensions->SpinBox_DX2->setValue(myStep);

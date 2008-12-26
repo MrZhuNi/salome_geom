@@ -115,7 +115,7 @@ void BlocksGUI_TrsfDlg::Init()
   QMap<int, QtxDoubleSpinBox*>::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter) {
     //anIter.data()->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
-    initSpinBox(anIter.value(), 1.0, MAX_NUMBER, SpecificStep, 3);
+    initSpinBox(anIter.value(), 1.0, 999, SpecificStep, 3);
   }
 
   // signals and slots connections
