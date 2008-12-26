@@ -60,16 +60,18 @@ and the Distance parameter (ranging from 0 to 1) defining  how far the object wi
 otherwise it will be removed.
 \n <b>Select Unpublished edges</b> checkbox allows to select subshape edges on
 the other objects.
-\n <b>Arguments:</b> Name + one or several objects + Translation path.
+\n <b>Reverse Direction</b> checkbox allows to REVERSE the direction of the object movement along its path.
+
+<b>Arguments:</b> Name + one or several objects + Translation path.
 \n <b>Advanced option:</b>
    \ref restore_presentation_parameters_page "Set presentation
    parameters and subshapes from arguments".
-
+   
 \image html transformation13.png
 
-\image html transformation14.png
-
 \image html transformation12.png
+
+\image html transformation14.png
 
 \n <b>TUI Command:</b> <em>geompy.MakePosition(theObject, theStartLCS,
 theEndLCS),</em>  where \em theObject is a shape, location of which is

@@ -123,7 +123,7 @@ cs2 = geompy.MakeMarker(30,40,40, 1,0,0, 0,1,0)
 
 # modify the location of the given object
 position = geompy.MakePosition(cylinder, cs1, cs2)
-position2 = geompy.PositionAlongPath(position, circle, 0.75, 1)
+position2 = geompy.PositionAlongPath(position, circle, 0.75, 1, 1)
 
 # add objects in the study
 id_cs1 = geompy.addToStudy(cs1, "Coordinate system 1")

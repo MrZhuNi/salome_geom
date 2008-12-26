@@ -688,6 +688,20 @@ void DlgRef_4Sel1Spin2Check::ShowRows( int fromRow, int toRow, bool toShow )
 }
 
 //////////////////////////////////////////
+// DlgRef_4Sel1Spin3Check
+//////////////////////////////////////////
+
+DlgRef_4Sel1Spin3Check::DlgRef_4Sel1Spin3Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_4Sel1Spin3Check::~DlgRef_4Sel1Spin3Check()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_6Sel
 //////////////////////////////////////////
 

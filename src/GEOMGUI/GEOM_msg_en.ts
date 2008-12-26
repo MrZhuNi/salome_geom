@@ -1304,6 +1304,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_REVERSE</source>
             <translation>Reverse</translation>
         </message>
+	<message>
+            <source>GEOM_REVERSE_DIRECTION</source>
+            <translation>Reverse Direction</translation>
+        </message>
         <message>
             <source>GEOM_REVERSE_PLANE</source>
             <translation>Reverse the plane normal</translation>

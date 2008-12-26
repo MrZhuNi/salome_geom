@@ -799,13 +799,15 @@ module GEOM
      *  \param  thePath Wire or Edge along that the object will be translated.
      *	\param  theDistance progress of Path (0 = actual location, 1 = end of path location).
      *	\param  theCopy is a true or false parameter. true is to create a copy, false to move the object.
+     *	\param  theCopy is a true or false parameter. true is to reverse direction, false is to move normal direction.
      *  \return New GEOM_Object, containing the displaced shape.
      */
 
     GEOM_Object PositionAlongPath (in GEOM_Object theObject,
 				   in GEOM_Object thePath,
 				   in double theDistance,
-				   in boolean theCopy);
+				   in boolean theCopy,
+				   in boolean theReverse);
 
     /*!
      *  Recompute the shape from its arguments.

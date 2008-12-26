@@ -997,7 +997,8 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionAlongPath
                                              (GEOM::GEOM_Object_ptr theObject,
 					      GEOM::GEOM_Object_ptr thePath,
 					      CORBA::Double         theDistance,
-					      CORBA::Boolean        theCopy)
+					      CORBA::Boolean        theCopy,
+					      CORBA::Boolean        theReverse)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -1021,7 +1022,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionAlongPath
 
   //Perform the position
   Handle(GEOM_Object) anObject =
-    GetOperations()->PositionAlongPath(aBasicObject, aPathObject, theDistance, theCopy);
+    GetOperations()->PositionAlongPath(aBasicObject, aPathObject, theDistance, theCopy, theReverse);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

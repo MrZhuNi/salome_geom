@@ -28,7 +28,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_4Sel1Spin2Check;
+class DlgRef_4Sel1Spin3Check;
 
 //=================================================================================
 // class    : TransformationGUI_PositionDlg
@@ -64,7 +64,7 @@ private:
   // to initialize the first selection field with a selected object on the dialog creation
   bool                               myInitial;
 
-  DlgRef_4Sel1Spin2Check*            Group1;
+  DlgRef_4Sel1Spin3Check*            Group1;
     
 private slots:
   void                               ClickOnOk();

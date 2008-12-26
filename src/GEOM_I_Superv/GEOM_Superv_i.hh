@@ -422,7 +422,8 @@ public:
   GEOM::GEOM_Object_ptr PositionAlongPath (GEOM::GEOM_Object_ptr theObject,
 					   GEOM::GEOM_Object_ptr thePath,
 					   CORBA::Double         theDistance,
-					   CORBA::Boolean        theCopy);
+					   CORBA::Boolean        theCopy,
+					   CORBA::Boolean        theReverse);
 
   //-----------------------------------------------------------//
   // ShapesOperations                                          //

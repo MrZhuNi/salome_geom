@@ -66,7 +66,7 @@ TransformationGUI_PositionDlg::TransformationGUI_PositionDlg
   mainFrame()->RadioButton2->setIcon(image1);
   mainFrame()->RadioButton3->setIcon(image2);
 
-  Group1 = new DlgRef_4Sel1Spin2Check(centralWidget());
+  Group1 = new DlgRef_4Sel1Spin3Check(centralWidget());
   Group1->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   Group1->TextLabel1->setText(tr("GEOM_OBJECTS"));
   Group1->TextLabel2->setText(tr("GEOM_START_LCS"));
@@ -79,6 +79,7 @@ TransformationGUI_PositionDlg::TransformationGUI_PositionDlg
   Group1->PushButton5->setIcon(imageselect);
   Group1->CheckButton1->setText(tr("GEOM_CREATE_COPY"));
   Group1->CheckButton2->setText(tr("SELECT_UNPUBLISHED_EDGES"));
+  Group1->CheckButton3->setText(tr("GEOM_REVERSE_DIRECTION"));
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -122,7 +123,7 @@ void TransformationGUI_PositionDlg::Init()
   Group1->LineEdit5->setText("");
 
   initSpinBox(Group1->SpinBox_DX, 0, 1, 0.05, 6); // VSR:TODO : DBL_DIGITS_DISPLAY
-  Group1->SpinBox_DX->setValue(1);
+  Group1->SpinBox_DX->setValue(0);
 
   Group1->CheckButton2->setEnabled(false);
 
@@ -150,6 +151,7 @@ void TransformationGUI_PositionDlg::Init()
   connect(Group1->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
 
   connect(Group1->CheckButton2,   SIGNAL(toggled(bool)), this, SLOT(SelectionTypeButtonClicked()));
+  connect(Group1->CheckButton3,   SIGNAL(toggled(bool)), this, SLOT(ValueChangedInSpinBox()));
 
   initName(tr("GEOM_POSITION"));
 
@@ -192,6 +194,7 @@ void TransformationGUI_PositionDlg::ConstructorsClicked (int constructorId)
       Group1->PushButton1->click();
 
       Group1->CheckButton2->hide();
+      Group1->CheckButton3->hide();
     }
     break;
   case 1:
@@ -210,6 +213,7 @@ void TransformationGUI_PositionDlg::ConstructorsClicked (int constructorId)
       Group1->PushButton1->click();
 
       Group1->CheckButton2->hide();
+      Group1->CheckButton3->hide();
     }
     break;
   case 2:
@@ -232,6 +236,7 @@ void TransformationGUI_PositionDlg::ConstructorsClicked (int constructorId)
       Group1->PushButton1->click();
 
       Group1->CheckButton2->show();
+      Group1->CheckButton3->show();
     }
     break;
   }
@@ -333,6 +338,9 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
       return;
     else
       myEditCurrentArgument->setText(aName);
+
+    if (getConstructorId() == 2)
+      Group1->PushButton5->click();
   }
   else if (myEditCurrentArgument == Group1->LineEdit2) {
     if (aSelList.Extent() != 1)
@@ -363,10 +371,8 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
     aName = GEOMBase::GetName(myEndLCS);
     myEditCurrentArgument->setText(aName);
 
-    if (!myEndLCS->_is_nil() && !myObjects.length() && getConstructorId() != 2)
+    if (!myEndLCS->_is_nil() && !myObjects.length())
       Group1->PushButton1->click();
-    else if (getConstructorId() == 2 && !myObjects.length())
-      Group1->PushButton5->click();
   }
   else if (myEditCurrentArgument == Group1->LineEdit5) {
     myPath = GEOM::GEOM_Object::_nil();
@@ -413,6 +419,9 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
     
     myEditCurrentArgument->setText(aName);
     myPath = aSelectedObject;
+
+    if (!myPath->_is_nil() && !myObjects.length())
+      Group1->PushButton1->click();
   }
 
   // clear selection
@@ -631,9 +640,10 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
   case 2:
     {
       double aDistance = Group1->SpinBox_DX->value();
+      bool toReverse = Group1->CheckButton3->isChecked();
       for (int i = 0; i < myObjects.length(); i++) {
 	anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-	  PositionAlongPath(myObjects[i], myPath, aDistance, toCreateCopy);
+	  PositionAlongPath(myObjects[i], myPath, aDistance, toCreateCopy, toReverse);
 	if (!anObj->_is_nil())
 	  objects.push_back(anObj._retn());
       }

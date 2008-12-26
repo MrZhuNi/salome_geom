@@ -2247,12 +2247,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param  theObject The object to be displaced.
         #  @param  thePath Wire or Edge along that the object will be translated.
 	#  @param  theDistance progress of Path (0 = start location, 1 = end of path location).
+	#  @param  theCopy is to create a copy objects if true.
+	#  @param  theReverse - 0 for usual direction, 1 to reverse path direction.
         #  @return New GEOM_Object, containing the displaced shape.
         #
         #  @ref tui_modify_location "Example"
-        def PositionAlongPath(self,theObject, thePath, theDistance, theCopy):
+        def PositionAlongPath(self,theObject, thePath, theDistance, theCopy, theReverse):
             # Example: see GEOM_TestAll.py
-            anObj = self.TrsfOp.PositionAlongPath(theObject, thePath, theDistance, theCopy)
+            anObj = self.TrsfOp.PositionAlongPath(theObject, thePath, theDistance, theCopy, theReverse)
             RaiseIfFailed("PositionAlongPath", self.TrsfOp)
             return anObj
 

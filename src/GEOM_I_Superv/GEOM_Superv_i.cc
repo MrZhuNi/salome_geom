@@ -1826,12 +1826,13 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionShapeCopy (GEOM::GEOM_Object_ptr th
 GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionAlongPath (GEOM::GEOM_Object_ptr theObject,
 							GEOM::GEOM_Object_ptr thePath,
 							CORBA::Double         theDistance,
-							CORBA::Boolean        theCopy)
+							CORBA::Boolean        theCopy,
+							CORBA::Boolean        theReverse)
 {
   beginService( " GEOM_Superv_i::PositionAlongPath" );
   MESSAGE("GEOM_Superv_i::PositionAlongPath");
   getTransfOp();
-  GEOM::GEOM_Object_ptr anObj = myTransfOp->PositionAlongPath(theObject, thePath, theDistance, theCopy);
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->PositionAlongPath(theObject, thePath, theDistance, theCopy, theReverse);
   endService( " GEOM_Superv_i::PositionAlongPath" );
   return anObj;
 }

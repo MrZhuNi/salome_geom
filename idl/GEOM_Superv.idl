@@ -346,7 +346,8 @@ module GEOM
     GEOM_Object PositionAlongPath (in GEOM_Object theObject,
 				   in GEOM_Object thePath,
 				   in double theDistance,
-				   in boolean theCopy);
+				   in boolean theCopy,
+				   in boolean theReverse);
 
     //-----------------------------------------------------------//
     // ShapesOperations                                          //

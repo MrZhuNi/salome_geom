@@ -207,7 +207,7 @@ def TestAll (geompy, math):
   MirrorAxis  = geompy.MakeMirrorByAxis(Box, Line1)  #
   MirrorPnt   = geompy.MakeMirrorByPoint(Box, p200)  #
   Position    = geompy.MakePosition(Box, cs1, cs2)   #(3 GEOM_Object_ptr)->GEOM_Object_ptr
-  Position2   = geompy.PositionAlongPath(Box, Arc, 0.5, 1)  #(2 GEOM_Object_ptr, 1 Double, 1 Bool)->GEOM_Object_ptr
+  Position2   = geompy.PositionAlongPath(Box, Arc, 0.5, 1, 0)  #(2 GEOM_Object_ptr, 1 Double, 2 Bool)->GEOM_Object_ptr
   Offset      = geompy.MakeOffset(Box, 10.)          #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Orientation = geompy.ChangeOrientation(Box)
 

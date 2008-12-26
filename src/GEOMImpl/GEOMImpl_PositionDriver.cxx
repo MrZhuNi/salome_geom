@@ -32,6 +32,7 @@
 #include <GCPnts_AbscissaPoint.hxx>
 #include <ShHealOper_EdgeDivide.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepTools.hxx>
 #include <BRepTools_WireExplorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
@@ -48,6 +49,8 @@
 #include <BRepGProp.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <GeomAdaptor_Curve.hxx>
+#include <BRepGProp.hxx>
+#include <ShapeFix_Wire.hxx>
 
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
@@ -145,6 +148,7 @@ Standard_Integer GEOMImpl_PositionDriver::Execute(TFunction_Logbook& log) const
     Handle(GEOM_Function) aRefShape = aCI.GetShape();
     Handle(GEOM_Function) aPathShape = aCI.GetPath();
     double aValue = aCI.GetDistance();
+    bool aReversed = aCI.GetReverse();
 
     TopoDS_Shape aShapeBase = aRefShape->GetValue();
     TopoDS_Shape aPath = aPathShape->GetValue();
@@ -152,31 +156,70 @@ Standard_Integer GEOMImpl_PositionDriver::Execute(TFunction_Logbook& log) const
     if (aShapeBase.IsNull() || aPath.IsNull())
       return 0;
 
+    //Get a Center Of Mass Of Base Object
+    GProp_GProps aSystem;
+    gp_Pnt aCenterMass;
+    if (aShapeBase.ShapeType() == TopAbs_VERTEX) {
+      aCenterMass = BRep_Tool::Pnt(TopoDS::Vertex(aShapeBase));
+    } else if (aShapeBase.ShapeType() == TopAbs_EDGE || aShapeBase.ShapeType() == TopAbs_WIRE) {
+      BRepGProp::LinearProperties(aShapeBase, aSystem);
+      aCenterMass = aSystem.CentreOfMass();
+    } else if (aShapeBase.ShapeType() == TopAbs_FACE || aShapeBase.ShapeType() == TopAbs_SHELL) {
+      BRepGProp::SurfaceProperties(aShapeBase, aSystem);
+      aCenterMass = aSystem.CentreOfMass();
+    } else {
+      BRepGProp::VolumeProperties(aShapeBase, aSystem);
+      aCenterMass = aSystem.CentreOfMass();
+    }
+
     TopoDS_Shape aTrimmedPath;
     gp_Trsf aTrsf;
     Handle(Geom_Curve) aCurve;    
     Standard_Real aFirst =0.,aLast=0.;
     Standard_Real aParam = 0.;
     Standard_Real aLength = 0.;
+
+    gp_Pnt aPFirst, aPLast;
    
-    if ( aPath.ShapeType() == TopAbs_EDGE ) {
+    if ( aPath.ShapeType() == TopAbs_EDGE ) { // The Path is Edge
       TopoDS_Edge anEdge = TopoDS::Edge(aPath);
-      // Computation by Parameter
+
       BRep_Tool::Range(anEdge,aFirst,aLast);
       aCurve = BRep_Tool::Curve(anEdge,aFirst,aLast);
-      aParam = aFirst + aValue*(aLast - aFirst);
-    } else if ( aPath.ShapeType() == TopAbs_WIRE ) {
+      if (aReversed)
+	aCurve = aCurve->Reversed();
+
+      aCurve->D0(aFirst, aPFirst);
+      aCurve->D0(aLast, aPLast);
+
+      // Translate a CenterMass of Base Shape to the start of the path
+      if ( !aPFirst.IsEqual(aCenterMass, gp::Resolution()) ) {
+	gp_Trsf aCurTrsf;
+	aCurTrsf.SetTranslation(aCenterMass, aPFirst);
+	aTrsf.PreMultiply(aCurTrsf);
+      }
+      aParam = aFirst + aValue*(aLast - aFirst); // Calculate parameter
+    } else if ( aPath.ShapeType() == TopAbs_WIRE ) { // The  path Shape is Wire
+      TopoDS_Wire aWire = TopoDS::Wire(aPath);
+
+     // fix edges order
+      Handle(ShapeFix_Wire) aFixWire = new ShapeFix_Wire;
+      aFixWire->Load(aWire);
+      aFixWire->FixReorder();
+      aWire = aFixWire->Wire();
+      
       TopExp_Explorer ex;
       TopTools_SequenceOfShape Edges;
       Standard_Real nbEdges = 0.;
-      BRepTools_WireExplorer aWE (TopoDS::Wire(aPath));
-      for (; aWE.More(); aWE.Next(), nbEdges++)
+      BRepTools_WireExplorer aWE (aWire);
+      for (; aWE.More(); aWE.Next(), nbEdges++) // Explore a Wire on Edges
 	Edges.Append(aWE.Current());
 
       Standard_Real aSummOfLen =0.;
       Standard_Real aCurLen =0.;
       GeomAdaptor_Curve aAdC;
-      for(int i=1; i<=Edges.Length(); i++) {
+
+      for(int i=1; i<=Edges.Length(); i++) { // Calculate summary Lenght of edges
 	TopoDS_Edge anEdge = TopoDS::Edge(Edges.Value(i));
 	BRep_Tool::Range(anEdge,aFirst,aLast);
 	aCurve = BRep_Tool::Curve(anEdge,aFirst,aLast);
@@ -185,29 +228,61 @@ Standard_Integer GEOMImpl_PositionDriver::Execute(TFunction_Logbook& log) const
 	aSummOfLen += aCurLen;
       }
 
+      // Move BaseShape to the Start Of the Curve
+      TopoDS_Edge anEdge;
+      if (!aReversed)
+	anEdge = TopoDS::Edge(Edges.Value(1));
+      else
+	anEdge = TopoDS::Edge(Edges.Value(Edges.Length()));
+
+      BRep_Tool::Range(anEdge,aFirst,aLast);
+      aCurve = BRep_Tool::Curve(anEdge,aFirst,aLast);
+      aCurve->D0(aFirst, aPFirst);
+      aCurve->D0(aLast, aPLast);
+      if ( !aPFirst.IsEqual(aCenterMass, gp::Resolution()) ) {
+	gp_Trsf aCurTrsf;
+	if (aReversed && anEdge.Orientation() == TopAbs_FORWARD)
+	  aPFirst = aPLast;
+
+	aCurTrsf.SetTranslation(aCenterMass, aPFirst);
+	aTrsf.PreMultiply(aCurTrsf);
+      }
+
       Standard_Real aWireLen = aSummOfLen*aValue;
       aSummOfLen = 0;
       for(int i=1; i<=Edges.Length(); i++) {
-	TopoDS_Edge anEdge = TopoDS::Edge(Edges.Value(i));
-	BRep_Tool::Range(anEdge,aFirst,aLast);
-	aCurve = BRep_Tool::Curve(anEdge,aFirst,aLast);
-	aAdC.Load(aCurve,aFirst,aLast);
-	aCurLen = GCPnts_AbscissaPoint::Length(aAdC,aFirst,aLast); 
+	TopoDS_Edge anEdge;
+	if (!aReversed)
+	  anEdge = TopoDS::Edge(Edges.Value(i));
+	else
+	  anEdge = TopoDS::Edge(Edges.Value(Edges.Length() - i + 1));
 
-	if ( aWireLen > (aSummOfLen + aCurLen) ) {
-	  aSummOfLen += aCurLen; // Transform a Base object along this Edge
+	aCurve = BRep_Tool::Curve(anEdge,aFirst,aLast);
+	BRep_Tool::Range(anEdge,aFirst,aLast);
+
+	if (!aReversed && anEdge.Orientation() == TopAbs_REVERSED)
+	  aCurve = aCurve->Reversed();
+
+	if (aReversed && anEdge.Orientation() == TopAbs_FORWARD)
+	  aCurve = aCurve->Reversed();
+
+	aAdC.Load(aCurve,aFirst,aLast);
+	aCurLen = GCPnts_AbscissaPoint::Length(aAdC,aFirst,aLast);
+
+	if ( aWireLen > (aSummOfLen + aCurLen) ) { // Transform a Base object along this Edge
+	  aSummOfLen += aCurLen;
 	  gp_Pnt aP1, aP2;
 	  gp_Vec aStartVec1, aStartVec2, aDestVec1, aDestVec2;
 	  aCurve->D2(aFirst, aP1, aStartVec1, aStartVec2 );
 	  aCurve->D2(aLast, aP2, aDestVec1, aDestVec2 );
 	  gp_Trsf aCurTrsf;
-	  if (aStartVec2.Magnitude() < gp::Resolution() || aDestVec2.Magnitude() < gp::Resolution()) // one of the second derivatives is null
-	    aCurTrsf.SetTranslation(aP1, aP2);
-	  else {
+	  if (aStartVec2.Magnitude() > gp::Resolution() && aDestVec2.Magnitude() > gp::Resolution()) {
 	    gp_Ax3 aStartAx3(aP1, aStartVec1, aStartVec2);
 	    gp_Ax3 aDestAx3(aP2, aDestVec1, aDestVec2);
 	    aCurTrsf.SetDisplacement(aStartAx3, aDestAx3);
-	  }
+	  } else
+	    aCurTrsf.SetTranslation(aP1, aP2);
+
 	  aTrsf.PreMultiply(aCurTrsf);
 	}
 	else {
@@ -221,21 +296,26 @@ Standard_Integer GEOMImpl_PositionDriver::Execute(TFunction_Logbook& log) const
     } else
       return 0; // Unknown Type
 
+    gp_Trsf aCurTrsf;
     gp_Pnt aP1, aP2;
     gp_Vec aStartVec1, aStartVec2, aDestVec1, aDestVec2;
     aCurve->D2(aFirst, aP1, aStartVec1, aStartVec2 );
     aCurve->D2(aParam, aP2, aDestVec1, aDestVec2 );
-    gp_Trsf aCurTrsf;
 
-    if (aStartVec2.Magnitude() < gp::Resolution() || aDestVec2.Magnitude() < gp::Resolution()) // one of the second derivatives is null
-      aCurTrsf.SetTranslation(aP1, aP2);
-    else {
+    if (aStartVec2.Magnitude() > gp::Resolution() && aDestVec2.Magnitude() > gp::Resolution()) {
       gp_Ax3 aStartAx3(aP1, aStartVec1, aStartVec2);
       gp_Ax3 aDestAx3(aP2, aDestVec1, aDestVec2);
       aCurTrsf.SetDisplacement(aStartAx3, aDestAx3);
-    }
-    
+    } else
+      aCurTrsf.SetTranslation(aP1, aP2);
+
     aTrsf.PreMultiply(aCurTrsf);
+    
+    if ( !aPFirst.IsEqual(aCenterMass, gp::Resolution()) ) {
+      gp_Trsf aCurTrsf;
+      aCurTrsf.SetTranslation(aPFirst, aCenterMass);
+      aTrsf.PreMultiply(aCurTrsf);
+    }
 
     // Perform transformation
     BRepBuilderAPI_Transform aBRepTrsf (aShapeBase, aTrsf, Standard_False);

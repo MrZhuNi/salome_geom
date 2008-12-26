@@ -1341,7 +1341,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShapeCopy
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionAlongPath
        (Handle(GEOM_Object) theObject, Handle(GEOM_Object) thePath, 
-	double theDistance, bool theCopy)
+	double theDistance, bool theCopy, bool theReverse)
 {
   SetErrorCode(KO);
 
@@ -1370,6 +1370,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionAlongPath
   aTI.SetShape(anOriginal);
   aTI.SetPath(thePath->GetLastFunction());
   aTI.SetDistance(theDistance);
+  aTI.SetReverse(theReverse);
 
   //Compute the position
   try {
@@ -1390,13 +1391,13 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionAlongPath
   //Make a Python command
   if (theCopy) {
     GEOM::TPythonDump(aFunction) << aCopy << " = geompy.PositionAlongPath("
-				 << theObject << ", " << thePath << ", " << theDistance << ", " << theCopy << ")";
+				 << theObject << ", " << thePath << ", " << theDistance << ", " << theCopy << ", " << theReverse << ")";
     SetErrorCode(OK);
     return aCopy;
   }
 
   GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.PositionAlongPath("
-    << theObject << ", " << thePath << ", " << theDistance << ", " << theCopy << ")";
+    << theObject << ", " << thePath << ", " << theDistance << ", " << theCopy << ", " << theReverse << ")";
 
   SetErrorCode(OK);
   return theObject;
