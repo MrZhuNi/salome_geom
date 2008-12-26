@@ -168,6 +168,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Bezier</translation>
         </message>
         <message>
+            <source>GEOM_BINORMAL</source>
+            <translation>BiNormal</translation>
+        </message>
+        <message>
             <source>GEOM_BLOCK</source>
             <translation>Hexahedral Solid</translation>
         </message>

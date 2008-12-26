@@ -73,7 +73,7 @@ GenerationGUI_PipeDlg::GenerationGUI_PipeDlg (GeometryGUI* theGeometryGUI, QWidg
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_BASE_OBJECT"));
   GroupPoints->TextLabel2->setText(tr("GEOM_PATH_OBJECT"));
-  GroupPoints->TextLabel3->setText(tr("GEOM_VECTOR"));
+  GroupPoints->TextLabel3->setText(tr("GEOM_BINORMAL"));
   GroupPoints->PushButton1->setIcon(image1);
   GroupPoints->PushButton2->setIcon(image1);
   GroupPoints->PushButton3->setIcon(image1);
