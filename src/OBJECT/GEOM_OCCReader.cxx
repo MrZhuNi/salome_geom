@@ -469,7 +469,7 @@ void GEOM_OCCReader::DrawTo(gp_Pnt P,
   coord[0] = P.X(); coord[1] = P.Y(); coord[2] = P.Z();
   Standard_Integer NewVTKpoint =  Pts->InsertNextPoint(coord);
 
-  int pts[2];
+  vtkIdType pts[2];
   pts[0] = lastVTKpoint;
   pts[1] = NewVTKpoint;
 
@@ -735,7 +735,7 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
     aP2 = theNodesP(nbnodes);
 
     float coord[3];
-    int pts[2];
+    vtkIdType pts[2];
 
     for(int j=1;j<nbnodes;j++) {
       gp_Pnt pt1 = theNodesP(j);
@@ -767,7 +767,7 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
     aP2 = theNodesPoly(nbnodes);
 
     float coord[3];
-    int pts[2];
+    vtkIdType pts[2];
     
     for(int j=1;j<nbnodes;j++) {
       Standard_Integer id1 = Nodesidx(j);
@@ -843,7 +843,7 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
     int ptPrev = 0;
     int ptCur = 0;
 
-    int pts[2];
+    vtkIdType pts[2];
 
     int NbPoints = 15;
     for (int i = 1; i <= NbPoints; i++, ptPrev = ptCur)
@@ -886,7 +886,7 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
   const TColgp_Array1OfPnt& theNodes = T->Nodes();
     
   float coord[3];
-  int pts[2];
+  vtkIdType pts[2];
     
 
   // PUSH NODES
@@ -909,7 +909,7 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
     Standard_Integer id1 = Nodesidx(i);
     Standard_Integer id2 = Nodesidx(i+1);
     
-    int pts[2];
+    vtkIdType pts[2];
     pts[0] = id1-1; pts[1] = id2-1;
 
     // insert line (pt1,pt2)
@@ -931,7 +931,7 @@ void GEOM_OCCReader::TransferVertexWData(const TopoDS_Vertex& aVertex,
   
   gp_Pnt P = BRep_Tool::Pnt( aVertex );
   float delta = 1, coord[3];
-  int pts[2];
+  vtkIdType pts[2];
   // insert pt
   ZERO_COORD; coord[0] = +delta;
   pts[0] = Pts->InsertNextPoint(coord);
@@ -1010,7 +1010,7 @@ void GEOM_OCCReader::TransferFaceSData(const TopoDS_Face& aFace,
       Standard_Integer N1,N2,N3;
       Triangles(i).Get(N1,N2,N3);
 	
-      int pts[3];
+      vtkIdType pts[3];
       pts[0] = N1-1; pts[1] = N2-1; pts[2] = N3-1;
       Cells->InsertNextCell(3,pts);
 
