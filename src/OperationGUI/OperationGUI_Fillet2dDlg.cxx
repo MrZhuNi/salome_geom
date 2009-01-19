@@ -68,7 +68,7 @@ OperationGUI_Fillet2dDlg::OperationGUI_Fillet2dDlg (GeometryGUI* theGeometryGUI,
 
   GroupVertexes = new DlgRef_2Sel1Spin(centralWidget());
   GroupVertexes->GroupBox1->setTitle(tr("GEOM_FILLET_2D"));
-  GroupVertexes->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
+  GroupVertexes->TextLabel1->setText(tr("GEOM_PLANAR_FACE"));
   GroupVertexes->TextLabel2->setText(tr("GEOM_VERTEXES"));
   GroupVertexes->TextLabel3->setText(tr("GEOM_RADIUS"));
   GroupVertexes->PushButton1->setIcon(iconSelect);
