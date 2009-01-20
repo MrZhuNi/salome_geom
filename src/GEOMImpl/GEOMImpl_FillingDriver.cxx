@@ -106,12 +106,19 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
   Standard_Real First, Last;
   Handle(Geom_Curve) C;
 
-  if(!isApprox) {
+  TopoDS_Iterator It (aShape);
+  for (; It.More(); It.Next()) {
+    Scurrent = It.Value();
+    if (Scurrent.ShapeType() != TopAbs_EDGE)
+      Standard_ConstructionError::Raise("The argument compound must contain only edges");
+  }
+
+  if (!isApprox) {
     // make filling as in old version of SALOME (before 4.1.1)
     GeomFill_SectionGenerator Section;
     Standard_Integer i = 0;
     for (Ex.Init(aShape, TopAbs_EDGE); Ex.More(); Ex.Next()) {
-      Scurrent = Ex.Current() ;
+      Scurrent = Ex.Current();
       if (Scurrent.IsNull() || Scurrent.ShapeType() != TopAbs_EDGE) return 0;
       if (BRep_Tool::Degenerated(TopoDS::Edge(Scurrent))) continue;
       C = BRep_Tool::Curve(TopoDS::Edge(Scurrent), First, Last);
@@ -119,7 +126,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
       Section.AddCurve(C);
       i++;
     }
-    
+
     /* a 'tolerance' is used to compare 2 knots : see GeomFill_Generator.cdl */
     Section.Perform(Precision::Confusion());
     Handle(GeomFill_Line) Line = new GeomFill_Line(i);
@@ -146,7 +153,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
     // add curves from edges to sequence and find maximal
     // number of poles if some of them are bsplines
     for (Ex.Init(aShape, TopAbs_EDGE); Ex.More(); Ex.Next()) {
-      Scurrent = Ex.Current() ;
+      Scurrent = Ex.Current();
       if (Scurrent.IsNull() || Scurrent.ShapeType() != TopAbs_EDGE) return 0;
       if (BRep_Tool::Degenerated(TopoDS::Edge(Scurrent))) continue;
       C = BRep_Tool::Curve(TopoDS::Edge(Scurrent), First, Last);
