@@ -48,7 +48,7 @@ class EntityGUI_3DSketcherDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  EntityGUI_3DSketcherDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
+  EntityGUI_3DSketcherDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0, const double = 2. );
   ~EntityGUI_3DSketcherDlg();
 
 protected:
@@ -64,7 +64,19 @@ protected:
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
-    
+
+  virtual void                       displayPreview( GEOM::GEOM_Object_ptr,
+						     const bool = false,
+						     const bool = false,
+						     const bool = true,
+						     const double = -1,
+						     const int  = -1,
+						     const int  = -1);
+
+  bool                               createShapes( GEOM::GEOM_Object_ptr,
+						   TopoDS_Shape&,
+						   TopoDS_Shape& );
+
 private:
   QList<double>                      myPointsList;
   QList<double>                      myRedoList;
@@ -73,6 +85,8 @@ private:
   DlgRef_3Radio*                     GroupType;
 
   bool                               myOK;
+  double                             myLineWidth;
+  GeometryGUI*                       myGeometryGUI;
 
 private slots:
   void                               ClickOnOk();

@@ -3614,7 +3614,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_PLANAR_FACE</source>
-            <translation>Planar face</translation>
+            <translation>Planar Face</translation>
         </message>
         <message>
             <source>GEOM_POLYGON</source>

@@ -29,6 +29,7 @@
 
 // OCCT Includes
 #include <BRepBuilderAPI_MakePolygon.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Wire.hxx>
@@ -73,18 +74,25 @@ Standard_Integer GEOMImpl_3DSketcherDriver::Execute(TFunction_Logbook& log) cons
   BRepBuilderAPI_MakePolygon aMakePoly;
   int anArrayLength = aCoordsArray->Length();
   double x, y, z;
+  gp_Pnt aPnt;
   for (int i = 0; i <=(anArrayLength - 3); i+=3) {
     x = aCoordsArray->Value(i+1);
     y = aCoordsArray->Value(i+2);
     z = aCoordsArray->Value(i+3);
-    gp_Pnt aPnt = gp_Pnt(x, y, z);
+    aPnt = gp_Pnt(x, y, z);
     aMakePoly.Add(aPnt);
   }
-  if (aCoordsArray->Value(1) == x && aCoordsArray->Value(2) == y && aCoordsArray->Value(3) == z)
-    aMakePoly.Close();
-
-  if (aMakePoly.IsDone())
-    aShape = aMakePoly.Wire();
+  if ( anArrayLength == 3) { // Only Start Point
+    BRepBuilderAPI_MakeVertex mkVertex (aPnt);
+    aShape = mkVertex.Shape();
+  }
+  else { // Make Wire
+    if (aCoordsArray->Value(1) == x && aCoordsArray->Value(2) == y && aCoordsArray->Value(3) == z)
+      aMakePoly.Close();
+    
+    if (aMakePoly.IsDone())
+      aShape = aMakePoly.Wire();
+  }
 
   if (aShape.IsNull()) return 0;
 

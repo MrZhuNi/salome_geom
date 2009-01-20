@@ -67,8 +67,11 @@ private:
 //            TRUE to construct a modal dialog.
 //=================================================================================
 EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-					          bool modal, Qt::WindowFlags fl )
-  : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
+					          bool modal, Qt::WindowFlags fl,
+						  const double lineWidth )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl ),
+    myGeometryGUI( theGeometryGUI ),
+    myLineWidth( lineWidth )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_UNDO" ) ) );
@@ -169,6 +172,7 @@ void EntityGUI_3DSketcherDlg::Init()
   initName( tr( "GEOM_3DSKETCHER" ) );
 
   UpdateButtonsState();
+  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
 
 //=================================================================================
@@ -212,16 +216,14 @@ void EntityGUI_3DSketcherDlg::TypeClicked()
 //=================================================================================
 void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
 {
+  Locker lock( myOK );
+
   double x, y, z;
   GetCurrentPoints(x, y, z);
   myPointsList.append(x);
   myPointsList.append(y);
   myPointsList.append(z);
 
-  /*if (myRedoList.size() >= 2) { // Remove this positions from Redo List
-    for (int i = 0; i <= 2; i++)
-      myRedoList.removeFirst();
-  }*/
   myRedoList.clear();
 
   if ( GroupType->RadioButton2->isChecked() ) {
@@ -229,8 +231,8 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
     Group3Spin->SpinBox_DY->setValue( 0.0 );
     Group3Spin->SpinBox_DZ->setValue( 0.0 );
   }
+  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
   UpdateButtonsState();
-  displayPreview();
 }
 
 //=================================================================================
@@ -263,7 +265,7 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
     myPointsList.removeLast();
 
     UpdateButtonsState();
-    displayPreview();
+    GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
   }
 }
 
@@ -283,7 +285,7 @@ void EntityGUI_3DSketcherDlg::ClickOnRedo()
     myRedoList.removeLast();
 
     UpdateButtonsState();
-    displayPreview();
+    GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
   }
 }
 
@@ -346,7 +348,7 @@ void EntityGUI_3DSketcherDlg::SelectionIntoArgument()
       }
     }
   }
-  displayPreview();
+  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
 
 //=================================================================================
@@ -376,7 +378,7 @@ void EntityGUI_3DSketcherDlg::ActivateThisDialog()
 	  SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-  displayPreview();
+  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
 
 
@@ -386,7 +388,7 @@ void EntityGUI_3DSketcherDlg::ActivateThisDialog()
 //=================================================================================
 void EntityGUI_3DSketcherDlg::ValueChangedInSpinBox( double newValue )
 {
-  displayPreview();
+  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
 
 //=================================================================================
@@ -414,11 +416,7 @@ GEOM::GEOM_IOperations_ptr EntityGUI_3DSketcherDlg::createOperation()
 //=================================================================================
 bool EntityGUI_3DSketcherDlg::isValid( QString& msg )
 {
-  int nbPoints = myPointsList.count()/3;
-  if ( myOK )
-    return nbPoints >= 2;
-  else 
-    return nbPoints >= 1;
+  return true;
 }
 
 //=================================================================================
@@ -428,10 +426,10 @@ bool EntityGUI_3DSketcherDlg::isValid( QString& msg )
 bool EntityGUI_3DSketcherDlg::execute( ObjectList& objects )
 {
   GEOM::ListOfDouble_var aCoordsArray = new GEOM::ListOfDouble;
-  if (myOK)
-    aCoordsArray->length(myPointsList.size());
-  else
+  if (!myOK || myPointsList.size() == 0)
     aCoordsArray->length(myPointsList.size()+3);
+  else
+    aCoordsArray->length(myPointsList.size());
 
   int i = 0;
   QList<double>::const_iterator it;
@@ -440,16 +438,15 @@ bool EntityGUI_3DSketcherDlg::execute( ObjectList& objects )
     i++;
   }
 
-  if (!myOK) {
+  if (!myOK || myPointsList.size() == 0) {
     double x, y, z;
     GetCurrentPoints(x, y, z);
     aCoordsArray[i] = x;
     aCoordsArray[i+1] = y;
     aCoordsArray[i+2] = z;
-  }
+  } 
 
-  GEOM::GEOM_Object_var anObj =
-    GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->Make3DSketcher( aCoordsArray );
+  GEOM::GEOM_Object_var anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->Make3DSketcher( aCoordsArray );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
@@ -481,24 +478,6 @@ void EntityGUI_3DSketcherDlg::SetDoubleSpinBoxStep( double step )
   Group3Spin->SpinBox_DY->setSingleStep(step);
   Group3Spin->SpinBox_DZ->setSingleStep(step);
 }
-
-//=================================================================================
-// function : isSameAsPrevious()
-// purpose  : Compare Last point in the list with current selected point
-//=================================================================================
-/*bool EntityGUI_3DSketcherDlg::isSameAsPrevious() // Not used this time
-{
-  double curX, curY, curZ;
-  double lastX, lastY, lastZ;
-  GetCurrentPoints(curX, curY, curZ);
-  GetLastPoints(lastX, lastY, lastZ);
-  if ( abs(lastX - curX) < Precision::Confusion() &&
-       abs(lastY - curY) < Precision::Confusion() &&
-       abs(lastZ - curZ) < Precision::Confusion() )
-    return true;
-
-    return false;
-}*/
 
 //=================================================================================
 // function : ClickOnOk()
@@ -563,4 +542,88 @@ void EntityGUI_3DSketcherDlg::GetCurrentPoints(double& x, double& y, double& z)
     y += Group3Spin->SpinBox_DY->value();
     z += Group3Spin->SpinBox_DZ->value();
   }
+}
+
+//================================================================
+// Function : displayPreview
+// Purpose  : Method for displaying preview of resulting shape
+//            Redefined from GEOMBase_Helper.
+//================================================================
+void EntityGUI_3DSketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
+					      const bool            append,
+					      const bool            activate,
+					      const bool            update,
+					      const double          lineWidth,
+					      const int             displayMode,
+					      const int             color )
+{
+  // Set color for preview shape
+  getDisplayer()->SetColor( Quantity_NOC_RED );
+
+  // set width of displayed shape
+  getDisplayer()->SetWidth( (lineWidth == -1)?myLineWidth:lineWidth ); 
+
+  // Disable activation of selection
+  getDisplayer()->SetToActivate( activate );
+
+  // Make a reference to GEOM_Object
+  CORBA::String_var objStr = myGeometryGUI->getApp()->orb()->object_to_string( object );
+  getDisplayer()->SetName( objStr.in() );
+
+  // Create wire from applayed object
+  TopoDS_Shape anApplyedWire, aLastSegment;
+  if ( !createShapes( object, anApplyedWire, aLastSegment ) )
+    return;
+
+  // Build prs
+  SALOME_Prs* aPrs = getDisplayer()->BuildPrs( anApplyedWire );
+  if ( aPrs != 0 && !aPrs->IsNull() )
+    GEOMBase_Helper::displayPreview( aPrs, append, update );
+
+  getDisplayer()->SetColor( Quantity_NOC_VIOLET );
+  aPrs = getDisplayer()->BuildPrs( aLastSegment );
+  if ( aPrs != 0 && !aPrs->IsNull() )
+    GEOMBase_Helper::displayPreview( aPrs, append, update );
+
+  getDisplayer()->UnsetName();
+
+  // Enable activation of displayed objects
+  getDisplayer()->SetToActivate( true );
+}
+
+//================================================================
+// Function : createShapes
+// Purpose  : Create applyed wire, and last segment from entry object
+//================================================================
+bool EntityGUI_3DSketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
+					    TopoDS_Shape&         theApplyedWire,
+					    TopoDS_Shape&         theLastSegment )
+{
+  TopoDS_Shape aShape;
+  if ( !GEOMBase::GetShape( theObject, aShape ) ||
+       aShape.ShapeType() != TopAbs_WIRE && aShape.ShapeType() != TopAbs_VERTEX )
+    return false;
+
+  if ( myOK  ) {
+     theApplyedWire = aShape;
+     return true;
+  }
+
+  BRepBuilderAPI_MakeWire aBuilder;
+  TopExp_Explorer anExp( aShape, TopAbs_EDGE );
+  while ( 1 ) {
+    TopoDS_Shape anEdge = anExp.Current();
+    anExp.Next();
+    if ( anExp.More() ) // i.e. non-last edge
+      aBuilder.Add( TopoDS::Edge( anEdge ) );
+    else {
+      theLastSegment = anEdge;
+      break;
+    }
+  }
+
+  if ( aBuilder.IsDone() )
+    theApplyedWire = aBuilder.Shape();
+
+  return true;
 }
