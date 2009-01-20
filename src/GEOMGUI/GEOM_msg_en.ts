@@ -857,11 +857,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_MEN_ISOU</source>
-            <translation>Isos u :</translation>
+            <translation>Isos U :</translation>
         </message>
         <message>
             <source>GEOM_MEN_ISOV</source>
-            <translation>Isos v :</translation>
+            <translation>Isos V :</translation>
         </message>
         <message>
             <source>GEOM_MEN_POPUP_NAME</source>
@@ -873,11 +873,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_MEN_SKETCHER_X</source>
-            <translation>Enter a length to set X</translation>
+            <translation>Enter a Length to Set X</translation>
         </message>
         <message>
             <source>GEOM_MEN_SKETCHER_Y</source>
-            <translation>Enter a length to set Y</translation>
+            <translation>Enter a Length to Set Y</translation>
         </message>
         <message>
             <source>GEOM_MEN_STEP_LABEL</source>
@@ -1957,7 +1957,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_BASIC_PROPS</source>
-            <translation>Basic properties</translation>
+            <translation>Basic Properties</translation>
         </message>
         <message>
             <source>MEN_BLOCKS</source>
@@ -1965,7 +1965,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_BND_BOX</source>
-            <translation>Bounding box</translation>
+            <translation>Bounding Box</translation>
         </message>
         <message>
             <source>MEN_BOOLEAN</source>
@@ -1985,7 +1985,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_CHANGE_ORIENTATION</source>
-            <translation>Change orientation</translation>
+            <translation>Change Orientation</translation>
         </message>
         <message>
             <source>MEN_CHECK</source>
@@ -1993,15 +1993,15 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_CHECK_COMPOUND</source>
-            <translation>Check compound of blocks</translation>
+            <translation>Check Compound of Blocks</translation>
         </message>
         <message>
             <source>MEN_CHECK_FREE_BNDS</source>
-            <translation>Check free boundaries</translation>
+            <translation>Check Free Boundaries</translation>
         </message>
         <message>
             <source>MEN_CHECK_FREE_FACES</source>
-            <translation>Check free faces</translation>
+            <translation>Check Free Faces</translation>
         </message>
         <message>
             <source>MEN_CHECK_GEOMETRY</source>
@@ -2013,11 +2013,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_CLIPPING</source>
-            <translation>Clipping range</translation>
+            <translation>Clipping Range</translation>
         </message>
         <message>
             <source>MEN_CLOSE_CONTOUR</source>
-            <translation>Close contour</translation>
+            <translation>Close Contour</translation>
         </message>
         <message>
             <source>MEN_COMMON</source>
@@ -2065,15 +2065,15 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_DISPLAY_ALL</source>
-            <translation>Show all</translation>
+            <translation>Show All</translation>
         </message>
         <message>
             <source>MEN_DISPLAY_MODE</source>
-            <translation>Display mode</translation>
+            <translation>Display Mode</translation>
         </message>
         <message>
             <source>MEN_DISPLAY_ONLY</source>
-            <translation>Show only</translation>
+            <translation>Show Only</translation>
         </message>
         <message>
             <source>MEN_EDGE</source>
@@ -2097,7 +2097,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_ERASE_ALL</source>
-            <translation>Hide all</translation>
+            <translation>Hide All</translation>
         </message>
         <message>
             <source>MEN_EXPLODE</source>
@@ -2145,7 +2145,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_GLUE_FACES</source>
-            <translation>Glue faces</translation>
+            <translation>Glue Faces</translation>
         </message>
         <message>
             <source>MEN_GROUP</source>
@@ -2185,11 +2185,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_LOCAL_CS</source>
-            <translation>Local coordinate system</translation>
+            <translation>Local Coordinate System</translation>
         </message>
         <message>
             <source>MEN_MASS_CENTER</source>
-            <translation>Center of mass</translation>
+            <translation>Center of Mass</translation>
         </message>
         <message>
             <source>MEN_MEASURES</source>
@@ -2197,11 +2197,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_MIN_DIST</source>
-            <translation>Min distance</translation>
+            <translation>Min Distance</translation>
         </message>
         <message>
             <source>MEN_MIRROR</source>
-            <translation>Mirror image</translation>
+            <translation>Mirror Image</translation>
         </message>
         <message>
             <source>MEN_MODIFY_LOCATION</source>
@@ -2213,7 +2213,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_MUL_TRANSFORM</source>
-            <translation>Multi-transformation</translation>
+            <translation>Multi-Transformation</translation>
         </message>
         <message>
             <source>MEN_MUL_TRANSLATION</source>
@@ -2225,7 +2225,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_OFFSET</source>
-            <translation>Offset surface</translation>
+            <translation>Offset Surface</translation>
         </message>
         <message>
             <source>MEN_OPERATIONS</source>
@@ -2237,7 +2237,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_PIPE</source>
-            <translation>Extrusion along a path</translation>
+            <translation>Extrusion Along a Path</translation>
         </message>
         <message>
             <source>MEN_PLANE</source>
@@ -2249,11 +2249,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_POINT_COORDS</source>
-            <translation>Point coordinates</translation>
+            <translation>Point Coordinates</translation>
         </message>
         <message>
             <source>MEN_POINT_ON_EDGE</source>
-            <translation>Add point on edge</translation>
+            <translation>Add Point on Edge</translation>
         </message>
         <message>
             <source>MEN_POP_COLOR</source>
@@ -2317,7 +2317,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_SCALE</source>
-            <translation>Scale transform</translation>
+            <translation>Scale Transform</translation>
         </message>
         <message>
             <source>MEN_SECTION</source>
@@ -2337,11 +2337,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_SHADING_COLOR</source>
-            <translation>Shading color</translation>
+            <translation>Shading Color</translation>
         </message>
         <message>
             <source>MEN_SHAPE_PROCESS</source>
-            <translation>Shape processing</translation>
+            <translation>Shape Processing</translation>
         </message>
         <message>
             <source>MEN_SHELL</source>
@@ -2369,23 +2369,23 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_STEP_VALUE</source>
-            <translation>Step value</translation>
+            <translation>Step Value</translation>
         </message>
         <message>
             <source>MEN_SUPPERSS_HOLES</source>
-            <translation>Suppress holes</translation>
+            <translation>Suppress Holes</translation>
         </message>
         <message>
             <source>MEN_SUPPRESS_FACES</source>
-            <translation>Suppress faces</translation>
+            <translation>Suppress Faces</translation>
         </message>
         <message>
             <source>MEN_SUPPRESS_INT_WIRES</source>
-            <translation>Suppress internal wires</translation>
+            <translation>Suppress Internal Wires</translation>
         </message>
         <message>
             <source>MEN_TOLERANCE</source>
-            <translation>Compute tolerance</translation>
+            <translation>Compute Tolerance</translation>
         </message>
         <message>
             <source>MEN_TOOLS</source>
@@ -2433,7 +2433,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_WORK_PLANE</source>
-            <translation>Working plane</translation>
+            <translation>Working Plane</translation>
         </message>
         <message>
             <source>NAME_LBL</source>
@@ -3485,7 +3485,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_REMOVE_EXTRA_EDGES</source>
-            <translation>Remove extra edges</translation>
+            <translation>Remove Extra Edges</translation>
         </message>
         <message>
             <source>STB_REMOVE_EXTRA_EDGES</source>
@@ -3497,7 +3497,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_NORMALE</source>
-            <translation>Normal to a face</translation>
+            <translation>Normal to a Face</translation>
         </message>
         <message>
             <source>STB_NORMALE</source>
@@ -3521,7 +3521,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_POP_AUTO_COLOR</source>
-            <translation>Auto color</translation>
+            <translation>Auto Color</translation>
         </message>
         <message>
             <source>STB_POP_AUTO_COLOR</source>
@@ -3533,7 +3533,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_POP_DISABLE_AUTO_COLOR</source>
-            <translation>Disable auto color</translation>
+            <translation>Disable Auto Color</translation>
         </message>
         <message>
             <source>STB_POP_DISABLE_AUTO_COLOR</source>
@@ -3677,7 +3677,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_GET_SHAPES_ON_SHAPES</source>
-            <translation>Get shapes on shape</translation>
+            <translation>Get Shapes on Shape</translation>
         </message>
         <message>
             <source>STB_GET_SHAPES_ON_SHAPES</source>
