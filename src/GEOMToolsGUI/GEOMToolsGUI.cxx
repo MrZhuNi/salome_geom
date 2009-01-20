@@ -792,6 +792,7 @@ bool GEOMToolsGUI::Export()
 
   SALOME_ListIO selectedObjects;
   sm->selectedObjects( selectedObjects );
+  bool appropriateObj = false;
 
   SALOME_ListIteratorOfListIO It( selectedObjects );
   for(;It.More();It.Next()) {
@@ -838,8 +839,13 @@ bool GEOMToolsGUI::Export()
       anOp->abort();
       return false;
     }
+    appropriateObj = true;
   }
 
+  if ( !appropriateObj )
+    SUIT_MessageBox::warning( app->desktop(),
+			      QObject::tr("WRN_WARNING"),
+			      QObject::tr("GEOM_WRN_NO_APPROPRIATE_SELECTION") );
   return true;
 }
 
