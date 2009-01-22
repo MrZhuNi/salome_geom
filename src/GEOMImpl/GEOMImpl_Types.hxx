@@ -47,8 +47,9 @@
 #define GEOM_ELLIPSE  18
 #define GEOM_CIRC_ARC 19
 
-#define GEOM_FILLET  20
-#define GEOM_CHAMFER 21
+#define GEOM_FILLET    20
+#define GEOM_FILLET_2D 45
+#define GEOM_CHAMFER   21
 
 #define GEOM_EDGE  22
 #define GEOM_WIRE  23
@@ -87,6 +88,9 @@
 
 #define GEOM_SHAPES_ON_SHAPE 42
 
+#define GEOM_ELLIPSE_ARC 43
+
+#define GEOM_3DSKETCHER 44
 
 //GEOM_Function types
 
@@ -153,6 +157,7 @@
 #define POSITION_SHAPE_COPY 2
 #define POSITION_SHAPE_FROM_GLOBAL      3
 #define POSITION_SHAPE_FROM_GLOBAL_COPY 4
+#define POSITION_ALONG_PATH 5
 
 #define TORUS_RR         1
 #define TORUS_PNT_VEC_RR 2
@@ -215,14 +220,17 @@
 
 #define ELLIPSE_PNT_VEC_RR 1
 
-#define CIRC_ARC_THREE_PNT 1
-#define CIRC_ARC_CENTER    2
+#define CIRC_ARC_THREE_PNT         1
+#define CIRC_ARC_CENTER            2
+#define ELLIPSE_ARC_CENTER_TWO_PNT 3
 
 #define FILLET_SHAPE_ALL      1
 #define FILLET_SHAPE_EDGES    2
 #define FILLET_SHAPE_FACES    3
 #define FILLET_SHAPE_EDGES_2R 4
 #define FILLET_SHAPE_FACES_2R 5
+
+#define FILLET_2D_SHAPE_VERTEXES      1
 
 #define CHAMFER_SHAPE_ALL      1
 #define CHAMFER_SHAPE_EDGE     2

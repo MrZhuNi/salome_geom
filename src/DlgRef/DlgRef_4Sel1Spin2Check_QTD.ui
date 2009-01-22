@@ -5,30 +5,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>131</width>
-    <height>196</height>
+    <width>225</width>
+    <height>306</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string/>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
+   <property name="margin" >
     <number>0</number>
    </property>
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>0</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>6</number>
-   </property>
-   <property name="verticalSpacing" >
+   <property name="spacing" >
     <number>6</number>
    </property>
    <item row="0" column="0" >
@@ -37,44 +25,12 @@
       <string/>
      </property>
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>9</number>
       </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
-      <property name="horizontalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
-      <property name="verticalSpacing" >
-       <number>6</number>
-      </property>
-      <item row="5" column="0" colspan="4" >
-       <widget class="QCheckBox" name="CheckButton1" >
-        <property name="text" >
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="3" >
-       <widget class="QCheckBox" name="CheckButton2" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text" >
-         <string/>
-        </property>
-       </widget>
-      </item>
       <item row="4" column="1" colspan="2" >
        <widget class="QtxDoubleSpinBox" name="SpinBox_DX" >
         <property name="sizePolicy" >
@@ -229,7 +185,43 @@
       <item row="1" column="2" colspan="2" >
        <widget class="QLineEdit" name="LineEdit2" />
       </item>
+      <item row="6" column="0" colspan="4" >
+       <widget class="QCheckBox" name="CheckButton1" >
+        <property name="text" >
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0" colspan="4" >
+       <widget class="QCheckBox" name="CheckButton2" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+       </widget>
+      </item>
      </layout>
+     <zorder>SpinBox_DX</zorder>
+     <zorder>TextLabel3</zorder>
+     <zorder>TextLabel5</zorder>
+     <zorder>TextLabel4</zorder>
+     <zorder>TextLabel2</zorder>
+     <zorder>TextLabel1</zorder>
+     <zorder>PushButton2</zorder>
+     <zorder>LineEdit5</zorder>
+     <zorder>LineEdit1</zorder>
+     <zorder>PushButton5</zorder>
+     <zorder>PushButton4</zorder>
+     <zorder>PushButton1</zorder>
+     <zorder>LineEdit4</zorder>
+     <zorder>LineEdit2</zorder>
+     <zorder>CheckButton1</zorder>
+     <zorder>CheckButton2</zorder>
     </widget>
    </item>
   </layout>
@@ -253,7 +245,6 @@
   <tabstop>PushButton5</tabstop>
   <tabstop>LineEdit5</tabstop>
   <tabstop>SpinBox_DX</tabstop>
-  <tabstop>CheckButton2</tabstop>
   <tabstop>CheckButton1</tabstop>
  </tabstops>
  <resources/>

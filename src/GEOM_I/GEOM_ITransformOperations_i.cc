@@ -991,6 +991,47 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShapeCopy
 
 //=============================================================================
 /*!
+ *  PositionAlongPath
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionAlongPath
+                                             (GEOM::GEOM_Object_ptr theObject,
+					      GEOM::GEOM_Object_ptr thePath,
+					      CORBA::Double         theDistance,
+					      CORBA::Boolean        theCopy,
+					      CORBA::Boolean        theReverse)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theObject == NULL || thePath == NULL)
+    return aGEOMObject._retn();
+
+  //Get the basic object
+  CORBA::String_var anEntry = theObject->GetEntry();
+  Handle(GEOM_Object) aBasicObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), anEntry);
+  if (aBasicObject.IsNull()) return aGEOMObject._retn();
+
+  //Get the path object
+  CORBA::String_var aPathEntry = thePath->GetEntry();
+  Handle(GEOM_Object) aPathObject =
+    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), aPathEntry);
+  if (aPathObject.IsNull()) return aGEOMObject._retn();
+
+  //Perform the position
+  Handle(GEOM_Object) anObject =
+    GetOperations()->PositionAlongPath(aBasicObject, aPathObject, theDistance, theCopy, theReverse);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MultiTranslate1D
  */
 //=============================================================================

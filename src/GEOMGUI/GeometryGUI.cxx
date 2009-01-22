@@ -441,6 +441,7 @@ void GeometryGUI::OnGUIEvent( int id )
 #endif
   }
   else if( id == 404 ||   // MENU ENTITY - SKETCHER
+           id == 405 ||   // MENU ENTITY - 3D SKETCHER
 	   id == 407 ) {  // MENU ENTITY - EXPLODE
 #ifndef WNT
 	library = getLibrary( "libEntityGUI.so" );
@@ -490,7 +491,8 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 505 ||   // MENU OPERATION - FILLET
 	   id == 506 ||   // MENU OPERATION - CHAMFER
 	   id == 507 ||   // MENU OPERATION - CLIPPING RANGE
-	   id == 508 ) {  // MENU OPERATION - GET SHAPES ON SHAPE
+	   id == 508 ||   // MENU OPERATION - GET SHAPES ON SHAPE
+	   id == 509 ) {  // MENU OPERATION - FILLET 2D
 #ifndef WNT
 	library = getLibrary( "libOperationGUI.so" );
 #else
@@ -797,6 +799,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 9999, "HEX_SOLID" );
 
   createGeomAction( 404, "SKETCH" );
+  createGeomAction( 405, "3DSKETCH" );
   createGeomAction( 407, "EXPLODE" );
 
   createGeomAction( 4081, "EDGE" );
@@ -826,6 +829,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 506, "CHAMFER" );
   //createGeomAction( 507, "CLIPPING" );
   createGeomAction( 508, "GET_SHAPES_ON_SHAPES" );
+  createGeomAction( 509, "FILLET_2D" );
 
   createGeomAction( 9998, "MUL_TRANSFORM" );
   createGeomAction( 9995, "EXPLODE_BLOCKS" );
@@ -945,6 +949,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createMenu( separator(), newEntId, -1 );
   createMenu( 404, newEntId, -1 );
+  createMenu( 405, newEntId, -1 );
   createMenu( separator(), newEntId, -1 );
   createMenu( 407, newEntId, -1 );
 
@@ -979,6 +984,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( 504, operId, -1 );
   createMenu( 508, operId, -1 );
   createMenu( separator(), operId, -1 );
+  createMenu( 509, transId, -1 );
   createMenu( 505, transId, -1 );
   createMenu( 506, transId, -1 );
   //createMenu( 507, transId, -1 );

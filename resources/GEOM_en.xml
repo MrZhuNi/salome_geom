@@ -104,6 +104,7 @@
    <separator pos-id=""/>
 
    <popup-item item-id="404" pos-id="" label-id="Sketch" icon-id="sketch.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="405" pos-id="" label-id="3D Sketch" icon-id="3dsketch.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <separator pos-id=""/>
    <popup-item item-id="407" pos-id="" label-id="Explode" icon-id="subshape.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <submenu label-id="Build" item-id="408" pos-id="">

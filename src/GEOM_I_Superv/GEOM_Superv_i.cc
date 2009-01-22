@@ -1821,6 +1821,23 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionShapeCopy (GEOM::GEOM_Object_ptr th
   return anObj;
 }
 
+//=============================================================================
+//  PositionAlongPath:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionAlongPath (GEOM::GEOM_Object_ptr theObject,
+							GEOM::GEOM_Object_ptr thePath,
+							CORBA::Double         theDistance,
+							CORBA::Boolean        theCopy,
+							CORBA::Boolean        theReverse)
+{
+  beginService( " GEOM_Superv_i::PositionAlongPath" );
+  MESSAGE("GEOM_Superv_i::PositionAlongPath");
+  getTransfOp();
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->PositionAlongPath(theObject, thePath, theDistance, theCopy, theReverse);
+  endService( " GEOM_Superv_i::PositionAlongPath" );
+  return anObj;
+}
+
 //=============================== ShapesOperations ============================
 //=============================================================================
 //  Make:
@@ -2547,6 +2564,21 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArcCenter (GEOM::GEOM_Object_ptr theCen
 }
 
 //=============================================================================
+//  MakeArcOfEllipse:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArcOfEllipse (GEOM::GEOM_Object_ptr thePnt1,
+						       GEOM::GEOM_Object_ptr thePnt2,
+						       GEOM::GEOM_Object_ptr thePnt3)
+{
+  beginService( " GEOM_Superv_i::MakeArcOfEllipse" );
+  MESSAGE("GEOM_Superv_i::MakeArcOfEllipse");
+  getCurvesOp();
+  GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeArcOfEllipse(thePnt1, thePnt2, thePnt3);
+  endService( " GEOM_Superv_i::MakeArcOfEllipse" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakePolyline:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePolyline (GEOM::GEOM_List_ptr thePoints)
@@ -2616,6 +2648,24 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSketcher (const char* theCommand,
     return anObj;
   }
   endService( " GEOM_Superv_i::MakeSketcher" );
+  return NULL;
+}
+
+//=============================================================================
+//  Make3DSketcher:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::Make3DSketcher ( GEOM::GEOM_List_ptr theCoordinates)
+{
+  beginService( " GEOM_Superv_i::Make3DSketcher" );
+  MESSAGE("GEOM_Superv_i::Make3DSketcher");
+  if (GEOM_List_i<GEOM::ListOfDouble>* aListImpl = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfDouble>*>(GetServant(theCoordinates, myPOA).in())) {
+    getCurvesOp();
+    GEOM::GEOM_Object_ptr anObj = myCurvesOp->Make3DSketcher(aListImpl->GetList());
+    endService( " GEOM_Superv_i::Make3DSketcher" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::Make3DSketcher" );
   return NULL;
 }
 
@@ -2715,6 +2765,26 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFacesR1R2 (GEOM::GEOM_Object_ptr 
     return anObj;
   }
   endService( " GEOM_Superv_i::MakeFilletFacesR1R2" );
+  return NULL;
+}
+
+//=============================================================================
+//  MakeFillet2D:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFillet2D (GEOM::GEOM_Object_ptr theShape, 
+						   CORBA::Double theR,
+						   GEOM::GEOM_List_ptr theVertexes)
+{
+  beginService( " GEOM_Superv_i::MakeFillet2D" );
+  MESSAGE("GEOM_Superv_i::MakeFillet2D");
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplV = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theVertexes, myPOA).in())) {
+    getLocalOp();
+    GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeFillet2D(theShape, theR, aListImplV->GetList());
+    endService( " GEOM_Superv_i::MakeFillet2D" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::MakeFillet2D" );
   return NULL;
 }
 

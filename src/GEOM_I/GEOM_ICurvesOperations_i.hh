@@ -65,6 +65,10 @@ class GEOM_I_EXPORT GEOM_ICurvesOperations_i :
                                        GEOM::GEOM_Object_ptr thePnt2,
                                        GEOM::GEOM_Object_ptr thePnt3,
                                        bool theSense);
+
+  GEOM::GEOM_Object_ptr MakeArcOfEllipse (GEOM::GEOM_Object_ptr thePnt1,
+					  GEOM::GEOM_Object_ptr thePnt2,
+					  GEOM::GEOM_Object_ptr thePnt3);
   
   GEOM::GEOM_Object_ptr MakePolyline (const GEOM::ListOfGO& thePoints);
 
@@ -73,6 +77,8 @@ class GEOM_I_EXPORT GEOM_ICurvesOperations_i :
   GEOM::GEOM_Object_ptr MakeSplineInterpolation (const GEOM::ListOfGO& thePoints);
 
   GEOM::GEOM_Object_ptr MakeSketcher (const char* theCommand, const GEOM::ListOfDouble& theWorkingPlane);
+  
+  GEOM::GEOM_Object_ptr Make3DSketcher (const GEOM::ListOfDouble& theCoordinates);
 
   GEOM::GEOM_Object_ptr MakeSketcherOnPlane (const char* theCommand, GEOM::GEOM_Object_ptr theWorkingPlane);
 

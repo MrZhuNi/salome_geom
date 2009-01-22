@@ -78,6 +78,7 @@ HEADERS += DlgRef_3Spin_QTD.h
 HEADERS += DlgRef_3Spin1Check_QTD.h
 HEADERS += DlgRef_3Sel3Spin1Check_QTD.h
 HEADERS += DlgRef_4Sel1Spin2Check_QTD.h
+HEADERS += DlgRef_4Sel1Spin3Check_QTD.h
 HEADERS += DlgRef_SpinBox.h
 HEADERS += DlgRef_1Sel1Spin.h
 HEADERS += DlgRef_1Sel2Spin.h

@@ -32,6 +32,7 @@ salomeinclude_HEADERS =				\
 	OperationGUI_ArchimedeDlg.h		\
 	OperationGUI_PartitionDlg.h		\
 	OperationGUI_FilletDlg.h		\
+	OperationGUI_Fillet2dDlg.h		\
 	OperationGUI_ChamferDlg.h		\
 	OperationGUI_GetShapesOnShapeDlg.h	\
 	OperationGUI_ClippingDlg.h
@@ -45,6 +46,7 @@ dist_libOperationGUI_la_SOURCES =		\
 	OperationGUI_PartitionDlg.cxx		\
 	OperationGUI_GetShapesOnShapeDlg.cxx	\
 	OperationGUI_FilletDlg.cxx		\
+	OperationGUI_Fillet2dDlg.cxx		\
 	OperationGUI_ChamferDlg.cxx		\
 	OperationGUI_ClippingDlg.cxx
 
@@ -53,6 +55,7 @@ MOC_FILES =					\
 	OperationGUI_PartitionDlg_moc.cxx	\
 	OperationGUI_GetShapesOnShapeDlg_moc.cxx\
 	OperationGUI_FilletDlg_moc.cxx		\
+	OperationGUI_Fillet2dDlg_moc.cxx	\
 	OperationGUI_ChamferDlg_moc.cxx		\
 	OperationGUI_ClippingDlg_moc.cxx
 

@@ -56,11 +56,13 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_ISpline.hxx			\
 	GEOMImpl_IEllipse.hxx			\
 	GEOMImpl_IFillet.hxx			\
+	GEOMImpl_IFillet2d.hxx			\
 	GEOMImpl_IChamfer.hxx			\
 	GEOMImpl_ICopy.hxx			\
 	GEOMImpl_IArchimede.hxx			\
 	GEOMImpl_IArc.hxx			\
 	GEOMImpl_ISketcher.hxx			\
+	GEOMImpl_I3DSketcher.hxx		\
 	GEOMImpl_IVector.hxx			\
 	GEOMImpl_IDisk.hxx			\
 	GEOMImpl_IFace.hxx			\
@@ -124,7 +126,9 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_ArcDriver.hxx			\
 	GEOMImpl_SplineDriver.hxx		\
 	GEOMImpl_SketcherDriver.hxx		\
+	GEOMImpl_3DSketcherDriver.hxx		\
 	GEOMImpl_FilletDriver.hxx		\
+	GEOMImpl_Fillet2dDriver.hxx		\
 	GEOMImpl_ChamferDriver.hxx		\
 	GEOMImpl_BooleanDriver.hxx		\
 	GEOMImpl_PartitionDriver.hxx		\
@@ -185,7 +189,9 @@ dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_ArcDriver.cxx			\
 	GEOMImpl_SplineDriver.cxx		\
 	GEOMImpl_SketcherDriver.cxx		\
+	GEOMImpl_3DSketcherDriver.cxx		\
 	GEOMImpl_FilletDriver.cxx		\
+	GEOMImpl_Fillet2dDriver.cxx		\
 	GEOMImpl_ChamferDriver.cxx		\
 	GEOMImpl_BooleanDriver.cxx		\
 	GEOMImpl_PartitionDriver.cxx		\

@@ -28,7 +28,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_3Sel3Spin1Check;
+class DlgRef_4Sel1Spin3Check;
 
 //=================================================================================
 // class    : TransformationGUI_PositionDlg
@@ -49,6 +49,7 @@ protected:
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
   virtual void                       restoreSubShapes( SALOMEDS::Study_ptr, SALOMEDS::SObject_ptr );
+  virtual void                       addSubshapesToStudy();
 
 private:
   void                               Init();
@@ -58,11 +59,12 @@ private:
   GEOM::GEOM_Object_var              myStartLCS;
   GEOM::GEOM_Object_var              myEndLCS;
   GEOM::ListOfGO                     myObjects;
+  GEOM::GEOM_Object_var              myPath;
 
   // to initialize the first selection field with a selected object on the dialog creation
   bool                               myInitial;
-  
-  DlgRef_3Sel3Spin1Check*            Group1;
+
+  DlgRef_4Sel1Spin3Check*            Group1;
     
 private slots:
   void                               ClickOnOk();
@@ -73,6 +75,8 @@ private slots:
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );
   void                               CreateCopyModeChanged( bool );
+  void                               ValueChangedInSpinBox();
+  void                               SelectionTypeButtonClicked();
 };
 
 #endif // TRANSFORMATIONGUI_POSITIONDLG_H

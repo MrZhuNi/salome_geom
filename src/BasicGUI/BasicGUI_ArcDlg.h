@@ -59,6 +59,7 @@ private:
 
   DlgRef_3Sel*                       Group3Pnts;
   DlgRef_3Sel1Check*                 Group3Pnts2;
+  DlgRef_3Sel*                       Group3Pnts3;
 
 private slots:
   void                               ClickOnOk();

@@ -37,12 +37,16 @@
 
 #include <GC_MakeArcOfCircle.hxx>
 #include <GC_MakeCircle.hxx>
+#include <GC_MakeArcOfEllipse.hxx>
+#include <GC_MakeEllipse.hxx>
 #include <Standard_ConstructionError.hxx>
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
 #include <gp_Circ.hxx>
+#include <gp_Elips.hxx>
 #include <Geom_Circle.hxx>
+#include <Geom_Ellipse.hxx>
 
 #include "utilities.h"
 
@@ -78,7 +82,7 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(TFunction_Logbook& log) const
   Standard_Integer aType = aFunction->GetType();
 
   TopoDS_Shape aShape;
-  if ((aType == CIRC_ARC_THREE_PNT) || (aType == CIRC_ARC_CENTER))
+  if ((aType == CIRC_ARC_THREE_PNT) || (aType == CIRC_ARC_CENTER) || (aType == ELLIPSE_ARC_CENTER_TWO_PNT))
   {
     Handle(GEOM_Function) aRefPoint1 = aCI.GetPoint1();
     Handle(GEOM_Function) aRefPoint2 = aCI.GetPoint2();
@@ -108,9 +112,7 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(TFunction_Logbook& log) const
       {
         GC_MakeArcOfCircle arc (aP1, aP2, aP3);
         aShape = BRepBuilderAPI_MakeEdge(arc).Edge();
-      }
-      else // CIRC_ARC_CENTER
-      {
+      } else if ( aType == CIRC_ARC_CENTER ) { // CIRC_ARC_CENTER
         Standard_Boolean sense = aCI.GetSense();
 
         Standard_Real aRad = aP1.Distance(aP2);
@@ -126,9 +128,29 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(TFunction_Logbook& log) const
 
         GC_MakeArcOfCircle arc (aGeomCirc->Circ(), aP2, aP3, Standard_True);
         aShape = BRepBuilderAPI_MakeEdge(arc).Edge();
+      } else if ( aType == ELLIPSE_ARC_CENTER_TWO_PNT ) { // ELLIPSE_ARC_CENTER_TWO_PNT
+	if ( aP1.Distance(aP2) <= aP1.Distance(aP3) ) {
+	  // Standard_ConstructionError::Raise("Arc creation aborted: the distance from Center Point to Point 1 needs to be bigger than the distance from Center Point to Point 2");	  
+	  cout << "aP1.Distance(aP2) <= aP1.Distance(aP3)" << endl;
+	  gp_Pnt aTmpP = aP2;
+	  aP2 = aP3;
+	  aP3 = aTmpP;
+	}
+
+	GC_MakeEllipse ellipse (aP2, aP3, aP1);
+	Handle(Geom_Ellipse) aGeomEllipse = ellipse.Value();
+
+        gp_Vec aV1 (aP1, aP2);
+        gp_Vec aV2 (aP1, aP3);
+
+	double alpha = fabs(aV1.Angle(aV2));
+	
+	GC_MakeArcOfEllipse arc (aGeomEllipse->Elips(), aP2, aP3, Standard_True);
+	aShape = BRepBuilderAPI_MakeEdge(arc).Edge();
       }
     }
-  } else {
+  }
+  else {
   }
 
   if (aShape.IsNull()) return 0;

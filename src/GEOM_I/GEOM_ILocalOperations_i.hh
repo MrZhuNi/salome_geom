@@ -59,6 +59,9 @@ class GEOM_I_EXPORT GEOM_ILocalOperations_i :
                                              CORBA::Double theR1,
                                              CORBA::Double theR2,
 				      	     const GEOM::ListOfLong& theFaces);
+					     
+  GEOM::GEOM_Object_ptr MakeFillet2D (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
+				      const GEOM::ListOfLong& theVertexes);
 
   GEOM::GEOM_Object_ptr MakeChamferAll   (GEOM::GEOM_Object_ptr theShape, CORBA::Double theD);
 

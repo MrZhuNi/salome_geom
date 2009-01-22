@@ -684,6 +684,10 @@ msgstr "Edge"
 msgid "GEOM_FACE"
 msgstr "Face"
 
+#Face
+msgid "GEOM_PLANAR_FACE"
+msgstr "Planar Face"
+
 #Faces
 msgid "GEOM_FACES"
 msgstr "Faces"

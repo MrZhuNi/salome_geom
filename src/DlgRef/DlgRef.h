@@ -764,6 +764,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_4Sel1Spin2Check
+//////////////////////////////////////////
+
+#include "ui_DlgRef_4Sel1Spin3Check_QTD.h"
+
+class DLGREF_EXPORT DlgRef_4Sel1Spin3Check : public QWidget, 
+                                             public Ui::DlgRef_4Sel1Spin3Check_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_4Sel1Spin3Check( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_4Sel1Spin3Check();
+};
+
+//////////////////////////////////////////
 // DlgRef_6Sel
 //////////////////////////////////////////
 

@@ -23,7 +23,7 @@
 #  File   : GEOM_usinggeom.py
 #  Author : Damien COQUERET, Open CASCADE
 #  Module : GEOM
-#  $Header$
+#
 # ! Please, if you edit this example file, update also
 # ! GEOM_SRC/doc/salome/gui/GEOM/input/tui_test_all.doc
 # ! as some sequences of symbols from this example are used during
@@ -92,6 +92,7 @@ def TestAll (geompy, math):
 
   Arc      = geompy.MakeArc(py, pz, px)                   #(3 GEOM_Object_ptr)->GEOM_Object_ptr
   Arc2     = geompy.MakeArcCenter(py, pz, px,0)           #(3 GEOM_Object_ptr,Boolean)->GEOM_Object_ptr
+  Arc3     = geompy.MakeArcOfEllipse(p0, px, pz)          #(3 GEOM_Object_ptr,Boolean)->GEOM_Object_ptr
   Circle   = geompy.MakeCircle(p0, vz, radius1)           #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Circle1  = geompy.MakeCircleThreePnt(p0, pxyz, px)      #(3 GEOM_Object_ptr)->GEOM_Object_ptr
   Circle2  = geompy.MakeCircleCenter2Pnt(p0, pxyz, py)    #(3 GEOM_Object_ptr)->GEOM_Object_ptr
@@ -101,6 +102,7 @@ def TestAll (geompy, math):
   Interpol = geompy.MakeInterpol([px, py, p200, pxyz])    #(List of GEOM_Object_ptr)->GEOM_Object_ptr
   Sketcher = geompy.MakeSketcher("Sketcher:F -100 -100:TT 250 -100:R 0:C 100 150:R 0:L 300:WW",
                                  [100,0,0, 1,1,1, -1,1,0]) #(String, List of Doubles)->GEOM_Object_ptr
+  Sketcher3d = geompy.Make3DSketcher([0,0,0, 50,50,50, 0,50,50, 10,0,0])
 
   #Test point on curve creation
   p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25) #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
@@ -205,6 +207,7 @@ def TestAll (geompy, math):
   MirrorAxis  = geompy.MakeMirrorByAxis(Box, Line1)  #
   MirrorPnt   = geompy.MakeMirrorByPoint(Box, p200)  #
   Position    = geompy.MakePosition(Box, cs1, cs2)   #(3 GEOM_Object_ptr)->GEOM_Object_ptr
+  Position2   = geompy.PositionAlongPath(Box, Arc, 0.5, 1, 0)  #(2 GEOM_Object_ptr, 1 Double, 2 Bool)->GEOM_Object_ptr
   Offset      = geompy.MakeOffset(Box, 10.)          #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Orientation = geompy.ChangeOrientation(Box)
 
@@ -232,6 +235,7 @@ def TestAll (geompy, math):
   IDlist_f = [f_ind_1, f_ind_2]
   
   #Local operations
+  Fillet2d = geompy.MakeFillet2D(Face3, radius, [4, 7, 9]) #(GEOM_Object_ptr, Double, ListOfLong)->GEOM_Object_ptr
   Fillet   = geompy.MakeFillet (Prism, radius, ShapeTypeEdge,
                                 IDlist_e) #(GEOM_Object_ptr, Double, Short, ListOfLong)->GEOM_Object_ptr
   Fillet2  = geompy.MakeFilletR1R2 (Prism, 7., 13., ShapeTypeEdge,
@@ -292,6 +296,8 @@ def TestAll (geompy, math):
   id_Plane1 = geompy.addToStudy(Plane1,  "Plane by 3 points")
 
   id_Arc      = geompy.addToStudy(Arc,      "Arc")
+  id_Arc2     = geompy.addToStudy(Arc2,     "Arc2")
+  id_Arc3     = geompy.addToStudy(Arc3,     "Arc3")
   id_Circle   = geompy.addToStudy(Circle,   "Circle")
   id_Circle1  = geompy.addToStudy(Circle1,  "Circle by 3 points")
   id_Circle2  = geompy.addToStudy(Circle2,  "Circle by center and 2 points")
@@ -300,6 +306,7 @@ def TestAll (geompy, math):
   id_Bezier   = geompy.addToStudy(Bezier,   "Bezier")
   id_Interpol = geompy.addToStudy(Interpol, "Interpol")
   id_Sketcher = geompy.addToStudy(Sketcher, "Sketcher")
+  id_Sketcher3d = geompy.addToStudy(Sketcher3d, "Sketcher 3D")
 
   id_p_on_arc  = geompy.addToStudy(p_on_arc,  "Vertex on Arc (0.25)")
   id_p_on_l1l2 = geompy.addToStudy(p_on_l1l2, "Vertex on Lines Intersection")
@@ -369,11 +376,13 @@ def TestAll (geompy, math):
   id_MirrorAxis  = geompy.addToStudy(MirrorAxis,  "Mirror by Axis")
   id_MirrorPnt   = geompy.addToStudy(MirrorPnt,   "Mirror by Point")
   id_Position    = geompy.addToStudy(Position,    "Positioned box")
+  id_Position2   = geompy.addToStudy(Position2,   "Positioned box along path")
   id_Offset      = geompy.addToStudy(Offset,      "Offset")
   id_Orientation = geompy.addToStudy(Orientation, "Orientation")
 
   id_Fillet   = geompy.addToStudy(Fillet,   "Fillet")
   id_Fillet2  = geompy.addToStudy(Fillet2,  "Fillet2")
+  id_Fillet2d = geompy.addToStudy(Fillet2d, "Fillet2D")
 
   id_Chamfer  = geompy.addToStudy(Chamfer,  "Chamfer on Edge")
   id_Chamfer2 = geompy.addToStudy(Chamfer2, "Chamfer on Faces")

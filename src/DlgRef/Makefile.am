@@ -83,6 +83,7 @@ UIC_FILES =					\
 	ui_DlgRef_4Sel1List1Check_QTD.h		\
 	ui_DlgRef_4Sel1List_QTD.h		\
 	ui_DlgRef_4Sel1Spin2Check_QTD.h		\
+	ui_DlgRef_4Sel1Spin3Check_QTD.h		\
 	ui_DlgRef_6Sel_QTD.h			\
 	ui_DlgRef_Skeleton_QTD.h
 

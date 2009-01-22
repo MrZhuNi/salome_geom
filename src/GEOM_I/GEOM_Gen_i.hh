@@ -232,7 +232,11 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   char* GetDumpName (const char* theStudyEntry);
 
   GEOM::string_array* GetAllDumpNames();
-
+  
+  // Object information
+  virtual bool hasObjectInfo();
+  virtual char* getObjectInfo(CORBA::Long studyId, const char* entry);
+  
   //-----------------------------------------------------------------------//
   // Internal methods                                                      //
   //-----------------------------------------------------------------------//

@@ -796,6 +796,22 @@ module GEOM
 				   in GEOM_Object theEndLCS);
 
     /*!
+     *  Modify the Location of the given object by Path,
+     *  \param  theObject The object to be displaced.
+     *  \param  thePath Wire or Edge along that the object will be translated.
+     *	\param  theDistance progress of Path (0 = actual location, 1 = end of path location).
+     *	\param  theCopy is a true or false parameter. true is to create a copy, false to move the object.
+     *	\param  theCopy is a true or false parameter. true is to reverse direction, false is to move normal direction.
+     *  \return New GEOM_Object, containing the displaced shape.
+     */
+
+    GEOM_Object PositionAlongPath (in GEOM_Object theObject,
+				   in GEOM_Object thePath,
+				   in double theDistance,
+				   in boolean theCopy,
+				   in boolean theReverse);
+
+    /*!
      *  Recompute the shape from its arguments.
      *  \param theObject The object to be recomputed.
      *  \return theObject.
@@ -2097,6 +2113,17 @@ module GEOM
                                in GEOM_Object thePnt1,
                                in GEOM_Object thePnt2,
                                in boolean theSense);
+			       
+    /*!
+     *  Create an arc of ellipse of center C and two points P1 P2.
+     *  \param theCenter Center point of the arc.
+     *  \param thePnt1 Major radius is distance from center to Pnt1.
+     *  \param thePnt2 define a plane and Minor radius as a shortest distance from Pnt2 to vector Center->Pnt1.
+     *  \return New GEOM_Object, containing the created arc.
+     */
+    GEOM_Object MakeArcOfEllipse (in GEOM_Object theCenter,
+			          in GEOM_Object thePnt1,
+			          in GEOM_Object thePnt2);
 
 
     /*!
@@ -2155,6 +2182,16 @@ module GEOM
      *  \return New GEOM_Object, containing the created wire.
      */
     GEOM_Object MakeSketcher (in string theCommand, in ListOfDouble theWorkingPlane);
+    
+    /*!
+     *  Create a 3D sketcher, following the numerical description,
+     *  passed through points created by \a theCoordinates argument. \n
+     *  Format of the description string have to be the following:
+     *
+     *  "Make3DSketcher[x1, y1, z1, x2, y2, z2, ..., xN, yN, zN]"
+     */
+    
+    GEOM_Object Make3DSketcher (in ListOfDouble theCoordinates);
 
       /*!
      *  Create a sketcher (wire or face), following the textual description,
@@ -2211,10 +2248,24 @@ module GEOM
     GEOM_Object MakeFilletFaces (in GEOM_Object theShape,
 				 in double      theR,
 				 in ListOfLong  theFaces);
+				 
     GEOM_Object MakeFilletFacesR1R2 (in GEOM_Object theShape,
 				     in double      theR1,
 				     in double      theR2,
 				     in ListOfLong  theFaces);
+				     
+    /*!
+     *  Perform a fillet on face of the specified vertexes of the given shape.
+     *  \param theShape Shape, to perform fillet on.
+     *  \param theR Fillet radius.
+     *  \param theVertexes Global indices of vertexes to perform fillet on.
+     *    \note Global index of sub-shape can be obtained, using method
+     *          <VAR>GEOM_IShapesOperations.GetSubShapeIndex()</VAR>.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeFillet2D (in GEOM_Object theShape,
+			      in double      theR,
+			      in ListOfLong  theVertexes);
 
     /*!
      *  Perform a symmetric chamfer on all edges of the given shape.

@@ -23,9 +23,12 @@
 //
 #include "GEOM_Function.hxx"
 
-#define POSITION_ARG_SHAPE 1
+#define POSITION_ARG_SHAPE     1
 #define POSITION_ARG_START_LCS 2
-#define POSITION_ARG_END_LCS 3
+#define POSITION_ARG_END_LCS   3
+#define POSITION_ARG_PATH      5
+#define POSITION_ARG_DISTANCE  6
+#define POSITION_ARG_REVERSE   7
 
 class GEOMImpl_IPosition
 {
@@ -46,6 +49,17 @@ class GEOMImpl_IPosition
   { _func->SetReference(POSITION_ARG_END_LCS, theEndLCS); }
 
   Handle(GEOM_Function) GetEndLCS() { return _func->GetReference(POSITION_ARG_END_LCS); }
+
+  void SetPath(Handle(GEOM_Function) thePath) { _func->SetReference(POSITION_ARG_PATH, thePath); }
+
+  Handle(GEOM_Function) GetPath() { return _func->GetReference(POSITION_ARG_PATH); }
+
+  void SetDistance(double theDistance) { _func->SetReal(POSITION_ARG_DISTANCE, theDistance); }
+
+  double GetDistance() { return _func->GetReal(POSITION_ARG_DISTANCE); }
+
+  void SetReverse(bool theReverse) { _func->SetReal(POSITION_ARG_REVERSE, theReverse); }
+  bool GetReverse() { return _func->GetReal(POSITION_ARG_REVERSE); }
 
  private:
 

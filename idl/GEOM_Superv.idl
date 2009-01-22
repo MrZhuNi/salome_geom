@@ -343,6 +343,11 @@ module GEOM
     GEOM_Object PositionShapeCopy (in GEOM_Object theObject,
 				   in GEOM_Object theStartLCS,
 				   in GEOM_Object theEndLCS) ;
+    GEOM_Object PositionAlongPath (in GEOM_Object theObject,
+				   in GEOM_Object thePath,
+				   in double theDistance,
+				   in boolean theCopy,
+				   in boolean theReverse);
 
     //-----------------------------------------------------------//
     // ShapesOperations                                          //
@@ -480,6 +485,9 @@ module GEOM
                                in GEOM_Object thePnt1,
                                in GEOM_Object thePnt2,
                                in boolean theSense) ;
+    GEOM_Object MakeArcOfEllipse (in GEOM_Object theCenter,
+			         in GEOM_Object thePnt1,
+			         in GEOM_Object thePnt2) ;
     GEOM_Object MakePolyline (in GEOM_List thePoints) ;
     GEOM_Object MakeSplineBezier (in GEOM_List thePoints) ;
     GEOM_Object MakeSplineInterpolation (in GEOM_List thePoints) ;
@@ -505,6 +513,9 @@ module GEOM
 				     in double      theR1,
 				     in double      theR2,
 				     in GEOM_List   theFaces) ;
+    GEOM_Object MakeFillet2D (in GEOM_Object theShape,
+			      in double      theR,
+			      in GEOM_List   theVertexes) ;
     GEOM_Object MakeChamferAll (in GEOM_Object theShape,
 				in double      theD) ;
     GEOM_Object MakeChamferEdge (in GEOM_Object theShape,

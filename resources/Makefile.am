@@ -22,8 +22,7 @@
 # -* Makefile *- 
 # Author : Patrick GOLDBRONN (CEA)
 # Date : 28/06/2001
-#  Modified by : Alexander BORODIN (OCN) - autotools usage
-# $Header$
+# Modified by : Alexander BORODIN (OCN) - autotools usage
 #
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
@@ -36,8 +35,11 @@ Plugin				\
 GEOMDS_Resources		\
 ImportExport			\
 ShHealing			\
+3dsketch.png			\
 angle.png			\
 arc.png				\
+arccenter.png			\
+arcofellipse.png		\
 archimede.png			\
 axisinertia.png			\
 basicproperties.png		\
@@ -84,6 +86,7 @@ eraseall.png			\
 face_hw.png			\
 face_vechw.png			\
 fillet.png			\
+fillet2d.png			\
 filletall.png			\
 filletedge.png			\
 filletface.png			\
@@ -182,6 +185,7 @@ marker2.png			\
 marker3.png			\
 position.png			\
 position2.png			\
+position3.png                   \
 free_bound.png			\
 point_coord.png			\
 point3.png			\
@@ -203,7 +207,6 @@ free_faces.png			\
 propagate.png			\
 redo.png			\
 undo.png			\
-arccenter.png			\
 glue2.png			\
 remove_extra_edges.png		\
 coordsys.png			\

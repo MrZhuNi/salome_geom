@@ -23,8 +23,7 @@
 #  File   : geompy.py
 #  Author : Paul RASCLE, EDF
 #  Module : GEOM
-#  $Header$
-#
+
 """
     \namespace geompy
     \brief Module geompy
@@ -491,6 +490,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeArcCenter(thePnt1, thePnt2, thePnt3, theSense)
             RaiseIfFailed("MakeArcCenter", self.CurvesOp)
             return anObj
+	
+        ##  Create an arc of ellipse, of center and two points.
+        #  @param theCenter Center of the arc.
+        #  @param thePnt1 defines major radius of the arc by distance from Pnt1 to Pnt2.
+        #  @param thePnt2 defines plane of ellipse and minor radius as distance from Pnt3 to line from Pnt1 to Pnt2.
+        #  @return New GEOM_Object, containing the created arc.
+        #
+        #  @ref swig_MakeArc "Example"
+        def MakeArcOfEllipse(self,theCenter, thePnt1, thePnt2):
+            # Example: see GEOM_TestAll.py
+            anObj = self.CurvesOp.MakeArcOfEllipse(theCenter, thePnt1, thePnt2)
+            RaiseIfFailed("MakeArcOfEllipse", self.CurvesOp)
+            return anObj
 
         ## Create a circle with given center, normal vector and radius.
         #  @param thePnt Circle center.
@@ -655,6 +667,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakeSketcherOnPlane(self, theCommand, theWorkingPlane):
             anObj = self.CurvesOp.MakeSketcherOnPlane(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcherOnPlane", self.CurvesOp)
+            return anObj
+	    
+	## Create a sketcher wire, following the numerical description,
+        #  passed through <VAR>theCoordinates</VAR> argument. \n
+	#  @param theCoordinates double values, defining points to create a wire,
+        #                                                      passing from it.
+        #  @return New GEOM_Object, containing the created wire.
+        #
+        #  @ref tui_sketcher_page "Example"
+        def Make3DSketcher(self, theCoordinates):
+            anObj = self.CurvesOp.Make3DSketcher(theCoordinates)
+            RaiseIfFailed("Make3DSketcher", self.CurvesOp)
             return anObj
 
         # end of l3_sketcher
@@ -2217,6 +2241,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("PositionShapeCopy", self.TrsfOp)
             return anObj
 
+        ## Modify the Location of the given object by Path,
+        #  @param  theObject The object to be displaced.
+        #  @param  thePath Wire or Edge along that the object will be translated.
+	#  @param  theDistance progress of Path (0 = start location, 1 = end of path location).
+	#  @param  theCopy is to create a copy objects if true.
+	#  @param  theReverse - 0 for usual direction, 1 to reverse path direction.
+        #  @return New GEOM_Object, containing the displaced shape.
+        #
+        #  @ref tui_modify_location "Example"
+        def PositionAlongPath(self,theObject, thePath, theDistance, theCopy, theReverse):
+            # Example: see GEOM_TestAll.py
+            anObj = self.TrsfOp.PositionAlongPath(theObject, thePath, theDistance, theCopy, theReverse)
+            RaiseIfFailed("PositionAlongPath", self.TrsfOp)
+            return anObj
+
         ## Create new object as offset of the given one.
         #  @param theObject The base object for the offset.
         #  @param theOffset Offset value.
@@ -2368,6 +2407,20 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             else:
                 anObj = self.LocalOp.MakeFilletFacesR1R2(theShape, theR1, theR2, theListShapes)
                 RaiseIfFailed("MakeFilletFacesR1R2", self.LocalOp)
+            return anObj
+	    
+        ## Perform a fillet on the specified edges/faces of the given shape
+        #  @param theShape - Face Shape to perform fillet on.
+        #  @param theR - Fillet radius.
+        #  @param theListOfVertexes Global indices of vertexes to perform fillet on.
+        #    \note Global index of sub-shape can be obtained, using method geompy.GetSubShapeID().
+        #  @return New GEOM_Object, containing the result shape.
+        #
+        #  @ref tui_fillet2d "Example"
+        def MakeFillet2D(self,theShape, theR, theListOfVertexes):
+            # Example: see GEOM_TestAll.py
+            anObj = self.LocalOp.MakeFillet2D(theShape, theR, theListOfVertexes)
+            RaiseIfFailed("MakeFillet2D", self.LocalOp)
             return anObj
 
         ## Perform a symmetric chamfer on all edges of the given shape.

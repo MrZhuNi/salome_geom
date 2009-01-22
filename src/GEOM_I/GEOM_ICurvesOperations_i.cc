@@ -275,6 +275,43 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeArcCenter
 
   return GetObject(anObject);
 }
+
+//=============================================================================
+/*!
+ *  MakeArc
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeArcOfEllipse
+                                                (GEOM::GEOM_Object_ptr thePnt1,
+						 GEOM::GEOM_Object_ptr thePnt2,
+						 GEOM::GEOM_Object_ptr thePnt3)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (thePnt1 == NULL || thePnt2 == NULL || thePnt3 == NULL) return aGEOMObject._retn();
+
+  //Get the reference points
+  Handle(GEOM_Object) aPnt1 = GetOperations()->GetEngine()->GetObject
+    (thePnt1->GetStudyID(), thePnt1->GetEntry());
+  Handle(GEOM_Object) aPnt2 = GetOperations()->GetEngine()->GetObject
+    (thePnt2->GetStudyID(), thePnt2->GetEntry());
+  Handle(GEOM_Object) aPnt3 = GetOperations()->GetEngine()->GetObject
+    (thePnt3->GetStudyID(), thePnt3->GetEntry());
+
+  if (aPnt1.IsNull() || aPnt2.IsNull() || aPnt3.IsNull()) return aGEOMObject._retn();
+
+  // Make Arc
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeArcOfEllipse(aPnt1, aPnt2, aPnt3);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
 //=============================================================================
 /*!
  *  MakePolyline
@@ -409,6 +446,31 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher
   return GetObject(anObject);
 }
 
+//=============================================================================
+/*!
+ *  Make3DSketcher
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::Make3DSketcher
+            (const GEOM::ListOfDouble& theCoordinates)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  int ind = 0;
+  int aLen = theCoordinates.length();
+  list<double> aCoords;
+  for (; ind < aLen; ind++)
+    aCoords.push_back(theCoordinates[ind]);
+
+  // Make Sketcher
+  Handle(GEOM_Object) anObject =
+    GetOperations()->Make3DSketcher(aCoords);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return GEOM::GEOM_Object::_nil();
+
+  return GetObject(anObject);
+}
 
 //=============================================================================
 /*!

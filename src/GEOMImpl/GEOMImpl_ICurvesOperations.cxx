@@ -23,6 +23,8 @@
 
 #include <GEOMImpl_ICurvesOperations.hxx>
 
+#include <TColStd_HArray1OfReal.hxx>
+
 #include <GEOM_Function.hxx>
 #include <GEOM_PythonDump.hxx>
 
@@ -34,6 +36,7 @@
 #include <GEOMImpl_EllipseDriver.hxx>
 #include <GEOMImpl_ArcDriver.hxx>
 #include <GEOMImpl_SketcherDriver.hxx>
+#include <GEOMImpl_3DSketcherDriver.hxx>
 
 #include <GEOMImpl_IPolyline.hxx>
 #include <GEOMImpl_ICircle.hxx>
@@ -41,6 +44,7 @@
 #include <GEOMImpl_IEllipse.hxx>
 #include <GEOMImpl_IArc.hxx>
 #include <GEOMImpl_ISketcher.hxx>
+#include <GEOMImpl_I3DSketcher.hxx>
 
 #include "utilities.h"
 
@@ -513,6 +517,67 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcCenter (Handle(GEOM_Objec
 
 //=============================================================================
 /*!
+ *  MakeArcOfEllipse
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcOfEllipse (Handle(GEOM_Object) thePnt1,
+								  Handle(GEOM_Object) thePnt2,
+								  Handle(GEOM_Object) thePnt3)
+{
+  SetErrorCode(KO);
+
+  if (thePnt1.IsNull() || thePnt2.IsNull() || thePnt3.IsNull()) return NULL;
+
+  //Add a new Circle Arc object
+  Handle(GEOM_Object) anArc = GetEngine()->AddObject(GetDocID(), GEOM_ELLIPSE_ARC);
+
+  //Add a new Circle Arc function
+  Handle(GEOM_Function) aFunction =
+      anArc->AddFunction(GEOMImpl_ArcDriver::GetID(), ELLIPSE_ARC_CENTER_TWO_PNT);
+
+  if (aFunction.IsNull()) return NULL;
+  
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ArcDriver::GetID()) return NULL;
+  GEOMImpl_IArc aCI (aFunction);
+
+  Handle(GEOM_Function) aRefPnt1 = thePnt1->GetLastFunction();
+  Handle(GEOM_Function) aRefPnt2 = thePnt2->GetLastFunction();
+  Handle(GEOM_Function) aRefPnt3 = thePnt3->GetLastFunction();
+  
+
+  if (aRefPnt1.IsNull() || aRefPnt2.IsNull() || aRefPnt3.IsNull()) return NULL;
+
+  aCI.SetPoint1(aRefPnt1);
+  aCI.SetPoint2(aRefPnt2);
+  aCI.SetPoint3(aRefPnt3);
+  
+  //Compute the Arc value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Arc driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << anArc << " = geompy.MakeArcOfEllipse("
+    << thePnt1 << ", " << thePnt2 << ", " << thePnt3 << ")";
+
+  SetErrorCode(OK);
+  return anArc;
+}
+
+//=============================================================================
+/*!
  *  MakeSplineBezier
  */
 //=============================================================================
@@ -707,6 +772,73 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
 
   SetErrorCode(OK);
   return aSketcher;
+}
+
+//=============================================================================
+/*!
+ *  Make3DSketcher
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcher (list<double> theCoordinates)
+{
+  SetErrorCode(KO);
+
+  //Add a new Sketcher object
+  Handle(GEOM_Object) a3DSketcher = GetEngine()->AddObject(GetDocID(), GEOM_3DSKETCHER);
+
+  //Add a new Sketcher function
+  Handle(GEOM_Function) aFunction =
+    a3DSketcher->AddFunction(GEOMImpl_3DSketcherDriver::GetID(), GEOM_3DSKETCHER);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_3DSketcherDriver::GetID()) return NULL;
+
+  GEOMImpl_I3DSketcher aCI (aFunction);
+
+  int nbOfCoords = 0;
+  list<double>::iterator it = theCoordinates.begin();
+  for (; it != theCoordinates.end(); it++)
+    nbOfCoords++;
+
+  Handle(TColStd_HArray1OfReal) aCoordsArray = new TColStd_HArray1OfReal (1, nbOfCoords);
+
+  it = theCoordinates.begin();
+  int ind = 1;
+  for (; it != theCoordinates.end(); it++, ind++)
+    aCoordsArray->SetValue(ind, *it);
+
+  aCI.SetCoordinates(aCoordsArray);
+    
+  //Compute the Sketcher value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("3D Sketcher driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << a3DSketcher << " = geompy.Make3DSketcher([";
+
+  it = theCoordinates.begin();
+  pd << (*it++);
+  while (it != theCoordinates.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return a3DSketcher;
 }
 
 //=============================================================================

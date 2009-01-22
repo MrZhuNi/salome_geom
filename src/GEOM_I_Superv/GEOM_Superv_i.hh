@@ -421,6 +421,11 @@ public:
   GEOM::GEOM_Object_ptr PositionShapeCopy (GEOM::GEOM_Object_ptr theObject,
 					   GEOM::GEOM_Object_ptr theStartLCS,
 					   GEOM::GEOM_Object_ptr theEndLCS);
+  GEOM::GEOM_Object_ptr PositionAlongPath (GEOM::GEOM_Object_ptr theObject,
+					   GEOM::GEOM_Object_ptr thePath,
+					   CORBA::Double         theDistance,
+					   CORBA::Boolean        theCopy,
+					   CORBA::Boolean        theReverse);
 
   //-----------------------------------------------------------//
   // ShapesOperations                                          //
@@ -559,11 +564,15 @@ public:
                                        GEOM::GEOM_Object_ptr thePnt1,
                                        GEOM::GEOM_Object_ptr thePnt2,
                                        CORBA::Boolean theSense);
+  GEOM::GEOM_Object_ptr MakeArcOfEllipse (GEOM::GEOM_Object_ptr thePnt1,
+					  GEOM::GEOM_Object_ptr thePnt2,
+					  GEOM::GEOM_Object_ptr thePnt3);
   GEOM::GEOM_Object_ptr MakePolyline (GEOM::GEOM_List_ptr thePoints);
   GEOM::GEOM_Object_ptr MakeSplineBezier (GEOM::GEOM_List_ptr thePoints);
   GEOM::GEOM_Object_ptr MakeSplineInterpolation (GEOM::GEOM_List_ptr thePoints);
   GEOM::GEOM_Object_ptr MakeSketcher (const char* theCommand, 
 						GEOM::GEOM_List_ptr theWorkingPlane);
+  GEOM::GEOM_Object_ptr Make3DSketcher (GEOM::GEOM_List_ptr theCoordinates);
 
   //-----------------------------------------------------------//
   // LocalOperations                                           //
@@ -578,6 +587,8 @@ public:
 					 GEOM::GEOM_List_ptr theFaces);
   GEOM::GEOM_Object_ptr MakeFilletFacesR1R2 (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR1,
 					     CORBA::Double theR2, GEOM::GEOM_List_ptr theFaces);
+  GEOM::GEOM_Object_ptr MakeFillet2D (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
+				      GEOM::GEOM_List_ptr theVertexes);
   GEOM::GEOM_Object_ptr MakeChamferAll (GEOM::GEOM_Object_ptr theShape, CORBA::Double theD);
   GEOM::GEOM_Object_ptr MakeChamferEdge (GEOM::GEOM_Object_ptr theShape,
 					 CORBA::Double theD1, CORBA::Double theD2,

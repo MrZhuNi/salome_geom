@@ -1338,6 +1338,75 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShapeCopy
 
 //=============================================================================
 /*!
+ *  PositionAlongPath
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionAlongPath
+       (Handle(GEOM_Object) theObject, Handle(GEOM_Object) thePath, 
+	double theDistance, bool theCopy, bool theReverse)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull() || thePath.IsNull()) return NULL;
+
+  Handle(GEOM_Function) anOriginal = theObject->GetLastFunction();
+  if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be set in position
+
+  //Add a position function
+  Handle(GEOM_Function) aFunction;
+  Handle(GEOM_Object) aCopy;
+
+  if (theCopy) {
+    aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+    aFunction = aCopy->AddFunction(GEOMImpl_PositionDriver::GetID(), POSITION_ALONG_PATH);
+  }
+  else
+    aFunction = theObject->AddFunction(GEOMImpl_PositionDriver::GetID(), POSITION_ALONG_PATH);
+
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PositionDriver::GetID()) return NULL;
+
+  GEOMImpl_IPosition aTI (aFunction);
+  aTI.SetShape(anOriginal);
+  aTI.SetPath(thePath->GetLastFunction());
+  aTI.SetDistance(theDistance);
+  aTI.SetReverse(theReverse);
+
+  //Compute the position
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Position driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  if (theCopy) {
+    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.PositionAlongPath("
+				 << theObject << ", " << thePath << ", " << theDistance << ", " << theCopy << ", " << theReverse << ")";
+    SetErrorCode(OK);
+    return aCopy;
+  }
+
+  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.PositionAlongPath("
+    << theObject << ", " << thePath << ", " << theDistance << ", " << theCopy << ", " << theReverse << ")";
+
+  SetErrorCode(OK);
+  return theObject;
+}
+
+//=============================================================================
+/*!
  *  Rotate
  */
 //=============================================================================

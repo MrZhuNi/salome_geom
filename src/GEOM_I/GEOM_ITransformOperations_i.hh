@@ -142,6 +142,12 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
 					   GEOM::GEOM_Object_ptr theStartLCS,
 					   GEOM::GEOM_Object_ptr theEndLCS);
 
+  GEOM::GEOM_Object_ptr PositionAlongPath (GEOM::GEOM_Object_ptr theObject,
+					   GEOM::GEOM_Object_ptr thePath,
+					   CORBA::Double         theDistance,
+					   CORBA::Boolean        theCopy,
+					   CORBA::Boolean        theReverse);
+
   GEOM::GEOM_Object_ptr RotateThreePoints (GEOM::GEOM_Object_ptr theObject,
 					   GEOM::GEOM_Object_ptr theCentPoint,
 					   GEOM::GEOM_Object_ptr thePoint1,
