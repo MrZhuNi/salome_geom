@@ -751,6 +751,9 @@ DlgRef_Skeleton::~DlgRef_Skeleton()
 QString DlgRef::PrintDoubleValue( double theValue, int thePrecision )
 {
   const double prec = 1e-12;
+  
+  if ( abs(theValue) < thePrecision)
+    return "0";
 
   QString aRes;
   aRes.setNum( theValue, 'g', thePrecision );
