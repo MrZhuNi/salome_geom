@@ -389,7 +389,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_COMMON_TITLE</source>
-            <translation>BOOLEAN : Common Of Two Objects</translation>
+            <translation>Common Of Two Objects</translation>
         </message>
         <message>
             <source>GEOM_COMPOUND</source>
@@ -453,7 +453,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_CUT_TITLE</source>
-            <translation>BOOLEAN : Cut Of Two Objects</translation>
+            <translation>Cut Of Two Objects</translation>
         </message>
         <message>
             <source>GEOM_CYLINDER</source>
@@ -709,7 +709,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_FUSE_TITLE</source>
-            <translation>BOOLEAN : Fuse Two Objects</translation>
+            <translation>Fuse Two Objects</translation>
         </message>
         <message>
             <source>GEOM_FixFaceSize</source>
@@ -1393,7 +1393,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_SECTION_TITLE</source>
-            <translation>BOOLEAN : Section Of Two Objects</translation>
+            <translation>Section Of Two Objects</translation>
         </message>
         <message>
             <source>GEOM_SELECTED_FACE</source>
