@@ -29,7 +29,7 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 
-#include <QtxDoubleSpinBox.h>
+#include <SalomeApp_DoubleSpinBox.h>
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
@@ -93,13 +93,13 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg (GeometryGUI* theGeometry
   LineEdit2->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
 
   TextLabel3 = new QLabel(tr("GEOM_SCALE_FACTOR"), GroupBox1);
-  SpinBox_FX = new QtxDoubleSpinBox(GroupBox1);
+  SpinBox_FX = new SalomeApp_DoubleSpinBox(GroupBox1);
 
   TextLabel4 = new QLabel(tr("GEOM_SCALE_FACTOR_Y"), GroupBox1);
-  SpinBox_FY = new QtxDoubleSpinBox(GroupBox1);
+  SpinBox_FY = new SalomeApp_DoubleSpinBox(GroupBox1);
 
   TextLabel5 = new QLabel(tr("GEOM_SCALE_FACTOR_Z"), GroupBox1);
-  SpinBox_FZ = new QtxDoubleSpinBox(GroupBox1);
+  SpinBox_FZ = new SalomeApp_DoubleSpinBox(GroupBox1);
 
   CheckBoxCopy = new QCheckBox(tr("GEOM_CREATE_COPY"), GroupBox1);
   CheckBoxCopy->setChecked(true);
@@ -460,18 +460,22 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_ScaleDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool TransformationGUI_ScaleDlg::isValid (QString& /*msg*/)
+bool TransformationGUI_ScaleDlg::isValid (QString& msg)
 {
-  if (myObjects.length() > 0 && fabs(SpinBox_FX->value()) > 0.00001)
-  {
-    // && !myPoint->_is_nil()
-    if (getConstructorId() == 0)
-      return true;
-    if (fabs(SpinBox_FY->value()) > 0.00001 &&
-        fabs(SpinBox_FZ->value()) > 0.00001)
-      return true;
+  // && !myPoint->_is_nil()
+  if (getConstructorId() == 0) {
+    bool ok = SpinBox_FX->isValid( msg, !IsPreview() );
+    return myObjects.length() > 0 && fabs(SpinBox_FX->value()) > 0.00001 && ok;
   }
-  return false;
+
+  bool ok = true;
+  ok = SpinBox_FX->isValid( msg, !IsPreview() ) && ok;
+  ok = SpinBox_FY->isValid( msg, !IsPreview() ) && ok;
+  ok = SpinBox_FZ->isValid( msg, !IsPreview() ) && ok;
+  return myObjects.length() > 0 &&
+    fabs(SpinBox_FX->value()) > 0.00001 &&
+    fabs(SpinBox_FY->value()) > 0.00001 &&
+    fabs(SpinBox_FZ->value()) > 0.00001 && ok;
 }
 
 //=================================================================================
@@ -494,8 +498,11 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
         {
           anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
             ScaleShapeCopy(myObjects[i], myPoint, SpinBox_FX->value());
-          if (!anObj->_is_nil())
+          if (!anObj->_is_nil()) {
+            if(!IsPreview()) 
+              anObj->SetParameters(SpinBox_FX->text().toLatin1().constData());
             objects.push_back(anObj._retn());
+          }
         }
       }
       else
@@ -520,6 +527,13 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
             ScaleShapeAlongAxesCopy(myObjects[i], myPoint, SpinBox_FX->value(),
                                      SpinBox_FY->value(), SpinBox_FZ->value());
           if (!anObj->_is_nil())
+            if(!IsPreview()) {
+              QStringList aParameters;
+              aParameters<<SpinBox_FX->text();
+              aParameters<<SpinBox_FY->text();
+              aParameters<<SpinBox_FZ->text();
+              anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+            }
             objects.push_back(anObj._retn());
         }
       }

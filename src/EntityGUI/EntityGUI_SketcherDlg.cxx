@@ -62,6 +62,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
 					      const double lineWidth )
   : QDialog( parent, fl ),
     myIsAllAdded( false ),
+    myIsApply( false ),
     GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
     myGeometryGUI( GUI ),
     myLineWidth( lineWidth )
@@ -275,14 +276,8 @@ bool EntityGUI_SketcherDlg::eventFilter (QObject* object, QEvent* event)
     }
   }
 
-  if (event->type() == QEvent::KeyRelease) {
-    // NPAL16010 (Sketcher Apply non available if only one line is modified)
-    // To have Apply active as soon as value text changed
-    QtxDoubleSpinBox* aDoubleSpinBox = (QtxDoubleSpinBox*)object;
-    if (aDoubleSpinBox)
-      ValueChangedInSpinBox( aDoubleSpinBox->value() );
-  }
-  
+  // Fix of the NPAL16010 bug is removed, because it's not actual with the Qt-4.x
+
   return QDialog::eventFilter(object, event);
 }
 
@@ -679,7 +674,8 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
       return;
     }
 
-    QString Command = myCommand.join( "" ) + GetNewCommand();
+    QString Parameters;
+    QString Command = myCommand.join( "" ) + GetNewCommand( Parameters );
     Sketcher_Profile aProfile( Command.toAscii() );
 
     Command = myCommand.join( "" );
@@ -719,18 +715,24 @@ bool EntityGUI_SketcherDlg::ClickOnApply()
   if ( sender() && sender()->inherits( "QPushButton" ) )
     ( (QPushButton*)sender() )->setFocus(); // to update value of currently edited spin-box (PAL11948)
 
-  myCommand.append( GetNewCommand() );
+  QString aParameters;
+  myCommand.append( GetNewCommand( aParameters ) );
   mySketchState = NEXT_POINT;
 
   myUndoCommand.clear();
   myUndoCommand.append( "Sketcher" );
+
+  myParameters.append( aParameters );
+  myUndoParameters.clear();
 
   MainWidget->GroupConstructors->setEnabled( true );
   MainWidget->GroupDest1->setEnabled( true );
   setEnabledUndo( true );
   setEnabledRedo( false );
 
+  myIsApply = true;
   GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  myIsApply = false;
 
   // Set focus to SpinBox_DX
   if ( sender() == Group1Spin->buttonApply ) {
@@ -786,6 +788,9 @@ void EntityGUI_SketcherDlg::ClickOnUndo()
   myUndoCommand.append( myCommand.last() );
   myCommand.pop_back();
 
+  myUndoParameters.append( myParameters.last() );
+  myParameters.pop_back();
+
   if ( myCommand.count() == 1 ) {
     mySketchState = FIRST_POINT;
 
@@ -810,6 +815,9 @@ void EntityGUI_SketcherDlg::ClickOnRedo()
 {
   myCommand.append( myUndoCommand.last() );
   myUndoCommand.pop_back();
+
+  myParameters.append( myUndoParameters.last() );
+  myUndoParameters.pop_back();
 
   mySketchState = NEXT_POINT;
 
@@ -1002,162 +1010,142 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
   Standard_Real vx, vy, vz, vs;
   vx = vy = vz = vs = 0.0;
 
+  QString vxStr, vyStr, vzStr, vsStr;
+
+  QString newValueStr;
+  if( SalomeApp_DoubleSpinBox* aDoubleSpinBox = (SalomeApp_DoubleSpinBox*)send )
+    newValueStr = aDoubleSpinBox->text();
+
   if ( send == Group1Spin->SpinBox_DX ) {
-    vx = newValue;
+    vx = newValue;                        vxStr = newValueStr;
   }
   else if ( send == Group2Spin->SpinBox_DX ) {
-    vx = newValue;
-    vy = Group2Spin->SpinBox_DY->value();
+    vx = newValue;                        vxStr = newValueStr;
+    vy = Group2Spin->SpinBox_DY->value(); vyStr = Group2Spin->SpinBox_DY->text();
   }
   else if ( send == Group2Spin->SpinBox_DY ) {
-    vx = Group2Spin->SpinBox_DX->value();
-    vy = newValue;
+    vx = Group2Spin->SpinBox_DX->value(); vxStr = Group2Spin->SpinBox_DX->text();
+    vy = newValue;                        vyStr = newValueStr;
   }
   else if ( send == Group3Spin->SpinBox_DX ) {
-    vx = newValue;
-    vy = Group3Spin->SpinBox_DY->value();
-    vz = Group3Spin->SpinBox_DZ->value();
+    vx = newValue;                        vxStr = newValueStr;
+    vy = Group3Spin->SpinBox_DY->value(); vyStr = Group3Spin->SpinBox_DY->text();
+    vz = Group3Spin->SpinBox_DZ->value(); vzStr = Group3Spin->SpinBox_DZ->text();
   }
   else if ( send == Group3Spin->SpinBox_DY ) {
-    vx = Group3Spin->SpinBox_DX->value();
-    vy = newValue;
-    vz = Group3Spin->SpinBox_DZ->value();
+    vx = Group3Spin->SpinBox_DX->value(); vxStr = Group3Spin->SpinBox_DX->text();
+    vy = newValue;                        vyStr = newValueStr;
+    vz = Group3Spin->SpinBox_DZ->value(); vzStr = Group3Spin->SpinBox_DZ->text();
   }
   else if ( send == Group3Spin->SpinBox_DZ ) {
-    vx = Group3Spin->SpinBox_DX->value();
-    vy = Group3Spin->SpinBox_DY->value();
-    vz = newValue;
+    vx = Group3Spin->SpinBox_DX->value(); vxStr = Group3Spin->SpinBox_DX->text();
+    vy = Group3Spin->SpinBox_DY->value(); vyStr = Group3Spin->SpinBox_DY->text();
+    vz = newValue;                        vzStr = newValueStr;
   }
   else if ( send == Group4Spin->SpinBox_DX ) {
-    vx = newValue;
-    vy = Group4Spin->SpinBox_DY->value();
-    vz = Group4Spin->SpinBox_DZ->value();
-    vs = Group4Spin->SpinBox_DS->value();
+    vx = newValue;                        vxStr = newValueStr;
+    vy = Group4Spin->SpinBox_DY->value(); vyStr = Group4Spin->SpinBox_DY->text();
+    vz = Group4Spin->SpinBox_DZ->value(); vzStr = Group4Spin->SpinBox_DZ->text();
+    vs = Group4Spin->SpinBox_DS->value(); vsStr = Group4Spin->SpinBox_DS->text();
   }
   else if ( send == Group4Spin->SpinBox_DY ) {
-    vx = Group4Spin->SpinBox_DX->value();
-    vy = newValue;
-    vz = Group4Spin->SpinBox_DZ->value();
-    vs = Group4Spin->SpinBox_DS->value();
+    vx = Group4Spin->SpinBox_DX->value(); vxStr = Group4Spin->SpinBox_DX->text();
+    vy = newValue;                        vyStr = newValueStr;
+    vz = Group4Spin->SpinBox_DZ->value(); vzStr = Group4Spin->SpinBox_DZ->text();
+    vs = Group4Spin->SpinBox_DS->value(); vsStr = Group4Spin->SpinBox_DS->text();
   }
   else if ( send == Group4Spin->SpinBox_DZ ) {
-    vx = Group4Spin->SpinBox_DX->value();
-    vy = Group4Spin->SpinBox_DY->value();
-    vz = newValue;
-    vs = Group4Spin->SpinBox_DS->value();
+    vx = Group4Spin->SpinBox_DX->value(); vxStr = Group4Spin->SpinBox_DX->text();
+    vy = Group4Spin->SpinBox_DY->value(); vyStr = Group4Spin->SpinBox_DY->text();
+    vz = newValue;                        vzStr = newValueStr;
+    vs = Group4Spin->SpinBox_DS->value(); vsStr = Group4Spin->SpinBox_DS->text();
   }
   else if ( send == Group4Spin->SpinBox_DS ) {
-    vx = Group4Spin->SpinBox_DX->value();
-    vy = Group4Spin->SpinBox_DY->value();
-    vz = Group4Spin->SpinBox_DZ->value();
-    vs = newValue;
+    vx = Group4Spin->SpinBox_DX->value(); vxStr = Group4Spin->SpinBox_DX->text();
+    vy = Group4Spin->SpinBox_DY->value(); vyStr = Group4Spin->SpinBox_DY->text();
+    vz = Group4Spin->SpinBox_DZ->value(); vzStr = Group4Spin->SpinBox_DZ->text();
+    vs = newValue;                        vsStr = newValueStr;
   }
-  // NPAL16010 (Sketcher Apply non available if only one line is modified)
-  // if ValueChangedInSpinBox() called from eventFilter()
-  else if ( Group1Spin->SpinBox_DX->hasFocus() ) {
-    vx = newValue;
-  }
-  else if ( Group2Spin->SpinBox_DX ->hasFocus() ) {
-    vx = newValue;
-    vy = Group2Spin->SpinBox_DY->value();
-  }
-  else if ( Group2Spin->SpinBox_DY->hasFocus() ) {
-    vx = Group2Spin->SpinBox_DX->value();
-    vy = newValue;
-  }
-  else if ( Group3Spin->SpinBox_DX->hasFocus() ) {
-    vx = newValue;
-    vy = Group3Spin->SpinBox_DY->value();
-    vz = Group3Spin->SpinBox_DZ->value();
-  }
-  else if ( Group3Spin->SpinBox_DY->hasFocus() ) {
-    vx = Group3Spin->SpinBox_DX->value();
-    vy = newValue;
-    vz = Group3Spin->SpinBox_DZ->value();
-  }
-  else if ( Group3Spin->SpinBox_DZ->hasFocus() ) {
-    vx = Group3Spin->SpinBox_DX->value();
-    vy = Group3Spin->SpinBox_DY->value();
-    vz = newValue;
-  }
-  else if ( Group4Spin->SpinBox_DX->hasFocus() ) {
-    vx = newValue;
-    vy = Group4Spin->SpinBox_DY->value();
-    vz = Group4Spin->SpinBox_DZ->value();
-    vs = Group4Spin->SpinBox_DS->value();
-  }
-  else if ( Group4Spin->SpinBox_DY->hasFocus() ) {
-    vx = Group4Spin->SpinBox_DX->value();
-    vy = newValue;
-    vz = Group4Spin->SpinBox_DZ->value();
-    vs = Group4Spin->SpinBox_DS->value();
-  }
-  else if ( Group4Spin->SpinBox_DZ->hasFocus() ) {
-    vx = Group4Spin->SpinBox_DX->value();
-    vy = Group4Spin->SpinBox_DY->value();
-    vz = newValue;
-    vs = Group4Spin->SpinBox_DS->value();
-  }
-  else if ( Group4Spin->SpinBox_DS->hasFocus() ) {
-    vx = Group4Spin->SpinBox_DX->value();
-    vy = Group4Spin->SpinBox_DY->value();
-    vz = Group4Spin->SpinBox_DZ->value();
-    vs = newValue;
-  }
+  // Fix of the NPAL16010 bug is removed, because it's not actual with the Qt-4.x
 
   if ( myConstructorId == 0 ) {  // SEGMENT
     if ( mySketchType == PT_ABS ) {
       myX = vx;
       myY = vy;
+      myXStr = vxStr;
+      myYStr = vyStr;
     }
     else if ( mySketchType == PT_RELATIVE ) {
       myDX = vx;
       myDY = vy;
+      myDXStr = vxStr;
+      myDYStr = vyStr;
     }
     else if ( mySketchType == DIR_ANGLE_LENGTH ) {
       myAngle = vx;
       myLength = vy;
+      myAngleStr = vxStr;
+      myLengthStr = vyStr;
     }
     else if ( mySketchType == DIR_ANGLE_X ) {
       myAngle = vx;
       myX = vy;
+      myAngleStr = vxStr;
+      myXStr = vyStr;
     }
     else if ( mySketchType == DIR_ANGLE_Y ) {
       myAngle = vx;
       myY = vy;
+      myAngleStr = vxStr;
+      myYStr = vyStr;
     }
     else if ( mySketchType == DIR_PER_LENGTH ) {
       myLength = vx;
+      myLengthStr = vxStr;
     }
     else if ( mySketchType == DIR_PER_X ) {
       myX = vx;
+      myXStr = vxStr;
     }
     else if ( mySketchType == DIR_PER_Y ) {
       myY = vx;
+      myYStr = vxStr;
     }
     else if ( mySketchType == DIR_TAN_LENGTH ) {
       myLength = vx;
+      myLengthStr = vxStr;
     }
     else if ( mySketchType == DIR_TAN_X ) {
       myX = vx;
+      myXStr = vxStr;
     }
     else if ( mySketchType == DIR_TAN_Y ) {
       myY = vx;
+      myYStr = vxStr;
     }
     else if ( mySketchType == DIR_DXDY_LENGTH ) {
       myDX = vx;
       myDY = vy;
       myLength = vz;
+      myDXStr = vxStr;
+      myDYStr = vyStr;
+      myLengthStr = vzStr;
     }
     else if ( mySketchType == DIR_DXDY_X ) {
       myDX = vx;
       myDY = vy;
       myX = vz;
+      myDXStr = vxStr;
+      myDYStr = vyStr;
+      myXStr = vzStr;
     }
     else if ( mySketchType == DIR_DXDY_Y ) {
       myDX = vx;
       myDY = vy;
       myY = vz;
+      myDXStr = vxStr;
+      myDYStr = vyStr;
+      myYStr = vzStr;
     }
   }
   else if ( myConstructorId == 1 ) {  // ARC
@@ -1165,20 +1153,31 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
       myAngle = vx;
       myRadius = vy;
       myLength = vz;
+      myAngleStr = vxStr;
+      myRadiusStr = vyStr;
+      myLengthStr = vzStr;
     }
     else if ( mySketchType == DIR_PER_LENGTH ) {
       myRadius = vx;
       myLength = vy;
+      myRadiusStr = vxStr;
+      myLengthStr = vyStr;
     }
     else if ( mySketchType == DIR_TAN_LENGTH ) {
       myRadius = vx;
       myLength = vy;
+      myRadiusStr = vxStr;
+      myLengthStr = vyStr;
     }
     else if ( mySketchType == DIR_DXDY_LENGTH ) {
       myDX = vx;
       myDY = vy;
       myRadius = vz;
       myLength = vs;
+      myDXStr = vxStr;
+      myDYStr = vyStr;
+      myRadiusStr = vzStr;
+      myLengthStr = vsStr;
     }
   }
 
@@ -1190,80 +1189,108 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
 // function : GetNewCommand()
 // purpose  : Build the new command with context
 //=================================================================================
-QString EntityGUI_SketcherDlg::GetNewCommand()
+QString EntityGUI_SketcherDlg::GetNewCommand( QString& theParameters )
 {
+  theParameters.clear();
   QString myNewCommand = ":";
   if ( mySketchState == FIRST_POINT ) {
-    if ( mySketchType == PT_ABS || mySketchType == PT_SEL )
+    if ( mySketchType == PT_ABS || mySketchType == PT_SEL ) {
       myNewCommand = myNewCommand + "F " + QString::number( myX ) + " " + QString::number( myY );
-    if ( mySketchType == PT_RELATIVE)
+      theParameters = myXStr + ":" + myYStr;
+    }
+    if ( mySketchType == PT_RELATIVE) {
       myNewCommand = myNewCommand + "F " + QString::number( myDX ) + " " + QString::number( myDY );
+      theParameters = myDXStr + ":" + myDYStr;
+    }
     return myNewCommand;
   }
 
   if ( myConstructorId == 0  ) {  // SEGMENT
-    if ( mySketchType == PT_ABS || mySketchType == PT_SEL )
+    if ( mySketchType == PT_ABS || mySketchType == PT_SEL ) {
       myNewCommand = myNewCommand + "TT " + QString::number( myX ) + " " + QString::number( myY );
-    if ( mySketchType == PT_RELATIVE)
+      theParameters = myXStr + ":" + myYStr;
+    }
+    if ( mySketchType == PT_RELATIVE) {
       myNewCommand = myNewCommand + "T " + QString::number( myDX ) + " " + QString::number( myDY );
+      theParameters = myDXStr + ":" + myDYStr;
+    }
     if ( mySketchType == DIR_ANGLE_LENGTH ) {
       myNewCommand = myNewCommand + "R " + QString::number( myAngle );
       myNewCommand = myNewCommand + ":" + "L " + QString::number( myLength );
+      theParameters = myAngleStr + ":" + myLengthStr;
     }
     if ( mySketchType == DIR_ANGLE_X ) {
       myNewCommand = myNewCommand + "R " + QString::number( myAngle );
       myNewCommand = myNewCommand + ":" + "IX " + QString::number( myX );
+      theParameters = myAngleStr + ":" + myXStr;
     }
     if ( mySketchType == DIR_ANGLE_Y ) {
       myNewCommand = myNewCommand + "R " + QString::number( myAngle );
       myNewCommand = myNewCommand + ":" + "IY " + QString::number( myY );
+      theParameters = myAngleStr + ":" + myYStr;
     }
     if ( mySketchType == DIR_PER_LENGTH ) {
       myNewCommand = myNewCommand + "R " + QString::number( 90.0 );
       myNewCommand = myNewCommand + ":" + "L " + QString::number( myLength );
+      theParameters = QString::number( 90.0 ) + ":" + myLengthStr;
     }
     if ( mySketchType == DIR_PER_X ) {
       myNewCommand = myNewCommand + "R " + QString::number( 90.0 );
       myNewCommand = myNewCommand + ":" + "IX " + QString::number( myX );
+      theParameters = QString::number( 90.0 ) + ":" + myXStr;
     }
     if ( mySketchType == DIR_PER_Y ) {
       myNewCommand = myNewCommand + "R " + QString::number( 90.0 );
       myNewCommand = myNewCommand + ":" + "IY " + QString::number( myY );
+      theParameters = QString::number( 90.0 ) + ":" + myYStr;
     }
-    if ( mySketchType == DIR_TAN_LENGTH )
+    if ( mySketchType == DIR_TAN_LENGTH ) {
       myNewCommand = myNewCommand + "L " + QString::number( myLength );
-    if ( mySketchType == DIR_TAN_X )
+      theParameters = myLengthStr;
+    }
+    if ( mySketchType == DIR_TAN_X ) {
       myNewCommand = myNewCommand + "IX " + QString::number( myX );
-    if ( mySketchType == DIR_TAN_Y)
+      theParameters = myXStr;
+    }
+    if ( mySketchType == DIR_TAN_Y) {
       myNewCommand = myNewCommand + "IY " + QString::number(myY);
+      theParameters = myYStr;
+    }
     if ( mySketchType == DIR_DXDY_LENGTH ) {
       myNewCommand = myNewCommand + "D " + QString::number( myDX ) + " " + QString::number( myDY );
       myNewCommand = myNewCommand + ":" + "L " + QString::number( myLength );
+      theParameters = myDXStr + ":" + myDYStr + ":" + myLengthStr;
     }
     if ( mySketchType == DIR_DXDY_X ) {
       myNewCommand = myNewCommand + "D " + QString::number( myDX ) + " " + QString::number( myDY );
       myNewCommand = myNewCommand + ":" + "IX " + QString::number( myX );
+      theParameters = myDXStr + ":" + myDYStr + ":" + myXStr;
     }
     if ( mySketchType == DIR_DXDY_Y ) {
       myNewCommand = myNewCommand + "D " + QString::number( myDX ) + " " + QString::number( myDY );
       myNewCommand = myNewCommand + ":" + "IY " + QString::number( myY );
+      theParameters = myDXStr + ":" + myDYStr + ":" + myYStr;
     }
   }
   else if ( myConstructorId == 1 ) {  // ARC
     if ( mySketchType == DIR_ANGLE_LENGTH ) {
       myNewCommand = myNewCommand + "R " + QString::number( myAngle );
       myNewCommand = myNewCommand + ":" + "C " + QString::number( myRadius ) + " " + QString::number( myLength );
+      theParameters = myAngleStr + ":" + myRadiusStr + ":" + myLengthStr;
     }
     if ( mySketchType == DIR_PER_LENGTH ) {
       myNewCommand = myNewCommand + "R " + QString::number( 90.0 );
       myNewCommand = myNewCommand + ":" + "C " + QString::number( myRadius ) + " " + QString::number( myLength );
+      theParameters = QString::number( 90.0 ) + ":" + myRadiusStr + ":" + myLengthStr;
     }
     if ( mySketchType == DIR_TAN_LENGTH ) {
       myNewCommand = myNewCommand + "C " + QString::number( myRadius ) + " " + QString::number( myLength );
+      theParameters = myRadiusStr + ":" + myLengthStr;
     }
     if ( mySketchType == DIR_DXDY_LENGTH ) {
       myNewCommand = myNewCommand + "D " + QString::number( myDX ) + " " + QString::number( myDY );
       myNewCommand = myNewCommand + ":" + "C " + QString::number( myRadius ) + " " + QString::number( myLength );
+      theParameters = myDXStr + ":" + myDYStr + ":" + myRadiusStr + ":" + myLengthStr;
     }
   }
   return myNewCommand;
@@ -1284,7 +1311,32 @@ GEOM::GEOM_IOperations_ptr EntityGUI_SketcherDlg::createOperation()
 //=================================================================================
 bool EntityGUI_SketcherDlg::isValid( QString& msg )
 {
-  return true;
+  bool ok = true;
+  bool toCorrect = !IsPreview() || myIsApply;
+
+  if( Group1Spin->isVisible() ) {
+    ok = Group1Spin->SpinBox_DX->isValid( msg, toCorrect ) && ok;
+  }
+  else if( Group2Spin->isVisible() ) {
+    ok = Group2Spin->SpinBox_DX->isValid( msg, toCorrect ) && ok;
+    ok = Group2Spin->SpinBox_DY->isValid( msg, toCorrect ) && ok;
+  }
+  else if( Group3Spin->isVisible() ) {
+    ok = Group3Spin->SpinBox_DX->isValid( msg, toCorrect ) && ok;
+    ok = Group3Spin->SpinBox_DY->isValid( msg, toCorrect ) && ok;
+    ok = Group3Spin->SpinBox_DZ->isValid( msg, toCorrect ) && ok;
+  }
+  else if( Group4Spin->isVisible() ) {
+    ok = Group4Spin->SpinBox_DX->isValid( msg, toCorrect ) && ok;
+    ok = Group4Spin->SpinBox_DY->isValid( msg, toCorrect ) && ok;
+    ok = Group4Spin->SpinBox_DZ->isValid( msg, toCorrect ) && ok;
+    ok = Group4Spin->SpinBox_DS->isValid( msg, toCorrect ) && ok;
+  }
+
+  if( myIsApply && !ok )
+    showError( msg );
+
+  return ok;
 }
 
 //=================================================================================
@@ -1293,6 +1345,8 @@ bool EntityGUI_SketcherDlg::isValid( QString& msg )
 //=================================================================================
 bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
 {
+  QString aParameters;
+
   if ( mySketchState == FIRST_POINT ) {
     myLastX2 = myX;
     myLastY2 = myY;
@@ -1308,7 +1362,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
       myShape1 = aProfile1.GetShape();
 
     //Current Shape
-    QString Command2 = Command1 + GetNewCommand();
+    QString Command2 = Command1 + GetNewCommand( aParameters );
     Sketcher_Profile aProfile2( Command2.toAscii() );
     if ( aProfile2.IsDone() )
       myShape2 = aProfile2.GetShape();
@@ -1367,7 +1421,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     }
   }
   else {
-    cmd = myCommand.join( "" ) + GetNewCommand();
+    cmd = myCommand.join( "" ) + GetNewCommand( aParameters );
 
     if ( Group1Sel->isVisible() ) {
       Group1Sel->buttonApply->setEnabled( true );
@@ -1410,7 +1464,15 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeSketcher( cmd.toLatin1(), WPlane );
 
   if ( !anObj->_is_nil() )
+  {
+    if( !IsPreview() ) {
+      QStringList aCurrentParameters = myParameters;
+      aCurrentParameters << aParameters;
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aCurrentParameters));
+    }
+
     objects.push_back( anObj._retn() );
+  }
 
   return true;
 }
@@ -1519,7 +1581,7 @@ void  EntityGUI_SketcherDlg::keyPressEvent( QKeyEvent* e )
   }
 }
 
-void EntityGUI_SketcherDlg::initSpinBox( QDoubleSpinBox* spinBox,
+void EntityGUI_SketcherDlg::initSpinBox( SalomeApp_DoubleSpinBox* spinBox,
 					 double min,  double max,
 					 double step, int decimals )
 {

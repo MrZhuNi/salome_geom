@@ -177,6 +177,9 @@ void TransformationGUI_MultiRotationDlg::Init()
   connect(GroupDimensions->SpinBox_DX2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupDimensions->SpinBox_DY2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
+  connect(GroupDimensions->SpinBox_DX1,SIGNAL(textChanged( const QString& )),
+          this, SLOT(TextValueChangedInSpinBox( const QString& )));
+
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
 
   connect(GroupDimensions->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(ReverseAngle()));
@@ -465,6 +468,17 @@ void TransformationGUI_MultiRotationDlg::enterEvent (QEvent*)
 }
 
 //=================================================================================
+// function : TextValueChangedInSpinBox()
+// purpose  :
+//=================================================================================
+void TransformationGUI_MultiRotationDlg::TextValueChangedInSpinBox(const QString& s){
+  bool isDigit;
+  s.toDouble(&isDigit);
+  if(!isDigit)
+    GroupDimensions->CheckButton1->setChecked(false);
+  GroupDimensions->CheckButton1->setEnabled(isDigit);
+}
+//=================================================================================
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
@@ -515,9 +529,21 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_MultiRotationDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool TransformationGUI_MultiRotationDlg::isValid (QString& /*msg*/)
+bool TransformationGUI_MultiRotationDlg::isValid (QString& msg)
 {
-  return !(myBase->_is_nil() || myVector->_is_nil());
+  bool ok = true;
+  switch(getConstructorId()){
+  case 0:
+    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    break;
+  case 1:                                           
+    ok = GroupDimensions->SpinBox_DX1->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY1->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DX2->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY2->isValid( msg, !IsPreview() ) && ok;        
+    break;
+  }
+  return !(myBase->_is_nil() || myVector->_is_nil()) && ok;
 }
 
 //=================================================================================
@@ -529,12 +555,15 @@ bool TransformationGUI_MultiRotationDlg::execute (ObjectList& objects)
   bool res = false;
 
   GEOM::GEOM_Object_var anObj;
+  QStringList aParameters;
 
   switch (getConstructorId()) {
   case 0:
     if (!CORBA::is_nil(myBase) && !CORBA::is_nil(myVector)) {
       anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
         MultiRotate1D(myBase, myVector, myNbTimes1);
+      if(!IsPreview())
+        aParameters<<GroupPoints->SpinBox_DX->text();
       res = true;
     }
     break;
@@ -542,13 +571,22 @@ bool TransformationGUI_MultiRotationDlg::execute (ObjectList& objects)
     if (!CORBA::is_nil(myBase) && !CORBA::is_nil(myVector)) {
       anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
         MultiRotate2D(myBase, myVector, myAng, myNbTimes1, myStep, myNbTimes2);
+      if(!IsPreview()) {
+        aParameters<<GroupDimensions->SpinBox_DX1->text();
+        aParameters<<GroupDimensions->SpinBox_DY1->text();
+        aParameters<<GroupDimensions->SpinBox_DX2->text();
+        aParameters<<GroupDimensions->SpinBox_DY2->text();
+      }
       res = true;
     }
     break;
   }
 
-  if (!anObj->_is_nil())
+  if (!anObj->_is_nil()) {
+    if(!IsPreview())
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
     objects.push_back(anObj._retn());
+  }
 
   return res;
 }

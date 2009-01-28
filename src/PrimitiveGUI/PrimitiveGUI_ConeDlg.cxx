@@ -438,11 +438,26 @@ GEOM::GEOM_IOperations_ptr  PrimitiveGUI_ConeDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool  PrimitiveGUI_ConeDlg::isValid (QString&)
+bool  PrimitiveGUI_ConeDlg::isValid (QString& msg)
 {
   if (!getRadius1() && !getRadius2())
     return false;
-  return getConstructorId() == 0 ? !(myPoint->_is_nil() || myDir->_is_nil()) : true;
+
+  bool ok = true;
+  if( getConstructorId() == 0 )
+  {
+    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPoints->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+  }
+  else if( getConstructorId() == 1 )
+  {
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+  }
+  ok = fabs( getHeight() ) > Precision::Confusion() && ok;
+  return getConstructorId() == 0 ? !(myPoint->_is_nil() || myDir->_is_nil()) && ok : ok;
 }
 
 //=================================================================================
@@ -460,12 +475,28 @@ bool PrimitiveGUI_ConeDlg::execute (ObjectList& objects)
     if (!CORBA::is_nil(myPoint) && !CORBA::is_nil(myDir)) {
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
         MakeConePntVecR1R2H(myPoint, myDir, getRadius1(), getRadius2(), getHeight());
+      if (!anObj->_is_nil() && !IsPreview())
+      {
+	QStringList aParameters;
+	aParameters << GroupPoints->SpinBox_DX->text();
+	aParameters << GroupPoints->SpinBox_DY->text();
+	aParameters << GroupPoints->SpinBox_DZ->text();
+	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      }
       res = true;
     }
     break;
   case 1:
     anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
       MakeConeR1R2H(getRadius1(), getRadius2(), getHeight());
+    if (!anObj->_is_nil() && !IsPreview())
+    {
+      QStringList aParameters;
+      aParameters << GroupDimensions->SpinBox_DX->text();
+      aParameters << GroupDimensions->SpinBox_DY->text();
+      aParameters << GroupDimensions->SpinBox_DZ->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
     res = true;
     break;
   }

@@ -151,6 +151,9 @@ void TransformationGUI_RotationDlg::Init()
 
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
 
+  connect(GroupPoints->SpinBox_DX, SIGNAL(textChanged( const QString& )),
+          this, SLOT(TextValueChangedInSpinBox( const QString&)));
+
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
   connect(GroupPoints->CheckButton2, SIGNAL(toggled(bool)), this, SLOT(onReverse()));
 
@@ -465,6 +468,16 @@ void TransformationGUI_RotationDlg::enterEvent (QEvent*)
     ActivateThisDialog();
 }
 
+void TransformationGUI_RotationDlg::TextValueChangedInSpinBox( const QString& s)
+{
+  bool isDigit = true;
+  s.toDouble(&isDigit);
+  if(!isDigit) {
+    GroupPoints->CheckButton2->setChecked(false);
+  }
+  GroupPoints->CheckButton2->setEnabled(isDigit); 
+}
+
 //=================================================================================
 // function : ValueChangedInSpinBox()
 // purpose  :
@@ -487,16 +500,16 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_RotationDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool TransformationGUI_RotationDlg::isValid (QString& /*msg*/)
+bool TransformationGUI_RotationDlg::isValid (QString& msg)
 {
-  if (myObjects.length() < 1) return false;
-
   switch (getConstructorId()) {
-  case 0:
-    return !(myAxis->_is_nil());
+  case 0: {
+    bool ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() );
+    return myObjects.length() > 0 && !(myAxis->_is_nil()) && ok;
     break;
+  }
   case 1:
-    return !(myCentPoint->_is_nil() || myPoint1->_is_nil() || myPoint2->_is_nil());
+    return myObjects.length() > 0 && !(myCentPoint->_is_nil() || myPoint1->_is_nil() || myPoint2->_is_nil());
     break;
   default:
     break;
@@ -518,13 +531,19 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
   switch (getConstructorId()) {
   case 0:
     {
+      QStringList aParameters;
+      aParameters<<GroupPoints->SpinBox_DX->text();
       if (toCreateCopy) {
         for (int i = 0; i < myObjects.length(); i++) {
           myCurrObject = myObjects[i];
           anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
             RotateCopy(myObjects[i], myAxis, GetAngle() * PI180);
-          if (!anObj->_is_nil())
+          if (!anObj->_is_nil()) {
+            if(!IsPreview()) {
+              anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+            }
             objects.push_back(anObj._retn());
+          }
         }
       }
       else {
@@ -532,8 +551,13 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
           myCurrObject = myObjects[i];
           anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
             Rotate(myObjects[i], myAxis, GetAngle() * PI180);
-          if (!anObj->_is_nil())
+          if (!anObj->_is_nil()) {
+            if(!IsPreview()) {
+              anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+	      updateAttributes(anObj, aParameters);
+	    }
             objects.push_back(anObj._retn());
+	  }
         }
       }
       res = true;

@@ -99,13 +99,13 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* th
   QVBoxLayout* anOriGrpLayout = new QVBoxLayout( anOriGrp );
 
   anOriGrpLayout->addWidget( new QLabel( tr( "GEOM_X" ), anOriGrp ) );
-  myData[ X ] = new QtxDoubleSpinBox( anOriGrp );
+  myData[ X ] = new SalomeApp_DoubleSpinBox( anOriGrp );
   anOriGrpLayout->addWidget( myData[ X ] );
   anOriGrpLayout->addWidget( new QLabel( tr( "GEOM_Y" ), anOriGrp ) );
-  myData[ Y ] = new QtxDoubleSpinBox( anOriGrp );
+  myData[ Y ] = new SalomeApp_DoubleSpinBox( anOriGrp );
   anOriGrpLayout->addWidget( myData[ Y ] );
   anOriGrpLayout->addWidget( new QLabel( tr( "GEOM_Z" ), anOriGrp ) );
-  myData[ Z ] = new QtxDoubleSpinBox( anOriGrp );
+  myData[ Z ] = new SalomeApp_DoubleSpinBox( anOriGrp );
   anOriGrpLayout->addWidget( myData[ Z ] );
 
   aMainGrpLayout->addWidget( anOriGrp );
@@ -114,13 +114,13 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* th
   QVBoxLayout* aXAxisGrpLayout = new QVBoxLayout( aXAxisGrp );
 
   aXAxisGrpLayout->addWidget( new QLabel( tr( "DX" ), aXAxisGrp ) );
-  myData[ DX1 ] = new QtxDoubleSpinBox( aXAxisGrp );
+  myData[ DX1 ] = new SalomeApp_DoubleSpinBox( aXAxisGrp );
   aXAxisGrpLayout->addWidget( myData[ DX1 ] );
   aXAxisGrpLayout->addWidget( new QLabel( tr( "DY" ), aXAxisGrp ) );
-  myData[ DY1 ] = new QtxDoubleSpinBox( aXAxisGrp );
+  myData[ DY1 ] = new SalomeApp_DoubleSpinBox( aXAxisGrp );
   aXAxisGrpLayout->addWidget( myData[ DY1 ] );
   aXAxisGrpLayout->addWidget( new QLabel( tr( "DZ" ), aXAxisGrp ) );
-  myData[ DZ1 ] = new QtxDoubleSpinBox( aXAxisGrp );
+  myData[ DZ1 ] = new SalomeApp_DoubleSpinBox( aXAxisGrp );
   aXAxisGrpLayout->addWidget( myData[ DZ1 ] );
 
   aMainGrpLayout->addWidget( aXAxisGrp );
@@ -129,13 +129,13 @@ BasicGUI_MarkerDlg::BasicGUI_MarkerDlg( GeometryGUI* theGeometryGUI, QWidget* th
   QVBoxLayout* anYAxisGrpLayout = new QVBoxLayout( anYAxisGrp );
 
   anYAxisGrpLayout->addWidget( new QLabel( tr( "DX" ), anYAxisGrp ) );
-  myData[ DX2 ] = new QtxDoubleSpinBox( anYAxisGrp );
+  myData[ DX2 ] = new SalomeApp_DoubleSpinBox( anYAxisGrp );
   anYAxisGrpLayout->addWidget( myData[ DX2 ] );
   anYAxisGrpLayout->addWidget( new QLabel( tr( "DY" ), anYAxisGrp ) );
-  myData[ DY2 ] = new QtxDoubleSpinBox( anYAxisGrp );
+  myData[ DY2 ] = new SalomeApp_DoubleSpinBox( anYAxisGrp );
   anYAxisGrpLayout->addWidget( myData[ DY2 ] );
   anYAxisGrpLayout->addWidget( new QLabel( tr( "DZ" ), anYAxisGrp ) );
-  myData[ DZ2 ] = new QtxDoubleSpinBox( anYAxisGrp );
+  myData[ DZ2 ] = new SalomeApp_DoubleSpinBox( anYAxisGrp );
   anYAxisGrpLayout->addWidget( myData[ DZ2 ] );
 
   aMainGrpLayout->addWidget( anYAxisGrp );
@@ -698,8 +698,12 @@ bool BasicGUI_MarkerDlg::isValid( QString& msg )
   }
 
   switch ( id ) {
-  case 0:
-    return isOk;
+  case 0: {
+    bool ok = true;
+    for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter )
+      ok = anIter.value()->isValid( msg, !IsPreview()) && ok;
+    return isOk && ok;
+  }
   case 1:
     return !Group1->LineEdit1->text().isEmpty() && isOk;
   case 2:
@@ -720,9 +724,22 @@ bool BasicGUI_MarkerDlg::execute( ObjectList& objects )
     getOperation() )->MakeMarker( myData[ X   ]->value(), myData[ Y   ]->value(), myData[ Z   ]->value(),
                                   myData[ DX1 ]->value(), myData[ DY1 ]->value(), myData[ DZ1 ]->value(),
                                   myData[ DX2 ]->value(), myData[ DY2 ]->value(), myData[ DZ2 ]->value() );
-
-  if ( !anObj->_is_nil() )
+  QStringList aParameters;
+  aParameters<<myData[X]->text();
+  aParameters<<myData[Y]->text();
+  aParameters<<myData[Z]->text();
+  aParameters<<myData[ DX1 ]->text(); 
+  aParameters<<myData[ DY1 ]->text(); 
+  aParameters<<myData[ DZ1 ]->text();
+  aParameters<<myData[ DX2 ]->text();
+  aParameters<<myData[ DY2 ]->text();
+  aParameters<<myData[ DZ2 ]->text();
+  
+  if ( !anObj->_is_nil() ) {
+    if ( !IsPreview() )
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
     objects.push_back( anObj._retn() );
+  }
 
   return true;
 }

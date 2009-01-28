@@ -617,11 +617,13 @@ static bool isEqual( const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Obje
 bool BasicGUI_CircleDlg::isValid( QString& msg )
 {
   const int id = getConstructorId();
-  if ( id == 0 )
+  if ( id == 0 ) {
     //return !myPoint->_is_nil() && !myDir->_is_nil() && getRadius() > 0;
     //nil point means origin of global CS
     //nil vector means Z axis
-    return getRadius() > 0;
+    bool ok = GroupPntVecR->SpinBox_DX->isValid(msg, !IsPreview());
+    return getRadius() > 0 && ok;
+  }
   else if ( id == 1 )
     return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
       !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
@@ -643,9 +645,15 @@ bool BasicGUI_CircleDlg::execute( ObjectList& objects )
   
   switch ( getConstructorId() ) {
   case 0 :
-    anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeCirclePntVecR( myPoint, myDir, getRadius() );
-    res = true;
-    break;
+    {
+      QStringList aParameters;
+      aParameters << GroupPntVecR->SpinBox_DX->text();
+      anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeCirclePntVecR( myPoint, myDir, getRadius() );
+      if ( !anObj->_is_nil() && !IsPreview() )
+        anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      res = true;
+      break;
+    }
   case 1 :
     anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeCircleThreePnt( myPoint1, myPoint2, myPoint3 );
     res = true;

@@ -31,6 +31,7 @@
 
 #include <QDialog>
 
+class SalomeApp_DoubleSpinBox;
 class GeometryGUI;
 class DlgRef_Skeleton;
 class QSpinBox;
@@ -59,8 +60,10 @@ private:
 
 protected:
     void                initSpinBox( QSpinBox*, int, int, int = 1 );
-    void                initSpinBox( QDoubleSpinBox*, double, double, double = 0.1, int = 3 );
+    void                initSpinBox( SalomeApp_DoubleSpinBox*, double, double, double = 0.1, int = 3 );
     
+    void                updateAttributes( GEOM::GEOM_Object_ptr, const QStringList& );
+
     void                closeEvent( QCloseEvent* );
     void                keyPressEvent( QKeyEvent* );
 

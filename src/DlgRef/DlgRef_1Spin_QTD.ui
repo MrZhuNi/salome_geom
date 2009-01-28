@@ -72,7 +72,7 @@
        </widget>
       </item>
       <item row="0" column="1" >
-       <widget class="QtxDoubleSpinBox" name="SpinBox_DX" />
+       <widget class="SalomeApp_DoubleSpinBox" name="SpinBox_DX" />
       </item>
      </layout>
     </widget>
@@ -83,9 +83,9 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>QtxDoubleSpinBox</class>
+   <class>SalomeApp_DoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header location="global" >QtxDoubleSpinBox.h</header>
+   <header location="global" >SalomeApp_DoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

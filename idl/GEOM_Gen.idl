@@ -233,6 +233,18 @@ module GEOM
      *  For example, method return false for GEOM_MARKER
      */
      boolean IsShape();
+
+     /*!
+     *  Set list of parameters
+     *  \param theParameters is a string containing the notebook variables separated by ":" symbol,
+     *         used for object creation
+     */
+    void SetParameters (in string theParameters);
+			    
+    /*!
+     *  Return list of notebook variables used for object creation separated by ":" symbol
+     */
+    string GetParameters();
   };
 
 

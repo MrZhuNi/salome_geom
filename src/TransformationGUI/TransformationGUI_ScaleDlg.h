@@ -33,7 +33,7 @@ class QGroupBox;
 class QLabel;
 class QLineEdit;
 class QPushButton;
-class QtxDoubleSpinBox;
+class SalomeApp_DoubleSpinBox;
 
 //=================================================================================
 // class    : TransformationGUI_ScaleDlg
@@ -77,9 +77,9 @@ private:
   QLabel*                            TextLabel3;
   QLabel*                            TextLabel4;
   QLabel*                            TextLabel5;
-  QtxDoubleSpinBox*                  SpinBox_FX;
-  QtxDoubleSpinBox*                  SpinBox_FY;
-  QtxDoubleSpinBox*                  SpinBox_FZ;
+  SalomeApp_DoubleSpinBox*           SpinBox_FX;
+  SalomeApp_DoubleSpinBox*           SpinBox_FY;
+  SalomeApp_DoubleSpinBox*           SpinBox_FZ;
   QCheckBox*                         CheckBoxCopy;
 
 private slots:

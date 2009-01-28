@@ -366,8 +366,12 @@ GEOM::GEOM_IOperations_ptr BlocksGUI_ExplodeDlg::createOperation()
 // function : isValid()
 // purpose  : Verify validity of input data
 //=================================================================================
-bool BlocksGUI_ExplodeDlg::isValid (QString&)
+bool BlocksGUI_ExplodeDlg::isValid (QString& msg)
 {
+  bool okSP = true;
+  okSP = myGrp1->SpinBox1->isValid( msg, !IsPreview() ) && okSP;
+  okSP = myGrp1->SpinBox2->isValid( msg, !IsPreview() ) && okSP;
+
   bool ok = false;
   switch ( getConstructorId() ) {
   case 0:
@@ -386,7 +390,7 @@ bool BlocksGUI_ExplodeDlg::isValid (QString&)
     break;
   }
 
-  return ok;
+  return ok && okSP;
 }
 
 //=================================================================================
@@ -421,6 +425,10 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
     return objects.size() > 0;
   }
 
+  QStringList aParameters;
+  aParameters << myGrp1->SpinBox1->text();
+  aParameters << myGrp1->SpinBox2->text();
+
   // Throw away sub-shapes not selected by user if not in preview mode
   // and manual selection is active
   if ( !isAllSubShapes() ) {
@@ -442,7 +450,11 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
     for ( anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter ) {
       CORBA::String_var objStr = myGeomGUI->getApp()->orb()->object_to_string( *anIter );
       if ( selected.contains( QString( objStr.in() ) ) )
+      {
+	if ( !IsPreview() )
+	  (*anIter)->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
         objects.push_back( *anIter );
+      }
       else
         toRemoveFromEngine.push_back( *anIter );
     }
@@ -457,7 +469,12 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
   }
   else {
     for ( int i = 0, n = aList->length(); i < n; i++ )
-      objects.push_back( GEOM::GEOM_Object::_duplicate( aList[i] ) );
+    {
+      GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_duplicate( aList[i] );
+      if ( !IsPreview() )
+	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      objects.push_back( anObj._retn() );
+    }
   }
 
   return objects.size();

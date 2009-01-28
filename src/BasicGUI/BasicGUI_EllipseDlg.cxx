@@ -410,7 +410,10 @@ bool BasicGUI_EllipseDlg::isValid( QString& msg )
   //return !myPoint->_is_nil() && !myDir->_is_nil();
   //nil point means origin of global CS
   //nil vector means Z axis
-  return true;
+  bool ok = true;
+  ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+  return ok;
 }
 
 //=================================================================================
@@ -421,11 +424,17 @@ bool BasicGUI_EllipseDlg::execute( ObjectList& objects )
 {
   double aMajorR = GroupPoints->SpinBox_DX->value();
   double aMinorR = GroupPoints->SpinBox_DY->value();
+
+  QStringList aParameters;
+  aParameters<<GroupPoints->SpinBox_DX->text();
+  aParameters<<GroupPoints->SpinBox_DY->text();
+  
   GEOM::GEOM_Object_var anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeEllipse( myPoint, myDir, aMajorR, aMinorR );
-
-  if ( !anObj->_is_nil() )
+  if ( !anObj->_is_nil() ) {
+    if ( !IsPreview() )
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
     objects.push_back( anObj._retn() );
-
+  }
   return true;
 }
 

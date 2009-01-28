@@ -459,14 +459,26 @@ GEOM::GEOM_IOperations_ptr PrimitiveGUI_FaceDlg::createOperation()
 //=================================================================================
 bool PrimitiveGUI_FaceDlg::isValid( QString& msg )
 {
+  bool ok = true;
+  if( getConstructorId() == 0 )
+  {
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+  }
+  else if( getConstructorId() == 1 )
+  {
+    ok = GroupPlane->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPlane->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+  }
+
   const int id = getConstructorId();
   if ( id == 0 )
-    return true;
+    return ok;
   else if ( id == 1 ) {
     if (GroupType->RadioButton1->isChecked())
-      return !myEdge->_is_nil();
+      return !myEdge->_is_nil() && ok;
     else if (GroupType->RadioButton2->isChecked())
-      return !myFace->_is_nil();
+      return !myFace->_is_nil() && ok;
   }
   return false;
 }
@@ -478,12 +490,19 @@ bool PrimitiveGUI_FaceDlg::isValid( QString& msg )
 bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
 {
   bool res = false;
+  QStringList aParameters;
   GEOM::GEOM_Object_var anObj;
   switch (getConstructorId()) {
   case 0:
     anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
       MakeFaceHW(GroupDimensions->SpinBox_DX->value(),
                  GroupDimensions->SpinBox_DY->value(), myOrientationType);
+    if (!anObj->_is_nil() && !IsPreview())
+    {
+      aParameters << GroupDimensions->SpinBox_DX->text();
+      aParameters << GroupDimensions->SpinBox_DY->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
     res = true;
     break;
   case 1:
@@ -493,6 +512,12 @@ bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
     else if (GroupType->RadioButton2->isChecked())
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
         MakeFaceObjHW(myFace, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value());
+    if (!anObj->_is_nil() && !IsPreview())
+    {
+      aParameters << GroupPlane->SpinBox_DX->text();
+      aParameters << GroupPlane->SpinBox_DY->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
     res = true;
     break;
   }

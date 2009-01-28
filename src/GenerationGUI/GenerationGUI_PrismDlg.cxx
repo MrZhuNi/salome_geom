@@ -622,14 +622,24 @@ GEOM::GEOM_IOperations_ptr GenerationGUI_PrismDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool GenerationGUI_PrismDlg::isValid (QString&)
+bool GenerationGUI_PrismDlg::isValid (QString& msg)
 {
+  bool ok = true;
+  if( getConstructorId() == 0 )
+    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+  else if( getConstructorId() == 2 )
+  {
+    ok = GroupPoints3->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPoints3->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPoints3->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+  }
+
   if (getConstructorId() == 0)
-    return (myOkBase && myOkVec);     // by vector and height
+    return (myOkBase && myOkVec) && ok;     // by vector and height
   else if (getConstructorId() == 1)
     return (myOkBase && myOkPnt1 && myOkPnt2);   // by two points
   else if (getConstructorId() == 2)
-    return myOkBase;
+    return myOkBase && ok;
 
   return false;
 }
@@ -640,6 +650,7 @@ bool GenerationGUI_PrismDlg::isValid (QString&)
 //=================================================================================
 bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
 {
+  QStringList aParameters;
   GEOM::GEOM_Object_var anObj;
 
   switch (getConstructorId()) {
@@ -652,6 +663,13 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
         MakePrismVecH2Ways(myBase, myVec, getHeight());
     }
+
+    if (!anObj->_is_nil() && !IsPreview())
+    {
+      aParameters << GroupPoints->SpinBox_DX->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
+
     break;
   case 1:
     if (!myBothway2) {
@@ -676,6 +694,15 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
       anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
         MakePrismDXDYDZ2Ways(myBase, dx, dy, dz);
     }
+
+    if (!anObj->_is_nil() && !IsPreview())
+    {
+      aParameters << GroupPoints3->SpinBox_DX->text();
+      aParameters << GroupPoints3->SpinBox_DY->text();
+      aParameters << GroupPoints3->SpinBox_DZ->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
+
     break;
   }
 

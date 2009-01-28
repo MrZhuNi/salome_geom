@@ -31,7 +31,7 @@
 #include <QDialog>
 
 class QLineEdit;
-class QDoubleSpinBox;
+class SalomeApp_DoubleSpinBox;
 class EntityGUI_1Sel;
 class EntityGUI_1Spin;
 class EntityGUI_2Spin;
@@ -66,7 +66,7 @@ public:
   bool eventFilter (QObject* object, QEvent* event);
 
 protected:
-  void                               initSpinBox( QDoubleSpinBox*, 
+  void                               initSpinBox( SalomeApp_DoubleSpinBox*, 
 						  double, double, double = 0.1, 
 						  int = 3 );
 
@@ -85,7 +85,7 @@ private:
   void                               setEnabledUndo( bool );
   void                               setEnabledRedo( bool );
     
-  QString                            GetNewCommand();
+  QString                            GetNewCommand( QString& );
 
   virtual void                       displayPreview( GEOM::GEOM_Object_ptr,
 						     const bool = false,
@@ -106,16 +106,25 @@ private:
   int                                mySketchState;
 
   bool                               myIsAllAdded;
+  bool                               myIsApply;
 
   QLineEdit*                         myEditCurrentArgument;   /* Current LineEdit */
 
   QStringList                        myCommand;
   QStringList                        myUndoCommand;
 
+  QStringList                        myParameters;
+  QStringList                        myUndoParameters;
+
   Standard_Real                      myX, myY, myDX, myDY;
   Standard_Real                      myLength, myAngle, myRadius;
   Standard_Real                      myLastX1, myLastY1;
   Standard_Real                      myLastX2, myLastY2;
+
+  QString                            myXStr, myYStr, myDXStr, myDYStr;
+  QString                            myLengthStr, myAngleStr, myRadiusStr;
+  QString                            myLastX1Str, myLastY1Str;
+  QString                            myLastX2Str, myLastY2Str;                            
 
   EntityGUI_Skeleton*                MainWidget;
 

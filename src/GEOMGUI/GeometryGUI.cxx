@@ -150,6 +150,14 @@ SALOMEDS::Study_var GeometryGUI::ClientStudyToStudy (_PTR(Study) theStudy)
 }
 
 //=======================================================================
+// function : JoinObjectParameters
+// purpose  :
+//=======================================================================
+char* GeometryGUI::JoinObjectParameters(const QStringList& theParametersList)
+{
+  return theParametersList.join(":").toLatin1().data();
+}
+//=======================================================================
 // function : GeometryGUI::GeometryGUI()
 // purpose  : Constructor
 //=======================================================================

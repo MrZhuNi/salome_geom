@@ -601,6 +601,20 @@ double BasicGUI_PlaneDlg::getSize() const
 }
 
 //=================================================================================
+// function : getSize()
+// purpose  :
+//=================================================================================
+QString BasicGUI_PlaneDlg::getSizeAsString() const
+{
+  switch ( getConstructorId() ) {
+  case 0 : return GroupPntDir->SpinBox_DX->text();
+  case 1 : return Group3Pnts->SpinBox_DX->text();
+  case 2 : return GroupFace->SpinBox_DX->text();
+  }
+  return QString();
+}
+
+//=================================================================================
 // function : createOperation
 // purpose  :
 //=================================================================================
@@ -629,13 +643,20 @@ bool BasicGUI_PlaneDlg::isValid( QString& msg )
     msg = QString( "Please, enter size greater than 0." );
     return false;
   }
-  if ( id == 0 )
-    return !CORBA::is_nil( myPoint ) && !CORBA::is_nil( myDir );
-  else if ( id == 1 )
+
+  if ( id == 0 ) { 
+    bool ok = GroupPntDir->SpinBox_DX->isValid( msg, !IsPreview() );
+    return !CORBA::is_nil( myPoint ) && !CORBA::is_nil( myDir ) && ok;
+  }
+  else if ( id == 1 ) {
+    bool ok = Group3Pnts->SpinBox_DX->isValid( msg, !IsPreview() );
     return !CORBA::is_nil( myPoint1  ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) &&
-      !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
-  else if ( id == 2 )
-    return !CORBA::is_nil( myFace );
+      !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 ) && ok;
+  }
+  else if ( id == 2 ) {
+    bool ok = GroupFace->SpinBox_DX->isValid( msg, !IsPreview() );
+    return !CORBA::is_nil( myFace ) && ok;
+  }
   return false;
 }
 
@@ -663,10 +684,12 @@ bool BasicGUI_PlaneDlg::execute( ObjectList& objects )
     res = true;
     break;
   }
-
-  if ( !anObj->_is_nil() )
-    objects.push_back( anObj._retn() );
   
+  if ( !anObj->_is_nil() ) {
+    if ( !IsPreview() )
+      anObj->SetParameters(getSizeAsString().toLatin1().constData());
+    objects.push_back( anObj._retn() );
+  }
   return res;
 }
 //=================================================================================

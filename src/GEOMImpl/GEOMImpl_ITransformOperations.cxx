@@ -180,7 +180,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateDXDYDZ
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.TranslateDXDYDZ("
+  GEOM::TPythonDump(aFunction) << "geompy.TranslateDXDYDZ("
     << theObject << ", " << theX << ", " << theY << ", " << theZ << ")";
 
   SetErrorCode(OK);
@@ -467,7 +467,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVectorDistance
     return aCopy;
   }
 
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.TranslateVectorDistance("
+  GEOM::TPythonDump(aFunction) << "geompy.TranslateVectorDistance("
 			       << theObject << ", " << theVector << ", " << theDistance << ", " << theCopy << ")";
   SetErrorCode(OK);
   return theObject;
@@ -1208,7 +1208,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeAlongAxes (Handle(G
 
   //Make a Python command
   if (doCopy) {
-    GEOM::TPythonDump(aFunction) << "geompy.MakeScaleAlongAxes("
+    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeScaleAlongAxes("
                                  << theObject << ", " << thePoint << ", "
                                  << theFactorX << ", " << theFactorY << ", " << theFactorZ << ")";
     return aCopy;
@@ -1454,7 +1454,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate (Handle(GEOM_Object) t
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.Rotate(" << theObject
+  GEOM::TPythonDump(aFunction) << "geompy.Rotate(" << theObject
     << ", " << theAxis << ", " << theAngle * 180.0 / PI << "*math.pi/180.0)";
 
   SetErrorCode(OK);

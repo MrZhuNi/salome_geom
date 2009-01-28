@@ -58,11 +58,27 @@
 #include <set>
 #include <map>
 #include <string>
+#include <vector>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+#define COMMA ','
+#define O_BRACKET '('
+#define C_BRACKET ')'
+#define O_SQR_BRACKET '['
+#define C_SQR_BRACKET ']'
+#define PY_NULL "None"
+
+#ifdef _DEBUG_
+static int MYDEBUG = 0;
+#else
+static int MYDEBUG = 0;
+#endif
+
 static GEOM_Engine* TheEngine = NULL;
+
+using namespace std;
 
 static TCollection_AsciiString BuildIDFromObject(Handle(GEOM_Object)& theObject)
 {
@@ -88,10 +104,17 @@ static Standard_Integer ExtractDocID(TCollection_AsciiString& theID)
 
 void ProcessFunction(Handle(GEOM_Function)&   theFunction,
                      TCollection_AsciiString& theScript,
+                     TVariablesList           theVariables,
                      TDF_LabelMap&            theProcessed,
                      std::set<std::string>&   theDumpedObjs);
 
+void ReplaceVariables(TCollection_AsciiString& theCommand, 
+                      TVariablesList theVariables);
+
+
+
 Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theString);
+
 
 //=============================================================================
 /*!
@@ -425,6 +448,7 @@ void GEOM_Engine::Close(int theDocID)
 //=============================================================================
 TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
                                                 Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                                                TVariablesList theVariables,
                                                 bool isPublished,
                                                 bool& aValidScript)
 {
@@ -455,7 +479,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
         MESSAGE ( "Null function !!!!" );
         continue;
       }
-      ProcessFunction(aFunction, aScript, aFuncMap, anObjMap);
+      ProcessFunction(aFunction, aScript, theVariables, aFuncMap, anObjMap);
     }
   }
 
@@ -682,6 +706,7 @@ Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
 //===========================================================================
 void ProcessFunction(Handle(GEOM_Function)&   theFunction,
                      TCollection_AsciiString& theScript,
+                     TVariablesList           theVariables,
                      TDF_LabelMap&            theProcessed,
                      std::set<std::string>&   theDumpedObjs)
 {
@@ -741,6 +766,8 @@ void ProcessFunction(Handle(GEOM_Function)&   theFunction,
   //Check if its internal function which doesn't requires dumping
   if(aDescr == "None") return;
 
+  //Replace parameter by notebook variables
+  ReplaceVariables(aDescr,theVariables);
   theScript += "\n\t";
   theScript += aDescr;
 
@@ -786,4 +813,306 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
   }
 
   return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  ReplaceVariables: Replace parameters of the function by variales from 
+ *                    Notebook if need
+ */
+//=============================================================================
+void ReplaceVariables(TCollection_AsciiString& theCommand, 
+                      TVariablesList theVariables)
+{
+  if (MYDEBUG)
+    cout<<"Command : "<<theCommand<<endl;
+
+  if (MYDEBUG) {
+    cout<<"All Entries:"<<endl;
+    TVariablesList::const_iterator it = theVariables.begin();
+    for(;it != theVariables.end();it++)
+      cout<<"\t'"<<(*it).first<<"'"<<endl;
+  }
+
+  //Additional case - multi-row commands
+  int aCommandIndex = 1;
+  while( aCommandIndex < 10 ) { // tmp check
+    TCollection_AsciiString aCommand = theCommand.Token("\n",aCommandIndex);
+    if( aCommand.Length() == 0 )
+      break;
+
+    if (MYDEBUG)
+      cout<<"Sub-command : "<<aCommand<<endl;
+
+    Standard_Integer aStartCommandPos = theCommand.Location(aCommand,1,theCommand.Length());
+    Standard_Integer aEndCommandPos = aStartCommandPos + aCommand.Length();
+
+    //Get Entry of the result object
+    TCollection_AsciiString anEntry;
+    if( aCommand.Search("=") != -1 ) // command returns an object
+      anEntry = aCommand.Token("=",1);
+    else { // command modifies the object
+      int aStartEntryPos = aCommand.Location(1,'(',1,aCommand.Length());
+      int aEndEntryPos = aCommand.Location(1,',',aStartEntryPos,aCommand.Length());
+      anEntry = aCommand.SubString(aStartEntryPos+1, aEndEntryPos-1);
+    }
+
+    //Remove white spaces
+    anEntry.RightAdjust();
+    anEntry.LeftAdjust();
+    if(MYDEBUG)
+      cout<<"Result entry : '" <<anEntry<<"'"<<endl;
+
+    //Check if result is list of entries - enough to get the first entry in this case
+    int aNbEntries = 1;
+    if( anEntry.Value( 1 ) == O_SQR_BRACKET && anEntry.Value( anEntry.Length() ) == C_SQR_BRACKET ) {
+      while(anEntry.Location(aNbEntries,COMMA,1,anEntry.Length()))
+	aNbEntries++;
+      TCollection_AsciiString aSeparator(COMMA);
+      anEntry = anEntry.Token(aSeparator.ToCString(),1);
+      anEntry.Remove( 1, 1 );
+      anEntry.RightAdjust();
+      anEntry.LeftAdjust();
+      if(MYDEBUG)
+	cout<<"Sub-entry : '" <<anEntry<<"'"<<endl;
+    }
+    
+    //Find variables used for object construction
+    ObjectStates* aStates = 0;
+    TVariablesList::const_iterator it = theVariables.find(anEntry);
+    if( it != theVariables.end() )
+      aStates = (*it).second;
+
+    if(!aStates) {
+      if(MYDEBUG)
+	cout<<"Valiables list empty!!!"<<endl;
+      aCommandIndex++;
+      continue;
+    }
+
+    TState aVariables = aStates->GetCurrectState();
+
+    if(MYDEBUG) {
+      cout<<"Variables from SObject:"<<endl;
+      for (int i = 0; i < aVariables.size();i++)
+	cout<<"\t Variable["<<i<<"] = "<<aVariables[i].myVariable<<endl;
+    }
+
+    //Calculate total number of parameters
+    Standard_Integer aTotalNbParams = 1;
+    while(aCommand.Location(aTotalNbParams,COMMA,1,aCommand.Length()))
+      aTotalNbParams++;
+
+    if(MYDEBUG)
+      cout<<"aTotalNbParams = "<<aTotalNbParams<<endl;
+
+    Standard_Integer aFirstParam = aNbEntries;
+
+    //Replace parameters by variables
+    Standard_Integer aStartPos = 0;
+    Standard_Integer aEndPos = 0;
+    int iVar = 0;
+    TCollection_AsciiString aVar, aReplacedVar;
+    for(Standard_Integer i=aFirstParam;i <= aTotalNbParams;i++) {
+      //Replace first parameter (bettwen '(' character and first ',' character)
+      if(i == aFirstParam)
+      {
+	aStartPos = aCommand.Location(O_BRACKET, 1, aCommand.Length()) + 1;
+	if(aTotalNbParams - aNbEntries > 0 )
+	  aEndPos = aCommand.Location(aFirstParam, COMMA, 1, aCommand.Length());
+	else
+	  aEndPos = aCommand.Location(C_BRACKET, 1, aCommand.Length());	
+      }
+      //Replace last parameter (bettwen ',' character and ')' character)
+      else if(i == aTotalNbParams)
+      {
+	aStartPos = aCommand.Location(i-1, COMMA, 1, aCommand.Length()) + 2;
+	aEndPos = aCommand.Location(C_BRACKET, 1, aCommand.Length());
+      }
+      //Replace other parameters (bettwen two ',' characters)
+      else if(i != aFirstParam && i != aTotalNbParams )
+      {
+	aStartPos = aCommand.Location(i-1, COMMA, 1, aCommand.Length()) + 2;
+	aEndPos = aCommand.Location(i, COMMA, 1, aCommand.Length());
+      }
+
+      if( aCommand.Value( aStartPos ) == O_SQR_BRACKET )
+	aStartPos++;
+      if( aCommand.Value( aEndPos-1 ) == C_SQR_BRACKET )
+	aEndPos--;
+
+      if(MYDEBUG) 
+	cout<<"aStartPos = "<<aStartPos<<", aEndPos = "<<aEndPos<<endl;
+
+      aVar = aCommand.SubString(aStartPos, aEndPos-1);
+      aVar.RightAdjust();
+      aVar.LeftAdjust();
+    
+      if(MYDEBUG) 
+	cout<<"Variable: '"<< aVar <<"'"<<endl;
+
+      // specific case for sketcher
+      if(aVar.Location( TCollection_AsciiString("Sketcher:"), 1, aVar.Length() ) != 0) {
+	Standard_Integer aNbSections = 1;
+	while( aVar.Location( aNbSections, ':', 1, aVar.Length() ) )
+	  aNbSections++;
+	aNbSections--;
+
+	int aStartSectionPos = 0, aEndSectionPos = 0;
+	TCollection_AsciiString aSection, aReplacedSection;
+	for(Standard_Integer aSectionIndex = 1; aSectionIndex <= aNbSections; aSectionIndex++) {
+	  aStartSectionPos = aVar.Location( aSectionIndex, ':', 1, aVar.Length() ) + 1;
+	  if( aSectionIndex != aNbSections )
+	    aEndSectionPos = aVar.Location( aSectionIndex + 1, ':', 1, aVar.Length() );
+	  else
+	    aEndSectionPos = aVar.Length();
+
+	  aSection = aVar.SubString(aStartSectionPos, aEndSectionPos-1);
+	  if(MYDEBUG) 
+	    cout<<"aSection: "<<aSection<<endl;
+
+	  Standard_Integer aNbParams = 1;
+	  while( aSection.Location( aNbParams, ' ', 1, aSection.Length() ) )
+	    aNbParams++;
+	  aNbParams--;
+
+	  int aStartParamPos = 0, aEndParamPos = 0;
+	  TCollection_AsciiString aParameter, aReplacedParameter;
+	  for(Standard_Integer aParamIndex = 1; aParamIndex <= aNbParams; aParamIndex++) {
+	    aStartParamPos = aSection.Location( aParamIndex, ' ', 1, aSection.Length() ) + 1;
+	    if( aParamIndex != aNbParams )
+	      aEndParamPos = aSection.Location( aParamIndex + 1, ' ', 1, aSection.Length() );
+	    else
+	      aEndParamPos = aSection.Length() + 1;
+
+	    aParameter = aSection.SubString(aStartParamPos, aEndParamPos-1);
+	    if(MYDEBUG) 
+	      cout<<"aParameter: "<<aParameter<<endl;
+
+	    if(iVar >= aVariables.size())
+	      continue;
+
+	    aReplacedParameter = aVariables[iVar].myVariable;
+	    if(aReplacedParameter.IsEmpty()) {
+	      iVar++;
+	      continue;
+	    }
+
+	    if(aVariables[iVar].isVariable) {
+	      aReplacedParameter.InsertBefore(1,"'");
+	      aReplacedParameter.InsertAfter(aReplacedParameter.Length(),"'");
+	    }
+
+	    if(MYDEBUG) 
+	      cout<<"aSection before : "<<aSection<<endl;
+	    aSection.Remove(aStartParamPos, aEndParamPos - aStartParamPos);
+	    aSection.Insert(aStartParamPos, aReplacedParameter);
+	    if(MYDEBUG) 
+	      cout<<"aSection after  : "<<aSection<<endl<<endl;
+	    iVar++;
+	  }
+	  if(MYDEBUG) 
+	    cout<<"aVar before : "<<aVar<<endl;
+	  aVar.Remove(aStartSectionPos, aEndSectionPos - aStartSectionPos);
+	  aVar.Insert(aStartSectionPos, aSection);
+	  if(MYDEBUG) 
+	    cout<<"aVar after  : "<<aVar<<endl<<endl;
+	}
+
+	if(MYDEBUG) 
+	  cout<<"aCommand before : "<<aCommand<<endl;
+	aCommand.Remove(aStartPos, aEndPos - aStartPos);
+	aCommand.Insert(aStartPos, aVar);
+	if(MYDEBUG) 
+	  cout<<"aCommand after  : "<<aCommand<<endl;
+
+	break;
+      } // end of specific case for sketcher
+
+      //If parameter is entry or 'None', skip it
+      if(theVariables.find(aVar) != theVariables.end() || aVar.Search(":") != -1 || aVar == PY_NULL)
+	continue;
+
+      if(iVar >= aVariables.size())
+	continue;
+
+      aReplacedVar = aVariables[iVar].myVariable;
+      if(aReplacedVar.IsEmpty()) {
+	iVar++;
+	continue;
+      }
+
+      if(aVariables[iVar].isVariable) {
+	aReplacedVar.InsertBefore(1,"\"");
+	aReplacedVar.InsertAfter(aReplacedVar.Length(),"\"");
+      }
+
+      aCommand.Remove(aStartPos, aEndPos - aStartPos);
+      aCommand.Insert(aStartPos, aReplacedVar);
+      iVar++;
+    }
+
+    theCommand.Remove(aStartCommandPos, aEndCommandPos - aStartCommandPos);
+    theCommand.Insert(aStartCommandPos, aCommand);
+
+    aCommandIndex++;
+
+    aStates->IncrementState();
+  }
+
+  if (MYDEBUG)
+    cout<<"Command : "<<theCommand<<endl;
+}
+
+//================================================================================
+/*!
+ * \brief Constructor
+ */
+//================================================================================
+ObjectStates::ObjectStates()
+{
+  _dumpstate = 0;
+}
+
+//================================================================================
+/*!
+ * \brief Destructor
+ */
+//================================================================================
+ObjectStates::~ObjectStates()
+{
+}
+
+//================================================================================
+/*!
+ * \brief Return current object state
+ * \retval state - Object state (vector of notebook variable)
+ */
+//================================================================================
+TState ObjectStates::GetCurrectState() const
+{
+  if(_states.size() > _dumpstate)
+    return _states[_dumpstate];
+  return TState();
+}
+
+//================================================================================
+/*!
+ * \brief Add new object state 
+ * \param theState - Object state (vector of notebook variable)
+ */
+//================================================================================
+void ObjectStates::AddState(const TState &theState)
+{
+  _states.push_back(theState);
+}
+
+//================================================================================
+/*!
+ * \brief Increment object state
+ */
+//================================================================================
+void ObjectStates::IncrementState()
+{
+  _dumpstate++;
 }

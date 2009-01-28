@@ -78,6 +78,8 @@ import salome
 salome.salome_init()
 from salome import *
 
+from salome_notebook import *
+
 import GEOM
 import math
 
@@ -90,6 +92,80 @@ ShapeType = {"COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE"
 def RaiseIfFailed (Method_name, Operation):
     if Operation.IsDone() == 0 and Operation.GetErrorCode() != "NOT_FOUND_ANY":
         raise RuntimeError, Method_name + " : " + Operation.GetErrorCode()
+    
+## Return list of variables value from salome notebook
+## @ingroup l1_geompy_auxiliary    
+def ParseParameters(*parameters):
+    Result = []
+    StringResult = ""
+    for parameter in parameters:
+        if isinstance(parameter,str):
+            if notebook.isVariable(parameter):
+                Result.append(notebook.get(parameter))
+            else:
+                raise RuntimeError, "Variable with name '" + parameter + "' doesn't exist!!!"
+        else:
+            Result.append(parameter)
+            pass
+        
+        StringResult = StringResult + str(parameter)
+        StringResult = StringResult + ":"
+        pass
+    StringResult = StringResult[:len(StringResult)-1]
+    Result.append(StringResult)
+    return Result
+    
+## Return list of variables value from salome notebook
+## @ingroup l1_geompy_auxiliary    
+def ParseList(list):
+    Result = []
+    StringResult = ""
+    for parameter in list:
+        if isinstance(parameter,str) and notebook.isVariable(parameter):
+            Result.append(str(notebook.get(parameter)))
+            pass
+        else:
+            Result.append(str(parameter))
+            pass
+        
+        StringResult = StringResult + str(parameter)
+        StringResult = StringResult + ":"
+        pass
+    StringResult = StringResult[:len(StringResult)-1]
+    return Result, StringResult
+    
+## Return list of variables value from salome notebook
+## @ingroup l1_geompy_auxiliary    
+def ParseSketcherCommand(command):
+    Result = ""
+    StringResult = ""
+    sections = command.split(":")
+    for section in sections:
+        parameters = section.split(" ")
+        paramIndex = 1
+        for parameter in parameters:
+            if paramIndex > 1 and parameter.find("'") != -1:
+                parameter = parameter.replace("'","")
+                if notebook.isVariable(parameter):
+                    Result = Result + str(notebook.get(parameter)) + " "
+                    pass
+                else:
+                    raise RuntimeError, "Variable with name '" + parameter + "' doesn't exist!!!"
+                    pass
+                pass
+            else:
+                Result = Result + str(parameter) + " "
+                pass
+            if paramIndex > 1:
+                StringResult = StringResult + parameter
+                StringResult = StringResult + ":"
+                pass
+            paramIndex = paramIndex + 1
+            pass
+        Result = Result[:len(Result)-1] + ":"
+        pass
+    Result = Result[:len(Result)-1]
+    return Result, StringResult
 
 ## Kinds of shape enumeration
 #  @ingroup l1_geompy_auxiliary
@@ -253,8 +329,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_point "Example"
         def MakeVertex(self,theX, theY, theZ):
             # Example: see GEOM_TestAll.py
+            theX,theY,theZ,Parameters = ParseParameters(theX, theY, theZ)
             anObj = self.BasicOp.MakePointXYZ(theX, theY, theZ)
             RaiseIfFailed("MakePointXYZ", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a point, distant from the referenced point
@@ -268,8 +346,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_point "Example"
         def MakeVertexWithRef(self,theReference, theX, theY, theZ):
             # Example: see GEOM_TestAll.py
+            theX,theY,theZ,Parameters = ParseParameters(theX, theY, theZ)
             anObj = self.BasicOp.MakePointWithReference(theReference, theX, theY, theZ)
             RaiseIfFailed("MakePointWithReference", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a point, corresponding to the given parameter on the given curve.
@@ -280,8 +360,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_point "Example"
         def MakeVertexOnCurve(self,theRefCurve, theParameter):
             # Example: see GEOM_TestAll.py
+            theParameter, Parameters = ParseParameters(theParameter)
             anObj = self.BasicOp.MakePointOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakePointOnCurve", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a point, corresponding to the given parameters on the
@@ -293,9 +375,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref swig_MakeVertexOnSurface "Example"
         def MakeVertexOnSurface(self, theRefSurf, theUParameter, theVParameter):
+            theUParameter, theVParameter, Parameters = ParseParameters(theUParameter, theVParameter)
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakePointOnSurface(theRefSurf, theUParameter, theVParameter)
             RaiseIfFailed("MakePointOnSurface", self.BasicOp)
+            anObj.SetParameters(Parameters);
             return anObj
 
         ## Create a point on intersection of two lines.
@@ -329,8 +413,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_vector "Example"
         def MakeVectorDXDYDZ(self,theDX, theDY, theDZ):
             # Example: see GEOM_TestAll.py
+            theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
             anObj = self.BasicOp.MakeVectorDXDYDZ(theDX, theDY, theDZ)
             RaiseIfFailed("MakeVectorDXDYDZ", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a vector between two points.
@@ -392,8 +478,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_plane "Example"
         def MakePlane(self,thePnt, theVec, theTrimSize):
             # Example: see GEOM_TestAll.py
+            theTrimSize, Parameters = ParseParameters(theTrimSize);
             anObj = self.BasicOp.MakePlanePntVec(thePnt, theVec, theTrimSize)
             RaiseIfFailed("MakePlanePntVec", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a plane, passing through the three given points
@@ -406,8 +494,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_plane "Example"
         def MakePlaneThreePnt(self,thePnt1, thePnt2, thePnt3, theTrimSize):
             # Example: see GEOM_TestAll.py
+            theTrimSize, Parameters = ParseParameters(theTrimSize);
             anObj = self.BasicOp.MakePlaneThreePnt(thePnt1, thePnt2, thePnt3, theTrimSize)
             RaiseIfFailed("MakePlaneThreePnt", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a plane, similar to the existing one, but with another size of representing face.
@@ -418,8 +508,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_plane "Example"
         def MakePlaneFace(self,theFace, theTrimSize):
             # Example: see GEOM_TestAll.py
+            theTrimSize, Parameters = ParseParameters(theTrimSize);
             anObj = self.BasicOp.MakePlaneFace(theFace, theTrimSize)
             RaiseIfFailed("MakePlaneFace", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a local coordinate system.
@@ -431,8 +523,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref swig_MakeMarker "Example"
         def MakeMarker(self, OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ):
             # Example: see GEOM_TestAll.py
+            OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ, Parameters = ParseParameters(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ);  
             anObj = self.BasicOp.MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ)
             RaiseIfFailed("MakeMarker", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a local coordinate system.
@@ -513,8 +607,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_circle "Example"
         def MakeCircle(self, thePnt, theVec, theR):
             # Example: see GEOM_TestAll.py
+            theR, Parameters = ParseParameters(theR)
             anObj = self.CurvesOp.MakeCirclePntVecR(thePnt, theVec, theR)
             RaiseIfFailed("MakeCirclePntVecR", self.CurvesOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a circle with given radius.
@@ -561,8 +657,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_ellipse "Example"
         def MakeEllipse(self, thePnt, theVec, theRMajor, theRMinor):
             # Example: see GEOM_TestAll.py
+            theRMajor, theRMinor, Parameters = ParseParameters(theRMajor, theRMinor)
             anObj = self.CurvesOp.MakeEllipse(thePnt, theVec, theRMajor, theRMinor)
             RaiseIfFailed("MakeEllipse", self.CurvesOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create an ellipse with given radiuses.
@@ -651,8 +749,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_sketcher_page "Example"
         def MakeSketcher(self, theCommand, theWorkingPlane = [0,0,0, 0,0,1, 1,0,0]):
             # Example: see GEOM_TestAll.py
+            theCommand,Parameters = ParseSketcherCommand(theCommand)
             anObj = self.CurvesOp.MakeSketcher(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcher", self.CurvesOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a sketcher (wire or face), following the textual description,
@@ -707,8 +807,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_box "Example"
         def MakeBoxDXDYDZ(self,theDX, theDY, theDZ):
             # Example: see GEOM_TestAll.py
+            theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
             anObj = self.PrimOp.MakeBoxDXDYDZ(theDX, theDY, theDZ)
             RaiseIfFailed("MakeBoxDXDYDZ", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a box with two specified opposite vertices,
@@ -734,8 +836,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_face "Example"
         def MakeFaceHW(self,theH, theW, theOrientation):
             # Example: see GEOM_TestAll.py
+            theH,theW,Parameters = ParseParameters(theH, theW)
             anObj = self.PrimOp.MakeFaceHW(theH, theW, theOrientation)
             RaiseIfFailed("MakeFaceHW", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a face from another plane and two sizes,
@@ -749,8 +853,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_face "Example"
         def MakeFaceObjHW(self, theObj, theH, theW):
             # Example: see GEOM_TestAll.py
+            theH,theW,Parameters = ParseParameters(theH, theW)
             anObj = self.PrimOp.MakeFaceObjHW(theObj, theH, theW)
             RaiseIfFailed("MakeFaceObjHW", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a disk with given center, normal vector and radius.
@@ -762,8 +868,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_disk "Example"
         def MakeDiskPntVecR(self,thePnt, theVec, theR):
             # Example: see GEOM_TestAll.py
+            theR,Parameters = ParseParameters(theR)
             anObj = self.PrimOp.MakeDiskPntVecR(thePnt, theVec, theR)
             RaiseIfFailed("MakeDiskPntVecR", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a disk, passing through three given points
@@ -785,8 +893,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_face "Example"
         def MakeDiskR(self,theR, theOrientation):
             # Example: see GEOM_TestAll.py
+            theR,Parameters = ParseParameters(theR)
             anObj = self.PrimOp.MakeDiskR(theR, theOrientation)
             RaiseIfFailed("MakeDiskR", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a cylinder with given base point, axis, radius and height.
@@ -799,8 +909,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_cylinder "Example"
         def MakeCylinder(self,thePnt, theAxis, theR, theH):
             # Example: see GEOM_TestAll.py
+            theR,theH,Parameters = ParseParameters(theR, theH)
             anObj = self.PrimOp.MakeCylinderPntVecRH(thePnt, theAxis, theR, theH)
             RaiseIfFailed("MakeCylinderPntVecRH", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a cylinder with given radius and height at
@@ -813,8 +925,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_cylinder "Example"
         def MakeCylinderRH(self,theR, theH):
             # Example: see GEOM_TestAll.py
+            theR,theH,Parameters = ParseParameters(theR, theH)
             anObj = self.PrimOp.MakeCylinderRH(theR, theH)
             RaiseIfFailed("MakeCylinderRH", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a sphere with given center and radius.
@@ -825,8 +939,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_sphere "Example"
         def MakeSpherePntR(self, thePnt, theR):
             # Example: see GEOM_TestAll.py
+            theR,Parameters = ParseParameters(theR)
             anObj = self.PrimOp.MakeSpherePntR(thePnt, theR)
             RaiseIfFailed("MakeSpherePntR", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a sphere with given center and radius.
@@ -848,8 +964,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_sphere "Example"
         def MakeSphereR(self, theR):
             # Example: see GEOM_TestAll.py
+            theR,Parameters = ParseParameters(theR)
             anObj = self.PrimOp.MakeSphereR(theR)
             RaiseIfFailed("MakeSphereR", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a cone with given base point, axis, height and radiuses.
@@ -865,8 +983,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_cone "Example"
         def MakeCone(self,thePnt, theAxis, theR1, theR2, theH):
             # Example: see GEOM_TestAll.py
+            theR1,theR2,theH,Parameters = ParseParameters(theR1,theR2,theH)
             anObj = self.PrimOp.MakeConePntVecR1R2H(thePnt, theAxis, theR1, theR2, theH)
             RaiseIfFailed("MakeConePntVecR1R2H", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a cone with given height and radiuses at
@@ -882,8 +1002,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_cone "Example"
         def MakeConeR1R2H(self,theR1, theR2, theH):
             # Example: see GEOM_TestAll.py
+            theR1,theR2,theH,Parameters = ParseParameters(theR1,theR2,theH)
             anObj = self.PrimOp.MakeConeR1R2H(theR1, theR2, theH)
             RaiseIfFailed("MakeConeR1R2H", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a torus with given center, normal vector and radiuses.
@@ -896,8 +1018,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_torus "Example"
         def MakeTorus(self, thePnt, theVec, theRMajor, theRMinor):
             # Example: see GEOM_TestAll.py
+            theRMajor,theRMinor,Parameters = ParseParameters(theRMajor,theRMinor)
             anObj = self.PrimOp.MakeTorusPntVecRR(thePnt, theVec, theRMajor, theRMinor)
             RaiseIfFailed("MakeTorusPntVecRR", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a torus with given radiuses at the origin of coordinate system.
@@ -908,8 +1032,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_torus "Example"
         def MakeTorusRR(self, theRMajor, theRMinor):
             # Example: see GEOM_TestAll.py
+            theRMajor,theRMinor,Parameters = ParseParameters(theRMajor,theRMinor)
             anObj = self.PrimOp.MakeTorusRR(theRMajor, theRMinor)
             RaiseIfFailed("MakeTorusRR", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         # end of l3_3d_primitives
@@ -942,8 +1068,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_prism "Example"
         def MakePrismVecH(self, theBase, theVec, theH):
             # Example: see GEOM_TestAll.py
+            theH,Parameters = ParseParameters(theH)
             anObj = self.PrimOp.MakePrismVecH(theBase, theVec, theH)
             RaiseIfFailed("MakePrismVecH", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a shape by extrusion of the base shape along the vector,
@@ -957,8 +1085,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_prism "Example"
         def MakePrismVecH2Ways(self, theBase, theVec, theH):
             # Example: see GEOM_TestAll.py
+            theH,Parameters = ParseParameters(theH)
             anObj = self.PrimOp.MakePrismVecH2Ways(theBase, theVec, theH)
             RaiseIfFailed("MakePrismVecH2Ways", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 	    
 	## Create a shape by extrusion of the base shape along the dx, dy, dz direction
@@ -969,8 +1099,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_prism "Example"
         def MakePrismDXDYDZ(self, theBase, theDX, theDY, theDZ):
             # Example: see GEOM_TestAll.py
+            theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
             anObj = self.PrimOp.MakePrismDXDYDZ(theBase, theDX, theDY, theDZ)
             RaiseIfFailed("MakePrismDXDYDZ", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 	    
 	## Create a shape by extrusion of the base shape along the dx, dy, dz direction
@@ -983,8 +1115,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_prism "Example"
         def MakePrismDXDYDZ2Ways(self, theBase, theDX, theDY, theDZ):
             # Example: see GEOM_TestAll.py
+            theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
             anObj = self.PrimOp.MakePrismDXDYDZ2Ways(theBase, theDX, theDY, theDZ)
             RaiseIfFailed("MakePrismDXDYDZ2Ways", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a shape by revolution of the base shape around the axis
@@ -998,14 +1132,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_revolution "Example"
         def MakeRevolution(self, theBase, theAxis, theAngle):
             # Example: see GEOM_TestAll.py
+            theAngle,Parameters = ParseParameters(theAngle)
             anObj = self.PrimOp.MakeRevolutionAxisAngle(theBase, theAxis, theAngle)
             RaiseIfFailed("MakeRevolutionAxisAngle", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## The Same Revolution but in both ways forward&backward.
         def MakeRevolution2Ways(self, theBase, theAxis, theAngle):
+            theAngle,Parameters = ParseParameters(theAngle)
             anObj = self.PrimOp.MakeRevolutionAxisAngle2Ways(theBase, theAxis, theAngle)
             RaiseIfFailed("MakeRevolutionAxisAngle2Ways", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a filling from the given compound of contours.
@@ -1025,9 +1163,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_filling "Example"
         def MakeFilling(self, theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter, isApprox=0):
             # Example: see GEOM_TestAll.py
+            theMinDeg,theMaxDeg,theTol2D,theTol3D,theNbIter,Parameters = ParseParameters(theMinDeg, theMaxDeg,
+                                                                                         theTol2D, theTol3D, theNbIter)
             anObj = self.PrimOp.MakeFilling(theShape, theMinDeg, theMaxDeg,
                                             theTol2D, theTol3D, theNbIter, isApprox)
             RaiseIfFailed("MakeFilling", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a shell or solid passing through set of sections.Sections should be wires,edges or vertices.
@@ -1739,8 +1880,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_shape_processing "Example"
         def ProcessShape(self,theShape, theOperators, theParameters, theValues):
             # Example: see GEOM_TestHealing.py
+            theValues,Parameters = ParseList(theValues)
             anObj = self.HealOp.ProcessShape(theShape, theOperators, theParameters, theValues)
             RaiseIfFailed("ProcessShape", self.HealOp)
+            for string in (theOperators + theParameters):
+                Parameters = ":" + Parameters
+                pass
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Remove faces from the given object (shape).
@@ -1771,8 +1917,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing processed shape.
         def Sew(self, theObject, theTolerance):
             # Example: see MakeSewing() above
+            theTolerance,Parameters = ParseParameters(theTolerance)
             anObj = self.HealOp.Sew(theObject, theTolerance)
             RaiseIfFailed("Sew", self.HealOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Remove internal wires and edges from the given object (face).
@@ -1829,8 +1977,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_add_point_on_edge "Example"
         def DivideEdge(self,theObject, theEdgeIndex, theValue, isByParameter):
             # Example: see GEOM_TestHealing.py
+            theEdgeIndex,theValue,isByParameter,Parameters = ParseParameters(theEdgeIndex,theValue,isByParameter)
             anObj = self.HealOp.DivideEdge(theObject, theEdgeIndex, theValue, isByParameter)
             RaiseIfFailed("DivideEdge", self.HealOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Change orientation of the given object. Updates given shape.
@@ -1877,9 +2027,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_glue_faces "Example"
         def MakeGlueFaces(self, theShape, theTolerance, doKeepNonSolids=True):
             # Example: see GEOM_Spanner.py
+            theTolerance,Parameters = ParseParameters(theTolerance)
             anObj = self.ShapesOp.MakeGlueFaces(theShape, theTolerance, doKeepNonSolids)
             if anObj is None:
                 raise RuntimeError, "MakeGlueFaces : " + self.ShapesOp.GetErrorCode()
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Find coincident faces in theShape for possible gluing.
@@ -2085,6 +2237,20 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("TranslateTwoPointsCopy", self.TrsfOp)
             return anObj
 
+        ## Translate the given object along the vector, specified by its components.
+        #  @param theObject The object to be translated.
+        #  @param theDX,theDY,theDZ Components of translation vector.
+        #  @return Translated GEOM_Object.
+        #
+        #  @ref tui_translation "Example"
+        def TranslateDXDYDZ(self,theObject, theDX, theDY, theDZ):
+            # Example: see GEOM_TestAll.py
+            theDX, theDY, theDZ, Parameters = ParseParameters(theDX, theDY, theDZ)
+            anObj = self.TrsfOp.TranslateDXDYDZ(theObject, theDX, theDY, theDZ)
+            anObj.SetParameters(Parameters)
+            RaiseIfFailed("TranslateDXDYDZ", self.TrsfOp)
+            return anObj
+
         ## Translate the given object along the vector, specified
         #  by its components, creating its copy before the translation.
         #  @param theObject The object to be translated.
@@ -2094,7 +2260,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_translation "Example"
         def MakeTranslation(self,theObject, theDX, theDY, theDZ):
             # Example: see GEOM_TestAll.py
+            theDX, theDY, theDZ, Parameters = ParseParameters(theDX, theDY, theDZ)
             anObj = self.TrsfOp.TranslateDXDYDZCopy(theObject, theDX, theDY, theDZ)
+            anObj.SetParameters(Parameters)
             RaiseIfFailed("TranslateDXDYDZ", self.TrsfOp)
             return anObj
 
@@ -2111,6 +2279,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("TranslateVectorCopy", self.TrsfOp)
             return anObj
 
+        ## Translate the given object along the given vector on given distance.
+        #  @param theObject The object to be translated.
+        #  @param theVector The translation vector.
+        #  @param theDistance The translation distance.
+        #  @param theCopy Flag used to translate object itself or create a copy.
+        #  @return Translated GEOM_Object.
+        #
+        #  @ref tui_translation "Example"
+        def TranslateVectorDistance(self, theObject, theVector, theDistance, theCopy):
+            # Example: see GEOM_TestAll.py
+            theDistance,Parameters = ParseParameters(theDistance)
+            anObj = self.TrsfOp.TranslateVectorDistance(theObject, theVector, theDistance, theCopy)
+            RaiseIfFailed("TranslateVectorDistance", self.TrsfOp)
+            anObj.SetParameters(Parameters)
+            return anObj
+
         ## Translate the given object along the given vector on given distance,
         #  creating its copy before the translation.
         #  @param theObject The object to be translated.
@@ -2121,8 +2305,30 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_translation "Example"
         def MakeTranslationVectorDistance(self, theObject, theVector, theDistance):
             # Example: see GEOM_TestAll.py
+            theDistance,Parameters = ParseParameters(theDistance)
             anObj = self.TrsfOp.TranslateVectorDistance(theObject, theVector, theDistance, 1)
             RaiseIfFailed("TranslateVectorDistance", self.TrsfOp)
+            anObj.SetParameters(Parameters)
+            return anObj
+
+        ## Rotate the given object around the given axis on the given angle.
+        #  @param theObject The object to be rotated.
+        #  @param theAxis Rotation axis.
+        #  @param theAngle Rotation angle in radians.
+        #  @return Rotated GEOM_Object.
+        #
+        #  @ref tui_rotation "Example"
+        def Rotate(self,theObject, theAxis, theAngle):
+            # Example: see GEOM_TestAll.py
+            flag = False
+            if isinstance(theAngle,str):
+                flag = True
+            theAngle, Parameters = ParseParameters(theAngle)
+            if flag:
+                theAngle = theAngle*math.pi/180.0
+            anObj = self.TrsfOp.Rotate(theObject, theAxis, theAngle)
+            RaiseIfFailed("RotateCopy", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Rotate the given object around the given axis
@@ -2135,8 +2341,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_rotation "Example"
         def MakeRotation(self,theObject, theAxis, theAngle):
             # Example: see GEOM_TestAll.py
+            flag = False
+            if isinstance(theAngle,str):
+                flag = True
+            theAngle, Parameters = ParseParameters(theAngle)
+            if flag:
+                theAngle = theAngle*math.pi/180.0
             anObj = self.TrsfOp.RotateCopy(theObject, theAxis, theAngle)
             RaiseIfFailed("RotateCopy", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Rotate given object around vector perpendicular to plane
@@ -2164,8 +2377,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_scale "Example"
         def MakeScaleTransform(self, theObject, thePoint, theFactor):
             # Example: see GEOM_TestAll.py
+            theFactor, Parameters = ParseParameters(theFactor)
             anObj = self.TrsfOp.ScaleShapeCopy(theObject, thePoint, theFactor)
             RaiseIfFailed("ScaleShapeCopy", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Scale the given object by different factors along coordinate axes,
@@ -2179,9 +2394,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref swig_scale "Example"
         def MakeScaleAlongAxes(self, theObject, thePoint, theFactorX, theFactorY, theFactorZ):
             # Example: see GEOM_TestAll.py
+            theFactorX, theFactorY, theFactorZ, Parameters = ParseParameters(theFactorX, theFactorY, theFactorZ)
             anObj = self.TrsfOp.ScaleShapeAlongAxesCopy(theObject, thePoint,
                                                         theFactorX, theFactorY, theFactorZ)
             RaiseIfFailed("MakeScaleAlongAxes", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create an object, symmetrical
@@ -2264,8 +2481,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_offset "Example"
         def MakeOffset(self,theObject, theOffset):
             # Example: see GEOM_TestAll.py
+            theOffset, Parameters = ParseParameters(theOffset)
             anObj = self.TrsfOp.OffsetShapeCopy(theObject, theOffset)
             RaiseIfFailed("OffsetShapeCopy", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         # -----------------------------------------------------------------------------
@@ -2283,8 +2502,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_multi_translation "Example"
         def MakeMultiTranslation1D(self,theObject, theVector, theStep, theNbTimes):
             # Example: see GEOM_TestAll.py
+            theStep, theNbTimes, Parameters = ParseParameters(theStep, theNbTimes)
             anObj = self.TrsfOp.MultiTranslate1D(theObject, theVector, theStep, theNbTimes)
             RaiseIfFailed("MultiTranslate1D", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Conseqently apply two specified translations to theObject specified number of times.
@@ -2302,9 +2523,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakeMultiTranslation2D(self,theObject, theVector1, theStep1, theNbTimes1,
                                    theVector2, theStep2, theNbTimes2):
             # Example: see GEOM_TestAll.py
+            theStep1,theNbTimes1,theStep2,theNbTimes2, Parameters = ParseParameters(theStep1,theNbTimes1,theStep2,theNbTimes2)
             anObj = self.TrsfOp.MultiTranslate2D(theObject, theVector1, theStep1, theNbTimes1,
                                                  theVector2, theStep2, theNbTimes2)
             RaiseIfFailed("MultiTranslate2D", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Rotate the given object around the given axis a given number times.
@@ -2318,8 +2541,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_multi_rotation "Example"
         def MultiRotate1D(self,theObject, theAxis, theNbTimes):
             # Example: see GEOM_TestAll.py
+            theAxis, theNbTimes, Parameters = ParseParameters(theAxis, theNbTimes)
             anObj = self.TrsfOp.MultiRotate1D(theObject, theAxis, theNbTimes)
             RaiseIfFailed("MultiRotate1D", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Rotate the given object around the
@@ -2339,8 +2564,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_multi_rotation "Example"
         def MultiRotate2D(self,theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2):
             # Example: see GEOM_TestAll.py
+            theAngle, theNbTimes1, theStep, theNbTimes2, Parameters = ParseParameters(theAngle, theNbTimes1, theStep, theNbTimes2)
             anObj = self.TrsfOp.MultiRotate2D(theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2)
             RaiseIfFailed("MultiRotate2D", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## The same, as MultiRotate1D(), but axis is given by direction and point
@@ -2374,8 +2601,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  \n @ref swig_MakeFilletAll "Example 2"
         def MakeFilletAll(self,theShape, theR):
             # Example: see GEOM_TestOthers.py
+            theR,Parameters = ParseParameters(theR)
             anObj = self.LocalOp.MakeFilletAll(theShape, theR)
             RaiseIfFailed("MakeFilletAll", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Perform a fillet on the specified edges/faces of the given shape
@@ -2389,6 +2618,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_fillet "Example"
         def MakeFillet(self,theShape, theR, theShapeType, theListShapes):
             # Example: see GEOM_TestAll.py
+            theR,Parameters = ParseParameters(theR)
             anObj = None
             if theShapeType == ShapeType["EDGE"]:
                 anObj = self.LocalOp.MakeFilletEdges(theShape, theR, theListShapes)
@@ -2396,10 +2626,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             else:
                 anObj = self.LocalOp.MakeFilletFaces(theShape, theR, theListShapes)
                 RaiseIfFailed("MakeFilletFaces", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## The same that MakeFillet but with two Fillet Radius R1 and R2
         def MakeFilletR1R2(self, theShape, theR1, theR2, theShapeType, theListShapes):
+            theR1,theR2,Parameters = ParseParameters(theR1,theR2)
             anObj = None
             if theShapeType == ShapeType["EDGE"]:
                 anObj = self.LocalOp.MakeFilletEdgesR1R2(theShape, theR1, theR2, theListShapes)
@@ -2407,6 +2639,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             else:
                 anObj = self.LocalOp.MakeFilletFacesR1R2(theShape, theR1, theR2, theListShapes)
                 RaiseIfFailed("MakeFilletFacesR1R2", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 	    
         ## Perform a fillet on the specified edges/faces of the given shape
@@ -2432,8 +2665,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  \n @ref swig_MakeChamferAll "Example 2"
         def MakeChamferAll(self,theShape, theD):
             # Example: see GEOM_TestOthers.py
+            theD,Parameters = ParseParameters(theD)
             anObj = self.LocalOp.MakeChamferAll(theShape, theD)
             RaiseIfFailed("MakeChamferAll", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Perform a chamfer on edges, common to the specified faces,
@@ -2448,15 +2683,24 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_chamfer "Example"
         def MakeChamferEdge(self,theShape, theD1, theD2, theFace1, theFace2):
             # Example: see GEOM_TestAll.py
+            theD1,theD2,Parameters = ParseParameters(theD1,theD2)
             anObj = self.LocalOp.MakeChamferEdge(theShape, theD1, theD2, theFace1, theFace2)
             RaiseIfFailed("MakeChamferEdge", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## The Same that MakeChamferEdge but with params theD is chamfer length and
-        #  theAngle is Angle of chamfer (angle in radians)
+        #  theAngle is Angle of chamfer (angle in radians or a name of variable which defines angle in degrees)
         def MakeChamferEdgeAD(self, theShape, theD, theAngle, theFace1, theFace2):
+            flag = False
+            if isinstance(theAngle,str):
+                flag = True
+            theD,theAngle,Parameters = ParseParameters(theD,theAngle)
+            if flag:
+                theAngle = theAngle*math.pi/180.0
             anObj = self.LocalOp.MakeChamferEdgeAD(theShape, theD, theAngle, theFace1, theFace2)
             RaiseIfFailed("MakeChamferEdgeAD", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Perform a chamfer on all edges of the specified faces,
@@ -2473,17 +2717,26 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_chamfer "Example"
         def MakeChamferFaces(self,theShape, theD1, theD2, theFaces):
             # Example: see GEOM_TestAll.py
+            theD1,theD2,Parameters = ParseParameters(theD1,theD2)
             anObj = self.LocalOp.MakeChamferFaces(theShape, theD1, theD2, theFaces)
             RaiseIfFailed("MakeChamferFaces", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## The Same that MakeChamferFaces but with params theD is chamfer lenght and
-        #  theAngle is Angle of chamfer (angle in radians)
+        #  theAngle is Angle of chamfer (angle in radians or a name of variable which defines angle in degrees)
         #
         #  @ref swig_FilletChamfer "Example"
         def MakeChamferFacesAD(self, theShape, theD, theAngle, theFaces):
+            flag = False
+            if isinstance(theAngle,str):
+                flag = True
+            theD,theAngle,Parameters = ParseParameters(theD,theAngle)
+            if flag:
+                theAngle = theAngle*math.pi/180.0
             anObj = self.LocalOp.MakeChamferFacesAD(theShape, theD, theAngle, theFaces)
             RaiseIfFailed("MakeChamferFacesAD", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Perform a chamfer on edges,
@@ -2495,15 +2748,24 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref swig_FilletChamfer "Example"
         def MakeChamferEdges(self, theShape, theD1, theD2, theEdges):
+            theD1,theD2,Parameters = ParseParameters(theD1,theD2)
             anObj = self.LocalOp.MakeChamferEdges(theShape, theD1, theD2, theEdges)
             RaiseIfFailed("MakeChamferEdges", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## The Same that MakeChamferEdges but with params theD is chamfer lenght and
-        #  theAngle is Angle of chamfer (angle in radians)
+        #  theAngle is Angle of chamfer (angle in radians or a name of variable which defines angle in degrees)
         def MakeChamferEdgesAD(self, theShape, theD, theAngle, theEdges):
+            flag = False
+            if isinstance(theAngle,str):
+                flag = True
+            theD,theAngle,Parameters = ParseParameters(theD,theAngle)
+            if flag:
+                theAngle = theAngle*math.pi/180.0
             anObj = self.LocalOp.MakeChamferEdgesAD(theShape, theD, theAngle, theEdges)
             RaiseIfFailed("MakeChamferEdgesAD", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Shortcut to MakeChamferEdge() and MakeChamferFaces()
@@ -2536,8 +2798,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_archimede "Example"
         def Archimede(self,theShape, theWeight, theWaterDensity, theMeshDeflection):
             # Example: see GEOM_TestAll.py
+            theWeight,theWaterDensity,theMeshDeflection,Parameters = ParseParameters(
+              theWeight,theWaterDensity,theMeshDeflection)
             anObj = self.LocalOp.MakeArchimede(theShape, theWeight, theWaterDensity, theMeshDeflection)
             RaiseIfFailed("MakeArchimede", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         # end of l3_basic_op
@@ -3176,8 +3441,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  \n @ref swig_MakeBlockExplode "Example 2"
         def MakeBlockExplode(self,theCompound, theMinNbFaces, theMaxNbFaces):
             # Example: see GEOM_TestOthers.py
+            theMinNbFaces,theMaxNbFaces,Parameters = ParseParameters(theMinNbFaces,theMaxNbFaces)
             aList = self.BlocksOp.ExplodeCompoundOfBlocks(theCompound, theMinNbFaces, theMaxNbFaces)
             RaiseIfFailed("ExplodeCompoundOfBlocks", self.BlocksOp)
+            for anObj in aList:
+                anObj.SetParameters(Parameters)
+                pass
             return aList
 
         ## Find block, containing the given point inside its volume or on boundary.
@@ -3229,8 +3498,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_multi_transformation "Example"
         def MakeMultiTransformation1D(self,Block, DirFace1, DirFace2, NbTimes):
             # Example: see GEOM_Spanner.py
+            DirFace1,DirFace2,NbTimes,Parameters = ParseParameters(DirFace1,DirFace2,NbTimes)
             anObj = self.BlocksOp.MakeMultiTransformation1D(Block, DirFace1, DirFace2, NbTimes)
             RaiseIfFailed("MakeMultiTransformation1D", self.BlocksOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Multi-transformate block and glue the result.
@@ -3244,9 +3515,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakeMultiTransformation2D(self,Block, DirFace1U, DirFace2U, NbTimesU,
                                       DirFace1V, DirFace2V, NbTimesV):
             # Example: see GEOM_Spanner.py
+            DirFace1U,DirFace2U,NbTimesU,DirFace1V,DirFace2V,NbTimesV,Parameters = ParseParameters(
+              DirFace1U,DirFace2U,NbTimesU,DirFace1V,DirFace2V,NbTimesV)
             anObj = self.BlocksOp.MakeMultiTransformation2D(Block, DirFace1U, DirFace2U, NbTimesU,
                                                             DirFace1V, DirFace2V, NbTimesV)
             RaiseIfFailed("MakeMultiTransformation2D", self.BlocksOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Build all possible propagation groups.

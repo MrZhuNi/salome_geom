@@ -248,9 +248,13 @@ GEOM::GEOM_IOperations_ptr OperationGUI_ArchimedeDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool OperationGUI_ArchimedeDlg::isValid( QString& )
+bool OperationGUI_ArchimedeDlg::isValid( QString& msg )
 {
-  return !myShape->_is_nil();
+  bool ok = true;
+  ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+  return !myShape->_is_nil() && ok;
 }
 
 //=================================================================================
@@ -269,7 +273,17 @@ bool OperationGUI_ArchimedeDlg::execute( ObjectList& objects )
     getOperation() )->MakeArchimede( myShape, aWeight, aWaterDensity, aMeshDeflection );
 
   if ( !anObj->_is_nil() )
+  {
+    if ( !IsPreview() )
+    {
+      QStringList aParameters;
+      aParameters << GroupPoints->SpinBox_DX->text();
+      aParameters << GroupPoints->SpinBox_DY->text();
+      aParameters << GroupPoints->SpinBox_DZ->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
     objects.push_back( anObj._retn() );
+  }
 
   return true;
 }

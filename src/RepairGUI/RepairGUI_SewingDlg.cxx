@@ -75,7 +75,7 @@ RepairGUI_SewingDlg::RepairGUI_SewingDlg( GeometryGUI* theGeometryGUI, QWidget* 
 
   QGridLayout* aLay = new QGridLayout( GroupPoints->Box );
   aLay->setMargin( 0 ); aLay->setSpacing( 6 );
-  myTolEdt = new QtxDoubleSpinBox( 0.0, 100.0, DEFAULT_TOLERANCE_VALUE, 7, 10, GroupPoints->Box );
+  myTolEdt = new SalomeApp_DoubleSpinBox( 0.0, 100.0, DEFAULT_TOLERANCE_VALUE, 7, 10, GroupPoints->Box );
   myTolEdt->setValue( DEFAULT_TOLERANCE_VALUE );
   QLabel* aLbl1 = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints->Box );
   myFreeBoundBtn = new QPushButton( tr( "GEOM_DETECT" ) + QString( " [%1]" ).arg( tr( "GEOM_FREE_BOUNDARIES" ) ), 
@@ -263,10 +263,11 @@ GEOM::GEOM_IOperations_ptr RepairGUI_SewingDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool RepairGUI_SewingDlg::isValid( QString& )
+bool RepairGUI_SewingDlg::isValid( QString& msg )
 {
   myClosed = -1;
-  return !myObject->_is_nil() && ( IsPreview() || myTolEdt->value() > 0. );
+  bool ok = myTolEdt->isValid( msg, !IsPreview() );
+  return !myObject->_is_nil() && ( IsPreview() || myTolEdt->value() > 0. ) && ok;
 }
 
 //=================================================================================
@@ -297,7 +298,15 @@ bool RepairGUI_SewingDlg::execute( ObjectList& objects )
     GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->Sew( myObject, myTolEdt->value() );
     aResult = !anObj->_is_nil();
     if ( aResult )
+    {
+      if ( !IsPreview() )
+      {
+	QStringList aParameters;
+	aParameters << myTolEdt->text();
+	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      }
       objects.push_back( anObj._retn() );
+    }
   }
 
   return aResult;

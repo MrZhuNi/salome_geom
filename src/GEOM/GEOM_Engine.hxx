@@ -33,6 +33,40 @@
 #include <TColStd_HSequenceOfAsciiString.hxx>
 #include <TDF_Label.hxx>
 
+#include <map>
+#include <vector>
+
+struct TVariable{
+  TCollection_AsciiString myVariable;
+  bool isVariable;
+
+  TVariable(const TCollection_AsciiString& theVariable, bool theFlag = true):
+    myVariable(theVariable),
+    isVariable(theFlag){}
+};
+
+typedef std::vector<TVariable> TState;
+typedef std::vector<TState>    TAllStates;
+
+class ObjectStates
+{
+public:
+  ObjectStates();
+  ~ObjectStates();
+
+  TAllStates GetAllStates() const { return _states; }
+
+  TState GetCurrectState() const;
+  void AddState(const TState &theState);
+  void IncrementState();
+
+private:
+  TAllStates              _states;
+  int                     _dumpstate;
+};
+
+typedef std::map<TCollection_AsciiString, ObjectStates* > TVariablesList;
+
 class GEOM_Engine
 {
  public:
@@ -85,6 +119,7 @@ class GEOM_Engine
 
   Standard_EXPORT TCollection_AsciiString DumpPython(int theDocID, 
 				     Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                                     TVariablesList theVariables,
 				     bool isPublished, 
 				     bool& aValidScript);
 
@@ -94,7 +129,7 @@ class GEOM_Engine
 
  protected:
   Standard_EXPORT static void SetEngine(GEOM_Engine* theEngine);       
-
+  
  private:
 
   Handle(GEOM_Application)  _OCAFApp;

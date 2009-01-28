@@ -77,6 +77,7 @@ private slots:
   void                               SetEditCurrentArgument();
   void                               ReverseAngle();
   void                               ValueChangedInSpinBox( double );
+  void                               TextValueChangedInSpinBox( const QString& );
   void                               ConstructorsClicked( int );
   void                               SetDoubleSpinBoxStep( double );
 };

@@ -112,7 +112,7 @@ void BlocksGUI_TrsfDlg::Init()
 {
   // Set range of spinboxes
   double SpecificStep = 1.0;
-  QMap<int, QtxDoubleSpinBox*>::iterator anIter;
+  QMap<int, SalomeApp_DoubleSpinBox*>::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter) {
     //anIter.data()->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
     initSpinBox(anIter.value(), 1.0, 999, SpecificStep, 3);
@@ -128,9 +128,9 @@ void BlocksGUI_TrsfDlg::Init()
   for (anIterBtn = mySelBtn.begin(); anIterBtn != mySelBtn.end(); ++anIterBtn)
     connect(anIterBtn.value(), SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  QMap<int, QtxDoubleSpinBox*>::iterator anIterSpin;
+  QMap<int, SalomeApp_DoubleSpinBox*>::iterator anIterSpin;
   for (anIterSpin = mySpinBox.begin(); anIterSpin != mySpinBox.end(); ++anIterSpin)
-    connect(anIterSpin.value(), SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+    connect(anIterSpin.value(), SIGNAL(valueChanged(int)), this, SLOT(ValueChangedInSpinBox(int)));
 
   // init controls and fields
   initName(tr("GEOM_BLOCK_MULTITRSF"));
@@ -410,7 +410,7 @@ void BlocksGUI_TrsfDlg::enterEvent (QEvent*)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BlocksGUI_TrsfDlg::ValueChangedInSpinBox(double)
+void BlocksGUI_TrsfDlg::ValueChangedInSpinBox(int)
 {
   displayPreview();
 }
@@ -453,7 +453,7 @@ void BlocksGUI_TrsfDlg::createSpinWg (const QString& theLbl,
                                       const int      theId)
 {
   QLabel* lab = new QLabel(theLbl, theParent);
-  mySpinBox[theId] = new QtxDoubleSpinBox(theParent);
+  mySpinBox[theId] = new SalomeApp_DoubleSpinBox(theParent);
   QGridLayout* l = 0;
   if (!theParent->layout()) {
     l = new QGridLayout(theParent);
@@ -550,20 +550,23 @@ GEOM::GEOM_IOperations_ptr BlocksGUI_TrsfDlg::createOperation()
 // function : isValid
 // purpose  : Verify validity of input data
 //=================================================================================
-bool BlocksGUI_TrsfDlg::isValid (QString&)
+bool BlocksGUI_TrsfDlg::isValid (QString& msg)
 {
-  bool ok = false;
+  bool ok = false, okSP = true;
   switch (getConstructorId()) {
   case 0:
     ok = !myShape->_is_nil() && myFaces[Face1] > 0;
+    okSP = mySpinBox[SpinBox1]->isValid( msg, !IsPreview() );
     break;
   case 1:
     ok = !myShape->_is_nil() && myFaces[Face1U] > 0 && myFaces[Face1V] > 0;
+    okSP = mySpinBox[SpinBox2U]->isValid( msg, !IsPreview() ) && okSP;
+    okSP = mySpinBox[SpinBox2V]->isValid( msg, !IsPreview() ) && okSP;
     break;
   default:
     break;
   }
-  return ok;
+  return ok && okSP;
 }
 
 //=================================================================================
@@ -581,16 +584,32 @@ bool BlocksGUI_TrsfDlg::execute (ObjectList& objects)
     anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
       MakeMultiTransformation1D(myShape,
                                 myFaces[Face1], myFaces[Face2],
-                                (int)mySpinBox[SpinBox1]->value());
+                                mySpinBox[SpinBox1]->value());
+    if (!anObj->_is_nil() && !IsPreview())
+    {
+      QStringList aParameters;
+      aParameters << "" << "";
+      aParameters << mySpinBox[SpinBox1]->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
     res = true;
     break;
   case 1:
     anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
       MakeMultiTransformation2D (myShape,
                                  myFaces[Face1U], myFaces[Face2U],
-                                 (int)mySpinBox[SpinBox2U]->value(),
+                                 mySpinBox[SpinBox2U]->value(),
                                  myFaces[Face1V], myFaces[Face2V],
-                                 (int)mySpinBox[SpinBox2V]->value());
+                                 mySpinBox[SpinBox2V]->value());
+    if (!anObj->_is_nil() && !IsPreview())
+    {
+      QStringList aParameters;
+      aParameters << "" << "";
+      aParameters << mySpinBox[SpinBox2U]->text();
+      aParameters << "" << "";
+      aParameters << mySpinBox[SpinBox2V]->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
     res = true;
     break;
   default:

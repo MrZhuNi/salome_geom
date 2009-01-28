@@ -453,7 +453,17 @@ GEOM::GEOM_IOperations_ptr BasicGUI_VectorDlg::createOperation()
 //=================================================================================
 bool BasicGUI_VectorDlg::isValid( QString& msg )
 {
-  return getConstructorId() == 0 ? !myPoint1->_is_nil() && !myPoint2->_is_nil() : true;
+  if(getConstructorId() == 0) 
+    return !myPoint1->_is_nil() && !myPoint2->_is_nil();
+  else if(getConstructorId() == 1)
+  {
+    bool ok = true;
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+    return ok;
+  }
+  return false;
 }
 
 //=================================================================================
@@ -478,7 +488,16 @@ bool BasicGUI_VectorDlg::execute( ObjectList& objects )
       double dx = GroupDimensions->SpinBox_DX->value();
       double dy = GroupDimensions->SpinBox_DY->value();
       double dz = GroupDimensions->SpinBox_DZ->value();
+      
+      QStringList aParameters;
+      aParameters << GroupDimensions->SpinBox_DX->text();
+      aParameters << GroupDimensions->SpinBox_DY->text();
+      aParameters << GroupDimensions->SpinBox_DZ->text();
       anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakeVectorDXDYDZ( dx, dy, dz );
+
+      if ( !anObj->_is_nil() && !IsPreview() )
+        anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      
       res = true;
       break;
     }

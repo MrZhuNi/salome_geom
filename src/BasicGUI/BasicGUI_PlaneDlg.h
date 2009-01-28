@@ -56,6 +56,7 @@ private:
   void                               Init();
   void                               enterEvent( QEvent* );
   double                             getSize() const;
+  QString                            getSizeAsString() const; 
 
 private:
   GEOM::GEOM_Object_var              myPoint, myDir, myPoint1, myPoint2, myPoint3, myFace;
