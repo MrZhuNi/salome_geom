@@ -192,7 +192,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
 
   qApp->processEvents();
   updateGeometry();
-  resize( minimumSize() );
+  resize( minimumSizeHint() );
 
   myEditCurrentArgument->setFocus();
   connect( myGeomGUI->getApp()->selectionMgr(), 

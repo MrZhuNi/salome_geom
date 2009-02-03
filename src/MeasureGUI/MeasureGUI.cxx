@@ -116,7 +116,7 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   }
   if ( dlg ) {
     dlg->updateGeometry();
-    dlg->resize( dlg->minimumSize() );
+    dlg->resize( dlg->minimumSizeHint() );
     dlg->show();
   }
   return true;

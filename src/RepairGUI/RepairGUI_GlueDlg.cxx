@@ -233,7 +233,7 @@ void RepairGUI_GlueDlg::ConstructorsClicked( int constructorId )
 
   qApp->processEvents();
   updateGeometry();
-  resize( minimumSize() );
+  resize( minimumSizeHint() );
 
   displayPreview();
   updateButtonState();

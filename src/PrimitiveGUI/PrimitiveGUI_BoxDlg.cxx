@@ -194,7 +194,7 @@ void PrimitiveGUI_BoxDlg::ConstructorsClicked (int constructorId)
 
   qApp->processEvents();
   updateGeometry();
-  resize(minimumSize());
+  resize(minimumSizeHint());
 
   if (myInitial) {
     // on dialog initialization we init the first field with a selected object (if any)

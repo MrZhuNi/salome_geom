@@ -79,7 +79,7 @@ bool BuildGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   
   if ( aDlg ) {
     aDlg->updateGeometry();
-    aDlg->resize( aDlg->minimumSize() );
+    aDlg->resize( aDlg->minimumSizeHint() );
     aDlg->show();
   }
 

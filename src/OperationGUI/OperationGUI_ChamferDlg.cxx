@@ -358,7 +358,7 @@ void OperationGUI_ChamferDlg::ConstructorsClicked (int constructorId)
 
   qApp->processEvents();
   updateGeometry();
-  resize(minimumSize());
+  resize(minimumSizeHint());
 }
 
 //=================================================================================

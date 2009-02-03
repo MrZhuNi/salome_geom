@@ -265,7 +265,7 @@ void TransformationGUI_MultiTranslationDlg::ConstructorsClicked (int constructor
 
   qApp->processEvents();
   updateGeometry();
-  resize(minimumSize());
+  resize(minimumSizeHint());
 
   if (myInitial) {
     myInitial = false;

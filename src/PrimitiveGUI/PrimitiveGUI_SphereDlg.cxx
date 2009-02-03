@@ -191,7 +191,7 @@ void PrimitiveGUI_SphereDlg::ConstructorsClicked( int constructorId )
 
   qApp->processEvents();
   updateGeometry();
-  resize( minimumSize() );
+  resize( minimumSizeHint() );
 
   displayPreview();
 }

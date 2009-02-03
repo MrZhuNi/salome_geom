@@ -254,7 +254,7 @@ void PrimitiveGUI_DiskDlg::ConstructorsClicked (int constructorId)
 
   qApp->processEvents();
   updateGeometry();
-  resize(minimumSize());
+  resize(minimumSizeHint());
 
   if (myInitial) {
     myInitial = false;

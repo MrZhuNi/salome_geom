@@ -229,7 +229,7 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
 
   qApp->processEvents();
   updateGeometry();
-  resize( minimumSize() );
+  resize( minimumSizeHint() );
 
   displayPreview();
 }

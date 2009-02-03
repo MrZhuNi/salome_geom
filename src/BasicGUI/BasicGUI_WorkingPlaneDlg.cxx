@@ -242,7 +242,7 @@ void BasicGUI_WorkingPlaneDlg::ConstructorsClicked( int constructorId )
 
   qApp->processEvents();
   updateGeometry();
-  resize( minimumSize() );
+  resize( minimumSizeHint() );
 
   updateWPlane();
 }

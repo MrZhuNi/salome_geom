@@ -308,7 +308,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
   
   qApp->processEvents();
   updateGeometry();
-  resize( minimumSize() );
+  resize( minimumSizeHint() );
 
   myEditCurrentArgument->setFocus();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
