@@ -304,7 +304,7 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
     break;
   case GEOM::GEOM_IKindOfShape::BOX:
     aKindStr = tr( "GEOM_BOX" );
-    theParameters = tr( "GEOM_CENTER") + ":"  +
+    theParameters = tr( "GEOM_CENTER") +
       "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0] ) +
       "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1] ) +
       "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2] ) +
