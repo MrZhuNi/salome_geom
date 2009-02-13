@@ -104,12 +104,12 @@ static Standard_Integer ExtractDocID(TCollection_AsciiString& theID)
 
 void ProcessFunction(Handle(GEOM_Function)&   theFunction,
                      TCollection_AsciiString& theScript,
-                     TVariablesList           theVariables,
+                     const TVariablesList&    theVariables,
                      TDF_LabelMap&            theProcessed,
                      std::set<std::string>&   theDumpedObjs);
 
 void ReplaceVariables(TCollection_AsciiString& theCommand, 
-                      TVariablesList theVariables);
+                      const TVariablesList&    theVariables);
 
 
 
@@ -467,8 +467,8 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 
   Handle(TDataStd_TreeNode) aNode, aRoot;
   Handle(GEOM_Function) aFunction;
-  TDF_LabelMap aFuncMap;
-  std::set<std::string> anObjMap;
+  TDF_LabelMap aCheckedFuncMap;
+  std::set<std::string> anIgnoreObjMap;
 
   if (aDoc->Main().FindAttribute(GEOM_Function::GetFunctionTreeID(), aRoot)) {
     TDataStd_ChildNodeIterator Itr(aRoot);
@@ -479,7 +479,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
         MESSAGE ( "Null function !!!!" );
         continue;
       }
-      ProcessFunction(aFunction, aScript, theVariables, aFuncMap, anObjMap);
+      ProcessFunction(aFunction, aScript, theVariables, aCheckedFuncMap, anIgnoreObjMap);
     }
   }
 
@@ -606,8 +606,8 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     {
       const TCollection_AsciiString& aEntry = anEntryToNameIt.Key();
       const TCollection_AsciiString& aName = anEntryToNameIt.Value();
-      if (!anObjMap.count(aEntry.ToCString()))
-        continue; // was not dumped
+      if (anIgnoreObjMap.count(aEntry.ToCString()))
+        continue; // should not be dumped
       if ( !aEntry2StEntry.IsBound( aEntry ))
         continue; // was not published
       TCollection_AsciiString aCommand("\n\tgeompy."), aFatherEntry;
@@ -706,23 +706,15 @@ Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
 //===========================================================================
 void ProcessFunction(Handle(GEOM_Function)&   theFunction,
                      TCollection_AsciiString& theScript,
-                     TVariablesList           theVariables,
+                     const TVariablesList&    theVariables,
                      TDF_LabelMap&            theProcessed,
-                     std::set<std::string>&   theDumpedObjs)
+                     std::set<std::string>&   theIgnoreObjs)
 {
   if (theFunction.IsNull()) return;
-  if (theProcessed.Contains(theFunction->GetEntry())) return;
 
-/*
-  TDF_LabelSequence aSeq;
-  theFunction->GetDependency(aSeq);
-  Standard_Integer aLen = aSeq.Length();
-  for(Standard_Integer i = 1; i <= aLen; i++) {
-    Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(aSeq.Value(i));
-    if(aFunction.IsNull()) continue;
-    ProcessFunction(aFunction, theScript, theProcessed);
-  }
-*/
+  // not to process twice
+  if (theProcessed.Contains(theFunction->GetEntry())) return;
+  theProcessed.Add(theFunction->GetEntry());
 
   // pass functions, that depends on nonexisting ones
   bool doNotProcess = false;
@@ -755,13 +747,15 @@ void ProcessFunction(Handle(GEOM_Function)&   theFunction,
     }
   }
 
-  if (doNotProcess) return;
-
-  TCollection_AsciiString aDescr = theFunction->GetDescription();
-  if(aDescr.Length() == 0) {
-    //cout << "Warning: the function has no description" << endl;
+  if (doNotProcess) {
+    TCollection_AsciiString anObjEntry;
+    TDF_Tool::Entry(theFunction->GetOwnerEntry(), anObjEntry);
+    theIgnoreObjs.insert(anObjEntry.ToCString());
     return;
   }
+
+  TCollection_AsciiString aDescr = theFunction->GetDescription();
+  if(aDescr.Length() == 0) return;
 
   //Check if its internal function which doesn't requires dumping
   if(aDescr == "None") return;
@@ -770,12 +764,6 @@ void ProcessFunction(Handle(GEOM_Function)&   theFunction,
   ReplaceVariables(aDescr,theVariables);
   theScript += "\n\t";
   theScript += aDescr;
-
-  theProcessed.Add(theFunction->GetEntry());
-
-  TCollection_AsciiString anObjEntry;
-  TDF_Tool::Entry(theFunction->GetOwnerEntry(), anObjEntry);
-  theDumpedObjs.insert(anObjEntry.ToCString());
 }
 
 //=============================================================================
@@ -822,7 +810,7 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
  */
 //=============================================================================
 void ReplaceVariables(TCollection_AsciiString& theCommand, 
-                      TVariablesList theVariables)
+                      const TVariablesList&    theVariables)
 {
   if (MYDEBUG)
     cout<<"Command : "<<theCommand<<endl;
