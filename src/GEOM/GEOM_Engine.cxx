@@ -927,6 +927,8 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
 	aStartPos++;
       if( aCommand.Value( aEndPos-1 ) == C_SQR_BRACKET )
 	aEndPos--;
+      if ( aStartPos == aEndPos )
+        continue; // PAL20889: for "[]"
 
       if(MYDEBUG) 
 	cout<<"aStartPos = "<<aStartPos<<", aEndPos = "<<aEndPos<<endl;
