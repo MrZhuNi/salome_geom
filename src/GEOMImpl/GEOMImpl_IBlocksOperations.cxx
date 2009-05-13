@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
@@ -2311,7 +2311,8 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
-                                             (Handle(GEOM_Object) theObject)
+                                     (Handle(GEOM_Object) theObject,
+                                      const Standard_Integer theOptimumNbFaces)
 {
   SetErrorCode(KO);
 
@@ -2332,6 +2333,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
 
   GEOMImpl_IBlockTrsf aTI (aFunction);
   aTI.SetOriginal(aLastFunction);
+  aTI.SetOptimumNbFaces(theOptimumNbFaces);
 
   //Compute the fixed shape
   try {
@@ -2351,7 +2353,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aCopy
-    << " = geompy.RemoveExtraEdges(" << theObject << ")";
+                               << " = geompy.RemoveExtraEdges(" << theObject
+                               << ", " << theOptimumNbFaces << ")";
 
   SetErrorCode(OK);
   return aCopy;
@@ -2384,6 +2387,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::CheckAndImprove
 
   GEOMImpl_IBlockTrsf aTI (aFunction);
   aTI.SetOriginal(aLastFunction);
+  aTI.SetOptimumNbFaces(6);
 
   //Compute the fixed shape
   try {

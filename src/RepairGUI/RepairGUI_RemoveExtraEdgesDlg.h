@@ -23,12 +23,14 @@
 //  File   : RepairGUI_RemoveExtraEdgesDlg.h
 //  Author : Michael ZORIN
 //  Module : GEOM
-//
+
 #ifndef DIALOGBOX_REMOVEEXTRAEDGES_H
 #define DIALOGBOX_REMOVEEXTRAEDGES_H
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel_QTD.h"
+//#include "DlgRef_1Sel_QTD.h"
+
+class DlgRef_1Sel1Check_QTD;
 
 //=================================================================================
 // class    : RepairGUI_RemoveExtraEdgesDlg
@@ -60,8 +62,9 @@ private :
     GEOM::GEOM_Object_var myObject;
     bool myOkObject;
 
-    DlgRef_1Sel_QTD* GroupPoints;
-
+    //DlgRef_1Sel_QTD* GroupPoints;
+    //DlgRef_1Sel1Check* GroupPoints;
+    DlgRef_1Sel1Check_QTD* GroupPoints;
 
 private slots:
     void ClickOnOk();

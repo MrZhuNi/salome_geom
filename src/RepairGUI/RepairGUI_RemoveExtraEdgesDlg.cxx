@@ -24,12 +24,14 @@
 //  Author : Michael Zorin
 //  Module : GEOM
 //  $Header$
-//
+
 #include "RepairGUI_RemoveExtraEdgesDlg.h"
 
 #include "SalomeApp_Application.h"
 #include "LightApp_SelectionMgr.h"
 #include "SUIT_Session.h"
+
+#include "DlgRef_1Sel1Check_QTD.h"
 
 #include "GEOMImpl_Types.hxx"
 
@@ -62,11 +64,13 @@ RepairGUI_RemoveExtraEdgesDlg::RepairGUI_RemoveExtraEdgesDlg(GeometryGUI* theGeo
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_1Sel_QTD(this, "GroupPoints");
+  GroupPoints = new DlgRef_1Sel1Check_QTD(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_REMOVE_EXTRA_EDGES"));
   GroupPoints->TextLabel1->setText(tr("GEOM_SELECTED_SHAPE"));
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->LineEdit1->setReadOnly( true );
+
+  GroupPoints->CheckButton1->setText(tr("GEOM_RMEE_UNION_FACES"));
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
@@ -96,6 +100,8 @@ void RepairGUI_RemoveExtraEdgesDlg::Init()
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
   myOkObject = false;
+
+  GroupPoints->CheckButton1->setChecked( false );
 
   activateSelection();
 
@@ -282,10 +288,14 @@ bool RepairGUI_RemoveExtraEdgesDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_Object_var anObj;
 
-  anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->RemoveExtraEdges(myObject);
+  int nbFacesOptimum = -1; // -1 means do not union faces
+  if (GroupPoints->CheckButton1->isChecked())
+    nbFacesOptimum = 0; // 0 means union all faces, that possible
+  anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->RemoveExtraEdges
+    (myObject, nbFacesOptimum);
 
-  if ( !anObj->_is_nil() )
-    objects.push_back( anObj._retn() );
+  if (!anObj->_is_nil())
+    objects.push_back(anObj._retn());
 
   return true;
 }

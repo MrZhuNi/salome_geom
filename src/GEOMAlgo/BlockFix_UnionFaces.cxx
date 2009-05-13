@@ -19,10 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	BlockFix_UnionFaces.cxx
-// Created:	Tue Dec  7 17:15:42 2004
-// Author:	Pavel DURANDIN
-//
+//  File:    BlockFix_UnionFaces.cxx
+//  Created: Tue Dec  7 17:15:42 2004
+//  Author:  Pavel DURANDIN
 
 #include <BlockFix_UnionFaces.ixx>
 
@@ -59,7 +58,7 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Wire.hxx>
-#include <TopoDS_Face.hxx>  
+#include <TopoDS_Face.hxx>
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Shell.hxx>
@@ -79,26 +78,38 @@
 
 #include <gp_XY.hxx>
 #include <gp_Pnt2d.hxx>
-  
+
 //=======================================================================
 //function : BlockFix_UnionFaces
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 BlockFix_UnionFaces::BlockFix_UnionFaces()
-     : myTolerance(Precision::Confusion())
+  : myTolerance(Precision::Confusion()),
+    myOptimumNbFaces(6)
 {
 }
 
 
 //=======================================================================
-//function : GetTolearnce
-//purpose  : 
+//function : GetTolerance
+//purpose  :
 //=======================================================================
 
 Standard_Real& BlockFix_UnionFaces::GetTolerance()
 {
   return myTolerance;
+}
+
+
+//=======================================================================
+//function : GetOptimumNbFaces
+//purpose  :
+//=======================================================================
+
+Standard_Integer& BlockFix_UnionFaces::GetOptimumNbFaces()
+{
+  return myOptimumNbFaces;
 }
 
 
@@ -129,22 +140,22 @@ static Standard_Boolean AddOrdinaryEdges(TopTools_SequenceOfShape& edges,
   for(Standard_Integer i = 1; i <= edges.Length(); i++) {
     TopoDS_Shape current = edges(i);
     if(aNewEdges.Contains(current)) {
-               
+
       aNewEdges.Remove(current);
       edges.Remove(i);
       i--;
-      
+
       if(!isDropped) {
         isDropped = Standard_True;
         anIndex = i;
       }
     }
   }
-          
+
   //add edges to the sequemce
   for(TopTools_MapIteratorOfMapOfShape anIter(aNewEdges); anIter.More(); anIter.Next())
     edges.Append(anIter.Key());
-  
+
   return isDropped;
 }
 
@@ -156,7 +167,7 @@ static Standard_Boolean AddOrdinaryEdges(TopTools_SequenceOfShape& edges,
 static Handle(Geom_Surface) ClearRts(const Handle(Geom_Surface)& aSurface)
 {
   if(aSurface->IsKind(STANDARD_TYPE(Geom_RectangularTrimmedSurface))) {
-    Handle(Geom_RectangularTrimmedSurface) rts = 
+    Handle(Geom_RectangularTrimmedSurface) rts =
       Handle(Geom_RectangularTrimmedSurface)::DownCast(aSurface);
     return rts->BasisSurface();
   }
@@ -166,7 +177,7 @@ static Handle(Geom_Surface) ClearRts(const Handle(Geom_Surface)& aSurface)
 
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
@@ -176,7 +187,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
 
   // processing each solid
   TopExp_Explorer exps;
-  for(exps.Init(Shape, TopAbs_SOLID); exps.More(); exps.Next()) {
+  for (exps.Init(Shape, TopAbs_SOLID); exps.More(); exps.Next()) {
     TopoDS_Solid aSolid = TopoDS::Solid(exps.Current());
 
     // creating map of edge faces
@@ -185,28 +196,40 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
 
     // map of processed shapes
     TopTools_MapOfShape aProcessed;
-  
+
     Handle(ShapeBuild_ReShape) aContext = new ShapeBuild_ReShape;
 
-    Standard_Integer NbModif=0;
+    Standard_Integer NbModif = 0;
     Standard_Boolean hasFailed = Standard_False;
-    Standard_Real tol = Min(Max(Precision::Confusion(), myTolerance/10.),0.1);
-    // processing each face
+    Standard_Real tol = Min(Max(Precision::Confusion(), myTolerance/10.), 0.1);
+
+    // count faces
+    int nbf = 0;
     TopExp_Explorer exp;
-    //for( exp.Init(Shape, TopAbs_FACE); exp.More(); exp.Next()) {
-    for( exp.Init(aSolid, TopAbs_FACE); exp.More(); exp.Next()) {
+    TopTools_MapOfShape mapF;
+    for (exp.Init(aSolid, TopAbs_FACE); exp.More(); exp.Next()) {
+      if (mapF.Add(exp.Current()))
+        nbf++;
+    }
+
+    bool doUnion = ((myOptimumNbFaces == 0) ||
+                    ((myOptimumNbFaces > 0) && (nbf > myOptimumNbFaces)));
+
+    // processing each face
+    mapF.Clear();
+    for (exp.Init(aSolid, TopAbs_FACE); exp.More() && doUnion; exp.Next()) {
       TopoDS_Face aFace = TopoDS::Face(exp.Current().Oriented(TopAbs_FORWARD));
-      
-      if(aProcessed.Contains(aFace))
+
+      if (aProcessed.Contains(aFace))
         continue;
-    
+
       Standard_Integer dummy;
       TopTools_SequenceOfShape edges;
       AddOrdinaryEdges(edges,aFace,dummy);
-    
+
       TopTools_SequenceOfShape faces;
       faces.Append(aFace);
-    
+
       //surface and location to construct result
       TopLoc_Location aBaseLocation;
       Handle(Geom_Surface) aBaseSurface = BRep_Tool::Surface(aFace,aBaseLocation);
@@ -214,73 +237,73 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
 
       // find adjacent faces to union
       Standard_Integer i;
-      for( i = 1; i <= edges.Length(); i++) {
+      for (i = 1; i <= edges.Length(); i++) {
         TopoDS_Edge edge = TopoDS::Edge(edges(i));
-        if(BRep_Tool::Degenerated(edge))
+        if (BRep_Tool::Degenerated(edge))
           continue;
-      
+
         const TopTools_ListOfShape& aList = aMapEdgeFaces.FindFromKey(edge);
         TopTools_ListIteratorOfListOfShape anIter(aList);
-        for( ; anIter.More(); anIter.Next()) {
+        for (; anIter.More(); anIter.Next()) {
           TopoDS_Face anCheckedFace = TopoDS::Face(anIter.Value().Oriented(TopAbs_FORWARD));
-          if(anCheckedFace.IsSame(aFace))
+          if (anCheckedFace.IsSame(aFace))
             continue;
-        
-          if(aProcessed.Contains(anCheckedFace))
+
+          if (aProcessed.Contains(anCheckedFace))
             continue;
-        
-          if(IsSameDomain(aFace,anCheckedFace)) {
-          
-            if(aList.Extent() != 2) {
+
+          if (IsSameDomain(aFace,anCheckedFace)) {
+
+            if (aList.Extent() != 2) {
               // non mainfold case is not processed
               continue;
             }
-          
+
             // replacing pcurves
             TopoDS_Face aMockUpFace;
             BRep_Builder B;
             B.MakeFace(aMockUpFace,aBaseSurface,aBaseLocation,0.);
             MovePCurves(aMockUpFace,anCheckedFace);
-            
-            if(AddOrdinaryEdges(edges,aMockUpFace,dummy)) {
+
+            if (AddOrdinaryEdges(edges,aMockUpFace,dummy)) {
               // sequence edges is modified
               i = dummy;
             }
-            
+
             faces.Append(anCheckedFace);
             aProcessed.Add(anCheckedFace);
             break;
           }
         }
       }
-    
+
       // all faces collected in the sequence. Perform union of faces
-      if(faces.Length() > 1) {
+      if (faces.Length() > 1) {
         NbModif++;
         TopoDS_Face aResult;
         BRep_Builder B;
         B.MakeFace(aResult,aBaseSurface,aBaseLocation,0);
         Standard_Integer nbWires = 0;
-      
+
         // connecting wires
-        while(edges.Length()>0) {
-        
+        while (edges.Length()>0) {
+
           Standard_Boolean isEdge3d = Standard_False;
           nbWires++;
           TopTools_MapOfShape aVertices;
           TopoDS_Wire aWire;
           B.MakeWire(aWire);
-        
+
           TopoDS_Edge anEdge = TopoDS::Edge(edges(1));
           edges.Remove(1);
-        
+
           isEdge3d |= !BRep_Tool::Degenerated(anEdge);
           B.Add(aWire,anEdge);
           TopoDS_Vertex V1,V2;
           TopExp::Vertices(anEdge,V1,V2);
           aVertices.Add(V1);
           aVertices.Add(V2);
-        
+
           Standard_Boolean isNewFound = Standard_False;
           do {
             isNewFound = Standard_False;
@@ -298,10 +321,10 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
               }
             }
           } while (isNewFound);
-        
+
           // sorting any type of edges
           aWire = TopoDS::Wire(aContext->Apply(aWire));
-                
+
           TopoDS_Face tmpF = TopoDS::Face(aContext->Apply(faces(1).Oriented(TopAbs_FORWARD)));
           Handle(ShapeFix_Wire) sfw = new ShapeFix_Wire(aWire,tmpF,Precision::Confusion());
           sfw->FixReorder();
@@ -348,7 +371,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
               sawo.Add(c2d->Value(f).XY(),c2d->Value(l).XY());
             }
             sawo.Perform();
-            
+
             // constructind one degenerative edge
             gp_XY aStart, anEnd, tmp;
             Standard_Integer nbFirst = sawo.Ordered(1);
@@ -358,7 +381,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
             TopoDS_Edge E = sbe.CopyReplaceVertices(anOrigE,aDummyV,aDummyV);
             sawo.XY(nbFirst,aStart,tmp);
             sawo.XY(sawo.Ordered(aLastEdge),tmp,anEnd);
-          
+
             gp_XY aVec = anEnd-aStart;
             Handle(Geom2d_Line) aLine = new Geom2d_Line(aStart,gp_Dir2d(anEnd-aStart));
 
@@ -372,13 +395,11 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
             B.Add(aW,E);
             B.Add(aResult,aW);
           }
-        
         }
-      
+
         // perform substitution of face
         aContext->Replace(aContext->Apply(aFace),aResult);
-      
-      
+
         ShapeFix_Face sff (aResult);
         //Intializing by tolerances
         sff.SetPrecision(myTolerance);
@@ -390,74 +411,72 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
         sff.SetContext(aContext);
         // Applying the fixes
         sff.Perform();
-        if(sff.Status(ShapeExtend_FAIL)) 
+        if(sff.Status(ShapeExtend_FAIL))
         hasFailed = Standard_True;
-      
+
         // breaking down to several faces
         TopoDS_Shape theResult = aContext->Apply(aResult);
-        for(TopExp_Explorer aFaceExp(theResult,TopAbs_FACE);aFaceExp.More();aFaceExp.Next()) {
+        for (TopExp_Explorer aFaceExp (theResult,TopAbs_FACE); aFaceExp.More(); aFaceExp.Next()) {
           TopoDS_Face aCurrent = TopoDS::Face(aFaceExp.Current().Oriented(TopAbs_FORWARD));
           Handle(TColGeom_HArray2OfSurface) grid = new TColGeom_HArray2OfSurface ( 1, 1, 1, 1 );
           grid->SetValue ( 1, 1, aBaseSurface );
           Handle(ShapeExtend_CompositeSurface) G = new ShapeExtend_CompositeSurface ( grid );
           ShapeFix_ComposeShell CompShell;
-          CompShell.Init ( G, aBaseLocation, aCurrent, ::Precision::Confusion() );//myPrecision 
+          CompShell.Init ( G, aBaseLocation, aCurrent, ::Precision::Confusion() );//myPrecision
           CompShell.SetContext( aContext );
-          
+
           TopTools_SequenceOfShape parts;
           ShapeFix_SequenceOfWireSegment wires;
           for(TopExp_Explorer W_Exp(aCurrent,TopAbs_WIRE);W_Exp.More();W_Exp.Next()) {
-            Handle(ShapeExtend_WireData) sbwd = 
+            Handle(ShapeExtend_WireData) sbwd =
               new ShapeExtend_WireData ( TopoDS::Wire(W_Exp.Current() ));
             ShapeFix_WireSegment seg ( sbwd, TopAbs_REVERSED );
             wires.Append(seg);
           }
-                
+
           CompShell.DispatchWires ( parts,wires );
           for (Standard_Integer j=1; j <= parts.Length(); j++ ) {
             ShapeFix_Face aFixOrient(TopoDS::Face(parts(j)));
             aFixOrient.SetContext(aContext);
             aFixOrient.FixOrientation();
           }
-        
+
           TopoDS_Shape CompRes;
           if ( faces.Length() !=1 ) {
             TopoDS_Shell S;
             B.MakeShell ( S );
-            for ( i=1; i <= parts.Length(); i++ ) 
+            for ( i=1; i <= parts.Length(); i++ )
               B.Add ( S, parts(i) );
             CompRes = S;
           }
           else CompRes = parts(1);
-          
+
           aContext->Replace(aCurrent,CompRes);
         }
-      
+
         // remove the remaining faces
         for(i = 2; i <= faces.Length(); i++)
           aContext->Remove(faces(i));
       }
-    }
-  
+    } // end processing each face
+
     //TopoDS_Shape aResult = Shape;
-    if(NbModif>0) {
-      TopoDS_Shape aResult = aSolid;
-      if(!hasFailed) {
-        aResult = aContext->Apply(aSolid);
-    
-        ShapeFix_Edge sfe;
-        for(exp.Init(aResult,TopAbs_EDGE); exp.More(); exp.Next()) {
-          TopoDS_Edge E = TopoDS::Edge(exp.Current());
-          sfe.FixVertexTolerance (E);
-          // ptv add fix same parameter
-          sfe.FixSameParameter(E, myTolerance);
-        }
-        
-        myContext->Replace(aSolid,aResult);
+    if (NbModif > 0 && !hasFailed) {
+      TopoDS_Shape aResult = aContext->Apply(aSolid);
+
+      ShapeFix_Edge sfe;
+      for (exp.Init(aResult,TopAbs_EDGE); exp.More(); exp.Next()) {
+        TopoDS_Edge E = TopoDS::Edge(exp.Current());
+        sfe.FixVertexTolerance (E);
+        // ptv add fix same parameter
+        sfe.FixSameParameter(E, myTolerance);
       }
+
+      myContext->Replace(aSolid, aResult);
     }
-//    else {
-      for( exp.Init(aSolid, TopAbs_FACE); exp.More(); exp.Next()) {
+    //else
+    {
+      for (exp.Init(aSolid, TopAbs_FACE); exp.More(); exp.Next()) {
         TopoDS_Face aFace = TopoDS::Face(exp.Current().Oriented(TopAbs_FORWARD));
         Handle(ShapeFix_Wire) sfw = new ShapeFix_Wire;
         sfw->SetContext(myContext);
@@ -465,15 +484,14 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
         sfw->SetMinTolerance(myTolerance);
         sfw->SetMaxTolerance(Max(1.,myTolerance*1000.));
         sfw->SetFace(aFace);
-        for ( TopoDS_Iterator iter(aFace,Standard_False); iter.More(); iter.Next()) { 
-          TopoDS_Wire wire = TopoDS::Wire ( iter.Value() );
+        for (TopoDS_Iterator iter (aFace,Standard_False); iter.More(); iter.Next()) {
+          TopoDS_Wire wire = TopoDS::Wire(iter.Value());
           sfw->Load(wire);
           sfw->FixReorder();
           sfw->FixShifted();
         }
       }
-//    }
-
+    }
   } // end processing each solid
 
   aResShape = myContext->Apply(Shape);
@@ -483,7 +501,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
 
 //=======================================================================
 //function : IsSameDomain
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 Standard_Boolean BlockFix_UnionFaces::IsSameDomain(const TopoDS_Face& aFace,
@@ -492,10 +510,10 @@ Standard_Boolean BlockFix_UnionFaces::IsSameDomain(const TopoDS_Face& aFace,
   //checking the same handless
   TopLoc_Location L1, L2;
   Handle(Geom_Surface) S1, S2;
-  
+
   S1 = BRep_Tool::Surface(aFace,L1);
   S2 = BRep_Tool::Surface(aCheckedFace,L2);
-  
+
   if (S1 == S2 && L1 == L2)
     return true;
 
@@ -586,7 +604,7 @@ Standard_Boolean BlockFix_UnionFaces::IsSameDomain(const TopoDS_Face& aFace,
 
 //=======================================================================
 //function : MovePCurves
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 void BlockFix_UnionFaces::MovePCurves(TopoDS_Face& aTarget,
@@ -594,17 +612,17 @@ void BlockFix_UnionFaces::MovePCurves(TopoDS_Face& aTarget,
 {
   BRep_Builder B;
   for(TopExp_Explorer wexp(aSource,TopAbs_WIRE);wexp.More();wexp.Next()) {
-    Handle(ShapeFix_Wire) sfw = new ShapeFix_Wire(TopoDS::Wire(wexp.Current()), 
+    Handle(ShapeFix_Wire) sfw = new ShapeFix_Wire(TopoDS::Wire(wexp.Current()),
                                                   aTarget, Precision::Confusion());
     sfw->FixReorder();
     Standard_Boolean isReoredFailed = sfw->StatusReorder ( ShapeExtend_FAIL );
     sfw->FixEdgeCurves();
     if(isReoredFailed)
       continue;
-    
+
     sfw->FixShifted();
     sfw->FixDegenerated();
-    
+
     // remove degenerated edges from not degenerated points
     ShapeAnalysis_Edge sae;
     Handle(ShapeExtend_WireData) sewd = sfw->WireData();
@@ -615,7 +633,7 @@ void BlockFix_UnionFaces::MovePCurves(TopoDS_Face& aTarget,
         i--;
       }
     }
-    
+
     TopoDS_Wire ResWire = sfw->Wire();
     B.Add(aTarget,ResWire);
   }

@@ -2254,6 +2254,9 @@ msgstr "SupressFaces"
 msgid "CHANGE_ORIENTATION_NEW_OBJ_NAME"
 msgstr "Invert"
 
+msgid "GEOM_RMEE_UNION_FACES"
+msgstr "Union faces, laying on common surface"
+
 msgid "REMOVE_EXTRA_EDGES_NEW_OBJ_NAME"
 msgstr "NoExtraEdges"
 
