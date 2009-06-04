@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #ifndef _GEOM_Engine_HXX_
 #define _GEOM_Engine_HXX_
 
@@ -32,6 +32,11 @@
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HSequenceOfAsciiString.hxx>
 #include <TDF_Label.hxx>
+
+#include <map>
+#include <list>
+
+typedef std::map<int, std::list<TDF_Label> > TFreeLabelsList;
 
 class GEOM_Engine
 {
@@ -104,7 +109,7 @@ class GEOM_Engine
 
   Resource_DataMapOfAsciiStringAsciiString _studyEntry2NameMap;
 
-  TDF_Label _lastCleared;
+  TFreeLabelsList _freeLabels;
 };
 
 #endif
