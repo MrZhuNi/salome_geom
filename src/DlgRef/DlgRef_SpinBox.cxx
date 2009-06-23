@@ -107,7 +107,7 @@ QString DlgRef_SpinBox::PrintDoubleValue (double theValue, int thePrecision)
 {
   const double prec = 1e-12;
   
-  if ( abs(theValue) < thePrecision)
+  if ( abs(theValue) < prec )
     return "0";
 
   QString aRes;
