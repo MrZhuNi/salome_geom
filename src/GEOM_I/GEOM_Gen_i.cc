@@ -741,7 +741,7 @@ CORBA::Boolean GEOM_Gen_i::RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
 	    if (!CORBA::is_nil(aSubO))
 	      aGroupOp->UnionIDs(aSubO, anIDs);
 	  }
-	  else {
+	  else if (anIDs->length() > 0) {
 	    // single sub-shape
 	    aSubO = aShapesOp->GetSubShape(theObject, anIDs[0]);
 	  }
