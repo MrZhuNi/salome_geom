@@ -79,10 +79,10 @@ void GEOM_AISVector::Compute (const Handle(PrsMgr_PresentationManager3d)& thePre
 
       Handle(Graphic3d_Group) aG = Prs3d_Root::CurrentGroup(thePrs);
 
-      //thePrs->Color(myShadingColor.Name());
-      //aG->BeginPrimitives();
-      Prs3d_Arrow::Draw(thePrs, aP2, aDir, PI/180.*5., aDist/10.);
-      //aG->EndPrimitives();
+      if ( anEdgeE.Orientation() == TopAbs_FORWARD )
+        Prs3d_Arrow::Draw(thePrs, aP2, aDir, PI/180.*5., aDist/10.);
+      else
+        Prs3d_Arrow::Draw(thePrs, aP1, -aDir, PI/180.*5., aDist/10.);
     }
   }
   //thePrs->ReCompute(); // for hidden line recomputation if necessary...
