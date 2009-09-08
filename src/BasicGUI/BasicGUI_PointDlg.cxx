@@ -578,7 +578,10 @@ void BasicGUI_PointDlg::enterEvent(QEvent* e)
 void BasicGUI_PointDlg::ActivateThisDialog( )
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  // myGeomGUI->SetState( 0 );
+
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
+
   ConstructorsClicked( getConstructorId() );
 }
 
