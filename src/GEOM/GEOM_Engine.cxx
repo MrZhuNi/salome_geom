@@ -591,7 +591,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     }
 
     SALOMEDS::Color aColor = obj->GetColor();
-    if ( aColor.R > 0 || aColor.G > 0 || aColor.B > 0 )
+    if ( aColor.R >= 0 && aColor.G >= 0 && aColor.B >= 0 )
     {
       TCollection_AsciiString aCommand( "\n\t" );
       aCommand += aName + ".SetColor(SALOMEDS.Color(" + aColor.R + "," + aColor.G + "," + aColor.B + "))";
