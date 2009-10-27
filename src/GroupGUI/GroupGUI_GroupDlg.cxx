@@ -676,6 +676,17 @@ void GroupGUI_GroupDlg::add()
       aSelMgr->selectedSubOwners(aMap);
       if (aMap.size() == 1)
         aMapIndex = aMap.begin().data();
+      else { // selected the same subshape as the main object
+        SALOME_ListIO aSelList;
+        TColStd_IndexedMapOfInteger aMap;
+        aSelMgr->selectedObjects(aSelList);
+        if (aSelList.Extent() == 1) {
+          Standard_Boolean aRes = Standard_False;
+          GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
+          if ( aSelectedObject->_is_equivalent(myMainObj) )
+            aMapIndex.Add(1); // add index of the only subshape of selected type
+        }
+      }
     }
   }
   GEOM::ListOfGO anObjects;
@@ -859,6 +870,22 @@ void GroupGUI_GroupDlg::updateState()
       aSelMgr->selectedSubOwners(aMap);
       if (aMap.size() == 1)
         aMapIndex = aMap.begin().data();
+      else { // selected the same subshape as the main object
+        SALOME_ListIO aSelList;
+        aSelMgr->selectedObjects(aSelList);
+        if (aSelList.Extent() == 1) {
+          myBusy = true;
+          Standard_Boolean aRes = Standard_False;
+          GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
+          if ( aSelectedObject->_is_equivalent(myMainObj) ) {
+            aMapIndex.Add(1); // add index of the only subshape of selected type
+            TColStd_MapOfInteger anIds; // higlight selected index
+            anIds.Add(1);
+            aSelMgr->AddOrRemoveIndex(aSelList.First(), anIds, false);
+          }
+          myBusy = false;
+        }
+      }
     }
   }
 
