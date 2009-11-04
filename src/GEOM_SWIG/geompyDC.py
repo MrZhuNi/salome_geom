@@ -320,7 +320,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakeTangentOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakeTangentOnCurve", self.BasicOp)
             return anObj
-	    
+
         ## Create a tangent plane to specified face in the point with specified parameters.
         #  @param theFace - face for which tangent plane shuold be built.
         #  @param theParameterU - value of parameter by U
@@ -332,7 +332,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakeTangentPlaneOnFace(theFace, theParameterU, theParameterV, theTrimSize)
             RaiseIfFailed("MakeTangentPlaneOnFace", self.BasicOp)
 	    return anObj
-												    
+
 
         ## Create a vector with the given components.
         #  @param theDX X component of the vector.
@@ -2990,16 +2990,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Unite faces and edges, sharing one surface. It means that
         #  this faces must have references to one C++ surface object (handle).
         #  @param theShape The compound or single solid to remove irregular edges from.
-        #  @param theOptimumNbFaces If more than zero, unite faces only for those solids,
-        #         that have more than theOptimumNbFaces faces. If zero, unite faces always,
-        #         regardsless their quantity in the solid. If negative (the default value),
-        #         do not unite faces at all. For blocks repairing recommended value is 6.
+        #  @param doUnionFaces If True, then unite faces. If False (the default value),
+        #         do not unite faces.
         #  @return Improved shape.
         #
         #  @ref swig_RemoveExtraEdges "Example"
-        def RemoveExtraEdges(self,theShape,theOptimumNbFaces=-1):
+        def RemoveExtraEdges(self, theShape, doUnionFaces=False):
             # Example: see GEOM_TestOthers.py
-            anObj = self.BlocksOp.RemoveExtraEdges(theShape,theOptimumNbFaces)
+            nbFacesOptimum = -1 # -1 means do not unite faces
+            if doUnionFaces is True: nbFacesOptimum = 0 # 0 means unite faces
+            anObj = self.BlocksOp.RemoveExtraEdges(theShape, nbFacesOptimum)
             RaiseIfFailed("RemoveExtraEdges", self.BlocksOp)
             return anObj
 

@@ -99,8 +99,6 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
-using namespace std;
-
 //=============================================================================
 /*!
  *   constructor:
@@ -1927,7 +1925,7 @@ Standard_Boolean HasAnyConnection (const Standard_Integer         theBlockIndex,
 //=============================================================================
 Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocksOld
                                                 (Handle(GEOM_Object) theCompound,
-                                                 list<BCError>&      theErrors)
+                                                 std::list<BCError>&      theErrors)
 {
   SetErrorCode(KO);
 
@@ -2079,11 +2077,11 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocksOld
 //=============================================================================
 TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
                                                 (Handle(GEOM_Object)  theCompound,
-                                                 const list<BCError>& theErrors)
+                                                 const std::list<BCError>& theErrors)
 {
   TCollection_AsciiString aDescr;
 
-  list<BCError>::const_iterator errIt = theErrors.begin();
+  std::list<BCError>::const_iterator errIt = theErrors.begin();
   int i = 0;
   for (; errIt != theErrors.end(); i++, errIt++) {
     BCError errStruct = *errIt;
@@ -2108,8 +2106,8 @@ TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
       break;
     }
 
-    list<int> sshList = errStruct.incriminated;
-    list<int>::iterator sshIt = sshList.begin();
+    std::list<int> sshList = errStruct.incriminated;
+    std::list<int>::iterator sshIt = sshList.begin();
     int jj = 0;
     for (; sshIt != sshList.end(); jj++, sshIt++) {
       if (jj > 0)
@@ -2128,7 +2126,7 @@ TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
 //=============================================================================
 Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
                                               (Handle(GEOM_Object) theCompound,
-                                               list<BCError>&      theErrors)
+                                               std::list<BCError>&      theErrors)
 {
   SetErrorCode(KO);
 
@@ -2224,7 +2222,7 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
   }
 
   // 3. Find not glued blocks
-  GEOMAlgo_GlueAnalyser aGD; 
+  GEOMAlgo_GlueAnalyser aGD;
 
   aGD.SetShape(aComp);
   aGD.SetTolerance(Precision::Confusion());
@@ -2352,9 +2350,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aCopy
-                               << " = geompy.RemoveExtraEdges(" << theObject
-                               << ", " << theOptimumNbFaces << ")";
+  std::string doUnionFaces = (theOptimumNbFaces < 0) ? "False" : "True";
+  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.RemoveExtraEdges("
+                               << theObject << ", " << doUnionFaces.data() << ")";
 
   SetErrorCode(OK);
   return aCopy;
