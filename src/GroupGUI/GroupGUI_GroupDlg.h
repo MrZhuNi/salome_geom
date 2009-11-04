@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : GroupGUI_GroupDlg.h
-// Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
-//
+//  GEOM GEOMGUI : GUI for Geometry component
+//  File   : GroupGUI_GroupDlg.h
+//  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
+
 #ifndef GROUPGUI_GROUPDLG_H
 #define GROUPGUI_GROUPDLG_H
 
@@ -58,8 +58,7 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr  createOperation();
   virtual bool                        isValid( QString& );
   virtual bool                        execute( ObjectList& );
-  virtual GEOM::GEOM_Object_ptr       getFather( GEOM::GEOM_Object_ptr );
-  
+
   void                                closeEvent( QCloseEvent* );
 
 private slots:
@@ -70,16 +69,16 @@ private slots:
   void                                SelectionIntoArgument();
   void                                SetEditCurrentArgument();
   void                                ConstructorsClicked( int );
-  
+
   void                                selectAllSubShapes();
   void                                add();
   void                                remove();
   void                                selectionChanged();
-  
+
 private:
   void                                Init();
   void                                enterEvent( QEvent* );
-  int                                 subSelectionWay() const;    
+  int                                 subSelectionWay() const;
   TopAbs_ShapeEnum                    getShapeType() const;
   void                                setShapeType( const TopAbs_ShapeEnum );
   void                                activateSelection();
