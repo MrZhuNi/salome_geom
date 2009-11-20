@@ -92,9 +92,13 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual bool IsShape();
 
-  virtual void SetParameters(const char* theParameters);
+  virtual void SetParameters( SALOME::Notebook_ptr theNotebook, const GEOM::string_array& theParameters );
 
-  virtual char* GetParameters();
+  virtual char* GetComponent();
+
+  virtual CORBA::Boolean IsValid();
+
+  virtual void Update( SALOME::Notebook_ptr theNotebook );
 
   Handle(GEOM_Object) GetImpl() { return _impl; }
 

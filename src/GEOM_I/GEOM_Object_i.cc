@@ -23,6 +23,7 @@
 
 #include <GEOM_Object_i.hh>
 #include <GEOM_ISubShape.hxx>
+#include <GEOM_Engine.hxx>
 #include <GEOMImpl_Types.hxx>
 
 #include "utilities.h"
@@ -35,6 +36,7 @@
 #include <TDF_Tool.hxx>
 #include <TDF_Label.hxx>
 #include <TCollection_AsciiString.hxx>
+#include <TColStd_Array1OfAsciiString.hxx>
 
 #include <BRepTools_ShapeSet.hxx>
 #include <BRepTools.hxx>
@@ -427,13 +429,81 @@ bool GEOM_Object_i::IsShape()
   return !_impl->GetValue().IsNull() && _impl->GetType() != GEOM_MARKER;
 }
 
-void GEOM_Object_i::SetParameters(const char* theParameters)
+void GEOM_Object_i::SetParameters( SALOME::Notebook_ptr theNotebook, const GEOM::string_array& theParameters )
 {
-  _impl->SetParameters((char*)theParameters);
+  printf( "set parameters\n" );
+  int n = theParameters.length();
+  if ( n <= 0 )
+    return;
+
+  theNotebook->ClearDependencies( _this() );
+
+  Handle( GEOM_Function ) aFunc = _impl->GetLastFunction();
+  TColStd_Array1OfAsciiString aParams( 1, n );
+  char* aStr;
+  for( int i = 0; i < n; i++ )
+  {
+    aStr = CORBA::string_dup( theParameters[i] );
+    printf( "\tparam = %s\n", aStr );
+    SALOME::Parameter_ptr aParam = theNotebook->Param( aStr );
+    TCollection_AsciiString anAsciiName;
+    if( !CORBA::is_nil( aParam ) )
+    {
+      printf( "add dep\n" );
+      theNotebook->AddDependency( _this(), aParam );
+      anAsciiName = aStr;
+    }
+    aFunc->SetParam( i+1, anAsciiName );
+  }
 }
 
-char* GEOM_Object_i::GetParameters()
+char* GEOM_Object_i::GetComponent()
 {
-  return CORBA::string_dup(_impl->GetParameters().ToCString());
+  return CORBA::string_dup( "GEOM" );
 }
 
+CORBA::Boolean GEOM_Object_i::IsValid()
+{
+  return true;
+}
+
+void GEOM_Object_i::Update( SALOME::Notebook_ptr theNotebook )
+{
+  printf( "GEOM_Object_i::Update:\n" );
+  Handle( GEOM_Function ) aFunc = _impl->GetLastFunction();
+
+  //1. Update parameter values
+  int n = aFunc->GetArgsCount();
+  printf( "args count = %i\n", n );
+  for( int i = 1; i <= n; i++ )
+  {
+    TCollection_AsciiString aParamName = aFunc->GetParam( i );
+    printf( "arg = %s\n", aParamName.ToCString() );
+    SALOME::Parameter_ptr aParam = theNotebook->Param( aParamName.ToCString() );
+    if( CORBA::is_nil( aParam ) )
+      continue;
+
+    switch( aParam->GetType() )
+    {
+    case SALOME::TInteger:
+      aFunc->SetInteger( i, aParam->AsInteger() );
+      break;
+
+    case SALOME::TReal:
+      printf( "real: %i-th = %lf\n", i, aParam->AsReal() );
+      aFunc->SetReal( i, aParam->AsReal() );
+      break;
+
+    case SALOME::TString:
+      aFunc->SetString( i, aParam->AsString() );
+      break;
+
+    default:
+      return;
+    }
+  }
+
+  //2. Recompute object
+  GEOM_Solver aSolver( GEOM_Engine::GetEngine() );
+  aSolver.ComputeFunction( aFunc );
+}

@@ -77,8 +77,8 @@
 
 import salome
 salome.salome_init()
-from salome import *
 
+from salome import *
 from salome_notebook import *
 
 import GEOM
@@ -98,23 +98,23 @@ def RaiseIfFailed (Method_name, Operation):
 ## @ingroup l1_geompy_auxiliary
 def ParseParameters(*parameters):
     Result = []
-    StringResult = ""
+    Params = []
     for parameter in parameters:
-        if isinstance(parameter,str):
-            if notebook.isVariable(parameter):
-                Result.append(notebook.get(parameter))
-            else:
-                raise RuntimeError, "Variable with name '" + parameter + "' doesn't exist!!!"
+        if isinstance(parameter, str):
+            Result.append(notebook.get(parameter))
+            Params.append(parameter)
         else:
             Result.append(parameter)
+            Params.append("")
             pass
 
-        StringResult = StringResult + str(parameter)
-        StringResult = StringResult + ":"
-        pass
-    StringResult = StringResult[:len(StringResult)-1]
-    Result.append(StringResult)
+    Result.append( Params )
     return Result
+
+
+def SetParameters( obj, params ):
+    obj.SetParameters( notebook.getNotebook(), params )
+
 
 ## Return list of variables value from salome notebook
 ## @ingroup l1_geompy_auxiliary
@@ -409,7 +409,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
-        def MakeVertex(self,theX, theY, theZ):
+        def MakeVertex(self, theX, theY, theZ):
             # Example: see GEOM_TestAll.py
             theX,theY,theZ,Parameters = ParseParameters(theX, theY, theZ)
             anObj = self.BasicOp.MakePointXYZ(theX, theY, theZ)
@@ -969,12 +969,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the created box.
         #
         #  @ref tui_creation_box "Example"
-        def MakeBoxDXDYDZ(self,theDX, theDY, theDZ):
+        def MakeBoxDXDYDZ(self, theDX, theDY, theDZ):
             # Example: see GEOM_TestAll.py
             theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
+            print theDX
+            print theDY
+            print theDZ
             anObj = self.PrimOp.MakeBoxDXDYDZ(theDX, theDY, theDZ)
             RaiseIfFailed("MakeBoxDXDYDZ", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters( anObj, Parameters )
             return anObj
 
         ## Create a box with two specified opposite vertices,
