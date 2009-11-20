@@ -44,6 +44,7 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 					 CORBA::Boolean isPublished, 
 					 CORBA::Boolean& isValidScript)
 {
+/*ASL: temporary commented for Notebook
   SALOMEDS::Study_var aStudy = SALOMEDS::Study::_narrow(theStudy);
   if(CORBA::is_nil(aStudy))
     return new Engines::TMPFile(0);   
@@ -109,10 +110,10 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
   }
 
   aScript += "\n\tpass\n";
-
-  int aLen = aScript.Length(); 
+*/
+  int aLen = 0;/*ASL: aScript.Length(); */
   unsigned char* aBuffer = new unsigned char[aLen+1];
-  strcpy((char*)aBuffer, aScript.ToCString());
+  //ASL : strcpy((char*)aBuffer, aScript.ToCString());
 
   CORBA::Octet* anOctetBuf =  (CORBA::Octet*)aBuffer;
   Engines::TMPFile_var aStreamFile = new Engines::TMPFile(aLen+1, aLen+1, anOctetBuf, 1); 
