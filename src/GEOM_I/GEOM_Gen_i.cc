@@ -66,11 +66,11 @@
 // function : GEOM_Gen_i()
 // purpose  : constructor to be called for servant creation.
 //============================================================================
-GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr            orb,
-		       PortableServer::POA_ptr   poa,
-		       PortableServer::ObjectId* contId,
-		       const char*               instanceName,
-		       const char*               interfaceName) :
+GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr orb,
+		       PortableServer::POA_ptr poa,
+		       PortableServer::ObjectId * contId,
+		       const char *instanceName,
+		       const char *interfaceName) :
   Engines_Component_i(orb, poa, contId, instanceName, interfaceName)
 {
   _thisObj = this;
@@ -321,6 +321,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   aNameAttrib->Destroy();
 
   //Set NoteBook variables used in the object creation
+  /*ASL: temporary commented
   TCollection_AsciiString aVars;
   CORBA::String_var aString=aShape->GetParameters();
   SALOMEDS::ListOfListOfStrings_var aSections = theStudy->ParseVariables(aString);
@@ -335,10 +336,12 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     if(i != n-1)
       aVars += "|";
   }
+
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeString");
   SALOMEDS::AttributeString_var aStringAttrib = SALOMEDS::AttributeString::_narrow(anAttr);
   aStringAttrib->SetValue(aVars.ToCString());
   aStringAttrib->Destroy();
+  */
 
   aFather->Destroy();
 
@@ -1615,6 +1618,15 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::GetIORFromString(const char* stringIOR) {
       aGeomObject =  GEOM::GEOM_Object::_narrow(anObject.in());
   }
   return aGeomObject._retn();
+}
+
+//=================================================================================
+// function : FindObjectByInternalEntry()
+// purpose  :
+//=================================================================================
+SALOME::GenericObj_ptr GEOM_Gen_i::FindObjectByInternalEntry( CORBA::Long theStudyID, const char* theEntry )
+{
+  return GetObject( theStudyID, theEntry );
 }
 
 //=================================================================================

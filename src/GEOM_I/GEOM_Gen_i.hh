@@ -248,6 +248,8 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 
   virtual GEOM::GEOM_Object_ptr GetObject(CORBA::Long theStudyID, const char* theEntry);
 
+  virtual SALOME::GenericObj_ptr FindObjectByInternalEntry( CORBA::Long theStudyID, const char* theEntry );
+
  private:
   GEOM::ListOfGO* RestoreSubShapesOneLevel (SALOMEDS::Study_ptr     theStudy,
 					    SALOMEDS::SObject_ptr   theOldSO,
