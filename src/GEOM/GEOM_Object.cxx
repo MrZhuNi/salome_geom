@@ -499,32 +499,6 @@ TCollection_AsciiString GEOM_Object::GetAuxData()
 
 //=============================================================================
 /*!
- *  SetParameters
- */
-//=============================================================================
-void GEOM_Object::SetParameters(const TCollection_AsciiString& theParameters)
-{
-  if( _parameters.IsEmpty() )
-    _parameters = theParameters;
-  else {
-    _parameters += "|";
-    _parameters += theParameters;
-  }
-}
-
-//=============================================================================
-/*!
- *  GetParameters
- */
-//=============================================================================
-TCollection_AsciiString GEOM_Object::GetParameters() const
-{
-  return _parameters;
-}
-
-
-//=============================================================================
-/*!
  *  IsSubShape
  */
 //=============================================================================
