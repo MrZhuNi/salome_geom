@@ -33,6 +33,7 @@
 #include <TDF_Data.hxx>
 #include <TDF_ChildIterator.hxx>
 #include <TDF_Reference.hxx>
+#include <TDataStd_AsciiString.hxx>
 #include <TDataStd_Integer.hxx>
 #include <TDataStd_IntegerArray.hxx>
 #include <TDataStd_Real.hxx>
@@ -297,6 +298,52 @@ void GEOM_Function::SetDescription(const TCollection_AsciiString& theDescription
   TDF_Label aChild = _label.FindChild(DESCRIPTION_LABEL);
   Handle(TDataStd_Comment) aComment =
     TDataStd_Comment::Set(aChild, TCollection_ExtendedString(theDescription));
+}
+
+//=============================================================================
+/*!
+ *  GetArgsCount
+ */
+//=============================================================================
+int GEOM_Function::GetArgsCount()
+{
+  return _label.FindChild( ARGUMENT_LABEL ).NbChildren();
+}
+
+//=============================================================================
+/*!
+ *  SetParam
+ */
+//=============================================================================
+void GEOM_Function::SetParam( int thePosition, const TCollection_AsciiString& theParamName )
+{
+  _isDone = false;
+  if( thePosition <= 0 )
+    return;
+
+  TDF_Label anArgLabel = ARGUMENT( thePosition );
+  TDataStd_AsciiString::Set( anArgLabel, theParamName );
+  _isDone = true;
+}
+
+//=============================================================================
+/*!
+ *  GetParam
+ */
+//=============================================================================
+TCollection_AsciiString GEOM_Function::GetParam(int thePosition)
+{
+  _isDone = false;
+  if( thePosition <= 0 )
+    return 0.0;
+
+  Handle( TDataStd_AsciiString ) aParam;
+  TDF_Label anArgLabel = ARGUMENT( thePosition );
+  if( !anArgLabel.FindAttribute( TDataStd_AsciiString::GetID(), aParam ) )
+    return "";
+
+  _isDone = true;
+  return aParam->Get();
 }
 
 //=============================================================================

@@ -189,6 +189,15 @@ public:
 
   //Access to arguments
 
+  //Return number of function arguments
+  Standard_EXPORT int GetArgsCount();
+
+  //Sets a parameter name as argument at position thePosition
+  Standard_EXPORT void SetParam( int thePosition, const TCollection_AsciiString& theParamName );
+
+  //Returns a parameter name as argument at position thePosition
+  Standard_EXPORT TCollection_AsciiString GetParam( int thePosition );
+
   //Sets a real argument at position thePosition
   Standard_EXPORT void SetReal(int thePosition, double theValue);
 
