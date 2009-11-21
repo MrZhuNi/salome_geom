@@ -276,13 +276,13 @@ module GEOM
      *  Return true if geom object representes a shape.
      *  For example, method return false for GEOM_MARKER
      */
-     boolean IsShape();
+    boolean IsShape();
 
      /*!
-     *  Set list of parameters
-     *  \param theParameters is a sequence containing names of notebook variables used for object creation
+     *  Store dependecies of this geom object on other geom objects into notebook
+     *  \param theNotebook is the instance of notebook
      */
-    void SetParameters (in SALOME::Notebook theNotebook, in string_array theParameters);
+    void StoreDependencies(in SALOME::Notebook theNotebook);
   };
 
 
