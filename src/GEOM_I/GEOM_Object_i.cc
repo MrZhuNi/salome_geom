@@ -429,14 +429,14 @@ bool GEOM_Object_i::IsShape()
   return !_impl->GetValue().IsNull() && _impl->GetType() != GEOM_MARKER;
 }
 
-void GEOM_Object_i::SetParameters( SALOME::Notebook_ptr theNotebook, const GEOM::string_array& theParameters )
+void GEOM_Object_i::SetParameters( SALOME::Notebook_ptr theNotebook, const SALOME::StringArray& theParameters )
 {
-  printf( "set parameters\n" );
+  //printf( "set parameters\n" );
   int n = theParameters.length();
   if ( n <= 0 )
     return;
 
-  theNotebook->ClearDependencies( _this() );
+  theNotebook->ClearDependencies( _this(), SALOME::Parameters );
 
   Handle( GEOM_Function ) aFunc = _impl->GetLastFunction();
   TColStd_Array1OfAsciiString aParams( 1, n );
@@ -444,12 +444,12 @@ void GEOM_Object_i::SetParameters( SALOME::Notebook_ptr theNotebook, const GEOM:
   for( int i = 0; i < n; i++ )
   {
     aStr = CORBA::string_dup( theParameters[i] );
-    printf( "\tparam = %s\n", aStr );
-    SALOME::Parameter_ptr aParam = theNotebook->Param( aStr );
+    //printf( "\tparam = %s\n", aStr );
+    SALOME::Parameter_ptr aParam = theNotebook->GetParameter( aStr );
     TCollection_AsciiString anAsciiName;
     if( !CORBA::is_nil( aParam ) )
     {
-      printf( "add dep\n" );
+      //printf( "add dep\n" );
       theNotebook->AddDependency( _this(), aParam );
       anAsciiName = aStr;
     }
@@ -469,17 +469,17 @@ CORBA::Boolean GEOM_Object_i::IsValid()
 
 void GEOM_Object_i::Update( SALOME::Notebook_ptr theNotebook )
 {
-  printf( "GEOM_Object_i::Update:\n" );
+  //printf( "GEOM_Object_i::Update:\n" );
   Handle( GEOM_Function ) aFunc = _impl->GetLastFunction();
 
   //1. Update parameter values
   int n = aFunc->GetArgsCount();
-  printf( "args count = %i\n", n );
+  //printf( "args count = %i\n", n );
   for( int i = 1; i <= n; i++ )
   {
     TCollection_AsciiString aParamName = aFunc->GetParam( i );
-    printf( "arg = %s\n", aParamName.ToCString() );
-    SALOME::Parameter_ptr aParam = theNotebook->Param( aParamName.ToCString() );
+    //printf( "arg = %s\n", aParamName.ToCString() );
+    SALOME::Parameter_ptr aParam = theNotebook->GetParameter( aParamName.ToCString() );
     if( CORBA::is_nil( aParam ) )
       continue;
 
@@ -490,7 +490,7 @@ void GEOM_Object_i::Update( SALOME::Notebook_ptr theNotebook )
       break;
 
     case SALOME::TReal:
-      printf( "real: %i-th = %lf\n", i, aParam->AsReal() );
+      //printf( "real: %i-th = %lf\n", i, aParam->AsReal() );
       aFunc->SetReal( i, aParam->AsReal() );
       break;
 
@@ -506,4 +506,23 @@ void GEOM_Object_i::Update( SALOME::Notebook_ptr theNotebook )
   //2. Recompute object
   GEOM_Solver aSolver( GEOM_Engine::GetEngine() );
   aSolver.ComputeFunction( aFunc );
+}
+
+void GEOM_Object_i::StoreDependencies( SALOME::Notebook_ptr theNotebook )
+{
+  theNotebook->ClearDependencies( _this(), SALOME::Objects );
+
+  Handle(TColStd_HSequenceOfTransient) aDeps = _impl->GetAllDependency();
+
+  TCollection_AsciiString anEntry;
+  for( int i = 1, n = aDeps->Length(); i <= n; i++ )
+  {
+    Handle( GEOM_Object ) anObj = Handle( GEOM_Object )::DownCast( aDeps->Value( i ) );
+    if( anObj.IsNull() )
+      continue;
+
+    TDF_Tool::Entry( anObj->GetEntry(), anEntry );
+    GEOM::GEOM_Object_var obj = _engine->GetObject( anObj->GetDocID(), anEntry.ToCString() );
+    theNotebook->AddDependency( _this(), obj._retn() );
+  }
 }

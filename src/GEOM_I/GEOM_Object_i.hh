@@ -92,7 +92,9 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual bool IsShape();
 
-  virtual void SetParameters( SALOME::Notebook_ptr theNotebook, const GEOM::string_array& theParameters );
+  virtual void SetParameters( SALOME::Notebook_ptr theNotebook, const SALOME::StringArray& theParameters );
+
+  virtual void StoreDependencies( SALOME::Notebook_ptr theNotebook );
 
   virtual char* GetComponent();
 
