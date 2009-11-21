@@ -101,7 +101,11 @@ def ParseParameters(*parameters):
     Params = []
     for parameter in parameters:
         if isinstance(parameter, str):
-            Result.append(notebook.get(parameter))
+	    p = notebook.get(parameter)
+	    if p==None:
+		notebook.getNotebook().AddExpression(parameter)
+		p = notebook.get(parameter)
+            Result.append(p)
             Params.append(parameter)
         else:
             Result.append(parameter)
@@ -2304,7 +2308,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  \n @ref swig_MakeCommon "Example 2"
         def MakeFuse(self, s1, s2):
             # Example: see GEOM_TestOthers.py
-            return self.MakeBoolean(s1, s2, 3)
+            res = self.MakeBoolean(s1, s2, 3)
+            res.StoreDependencies( notebook.getNotebook() )
+            return res
 
         ## Shortcut to MakeBoolean(s1, s2, 4)
         #
