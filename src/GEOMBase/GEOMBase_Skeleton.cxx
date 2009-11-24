@@ -31,6 +31,7 @@
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_DoubleSpinBox.h>
+#include <SalomeApp_Notebook.h>
 #include <SalomeApp_Study.h>
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
@@ -55,6 +56,7 @@ GEOMBase_Skeleton::GEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* pare
   : QDialog( parent, fl ), 
     GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
     myGeomGUI( theGeometryGUI ),
+    myNoteBook( 0 ),
     myRBGroup( 0 )
 {
   setAttribute( Qt::WA_DeleteOnClose );
@@ -97,6 +99,12 @@ GEOMBase_Skeleton::~GEOMBase_Skeleton()
 {
   if ( myGeomGUI )
     myGeomGUI->SetActiveDialogBox( 0 );
+
+  if( myNoteBook )
+  {
+    delete myNoteBook;
+    myNoteBook = 0;
+  }
 }
 
 //=================================================================================
@@ -108,6 +116,10 @@ void GEOMBase_Skeleton::Init()
   SalomeApp_Application* app = (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() );
   if ( !myGeomGUI && app )
     myGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
+
+  if ( !myNoteBook && app )
+    if( SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) )
+      myNoteBook = new SalomeApp_Notebook( appStudy );
 
   /* init variables */
   if ( myGeomGUI )
@@ -173,6 +185,7 @@ void GEOMBase_Skeleton::updateAttributes( GEOM::GEOM_Object_ptr theObj,
   SALOMEDS::AttributeString_var aStringAttrib = SALOMEDS::AttributeString::_narrow(anAttr);
 
   std::string aValue = aStringAttrib->Value();
+  /* ouv: temporarily disabled
   if( aValue != "" )
     aValue += "|";
   for( int i = 0, n = theParameters.count(); i < n; i++ ) {
@@ -182,6 +195,7 @@ void GEOMBase_Skeleton::updateAttributes( GEOM::GEOM_Object_ptr theObj,
     if(i != n-1)
       aValue += ":";
   }
+  */
   aStringAttrib->SetValue(aValue.c_str());
 }
 
