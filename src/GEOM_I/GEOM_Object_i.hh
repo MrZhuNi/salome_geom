@@ -94,6 +94,8 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual void SetParameters( SALOME::Notebook_ptr theNotebook, const SALOME::StringArray& theParameters );
 
+  virtual SALOME::StringArray* GetParameters();
+
   virtual void StoreDependencies( SALOME::Notebook_ptr theNotebook );
 
   virtual char* GetComponent();
@@ -104,8 +106,8 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   Handle(GEOM_Object) GetImpl() { return _impl; }
 
- private:
-
+private:
+  std::list<std::string> _parameters;
   GEOM::GEOM_Gen_var _engine;
   Handle(GEOM_Object) _impl;
   TopoDS_Shape _geom;

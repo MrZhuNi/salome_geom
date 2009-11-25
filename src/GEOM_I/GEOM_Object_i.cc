@@ -431,30 +431,33 @@ bool GEOM_Object_i::IsShape()
 
 void GEOM_Object_i::SetParameters( SALOME::Notebook_ptr theNotebook, const SALOME::StringArray& theParameters )
 {
-  //printf( "set parameters\n" );
-  int n = theParameters.length();
-  if ( n <= 0 )
-    return;
-
   theNotebook->ClearDependencies( _this(), SALOME::Parameters );
+  _parameters.clear();
 
+  int n = theParameters.length();
   Handle( GEOM_Function ) aFunc = _impl->GetLastFunction();
-  TColStd_Array1OfAsciiString aParams( 1, n );
-  char* aStr;
   for( int i = 0; i < n; i++ )
   {
-    aStr = CORBA::string_dup( theParameters[i] );
-    //printf( "\tparam = %s\n", aStr );
-    SALOME::Parameter_ptr aParam = theNotebook->GetParameter( aStr );
-    TCollection_AsciiString anAsciiName;
-    if( !CORBA::is_nil( aParam ) )
-    {
-      //printf( "add dep\n" );
-      theNotebook->AddDependency( _this(), aParam );
-      anAsciiName = aStr;
-    }
-    aFunc->SetParam( i+1, anAsciiName );
+    std::string aParam = CORBA::string_dup( theParameters[i] );
+    SALOME::Parameter_ptr aParamPtr = theNotebook->GetParameter( aParam.c_str() );
+    if( !CORBA::is_nil( aParamPtr ) )
+      theNotebook->AddDependency( _this(), aParamPtr );
+
+    aFunc->SetParam( i+1, TCollection_AsciiString( aParam.c_str() ) );
+    _parameters.push_back( aParam );
   }
+}
+
+SALOME::StringArray* GEOM_Object_i::GetParameters()
+{
+  SALOME::StringArray_var aParams = new SALOME::StringArray();
+
+  aParams->length( _parameters.size() );
+  std::list<std::string>::const_iterator it = _parameters.begin(), last = _parameters.end();
+  for( int i=0; it!=last; it++, i++ )
+    aParams[i] = CORBA::string_dup( it->c_str() );
+
+  return aParams._retn();
 }
 
 char* GEOM_Object_i::GetComponent()
