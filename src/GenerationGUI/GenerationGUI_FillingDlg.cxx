@@ -32,6 +32,7 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 #include <TopoDS_Iterator.hxx>
@@ -361,15 +362,12 @@ bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
   if ( !anObj->_is_nil() )
   {
     if ( !IsPreview() )
-    {
-      QStringList aParameters;
-      aParameters << GroupPoints->SpinBox1->text();
-      aParameters << GroupPoints->SpinBox2->text();
-      aParameters << GroupPoints->SpinBox3->text();
-      aParameters << GroupPoints->SpinBox4->text();
-      aParameters << GroupPoints->SpinBox5->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
+      myNoteBook->setParameters(anObj, 5,
+                                GroupPoints->SpinBox1,
+                                GroupPoints->SpinBox2,
+                                GroupPoints->SpinBox3,
+                                GroupPoints->SpinBox4,
+                                GroupPoints->SpinBox5);
     objects.push_back( anObj._retn() );
   }
 

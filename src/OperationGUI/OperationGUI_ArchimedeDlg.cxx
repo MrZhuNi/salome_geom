@@ -33,6 +33,7 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 //=================================================================================
@@ -274,13 +275,10 @@ bool OperationGUI_ArchimedeDlg::execute( ObjectList& objects )
   if ( !anObj->_is_nil() )
   {
     if ( !IsPreview() )
-    {
-      QStringList aParameters;
-      aParameters << GroupPoints->SpinBox_DX->text();
-      aParameters << GroupPoints->SpinBox_DY->text();
-      aParameters << GroupPoints->SpinBox_DZ->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
+      myNoteBook->setParameters(anObj, 3,
+                                GroupPoints->SpinBox_DX,
+                                GroupPoints->SpinBox_DY,
+                                GroupPoints->SpinBox_DZ);
     objects.push_back( anObj._retn() );
   }
 

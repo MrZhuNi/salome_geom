@@ -32,6 +32,7 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 #include <TopoDS_Shape.hxx>
@@ -490,7 +491,6 @@ bool PrimitiveGUI_FaceDlg::isValid( QString& msg )
 bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
 {
   bool res = false;
-  QStringList aParameters;
   GEOM::GEOM_Object_var anObj;
 
   GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
@@ -500,11 +500,7 @@ bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
     anObj = anOper->MakeFaceHW(GroupDimensions->SpinBox_DX->value(),
 			       GroupDimensions->SpinBox_DY->value(), myOrientationType);
     if (!anObj->_is_nil() && !IsPreview())
-    {
-      aParameters << GroupDimensions->SpinBox_DX->text();
-      aParameters << GroupDimensions->SpinBox_DY->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
+      myNoteBook->setParameters(anObj, 2, GroupDimensions->SpinBox_DX, GroupDimensions->SpinBox_DY);
     res = true;
     break;
   case 1:
@@ -512,11 +508,7 @@ bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
       anOper->MakeFaceObjHW(myEdge, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value()) : 
       anOper->MakeFaceObjHW(myFace, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value());
     if (!anObj->_is_nil() && !IsPreview())
-    {
-      aParameters << GroupPlane->SpinBox_DX->text();
-      aParameters << GroupPlane->SpinBox_DY->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
+      myNoteBook->setParameters(anObj, 2, GroupPlane->SpinBox_DX, GroupPlane->SpinBox_DY);
     res = true;
     break;
   }

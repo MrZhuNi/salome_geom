@@ -32,6 +32,7 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 // OCCT Includes
@@ -468,24 +469,14 @@ bool PrimitiveGUI_CylinderDlg::execute (ObjectList& objects)
     if (!CORBA::is_nil(myPoint) && !CORBA::is_nil(myDir)) {
       anObj = anOper->MakeCylinderPntVecRH(myPoint, myDir, getRadius(), getHeight());
       if (!anObj->_is_nil() && !IsPreview())
-      {
-	QStringList aParameters;
-	aParameters << GroupPoints->SpinBox_DX->text();
-	aParameters << GroupPoints->SpinBox_DY->text();
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-      }
+        myNoteBook->setParameters(anObj, 2, GroupPoints->SpinBox_DX, GroupPoints->SpinBox_DY);
       res = true;
     }
     break;
   case 1:
     anObj = anOper->MakeCylinderRH(getRadius(), getHeight());
     if (!anObj->_is_nil() && !IsPreview())
-    {
-      QStringList aParameters;
-      aParameters << GroupDimensions->SpinBox_DX->text();
-      aParameters << GroupDimensions->SpinBox_DY->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
+      myNoteBook->setParameters(anObj, 2, GroupDimensions->SpinBox_DX, GroupDimensions->SpinBox_DY);
     res = true;
     break;
   }

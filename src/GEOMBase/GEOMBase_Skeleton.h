@@ -32,7 +32,6 @@
 #include <QDialog>
 
 class SalomeApp_DoubleSpinBox;
-class SalomeApp_Notebook;
 class GeometryGUI;
 class DlgRef_Skeleton;
 class QSpinBox;
@@ -102,8 +101,6 @@ protected:
     
     QButtonGroup*       myRBGroup;             //!< radio button group
     DlgRef_Skeleton*    myMainFrame;           //!< dialog box's mainframe widgetx
-
-    SalomeApp_Notebook* myNoteBook;
 
 protected slots:
     virtual void        ClickOnCancel();

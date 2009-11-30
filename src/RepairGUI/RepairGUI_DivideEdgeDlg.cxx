@@ -31,6 +31,7 @@
 #include <QtxDoubleSpinBox.h>
 
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -368,13 +369,7 @@ bool RepairGUI_DivideEdgeDlg::execute( ObjectList& objects )
   if ( aResult )
   {
     if ( !IsPreview() )
-    {
-      QStringList aParameters;
-      aParameters << "";
-      aParameters << myValEdt->text();
-      aParameters << "";
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
+      myNoteBook->setParameters(anObj, 1, myValEdt);
     objects.push_back( anObj._retn() );
   }
 

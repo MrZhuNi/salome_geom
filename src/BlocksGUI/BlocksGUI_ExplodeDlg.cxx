@@ -36,6 +36,7 @@
 #include <SUIT_ViewManager.h>
 #include <SUIT_MessageBox.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 #include <OCCViewer_ViewModel.h>
 #include <SALOME_ListIteratorOfListIO.hxx>
@@ -426,10 +427,6 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
     return objects.size() > 0;
   }
 
-  QStringList aParameters;
-  aParameters << myGrp1->SpinBox1->text();
-  aParameters << myGrp1->SpinBox2->text();
-
   // Throw away sub-shapes not selected by user if not in preview mode
   // and manual selection is active
   if ( !isAllSubShapes() ) {
@@ -453,7 +450,7 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
       if ( selected.contains( QString( objStr.in() ) ) )
       {
 	if ( !IsPreview() )
-          (*anIter)->SetParameters(aParameters.join(":").toLatin1().constData());
+          myNoteBook->setParameters((*anIter), 2, myGrp1->SpinBox1, myGrp1->SpinBox2);
         objects.push_back( *anIter );
       }
       else
@@ -473,7 +470,7 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
     {
       GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_duplicate( aList[i] );
       if ( !IsPreview() )
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+        myNoteBook->setParameters(anObj, 2, myGrp1->SpinBox1, myGrp1->SpinBox2);
       objects.push_back( anObj._retn() );
     }
   }

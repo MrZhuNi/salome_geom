@@ -33,6 +33,7 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 #include <TColStd_IndexedMapOfInteger.hxx>
@@ -455,17 +456,13 @@ bool BasicGUI_EllipseDlg::execute( ObjectList& objects )
   double aMajorR = GroupPoints->SpinBox_DX->value();
   double aMinorR = GroupPoints->SpinBox_DY->value();
 
-  QStringList aParameters;
-  aParameters<<GroupPoints->SpinBox_DX->text();
-  aParameters<<GroupPoints->SpinBox_DY->text();
-  
   GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() );
   GEOM::GEOM_Object_var anObj = myMajor->_is_nil() ? 
     anOper->MakeEllipse   ( myPoint, myDir, aMajorR, aMinorR )         :
     anOper->MakeEllipseVec( myPoint, myDir, aMajorR, aMinorR, myMajor );
   if ( !anObj->_is_nil() ) {
     if ( !IsPreview() )
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      myNoteBook->setParameters(anObj, 2, GroupPoints->SpinBox_DX, GroupPoints->SpinBox_DY);
     objects.push_back( anObj._retn() );
   }
   return true;

@@ -38,6 +38,7 @@
 #include <SUIT_MessageBox.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
@@ -1489,7 +1490,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     if( !IsPreview() ) {
       QStringList aCurrentParameters = myParameters;
       aCurrentParameters << aParameters;
-      anObj->SetParameters(aCurrentParameters.join(":").toLatin1().constData());
+      myNoteBook->setParameters(anObj, aCurrentParameters);
     }
 
     objects.push_back( anObj._retn() );

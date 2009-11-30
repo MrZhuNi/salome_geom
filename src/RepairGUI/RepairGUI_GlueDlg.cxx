@@ -31,6 +31,7 @@
 #include <QtxDoubleSpinBox.h>
 
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Tools.h>
@@ -415,10 +416,7 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
       aResult = !anObj->_is_nil();
       if ( aResult && !IsPreview() )
       {
-	QStringList aParameters;
-	aParameters << myTolEdt->text();
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-
+        myNoteBook->setParameters(anObj, 1, myTolEdt);
         objects.push_back( anObj._retn() );
       }
       break;
@@ -468,11 +466,7 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
       if ( aResult )
       {
 	if ( !IsPreview() )
-	{
-	  QStringList aParameters;
-	  aParameters << myTolEdt2->text();
-          anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-	}
+          myNoteBook->setParameters(anObj, 1, myTolEdt2);
         objects.push_back( anObj._retn() );
       }
 

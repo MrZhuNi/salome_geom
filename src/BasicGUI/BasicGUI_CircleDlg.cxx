@@ -33,6 +33,7 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 #include <TColStd_IndexedMapOfInteger.hxx>
@@ -648,11 +649,9 @@ bool BasicGUI_CircleDlg::execute( ObjectList& objects )
   switch ( getConstructorId() ) {
   case 0 :
     {
-      QStringList aParameters;
-      aParameters << GroupPntVecR->SpinBox_DX->text();
       anObj = anOper->MakeCirclePntVecR( myPoint, myDir, getRadius() );
       if ( !anObj->_is_nil() && !IsPreview() )
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+        myNoteBook->setParameters(anObj, 1, GroupPntVecR->SpinBox_DX);
       res = true;
       break;
     }

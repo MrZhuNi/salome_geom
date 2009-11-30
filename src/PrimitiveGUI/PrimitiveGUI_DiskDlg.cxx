@@ -32,6 +32,7 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 // OCCT Includes
@@ -568,7 +569,6 @@ bool PrimitiveGUI_DiskDlg::isValid (QString& msg)
 bool PrimitiveGUI_DiskDlg::execute (ObjectList& objects)
 {
   bool res = false;
-  QStringList aParameters;
 
   GEOM::GEOM_Object_var anObj;
 
@@ -578,19 +578,13 @@ bool PrimitiveGUI_DiskDlg::execute (ObjectList& objects)
   case 0:
     anObj = anOper->MakeDiskR(getRadius(), myOrientationType);
     if (!anObj->_is_nil() && !IsPreview())
-    {
-      aParameters << GroupDimensions->SpinBox_DX->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
+      myNoteBook->setParameters(anObj, 1, GroupDimensions->SpinBox_DX);
     res = true;
     break;
   case 1:
     anObj = anOper->MakeDiskPntVecR(myPoint, myDir, getRadius());
     if (!anObj->_is_nil() && !IsPreview())
-    {
-      aParameters << GroupPntVecR->SpinBox_DX->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
+      myNoteBook->setParameters(anObj, 1, GroupPntVecR->SpinBox_DX);
     res = true;
     break;
   case 2:

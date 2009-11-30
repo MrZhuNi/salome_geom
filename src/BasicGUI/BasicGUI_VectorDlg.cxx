@@ -32,6 +32,7 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 #include <TopoDS_Shape.hxx>
@@ -491,14 +492,13 @@ bool BasicGUI_VectorDlg::execute( ObjectList& objects )
       double dy = GroupDimensions->SpinBox_DY->value();
       double dz = GroupDimensions->SpinBox_DZ->value();
       
-      QStringList aParameters;
-      aParameters << GroupDimensions->SpinBox_DX->text();
-      aParameters << GroupDimensions->SpinBox_DY->text();
-      aParameters << GroupDimensions->SpinBox_DZ->text();
       anObj = anOper->MakeVectorDXDYDZ( dx, dy, dz );
 
       if ( !anObj->_is_nil() && !IsPreview() )
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+        myNoteBook->setParameters(anObj, 3,
+                                  GroupDimensions->SpinBox_DX,
+                                  GroupDimensions->SpinBox_DY,
+                                  GroupDimensions->SpinBox_DZ);
       
       res = true;
       break;

@@ -32,6 +32,7 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 // OCCT Includes
@@ -702,7 +703,7 @@ bool TransformationGUI_MultiTranslationDlg::execute (ObjectList& objects)
 
   if (!anObj->_is_nil()) {
     if(!IsPreview())
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      myNoteBook->setParameters(anObj, aParameters);
     objects.push_back(anObj._retn());
   }
 

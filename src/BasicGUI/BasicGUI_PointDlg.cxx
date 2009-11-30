@@ -28,6 +28,7 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 #include <GeometryGUI.h>
@@ -868,11 +869,11 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
   }
   
   const int id = getConstructorId();
-  if(!anObj->_is_nil() && !IsPreview() && (id ==  GEOM_POINT_XYZ || 
+  if(!anObj->_is_nil() && !IsPreview() && (id == GEOM_POINT_XYZ || 
 					   id == GEOM_POINT_REF ||
 					   id == GEOM_POINT_EDGE ||
 					   id == GEOM_POINT_SURF) ) {
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+    myNoteBook->setParameters(anObj, aParameters);
   }
   
 

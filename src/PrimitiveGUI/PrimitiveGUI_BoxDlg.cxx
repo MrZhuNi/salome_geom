@@ -32,6 +32,7 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 // OCCT Includes
@@ -467,13 +468,10 @@ bool PrimitiveGUI_BoxDlg::execute (ObjectList& objects)
 
       anObj = anOper->MakeBoxDXDYDZ(x, y, z);
       if (!anObj->_is_nil() && !IsPreview())
-      {
-	QStringList aParameters;
-	aParameters << GroupDimensions->SpinBox_DX->text();
-	aParameters << GroupDimensions->SpinBox_DY->text();
-	aParameters << GroupDimensions->SpinBox_DZ->text();
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-      }
+        myNoteBook->setParameters(anObj, 3,
+                                  GroupDimensions->SpinBox_DX,
+                                  GroupDimensions->SpinBox_DY,
+                                  GroupDimensions->SpinBox_DZ);
       res = true;
     }
     break;

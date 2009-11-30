@@ -33,6 +33,7 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 // OCCT Includes
@@ -502,7 +503,7 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
           anObj = anOper->ScaleShapeCopy(myObjects[i], myPoint, SpinBox_FX->value());
           if (!anObj->_is_nil()) {
             if(!IsPreview()) 
-              anObj->SetParameters(SpinBox_FX->text().toLatin1().constData());
+              myNoteBook->setParameters(anObj, 1, SpinBox_FX);
             objects.push_back(anObj._retn());
           }
         }
@@ -528,11 +529,7 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
 						  SpinBox_FY->value(), SpinBox_FZ->value());
           if (!anObj->_is_nil())
             if(!IsPreview()) {
-              QStringList aParameters;
-              aParameters<<SpinBox_FX->text();
-              aParameters<<SpinBox_FY->text();
-              aParameters<<SpinBox_FZ->text();
-              anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+              myNoteBook->setParameters(anObj, 3, SpinBox_FX, SpinBox_FY, SpinBox_FZ);
             }
             objects.push_back(anObj._retn());
         }

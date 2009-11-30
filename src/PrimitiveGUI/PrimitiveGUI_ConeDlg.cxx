@@ -32,6 +32,7 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 // OCCT Includes
@@ -477,26 +478,20 @@ bool PrimitiveGUI_ConeDlg::execute (ObjectList& objects)
     if (!CORBA::is_nil(myPoint) && !CORBA::is_nil(myDir)) {
       anObj = anOper->MakeConePntVecR1R2H(myPoint, myDir, getRadius1(), getRadius2(), getHeight());
       if (!anObj->_is_nil() && !IsPreview())
-      {
-	QStringList aParameters;
-	aParameters << GroupPoints->SpinBox_DX->text();
-	aParameters << GroupPoints->SpinBox_DY->text();
-	aParameters << GroupPoints->SpinBox_DZ->text();
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-      }
+        myNoteBook->setParameters(anObj, 3,
+                                  GroupPoints->SpinBox_DX,
+                                  GroupPoints->SpinBox_DY,
+                                  GroupPoints->SpinBox_DZ);
       res = true;
     }
     break;
   case 1:
     anObj = anOper->MakeConeR1R2H(getRadius1(), getRadius2(), getHeight());
     if (!anObj->_is_nil() && !IsPreview())
-    {
-      QStringList aParameters;
-      aParameters << GroupDimensions->SpinBox_DX->text();
-      aParameters << GroupDimensions->SpinBox_DY->text();
-      aParameters << GroupDimensions->SpinBox_DZ->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
+      myNoteBook->setParameters(anObj, 3,
+                                GroupDimensions->SpinBox_DX,
+                                GroupDimensions->SpinBox_DY,
+                                GroupDimensions->SpinBox_DZ);
     res = true;
     break;
   }

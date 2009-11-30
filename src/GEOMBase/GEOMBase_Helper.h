@@ -40,6 +40,7 @@
 
 typedef std::list<GEOM::GEOM_Object_ptr> ObjectList;
 
+class SalomeApp_Notebook;
 class SalomeApp_Study;
 class SUIT_Desktop;
 class SUIT_ViewWindow;
@@ -173,6 +174,10 @@ protected:
 
   GEOM_Displayer*             getDisplayer();
   SUIT_Desktop*               getDesktop() const;
+
+protected:
+  // To do: make this field private and add method getNoteBook()
+  SalomeApp_Notebook*         myNoteBook;
 
 private:
   char* getEntry              ( GEOM::GEOM_Object_ptr ) const;

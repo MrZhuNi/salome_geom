@@ -36,6 +36,7 @@
 #include <SUIT_ViewWindow.h>
 #include <SUIT_ViewManager.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 #include <OCCViewer_ViewModel.h>
 
@@ -898,7 +899,7 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
   if (!anObj->_is_nil())
   {
     if (!IsPreview())
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      myNoteBook->setParameters(anObj, aParameters);
     objects.push_back(anObj._retn());
   }
 

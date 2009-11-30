@@ -32,6 +32,7 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 // OCCT Includes
@@ -650,7 +651,6 @@ bool GenerationGUI_PrismDlg::isValid (QString& msg)
 //=================================================================================
 bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
 {
-  QStringList aParameters;
   GEOM::GEOM_Object_var anObj;
 
   GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
@@ -665,10 +665,7 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
     }
 
     if (!anObj->_is_nil() && !IsPreview())
-    {
-      aParameters << GroupPoints->SpinBox_DX->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
+      myNoteBook->setParameters(anObj, 1, GroupPoints->SpinBox_DX );
 
     break;
   case 1:
@@ -692,12 +689,10 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
     }
 
     if (!anObj->_is_nil() && !IsPreview())
-    {
-      aParameters << GroupPoints3->SpinBox_DX->text();
-      aParameters << GroupPoints3->SpinBox_DY->text();
-      aParameters << GroupPoints3->SpinBox_DZ->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
+      myNoteBook->setParameters(anObj, 3,
+                                GroupPoints3->SpinBox_DX,
+                                GroupPoints3->SpinBox_DY,
+                                GroupPoints3->SpinBox_DZ);
 
     break;
   }

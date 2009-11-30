@@ -33,6 +33,7 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 #include <TColStd_MapOfInteger.hxx>
@@ -712,7 +713,7 @@ double BasicGUI_PlaneDlg::getSize() const
 }
 
 //=================================================================================
-// function : getSize()
+// function : getSizeAsString()
 // purpose  :
 //=================================================================================
 QString BasicGUI_PlaneDlg::getSizeAsString() const
@@ -722,6 +723,7 @@ QString BasicGUI_PlaneDlg::getSizeAsString() const
   case 1 : return Group3Pnts->SpinBox_DX->text();
   case 2 : return GroupFace->SpinBox_DX->text();
   case 3 : return Group2Vec->SpinBox_DX->text();
+  case 4 : return GroupLCS->SpinBox_DX->text();
   }
   return QString();
 }
@@ -815,7 +817,7 @@ bool BasicGUI_PlaneDlg::execute( ObjectList& objects )
   
   if ( !anObj->_is_nil() ) {
     if ( !IsPreview() )
-      anObj->SetParameters(getSizeAsString().toLatin1().constData());
+      myNoteBook->setParameters(anObj, QStringList(getSizeAsString()));
     objects.push_back( anObj._retn() );
   }
   return res;

@@ -32,6 +32,7 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 #include <QLabel>
@@ -730,20 +731,18 @@ bool BasicGUI_MarkerDlg::execute( ObjectList& objects )
 						    myData[ DX2 ]->value(),
 						    myData[ DY2 ]->value(),
 						    myData[ DZ2 ]->value() );
-  QStringList aParameters;
-  aParameters<<myData[X]->text();
-  aParameters<<myData[Y]->text();
-  aParameters<<myData[Z]->text();
-  aParameters<<myData[ DX1 ]->text(); 
-  aParameters<<myData[ DY1 ]->text(); 
-  aParameters<<myData[ DZ1 ]->text();
-  aParameters<<myData[ DX2 ]->text();
-  aParameters<<myData[ DY2 ]->text();
-  aParameters<<myData[ DZ2 ]->text();
-  
   if ( !anObj->_is_nil() ) {
     if ( !IsPreview() )
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      myNoteBook->setParameters(anObj, 9,
+                                myData[ X ],
+                                myData[ Y ],
+                                myData[ Z ],
+                                myData[ DX1 ],
+                                myData[ DY1 ],
+                                myData[ DZ1 ],
+                                myData[ DX2 ],
+                                myData[ DY2 ],
+                                myData[ DZ2 ]);
     objects.push_back( anObj._retn() );
   }
 

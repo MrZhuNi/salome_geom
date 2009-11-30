@@ -35,6 +35,7 @@
 #include <SUIT_ViewWindow.h>
 #include <SUIT_ViewManager.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 #include <OCCViewer_ViewModel.h>
 
@@ -584,12 +585,7 @@ bool BlocksGUI_TrsfDlg::execute (ObjectList& objects)
 					      myFaces[Face1], myFaces[Face2],
 					      mySpinBox[SpinBox1]->value());
     if (!anObj->_is_nil() && !IsPreview())
-    {
-      QStringList aParameters;
-      aParameters << "" << "";
-      aParameters << mySpinBox[SpinBox1]->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
+      myNoteBook->setParameters(anObj, 1, mySpinBox[SpinBox1]);
     res = true;
     break;
   case 1:
@@ -599,14 +595,7 @@ bool BlocksGUI_TrsfDlg::execute (ObjectList& objects)
 					       myFaces[Face1V], myFaces[Face2V],
 					       mySpinBox[SpinBox2V]->value());
     if (!anObj->_is_nil() && !IsPreview())
-    {
-      QStringList aParameters;
-      aParameters << "" << "";
-      aParameters << mySpinBox[SpinBox2U]->text();
-      aParameters << "" << "";
-      aParameters << mySpinBox[SpinBox2V]->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
+      myNoteBook->setParameters(anObj, 2, mySpinBox[SpinBox2U], mySpinBox[SpinBox2V]);
     res = true;
     break;
   default:

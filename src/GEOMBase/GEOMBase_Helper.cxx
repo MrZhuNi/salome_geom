@@ -40,6 +40,7 @@
 #include <SalomeApp_Module.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 #include <LightApp_DataOwner.h>
 #include <SalomeApp_Tools.h>
@@ -84,8 +85,11 @@ GEOM::GEOM_Gen_ptr GEOMBase_Helper::getGeomEngine()
 // Purpose  :
 //================================================================
 GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop )
-  : myDesktop( desktop ), myViewWindow( 0 ), myDisplayer( 0 ), myCommand( 0 ), isPreview( false )
+  : myDesktop( desktop ), myViewWindow( 0 ), myDisplayer( 0 ), myCommand( 0 ), myNoteBook( 0 ), isPreview( false )
 {
+  if( SalomeApp_Application* app = (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )
+    if( SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) )
+      myNoteBook = new SalomeApp_Notebook( appStudy );
 }
 
 //================================================================
@@ -112,6 +116,12 @@ GEOMBase_Helper::~GEOMBase_Helper()
     delete myDisplayer;
   if ( !CORBA::is_nil( myOperation ) )
     myOperation->Destroy();
+
+  if( myNoteBook )
+  {
+    delete myNoteBook;
+    myNoteBook = 0;
+  }
 }
 
 //================================================================

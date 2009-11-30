@@ -34,6 +34,7 @@
 #include <SalomeApp_Application.h>
 #include <SalomeApp_DoubleSpinBox.h>
 #include <SalomeApp_IntSpinBox.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -638,7 +639,7 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
 	  aParameters << QString( aParams[i] );
 
 	aParameters << getTexts( aParams );
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+        myNoteBook->setParameters(anObj, aParameters);
       }
       objects.push_back( anObj._retn() );
     }

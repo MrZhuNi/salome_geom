@@ -32,6 +32,7 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 #include <TopoDS_Shape.hxx>
@@ -404,11 +405,7 @@ bool PrimitiveGUI_SphereDlg::execute( ObjectList& objects )
       if ( !CORBA::is_nil( myPoint ) ) {
 	anObj = anOper->MakeSpherePntR( myPoint, getRadius() );
 	if (!anObj->_is_nil() && !IsPreview())
-        {
-	  QStringList aParameters;
-	  aParameters << GroupPoints->SpinBox_DX->text();
-          anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-	}
+          myNoteBook->setParameters(anObj, 1, GroupPoints->SpinBox_DX);
 	res = true;
       }
       break;
@@ -417,11 +414,7 @@ bool PrimitiveGUI_SphereDlg::execute( ObjectList& objects )
     {
       anObj = anOper->MakeSphereR( getRadius() );
       if (!anObj->_is_nil() && !IsPreview())
-      {
-	QStringList aParameters;
-	aParameters << GroupDimensions->SpinBox_DX->text();
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-      }
+        myNoteBook->setParameters(anObj, 1, GroupDimensions->SpinBox_DX);
       res = true;
       break;
     }

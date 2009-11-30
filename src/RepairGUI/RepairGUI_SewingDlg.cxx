@@ -31,6 +31,7 @@
 #include <QtxDoubleSpinBox.h>
 
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 #include <SUIT_Session.h>
 #include <SUIT_MessageBox.h>
@@ -303,11 +304,7 @@ bool RepairGUI_SewingDlg::execute( ObjectList& objects )
     if ( aResult )
     {
       if ( !IsPreview() )
-      {
-	QStringList aParameters;
-	aParameters << myTolEdt->text();
-        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-      }
+        myNoteBook->setParameters(anObj, 1, myTolEdt);
       objects.push_back( anObj._retn() );
     }
   }

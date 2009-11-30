@@ -551,7 +551,7 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
           anObj = anOper->RotateCopy(myObjects[i], myAxis, GetAngle() * PI180);
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
-              anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+              //anObj->SetParameters(aParameters.join(":").toLatin1().constData());
             }
             objects.push_back(anObj._retn());
           }
@@ -563,7 +563,7 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
           anObj = anOper->Rotate(myObjects[i], myAxis, GetAngle() * PI180);
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
-              anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+              //anObj->SetParameters(aParameters.join(":").toLatin1().constData());
 	      updateAttributes(anObj, aParameters);
 	    }
             objects.push_back(anObj._retn());
