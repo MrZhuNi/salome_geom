@@ -1815,6 +1815,19 @@ char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
   return ret;
 }
 
+//=================================================================================
+// function : GetNotebook()
+// purpose  : Returns a pointer to SALOME Notebook object by an id of the study
+//=================================================================================
+SALOME::Notebook_ptr GEOM_Gen_i::GetNotebook( CORBA::Long theStudyID )
+{
+  CORBA::Object_var aSMObject = name_service->Resolve( "/myStudyManager" );
+  SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow( aSMObject );
+  SALOMEDS::Study_var aStudy = aStudyManager->GetStudyByID( theStudyID );
+  SALOME::Notebook_var aNotebook = aStudy->GetNotebook();
+  return aNotebook._retn();
+}
+
 //=====================================================================================
 // EXPORTED METHODS
 //=====================================================================================

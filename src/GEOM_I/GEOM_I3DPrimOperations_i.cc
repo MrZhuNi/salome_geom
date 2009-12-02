@@ -71,7 +71,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeBoxDXDYDZ (CORBA::Double the
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
-  return GetObject(anObject);
+  return GetObject(anObject, false);
 }
 
 //=============================================================================
@@ -122,7 +122,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFaceHW (CORBA::Double theH,
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
-  return GetObject(anObject);
+  return GetObject(anObject, false);
 }
 
 //=============================================================================
@@ -234,7 +234,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDiskR (CORBA::Double theR,
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
-  return GetObject(anObject);
+  return GetObject(anObject, false);
 }
 
 //=============================================================================
@@ -255,7 +255,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderRH (CORBA::Double th
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
-  return GetObject(anObject);
+  return GetObject(anObject, false);
 }
 
 //=============================================================================
@@ -305,7 +305,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeConeR1R2H (CORBA::Double the
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
-  return GetObject(anObject);
+  return GetObject(anObject, false);
 }
 
 //=============================================================================
@@ -354,7 +354,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeSphereR (CORBA::Double theR)
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
-  return GetObject(anObject);
+  return GetObject(anObject, false);
 }
 
 //=============================================================================
@@ -403,7 +403,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeTorusRR
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
-  return GetObject(anObject);
+  return GetObject(anObject, false);
 }
 
 //=============================================================================

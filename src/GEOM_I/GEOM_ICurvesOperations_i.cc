@@ -447,7 +447,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return GEOM::GEOM_Object::_nil();
 
-  return GetObject(anObject);
+  return GetObject(anObject, false);
 }
 
 //=============================================================================
@@ -473,7 +473,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::Make3DSketcher
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return GEOM::GEOM_Object::_nil();
 
-  return GetObject(anObject);
+  return GetObject(anObject, false);
 }
 
 //=============================================================================

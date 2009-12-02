@@ -129,14 +129,21 @@ void GEOM_IOperations_i::AbortOperation()
  *  GetObject
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(Handle(GEOM_Object) theObject)
+GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(Handle(GEOM_Object) theObject,
+                                                    bool theIsDependent)
 {
   GEOM::GEOM_Object_var GO;
   if (theObject.IsNull()) return GO._retn();
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
   GO = _engine->GetObject(theObject->GetDocID(), anEntry.ToCString());
-  return GO._retn();
+  GEOM::GEOM_Object_ptr aResult = GO._retn();
+  if (theIsDependent && !CORBA::is_nil(aResult)) {
+    SALOME::Notebook_ptr aNotebook = _engine->GetNotebook(aResult->GetStudyID());
+    if (!CORBA::is_nil(aNotebook))
+      aResult->StoreDependencies(aNotebook);
+  }
+  return aResult;
 }
 
 //=============================================================================

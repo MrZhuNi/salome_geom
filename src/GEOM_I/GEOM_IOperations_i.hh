@@ -46,7 +46,7 @@ class GEOM_I_EXPORT GEOM_IOperations_i : public virtual POA_GEOM::GEOM_IOperatio
 
   virtual CORBA::Long GetStudyID();    
 
-  virtual GEOM::GEOM_Object_ptr GetObject(Handle(GEOM_Object) theObject);
+  virtual GEOM::GEOM_Object_ptr GetObject(Handle(GEOM_Object) theObject, bool theIsDependent = true);
   virtual Handle(GEOM_Object) GetObjectImpl(GEOM::GEOM_Object_ptr theObject);
 
   virtual void StartOperation();
