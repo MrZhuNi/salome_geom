@@ -381,19 +381,19 @@ GEOM::GEOM_IOperations_ptr RepairGUI_GlueDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool RepairGUI_GlueDlg::isValid( QString& msg )
+bool RepairGUI_GlueDlg::isValid( QString& msg, QStringList& absentParams )
 {
   bool ok = true;
   double v = 0;
   switch ( getConstructorId() )
   {
   case 0:
+    ok = myTolEdt->isValid( msg, absentParams, !IsPreview() );
     v = myTolEdt->value();
-    ok = myTolEdt->isValid( msg, !IsPreview() );
     break;
   case 1:
+    ok = myTolEdt2->isValid( msg, absentParams, !IsPreview() );
     v = myTolEdt2->value(); 
-    ok = myTolEdt2->isValid( msg, !IsPreview() );
     break;
   }
   return !myObject->_is_nil() && ( IsPreview() || v > 0. ) && ok;
@@ -552,11 +552,8 @@ bool RepairGUI_GlueDlg::onAcceptLocal()
     return false;
   }
 
-  QString msg;
-  if ( !isValid( msg ) ) {
-    showError( msg );
+  if( !checkIsValid() )
     return false;
-  }
 
   erasePreview( false );
 
@@ -630,11 +627,8 @@ bool RepairGUI_GlueDlg::onAcceptLocal()
 void RepairGUI_GlueDlg::onDetect()
 {
   clearTemporary();
-  QString msg;
-  if ( !isValid( msg ) ) {
-    showError( msg );
+  if( !checkIsValid( false ) )
     return;
-  }
 
   buttonOk()->setEnabled( false );
   buttonApply()->setEnabled( false );
@@ -646,6 +640,7 @@ void RepairGUI_GlueDlg::onDetect()
   for ( int i = 0, n = aList->length(); i < n; i++ ) 
     myTmpObjs.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
   
+  QString msg;
   if ( myTmpObjs.size() > 0  ) {
     msg = tr( "FACES_FOR_GLUING_ARE_DETECTED" ).arg( myTmpObjs.size() );
     mySubShapesChk->setChecked( true );

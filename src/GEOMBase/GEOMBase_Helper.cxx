@@ -87,7 +87,7 @@ GEOM::GEOM_Gen_ptr GEOMBase_Helper::getGeomEngine()
 GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop )
   : myDesktop( desktop ), myViewWindow( 0 ), myDisplayer( 0 ), myCommand( 0 ), myNoteBook( 0 ), isPreview( false )
 {
-  if( SalomeApp_Application* app = (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )
+  if( SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() ) )
     if( SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) )
       myNoteBook = new SalomeApp_Notebook( appStudy );
 }
@@ -262,7 +262,9 @@ void GEOMBase_Helper::displayPreview( const bool   activate,
 {
   isPreview = true;
   QString msg;
-  if ( !isValid( msg ) )
+  QStringList absentParams;
+  // only one prototype of isValid() methods called below will be actually processed
+  if ( !isValid( msg ) || !isValid( msg, absentParams ) )
   {
     erasePreview( update );
     isPreview = false;
@@ -803,11 +805,8 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
     return false;
   }
 
-  QString msg;
-  if ( !isValid( msg ) ) {
-    showError( msg );
+  if( !checkIsValid() )
     return false;
-  }
 
   erasePreview( false );
 
@@ -915,6 +914,33 @@ void GEOMBase_Helper::showError( const QString& msg )
   SUIT_MessageBox::critical(SUIT_Session::session()->activeApplication()->desktop(), QObject::tr( "GEOM_ERROR" ), str, QObject::tr( "BUT_OK" ) );
 }
 
+//================================================================
+// Function : checkIsValid
+// Purpose  : Checks validity of the dialog contents and shows the error message
+//            or displays a notebook dialog if some parameters used in the dialog are not defined.
+//            In the second case it also redisplays preview if <updatePreview> argument is <true>.
+//================================================================
+bool GEOMBase_Helper::checkIsValid( bool updatePreview )
+{
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
+  if ( !app )
+    return false;
+
+  QString msg;
+  QStringList absentParams;
+  // only one prototype of isValid() methods called below will be actually processed
+  if ( !isValid( msg ) || !isValid( msg, absentParams ) ) {
+    if ( !absentParams.isEmpty() ) {
+      if ( app->defineAbsentParameters( absentParams ) && updatePreview )
+        displayPreview();
+      return false;
+    }
+    showError( msg );
+    return false;
+  }
+  return true;
+}
+
 //////////////////////////////////////////////////////////////////
 // Virtual methods to be redefined in dialogs
 //////////////////////////////////////////////////////////////////
@@ -932,8 +958,19 @@ GEOM::GEOM_IOperations_ptr GEOMBase_Helper::createOperation()
 //================================================================
 // Function : isValid
 // Purpose  : Called by onAccept(). Redefine this method to check validity of user input in dialog boxes.
+//            (This method should be redefined if there are no parametrized spin-boxes in the dialog box).
 //================================================================
 bool GEOMBase_Helper::isValid( QString& )
+{
+  return true;
+}
+
+//================================================================
+// Function : isValid
+// Purpose  : Called by onAccept(). Redefine this method to check validity of user input in dialog boxes.
+//            (This method should be redefined if there are some parametrized spin-boxes in the dialog box).
+//================================================================
+bool GEOMBase_Helper::isValid( QString&, QStringList& )
 {
   return true;
 }

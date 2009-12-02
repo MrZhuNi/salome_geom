@@ -338,14 +338,14 @@ GEOM::GEOM_IOperations_ptr GenerationGUI_FillingDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool GenerationGUI_FillingDlg::isValid( QString& msg )
+bool GenerationGUI_FillingDlg::isValid( QString& msg, QStringList& absentParams )
 {
   bool ok = true;
-  ok = GroupPoints->SpinBox1->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox2->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox3->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox4->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox5->isValid( msg, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox1->isValid( msg, absentParams, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox2->isValid( msg, absentParams, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox3->isValid( msg, absentParams, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox4->isValid( msg, absentParams, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox5->isValid( msg, absentParams, !IsPreview() ) && ok;
 
   return myOkCompound > 0 && ok;
 }

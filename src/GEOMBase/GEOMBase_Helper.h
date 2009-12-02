@@ -125,6 +125,10 @@ protected:
   void showError( const QString& msg );
   // Shows a error message followed by <msg>
 
+  bool checkIsValid( bool updatePreview = true );
+  // Checks validity of the dialog contents and shows the error message
+  // or displays a notebook dialog if some parameters used in the dialog are not defined
+
   GEOM::GEOM_IOperations_ptr getOperation();
   // If <myOperation> is nil --> calls createOperation() and put the result
   // into <myOperation> and returns it;
@@ -147,6 +151,11 @@ protected:
 
   virtual bool isValid( QString& msg );
   // Called by onAccept(). Redefine this method to check validity of user input in dialog boxes.
+  // (This method should be redefined if there are no parametrized spin-boxes in the dialog box).
+
+  virtual bool isValid( QString& msg, QStringList& absentParams );
+  // Called by onAccept(). Redefine this method to check validity of user input in dialog boxes.
+  // (This method should be redefined if there are some parametrized spin-boxes in the dialog box).
 
   virtual bool execute( ObjectList& objects );
   // This method is called by onAccept(). 

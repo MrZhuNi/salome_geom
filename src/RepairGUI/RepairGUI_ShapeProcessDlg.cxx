@@ -559,7 +559,7 @@ GEOM::GEOM_IOperations_ptr RepairGUI_ShapeProcessDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool RepairGUI_ShapeProcessDlg::isValid( QString& msg )
+bool RepairGUI_ShapeProcessDlg::isValid( QString& msg, QStringList& absentParams )
 {
   bool ok = true;
   QMapIterator<QString,QStringList> aMapIter( myValMap );
@@ -571,9 +571,9 @@ bool RepairGUI_ShapeProcessDlg::isValid( QString& msg )
       const QString& aParam = aListIter.next();
       QWidget* aControl = getControl( aParam );
       if ( qobject_cast<SalomeApp_DoubleSpinBox*>( aControl ) )
-	ok = qobject_cast<SalomeApp_DoubleSpinBox*>( aControl )->isValid( msg, !IsPreview() ) && ok;
+	ok = qobject_cast<SalomeApp_DoubleSpinBox*>( aControl )->isValid( msg, absentParams, !IsPreview() ) && ok;
       else if ( qobject_cast<SalomeApp_IntSpinBox*>( aControl ) )
-	ok = qobject_cast<SalomeApp_IntSpinBox*>( aControl )->isValid( msg, !IsPreview() ) && ok;
+	ok = qobject_cast<SalomeApp_IntSpinBox*>( aControl )->isValid( msg, absentParams, !IsPreview() ) && ok;
     }
   }
 

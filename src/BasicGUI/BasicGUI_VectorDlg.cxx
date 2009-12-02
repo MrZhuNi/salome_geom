@@ -452,16 +452,16 @@ GEOM::GEOM_IOperations_ptr BasicGUI_VectorDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BasicGUI_VectorDlg::isValid( QString& msg )
+bool BasicGUI_VectorDlg::isValid( QString& msg, QStringList& absentParams )
 {
   if(getConstructorId() == 0) 
     return !myPoint1->_is_nil() && !myPoint2->_is_nil();
   else if(getConstructorId() == 1)
   {
     bool ok = true;
-    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DZ->isValid( msg, absentParams, !IsPreview() ) && ok;
     return ok;
   }
   return false;

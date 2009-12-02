@@ -430,7 +430,7 @@ GEOM::GEOM_IOperations_ptr BasicGUI_EllipseDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BasicGUI_EllipseDlg::isValid( QString& msg )
+bool BasicGUI_EllipseDlg::isValid( QString& msg, QStringList& absentParams )
 {
   double aMajorR = GroupPoints->SpinBox_DX->value();
   double aMinorR = GroupPoints->SpinBox_DY->value();
@@ -442,8 +442,8 @@ bool BasicGUI_EllipseDlg::isValid( QString& msg )
   //nil point means origin of global CS
   //nil vector means Z axis
   bool ok = true;
-  ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
   return ok;
 }
 

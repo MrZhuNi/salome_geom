@@ -265,10 +265,10 @@ GEOM::GEOM_IOperations_ptr RepairGUI_SewingDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool RepairGUI_SewingDlg::isValid( QString& msg )
+bool RepairGUI_SewingDlg::isValid( QString& msg, QStringList& absentParams )
 {
   myClosed = -1;
-  bool ok = myTolEdt->isValid( msg, !IsPreview() );
+  bool ok = myTolEdt->isValid( msg, absentParams, !IsPreview() );
   return !myObject->_is_nil() && ( IsPreview() || myTolEdt->value() > 0. ) && ok;
 }
 

@@ -392,9 +392,9 @@ GEOM::GEOM_IOperations_ptr GenerationGUI_RevolDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool GenerationGUI_RevolDlg::isValid (QString& msg)
+bool GenerationGUI_RevolDlg::isValid (QString& msg, QStringList& absentParams)
 {
-  bool ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() );
+  bool ok = GroupPoints->SpinBox_DX->isValid( msg, absentParams, !IsPreview() );
   return myOkBase && myOkAxis && ok;
 }
 

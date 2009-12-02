@@ -462,18 +462,18 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_ScaleDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool TransformationGUI_ScaleDlg::isValid (QString& msg)
+bool TransformationGUI_ScaleDlg::isValid (QString& msg, QStringList& absentParams)
 {
   // && !myPoint->_is_nil()
   if (getConstructorId() == 0) {
-    bool ok = SpinBox_FX->isValid( msg, !IsPreview() );
+    bool ok = SpinBox_FX->isValid( msg, absentParams, !IsPreview() );
     return myObjects.length() > 0 && fabs(SpinBox_FX->value()) > 0.00001 && ok;
   }
 
   bool ok = true;
-  ok = SpinBox_FX->isValid( msg, !IsPreview() ) && ok;
-  ok = SpinBox_FY->isValid( msg, !IsPreview() ) && ok;
-  ok = SpinBox_FZ->isValid( msg, !IsPreview() ) && ok;
+  ok = SpinBox_FX->isValid( msg, absentParams, !IsPreview() ) && ok;
+  ok = SpinBox_FY->isValid( msg, absentParams, !IsPreview() ) && ok;
+  ok = SpinBox_FZ->isValid( msg, absentParams, !IsPreview() ) && ok;
   return myObjects.length() > 0 &&
     fabs(SpinBox_FX->value()) > 0.00001 &&
     fabs(SpinBox_FY->value()) > 0.00001 &&

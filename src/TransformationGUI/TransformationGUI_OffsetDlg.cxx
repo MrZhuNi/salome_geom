@@ -268,7 +268,7 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_OffsetDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool TransformationGUI_OffsetDlg::isValid( QString& msg )
+bool TransformationGUI_OffsetDlg::isValid( QString& msg, QStringList& absentParams )
 {
   //return !(myObjects.length() == 0);
   if ( myObjects.length() == 0 ) return false;
@@ -280,7 +280,7 @@ bool TransformationGUI_OffsetDlg::isValid( QString& msg )
       return false;
     }
   }
-  return GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() );
+  return GroupPoints->SpinBox_DX->isValid( msg, absentParams, !IsPreview() );
 }
 
 //=================================================================================

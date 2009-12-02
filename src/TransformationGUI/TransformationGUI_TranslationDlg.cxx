@@ -518,7 +518,7 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_TranslationDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool TransformationGUI_TranslationDlg::isValid (QString& msg)
+bool TransformationGUI_TranslationDlg::isValid (QString& msg, QStringList& absentParams)
 {
   int aConstructorId = getConstructorId();
 
@@ -526,16 +526,16 @@ bool TransformationGUI_TranslationDlg::isValid (QString& msg)
   case 0: 
     {
       bool ok = true;
-      ok = GroupPoints->SpinBox1->isValid( msg, !IsPreview() ) && ok;
-      ok = GroupPoints->SpinBox2->isValid( msg, !IsPreview() ) && ok;
-      ok = GroupPoints->SpinBox3->isValid( msg, !IsPreview() ) && ok;
+      ok = GroupPoints->SpinBox1->isValid( msg, absentParams, !IsPreview() ) && ok;
+      ok = GroupPoints->SpinBox2->isValid( msg, absentParams, !IsPreview() ) && ok;
+      ok = GroupPoints->SpinBox3->isValid( msg, absentParams, !IsPreview() ) && ok;
       return myObjects.length() > 0 && ok;
     }
   case 1:
     return myObjects.length() > 0 && !(myPoint1->_is_nil() || myPoint2->_is_nil());
   case 2:
     {
-      bool ok = GroupPoints->SpinBox3->isValid( msg, !IsPreview() );
+      bool ok = GroupPoints->SpinBox3->isValid( msg, absentParams, !IsPreview() );
       return myObjects.length() > 0 && !(myVector->_is_nil()) && ok;
     }
   default:

@@ -250,12 +250,12 @@ GEOM::GEOM_IOperations_ptr OperationGUI_ArchimedeDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool OperationGUI_ArchimedeDlg::isValid( QString& msg )
+bool OperationGUI_ArchimedeDlg::isValid( QString& msg, QStringList& absentParams )
 {
   bool ok = true;
-  ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox_DZ->isValid( msg, absentParams, !IsPreview() ) && ok;
   return !myShape->_is_nil() && ok;
 }
 

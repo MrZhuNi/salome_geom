@@ -683,7 +683,7 @@ GEOM::GEOM_IOperations_ptr BasicGUI_MarkerDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BasicGUI_MarkerDlg::isValid( QString& msg )
+bool BasicGUI_MarkerDlg::isValid( QString& msg, QStringList& absentParams )
 {
   const int id = getConstructorId();
   gp_Vec v1( myData[ DX1 ]->value(), myData[ DY1 ]->value(), myData[ DZ1 ]->value() ),
@@ -702,7 +702,7 @@ bool BasicGUI_MarkerDlg::isValid( QString& msg )
   case 0: {
     bool ok = true;
     for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter )
-      ok = anIter.value()->isValid( msg, !IsPreview()) && ok;
+      ok = anIter.value()->isValid( msg, absentParams, !IsPreview()) && ok;
     return isOk && ok;
   }
   case 1:

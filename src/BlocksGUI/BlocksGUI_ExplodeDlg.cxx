@@ -367,11 +367,11 @@ GEOM::GEOM_IOperations_ptr BlocksGUI_ExplodeDlg::createOperation()
 // function : isValid()
 // purpose  : Verify validity of input data
 //=================================================================================
-bool BlocksGUI_ExplodeDlg::isValid (QString& msg)
+bool BlocksGUI_ExplodeDlg::isValid (QString& msg, QStringList& absentParams)
 {
   bool okSP = true;
-  okSP = myGrp1->SpinBox1->isValid( msg, !IsPreview() ) && okSP;
-  okSP = myGrp1->SpinBox2->isValid( msg, !IsPreview() ) && okSP;
+  okSP = myGrp1->SpinBox1->isValid( msg, absentParams, !IsPreview() ) && okSP;
+  okSP = myGrp1->SpinBox2->isValid( msg, absentParams, !IsPreview() ) && okSP;
 
   bool ok = false;
   switch ( getConstructorId() ) {

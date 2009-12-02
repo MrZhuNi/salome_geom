@@ -458,18 +458,18 @@ GEOM::GEOM_IOperations_ptr PrimitiveGUI_FaceDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool PrimitiveGUI_FaceDlg::isValid( QString& msg )
+bool PrimitiveGUI_FaceDlg::isValid( QString& msg, QStringList& absentParams )
 {
   bool ok = true;
   if( getConstructorId() == 0 )
   {
-    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
   }
   else if( getConstructorId() == 1 )
   {
-    ok = GroupPlane->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupPlane->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPlane->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupPlane->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
   }
 
   const int id = getConstructorId();

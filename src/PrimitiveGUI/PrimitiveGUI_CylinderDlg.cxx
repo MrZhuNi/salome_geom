@@ -435,18 +435,18 @@ GEOM::GEOM_IOperations_ptr PrimitiveGUI_CylinderDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool PrimitiveGUI_CylinderDlg::isValid (QString& msg)
+bool PrimitiveGUI_CylinderDlg::isValid (QString& msg, QStringList& absentParams)
 {
   bool ok = true;
   if( getConstructorId() == 0 )
   {
-    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPoints->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupPoints->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
   }
   else if( getConstructorId() == 1 )
   {
-    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
   }
   ok = fabs( getHeight() ) > Precision::Confusion() && ok;
   return getConstructorId() == 0 ? !(myPoint->_is_nil() || myDir->_is_nil()) && ok : ok;

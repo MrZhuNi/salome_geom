@@ -240,9 +240,9 @@ GEOM::GEOM_IOperations_ptr BuildGUI_WireDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BuildGUI_WireDlg::isValid (QString& msg)
+bool BuildGUI_WireDlg::isValid (QString& msg, QStringList& absentParams)
 {
-  bool ok = GroupArgs->SpinBox_DX->isValid(msg, !IsPreview());
+  bool ok = GroupArgs->SpinBox_DX->isValid(msg, absentParams, !IsPreview());
   return myOkEdgesAndWires && ok;
 }
 

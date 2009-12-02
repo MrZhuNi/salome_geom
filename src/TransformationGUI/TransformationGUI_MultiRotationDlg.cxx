@@ -538,18 +538,18 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_MultiRotationDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool TransformationGUI_MultiRotationDlg::isValid (QString& msg)
+bool TransformationGUI_MultiRotationDlg::isValid (QString& msg, QStringList& absentParams)
 {
   bool ok = true;
   switch(getConstructorId()){
   case 0:
-    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPoints->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
     break;
   case 1:                                           
-    ok = GroupDimensions->SpinBox_DX1->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DY1->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DX2->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DY2->isValid( msg, !IsPreview() ) && ok;        
+    ok = GroupDimensions->SpinBox_DX1->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY1->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DX2->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY2->isValid( msg, absentParams, !IsPreview() ) && ok;        
     break;
   }
   return !(myBase->_is_nil() || myVector->_is_nil()) && ok;

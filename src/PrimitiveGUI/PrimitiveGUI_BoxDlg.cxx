@@ -423,14 +423,14 @@ GEOM::GEOM_IOperations_ptr PrimitiveGUI_BoxDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool PrimitiveGUI_BoxDlg::isValid (QString& msg)
+bool PrimitiveGUI_BoxDlg::isValid (QString& msg, QStringList& absentParams)
 {
   bool ok = true;
   if( getConstructorId() == 1 )
   {
-    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DZ->isValid( msg, absentParams, !IsPreview() ) && ok;
 
     ok = fabs( GroupDimensions->SpinBox_DX->value() ) > Precision::Confusion() && ok;
     ok = fabs( GroupDimensions->SpinBox_DY->value() ) > Precision::Confusion() && ok;

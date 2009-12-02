@@ -587,30 +587,30 @@ GEOM::GEOM_IOperations_ptr OperationGUI_FilletDlg::createOperation()
 // function : isValid()
 // purpose  : Verify validity of input data
 //=================================================================================
-bool OperationGUI_FilletDlg::isValid (QString& msg)
+bool OperationGUI_FilletDlg::isValid (QString& msg, QStringList& absentParams)
 {
   bool ok = true;
   switch (getConstructorId())
   {
     case 0:
-      ok = Group1->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+      ok = Group1->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
       return !myShape->_is_nil() && ok;
     case 1:
       if (Group2->RadioButton1->isChecked())
-	ok = Group2->SpinBox_DX->isValid( msg, !IsPreview() );
+	ok = Group2->SpinBox_DX->isValid( msg, absentParams, !IsPreview() );
       else
       {
-	ok = Group2->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-	ok = Group2->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+	ok = Group2->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
+	ok = Group2->SpinBox_DZ->isValid( msg, absentParams, !IsPreview() ) && ok;
       }
       return !myShape->_is_nil() && myEdges.Extent() > 0 && ok;
     case 2:
       if (Group3->RadioButton1->isChecked())
-	ok = Group3->SpinBox_DX->isValid( msg, !IsPreview() );
+	ok = Group3->SpinBox_DX->isValid( msg, absentParams, !IsPreview() );
       else
       {
-	ok = Group3->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-	ok = Group3->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+	ok = Group3->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
+	ok = Group3->SpinBox_DZ->isValid( msg, absentParams, !IsPreview() ) && ok;
       }
       return !myShape->_is_nil() && myFaces.Extent() > 0 && ok;
     default: return false;

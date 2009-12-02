@@ -750,7 +750,7 @@ static bool isEqual( const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Obje
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BasicGUI_PlaneDlg::isValid( QString& msg )
+bool BasicGUI_PlaneDlg::isValid( QString& msg, QStringList& absentParams )
 {
   const int id = getConstructorId();
   if ( getSize() <= 0 ) {
@@ -759,22 +759,22 @@ bool BasicGUI_PlaneDlg::isValid( QString& msg )
   }
 
   if ( id == 0 ) { 
-    bool ok = GroupPntDir->SpinBox_DX->isValid( msg, !IsPreview() );
+    bool ok = GroupPntDir->SpinBox_DX->isValid( msg, absentParams, !IsPreview() );
     return !CORBA::is_nil( myPoint ) && !CORBA::is_nil( myDir ) && ok;
   }
   else if ( id == 1 ) {
-    bool ok = Group3Pnts->SpinBox_DX->isValid( msg, !IsPreview() );
+    bool ok = Group3Pnts->SpinBox_DX->isValid( msg, absentParams, !IsPreview() );
     return !CORBA::is_nil( myPoint1  ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) &&
       !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 ) && ok;
   }
   else if ( id == 2 ) {
-    bool ok = GroupFace->SpinBox_DX->isValid( msg, !IsPreview() );
+    bool ok = GroupFace->SpinBox_DX->isValid( msg, absentParams, !IsPreview() );
     return !CORBA::is_nil( myFace ) && ok;
   }   else if ( id == 3 ) {
-    bool ok = Group2Vec->SpinBox_DX->isValid( msg, !IsPreview() );
+    bool ok = Group2Vec->SpinBox_DX->isValid( msg, absentParams, !IsPreview() );
     return !CORBA::is_nil( myVec1  ) && !CORBA::is_nil( myVec2 ) && !isEqual( myVec1, myVec2 ) && ok;
   } else if ( id == 4 ) {
-    bool ok = GroupLCS->SpinBox_DX->isValid( msg, !IsPreview() );
+    bool ok = GroupLCS->SpinBox_DX->isValid( msg, absentParams, !IsPreview() );
     return ok;
   }
   return false;

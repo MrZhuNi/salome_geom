@@ -733,32 +733,32 @@ GEOM::GEOM_IOperations_ptr BasicGUI_PointDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BasicGUI_PointDlg::isValid( QString& msg )
+bool BasicGUI_PointDlg::isValid( QString& msg, QStringList& absentParams )
 {
   const int id = getConstructorId();
   if ( id == GEOM_POINT_XYZ ) {
     bool ok = true;
-    ok = GroupXYZ->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupXYZ->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupXYZ->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupXYZ->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupXYZ->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupXYZ->SpinBox_DZ->isValid( msg, absentParams, !IsPreview() ) && ok;
     return ok;
   }
   else if ( id == GEOM_POINT_REF ) {
     bool ok = true;
-    ok = GroupRefPoint->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupRefPoint->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupRefPoint->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupRefPoint->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupRefPoint->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupRefPoint->SpinBox_DZ->isValid( msg, absentParams, !IsPreview() ) && ok;
 
     return !myRefPoint->_is_nil() && ok;
   }
   else if ( id == GEOM_POINT_EDGE ) {
     bool ok = true;
     if ( myParamCoord->checkedId() == PARAM_VALUE )
-      ok = GroupOnCurve->SpinBox_DX->isValid( msg, !IsPreview() );
+      ok = GroupOnCurve->SpinBox_DX->isValid( msg, absentParams, !IsPreview() );
     else {
-      ok = GroupXYZ->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-      ok = GroupXYZ->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-      ok = GroupXYZ->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+      ok = GroupXYZ->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+      ok = GroupXYZ->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
+      ok = GroupXYZ->SpinBox_DZ->isValid( msg, absentParams, !IsPreview() ) && ok;
     }
     return !myEdge->_is_nil() && ok;
   }
@@ -767,13 +767,13 @@ bool BasicGUI_PointDlg::isValid( QString& msg )
   else if ( id == GEOM_POINT_SURF ) {
     bool ok = true;
     if ( myParamCoord->checkedId() == PARAM_VALUE ) {
-      ok = GroupOnSurface->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-      ok = GroupOnSurface->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+      ok = GroupOnSurface->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+      ok = GroupOnSurface->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
     }
     else {
-      ok = GroupXYZ->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-      ok = GroupXYZ->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-      ok = GroupXYZ->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+      ok = GroupXYZ->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+      ok = GroupXYZ->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
+      ok = GroupXYZ->SpinBox_DZ->isValid( msg, absentParams, !IsPreview() ) && ok;
     }
     return !myFace->_is_nil() && ok;
     

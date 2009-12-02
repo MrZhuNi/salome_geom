@@ -638,22 +638,22 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_MultiTranslationDlg::createOperatio
 // function : isValid
 // purpose  :
 //=================================================================================
-bool TransformationGUI_MultiTranslationDlg::isValid (QString& msg)
+bool TransformationGUI_MultiTranslationDlg::isValid (QString& msg, QStringList& absentParams)
 {
   int aConstructorId = getConstructorId();
   
   if (aConstructorId == 0) {
     bool ok = true;
-    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPoints->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupPoints->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
     return !(myBase->_is_nil() || myVectorU->_is_nil()) && ok;
   }
   else if (aConstructorId == 1) {
     bool ok = true;
-    ok = GroupDimensions->SpinBox_DX1->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DY1->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DX2->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DY2->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DX1->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY1->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DX2->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DY2->isValid( msg, absentParams, !IsPreview() ) && ok;
     return !(myBase->_is_nil() || myVectorU->_is_nil() || myVectorV->_is_nil()) && ok;
   }
   return 0;

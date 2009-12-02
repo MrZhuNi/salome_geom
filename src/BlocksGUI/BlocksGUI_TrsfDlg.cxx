@@ -548,18 +548,18 @@ GEOM::GEOM_IOperations_ptr BlocksGUI_TrsfDlg::createOperation()
 // function : isValid
 // purpose  : Verify validity of input data
 //=================================================================================
-bool BlocksGUI_TrsfDlg::isValid (QString& msg)
+bool BlocksGUI_TrsfDlg::isValid (QString& msg, QStringList& absentParams)
 {
   bool ok = false, okSP = true;
   switch (getConstructorId()) {
   case 0:
     ok = !myShape->_is_nil() && myFaces[Face1] > 0;
-    okSP = mySpinBox[SpinBox1]->isValid( msg, !IsPreview() );
+    okSP = mySpinBox[SpinBox1]->isValid( msg, absentParams, !IsPreview() );
     break;
   case 1:
     ok = !myShape->_is_nil() && myFaces[Face1U] > 0 && myFaces[Face1V] > 0;
-    okSP = mySpinBox[SpinBox2U]->isValid( msg, !IsPreview() ) && okSP;
-    okSP = mySpinBox[SpinBox2V]->isValid( msg, !IsPreview() ) && okSP;
+    okSP = mySpinBox[SpinBox2U]->isValid( msg, absentParams, !IsPreview() ) && okSP;
+    okSP = mySpinBox[SpinBox2V]->isValid( msg, absentParams, !IsPreview() ) && okSP;
     break;
   default:
     break;

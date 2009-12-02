@@ -543,13 +543,13 @@ static bool isEqual (const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Obje
 // function : isValid
 // purpose  :
 //=================================================================================
-bool PrimitiveGUI_DiskDlg::isValid (QString& msg)
+bool PrimitiveGUI_DiskDlg::isValid (QString& msg, QStringList& absentParams)
 {
   bool ok = true;
   if( getConstructorId() == 0 )
-    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
   else if( getConstructorId() == 1 )
-    ok = GroupPntVecR->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPntVecR->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
 
   const int id = getConstructorId();
   if (id == 0)

@@ -1331,32 +1331,41 @@ GEOM::GEOM_IOperations_ptr EntityGUI_SketcherDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool EntityGUI_SketcherDlg::isValid( QString& msg )
+bool EntityGUI_SketcherDlg::isValid( QString& msg, QStringList& absentParams )
 {
   bool ok = true;
   bool toCorrect = !IsPreview() || myIsApply;
 
   if( Group1Spin->isVisible() ) {
-    ok = Group1Spin->SpinBox_DX->isValid( msg, toCorrect ) && ok;
+    ok = Group1Spin->SpinBox_DX->isValid( msg, absentParams, toCorrect ) && ok;
   }
   else if( Group2Spin->isVisible() ) {
-    ok = Group2Spin->SpinBox_DX->isValid( msg, toCorrect ) && ok;
-    ok = Group2Spin->SpinBox_DY->isValid( msg, toCorrect ) && ok;
+    ok = Group2Spin->SpinBox_DX->isValid( msg, absentParams, toCorrect ) && ok;
+    ok = Group2Spin->SpinBox_DY->isValid( msg, absentParams, toCorrect ) && ok;
   }
   else if( Group3Spin->isVisible() ) {
-    ok = Group3Spin->SpinBox_DX->isValid( msg, toCorrect ) && ok;
-    ok = Group3Spin->SpinBox_DY->isValid( msg, toCorrect ) && ok;
-    ok = Group3Spin->SpinBox_DZ->isValid( msg, toCorrect ) && ok;
+    ok = Group3Spin->SpinBox_DX->isValid( msg, absentParams, toCorrect ) && ok;
+    ok = Group3Spin->SpinBox_DY->isValid( msg, absentParams, toCorrect ) && ok;
+    ok = Group3Spin->SpinBox_DZ->isValid( msg, absentParams, toCorrect ) && ok;
   }
   else if( Group4Spin->isVisible() ) {
-    ok = Group4Spin->SpinBox_DX->isValid( msg, toCorrect ) && ok;
-    ok = Group4Spin->SpinBox_DY->isValid( msg, toCorrect ) && ok;
-    ok = Group4Spin->SpinBox_DZ->isValid( msg, toCorrect ) && ok;
-    ok = Group4Spin->SpinBox_DS->isValid( msg, toCorrect ) && ok;
+    ok = Group4Spin->SpinBox_DX->isValid( msg, absentParams, toCorrect ) && ok;
+    ok = Group4Spin->SpinBox_DY->isValid( msg, absentParams, toCorrect ) && ok;
+    ok = Group4Spin->SpinBox_DZ->isValid( msg, absentParams, toCorrect ) && ok;
+    ok = Group4Spin->SpinBox_DS->isValid( msg, absentParams, toCorrect ) && ok;
   }
 
-  if( myIsApply && !ok )
+  if( myIsApply && !ok ) {
+    if ( !absentParams.isEmpty() ) {
+      if( SalomeApp_Application* app =
+          dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() ) )
+      {
+        app->defineAbsentParameters( absentParams );
+        return ok;
+      }
+    }
     showError( msg );
+  }
 
   return ok;
 }

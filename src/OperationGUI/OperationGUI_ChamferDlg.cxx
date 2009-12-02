@@ -741,48 +741,48 @@ GEOM::GEOM_IOperations_ptr OperationGUI_ChamferDlg::createOperation()
 // function : isValid()
 // purpose  : Verify validity of input data
 //=================================================================================
-bool OperationGUI_ChamferDlg::isValid (QString& msg)
+bool OperationGUI_ChamferDlg::isValid (QString& msg, QStringList& absentParams)
 {
   bool ok = true;
   switch (getConstructorId())
   {
     case 0:
-      ok = mySpinBox[ SpinBox1 ]->isValid( msg, !IsPreview() );
+      ok = mySpinBox[ SpinBox1 ]->isValid( msg, absentParams, !IsPreview() );
       return !myShape->_is_nil() && ok;
     case 1:
       if (myRadioButton[ RadioButton21 ]->isChecked())
       {
-	ok = mySpinBox[ SpinBox21 ]->isValid( msg, !IsPreview() ) && ok;
-	ok = mySpinBox[ SpinBox22 ]->isValid( msg, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox21 ]->isValid( msg, absentParams, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox22 ]->isValid( msg, absentParams, !IsPreview() ) && ok;
       }
       else
       {
-	ok = mySpinBox[ SpinBox23 ]->isValid( msg, !IsPreview() ) && ok;
-	ok = mySpinBox[ SpinBox24 ]->isValid( msg, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox23 ]->isValid( msg, absentParams, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox24 ]->isValid( msg, absentParams, !IsPreview() ) && ok;
       }
       return !myShape->_is_nil() && myFace[ Face1 ] > 0 && myFace[ Face2 ] > 0 && ok;
     case 2:
       if (myRadioButton[ RadioButton31 ]->isChecked())
       {
-	ok = mySpinBox[ SpinBox31 ]->isValid( msg, !IsPreview() ) && ok;
-	ok = mySpinBox[ SpinBox32 ]->isValid( msg, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox31 ]->isValid( msg, absentParams, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox32 ]->isValid( msg, absentParams, !IsPreview() ) && ok;
       }
       else
       {
-	ok = mySpinBox[ SpinBox33 ]->isValid( msg, !IsPreview() ) && ok;
-	ok = mySpinBox[ SpinBox34 ]->isValid( msg, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox33 ]->isValid( msg, absentParams, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox34 ]->isValid( msg, absentParams, !IsPreview() ) && ok;
       }
       return !myShape->_is_nil() && myFaces.Extent() > 0 && ok;
     case 3:
       if (myRadioButton[ RadioButton41 ]->isChecked())
       {
-	ok = mySpinBox[ SpinBox41 ]->isValid( msg, !IsPreview() ) && ok;
-	ok = mySpinBox[ SpinBox42 ]->isValid( msg, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox41 ]->isValid( msg, absentParams, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox42 ]->isValid( msg, absentParams, !IsPreview() ) && ok;
       }
       else
       {
-	ok = mySpinBox[ SpinBox43 ]->isValid( msg, !IsPreview() ) && ok;
-	ok = mySpinBox[ SpinBox44 ]->isValid( msg, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox43 ]->isValid( msg, absentParams, !IsPreview() ) && ok;
+	ok = mySpinBox[ SpinBox44 ]->isValid( msg, absentParams, !IsPreview() ) && ok;
       }
       return !myShape->_is_nil() && myEdges.Extent() > 0 && ok;
     default: return false;

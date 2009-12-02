@@ -623,16 +623,16 @@ GEOM::GEOM_IOperations_ptr GenerationGUI_PrismDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool GenerationGUI_PrismDlg::isValid (QString& msg)
+bool GenerationGUI_PrismDlg::isValid (QString& msg, QStringList& absentParams)
 {
   bool ok = true;
   if( getConstructorId() == 0 )
-    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPoints->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
   else if( getConstructorId() == 2 )
   {
-    ok = GroupPoints3->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupPoints3->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupPoints3->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPoints3->SpinBox_DX->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupPoints3->SpinBox_DY->isValid( msg, absentParams, !IsPreview() ) && ok;
+    ok = GroupPoints3->SpinBox_DZ->isValid( msg, absentParams, !IsPreview() ) && ok;
   }
 
   if (getConstructorId() == 0)

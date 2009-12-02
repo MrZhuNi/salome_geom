@@ -510,11 +510,11 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_RotationDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool TransformationGUI_RotationDlg::isValid (QString& msg)
+bool TransformationGUI_RotationDlg::isValid (QString& msg, QStringList& absentParams)
 {
   switch (getConstructorId()) {
   case 0: {
-    bool ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() );
+    bool ok = GroupPoints->SpinBox_DX->isValid( msg, absentParams, !IsPreview() );
     return myObjects.length() > 0 && !(myAxis->_is_nil()) && ok;
     break;
   }
