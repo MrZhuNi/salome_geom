@@ -976,9 +976,6 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakeBoxDXDYDZ(self, theDX, theDY, theDZ):
             # Example: see GEOM_TestAll.py
             theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
-            print theDX
-            print theDY
-            print theDZ
             anObj = self.PrimOp.MakeBoxDXDYDZ(theDX, theDY, theDZ)
             RaiseIfFailed("MakeBoxDXDYDZ", self.PrimOp)
             SetParameters( anObj, Parameters )
