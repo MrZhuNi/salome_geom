@@ -44,7 +44,6 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 					 CORBA::Boolean isPublished, 
 					 CORBA::Boolean& isValidScript)
 {
-/*ASL: temporary commented for Notebook
   SALOMEDS::Study_var aStudy = SALOMEDS::Study::_narrow(theStudy);
   if(CORBA::is_nil(aStudy))
     return new Engines::TMPFile(0);   
@@ -57,6 +56,7 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 
   TVariablesList aVariableMap;
 
+  /*ASL: temporary commented for Notebook
   SALOMEDS::ChildIterator_var Itr = aStudy->NewChildIterator(aSO);
   for(Itr->InitEx(true); Itr->More(); Itr->Next()) {
     SALOMEDS::SObject_var aValue = Itr->Value();
@@ -91,6 +91,7 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
       }
     }
   }
+  */
   
   TCollection_AsciiString aScript =
     "# -*- coding: iso-8859-1 -*-\n"
@@ -110,10 +111,10 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
   }
 
   aScript += "\n\tpass\n";
-*/
-  int aLen = 0;/*ASL: aScript.Length(); */
+
+  int aLen = aScript.Length(); 
   unsigned char* aBuffer = new unsigned char[aLen+1];
-  //ASL : strcpy((char*)aBuffer, aScript.ToCString());
+  strcpy((char*)aBuffer, aScript.ToCString());
 
   CORBA::Octet* anOctetBuf =  (CORBA::Octet*)aBuffer;
   Engines::TMPFile_var aStreamFile = new Engines::TMPFile(aLen+1, aLen+1, anOctetBuf, 1); 
