@@ -56,7 +56,6 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 
   TVariablesList aVariableMap;
 
-  /*ASL: temporary commented for Notebook
   SALOMEDS::ChildIterator_var Itr = aStudy->NewChildIterator(aSO);
   for(Itr->InitEx(true); Itr->More(); Itr->Next()) {
     SALOMEDS::SObject_var aValue = Itr->Value();
@@ -69,6 +68,7 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
         CORBA::String_var anEntry = GO->GetEntry();
 	aMap.Bind( (char*)anEntry.in(), (char*)aName.in() );
 
+  /*ASL: temporary commented for Notebook
 	//Find attribute with list of used notebook variables
 	SALOMEDS::GenericAttribute_var anAttr;
 	SALOMEDS::AttributeString_var anAttrStr;
@@ -88,10 +88,10 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 	  }
 	  aVariableMap.insert(pair<TCollection_AsciiString,ObjectStates*>(TCollection_AsciiString(anEntry),aStates));
 	}
+  */
       }
     }
   }
-  */
   
   TCollection_AsciiString aScript =
     "# -*- coding: iso-8859-1 -*-\n"
