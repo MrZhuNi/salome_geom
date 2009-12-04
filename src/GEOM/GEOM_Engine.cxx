@@ -107,17 +107,18 @@ static Standard_Integer ExtractDocID(TCollection_AsciiString& theID)
   return aDocID.IntegerValue();
 }
 
-bool ProcessFunction(Handle(GEOM_Function)&   theFunction,
-                     TCollection_AsciiString& theScript,
-                     TCollection_AsciiString& theAfterScript,
-                     const TVariablesList&    theVariables,
-                     const bool               theIsPublished,
-                     TDF_LabelMap&            theProcessed,
-                     std::set<std::string>&   theIgnoreObjs,
-                     bool&                    theIsDumpCollected);
+bool ProcessFunction(Handle(GEOM_Function)&                          theFunction,
+                     TCollection_AsciiString&                        theScript,
+                     TCollection_AsciiString&                        theAfterScript,
+                     const Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                     const bool                                      theIsPublished,
+                     TDF_LabelMap&                                   theProcessed,
+                     std::set<std::string>&                          theIgnoreObjs,
+                     bool&                                           theIsDumpCollected);
 
-void ReplaceVariables(TCollection_AsciiString& theCommand, 
-                      const TVariablesList&    theVariables);
+void ReplaceVariables(TCollection_AsciiString&                        theCommand, 
+                      const TColStd_SequenceOfAsciiString&            theVariables,
+                      const Resource_DataMapOfAsciiStringAsciiString& theObjectNames);
 
 Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theString);
 
@@ -522,7 +523,6 @@ void GEOM_Engine::Close(int theDocID)
 //=============================================================================
 TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
                                                 Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
-                                                TVariablesList theVariables,
                                                 bool isPublished,
                                                 bool& aValidScript)
 {
@@ -586,7 +586,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       }
       bool isDumpCollected = false;
       TCollection_AsciiString aCurScript, anAfterScript;
-      if (!ProcessFunction(aFunction, aCurScript, anAfterScript, theVariables,
+      if (!ProcessFunction(aFunction, aCurScript, anAfterScript, theObjectNames,
                            isPublished, aCheckedFuncMap, anIgnoreObjMap,
                            isDumpCollected ))
         continue;
@@ -847,14 +847,14 @@ std::list<int> GEOM_Engine::getAllTextures(int theDocID)
  *  ProcessFunction: Dump fucntion description into script
  */
 //=============================================================================
-bool ProcessFunction(Handle(GEOM_Function)&     theFunction,
-                     TCollection_AsciiString&   theScript,
-                     TCollection_AsciiString&   theAfterScript,
-                     const TVariablesList&      theVariables,
-                     const bool                 theIsPublished,
-                     TDF_LabelMap&              theProcessed,
-                     std::set<std::string>&     theIgnoreObjs,
-                     bool&                      theIsDumpCollected)
+bool ProcessFunction(Handle(GEOM_Function)&                          theFunction,
+                     TCollection_AsciiString&                        theScript,
+                     TCollection_AsciiString&                        theAfterScript,
+                     const Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                     const bool                                      theIsPublished,
+                     TDF_LabelMap&                                   theProcessed,
+                     std::set<std::string>&                          theIgnoreObjs,
+                     bool&                                           theIsDumpCollected)
 {
   theIsDumpCollected = false;
   if (theFunction.IsNull()) return false;
@@ -915,8 +915,12 @@ bool ProcessFunction(Handle(GEOM_Function)&     theFunction,
       theIsDumpCollected = true;
   }
 
-  //Replace parameter by notebook variables
-  ReplaceVariables(aDescr,theVariables);
+  // replace parameters of the function by notebook variables
+  TColStd_SequenceOfAsciiString aVariables;
+  for( int i = 1, n = theFunction->GetArgsCount(); i <= n; i++ )
+    aVariables.Append( theFunction->GetParam( i ) );
+  ReplaceVariables(aDescr, aVariables, theObjectNames);
+
   if ( theIsDumpCollected ) {
     int i = 1;
     bool isBefore = true;
@@ -979,18 +983,12 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
  *                    Notebook if need
  */
 //=============================================================================
-void ReplaceVariables(TCollection_AsciiString& theCommand, 
-                      const TVariablesList&    theVariables)
+void ReplaceVariables(TCollection_AsciiString&                        theCommand, 
+                      const TColStd_SequenceOfAsciiString&            theVariables,
+                      const Resource_DataMapOfAsciiStringAsciiString& theObjectNames)
 {
   if (MYDEBUG)
     cout<<"Command : "<<theCommand<<endl;
-
-  if (MYDEBUG) {
-    cout<<"All Entries:"<<endl;
-    TVariablesList::const_iterator it = theVariables.begin();
-    for(;it != theVariables.end();it++)
-      cout<<"\t'"<<(*it).first<<"'"<<endl;
-  }
 
   //Additional case - multi-row commands
   int aCommandIndex = 1;
@@ -1039,25 +1037,10 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
         cout<<"Sub-entry : '" <<anEntry<<"'"<<endl;
     }
     
-    //Find variables used for object construction
-    ObjectStates* aStates = 0;
-    TVariablesList::const_iterator it = theVariables.find(anEntry);
-    if( it != theVariables.end() )
-      aStates = (*it).second;
-
-    if(!aStates) {
-      if(MYDEBUG)
-        cout<<"Valiables list empty!!!"<<endl;
-      aCommandIndex++;
-      continue;
-    }
-
-    TState aVariables = aStates->GetCurrectState();
-
     if(MYDEBUG) {
-      cout<<"Variables from SObject:"<<endl;
-      for (int i = 0; i < aVariables.size();i++)
-        cout<<"\t Variable["<<i<<"] = "<<aVariables[i].myVariable<<endl;
+      cout<<"Variables:"<<endl;
+      for (int i = 1; i <= theVariables.Length(); i++)
+        cout<<"\t Variable["<<i<<"] = "<<theVariables.Value(i)<<endl;
     }
 
     //Calculate total number of parameters
@@ -1073,7 +1056,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     //Replace parameters by variables
     Standard_Integer aStartPos = 0;
     Standard_Integer aEndPos = 0;
-    int iVar = 0;
+    int iVar = 1;
     TCollection_AsciiString aVar, aReplacedVar;
     for(Standard_Integer i=aFirstParam;i <= aTotalNbParams;i++) {
       //Replace first parameter (bettwen '(' character and first ',' character)
@@ -1153,16 +1136,16 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
             if(MYDEBUG) 
               cout<<"aParameter: "<<aParameter<<endl;
 
-            if(iVar >= aVariables.size())
+            if(iVar > theVariables.Length())
               continue;
 
-            aReplacedParameter = aVariables[iVar].myVariable;
+            aReplacedParameter = theVariables.Value(iVar);
             if(aReplacedParameter.IsEmpty()) {
               iVar++;
               continue;
             }
 
-            if(aVariables[iVar].isVariable) {
+            if(!theVariables.Value(iVar).IsEmpty()) {
               aReplacedParameter.InsertBefore(1,"'");
               aReplacedParameter.InsertAfter(aReplacedParameter.Length(),"'");
             }
@@ -1194,19 +1177,19 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       } // end of specific case for sketcher
 
       //If parameter is entry or 'None', skip it
-      if(theVariables.find(aVar) != theVariables.end() || aVar.Search(":") != -1 || aVar == PY_NULL)
+      if(theObjectNames.IsBound(aVar) || aVar.Search(":") != -1 || aVar == PY_NULL)
         continue;
 
-      if(iVar >= aVariables.size())
+      if(iVar > theVariables.Length())
         continue;
 
-      aReplacedVar = aVariables[iVar].myVariable;
+      aReplacedVar = theVariables.Value(iVar);
       if(aReplacedVar.IsEmpty()) {
         iVar++;
         continue;
       }
 
-      if(aVariables[iVar].isVariable) {
+      if(!theVariables.Value(iVar).IsEmpty()) {
         aReplacedVar.InsertBefore(1,"\"");
         aReplacedVar.InsertAfter(aReplacedVar.Length(),"\"");
       }
@@ -1220,8 +1203,6 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     theCommand.Insert(aStartCommandPos, aCommand);
 
     aCommandIndex++;
-
-    aStates->IncrementState();
   }
 
   if (MYDEBUG)
@@ -1495,57 +1476,4 @@ void PublishObject (const TCollection_AsciiString&                  theEntry,
   int tag =
     theEntry.SubString( theEntry.SearchFromEnd(":")+1, theEntry.Length() ).IntegerValue();
   theEntryToCommandMap.insert( std::make_pair( tag, aCommand.ToCString() ));
-}
-
-//================================================================================
-/*!
- * \brief Constructor
- */
-//================================================================================
-ObjectStates::ObjectStates()
-{
-  _dumpstate = 0;
-}
-
-//================================================================================
-/*!
- * \brief Destructor
- */
-//================================================================================
-ObjectStates::~ObjectStates()
-{
-}
-
-//================================================================================
-/*!
- * \brief Return current object state
- * \retval state - Object state (vector of notebook variable)
- */
-//================================================================================
-TState ObjectStates::GetCurrectState() const
-{
-  if(_states.size() > _dumpstate)
-    return _states[_dumpstate];
-  return TState();
-}
-
-//================================================================================
-/*!
- * \brief Add new object state 
- * \param theState - Object state (vector of notebook variable)
- */
-//================================================================================
-void ObjectStates::AddState(const TState &theState)
-{
-  _states.push_back(theState);
-}
-
-//================================================================================
-/*!
- * \brief Increment object state
- */
-//================================================================================
-void ObjectStates::IncrementState()
-{
-  _dumpstate++;
 }

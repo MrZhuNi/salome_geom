@@ -81,7 +81,7 @@ GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::CreateGroup(GEOM::GEOM_Object_ptr
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
-  return GetObject(anObject);
+  return GetObject(anObject, false);
 }
 
 //=============================================================================
@@ -268,7 +268,7 @@ GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::GetMainShape(GEOM::GEOM_Object_pt
   Handle(GEOM_Object) anObject = GetOperations()->GetMainShape(aGroupRef);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
-  return GetObject(anObject);
+  return GetObject(anObject, false);
 }
 
 //=============================================================================

@@ -32,6 +32,7 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 // OCCT Includes
@@ -550,9 +551,8 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
           myCurrObject = myObjects[i];
           anObj = anOper->RotateCopy(myObjects[i], myAxis, GetAngle() * PI180);
           if (!anObj->_is_nil()) {
-            if(!IsPreview()) {
-              //anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-            }
+            if(!IsPreview())
+              myNoteBook->setParameters(anObj, 1, GroupPoints->SpinBox_DX);
             objects.push_back(anObj._retn());
           }
         }
@@ -563,8 +563,8 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
           anObj = anOper->Rotate(myObjects[i], myAxis, GetAngle() * PI180);
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
-              //anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-	      updateAttributes(anObj, aParameters);
+              myNoteBook->setParameters(anObj, 1, GroupPoints->SpinBox_DX);
+	      //updateAttributes(anObj, aParameters);
 	    }
             objects.push_back(anObj._retn());
 	  }

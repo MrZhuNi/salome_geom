@@ -32,6 +32,7 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Notebook.h>
 #include <LightApp_SelectionMgr.h>
 
 // OCCT Includes
@@ -564,18 +565,16 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
       double dy = GroupPoints->SpinBox2->value();
       double dz = GroupPoints->SpinBox3->value();
 
-      QStringList aParameters;
-      aParameters<<GroupPoints->SpinBox1->text();
-      aParameters<<GroupPoints->SpinBox2->text();
-      aParameters<<GroupPoints->SpinBox3->text();
-
       if (toCreateCopy) {
         for (int i = 0; i < myObjects.length(); i++) {
           myCurrObject = myObjects[i];
           anObj = anOper->TranslateDXDYDZCopy(myObjects[i], dx, dy, dz);
           if (!anObj->_is_nil()) {
-            //if(!IsPreview())
-    	    //  anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+            if(!IsPreview())
+              myNoteBook->setParameters(anObj, 3,
+                                        GroupPoints->SpinBox1,
+                                        GroupPoints->SpinBox2,
+                                        GroupPoints->SpinBox3);
             objects.push_back(anObj._retn());
           }
         }
@@ -586,8 +585,11 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
           anObj = anOper->TranslateDXDYDZ(myObjects[i], dx, dy, dz);
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
-    	      //anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-	      updateAttributes(anObj, aParameters);
+              myNoteBook->setParameters(anObj, 3,
+                                        GroupPoints->SpinBox1,
+                                        GroupPoints->SpinBox2,
+                                        GroupPoints->SpinBox3);
+	      //updateAttributes(anObj, aParameters);
 	    }
             objects.push_back(anObj._retn());
 	  }

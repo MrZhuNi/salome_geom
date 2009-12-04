@@ -418,7 +418,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theX,theY,theZ,Parameters = ParseParameters(theX, theY, theZ)
             anObj = self.BasicOp.MakePointXYZ(theX, theY, theZ)
             RaiseIfFailed("MakePointXYZ", self.BasicOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a point, distant from the referenced point
@@ -435,7 +435,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theX,theY,theZ,Parameters = ParseParameters(theX, theY, theZ)
             anObj = self.BasicOp.MakePointWithReference(theReference, theX, theY, theZ)
             RaiseIfFailed("MakePointWithReference", self.BasicOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a point, corresponding to the given parameter on the given curve.
@@ -449,7 +449,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theParameter, Parameters = ParseParameters(theParameter)
             anObj = self.BasicOp.MakePointOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakePointOnCurve", self.BasicOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a point by projection give coordinates on the given curve
@@ -465,7 +465,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theX, theY, theZ, Parameters = ParseParameters(theX, theY, theZ)
             anObj = self.BasicOp.MakePointOnCurveByCoord(theRefCurve, theX, theY, theZ)
             RaiseIfFailed("MakeVertexOnCurveByCoord", self.BasicOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a point, corresponding to the given parameters on the
@@ -481,7 +481,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakePointOnSurface(theRefSurf, theUParameter, theVParameter)
             RaiseIfFailed("MakePointOnSurface", self.BasicOp)
-            anObj.SetParameters(Parameters);
+            SetParameters(anObj, Parameters);
             return anObj
 
         ## Create a point by projection give coordinates on the given surface
@@ -497,7 +497,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakePointOnSurfaceByCoord(theRefSurf, theX, theY, theZ)
             RaiseIfFailed("MakeVertexOnSurfaceByCoord", self.BasicOp)
-            anObj.SetParameters(Parameters);
+            SetParameters(anObj, Parameters);
             return anObj
 
         ## Create a point on intersection of two lines.
@@ -547,7 +547,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
             anObj = self.BasicOp.MakeVectorDXDYDZ(theDX, theDY, theDZ)
             RaiseIfFailed("MakeVectorDXDYDZ", self.BasicOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a vector between two points.
@@ -612,7 +612,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theTrimSize, Parameters = ParseParameters(theTrimSize);
             anObj = self.BasicOp.MakePlanePntVec(thePnt, theVec, theTrimSize)
             RaiseIfFailed("MakePlanePntVec", self.BasicOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a plane, passing through the three given points
@@ -628,7 +628,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theTrimSize, Parameters = ParseParameters(theTrimSize);
             anObj = self.BasicOp.MakePlaneThreePnt(thePnt1, thePnt2, thePnt3, theTrimSize)
             RaiseIfFailed("MakePlaneThreePnt", self.BasicOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a plane, similar to the existing one, but with another size of representing face.
@@ -642,7 +642,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theTrimSize, Parameters = ParseParameters(theTrimSize);
             anObj = self.BasicOp.MakePlaneFace(theFace, theTrimSize)
             RaiseIfFailed("MakePlaneFace", self.BasicOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
 	## Create a plane, passing through the 2 vectors
@@ -658,7 +658,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theTrimSize, Parameters = ParseParameters(theTrimSize);
             anObj = self.BasicOp.MakePlane2Vec(theVec1, theVec2, theTrimSize)
             RaiseIfFailed("MakePlane2Vec", self.BasicOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
 	## Create a plane, based on a Local coordinate system.
@@ -673,7 +673,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theTrimSize, Parameters = ParseParameters(theTrimSize);
             anObj = self.BasicOp.MakePlaneLCS(theLCS, theTrimSize, theOrientation)
             RaiseIfFailed("MakePlaneLCS", self.BasicOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a local coordinate system.
@@ -688,7 +688,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ, Parameters = ParseParameters(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ);
             anObj = self.BasicOp.MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ)
             RaiseIfFailed("MakeMarker", self.BasicOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a local coordinate system.
@@ -772,7 +772,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theR, Parameters = ParseParameters(theR)
             anObj = self.CurvesOp.MakeCirclePntVecR(thePnt, theVec, theR)
             RaiseIfFailed("MakeCirclePntVecR", self.CurvesOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a circle with given radius.
@@ -827,7 +827,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 anObj = self.CurvesOp.MakeEllipse(thePnt, theVec, theRMajor, theRMinor)
                 pass
             RaiseIfFailed("MakeEllipse", self.CurvesOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create an ellipse with given radiuses.
@@ -920,7 +920,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theCommand,Parameters = ParseSketcherCommand(theCommand)
             anObj = self.CurvesOp.MakeSketcher(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcher", self.CurvesOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a sketcher (wire or face), following the textual description,
@@ -978,7 +978,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
             anObj = self.PrimOp.MakeBoxDXDYDZ(theDX, theDY, theDZ)
             RaiseIfFailed("MakeBoxDXDYDZ", self.PrimOp)
-            SetParameters( anObj, Parameters )
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a box with two specified opposite vertices,
@@ -1007,7 +1007,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theH,theW,Parameters = ParseParameters(theH, theW)
             anObj = self.PrimOp.MakeFaceHW(theH, theW, theOrientation)
             RaiseIfFailed("MakeFaceHW", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a face from another plane and two sizes,
@@ -1024,7 +1024,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theH,theW,Parameters = ParseParameters(theH, theW)
             anObj = self.PrimOp.MakeFaceObjHW(theObj, theH, theW)
             RaiseIfFailed("MakeFaceObjHW", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a disk with given center, normal vector and radius.
@@ -1039,7 +1039,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theR,Parameters = ParseParameters(theR)
             anObj = self.PrimOp.MakeDiskPntVecR(thePnt, theVec, theR)
             RaiseIfFailed("MakeDiskPntVecR", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a disk, passing through three given points
@@ -1064,7 +1064,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theR,Parameters = ParseParameters(theR)
             anObj = self.PrimOp.MakeDiskR(theR, theOrientation)
             RaiseIfFailed("MakeDiskR", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a cylinder with given base point, axis, radius and height.
@@ -1080,7 +1080,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theR,theH,Parameters = ParseParameters(theR, theH)
             anObj = self.PrimOp.MakeCylinderPntVecRH(thePnt, theAxis, theR, theH)
             RaiseIfFailed("MakeCylinderPntVecRH", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a cylinder with given radius and height at
@@ -1096,7 +1096,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theR,theH,Parameters = ParseParameters(theR, theH)
             anObj = self.PrimOp.MakeCylinderRH(theR, theH)
             RaiseIfFailed("MakeCylinderRH", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a sphere with given center and radius.
@@ -1110,7 +1110,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theR,Parameters = ParseParameters(theR)
             anObj = self.PrimOp.MakeSpherePntR(thePnt, theR)
             RaiseIfFailed("MakeSpherePntR", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a sphere with given center and radius.
@@ -1135,7 +1135,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theR,Parameters = ParseParameters(theR)
             anObj = self.PrimOp.MakeSphereR(theR)
             RaiseIfFailed("MakeSphereR", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a cone with given base point, axis, height and radiuses.
@@ -1154,7 +1154,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theR1,theR2,theH,Parameters = ParseParameters(theR1,theR2,theH)
             anObj = self.PrimOp.MakeConePntVecR1R2H(thePnt, theAxis, theR1, theR2, theH)
             RaiseIfFailed("MakeConePntVecR1R2H", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a cone with given height and radiuses at
@@ -1173,7 +1173,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theR1,theR2,theH,Parameters = ParseParameters(theR1,theR2,theH)
             anObj = self.PrimOp.MakeConeR1R2H(theR1, theR2, theH)
             RaiseIfFailed("MakeConeR1R2H", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a torus with given center, normal vector and radiuses.
@@ -1189,7 +1189,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theRMajor,theRMinor,Parameters = ParseParameters(theRMajor,theRMinor)
             anObj = self.PrimOp.MakeTorusPntVecRR(thePnt, theVec, theRMajor, theRMinor)
             RaiseIfFailed("MakeTorusPntVecRR", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a torus with given radiuses at the origin of coordinate system.
@@ -1203,7 +1203,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theRMajor,theRMinor,Parameters = ParseParameters(theRMajor,theRMinor)
             anObj = self.PrimOp.MakeTorusRR(theRMajor, theRMinor)
             RaiseIfFailed("MakeTorusRR", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         # end of l3_3d_primitives
@@ -1239,7 +1239,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theH,Parameters = ParseParameters(theH)
             anObj = self.PrimOp.MakePrismVecH(theBase, theVec, theH)
             RaiseIfFailed("MakePrismVecH", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a shape by extrusion of the base shape along the vector,
@@ -1256,7 +1256,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theH,Parameters = ParseParameters(theH)
             anObj = self.PrimOp.MakePrismVecH2Ways(theBase, theVec, theH)
             RaiseIfFailed("MakePrismVecH2Ways", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
 	## Create a shape by extrusion of the base shape along the dx, dy, dz direction
@@ -1270,7 +1270,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
             anObj = self.PrimOp.MakePrismDXDYDZ(theBase, theDX, theDY, theDZ)
             RaiseIfFailed("MakePrismDXDYDZ", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
 	## Create a shape by extrusion of the base shape along the dx, dy, dz direction
@@ -1286,7 +1286,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
             anObj = self.PrimOp.MakePrismDXDYDZ2Ways(theBase, theDX, theDY, theDZ)
             RaiseIfFailed("MakePrismDXDYDZ2Ways", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a shape by revolution of the base shape around the axis
@@ -1303,7 +1303,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theAngle,Parameters = ParseParameters(theAngle)
             anObj = self.PrimOp.MakeRevolutionAxisAngle(theBase, theAxis, theAngle)
             RaiseIfFailed("MakeRevolutionAxisAngle", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## The Same Revolution but in both ways forward&backward.
@@ -1311,7 +1311,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theAngle,Parameters = ParseParameters(theAngle)
             anObj = self.PrimOp.MakeRevolutionAxisAngle2Ways(theBase, theAxis, theAngle)
             RaiseIfFailed("MakeRevolutionAxisAngle2Ways", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a filling from the given compound of contours.
@@ -1336,7 +1336,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeFilling(theShape, theMinDeg, theMaxDeg,
                                             theTol2D, theTol3D, theNbIter, isApprox)
             RaiseIfFailed("MakeFilling", self.PrimOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create a shell or solid passing through set of sections.Sections should be wires,edges or vertices.
@@ -2079,7 +2079,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             for string in (theOperators + theParameters):
                 Parameters = ":" + Parameters
                 pass
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Remove faces from the given object (shape).
@@ -2113,7 +2113,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theTolerance,Parameters = ParseParameters(theTolerance)
             anObj = self.HealOp.Sew(theObject, theTolerance)
             RaiseIfFailed("Sew", self.HealOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Remove internal wires and edges from the given object (face).
@@ -2173,7 +2173,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theEdgeIndex,theValue,isByParameter,Parameters = ParseParameters(theEdgeIndex,theValue,isByParameter)
             anObj = self.HealOp.DivideEdge(theObject, theEdgeIndex, theValue, isByParameter)
             RaiseIfFailed("DivideEdge", self.HealOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Change orientation of the given object. Updates given shape.
@@ -2224,7 +2224,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.ShapesOp.MakeGlueFaces(theShape, theTolerance, doKeepNonSolids)
             if anObj is None:
                 raise RuntimeError, "MakeGlueFaces : " + self.ShapesOp.GetErrorCode()
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Find coincident faces in theShape for possible gluing.
@@ -2442,7 +2442,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             theDX, theDY, theDZ, Parameters = ParseParameters(theDX, theDY, theDZ)
             anObj = self.TrsfOp.TranslateDXDYDZ(theObject, theDX, theDY, theDZ)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             RaiseIfFailed("TranslateDXDYDZ", self.TrsfOp)
             return anObj
 
@@ -2457,7 +2457,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             theDX, theDY, theDZ, Parameters = ParseParameters(theDX, theDY, theDZ)
             anObj = self.TrsfOp.TranslateDXDYDZCopy(theObject, theDX, theDY, theDZ)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             RaiseIfFailed("TranslateDXDYDZ", self.TrsfOp)
             return anObj
 
@@ -2487,7 +2487,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theDistance,Parameters = ParseParameters(theDistance)
             anObj = self.TrsfOp.TranslateVectorDistance(theObject, theVector, theDistance, theCopy)
             RaiseIfFailed("TranslateVectorDistance", self.TrsfOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Translate the given object along the given vector on given distance,
@@ -2503,7 +2503,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theDistance,Parameters = ParseParameters(theDistance)
             anObj = self.TrsfOp.TranslateVectorDistance(theObject, theVector, theDistance, 1)
             RaiseIfFailed("TranslateVectorDistance", self.TrsfOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Rotate the given object around the given axis on the given angle.
@@ -2523,7 +2523,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theAngle = theAngle*math.pi/180.0
             anObj = self.TrsfOp.Rotate(theObject, theAxis, theAngle)
             RaiseIfFailed("RotateCopy", self.TrsfOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Rotate the given object around the given axis
@@ -2544,7 +2544,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theAngle = theAngle*math.pi/180.0
             anObj = self.TrsfOp.RotateCopy(theObject, theAxis, theAngle)
             RaiseIfFailed("RotateCopy", self.TrsfOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Rotate given object around vector perpendicular to plane
@@ -2575,7 +2575,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theFactor, Parameters = ParseParameters(theFactor)
             anObj = self.TrsfOp.ScaleShapeCopy(theObject, thePoint, theFactor)
             RaiseIfFailed("ScaleShapeCopy", self.TrsfOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Scale the given object by different factors along coordinate axes,
@@ -2593,7 +2593,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.ScaleShapeAlongAxesCopy(theObject, thePoint,
                                                         theFactorX, theFactorY, theFactorZ)
             RaiseIfFailed("MakeScaleAlongAxes", self.TrsfOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Create an object, symmetrical
@@ -2679,7 +2679,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theOffset, Parameters = ParseParameters(theOffset)
             anObj = self.TrsfOp.OffsetShapeCopy(theObject, theOffset)
             RaiseIfFailed("OffsetShapeCopy", self.TrsfOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         # -----------------------------------------------------------------------------
@@ -2700,7 +2700,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theStep, theNbTimes, Parameters = ParseParameters(theStep, theNbTimes)
             anObj = self.TrsfOp.MultiTranslate1D(theObject, theVector, theStep, theNbTimes)
             RaiseIfFailed("MultiTranslate1D", self.TrsfOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Conseqently apply two specified translations to theObject specified number of times.
@@ -2722,7 +2722,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.MultiTranslate2D(theObject, theVector1, theStep1, theNbTimes1,
                                                  theVector2, theStep2, theNbTimes2)
             RaiseIfFailed("MultiTranslate2D", self.TrsfOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Rotate the given object around the given axis a given number times.
@@ -2739,7 +2739,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theAxis, theNbTimes, Parameters = ParseParameters(theAxis, theNbTimes)
             anObj = self.TrsfOp.MultiRotate1D(theObject, theAxis, theNbTimes)
             RaiseIfFailed("MultiRotate1D", self.TrsfOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Rotate the given object around the
@@ -2762,7 +2762,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theAngle, theNbTimes1, theStep, theNbTimes2, Parameters = ParseParameters(theAngle, theNbTimes1, theStep, theNbTimes2)
             anObj = self.TrsfOp.MultiRotate2D(theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2)
             RaiseIfFailed("MultiRotate2D", self.TrsfOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## The same, as MultiRotate1D(), but axis is given by direction and point
@@ -2799,7 +2799,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theR,Parameters = ParseParameters(theR)
             anObj = self.LocalOp.MakeFilletAll(theShape, theR)
             RaiseIfFailed("MakeFilletAll", self.LocalOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Perform a fillet on the specified edges/faces of the given shape
@@ -2821,7 +2821,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             else:
                 anObj = self.LocalOp.MakeFilletFaces(theShape, theR, theListShapes)
                 RaiseIfFailed("MakeFilletFaces", self.LocalOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## The same that MakeFillet but with two Fillet Radius R1 and R2
@@ -2834,7 +2834,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             else:
                 anObj = self.LocalOp.MakeFilletFacesR1R2(theShape, theR1, theR2, theListShapes)
                 RaiseIfFailed("MakeFilletFacesR1R2", self.LocalOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Perform a fillet on the specified edges of the given shape
@@ -2879,7 +2879,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theD,Parameters = ParseParameters(theD)
             anObj = self.LocalOp.MakeChamferAll(theShape, theD)
             RaiseIfFailed("MakeChamferAll", self.LocalOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Perform a chamfer on edges, common to the specified faces,
@@ -2897,7 +2897,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theD1,theD2,Parameters = ParseParameters(theD1,theD2)
             anObj = self.LocalOp.MakeChamferEdge(theShape, theD1, theD2, theFace1, theFace2)
             RaiseIfFailed("MakeChamferEdge", self.LocalOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## The Same that MakeChamferEdge but with params theD is chamfer length and
@@ -2911,7 +2911,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theAngle = theAngle*math.pi/180.0
             anObj = self.LocalOp.MakeChamferEdgeAD(theShape, theD, theAngle, theFace1, theFace2)
             RaiseIfFailed("MakeChamferEdgeAD", self.LocalOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Perform a chamfer on all edges of the specified faces,
@@ -2931,7 +2931,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theD1,theD2,Parameters = ParseParameters(theD1,theD2)
             anObj = self.LocalOp.MakeChamferFaces(theShape, theD1, theD2, theFaces)
             RaiseIfFailed("MakeChamferFaces", self.LocalOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## The Same that MakeChamferFaces but with params theD is chamfer lenght and
@@ -2947,7 +2947,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theAngle = theAngle*math.pi/180.0
             anObj = self.LocalOp.MakeChamferFacesAD(theShape, theD, theAngle, theFaces)
             RaiseIfFailed("MakeChamferFacesAD", self.LocalOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Perform a chamfer on edges,
@@ -2962,7 +2962,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theD1,theD2,Parameters = ParseParameters(theD1,theD2)
             anObj = self.LocalOp.MakeChamferEdges(theShape, theD1, theD2, theEdges)
             RaiseIfFailed("MakeChamferEdges", self.LocalOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## The Same that MakeChamferEdges but with params theD is chamfer lenght and
@@ -2976,7 +2976,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theAngle = theAngle*math.pi/180.0
             anObj = self.LocalOp.MakeChamferEdgesAD(theShape, theD, theAngle, theEdges)
             RaiseIfFailed("MakeChamferEdgesAD", self.LocalOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Shortcut to MakeChamferEdge() and MakeChamferFaces()
@@ -3013,7 +3013,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
               theWeight,theWaterDensity,theMeshDeflection)
             anObj = self.LocalOp.MakeArchimede(theShape, theWeight, theWaterDensity, theMeshDeflection)
             RaiseIfFailed("MakeArchimede", self.LocalOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         # end of l3_basic_op
@@ -3680,7 +3680,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             aList = self.BlocksOp.ExplodeCompoundOfBlocks(theCompound, theMinNbFaces, theMaxNbFaces)
             RaiseIfFailed("ExplodeCompoundOfBlocks", self.BlocksOp)
             for anObj in aList:
-                anObj.SetParameters(Parameters)
+                SetParameters(anObj, Parameters)
                 pass
             return aList
 
@@ -3736,7 +3736,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             DirFace1,DirFace2,NbTimes,Parameters = ParseParameters(DirFace1,DirFace2,NbTimes)
             anObj = self.BlocksOp.MakeMultiTransformation1D(Block, DirFace1, DirFace2, NbTimes)
             RaiseIfFailed("MakeMultiTransformation1D", self.BlocksOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Multi-transformate block and glue the result.
@@ -3755,7 +3755,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BlocksOp.MakeMultiTransformation2D(Block, DirFace1U, DirFace2U, NbTimesU,
                                                             DirFace1V, DirFace2V, NbTimesV)
             RaiseIfFailed("MakeMultiTransformation2D", self.BlocksOp)
-            anObj.SetParameters(Parameters)
+            SetParameters(anObj, Parameters)
             return anObj
 
         ## Build all possible propagation groups.

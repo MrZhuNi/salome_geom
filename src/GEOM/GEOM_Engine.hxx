@@ -39,37 +39,6 @@
 
 class Handle_TDataStd_HArray1OfByte;
 
-struct TVariable{
-  TCollection_AsciiString myVariable;
-  bool isVariable;
-
-  TVariable(const TCollection_AsciiString& theVariable, bool theFlag = true):
-    myVariable(theVariable),
-    isVariable(theFlag){}
-};
-
-typedef std::vector<TVariable> TState;
-typedef std::vector<TState>    TAllStates;
-
-class ObjectStates
-{
-public:
-  Standard_EXPORT ObjectStates();
-  ~ObjectStates();
-
-  TAllStates GetAllStates() const { return _states; }
-
-  TState GetCurrectState() const;
-  Standard_EXPORT void AddState(const TState &theState);
-  void IncrementState();
-
-private:
-  TAllStates              _states;
-  int                     _dumpstate;
-};
-
-typedef std::map<TCollection_AsciiString, ObjectStates* > TVariablesList;
-
 typedef std::map<int, std::list<TDF_Label> > TFreeLabelsList;
 
 class GEOM_Engine
@@ -124,7 +93,6 @@ class GEOM_Engine
 
   Standard_EXPORT TCollection_AsciiString DumpPython(int theDocID, 
                                      Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
-                                     TVariablesList theVariables,
                                      bool isPublished, 
                                      bool& aValidScript);
 
