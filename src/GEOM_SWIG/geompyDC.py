@@ -2306,7 +2306,6 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakeFuse(self, s1, s2):
             # Example: see GEOM_TestOthers.py
             res = self.MakeBoolean(s1, s2, 3)
-            res.StoreDependencies( notebook.getNotebook() )
             return res
 
         ## Shortcut to MakeBoolean(s1, s2, 4)
