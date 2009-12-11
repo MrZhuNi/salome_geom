@@ -20,6 +20,7 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
 #include "GEOM_IOperations_i.hh"
+#include "GEOM_Gen_i.hh"
 
 #include "GEOM_Engine.hxx"
 
@@ -139,7 +140,8 @@ GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(Handle(GEOM_Object) theObjec
   GO = _engine->GetObject(theObject->GetDocID(), anEntry.ToCString());
   GEOM::GEOM_Object_ptr aResult = GO._retn();
   if (theIsDependent && !CORBA::is_nil(aResult)) {
-    SALOME::Notebook_ptr aNotebook = _engine->GetNotebook(aResult->GetStudyID());
+    GEOM_Gen_i* aGEOMGen = dynamic_cast<GEOM_Gen_i*>(GEOM_Gen_i::GetServant(_engine).in());
+    SALOME::Notebook_ptr aNotebook = aGEOMGen->GetNotebook(aResult->GetStudyID());
     if (!CORBA::is_nil(aNotebook))
       aResult->StoreDependencies(aNotebook);
   }

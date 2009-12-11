@@ -104,6 +104,8 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual void Update( SALOME::Notebook_ptr theNotebook );
 
+  virtual void UpdateStringAttribute();
+
   Handle(GEOM_Object) GetImpl() { return _impl; }
 
 private:

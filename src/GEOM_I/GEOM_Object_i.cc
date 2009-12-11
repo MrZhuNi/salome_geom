@@ -22,6 +22,7 @@
 #include <Standard_OStream.hxx>
 
 #include <GEOM_Object_i.hh>
+#include <GEOM_Gen_i.hh>
 #include <GEOM_ISubShape.hxx>
 #include <GEOM_Engine.hxx>
 #include <GEOMImpl_Types.hxx>
@@ -446,6 +447,8 @@ void GEOM_Object_i::SetParameters( SALOME::Notebook_ptr theNotebook, const SALOM
     aFunc->SetParam( i+1, TCollection_AsciiString( aParam.c_str() ) );
     _parameters.push_back( aParam );
   }
+
+  UpdateStringAttribute();
 }
 
 SALOME::StringArray* GEOM_Object_i::GetParameters()
@@ -528,4 +531,38 @@ void GEOM_Object_i::StoreDependencies( SALOME::Notebook_ptr theNotebook )
     GEOM::GEOM_Object_var obj = _engine->GetObject( anObj->GetDocID(), anEntry.ToCString() );
     theNotebook->AddDependency( _this(), obj._retn() );
   }
+}
+
+void GEOM_Object_i::UpdateStringAttribute()
+{
+  GEOM_Gen_i* aGEOMGen = dynamic_cast<GEOM_Gen_i*>( GEOM_Gen_i::GetServant( _engine ).in() );
+
+  SALOME::Notebook_ptr aNotebook = aGEOMGen->GetNotebook( GetStudyID() );
+
+  SALOME::StringArray* anObjectParameters = aNotebook->GetObjectParameters( GetComponent(), GetEntry() );
+  int aParametersLength = anObjectParameters ? anObjectParameters->length() : 0;
+  if( aParametersLength == 0 )
+    return;
+
+  SALOMEDS::Study_ptr aStudy = aGEOMGen->GetStudy( GetStudyID() );
+  SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
+  SALOMEDS::SObject_var aSObject = aStudy->FindObjectID( GetStudyEntry() );
+  if( CORBA::is_nil( aSObject ) )
+    return;
+
+  SALOMEDS::GenericAttribute_var anAttr = aStudyBuilder->FindOrCreateAttribute( aSObject, "AttributeString" );
+  SALOMEDS::AttributeString_var aStringAttrib = SALOMEDS::AttributeString::_narrow( anAttr );
+
+  std::string aString;
+  for( int i = 0, n = anObjectParameters->length(); i < n; i++ ) {
+    std::string aParameter = anObjectParameters->operator[](i).in();
+    if( aParameter != "" )
+    {
+      if( aString != "" )
+        aString += ", ";
+      aString += aParameter;
+    }
+  }
+  aStringAttrib->SetValue( aString.c_str() );
+  aStringAttrib->Destroy();
 }

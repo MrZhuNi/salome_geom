@@ -63,6 +63,15 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
  public:
 
   //-----------------------------------------------------------------------//
+  // Static methods                                                        //
+  //-----------------------------------------------------------------------//
+
+  // Get SMESH module's POA object
+  static PortableServer::POA_var GetPOA() { return myPoa;}
+  // Get object of the CORBA reference
+  static PortableServer::ServantBase_var GetServant( CORBA::Object_ptr theObject );
+
+  //-----------------------------------------------------------------------//
   // Constructor / Destructor                                              //
   //-----------------------------------------------------------------------//
 
@@ -242,6 +251,7 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   virtual bool hasObjectInfo();
   virtual char* getObjectInfo(CORBA::Long studyId, const char* entry);
   
+  SALOMEDS::Study_ptr GetStudy(CORBA::Long theStudyID);
   SALOME::Notebook_ptr GetNotebook(CORBA::Long theStudyID);
   
   //-----------------------------------------------------------------------//
@@ -276,6 +286,7 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 			     GEOM::ListOfGO_var aResList);
 
  private:
+  static PortableServer::POA_var myPoa; // POA reference
 
    ::GEOMImpl_Gen* _impl;
    SALOME_NamingService * name_service;

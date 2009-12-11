@@ -62,6 +62,27 @@
 
 #include "SALOMEDS_Tool.hxx"
 
+// Static variables definition
+PortableServer::POA_var GEOM_Gen_i::myPoa;
+
+//=============================================================================
+// function : GetServant()
+// purpose  : Get servant of the CORBA object
+//=============================================================================
+PortableServer::ServantBase_var GEOM_Gen_i::GetServant( CORBA::Object_ptr theObject )
+{
+  if( CORBA::is_nil( theObject ) || CORBA::is_nil( GetPOA() ) )
+    return NULL;
+  try {
+    PortableServer::Servant aServant = GetPOA()->reference_to_servant( theObject );
+    return aServant;
+  } 
+  catch (...) {
+    INFOS( "GetServant - Unknown exception was caught!!!" ); 
+    return NULL;
+  }
+}
+
 //============================================================================
 // function : GEOM_Gen_i()
 // purpose  : constructor to be called for servant creation.
@@ -73,6 +94,8 @@ GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr orb,
 		       const char *interfaceName) :
   Engines_Component_i(orb, poa, contId, instanceName, interfaceName)
 {
+  myPoa = PortableServer::POA::_duplicate(poa);
+
   _thisObj = this;
   _id = _poa->activate_object(_thisObj);
   name_service = new SALOME_NamingService(_orb);
@@ -321,27 +344,8 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   aNameAttrib->Destroy();
 
   //Set NoteBook variables used in the object creation
-  /*ASL: temporary commented
-  TCollection_AsciiString aVars;
-  CORBA::String_var aString=aShape->GetParameters();
-  SALOMEDS::ListOfListOfStrings_var aSections = theStudy->ParseVariables(aString);
-  for(int i = 0, n = aSections->length(); i < n; i++) {
-    SALOMEDS::ListOfStrings aListOfVars = aSections[i];
-    for(int j = 0, m = aListOfVars.length(); j < m; j++) {
-      if(theStudy->IsVariable(aListOfVars[j].in()))
-	aVars += TCollection_AsciiString(aListOfVars[j].in());
-      if(j != m-1)
-	aVars += ":";
-    }
-    if(i != n-1)
-      aVars += "|";
-  }
-
-  anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeString");
-  SALOMEDS::AttributeString_var aStringAttrib = SALOMEDS::AttributeString::_narrow(anAttr);
-  aStringAttrib->SetValue(aVars.ToCString());
-  aStringAttrib->Destroy();
-  */
+  if( GEOM_Object_i* aServant = dynamic_cast<GEOM_Object_i*>( GetServant( aShape ).in() ) )
+    aServant->UpdateStringAttribute();
 
   aFather->Destroy();
 
@@ -1816,14 +1820,24 @@ char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
 }
 
 //=================================================================================
+// function : GetStudy()
+// purpose  : Returns a pointer to SALOMEDS Study object by its id
+//=================================================================================
+SALOMEDS::Study_ptr GEOM_Gen_i::GetStudy(CORBA::Long theStudyID)
+{
+  CORBA::Object_var aSMObject = name_service->Resolve( "/myStudyManager" );
+  SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow( aSMObject );
+  SALOMEDS::Study_var aStudy = aStudyManager->GetStudyByID( theStudyID );
+  return aStudy._retn();
+}
+
+//=================================================================================
 // function : GetNotebook()
 // purpose  : Returns a pointer to SALOME Notebook object by an id of the study
 //=================================================================================
 SALOME::Notebook_ptr GEOM_Gen_i::GetNotebook( CORBA::Long theStudyID )
 {
-  CORBA::Object_var aSMObject = name_service->Resolve( "/myStudyManager" );
-  SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow( aSMObject );
-  SALOMEDS::Study_var aStudy = aStudyManager->GetStudyByID( theStudyID );
+  SALOMEDS::Study_ptr aStudy = GetStudy( theStudyID );
   SALOME::Notebook_var aNotebook = aStudy->GetNotebook();
   return aNotebook._retn();
 }

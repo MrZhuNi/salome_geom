@@ -3201,12 +3201,6 @@ module GEOM
     ListOfGO PublishNamedShapesInStudy(in SALOMEDS::Study theStudy,
 					     //in SObject theSObject,
 					     in Object theObject);
-
-    /*!
-     *  Returns a pointer to SALOME Notebook interface.
-     *  \param theStudyID is a SALOMEDS Study ID
-     */
-    SALOME::Notebook GetNotebook(in long theStudyID);
   };
 };
 
