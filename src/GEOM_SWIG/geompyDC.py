@@ -107,9 +107,9 @@ def ParseParameters(*parameters):
 		p = notebook.get(parameter)
             Result.append(p)
             Params.append(parameter)
-	elif isinstance(parameter, SALOME._objref_Parameter):
-            Result.append(notebook.get(parameter))
-            Params.append(parameter.GetEntry())
+	elif isinstance(parameter, Parameter):
+            Result.append(parameter.value())
+            Params.append(parameter.name())
         else:
             Result.append(parameter)
             Params.append("")
