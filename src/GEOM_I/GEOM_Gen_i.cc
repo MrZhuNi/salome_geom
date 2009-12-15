@@ -1652,7 +1652,7 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::GetObject (CORBA::Long theStudyID, const char*
 
   GEOM::GEOM_Gen_ptr engine = _this();
   //transfer the reference to GEOM_Object_i
-  GEOM_Object_i* servant = new GEOM_Object_i (_poa, engine, handle_object);
+  GEOM_Object_i* servant = new GEOM_Object_i (_poa, engine, handle_object, GetNotebook( theStudyID ) );
   PortableServer::ObjectId_var id = _poa->activate_object(servant);
 
   obj = servant->_this();

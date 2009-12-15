@@ -54,8 +54,8 @@
 //=============================================================================
 
 GEOM_Object_i::GEOM_Object_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine,
-			      Handle(GEOM_Object) theImpl)
-: SALOME::GenericObj_i( thePOA ), _engine(theEngine), _impl(theImpl)
+			      Handle(GEOM_Object) theImpl, SALOME::Notebook_ptr theNotebook )
+  : SALOME_ParameterizedObject( theNotebook ), _engine(theEngine), _impl(theImpl)
 {
 }
 
