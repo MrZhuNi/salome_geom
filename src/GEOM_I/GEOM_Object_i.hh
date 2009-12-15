@@ -30,16 +30,17 @@
 #include CORBA_CLIENT_HEADER(SALOMEDS)
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
-#include "SALOME_GenericObj_i.hh"
+#include "SALOME_ParameterizedObject.hxx"
 
 #include "GEOM_Object.hxx"
 
 #include <TopoDS_Shape.hxx>
 
-class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public virtual SALOME::GenericObj_i
+class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public virtual SALOME_ParameterizedObject
 {
  public:
-   GEOM_Object_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(GEOM_Object) theImpl);
+   GEOM_Object_i( PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine,
+                  Handle(GEOM_Object) theImpl, SALOME::Notebook_ptr theNotebook );
    ~GEOM_Object_i();
 
   virtual char* GetEntry();
