@@ -26,7 +26,7 @@
 #ifndef OPERATIONGUI_H
 #define OPERATIONGUI_H
 
-#include <GEOMGUI.h>
+#include "GEOMGUI.h"
 
 //=================================================================================
 // class    : OperationGUI

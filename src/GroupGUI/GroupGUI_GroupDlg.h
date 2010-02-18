@@ -26,7 +26,7 @@
 #ifndef GROUPGUI_GROUPDLG_H
 #define GROUPGUI_GROUPDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 #include <TopAbs_ShapeEnum.hxx>
 #include <TColStd_DataMapOfIntegerInteger.hxx>

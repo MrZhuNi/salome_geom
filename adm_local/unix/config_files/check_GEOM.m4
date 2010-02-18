@@ -69,7 +69,7 @@ if test -f ${GEOM_DIR}/bin/salome/geompy.py ; then
    AC_SUBST(GEOM_ROOT_DIR)
 
    GEOM_LDFLAGS=-L${GEOM_DIR}/lib${LIB_LOCATION_SUFFIX}/salome
-   GEOM_CXXFLAGS=-I${GEOM_DIR}/include/salome
+   GEOM_CXXFLAGS="-I${GEOM_DIR}/include/salome -I${GEOM_DIR}/include/salome/skel"
 
    AC_SUBST(GEOM_LDFLAGS)
    AC_SUBST(GEOM_CXXFLAGS)

@@ -57,7 +57,7 @@
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Iterator.hxx>
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 //=======================================================================
 //function : BlockFix_UnionEdges()

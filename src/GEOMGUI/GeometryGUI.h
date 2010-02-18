@@ -28,11 +28,11 @@
 
 #include "GEOM_GEOMGUI.hxx"
 
-#include <SalomeApp_Module.h>
+#include <gui/SalomeApp_Module.h>
 
-#include <GEOM_Client.hxx>
-#include <SALOME_InteractiveObject.hxx>
-#include <SALOMEDSClient.hxx>
+#include "GEOM_Client.hxx"
+#include <gui/SALOME_InteractiveObject.hxx>
+#include <kernel/SALOMEDSClient.hxx>
 
 #include "GEOMGUI.h"
 

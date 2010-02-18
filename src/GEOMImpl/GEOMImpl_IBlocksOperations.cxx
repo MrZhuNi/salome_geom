@@ -44,9 +44,9 @@
 #include <GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx>
 #include <BlockFix_CheckTool.hxx>
 
-#include "utilities.h"
-#include <OpUtil.hxx>
-#include <Utils_ExceptHandlers.hxx>
+#include <kernel/utilities.h>
+#include <kernel/OpUtil.hxx>
+#include <kernel/Utils_ExceptHandlers.hxx>
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>

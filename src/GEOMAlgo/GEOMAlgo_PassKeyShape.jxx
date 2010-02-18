@@ -26,5 +26,5 @@
 #include <TopTools_ListOfShape.hxx>
 #endif
 #ifndef _GEOMAlgo_PassKeyShape_HeaderFile
-#include <GEOMAlgo_PassKeyShape.hxx>
+#include "GEOMAlgo_PassKeyShape.hxx"
 #endif

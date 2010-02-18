@@ -28,7 +28,7 @@
 
 #include "GEOM_GEOMGUI.hxx"
 
-#include <LightApp_OCCSelector.h>
+#include <gui/LightApp_OCCSelector.h>
 
 class GEOMGUI_EXPORT GEOMGUI_OCCSelector : public LightApp_OCCSelector
 {

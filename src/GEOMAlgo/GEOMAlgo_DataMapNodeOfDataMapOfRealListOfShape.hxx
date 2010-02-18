@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape.hxx>
+#include "Handle_GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape.hxx"
 #endif
 
 #ifndef _Standard_Real_HeaderFile

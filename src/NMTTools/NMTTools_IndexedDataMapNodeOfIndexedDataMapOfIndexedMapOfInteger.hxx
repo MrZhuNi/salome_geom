@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger_HeaderFile
-#include <Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger.hxx>
+#include "Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger.hxx"
 #endif
 
 #ifndef _Standard_Integer_HeaderFile

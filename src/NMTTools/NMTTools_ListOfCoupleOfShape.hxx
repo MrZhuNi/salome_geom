@@ -26,7 +26,7 @@
 #include <Standard_Address.hxx>
 #endif
 #ifndef _Handle_NMTTools_ListNodeOfListOfCoupleOfShape_HeaderFile
-#include <Handle_NMTTools_ListNodeOfListOfCoupleOfShape.hxx>
+#include "Handle_NMTTools_ListNodeOfListOfCoupleOfShape.hxx"
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>

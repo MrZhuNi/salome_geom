@@ -44,7 +44,7 @@
 #include <TopTools_MapOfShape.hxx>
 #endif
 #ifndef _GEOMAlgo_ShapeAlgo_HeaderFile
-#include <GEOMAlgo_ShapeAlgo.hxx>
+#include "GEOMAlgo_ShapeAlgo.hxx"
 #endif
 #ifndef _TopAbs_ShapeEnum_HeaderFile
 #include <TopAbs_ShapeEnum.hxx>

@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_HAlgo_HeaderFile
-#include <Handle_GEOMAlgo_HAlgo.hxx>
+#include "Handle_GEOMAlgo_HAlgo.hxx"
 #endif
 
 #ifndef _Standard_Integer_HeaderFile

@@ -35,7 +35,7 @@
 #include <Standard_Integer.hxx>
 #endif
 #ifndef _GEOMAlgo_Builder_HeaderFile
-#include <GEOMAlgo_Builder.hxx>
+#include "GEOMAlgo_Builder.hxx"
 #endif
 class TopoDS_Shape;
 class TopTools_ListOfShape;

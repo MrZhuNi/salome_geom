@@ -30,17 +30,17 @@
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
 
-#include <SUIT_Session.h>
-#include <SUIT_Desktop.h>
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_MessageBox.h>
-#include <SUIT_ViewWindow.h>
-#include <SUIT_ViewManager.h>
-#include <SOCC_Prs.h>
-#include <SOCC_ViewModel.h>
-#include <SalomeApp_Tools.h>
-#include <SalomeApp_Application.h>
-#include <LightApp_SelectionMgr.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SUIT_MessageBox.h>
+#include <gui/SUIT_ViewWindow.h>
+#include <gui/SUIT_ViewManager.h>
+#include <gui/SOCC_Prs.h>
+#include <gui/SOCC_ViewModel.h>
+#include <gui/SalomeApp_Tools.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/LightApp_SelectionMgr.h>
 
 // OCCT Includes
 #include <AIS_AngleDimension.hxx>
@@ -66,7 +66,7 @@
 
 #include "GEOMImpl_Types.hxx"
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC

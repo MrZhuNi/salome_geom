@@ -28,7 +28,7 @@
 
 #include "GEOM_GEOMBase.hxx"
 
-#include <SUIT_Operation.h>
+#include <gui/SUIT_Operation.h>
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
 

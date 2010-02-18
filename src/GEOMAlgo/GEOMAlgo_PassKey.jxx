@@ -23,5 +23,5 @@
 #include <TColStd_ListOfInteger.hxx>
 #endif
 #ifndef _GEOMAlgo_PassKey_HeaderFile
-#include <GEOMAlgo_PassKey.hxx>
+#include "GEOMAlgo_PassKey.hxx"
 #endif

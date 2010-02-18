@@ -26,5 +26,5 @@
 #include <TopTools_ListOfShape.hxx>
 #endif
 #ifndef _NMTDS_PassKeyShape_HeaderFile
-#include <NMTDS_PassKeyShape.hxx>
+#include "NMTDS_PassKeyShape.hxx"
 #endif

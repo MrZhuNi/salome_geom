@@ -27,9 +27,9 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
-#include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <kernel/utilities.h>
+#include <kernel/OpUtil.hxx>
+#include <kernel/Utils_ExceptHandlers.hxx>
 
 #include <TColStd_HSequenceOfTransient.hxx>
 

@@ -26,7 +26,7 @@
 #ifndef MEASUREGUI_CHECKCOMPOUNDOFBLOCKSDLG_H
 #define MEASUREGUI_CHECKCOMPOUNDOFBLOCKSDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class MeasureGUI_1Sel1TextView2ListBox;
 

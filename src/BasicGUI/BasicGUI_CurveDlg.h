@@ -26,7 +26,7 @@
 #ifndef BASICGUI_CURVEDLG_H
 #define BASICGUI_CURVEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 #include <list>
 

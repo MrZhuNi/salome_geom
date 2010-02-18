@@ -29,11 +29,11 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 
-#include <SalomeApp_DoubleSpinBox.h>
-#include <SUIT_Session.h>
-#include <SUIT_ResourceMgr.h>
-#include <SalomeApp_Application.h>
-#include <LightApp_SelectionMgr.h>
+#include <gui/SalomeApp_DoubleSpinBox.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/LightApp_SelectionMgr.h>
 
 // OCCT Includes
 #include <TopoDS_Shape.hxx>

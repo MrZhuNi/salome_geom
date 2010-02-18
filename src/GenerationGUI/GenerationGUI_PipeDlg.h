@@ -26,7 +26,7 @@
 #ifndef GENERATIONGUI_PIPEDLG_H
 #define GENERATIONGUI_PIPEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_3Sel1Check;
 

@@ -29,17 +29,17 @@
 #include <TopoDS_Face.hxx>
 #endif
 #ifndef _GEOMAlgo_ListOfPnt_HeaderFile
-#include <GEOMAlgo_ListOfPnt.hxx>
+#include "GEOMAlgo_ListOfPnt.hxx"
 #endif
 #ifndef _TopoDS_Edge_HeaderFile
 #include <TopoDS_Edge.hxx>
 #endif
 #ifndef _GEOMAlgo_IndexedDataMapOfShapeState_HeaderFile
-#include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
+#include "GEOMAlgo_IndexedDataMapOfShapeState.hxx"
 #endif
 #ifndef _gp_Pnt_HeaderFile
 #include <gp_Pnt.hxx>
 #endif
 #ifndef _GEOMAlgo_FinderShapeOn1_HeaderFile
-#include <GEOMAlgo_FinderShapeOn1.hxx>
+#include "GEOMAlgo_FinderShapeOn1.hxx"
 #endif

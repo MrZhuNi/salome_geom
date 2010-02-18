@@ -26,11 +26,11 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_NMTTools_ListNodeOfListOfCommonBlock_HeaderFile
-#include <Handle_NMTTools_ListNodeOfListOfCommonBlock.hxx>
+#include "Handle_NMTTools_ListNodeOfListOfCommonBlock.hxx"
 #endif
 
 #ifndef _NMTTools_CommonBlock_HeaderFile
-#include <NMTTools_CommonBlock.hxx>
+#include "NMTTools_CommonBlock.hxx"
 #endif
 #ifndef _TCollection_MapNode_HeaderFile
 #include <TCollection_MapNode.hxx>

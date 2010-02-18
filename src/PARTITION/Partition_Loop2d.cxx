@@ -27,7 +27,7 @@
 //
 #include "Partition_Loop2d.ixx"
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 #include <stdio.h>
 
 #include <BRepAdaptor_Curve2d.hxx>

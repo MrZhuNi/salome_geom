@@ -26,7 +26,7 @@
 #include <Standard_Address.hxx>
 #endif
 #ifndef _Handle_NMTDS_ListNodeOfListOfPassKeyBoolean_HeaderFile
-#include <Handle_NMTDS_ListNodeOfListOfPassKeyBoolean.hxx>
+#include "Handle_NMTDS_ListNodeOfListOfPassKeyBoolean.hxx"
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>

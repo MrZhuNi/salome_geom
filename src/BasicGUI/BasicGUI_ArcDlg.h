@@ -26,7 +26,7 @@
 #ifndef BASICGUI_ARCDLG_H
 #define BASICGUI_ARCDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_3Sel;
 class DlgRef_3Sel1Check;

@@ -26,11 +26,11 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger.hxx>
+#include "Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger.hxx"
 #endif
 
 #ifndef _GEOMAlgo_PassKey_HeaderFile
-#include <GEOMAlgo_PassKey.hxx>
+#include "GEOMAlgo_PassKey.hxx"
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>

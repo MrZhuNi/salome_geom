@@ -29,7 +29,7 @@
 #include <Standard_Integer.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger.hxx>
+#include "Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger.hxx"
 #endif
 class Standard_NoSuchObject;
 class GEOMAlgo_PassKey;

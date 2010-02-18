@@ -23,13 +23,13 @@
 #define _GEOMAlgo_GlueAnalyser_HeaderFile
 
 #ifndef _GEOMAlgo_ListOfCoupleOfShapes_HeaderFile
-#include <GEOMAlgo_ListOfCoupleOfShapes.hxx>
+#include "GEOMAlgo_ListOfCoupleOfShapes.hxx"
 #endif
 #ifndef _TopTools_ListOfShape_HeaderFile
 #include <TopTools_ListOfShape.hxx>
 #endif
 #ifndef _GEOMAlgo_Gluer_HeaderFile
-#include <GEOMAlgo_Gluer.hxx>
+#include "GEOMAlgo_Gluer.hxx"
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>

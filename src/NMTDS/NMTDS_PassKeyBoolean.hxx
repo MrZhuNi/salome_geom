@@ -26,7 +26,7 @@
 #include <Standard_Boolean.hxx>
 #endif
 #ifndef _NMTDS_PassKey_HeaderFile
-#include <NMTDS_PassKey.hxx>
+#include "NMTDS_PassKey.hxx"
 #endif
 
 

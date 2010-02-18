@@ -20,10 +20,10 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _NMTDS_PassKeyBoolean_HeaderFile
-#include <NMTDS_PassKeyBoolean.hxx>
+#include "NMTDS_PassKeyBoolean.hxx"
 #endif
 #ifndef _NMTDS_ListOfPassKeyBoolean_HeaderFile
-#include <NMTDS_ListOfPassKeyBoolean.hxx>
+#include "NMTDS_ListOfPassKeyBoolean.hxx"
 #endif
 #ifndef _BOPTools_CArray1OfSSInterference_HeaderFile
 #include <BOPTools_CArray1OfSSInterference.hxx>
@@ -44,5 +44,5 @@
 #include <BOPTools_CArray1OfVVInterference.hxx>
 #endif
 #ifndef _NMTDS_InterfPool_HeaderFile
-#include <NMTDS_InterfPool.hxx>
+#include "NMTDS_InterfPool.hxx"
 #endif

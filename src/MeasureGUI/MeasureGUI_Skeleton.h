@@ -27,7 +27,7 @@
 #define MEASUREGUI_SKELETON_H
 
 #include <QDialog>
-#include <GEOMBase_Helper.h>
+#include "GEOMBase_Helper.h"
 
 class GeometryGUI;
 class MeasureGUI_SkeletonBox;

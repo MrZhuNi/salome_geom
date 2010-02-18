@@ -26,7 +26,7 @@
 #include <Standard_Integer.hxx>
 #endif
 #ifndef _NMTTools_PaveFiller_HeaderFile
-#include <NMTTools_PaveFiller.hxx>
+#include "NMTTools_PaveFiller.hxx"
 #endif
 #ifndef _TopAbs_ShapeEnum_HeaderFile
 #include <TopAbs_ShapeEnum.hxx>

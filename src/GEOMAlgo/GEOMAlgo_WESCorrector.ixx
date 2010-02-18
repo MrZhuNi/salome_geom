@@ -19,7 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-#include <GEOMAlgo_WESCorrector.jxx>
+#include "GEOMAlgo_WESCorrector.jxx"
 
  
 

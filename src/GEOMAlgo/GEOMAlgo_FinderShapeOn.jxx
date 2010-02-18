@@ -32,5 +32,5 @@
 #include <TopTools_DataMapOfShapeShape.hxx>
 #endif
 #ifndef _GEOMAlgo_FinderShapeOn_HeaderFile
-#include <GEOMAlgo_FinderShapeOn.hxx>
+#include "GEOMAlgo_FinderShapeOn.hxx"
 #endif

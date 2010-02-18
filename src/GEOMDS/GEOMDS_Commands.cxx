@@ -26,7 +26,7 @@
 //  $Header$
 //
 using namespace std;
-#include "utilities.h"
+#include <kernel/utilities.h>
 #include "GEOMDS_Commands.ixx"
 
 #include <TNaming_Builder.hxx>

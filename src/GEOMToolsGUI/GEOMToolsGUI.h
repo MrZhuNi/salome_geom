@@ -28,9 +28,9 @@
 
 #include "GEOM_ToolsGUI.hxx"
 
-#include <GEOMGUI.h>
+#include "GEOMGUI.h"
 
-#include <SALOMEDSClient.hxx>
+#include <kernel/SALOMEDSClient.hxx>
 
 class GEOM_Displayer;
 class SALOME_View;

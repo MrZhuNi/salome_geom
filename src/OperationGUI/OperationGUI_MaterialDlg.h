@@ -26,7 +26,7 @@
 #ifndef OPERATIONGUI_MATERIALDLG_H
 #define OPERATIONGUI_MATERIALDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_1List1Spin1Btn;
 

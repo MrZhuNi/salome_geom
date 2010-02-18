@@ -23,10 +23,10 @@
 #define _NMTTools_DEProcessor_HeaderFile
 
 #ifndef _NMTTools_PPaveFiller_HeaderFile
-#include <NMTTools_PPaveFiller.hxx>
+#include "NMTTools_PPaveFiller.hxx"
 #endif
 #ifndef _NMTDS_PShapesDataStructure_HeaderFile
-#include <NMTDS_PShapesDataStructure.hxx>
+#include "NMTDS_PShapesDataStructure.hxx"
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>

@@ -26,7 +26,7 @@
 #include <TCollection_BasicMapIterator.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape.hxx>
+#include "Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape.hxx"
 #endif
 class Standard_NoSuchObject;
 class GEOMAlgo_PassKeyShape;

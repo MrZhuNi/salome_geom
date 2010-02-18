@@ -26,7 +26,7 @@
 #ifndef BOOLEANGUI_H
 #define BOOLEANGUI_H
 
-#include <GEOMGUI.h>
+#include "GEOMGUI.h"
 
 //=================================================================================
 // class    : BooleanGUI

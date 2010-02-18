@@ -26,7 +26,7 @@
 #ifndef BLOCKSGUI_TRSFDLG_H
 #define BLOCKSGUI_TRSFDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 #include <QMap>
 

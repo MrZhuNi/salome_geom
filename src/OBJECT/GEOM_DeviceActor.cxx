@@ -29,7 +29,7 @@
 #include <vtkPolyDataMapper.h>  
 #include <vtkPolyDataNormals.h>  
 #include <vtkActor.h> 
-#include <VTKViewer_Actor.h>
+#include <gui/VTKViewer_Actor.h>
 #include <vtkRenderer.h> 
  
 vtkStandardNewMacro(GEOM_DeviceActor);

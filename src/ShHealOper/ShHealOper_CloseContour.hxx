@@ -35,7 +35,7 @@
 #include <ShapeExtend_WireData.hxx>
 #include <ShapeAnalysis_Wire.hxx>
 #include <TColStd_MapOfInteger.hxx>
-#include <ShHealOper_Tool.hxx>
+#include "ShHealOper_Tool.hxx"
 #include <TopoDS_Edge.hxx>
 ///  Class ShHealOper_CloseContour
 //

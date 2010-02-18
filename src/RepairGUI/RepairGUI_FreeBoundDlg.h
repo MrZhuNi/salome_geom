@@ -27,7 +27,7 @@
 #define REPAIRGUI_FREEBOUNDDLG_H
 
 #include <QDialog>
-#include <GEOMBase_Helper.h>
+#include "GEOMBase_Helper.h"
 
 class QLineEdit;
 class QLabel;

@@ -26,7 +26,7 @@
 #ifndef OPERATIONGUI_PARTITIONDLG_H
 #define OPERATIONGUI_PARTITIONDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel1List1Check;
 

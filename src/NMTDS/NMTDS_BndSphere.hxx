@@ -114,7 +114,7 @@ private:
 };
 
 
-#include <NMTDS_BndSphere.lxx>
+#include "NMTDS_BndSphere.lxx"
 
 
 

@@ -29,5 +29,5 @@
 #include <BOPTools_ListOfPaveBlock.hxx>
 #endif
 #ifndef _NMTTools_CommonBlock_HeaderFile
-#include <NMTTools_CommonBlock.hxx>
+#include "NMTTools_CommonBlock.hxx"
 #endif

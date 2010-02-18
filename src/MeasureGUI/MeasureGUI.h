@@ -26,7 +26,7 @@
 #ifndef MEASUREGUI_H
 #define MEASUREGUI_H
 
-#include <GEOMGUI.h>
+#include "GEOMGUI.h"
 
 //=================================================================================
 // class    : MeasureGUI

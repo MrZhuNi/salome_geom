@@ -25,7 +25,7 @@
 //
 #include "EntityGUI_SketcherDlg.h"
 #include "EntityGUI_Widgets.h"
-#include <QtxDoubleSpinBox.h>
+#include <gui/QtxDoubleSpinBox.h>
 
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
@@ -33,13 +33,13 @@
 #include <Geom_Surface.hxx>
 #include <Geom_Plane.hxx>
 
-#include <SUIT_Desktop.h>
-#include <SUIT_Session.h>
-#include <SUIT_MessageBox.h>
-#include <SUIT_ResourceMgr.h>
-#include <SalomeApp_Application.h>
-#include <LightApp_Application.h>
-#include <LightApp_SelectionMgr.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_MessageBox.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/LightApp_Application.h>
+#include <gui/LightApp_SelectionMgr.h>
 
 #include <QKeyEvent>
 
@@ -52,7 +52,7 @@
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <Sketcher_Profile.hxx>
 
-#include <SalomeApp_Study.h>
+#include <gui/SalomeApp_Study.h>
 
 #include <gp_Pln.hxx>
 

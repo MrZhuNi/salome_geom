@@ -29,7 +29,7 @@
 #include <Handle_Standard_Transient.hxx>
 #endif
 #ifndef _Handle_GEOM_DataMapNodeOfDataMapOfAsciiStringTransient_HeaderFile
-#include <Handle_GEOM_DataMapNodeOfDataMapOfAsciiStringTransient.hxx>
+#include "Handle_GEOM_DataMapNodeOfDataMapOfAsciiStringTransient.hxx"
 #endif
 class Standard_NoSuchObject;
 class TCollection_AsciiString;

@@ -23,7 +23,7 @@
 #define _NMTDS_IteratorCheckerSI_HeaderFile
 
 #ifndef _NMTDS_Iterator_HeaderFile
-#include <NMTDS_Iterator.hxx>
+#include "NMTDS_Iterator.hxx"
 #endif
 
 

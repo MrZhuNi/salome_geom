@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_BlockFix_BlockFixAPI_HeaderFile
-#include <Handle_BlockFix_BlockFixAPI.hxx>
+#include "Handle_BlockFix_BlockFixAPI.hxx"
 #endif
 
 #ifndef _Handle_ShapeBuild_ReShape_HeaderFile
@@ -88,6 +88,6 @@ private:
   Standard_Integer myOptimumNbFaces;
 };
 
-#include <BlockFix_BlockFixAPI.lxx>
+#include "BlockFix_BlockFixAPI.lxx"
 
 #endif

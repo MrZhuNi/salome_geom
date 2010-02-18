@@ -26,11 +26,11 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_NMTTools_ListNodeOfListOfCoupleOfShape_HeaderFile
-#include <Handle_NMTTools_ListNodeOfListOfCoupleOfShape.hxx>
+#include "Handle_NMTTools_ListNodeOfListOfCoupleOfShape.hxx"
 #endif
 
 #ifndef _NMTTools_CoupleOfShape_HeaderFile
-#include <NMTTools_CoupleOfShape.hxx>
+#include "NMTTools_CoupleOfShape.hxx"
 #endif
 #ifndef _TCollection_MapNode_HeaderFile
 #include <TCollection_MapNode.hxx>

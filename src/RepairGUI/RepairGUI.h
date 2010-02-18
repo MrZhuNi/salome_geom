@@ -26,7 +26,7 @@
 #ifndef REPAIRGUI_H
 #define REPAIRGUI_H
 
-#include <GEOMGUI.h>
+#include "GEOMGUI.h"
 
 //=================================================================================
 // class    : RepairGUI

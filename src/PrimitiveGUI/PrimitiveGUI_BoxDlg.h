@@ -26,7 +26,7 @@
 #ifndef PRIMITIVEGUI_BOXDLG_H
 #define PRIMITIVEGUI_BOXDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel;
 class DlgRef_3Spin;

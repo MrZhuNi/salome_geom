@@ -31,7 +31,7 @@
 #include "Partition_Loop3d.hxx"
 #include "Partition_Spliter.ixx"
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <Precision.hxx>
 #include <TopAbs_Orientation.hxx>

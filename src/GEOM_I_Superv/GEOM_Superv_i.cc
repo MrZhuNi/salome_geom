@@ -20,10 +20,10 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include "GEOM_Superv_i.hh"
-#include "SALOME_LifeCycleCORBA.hxx"
+#include <kernel/SALOME_LifeCycleCORBA.hxx>
 
 #include CORBA_SERVER_HEADER(SALOME_Session)
-#include "SALOMEDSClient_ClientFactory.hxx"
+#include <kernel/SALOMEDSClient_ClientFactory.hxx>
 
 #define isNewStudy(a,b) (a > 0 && a != b)
 

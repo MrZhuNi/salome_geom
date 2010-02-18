@@ -26,16 +26,16 @@
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _GEOMAlgo_ShapeInfo_HeaderFile
-#include <GEOMAlgo_ShapeInfo.hxx>
+#include "GEOMAlgo_ShapeInfo.hxx"
 #endif
 #ifndef _GEOMAlgo_IndexedDataMapOfShapeShapeInfo_HeaderFile
-#include <GEOMAlgo_IndexedDataMapOfShapeShapeInfo.hxx>
+#include "GEOMAlgo_IndexedDataMapOfShapeShapeInfo.hxx"
 #endif
 #ifndef _Standard_Real_HeaderFile
 #include <Standard_Real.hxx>
 #endif
 #ifndef _GEOMAlgo_Algo_HeaderFile
-#include <GEOMAlgo_Algo.hxx>
+#include "GEOMAlgo_Algo.hxx"
 #endif
 class TopoDS_Shape;
 class GEOMAlgo_ShapeInfo;

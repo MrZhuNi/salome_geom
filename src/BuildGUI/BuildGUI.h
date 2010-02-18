@@ -26,7 +26,7 @@
 #ifndef BUILDGUI_H
 #define BUILDGUI_H
 
-#include <GEOMGUI.h>
+#include "GEOMGUI.h"
 
 //=================================================================================
 // class    : BuildGUI

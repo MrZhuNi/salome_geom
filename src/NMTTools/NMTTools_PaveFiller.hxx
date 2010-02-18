@@ -30,7 +30,7 @@
 #endif
 
 #ifndef _NMTDS_PShapesDataStructure_HeaderFile
-#include <NMTDS_PShapesDataStructure.hxx>
+#include "NMTDS_PShapesDataStructure.hxx"
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
@@ -42,7 +42,7 @@
 #include <BOPTools_PavePool.hxx>
 #endif
 #ifndef _NMTTools_CommonBlockPool_HeaderFile
-#include <NMTTools_CommonBlockPool.hxx>
+#include "NMTTools_CommonBlockPool.hxx"
 #endif
 #ifndef _BOPTools_SplitShapesPool_HeaderFile
 #include <BOPTools_SplitShapesPool.hxx>
@@ -54,19 +54,19 @@
 #include <BOPTools_SSIntersectionAttribute.hxx>
 #endif
 #ifndef _NMTTools_IndexedDataMapOfIndexedMapOfInteger_HeaderFile
-#include <NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx>
+#include "NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx"
 #endif
 #ifndef _TColStd_DataMapOfIntegerInteger_HeaderFile
 #include <TColStd_DataMapOfIntegerInteger.hxx>
 #endif
 #ifndef _NMTDS_PIterator_HeaderFile
-#include <NMTDS_PIterator.hxx>
+#include "NMTDS_PIterator.hxx"
 #endif
 #ifndef _TopoDS_Shape_HeaderFile
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _NMTDS_PInterfPool_HeaderFile
-#include <NMTDS_PInterfPool.hxx>
+#include "NMTDS_PInterfPool.hxx"
 #endif
 #ifndef _TopAbs_ShapeEnum_HeaderFile
 #include <TopAbs_ShapeEnum.hxx>

@@ -29,25 +29,25 @@
 
 #include <GeometryGUI.h>
 
-#include <SUIT_Desktop.h>
-#include <SUIT_Session.h>
-#include <SUIT_ViewManager.h>
-#include <SUIT_ViewWindow.h>
-#include <SUIT_ViewModel.h>
-#include <SUIT_MessageBox.h>
-#include <SUIT_OverrideCursor.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ViewManager.h>
+#include <gui/SUIT_ViewWindow.h>
+#include <gui/SUIT_ViewModel.h>
+#include <gui/SUIT_MessageBox.h>
+#include <gui/SUIT_OverrideCursor.h>
 
-#include <SalomeApp_Module.h>
-#include <SalomeApp_Application.h>
-#include <SalomeApp_Study.h>
-#include <LightApp_SelectionMgr.h>
-#include <LightApp_DataOwner.h>
-#include <SalomeApp_Tools.h>
+#include <gui/SalomeApp_Module.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/SalomeApp_Study.h>
+#include <gui/LightApp_SelectionMgr.h>
+#include <gui/LightApp_DataOwner.h>
+#include <gui/SalomeApp_Tools.h>
 
-#include <SALOME_Prs.h>
+#include <gui/SALOME_Prs.h>
 
-#include <OCCViewer_ViewModel.h>
-#include <SVTK_ViewModel.h>
+#include <gui/OCCViewer_ViewModel.h>
+#include <gui/SVTK_ViewModel.h>
 
 #include <TColStd_MapOfInteger.hxx>
 #include <TCollection_AsciiString.hxx>

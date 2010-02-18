@@ -29,17 +29,17 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 #include <GEOMImpl_Types.hxx>
-#include <QtxDoubleSpinBox.h>
+#include <gui/QtxDoubleSpinBox.h>
 
-#include <SalomeApp_Application.h>
-#include <SalomeApp_DoubleSpinBox.h>
-#include <SalomeApp_IntSpinBox.h>
-#include <LightApp_SelectionMgr.h>
-#include <SUIT_Session.h>
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_MessageBox.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
-#include <SALOME_ListIO.hxx>
+#include <gui/SalomeApp_Application.h>
+#include <gui/SalomeApp_DoubleSpinBox.h>
+#include <gui/SalomeApp_IntSpinBox.h>
+#include <gui/LightApp_SelectionMgr.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SUIT_MessageBox.h>
+#include <gui/SALOME_ListIteratorOfListIO.hxx>
+#include <gui/SALOME_ListIO.hxx>
 
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_MapOfInteger.hxx>

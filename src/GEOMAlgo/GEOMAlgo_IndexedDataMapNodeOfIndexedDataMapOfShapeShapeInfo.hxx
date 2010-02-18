@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo_HeaderFile
-#include <Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo.hxx>
+#include "Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo.hxx"
 #endif
 
 #ifndef _TopoDS_Shape_HeaderFile
@@ -36,7 +36,7 @@
 #include <Standard_Integer.hxx>
 #endif
 #ifndef _GEOMAlgo_ShapeInfo_HeaderFile
-#include <GEOMAlgo_ShapeInfo.hxx>
+#include "GEOMAlgo_ShapeInfo.hxx"
 #endif
 #ifndef _TCollection_MapNodePtr_HeaderFile
 #include <TCollection_MapNodePtr.hxx>

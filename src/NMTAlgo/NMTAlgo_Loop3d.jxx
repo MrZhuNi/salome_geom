@@ -38,5 +38,5 @@
 #include <gp_Vec.hxx>
 #endif
 #ifndef _NMTAlgo_Loop3d_HeaderFile
-#include <NMTAlgo_Loop3d.hxx>
+#include "NMTAlgo_Loop3d.hxx"
 #endif

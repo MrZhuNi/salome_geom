@@ -29,7 +29,7 @@
 #include <Standard_Integer.hxx>
 #endif
 #ifndef _Handle_NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger_HeaderFile
-#include <Handle_NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger.hxx>
+#include "Handle_NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger.hxx"
 #endif
 class Standard_NoSuchObject;
 class TColStd_MapOfInteger;

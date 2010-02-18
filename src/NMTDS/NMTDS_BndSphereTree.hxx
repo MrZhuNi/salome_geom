@@ -28,7 +28,7 @@
 #define NMTDS_BndSphereTree_HeaderFile
 
 #include <NCollection_UBTree.hxx>
-#include <NMTDS_BndSphere.hxx>
+#include "NMTDS_BndSphere.hxx"
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
 

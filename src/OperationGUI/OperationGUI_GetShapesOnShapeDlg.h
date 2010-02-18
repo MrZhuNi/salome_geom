@@ -26,8 +26,8 @@
 #ifndef OPERATIONGUI_GETSHAPESONSHAPEDLG_H
 #define OPERATIONGUI_GETSHAPESONSHAPEDLG_H
 
-#include <GEOMBase_Skeleton.h>
-#include <GEOMAlgo_State.hxx>
+#include "GEOMBase_Skeleton.h"
+#include "GEOMAlgo_State.hxx"
 
 class DlgRef_2Sel2List;
 

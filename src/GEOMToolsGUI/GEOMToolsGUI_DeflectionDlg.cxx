@@ -25,13 +25,13 @@
 
 #include "GEOMToolsGUI_DeflectionDlg.h"
 #include <GeometryGUI.h>
-#include <LightApp_Application.h>
-#include <QtxDoubleSpinBox.h>
+#include <gui/LightApp_Application.h>
+#include <gui/QtxDoubleSpinBox.h>
 
-#include <SUIT_MessageBox.h>
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_Session.h>
-#include <SUIT_Tools.h>
+#include <gui/SUIT_MessageBox.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_Tools.h>
 
 #include <QLabel>
 #include <QPushButton>

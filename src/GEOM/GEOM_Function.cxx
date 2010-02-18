@@ -26,7 +26,7 @@
 #include <GEOM_Solver.hxx>
 #include <GEOM_ISubShape.hxx>
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <TDF.hxx>
 #include <TDF_Tool.hxx>

@@ -26,7 +26,7 @@
 #ifndef REPAIRGUI_CLOSECONTOURDLG_H
 #define REPAIRGUI_CLOSECONTOURDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2SelExt;
 class QButtonGroup;

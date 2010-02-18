@@ -25,7 +25,7 @@
 
 #include "EntityGUI_3DSketcherDlg.h"
 #include "EntityGUI_Widgets.h"
-#include <QtxDoubleSpinBox.h>
+#include <gui/QtxDoubleSpinBox.h>
 
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
@@ -33,13 +33,13 @@
 #include <Precision.hxx>  
 
 #include <DlgRef.h>
-#include <SUIT_Desktop.h>
-#include <SUIT_Session.h>
-#include <SUIT_MessageBox.h>
-#include <SUIT_ResourceMgr.h>
-#include <SalomeApp_Application.h>
-#include <LightApp_Application.h>
-#include <LightApp_SelectionMgr.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_MessageBox.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/LightApp_Application.h>
+#include <gui/LightApp_SelectionMgr.h>
 
 #include <BRep_Tool.hxx>
 #include <TopExp.hxx>

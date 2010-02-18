@@ -29,7 +29,7 @@
 #include <TopAbs_ShapeEnum.hxx>
 #endif
 #ifndef _GEOMAlgo_State_HeaderFile
-#include <GEOMAlgo_State.hxx>
+#include "GEOMAlgo_State.hxx"
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>
@@ -41,10 +41,10 @@
 #include <TopTools_ListOfShape.hxx>
 #endif
 #ifndef _GEOMAlgo_IndexedDataMapOfShapeState_HeaderFile
-#include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
+#include "GEOMAlgo_IndexedDataMapOfShapeState.hxx"
 #endif
 #ifndef _GEOMAlgo_ShapeAlgo_HeaderFile
-#include <GEOMAlgo_ShapeAlgo.hxx>
+#include "GEOMAlgo_ShapeAlgo.hxx"
 #endif
 #ifndef _TopAbs_State_HeaderFile
 #include <TopAbs_State.hxx>

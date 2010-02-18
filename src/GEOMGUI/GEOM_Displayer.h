@@ -28,7 +28,7 @@
 
 #include "GEOM_GEOMGUI.hxx"
 
-#include <SALOME_InteractiveObject.hxx>
+#include <gui/SALOME_InteractiveObject.hxx>
 
 class SALOME_ListIO;
 class SALOME_View;
@@ -39,7 +39,7 @@ class SALOME_OCCViewType;
 
 #include <TopoDS_Shape.hxx>
 #include <Quantity_Color.hxx>
-#include <LightApp_Displayer.h>
+#include <gui/LightApp_Displayer.h>
 #include <Aspect_TypeOfMarker.hxx>
 
 #include <QList>

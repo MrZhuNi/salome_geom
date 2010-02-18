@@ -26,7 +26,7 @@
 #ifndef TRANSFORMATIONGUI_H
 #define TRANSFORMATIONGUI_H
 
-#include <GEOMGUI.h>
+#include "GEOMGUI.h"
 
 //=================================================================================
 // class    : TransformationGUI

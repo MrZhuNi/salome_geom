@@ -25,8 +25,8 @@
 //
 #include "GEOM_Operation.h"
 
-#include <SUIT_Application.h>
-#include <SalomeApp_Tools.h>
+#include <gui/SUIT_Application.h>
+#include <gui/SalomeApp_Tools.h>
 
 
 //================================================================

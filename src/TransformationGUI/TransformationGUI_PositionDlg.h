@@ -26,7 +26,7 @@
 #ifndef TRANSFORMATIONGUI_POSITIONDLG_H
 #define TRANSFORMATIONGUI_POSITIONDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_4Sel1Spin3Check;
 

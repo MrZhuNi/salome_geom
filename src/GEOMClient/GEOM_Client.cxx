@@ -33,8 +33,8 @@
 
 #include "GEOM_Client.hxx"
 #include <SALOMEconfig.h>
-#include "Basics_Utils.hxx"
-#include "utilities.h"
+#include <kernel/Basics_Utils.hxx>
+#include <kernel/utilities.h>
 
 #include <BRep_Builder.hxx>
 #include <BRepTools.hxx>

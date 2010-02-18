@@ -26,7 +26,7 @@
 #ifndef BASICGUI_WORKINGPLANEDLG_H
 #define BASICGUI_WORKINGPLANEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 #include <gp_Ax3.hxx>
 

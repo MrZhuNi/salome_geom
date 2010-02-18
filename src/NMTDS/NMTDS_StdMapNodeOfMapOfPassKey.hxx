@@ -27,11 +27,11 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_NMTDS_StdMapNodeOfMapOfPassKey_HeaderFile
-#include <Handle_NMTDS_StdMapNodeOfMapOfPassKey.hxx>
+#include "Handle_NMTDS_StdMapNodeOfMapOfPassKey.hxx"
 #endif
 
 #ifndef _NMTDS_PassKey_HeaderFile
-#include <NMTDS_PassKey.hxx>
+#include "NMTDS_PassKey.hxx"
 #endif
 #ifndef _TCollection_MapNode_HeaderFile
 #include <TCollection_MapNode.hxx>

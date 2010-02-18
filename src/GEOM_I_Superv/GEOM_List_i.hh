@@ -27,7 +27,7 @@
 #include CORBA_SERVER_HEADER(GEOM_Superv)
 
 #include "GEOM_Gen_i.hh"
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 template <class Type>
 class GEOM_List_i : 

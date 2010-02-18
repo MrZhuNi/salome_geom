@@ -22,7 +22,7 @@
 #ifndef _GEOMImpl_GEN_HXX_
 #define _GEOMImpl_GEN_HXX_
 
-#include <GEOM_GEOMImpl.hxx>
+#include "GEOM_GEOMImpl.hxx"
 
 #include <map>
 

@@ -27,7 +27,7 @@
 #define REPAIRGUI_FREEFACESDLG_H
 
 #include <QDialog>
-#include <GEOMBase_Helper.h>
+#include "GEOMBase_Helper.h"
 
 class GEOM_Displayer;
 class QPushButton;

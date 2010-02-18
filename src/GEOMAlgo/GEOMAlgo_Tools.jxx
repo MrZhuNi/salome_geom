@@ -23,7 +23,7 @@
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape_HeaderFile
-#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
+#include "GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx"
 #endif
 #ifndef _IntTools_Context_HeaderFile
 #include <IntTools_Context.hxx>
@@ -47,5 +47,5 @@
 #include <Geom_Surface.hxx>
 #endif
 #ifndef _GEOMAlgo_Tools_HeaderFile
-#include <GEOMAlgo_Tools.hxx>
+#include "GEOMAlgo_Tools.hxx"
 #endif

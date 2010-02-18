@@ -26,7 +26,7 @@
 #ifndef BUILDGUI_EDGEDLG_H
 #define BUILDGUI_EDGEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel;
 

@@ -32,10 +32,10 @@
 #include <strstream>
 //#include <sstream>
 
-#include "Utils_CorbaException.hxx"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
-#include "utilities.h"
+#include <kernel/Utils_CorbaException.hxx>
+#include <kernel/OpUtil.hxx>
+#include <kernel/Utils_ExceptHandlers.hxx>
+#include <kernel/utilities.h>
 
 #include "GEOM_Object_i.hh"
 #include "GEOM_Object.hxx"
@@ -60,7 +60,7 @@
 #include <TopExp.hxx>
 #include <OSD.hxx>
 
-#include "SALOMEDS_Tool.hxx"
+#include <kernel/SALOMEDS_Tool.hxx>
 
 //============================================================================
 // function : GEOM_Gen_i()

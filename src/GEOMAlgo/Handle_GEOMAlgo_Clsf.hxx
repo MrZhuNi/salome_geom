@@ -30,7 +30,7 @@
 #endif
 
 #ifndef _Handle_GEOMAlgo_HAlgo_HeaderFile
-#include <Handle_GEOMAlgo_HAlgo.hxx>
+#include "Handle_GEOMAlgo_HAlgo.hxx"
 #endif
 
 class Standard_Transient;

@@ -26,7 +26,7 @@
 #include <Standard_Address.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_ListNodeOfListOfPnt_HeaderFile
-#include <Handle_GEOMAlgo_ListNodeOfListOfPnt.hxx>
+#include "Handle_GEOMAlgo_ListNodeOfListOfPnt.hxx"
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>

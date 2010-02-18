@@ -26,11 +26,11 @@
 #include "MeasureGUI_CheckCompoundOfBlocksDlg.h"
 #include "MeasureGUI_Widgets.h"
 
-#include <SUIT_Session.h>
-#include <SUIT_ResourceMgr.h>
-#include <LightApp_SelectionMgr.h>
-#include <SalomeApp_Tools.h>
-#include <SalomeApp_Application.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/LightApp_SelectionMgr.h>
+#include <gui/SalomeApp_Tools.h>
+#include <gui/SalomeApp_Application.h>
 
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopExp.hxx>

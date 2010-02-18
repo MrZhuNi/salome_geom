@@ -19,7 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-#include <NMTDS_Tools.jxx>
+#include "NMTDS_Tools.jxx"
 
  
 

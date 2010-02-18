@@ -38,5 +38,5 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 #endif
 #ifndef _NMTAlgo_Tools_HeaderFile
-#include <NMTAlgo_Tools.hxx>
+#include "NMTAlgo_Tools.hxx"
 #endif

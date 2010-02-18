@@ -28,14 +28,14 @@
 #include <GeometryGUI.h>
 #include <GEOM_Displayer.h>
 
-#include <QtxComboBox.h>
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_Session.h>
-#include <LightApp_SelectionMgr.h>
-#include <SalomeApp_Application.h>
-#include <SalomeApp_Study.h>
-#include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <gui/QtxComboBox.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SUIT_Session.h>
+#include <gui/LightApp_SelectionMgr.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/SalomeApp_Study.h>
+#include <gui/SALOME_ListIO.hxx>
+#include <gui/SALOME_ListIteratorOfListIO.hxx>
 
 #include <QButtonGroup>
 #include <QGridLayout>

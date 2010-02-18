@@ -30,7 +30,7 @@
 #include CORBA_CLIENT_HEADER(SALOMEDS)
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
-#include "SALOME_GenericObj_i.hh"
+#include <kernel/SALOME_GenericObj_i.hh>
 
 #include "GEOM_Object.hxx"
 

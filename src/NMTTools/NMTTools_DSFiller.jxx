@@ -23,14 +23,14 @@
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _NMTDS_ShapesDataStructure_HeaderFile
-#include <NMTDS_ShapesDataStructure.hxx>
+#include "NMTDS_ShapesDataStructure.hxx"
 #endif
 #ifndef _BOPTools_InterferencePool_HeaderFile
 #include <BOPTools_InterferencePool.hxx>
 #endif
 #ifndef _NMTTools_PaveFiller_HeaderFile
-#include <NMTTools_PaveFiller.hxx>
+#include "NMTTools_PaveFiller.hxx"
 #endif
 #ifndef _NMTTools_DSFiller_HeaderFile
-#include <NMTTools_DSFiller.hxx>
+#include "NMTTools_DSFiller.hxx"
 #endif

@@ -23,9 +23,9 @@
 
 #include "GEOM_Engine.hxx"
 
-#include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <kernel/utilities.h>
+#include <kernel/OpUtil.hxx>
+#include <kernel/Utils_ExceptHandlers.hxx>
 
 #include <Standard_Stream.hxx>
 #include <TCollection_AsciiString.hxx>

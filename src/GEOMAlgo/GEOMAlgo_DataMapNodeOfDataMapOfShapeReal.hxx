@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeReal_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeReal.hxx>
+#include "Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeReal.hxx"
 #endif
 
 #ifndef _TopoDS_Shape_HeaderFile

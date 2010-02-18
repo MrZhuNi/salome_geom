@@ -26,7 +26,7 @@
 #ifndef MEASUREGUI_CENTERMASSDLG_H
 #define MEASUREGUI_CENTERMASSDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class MeasureGUI_1Sel3LineEdit;
 

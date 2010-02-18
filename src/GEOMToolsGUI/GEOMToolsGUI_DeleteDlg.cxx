@@ -30,7 +30,7 @@
 #include <QTextBrowser>
 #include <QStringList>
 #include <QGridLayout>
-#include <SUIT_MessageBox.h>
+#include <gui/SUIT_MessageBox.h>
  
 static bool isEntryLess( const QString& e1, const QString& e2 )
 {

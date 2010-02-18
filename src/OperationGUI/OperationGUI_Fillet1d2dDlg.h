@@ -26,7 +26,7 @@
 #ifndef OPERATIONGUI_Fillet1d2dDLG_H
 #define OPERATIONGUI_Fillet1d2dDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 

@@ -44,5 +44,5 @@
 #include <Geom2d_Curve.hxx>
 #endif
 #ifndef _BlockFix_SphereSpaceModifier_HeaderFile
-#include <BlockFix_SphereSpaceModifier.hxx>
+#include "BlockFix_SphereSpaceModifier.hxx"
 #endif

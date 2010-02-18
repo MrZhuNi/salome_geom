@@ -31,7 +31,7 @@
 */
 
 #include "GEOM_AISShape.ixx"
-#include "SALOME_InteractiveObject.hxx"
+#include <gui/SALOME_InteractiveObject.hxx>
 
 // Open CASCADE Includes
 #include <AIS_Drawer.hxx>

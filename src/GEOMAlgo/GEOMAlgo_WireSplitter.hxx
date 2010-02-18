@@ -38,7 +38,7 @@
 #include <TopTools_ListOfShape.hxx>
 #endif
 #ifndef _GEOMAlgo_Algo_HeaderFile
-#include <GEOMAlgo_Algo.hxx>
+#include "GEOMAlgo_Algo.hxx"
 #endif
 class TopoDS_Face;
 class TopTools_ListOfShape;

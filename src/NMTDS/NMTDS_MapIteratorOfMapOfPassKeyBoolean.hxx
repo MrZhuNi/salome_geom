@@ -26,7 +26,7 @@
 #include <TCollection_BasicMapIterator.hxx>
 #endif
 #ifndef _Handle_NMTDS_StdMapNodeOfMapOfPassKeyBoolean_HeaderFile
-#include <Handle_NMTDS_StdMapNodeOfMapOfPassKeyBoolean.hxx>
+#include "Handle_NMTDS_StdMapNodeOfMapOfPassKeyBoolean.hxx"
 #endif
 class Standard_NoSuchObject;
 class NMTDS_PassKeyBoolean;

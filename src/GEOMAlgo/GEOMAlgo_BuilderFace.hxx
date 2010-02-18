@@ -26,7 +26,7 @@
 #include <TopoDS_Face.hxx>
 #endif
 #ifndef _GEOMAlgo_BuilderArea_HeaderFile
-#include <GEOMAlgo_BuilderArea.hxx>
+#include "GEOMAlgo_BuilderArea.hxx"
 #endif
 class TopoDS_Face;
 

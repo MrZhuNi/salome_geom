@@ -33,8 +33,8 @@
 #include "GEOM_AssemblyBuilder.h"
 #include "GEOM_Actor.h"
 
-#include <SUIT_Session.h>
-#include <SUIT_ResourceMgr.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ResourceMgr.h>
 
 #include <vtkProperty.h>
 #include <vtkAssembly.h>
@@ -55,7 +55,7 @@
 // Qt includes
 #include <QColor>
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 using namespace std;
 // SALOME

@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_NMTDS_ListNodeOfListOfIndexedDataMapOfShapeAncestorsSuccessors_HeaderFile
-#include <Handle_NMTDS_ListNodeOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx>
+#include "Handle_NMTDS_ListNodeOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx"
 #endif
 
 #ifndef _BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors_HeaderFile

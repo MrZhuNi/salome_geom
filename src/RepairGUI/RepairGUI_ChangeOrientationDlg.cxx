@@ -29,10 +29,10 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 
-#include <SalomeApp_Application.h>
-#include <LightApp_SelectionMgr.h>
-#include <SUIT_Session.h>
-#include <SUIT_ResourceMgr.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/LightApp_SelectionMgr.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ResourceMgr.h>
 
 #include <GEOMImpl_Types.hxx>
 

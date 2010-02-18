@@ -26,7 +26,7 @@
 #ifndef ENTITYGUI_SUBSHAPEDLG_H
 #define ENTITYGUI_SUBSHAPEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_1Sel1Check1List;
 

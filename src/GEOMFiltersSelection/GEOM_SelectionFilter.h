@@ -22,7 +22,7 @@
 #ifndef GEOM_SELECTIONFILTER_H
 #define GEOM_SELECTIONFILTER_H
 
-#include <SalomeApp_Filter.h>
+#include <gui/SalomeApp_Filter.h>
 
 #include <TopoDS_Shape.hxx>
 

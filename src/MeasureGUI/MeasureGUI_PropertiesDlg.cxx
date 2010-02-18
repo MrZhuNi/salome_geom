@@ -30,9 +30,9 @@
 #include <GEOMBase.h>
 #include <DlgRef.h>
 
-#include <SalomeApp_Tools.h>
-#include <SUIT_Session.h>
-#include <SUIT_ResourceMgr.h>
+#include <gui/SalomeApp_Tools.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ResourceMgr.h>
 
 #include <TColStd_MapOfInteger.hxx>
 

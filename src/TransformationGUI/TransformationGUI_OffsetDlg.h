@@ -26,7 +26,7 @@
 #ifndef TRANSFORMATIONGUI_OFFSETDLG_H
 #define TRANSFORMATIONGUI_OFFSETDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_1Sel1Spin1Check;  
   

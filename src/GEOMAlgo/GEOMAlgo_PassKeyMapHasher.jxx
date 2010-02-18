@@ -20,8 +20,8 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _GEOMAlgo_PassKey_HeaderFile
-#include <GEOMAlgo_PassKey.hxx>
+#include "GEOMAlgo_PassKey.hxx"
 #endif
 #ifndef _GEOMAlgo_PassKeyMapHasher_HeaderFile
-#include <GEOMAlgo_PassKeyMapHasher.hxx>
+#include "GEOMAlgo_PassKeyMapHasher.hxx"
 #endif

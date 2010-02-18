@@ -19,7 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-#include <GEOMAlgo_Clsf.jxx>
+#include "GEOMAlgo_Clsf.jxx"
 
 #ifndef _Standard_TypeMismatch_HeaderFile
 #include <Standard_TypeMismatch.hxx>

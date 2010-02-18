@@ -215,7 +215,7 @@
   <customwidget>
    <class>QtxDoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header location="global" >QtxDoubleSpinBox.h</header>
+   <header location="global" >gui/QtxDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

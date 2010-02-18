@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox_HeaderFile
-#include <Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx>
+#include "Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx"
 #endif
 
 #ifndef _TopoDS_Shape_HeaderFile

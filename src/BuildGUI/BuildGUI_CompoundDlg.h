@@ -26,7 +26,7 @@
 #ifndef BUILDGUI_COMPOUNDDLG_H
 #define BUILDGUI_COMPOUNDDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_1Sel;
 

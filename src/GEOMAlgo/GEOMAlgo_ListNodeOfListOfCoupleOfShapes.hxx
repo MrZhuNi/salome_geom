@@ -26,11 +26,11 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes_HeaderFile
-#include <Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx>
+#include "Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx"
 #endif
 
 #ifndef _GEOMAlgo_CoupleOfShapes_HeaderFile
-#include <GEOMAlgo_CoupleOfShapes.hxx>
+#include "GEOMAlgo_CoupleOfShapes.hxx"
 #endif
 #ifndef _TCollection_MapNode_HeaderFile
 #include <TCollection_MapNode.hxx>

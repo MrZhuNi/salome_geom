@@ -19,7 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-#include <GEOMAlgo_BuilderArea.jxx>
+#include "GEOMAlgo_BuilderArea.jxx"
 
  
 

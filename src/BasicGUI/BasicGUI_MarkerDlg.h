@@ -26,7 +26,7 @@
 #ifndef BASICGUI_MARKERDLG_H
 #define BASICGUI_MARKERDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 #include <QMap>
 

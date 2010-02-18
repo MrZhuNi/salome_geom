@@ -38,13 +38,13 @@
 
 #include <GeometryGUI.h>
 
-#include <SUIT_Session.h>
-#include <SUIT_Desktop.h>
-#include <SUIT_ViewWindow.h>
-#include <OCCViewer_ViewWindow.h>
-#include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewManager.h>
-#include <OCCViewer_ViewPort3d.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_ViewWindow.h>
+#include <gui/OCCViewer_ViewWindow.h>
+#include <gui/OCCViewer_ViewModel.h>
+#include <gui/OCCViewer_ViewManager.h>
+#include <gui/OCCViewer_ViewPort3d.h>
 
 #include <BRep_Tool.hxx>
 #include <ProjLib.hxx>

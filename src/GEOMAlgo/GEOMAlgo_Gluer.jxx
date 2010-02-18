@@ -29,7 +29,7 @@
 #include <TopoDS_Edge.hxx>
 #endif
 #ifndef _GEOMAlgo_PassKeyShape_HeaderFile
-#include <GEOMAlgo_PassKeyShape.hxx>
+#include "GEOMAlgo_PassKeyShape.hxx"
 #endif
 #ifndef _TopoDS_Face_HeaderFile
 #include <TopoDS_Face.hxx>
@@ -44,5 +44,5 @@
 #include <TopTools_DataMapOfShapeShape.hxx>
 #endif
 #ifndef _GEOMAlgo_Gluer_HeaderFile
-#include <GEOMAlgo_Gluer.hxx>
+#include "GEOMAlgo_Gluer.hxx"
 #endif

@@ -27,7 +27,7 @@
 #include "BooleanGUI_Dialog.h"
 
 #include <GeometryGUI.h>
-#include <SUIT_Desktop.h>
+#include <gui/SUIT_Desktop.h>
 
 //=======================================================================
 // function : BooleanGUI()

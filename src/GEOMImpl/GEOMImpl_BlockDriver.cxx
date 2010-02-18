@@ -39,7 +39,7 @@
 #include <GEOMAlgo_Gluer.hxx>
 #include <BlockFix_BlockFixAPI.hxx>
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <TNaming_CopyShape.hxx>
 

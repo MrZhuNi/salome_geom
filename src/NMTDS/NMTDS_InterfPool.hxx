@@ -23,10 +23,10 @@
 #define _NMTDS_InterfPool_HeaderFile
 
 #ifndef _NMTDS_MapOfPassKeyBoolean_HeaderFile
-#include <NMTDS_MapOfPassKeyBoolean.hxx>
+#include "NMTDS_MapOfPassKeyBoolean.hxx"
 #endif
 #ifndef _NMTDS_ListOfPassKeyBoolean_HeaderFile
-#include <NMTDS_ListOfPassKeyBoolean.hxx>
+#include "NMTDS_ListOfPassKeyBoolean.hxx"
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>
@@ -53,7 +53,7 @@
 #include <Standard_Boolean.hxx>
 #endif
 #ifndef _NMTDS_InterfType_HeaderFile
-#include <NMTDS_InterfType.hxx>
+#include "NMTDS_InterfType.hxx"
 #endif
 class NMTDS_PassKeyBoolean;
 class NMTDS_ListOfPassKeyBoolean;

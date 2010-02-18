@@ -35,7 +35,7 @@
 #include <BOPTools_PavePool.hxx>
 #endif
 #ifndef _NMTTools_CommonBlockPool_HeaderFile
-#include <NMTTools_CommonBlockPool.hxx>
+#include "NMTTools_CommonBlockPool.hxx"
 #endif
 #ifndef _BOPTools_SplitShapesPool_HeaderFile
 #include <BOPTools_SplitShapesPool.hxx>
@@ -47,10 +47,10 @@
 #include <TopoDS_Vertex.hxx>
 #endif
 #ifndef _NMTTools_ListOfCommonBlock_HeaderFile
-#include <NMTTools_ListOfCommonBlock.hxx>
+#include "NMTTools_ListOfCommonBlock.hxx"
 #endif
 #ifndef _NMTTools_CommonBlock_HeaderFile
-#include <NMTTools_CommonBlock.hxx>
+#include "NMTTools_CommonBlock.hxx"
 #endif
 #ifndef _BOPTools_IDMapOfPaveBlockIMapOfPaveBlock_HeaderFile
 #include <BOPTools_IDMapOfPaveBlockIMapOfPaveBlock.hxx>
@@ -83,7 +83,7 @@
 #include <gp_Pnt.hxx>
 #endif
 #ifndef _NMTTools_IndexedDataMapOfIndexedMapOfInteger_HeaderFile
-#include <NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx>
+#include "NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx"
 #endif
 #ifndef _TopTools_ListOfShape_HeaderFile
 #include <TopTools_ListOfShape.hxx>
@@ -95,5 +95,5 @@
 #include <TopTools_DataMapOfShapeShape.hxx>
 #endif
 #ifndef _NMTTools_PaveFiller_HeaderFile
-#include <NMTTools_PaveFiller.hxx>
+#include "NMTTools_PaveFiller.hxx"
 #endif

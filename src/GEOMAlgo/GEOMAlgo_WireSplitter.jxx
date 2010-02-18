@@ -29,5 +29,5 @@
 #include <BOPTColStd_ListOfListOfShape.hxx>
 #endif
 #ifndef _GEOMAlgo_WireSplitter_HeaderFile
-#include <GEOMAlgo_WireSplitter.hxx>
+#include "GEOMAlgo_WireSplitter.hxx"
 #endif

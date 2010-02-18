@@ -26,7 +26,7 @@
 #ifndef BUILDGUI_WIREDLG_H
 #define BUILDGUI_WIREDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_1Sel1Spin;
 

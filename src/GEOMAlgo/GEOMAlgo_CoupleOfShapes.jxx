@@ -23,5 +23,5 @@
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _GEOMAlgo_CoupleOfShapes_HeaderFile
-#include <GEOMAlgo_CoupleOfShapes.hxx>
+#include "GEOMAlgo_CoupleOfShapes.hxx"
 #endif

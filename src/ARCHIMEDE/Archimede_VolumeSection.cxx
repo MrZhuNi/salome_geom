@@ -26,7 +26,7 @@
 //  $Header$
 //
 #include "Archimede_VolumeSection.hxx"
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <BRepMesh_IncrementalMesh.hxx>
 #include <TopExp_Explorer.hxx>

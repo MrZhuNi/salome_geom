@@ -27,7 +27,7 @@
 //
 #include "Partition_Inter2d.hxx"
 #include "Partition_Inter3d.ixx"
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <BRepAlgo_AsDes.hxx>
 #include <BRepAlgo_Image.hxx>

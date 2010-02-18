@@ -30,14 +30,14 @@
 #include <GEOM_Displayer.h>
 #include <GeometryGUI.h>
 
-#include <LightApp_SelectionMgr.h>
-#include <SalomeApp_Application.h>
-#include <SalomeApp_Tools.h>
-#include <SUIT_Desktop.h>
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_MessageBox.h>
-#include <SUIT_Session.h>
-#include <SUIT_OverrideCursor.h>
+#include <gui/LightApp_SelectionMgr.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/SalomeApp_Tools.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SUIT_MessageBox.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_OverrideCursor.h>
 
 #include <QKeyEvent>
 

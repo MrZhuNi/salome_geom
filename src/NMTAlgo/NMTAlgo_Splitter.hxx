@@ -47,7 +47,7 @@
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #endif
 #ifndef _NMTAlgo_Builder_HeaderFile
-#include <NMTAlgo_Builder.hxx>
+#include "NMTAlgo_Builder.hxx"
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>

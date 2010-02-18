@@ -37,13 +37,13 @@
 #include <Standard_CString.hxx>
 #endif
 #ifndef _SALOME_InteractiveObject_HeaderFile
-#include "SALOME_InteractiveObject.hxx"
+#include <gui/SALOME_InteractiveObject.hxx>
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
 #ifndef _Handle_SALOME_InteractiveObject_HeaderFile
-#include "Handle_SALOME_InteractiveObject.hxx"
+#include <gui/Handle_SALOME_InteractiveObject.hxx>
 #endif
 
 class GEOM_InteractiveObject : public SALOME_InteractiveObject {

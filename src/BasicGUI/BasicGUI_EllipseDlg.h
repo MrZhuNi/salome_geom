@@ -26,7 +26,7 @@
 #ifndef BASICGUI_ELLIPSEDLG_H
 #define BASICGUI_ELLIPSEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_3Sel2Spin;
 

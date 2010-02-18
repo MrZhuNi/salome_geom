@@ -59,7 +59,7 @@
 #include <TColStd_Array1OfReal.hxx>
 #include <Adaptor3d_HCurve.hxx>
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 using namespace std;
 

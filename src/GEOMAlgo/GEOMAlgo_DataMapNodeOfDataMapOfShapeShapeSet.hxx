@@ -26,14 +26,14 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet.hxx>
+#include "Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet.hxx"
 #endif
 
 #ifndef _TopoDS_Shape_HeaderFile
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _GEOMAlgo_ShapeSet_HeaderFile
-#include <GEOMAlgo_ShapeSet.hxx>
+#include "GEOMAlgo_ShapeSet.hxx"
 #endif
 #ifndef _TCollection_MapNode_HeaderFile
 #include <TCollection_MapNode.hxx>

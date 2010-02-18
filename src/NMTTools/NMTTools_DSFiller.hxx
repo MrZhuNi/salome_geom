@@ -26,13 +26,13 @@
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _NMTDS_PShapesDataStructure_HeaderFile
-#include <NMTDS_PShapesDataStructure.hxx>
+#include "NMTDS_PShapesDataStructure.hxx"
 #endif
 #ifndef _BOPTools_PInterferencePool_HeaderFile
 #include <BOPTools_PInterferencePool.hxx>
 #endif
 #ifndef _NMTTools_PPaveFiller_HeaderFile
-#include <NMTTools_PPaveFiller.hxx>
+#include "NMTTools_PPaveFiller.hxx"
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>

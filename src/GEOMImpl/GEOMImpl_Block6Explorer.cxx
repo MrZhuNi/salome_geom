@@ -25,7 +25,7 @@
 
 #include <ShHealOper_ShapeProcess.hxx>
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <BRep_Tool.hxx>
 #include <BRep_TFace.hxx>

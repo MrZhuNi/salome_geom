@@ -26,7 +26,7 @@
 #ifndef PRIMITIVEGUI_SPHEREDLG_H
 #define PRIMITIVEGUI_SPHEREDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_1Sel1Spin;
 class DlgRef_1Spin;

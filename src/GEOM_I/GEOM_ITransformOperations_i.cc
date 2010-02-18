@@ -23,9 +23,9 @@
 
 #include "GEOM_ITransformOperations_i.hh"
 
-#include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <kernel/utilities.h>
+#include <kernel/OpUtil.hxx>
+#include <kernel/Utils_ExceptHandlers.hxx>
 
 #include <TDF_Label.hxx>
 #include <TDF_Tool.hxx>

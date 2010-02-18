@@ -41,9 +41,9 @@
 #include <TopoDS_Face.hxx>
 #include <TopExp_Explorer.hxx>
 
-#include <SUIT_Session.h>
-#include <SUIT_ResourceMgr.h>
-#include <SalomeApp_Tools.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SalomeApp_Tools.h>
 
 // #include <qlineedit.h>
 // #include <qlabel.h>

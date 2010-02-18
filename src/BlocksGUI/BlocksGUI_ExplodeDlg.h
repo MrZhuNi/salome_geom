@@ -26,7 +26,7 @@
 #ifndef BLOCKSGUI_EXPLODEDLG_H
 #define BLOCKSGUI_EXPLODEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_1Sel2Spin1View1Check;
 

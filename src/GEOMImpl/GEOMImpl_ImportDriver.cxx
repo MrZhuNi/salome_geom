@@ -26,7 +26,7 @@
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <TopoDS_Shape.hxx>
 

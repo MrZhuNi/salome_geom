@@ -33,9 +33,9 @@
 #include <GEOM_Function.hxx>
 #include <GEOM_PythonDump.hxx>
 
-#include <utilities.h>
-#include <OpUtil.hxx>
-#include <Utils_ExceptHandlers.hxx>
+#include <kernel/utilities.h>
+#include <kernel/OpUtil.hxx>
+#include <kernel/Utils_ExceptHandlers.hxx>
 
 // OCCT Includes
 #include <TFunction_DriverTable.hxx>

@@ -26,7 +26,7 @@
 #ifndef OPERATIONGUI_CLIPPINGDLG_H
 #define OPERATIONGUI_CLIPPINGDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class QGroupBox;
 class QLabel;

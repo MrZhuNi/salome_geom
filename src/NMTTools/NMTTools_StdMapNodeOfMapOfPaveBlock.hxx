@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_NMTTools_StdMapNodeOfMapOfPaveBlock_HeaderFile
-#include <Handle_NMTTools_StdMapNodeOfMapOfPaveBlock.hxx>
+#include "Handle_NMTTools_StdMapNodeOfMapOfPaveBlock.hxx"
 #endif
 
 #ifndef _BOPTools_PaveBlock_HeaderFile

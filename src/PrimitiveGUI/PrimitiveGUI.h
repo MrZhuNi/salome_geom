@@ -26,7 +26,7 @@
 #ifndef PRIMITIVEGUI_H
 #define PRIMITIVEGUI_H
 
-#include <GEOMGUI.h>
+#include "GEOMGUI.h"
   
 //=================================================================================
 // class    : PrimitiveGUI

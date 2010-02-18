@@ -29,7 +29,7 @@
 
 #include "Partition_Loop.ixx"
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <BRep_Builder.hxx>
 #include <BRepAlgo_FaceRestrictor.hxx>

@@ -26,7 +26,7 @@
 #ifndef TRANSFORMATIONGUI_SCALEDLG_H
 #define TRANSFORMATIONGUI_SCALEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class QCheckBox;
 class QGroupBox;

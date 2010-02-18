@@ -38,5 +38,5 @@
 #include <gp_Sphere.hxx>
 #endif
 #ifndef _GEOMAlgo_SurfaceTools_HeaderFile
-#include <GEOMAlgo_SurfaceTools.hxx>
+#include "GEOMAlgo_SurfaceTools.hxx"
 #endif

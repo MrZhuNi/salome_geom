@@ -28,7 +28,7 @@
 
 #include <GEOMImpl_IMeasureOperations.hxx>
 
-#include <Basics_Utils.hxx>
+#include <kernel/Basics_Utils.hxx>
 
 // OCCT Includes
 #include <BRepBuilderAPI_Transform.hxx>

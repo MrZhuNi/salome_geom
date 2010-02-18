@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBox_HeaderFile
-#include <Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx>
+#include "Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx"
 #endif
 
 #ifndef _TopoDS_Shape_HeaderFile

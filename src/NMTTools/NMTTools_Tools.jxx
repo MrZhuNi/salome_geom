@@ -44,14 +44,14 @@
 #include <IntTools_Context.hxx>
 #endif
 #ifndef _NMTTools_ListOfCoupleOfShape_HeaderFile
-#include <NMTTools_ListOfCoupleOfShape.hxx>
+#include "NMTTools_ListOfCoupleOfShape.hxx"
 #endif
 #ifndef _NMTTools_IndexedDataMapOfShapeIndexedMapOfShape_HeaderFile
-#include <NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx>
+#include "NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx"
 #endif
 #ifndef _Geom2d_Curve_HeaderFile
 #include <Geom2d_Curve.hxx>
 #endif
 #ifndef _NMTTools_Tools_HeaderFile
-#include <NMTTools_Tools.hxx>
+#include "NMTTools_Tools.hxx"
 #endif

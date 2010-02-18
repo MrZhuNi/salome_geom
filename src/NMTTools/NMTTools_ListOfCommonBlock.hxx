@@ -26,7 +26,7 @@
 #include <Standard_Address.hxx>
 #endif
 #ifndef _Handle_NMTTools_ListNodeOfListOfCommonBlock_HeaderFile
-#include <Handle_NMTTools_ListNodeOfListOfCommonBlock.hxx>
+#include "Handle_NMTTools_ListNodeOfListOfCommonBlock.hxx"
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>

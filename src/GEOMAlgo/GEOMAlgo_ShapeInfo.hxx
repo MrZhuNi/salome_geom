@@ -29,16 +29,16 @@
 #include <Standard_Integer.hxx>
 #endif
 #ifndef _GEOMAlgo_KindOfShape_HeaderFile
-#include <GEOMAlgo_KindOfShape.hxx>
+#include "GEOMAlgo_KindOfShape.hxx"
 #endif
 #ifndef _GEOMAlgo_KindOfName_HeaderFile
-#include <GEOMAlgo_KindOfName.hxx>
+#include "GEOMAlgo_KindOfName.hxx"
 #endif
 #ifndef _GEOMAlgo_KindOfBounds_HeaderFile
-#include <GEOMAlgo_KindOfBounds.hxx>
+#include "GEOMAlgo_KindOfBounds.hxx"
 #endif
 #ifndef _GEOMAlgo_KindOfClosed_HeaderFile
-#include <GEOMAlgo_KindOfClosed.hxx>
+#include "GEOMAlgo_KindOfClosed.hxx"
 #endif
 #ifndef _gp_Pnt_HeaderFile
 #include <gp_Pnt.hxx>

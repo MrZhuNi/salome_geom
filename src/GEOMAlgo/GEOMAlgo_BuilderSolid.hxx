@@ -23,7 +23,7 @@
 #define _GEOMAlgo_BuilderSolid_HeaderFile
 
 #ifndef _GEOMAlgo_BuilderArea_HeaderFile
-#include <GEOMAlgo_BuilderArea.hxx>
+#include "GEOMAlgo_BuilderArea.hxx"
 #endif
 
 

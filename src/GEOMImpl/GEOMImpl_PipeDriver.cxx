@@ -92,7 +92,7 @@
 #include <Standard_TypeMismatch.hxx>
 #include <Standard_ConstructionError.hxx>
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 //=======================================================================
 //function : GetID

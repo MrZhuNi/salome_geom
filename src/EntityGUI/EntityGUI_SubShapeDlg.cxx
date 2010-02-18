@@ -29,14 +29,14 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 
-#include <SUIT_Desktop.h>
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_Session.h>
-#include <SUIT_ViewManager.h>
-#include <SUIT_ViewWindow.h>
-#include <OCCViewer_ViewModel.h>
-#include <SalomeApp_Application.h>
-#include <LightApp_SelectionMgr.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ViewManager.h>
+#include <gui/SUIT_ViewWindow.h>
+#include <gui/OCCViewer_ViewModel.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/LightApp_SelectionMgr.h>
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopoDS_Iterator.hxx>

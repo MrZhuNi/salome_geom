@@ -26,22 +26,22 @@
 #include <TopAbs_ShapeEnum.hxx>
 #endif
 #ifndef _GEOMAlgo_State_HeaderFile
-#include <GEOMAlgo_State.hxx>
+#include "GEOMAlgo_State.hxx"
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_Clsf_HeaderFile
-#include <Handle_GEOMAlgo_Clsf.hxx>
+#include "Handle_GEOMAlgo_Clsf.hxx"
 #endif
 #ifndef _TopTools_ListOfShape_HeaderFile
 #include <TopTools_ListOfShape.hxx>
 #endif
 #ifndef _GEOMAlgo_IndexedDataMapOfShapeState_HeaderFile
-#include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
+#include "GEOMAlgo_IndexedDataMapOfShapeState.hxx"
 #endif
 #ifndef _GEOMAlgo_ShapeAlgo_HeaderFile
-#include <GEOMAlgo_ShapeAlgo.hxx>
+#include "GEOMAlgo_ShapeAlgo.hxx"
 #endif
 class GEOMAlgo_Clsf;
 class TopTools_ListOfShape;

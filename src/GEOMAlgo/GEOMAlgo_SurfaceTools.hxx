@@ -35,7 +35,7 @@
 #include <TopAbs_State.hxx>
 #endif
 #ifndef _GEOMAlgo_State_HeaderFile
-#include <GEOMAlgo_State.hxx>
+#include "GEOMAlgo_State.hxx"
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>

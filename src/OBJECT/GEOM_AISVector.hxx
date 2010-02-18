@@ -27,7 +27,7 @@
 #ifndef GEOM_AISVector_HeaderFile
 #define GEOM_AISVector_HeaderFile
 
-#include <GEOM_AISShape.hxx>
+#include "GEOM_AISShape.hxx"
 #include <Standard_DefineHandle.hxx>
 
 /*!

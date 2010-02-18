@@ -26,5 +26,5 @@
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _GEOMAlgo_ShapeSet_HeaderFile
-#include <GEOMAlgo_ShapeSet.hxx>
+#include "GEOMAlgo_ShapeSet.hxx"
 #endif

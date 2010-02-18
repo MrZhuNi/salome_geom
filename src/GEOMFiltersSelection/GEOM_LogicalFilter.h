@@ -22,7 +22,7 @@
 #ifndef GEOM_LOGICALFILTER_H
 #define GEOM_LOGICALFILTER_H
 
-#include <SUIT_SelectionFilter.h>
+#include <gui/SUIT_SelectionFilter.h>
 #include <Standard_Macro.hxx>
 
 #include <QList>

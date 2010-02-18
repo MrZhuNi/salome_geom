@@ -23,13 +23,13 @@
 #define _NMTDS_Iterator_HeaderFile
 
 #ifndef _NMTDS_PShapesDataStructure_HeaderFile
-#include <NMTDS_PShapesDataStructure.hxx>
+#include "NMTDS_PShapesDataStructure.hxx"
 #endif
 #ifndef _NMTDS_ListOfPassKeyBoolean_HeaderFile
-#include <NMTDS_ListOfPassKeyBoolean.hxx>
+#include "NMTDS_ListOfPassKeyBoolean.hxx"
 #endif
 #ifndef _NMTDS_ListIteratorOfListOfPassKeyBoolean_HeaderFile
-#include <NMTDS_ListIteratorOfListOfPassKeyBoolean.hxx>
+#include "NMTDS_ListIteratorOfListOfPassKeyBoolean.hxx"
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>

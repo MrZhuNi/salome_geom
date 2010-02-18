@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_ClsfSurf_HeaderFile
-#include <Handle_GEOMAlgo_ClsfSurf.hxx>
+#include "Handle_GEOMAlgo_ClsfSurf.hxx"
 #endif
 
 #ifndef _Handle_Geom_Surface_HeaderFile
@@ -36,7 +36,7 @@
 #include <GeomAdaptor_Surface.hxx>
 #endif
 #ifndef _GEOMAlgo_Clsf_HeaderFile
-#include <GEOMAlgo_Clsf.hxx>
+#include "GEOMAlgo_Clsf.hxx"
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>

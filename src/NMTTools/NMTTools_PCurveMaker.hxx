@@ -23,7 +23,7 @@
 #define _NMTTools_PCurveMaker_HeaderFile
 
 #ifndef _NMTTools_PDSFiller_HeaderFile
-#include <NMTTools_PDSFiller.hxx>
+#include "NMTTools_PDSFiller.hxx"
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>

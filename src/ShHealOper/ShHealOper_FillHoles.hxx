@@ -34,7 +34,7 @@
 #include <Geom_Surface.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-#include <ShHealOper_Tool.hxx>
+#include "ShHealOper_Tool.hxx"
 #include <TopTools_HSequenceOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 

@@ -29,7 +29,7 @@
 #include <TopAbs_ShapeEnum.hxx>
 #endif
 #ifndef _GEOMAlgo_State_HeaderFile
-#include <GEOMAlgo_State.hxx>
+#include "GEOMAlgo_State.hxx"
 #endif
 #ifndef _TopoDS_Shape_HeaderFile
 #include <TopoDS_Shape.hxx>
@@ -41,13 +41,13 @@
 #include <TopTools_DataMapOfShapeShape.hxx>
 #endif
 #ifndef _GEOMAlgo_IndexedDataMapOfShapeState_HeaderFile
-#include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
+#include "GEOMAlgo_IndexedDataMapOfShapeState.hxx"
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
 #ifndef _GEOMAlgo_ShapeAlgo_HeaderFile
-#include <GEOMAlgo_ShapeAlgo.hxx>
+#include "GEOMAlgo_ShapeAlgo.hxx"
 #endif
 class Geom_Surface;
 class TopTools_ListOfShape;

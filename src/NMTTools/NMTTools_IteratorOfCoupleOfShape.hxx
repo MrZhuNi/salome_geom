@@ -23,7 +23,7 @@
 #define _NMTTools_IteratorOfCoupleOfShape_HeaderFile
 
 #ifndef _NMTDS_PShapesDataStructure_HeaderFile
-#include <NMTDS_PShapesDataStructure.hxx>
+#include "NMTDS_PShapesDataStructure.hxx"
 #endif
 #ifndef _BOPTools_IndexedMapOfCoupleOfInteger_HeaderFile
 #include <BOPTools_IndexedMapOfCoupleOfInteger.hxx>

@@ -26,7 +26,7 @@
 #ifndef REPAIRGUI_SHAPEPROCESSDLG_H
 #define REPAIRGUI_SHAPEPROCESSDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 #include <QMap>
 

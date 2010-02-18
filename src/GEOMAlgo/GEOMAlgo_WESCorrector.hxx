@@ -23,16 +23,16 @@
 #define _GEOMAlgo_WESCorrector_HeaderFile
 
 #ifndef _GEOMAlgo_PWireEdgeSet_HeaderFile
-#include <GEOMAlgo_PWireEdgeSet.hxx>
+#include "GEOMAlgo_PWireEdgeSet.hxx"
 #endif
 #ifndef _GEOMAlgo_WireEdgeSet_HeaderFile
-#include <GEOMAlgo_WireEdgeSet.hxx>
+#include "GEOMAlgo_WireEdgeSet.hxx"
 #endif
 #ifndef _BOP_ListOfConnexityBlock_HeaderFile
 #include <BOP_ListOfConnexityBlock.hxx>
 #endif
 #ifndef _GEOMAlgo_Algo_HeaderFile
-#include <GEOMAlgo_Algo.hxx>
+#include "GEOMAlgo_Algo.hxx"
 #endif
 class GEOMAlgo_WireEdgeSet;
 

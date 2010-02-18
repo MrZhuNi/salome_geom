@@ -29,28 +29,28 @@
 #include <GEOM_AISShape.hxx>
 #include <GEOM_Actor.h>
 
-#include <SUIT_Desktop.h>
-#include <SUIT_ViewWindow.h>
-#include <SUIT_OverrideCursor.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_ViewWindow.h>
+#include <gui/SUIT_OverrideCursor.h>
 
-#include <OCCViewer_ViewManager.h>
-#include <OCCViewer_ViewModel.h>
+#include <gui/OCCViewer_ViewManager.h>
+#include <gui/OCCViewer_ViewModel.h>
 
-#include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <gui/SALOME_ListIO.hxx>
+#include <gui/SALOME_ListIteratorOfListIO.hxx>
 
-#include <SVTK_ViewWindow.h>
-#include <SVTK_View.h>
-#include <SVTK_ViewModel.h>
-#include <SOCC_ViewModel.h>
-#include <SVTK_Prs.h>
-#include <SOCC_Prs.h>
+#include <gui/SVTK_ViewWindow.h>
+#include <gui/SVTK_View.h>
+#include <gui/SVTK_ViewModel.h>
+#include <gui/SOCC_ViewModel.h>
+#include <gui/SVTK_Prs.h>
+#include <gui/SOCC_Prs.h>
 
-#include <QtxActionMenuMgr.h>
+#include <gui/QtxActionMenuMgr.h>
 
-#include <SalomeApp_Application.h>
-#include <LightApp_SelectionMgr.h>
-#include <SalomeApp_Study.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/LightApp_SelectionMgr.h>
+#include <gui/SalomeApp_Study.h>
 
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 

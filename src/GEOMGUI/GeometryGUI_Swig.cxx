@@ -28,23 +28,23 @@
 
 #include "GeometryGUI.h"
 
-#include "SUIT_Desktop.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "SalomeApp_Study.h"
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/SalomeApp_Study.h>
 
-#include "OB_Browser.h"
+#include <gui/OB_Browser.h>
 
-#include "OCCViewer_ViewWindow.h"
-#include "OCCViewer_ViewManager.h"
-#include "SOCC_ViewModel.h"
-#include <SOCC_Prs.h>
+#include <gui/OCCViewer_ViewWindow.h>
+#include <gui/OCCViewer_ViewManager.h>
+#include <gui/SOCC_ViewModel.h>
+#include <gui/SOCC_Prs.h>
 
-#include "SVTK_ViewModel.h"
-#include "SVTK_ViewWindow.h"
-#include "SVTK_View.h"
-#include "SVTK_Renderer.h"
-#include <SVTK_Prs.h>
+#include <gui/SVTK_ViewModel.h>
+#include <gui/SVTK_ViewWindow.h>
+#include <gui/SVTK_View.h>
+#include <gui/SVTK_Renderer.h>
+#include <gui/SVTK_Prs.h>
 
 #include "GEOM_Actor.h"
 #include "GEOM_Client.hxx"
@@ -52,7 +52,7 @@
 #include "GEOM_InteractiveObject.hxx"
 #include "GEOM_Displayer.h"
 
-#include "SALOME_Event.h"
+#include <gui/SALOME_Event.h>
 
 // OCCT Includes
 #include <TopAbs.hxx>

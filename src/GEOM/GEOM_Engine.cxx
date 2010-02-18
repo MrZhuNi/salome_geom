@@ -32,7 +32,7 @@
 #include "GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient.hxx"
 #include "GEOM_PythonDump.hxx"
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <TDF_Tool.hxx>
 #include <TDF_Data.hxx>

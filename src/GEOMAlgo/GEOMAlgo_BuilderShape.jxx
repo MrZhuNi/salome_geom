@@ -26,5 +26,5 @@
 #include <TopTools_ListOfShape.hxx>
 #endif
 #ifndef _GEOMAlgo_BuilderShape_HeaderFile
-#include <GEOMAlgo_BuilderShape.hxx>
+#include "GEOMAlgo_BuilderShape.hxx"
 #endif

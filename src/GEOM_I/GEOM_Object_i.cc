@@ -25,13 +25,13 @@
 #include <GEOM_ISubShape.hxx>
 #include <GEOMImpl_Types.hxx>
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 #include <fstream>
 #include <strstream>
 //#include <sstream>
 
-#include <OpUtil.hxx>
-#include <Utils_ExceptHandlers.hxx>
+#include <kernel/OpUtil.hxx>
+#include <kernel/Utils_ExceptHandlers.hxx>
 #include <TDF_Tool.hxx>
 #include <TDF_Label.hxx>
 #include <TCollection_AsciiString.hxx>

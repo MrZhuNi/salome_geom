@@ -26,5 +26,5 @@
 #include <TopTools_ListOfShape.hxx>
 #endif
 #ifndef _GEOMAlgo_Splitter_HeaderFile
-#include <GEOMAlgo_Splitter.hxx>
+#include "GEOMAlgo_Splitter.hxx"
 #endif

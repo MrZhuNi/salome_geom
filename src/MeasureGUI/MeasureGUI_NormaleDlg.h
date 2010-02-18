@@ -26,7 +26,7 @@
 #ifndef MEASUREGUI_NORMALEDLG_H
 #define MEASUREGUI_NORMALEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel;
 

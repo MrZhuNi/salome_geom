@@ -26,7 +26,7 @@
 #ifndef BOOLEANGUI_DIALOG_H
 #define BOOLEANGUI_DIALOG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel;
 

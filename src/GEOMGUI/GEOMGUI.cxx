@@ -26,8 +26,8 @@
 #include "GEOMGUI.h"
 #include "GeometryGUI.h"
 
-#include <SUIT_Desktop.h>
-#include <SUIT_ViewWindow.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_ViewWindow.h>
 
 //=================================================================================
 // class    : GEOMGUI::GEOMGUI

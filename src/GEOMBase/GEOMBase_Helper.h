@@ -28,8 +28,8 @@
 
 #include "GEOM_GEOMBase.hxx"
 
-#include <GEOM_Displayer.h>
-#include <SALOME_ListIO.hxx>
+#include "GEOM_Displayer.h"
+#include <gui/SALOME_ListIO.hxx>
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
 

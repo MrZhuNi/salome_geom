@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_BlockFix_SphereSpaceModifier_HeaderFile
-#include <Handle_BlockFix_SphereSpaceModifier.hxx>
+#include "Handle_BlockFix_SphereSpaceModifier.hxx"
 #endif
 
 #ifndef _Standard_Real_HeaderFile

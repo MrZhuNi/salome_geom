@@ -25,10 +25,10 @@
 
 #include "BasicGUI_PointDlg.h"
 
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_Session.h>
-#include <SalomeApp_Application.h>
-#include <LightApp_SelectionMgr.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/LightApp_SelectionMgr.h>
 
 #include <GeometryGUI.h>
 #include <GEOMBase.h>

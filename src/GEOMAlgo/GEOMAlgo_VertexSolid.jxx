@@ -20,5 +20,5 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _GEOMAlgo_VertexSolid_HeaderFile
-#include <GEOMAlgo_VertexSolid.hxx>
+#include "GEOMAlgo_VertexSolid.hxx"
 #endif

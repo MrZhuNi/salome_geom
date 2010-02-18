@@ -30,7 +30,7 @@
 #endif
 
 #ifndef _Handle_GEOMAlgo_Clsf_HeaderFile
-#include <Handle_GEOMAlgo_Clsf.hxx>
+#include "Handle_GEOMAlgo_Clsf.hxx"
 #endif
 
 class Standard_Transient;

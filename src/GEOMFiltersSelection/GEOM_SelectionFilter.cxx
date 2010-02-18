@@ -23,13 +23,13 @@
 
 #include "GEOM_Client.hxx"
 
-#include <LightApp_DataOwner.h>
-#include <SalomeApp_Study.h>
-#include <SalomeApp_Application.h>
+#include <gui/LightApp_DataOwner.h>
+#include <gui/SalomeApp_Study.h>
+#include <gui/SalomeApp_Application.h>
 
-#include <SALOME_LifeCycleCORBA.hxx>
+#include <kernel/SALOME_LifeCycleCORBA.hxx>
 
-#include <SUIT_Session.h>
+#include <gui/SUIT_Session.h>
 
 //=======================================================================
 // function : GEOM_SelectionFilter

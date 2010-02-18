@@ -29,5 +29,5 @@
 #include <TopTools_ListOfShape.hxx>
 #endif
 #ifndef _GEOMAlgo_WireEdgeSet_HeaderFile
-#include <GEOMAlgo_WireEdgeSet.hxx>
+#include "GEOMAlgo_WireEdgeSet.hxx"
 #endif

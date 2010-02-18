@@ -26,7 +26,7 @@
 #ifndef GENERATIONGUI_H
 #define GENERATIONGUI_H
 
-#include <GEOMGUI.h>
+#include "GEOMGUI.h"
 
 //=================================================================================
 // class    : GenerationGUI

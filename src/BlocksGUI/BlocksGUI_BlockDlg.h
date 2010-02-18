@@ -26,7 +26,7 @@
 #ifndef BLOCKSGUI_BLOCKDLG_H
 #define BLOCKSGUI_BLOCKDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel;
 class DlgRef_6Sel;

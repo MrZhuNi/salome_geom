@@ -26,7 +26,7 @@
 #ifndef BUILDGUI_SOLIDDLG_H
 #define BUILDGUI_SOLIDDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_1Sel1Check;
 

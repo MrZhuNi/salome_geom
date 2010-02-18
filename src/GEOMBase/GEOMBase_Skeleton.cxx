@@ -29,15 +29,15 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 
-#include <SalomeApp_Application.h>
-#include <SalomeApp_DoubleSpinBox.h>
-#include <SalomeApp_Study.h>
-#include <LightApp_Application.h>
-#include <LightApp_SelectionMgr.h>
-#include <SUIT_Desktop.h>
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_Session.h>
-#include <SUIT_MessageBox.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/SalomeApp_DoubleSpinBox.h>
+#include <gui/SalomeApp_Study.h>
+#include <gui/LightApp_Application.h>
+#include <gui/LightApp_SelectionMgr.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_MessageBox.h>
 
 #include <QKeyEvent>
 #include <QSpinBox>

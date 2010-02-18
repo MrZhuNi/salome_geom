@@ -29,5 +29,5 @@
 #include <Geom_Surface.hxx>
 #endif
 #ifndef _GEOMAlgo_Clsf_HeaderFile
-#include <GEOMAlgo_Clsf.hxx>
+#include "GEOMAlgo_Clsf.hxx"
 #endif

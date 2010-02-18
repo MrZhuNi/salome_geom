@@ -26,5 +26,5 @@
 #include <TopoDS_Face.hxx>
 #endif
 #ifndef _BlockFix_UnionFaces_HeaderFile
-#include <BlockFix_UnionFaces.hxx>
+#include "BlockFix_UnionFaces.hxx"
 #endif

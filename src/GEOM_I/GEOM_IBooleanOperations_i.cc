@@ -23,8 +23,8 @@
 
 #include "GEOM_IBooleanOperations_i.hh"
 
-#include "utilities.h"
-#include "OpUtil.hxx"
+#include <kernel/utilities.h>
+#include <kernel/OpUtil.hxx>
 
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"

@@ -26,7 +26,7 @@
 #ifndef REPAIRGUI_GLUEDLG_H
 #define REPAIRGUI_GLUEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_1SelExt;
 class SalomeApp_DoubleSpinBox;

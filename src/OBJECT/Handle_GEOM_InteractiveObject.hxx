@@ -34,7 +34,7 @@
 #endif
 
 #ifndef _Handle_SALOME_InteractiveObject_HeaderFile
-#include "Handle_SALOME_InteractiveObject.hxx"
+#include <gui/Handle_SALOME_InteractiveObject.hxx>
 #endif
 
 class Standard_Transient;

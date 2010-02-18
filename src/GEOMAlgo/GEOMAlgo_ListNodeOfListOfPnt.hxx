@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_ListNodeOfListOfPnt_HeaderFile
-#include <Handle_GEOMAlgo_ListNodeOfListOfPnt.hxx>
+#include "Handle_GEOMAlgo_ListNodeOfListOfPnt.hxx"
 #endif
 
 #ifndef _gp_Pnt_HeaderFile

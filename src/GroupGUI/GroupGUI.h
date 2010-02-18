@@ -26,7 +26,7 @@
 #ifndef GROUPGUI_H
 #define GROUPGUI_H
 
-#include <GEOMGUI.h>
+#include "GEOMGUI.h"
 
 //=================================================================================
 // class    : GroupGUI

@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_ClsfSolid_HeaderFile
-#include <Handle_GEOMAlgo_ClsfSolid.hxx>
+#include "Handle_GEOMAlgo_ClsfSolid.hxx"
 #endif
 
 #ifndef _TopoDS_Shape_HeaderFile
@@ -36,7 +36,7 @@
 #include <Standard_Address.hxx>
 #endif
 #ifndef _GEOMAlgo_Clsf_HeaderFile
-#include <GEOMAlgo_Clsf.hxx>
+#include "GEOMAlgo_Clsf.hxx"
 #endif
 class TopoDS_Shape;
 

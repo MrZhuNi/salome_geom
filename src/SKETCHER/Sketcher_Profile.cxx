@@ -49,7 +49,7 @@
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_Array1OfAsciiString.hxx>
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 //=======================================================================
 // profile

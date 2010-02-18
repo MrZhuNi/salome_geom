@@ -26,7 +26,7 @@
 #ifndef BLOCKSGUI_QUADFACEDLG_H
 #define BLOCKSGUI_QUADFACEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 #include <QMap>
 

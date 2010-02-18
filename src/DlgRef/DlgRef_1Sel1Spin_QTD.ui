@@ -117,7 +117,7 @@
   <customwidget>
    <class>SalomeApp_DoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header location="global" >SalomeApp_DoubleSpinBox.h</header>
+   <header location="global" >gui/SalomeApp_DoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

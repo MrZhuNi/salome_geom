@@ -26,7 +26,7 @@
 #include <Standard_Address.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes_HeaderFile
-#include <Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx>
+#include "Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx"
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>

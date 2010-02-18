@@ -26,7 +26,7 @@
 #ifndef GENERATIONGUI_PRISMDLG_H
 #define GENERATIONGUI_PRISMDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel1Spin2Check;
 class DlgRef_3Sel1Check;

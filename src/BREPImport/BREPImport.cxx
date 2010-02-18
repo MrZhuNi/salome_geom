@@ -24,7 +24,7 @@
 // Author:      Pavel TELKOV
 //              <ptv@mutex.nnov.opencascade.com>
 //
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <BRepTools.hxx>
 #include <BRep_Builder.hxx>

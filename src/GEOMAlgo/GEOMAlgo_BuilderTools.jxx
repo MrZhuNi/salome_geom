@@ -23,5 +23,5 @@
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _GEOMAlgo_BuilderTools_HeaderFile
-#include <GEOMAlgo_BuilderTools.hxx>
+#include "GEOMAlgo_BuilderTools.hxx"
 #endif

@@ -29,14 +29,14 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_Session.h>
-#include <SalomeApp_Application.h>
-#include <SalomeApp_Study.h>
-#include <LightApp_SelectionMgr.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/SalomeApp_Study.h>
+#include <gui/LightApp_SelectionMgr.h>
 
-#include <SALOME_ListIteratorOfListIO.hxx>
-#include <SALOME_ListIO.hxx>
+#include <gui/SALOME_ListIteratorOfListIO.hxx>
+#include <gui/SALOME_ListIO.hxx>
 
 #include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>

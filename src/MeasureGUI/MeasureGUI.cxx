@@ -26,8 +26,8 @@
 #include "MeasureGUI.h"
 
 #include <GeometryGUI.h>
-#include <SUIT_Desktop.h>
-#include <SalomeApp_Application.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SalomeApp_Application.h>
 
 #include "MeasureGUI_PropertiesDlg.h"    // Method PROPERTIES
 #include "MeasureGUI_CenterMassDlg.h"    // Method CENTER MASS

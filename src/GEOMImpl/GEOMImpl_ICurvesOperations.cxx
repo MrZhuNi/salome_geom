@@ -46,7 +46,7 @@
 #include <GEOMImpl_ISketcher.hxx>
 #include <GEOMImpl_I3DSketcher.hxx>
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <TDF_Tool.hxx>
 

@@ -20,7 +20,7 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _NMTTools_PaveFiller_HeaderFile
-#include <NMTTools_PaveFiller.hxx>
+#include "NMTTools_PaveFiller.hxx"
 #endif
 #ifndef _TopoDS_Shape_HeaderFile
 #include <TopoDS_Shape.hxx>
@@ -32,5 +32,5 @@
 #include <BRepAlgo_Image.hxx>
 #endif
 #ifndef _GEOMAlgo_Builder_HeaderFile
-#include <GEOMAlgo_Builder.hxx>
+#include "GEOMAlgo_Builder.hxx"
 #endif

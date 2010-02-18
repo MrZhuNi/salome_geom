@@ -20,5 +20,5 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _GEOMAlgo_WireSolid_HeaderFile
-#include <GEOMAlgo_WireSolid.hxx>
+#include "GEOMAlgo_WireSolid.hxx"
 #endif

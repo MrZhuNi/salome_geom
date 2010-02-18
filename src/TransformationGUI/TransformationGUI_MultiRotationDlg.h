@@ -26,7 +26,7 @@
 #ifndef TRANSFORMATIONGUI_MULTIROTATIONDLG_H
 #define TRANSFORMATIONGUI_MULTIROTATIONDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel4Spin1Check;
 class DlgRef_2Sel1SpinInt;

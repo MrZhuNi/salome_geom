@@ -20,5 +20,5 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _NMTDS_IndexRange_HeaderFile
-#include <NMTDS_IndexRange.hxx>
+#include "NMTDS_IndexRange.hxx"
 #endif

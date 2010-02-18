@@ -20,5 +20,5 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _NMTTools_PCurveMaker_HeaderFile
-#include <NMTTools_PCurveMaker.hxx>
+#include "NMTTools_PCurveMaker.hxx"
 #endif

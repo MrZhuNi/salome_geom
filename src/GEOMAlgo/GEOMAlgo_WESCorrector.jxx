@@ -20,8 +20,8 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _GEOMAlgo_WireEdgeSet_HeaderFile
-#include <GEOMAlgo_WireEdgeSet.hxx>
+#include "GEOMAlgo_WireEdgeSet.hxx"
 #endif
 #ifndef _GEOMAlgo_WESCorrector_HeaderFile
-#include <GEOMAlgo_WESCorrector.hxx>
+#include "GEOMAlgo_WESCorrector.hxx"
 #endif

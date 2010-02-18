@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_Clsf_HeaderFile
-#include <Handle_GEOMAlgo_Clsf.hxx>
+#include "Handle_GEOMAlgo_Clsf.hxx"
 #endif
 
 #ifndef _TopAbs_State_HeaderFile
@@ -39,7 +39,7 @@
 #include <Standard_Real.hxx>
 #endif
 #ifndef _GEOMAlgo_HAlgo_HeaderFile
-#include <GEOMAlgo_HAlgo.hxx>
+#include "GEOMAlgo_HAlgo.hxx"
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>

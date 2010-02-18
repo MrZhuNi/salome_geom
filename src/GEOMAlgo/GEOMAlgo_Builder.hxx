@@ -23,7 +23,7 @@
 #define _GEOMAlgo_Builder_HeaderFile
 
 #ifndef _NMTTools_PPaveFiller_HeaderFile
-#include <NMTTools_PPaveFiller.hxx>
+#include "NMTTools_PPaveFiller.hxx"
 #endif
 #ifndef _TopTools_ListOfShape_HeaderFile
 #include <TopTools_ListOfShape.hxx>
@@ -44,7 +44,7 @@
 #include <TopTools_IndexedDataMapOfShapeShape.hxx>
 #endif
 #ifndef _GEOMAlgo_BuilderShape_HeaderFile
-#include <GEOMAlgo_BuilderShape.hxx>
+#include "GEOMAlgo_BuilderShape.hxx"
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>

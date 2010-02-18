@@ -26,7 +26,7 @@
 #ifndef GENERATIONGUI_REVOLUTIONDLG_H
 #define GENERATIONGUI_REVOLUTIONDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel1Spin2Check;
 

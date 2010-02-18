@@ -21,7 +21,7 @@
 //
 #include "GEOM_PreviewFilter.h"
 
-#include <LightApp_DataOwner.h>
+#include <gui/LightApp_DataOwner.h>
 
 //=======================================================================
 // function : GEOM_SelectionFilter

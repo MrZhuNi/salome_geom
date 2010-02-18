@@ -24,13 +24,13 @@
 
 #include "GEOMGUI_OCCSelector.h"
 
-#include <LightApp_DataSubOwner.h>
+#include <gui/LightApp_DataSubOwner.h>
 
-#include <OCCViewer_ViewModel.h>
+#include <gui/OCCViewer_ViewModel.h>
 
-#include <SUIT_Session.h>
-#include <SalomeApp_Study.h>
-#include <SALOME_InteractiveObject.hxx>
+#include <gui/SUIT_Session.h>
+#include <gui/SalomeApp_Study.h>
+#include <gui/SALOME_InteractiveObject.hxx>
 
 #include <StdSelect_BRepOwner.hxx>
 #include <SelectMgr_Selection.hxx>

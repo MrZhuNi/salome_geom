@@ -26,7 +26,7 @@
 #ifndef ENTITYGUI_SKETCHERDLG_H
 #define ENTITYGUI_SKETCHERDLG_H
 
-#include <GEOMBase_Helper.h>
+#include "GEOMBase_Helper.h"
 
 #include <QGroupBox>
 #include <QComboBox>

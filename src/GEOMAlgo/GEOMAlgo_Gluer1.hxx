@@ -23,13 +23,13 @@
 #define _GEOMAlgo_Gluer1_HeaderFile
 
 #ifndef _GEOMAlgo_ListOfCoupleOfShapes_HeaderFile
-#include <GEOMAlgo_ListOfCoupleOfShapes.hxx>
+#include "GEOMAlgo_ListOfCoupleOfShapes.hxx"
 #endif
 #ifndef _GEOMAlgo_DataMapOfPassKeyShapeShape_HeaderFile
-#include <GEOMAlgo_DataMapOfPassKeyShapeShape.hxx>
+#include "GEOMAlgo_DataMapOfPassKeyShapeShape.hxx"
 #endif
 #ifndef _GEOMAlgo_Gluer_HeaderFile
-#include <GEOMAlgo_Gluer.hxx>
+#include "GEOMAlgo_Gluer.hxx"
 #endif
 class GEOMAlgo_ListOfCoupleOfShapes;
 

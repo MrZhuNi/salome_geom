@@ -29,5 +29,5 @@
 #include <Geom_Surface.hxx>
 #endif
 #ifndef _GEOMAlgo_ClsfBox_HeaderFile
-#include <GEOMAlgo_ClsfBox.hxx>
+#include "GEOMAlgo_ClsfBox.hxx"
 #endif

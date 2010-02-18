@@ -23,7 +23,7 @@
 #define _GEOMAlgo_WireSolid_HeaderFile
 
 #ifndef _GEOMAlgo_ShapeSolid_HeaderFile
-#include <GEOMAlgo_ShapeSolid.hxx>
+#include "GEOMAlgo_ShapeSolid.hxx"
 #endif
 
 

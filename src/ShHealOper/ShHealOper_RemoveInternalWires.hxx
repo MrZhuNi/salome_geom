@@ -27,7 +27,7 @@
 #define ShHealOper_RemoveInternalWires_HeaderFile
 
 #include <MMgt_TShared.hxx>
-#include <ShHealOper_Tool.hxx>
+#include "ShHealOper_Tool.hxx"
 #include <TopoDS_Shape.hxx>
 #include <TopTools_SequenceOfShape.hxx>
 #include <TopoDS_Face.hxx>

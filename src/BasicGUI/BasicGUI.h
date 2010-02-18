@@ -26,7 +26,7 @@
 #ifndef BASICGUI_H
 #define BASICGUI_H
 
-#include <GEOMGUI.h>
+#include "GEOMGUI.h"
 #include <V3d_View.hxx>
 
 //=================================================================================

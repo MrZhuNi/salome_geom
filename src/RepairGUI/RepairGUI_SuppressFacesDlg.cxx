@@ -29,12 +29,12 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 
-#include <SUIT_Session.h>
-#include <SUIT_ResourceMgr.h>
-#include <SalomeApp_Application.h>
-#include <SalomeApp_Study.h>
-#include <LightApp_SelectionMgr.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/SalomeApp_Study.h>
+#include <gui/LightApp_SelectionMgr.h>
+#include <gui/SALOME_ListIteratorOfListIO.hxx>
 
 // OCCT Includes
 #include <TopAbs.hxx>

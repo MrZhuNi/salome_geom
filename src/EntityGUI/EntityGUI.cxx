@@ -27,12 +27,12 @@
 
 #include <GeometryGUI.h>
 
-#include <SUIT_Desktop.h>
-#include <SUIT_ViewWindow.h>
-#include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewManager.h>
-#include <SalomeApp_Study.h>
-#include <SalomeApp_Application.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_ViewWindow.h>
+#include <gui/OCCViewer_ViewModel.h>
+#include <gui/OCCViewer_ViewManager.h>
+#include <gui/SalomeApp_Study.h>
+#include <gui/SalomeApp_Application.h>
 
 #include <TopoDS_Shape.hxx>
 

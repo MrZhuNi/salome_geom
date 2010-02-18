@@ -26,7 +26,7 @@
 #ifndef BASICGUI_PLANEDLG_H
 #define BASICGUI_PLANEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_1Sel1Spin;
 class DlgRef_2Sel1Spin;

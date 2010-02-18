@@ -29,7 +29,7 @@
 #include <Standard_Integer.hxx>
 #endif
 #ifndef _Handle_NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock_HeaderFile
-#include <Handle_NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock.hxx>
+#include "Handle_NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock.hxx"
 #endif
 class Standard_NoSuchObject;
 class BOPTools_ListOfPaveBlock;

@@ -74,7 +74,7 @@ else
     GUI_ROOT_DIR=${SALOME_GUI_DIR}
 
     GUI_LDFLAGS=-L${SALOME_GUI_DIR}/lib${LIB_LOCATION_SUFFIX}/salome
-    GUI_CXXFLAGS=-I${SALOME_GUI_DIR}/include/salome
+    GUI_CXXFLAGS="-I${SALOME_GUI_DIR}/include/salome -I${SALOME_GUI_DIR}/include/salome/skel"
 
     AC_CHECKING(for full GUI)
     if test -f ${SALOME_GUI_DIR}/bin/salome/SALOME_Session_Server ; then

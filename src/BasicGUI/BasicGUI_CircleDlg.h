@@ -26,7 +26,7 @@
 #ifndef BASICGUI_CIRCLEDLG_H
 #define BASICGUI_CIRCLEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_3Sel;
 class DlgRef_2Sel1Spin;

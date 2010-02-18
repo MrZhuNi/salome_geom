@@ -31,11 +31,11 @@
 
 #include <GeometryGUI.h>
 
-#include <SUIT_Session.h>
-#include <SUIT_ResourceMgr.h>
-#include <SalomeApp_Application.h>
-#include <LightApp_SelectionMgr.h>
-#include <SalomeApp_Tools.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/LightApp_SelectionMgr.h>
+#include <gui/SalomeApp_Tools.h>
 
 #include <BRep_Tool.hxx>
 #include <TopoDS_Vertex.hxx>

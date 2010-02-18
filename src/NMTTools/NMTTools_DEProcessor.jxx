@@ -20,7 +20,7 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _NMTTools_PaveFiller_HeaderFile
-#include <NMTTools_PaveFiller.hxx>
+#include "NMTTools_PaveFiller.hxx"
 #endif
 #ifndef _BOPTools_ListOfPaveBlock_HeaderFile
 #include <BOPTools_ListOfPaveBlock.hxx>
@@ -35,5 +35,5 @@
 #include <TopoDS_Vertex.hxx>
 #endif
 #ifndef _NMTTools_DEProcessor_HeaderFile
-#include <NMTTools_DEProcessor.hxx>
+#include "NMTTools_DEProcessor.hxx"
 #endif

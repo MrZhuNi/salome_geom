@@ -26,7 +26,7 @@
 #include <TCollection_BasicMap.hxx>
 #endif
 #ifndef _Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapePaveBlock_HeaderFile
-#include <Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapePaveBlock.hxx>
+#include "Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapePaveBlock.hxx"
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>

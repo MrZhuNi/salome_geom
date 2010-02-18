@@ -26,7 +26,7 @@
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _GEOMAlgo_ShellSolid_HeaderFile
-#include <GEOMAlgo_ShellSolid.hxx>
+#include "GEOMAlgo_ShellSolid.hxx"
 #endif
 class TopoDS_Shape;
 

@@ -22,7 +22,7 @@
 #ifndef _GEOMImpl_IInsertOperations_HXX_
 #define _GEOMImpl_IInsertOperations_HXX_
 
-#include "Utils_SALOME_Exception.hxx"
+#include <kernel/Utils_SALOME_Exception.hxx>
 #include "GEOM_IOperations.hxx"
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"

@@ -26,7 +26,7 @@
 #ifndef BASICGUI_POINTDLG_H
 #define BASICGUI_POINTDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 #include <QMap>
 
 class DlgRef_1Sel1Spin;

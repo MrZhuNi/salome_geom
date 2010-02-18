@@ -30,12 +30,12 @@
 #include <GEOMBase.h>
 #include <GEOMImpl_Types.hxx>
 
-#include <SUIT_Session.h>
-#include <SUIT_Desktop.h>
-#include <SUIT_MessageBox.h>
-#include <SalomeApp_Application.h>
-#include <SalomeApp_Study.h>
-#include <LightApp_SelectionMgr.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_MessageBox.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/SalomeApp_Study.h>
+#include <gui/LightApp_SelectionMgr.h>
 
 //=======================================================================
 // function : GroupGUI()

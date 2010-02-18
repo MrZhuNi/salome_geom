@@ -29,7 +29,7 @@
 #include <Standard_Real.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeReal_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeReal.hxx>
+#include "Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeReal.hxx"
 #endif
 class Standard_NoSuchObject;
 class TopoDS_Shape;

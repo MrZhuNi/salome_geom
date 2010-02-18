@@ -26,7 +26,7 @@
 #ifndef REPAIRGUI_REMOVEHOLESDLG_H
 #define REPAIRGUI_REMOVEHOLESDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_1Sel1Check1Sel;
 class QPushButton;

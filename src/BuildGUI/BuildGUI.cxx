@@ -25,8 +25,8 @@
 //
 #include "BuildGUI.h"
 
-#include <SUIT_Desktop.h>
-#include <SalomeApp_Application.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SalomeApp_Application.h>
 
 #include "BuildGUI_EdgeDlg.h"       // Method EDGE
 #include "BuildGUI_WireDlg.h"       // Method WIRE

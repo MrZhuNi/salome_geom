@@ -27,7 +27,7 @@
 //
 #include "Partition_Inter2d.ixx"
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepAlgo_AsDes.hxx>

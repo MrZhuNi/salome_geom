@@ -30,7 +30,7 @@
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
-#include <ShHealOper_Tool.hxx>
+#include "ShHealOper_Tool.hxx"
 #include <TColStd_SequenceOfReal.hxx>
 
 ///  Class ShHealOper_EdgeDivide

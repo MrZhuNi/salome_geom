@@ -32,7 +32,7 @@
 #include <IntTools_PContext.hxx>
 #endif
 #ifndef _GEOMAlgo_Algo_HeaderFile
-#include <GEOMAlgo_Algo.hxx>
+#include "GEOMAlgo_Algo.hxx"
 #endif
 class IntTools_Context;
 class TopTools_ListOfShape;

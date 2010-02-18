@@ -26,9 +26,9 @@
 #include "MeasureGUI_MaxToleranceDlg.h"
 #include "MeasureGUI_Widgets.h"
 
-#include <SUIT_Session.h>
-#include <SUIT_ResourceMgr.h>
-#include <SalomeApp_Tools.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SalomeApp_Tools.h>
 
 //=================================================================================
 // class    : MeasureGUI_MaxToleranceDlg()

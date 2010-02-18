@@ -20,8 +20,8 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _NMTDS_PassKey_HeaderFile
-#include <NMTDS_PassKey.hxx>
+#include "NMTDS_PassKey.hxx"
 #endif
 #ifndef _NMTDS_PassKeyMapHasher_HeaderFile
-#include <NMTDS_PassKeyMapHasher.hxx>
+#include "NMTDS_PassKeyMapHasher.hxx"
 #endif

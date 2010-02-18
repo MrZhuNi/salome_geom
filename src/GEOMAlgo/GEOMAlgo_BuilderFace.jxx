@@ -23,5 +23,5 @@
 #include <TopoDS_Face.hxx>
 #endif
 #ifndef _GEOMAlgo_BuilderFace_HeaderFile
-#include <GEOMAlgo_BuilderFace.hxx>
+#include "GEOMAlgo_BuilderFace.hxx"
 #endif

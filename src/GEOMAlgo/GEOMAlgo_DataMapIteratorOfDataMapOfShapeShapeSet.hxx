@@ -26,7 +26,7 @@
 #include <TCollection_BasicMapIterator.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet.hxx>
+#include "Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet.hxx"
 #endif
 class Standard_NoSuchObject;
 class TopoDS_Shape;

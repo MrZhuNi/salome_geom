@@ -26,7 +26,7 @@
 #ifndef OPERATIONGUI_ARCHIMEDEDLG_H
 #define OPERATIONGUI_ARCHIMEDEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_1Sel3Spin;
 

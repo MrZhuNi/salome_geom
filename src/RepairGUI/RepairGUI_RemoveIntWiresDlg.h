@@ -26,7 +26,7 @@
 #ifndef REPAIRGUI_REMOVEINTWIRESDLG_H
 #define REPAIRGUI_REMOVEINTWIRESDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_1Sel1Check1Sel;
 

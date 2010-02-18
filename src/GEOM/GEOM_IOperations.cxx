@@ -23,9 +23,9 @@
 
 #include <GEOM_IOperations.hxx>
 
-#include "utilities.h"
-#include <OpUtil.hxx>
-#include <Utils_ExceptHandlers.hxx>
+#include <kernel/utilities.h>
+#include <kernel/OpUtil.hxx>
+#include <kernel/Utils_ExceptHandlers.hxx>
 
 #include <TDataStd_TreeNode.hxx>
 #include <TDataStd_ChildNodeIterator.hxx>

@@ -26,7 +26,7 @@
 #ifndef ENTITYGUI_3DSKETCHERDLG_H
 #define ENTITYGUI_3DSKETCHERDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class QDoubleSpinBox;
 class EntityGUI_3Spin;

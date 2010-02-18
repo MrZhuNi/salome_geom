@@ -26,11 +26,11 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_NMTDS_ListNodeOfListOfPassKeyBoolean_HeaderFile
-#include <Handle_NMTDS_ListNodeOfListOfPassKeyBoolean.hxx>
+#include "Handle_NMTDS_ListNodeOfListOfPassKeyBoolean.hxx"
 #endif
 
 #ifndef _NMTDS_PassKeyBoolean_HeaderFile
-#include <NMTDS_PassKeyBoolean.hxx>
+#include "NMTDS_PassKeyBoolean.hxx"
 #endif
 #ifndef _TCollection_MapNode_HeaderFile
 #include <TCollection_MapNode.hxx>

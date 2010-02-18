@@ -29,7 +29,7 @@
 #include "GEOM_GEOMBase.hxx"
 
 // SALOME Includes
-#include <GEOM_AISShape.hxx>
+#include "GEOM_AISShape.hxx"
 
 // IDL Headers
 #include <SALOMEconfig.h>

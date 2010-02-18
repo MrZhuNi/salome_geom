@@ -27,7 +27,7 @@
 #define ShHealOper_Sewing_HeaderFile
 
 #include <MMgt_TShared.hxx>
-#include <ShHealOper_Tool.hxx>
+#include "ShHealOper_Tool.hxx"
 #include <TopoDS_Shape.hxx>
 #include <TopAbs_ShapeEnum.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>

@@ -26,7 +26,7 @@
 #ifndef BLOCKSGUI_H
 #define BLOCKSGUI_H
 
-#include <GEOMGUI.h>
+#include "GEOMGUI.h"
 
 //=================================================================================
 // class    : BlocksGUI

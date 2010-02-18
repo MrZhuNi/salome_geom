@@ -27,7 +27,7 @@
 #ifndef GEOM_AISTrihedron_HeaderFile
 #define GEOM_AISTrihedron_HeaderFile
 
-#include <SALOME_InteractiveObject.hxx>
+#include <gui/SALOME_InteractiveObject.hxx>
 
 #include <AIS_Trihedron.hxx>
 #include <Standard_DefineHandle.hxx>

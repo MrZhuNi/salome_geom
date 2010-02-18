@@ -19,7 +19,7 @@
 // the specific terms and conditions governing rights and limitations under the
 // License.
 
-#include <NMTDS_BndSphere.jxx>
+#include "NMTDS_BndSphere.jxx"
 
  
 

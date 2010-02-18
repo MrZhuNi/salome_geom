@@ -31,39 +31,39 @@
 
 #include "GEOM_Actor.h"
 
-#include <SUIT_Desktop.h>
-#include <SUIT_MessageBox.h>
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_Session.h>
-#include <SUIT_ViewManager.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_MessageBox.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ViewManager.h>
 
-#include <OCCViewer_ViewWindow.h>
-#include <OCCViewer_ViewPort3d.h>
-#include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewManager.h>
+#include <gui/OCCViewer_ViewWindow.h>
+#include <gui/OCCViewer_ViewPort3d.h>
+#include <gui/OCCViewer_ViewModel.h>
+#include <gui/OCCViewer_ViewManager.h>
 
-#include <SOCC_ViewModel.h>
-#include <SOCC_ViewWindow.h>
+#include <gui/SOCC_ViewModel.h>
+#include <gui/SOCC_ViewWindow.h>
 
-#include <SVTK_ViewWindow.h>
-#include <SVTK_RenderWindowInteractor.h>
-#include <SVTK_InteractorStyle.h>
-#include <SVTK_ViewModel.h>
+#include <gui/SVTK_ViewWindow.h>
+#include <gui/SVTK_RenderWindowInteractor.h>
+#include <gui/SVTK_InteractorStyle.h>
+#include <gui/SVTK_ViewModel.h>
 
-#include <SalomeApp_Application.h>
-#include <SalomeApp_Study.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/SalomeApp_Study.h>
 
-#include <LightApp_SelectionMgr.h>
-#include <LightApp_VTKSelector.h>
-#include <LightApp_DataObject.h>
-#include <LightApp_Preferences.h>
+#include <gui/LightApp_SelectionMgr.h>
+#include <gui/LightApp_VTKSelector.h>
+#include <gui/LightApp_DataObject.h>
+#include <gui/LightApp_Preferences.h>
 
-#include <SALOME_LifeCycleCORBA.hxx>
-#include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <kernel/SALOME_LifeCycleCORBA.hxx>
+#include <gui/SALOME_ListIO.hxx>
+#include <gui/SALOME_ListIteratorOfListIO.hxx>
 
-#include <SALOMEDSClient_ClientFactory.hxx>
-#include <SALOMEDSClient_IParameters.hxx>
+#include <kernel/SALOMEDSClient_ClientFactory.hxx>
+#include <kernel/SALOMEDSClient_IParameters.hxx>
 
 // External includes
 #include <QMenu>
@@ -82,7 +82,7 @@
 #include <NCollection_DataMap.hxx>
 #include <Graphic3d_HArray1OfBytes.hxx>
 
-#include <utilities.h>
+#include <kernel/utilities.h>
 
 #include <vtkCamera.h>
 #include <vtkRenderer.h>

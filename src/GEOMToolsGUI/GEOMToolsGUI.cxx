@@ -31,23 +31,23 @@
 #include <GEOM_Operation.h>
 #include <GEOM_Displayer.h>
 
-#include <SUIT_Session.h>
-#include <SUIT_OverrideCursor.h>
-#include <SUIT_MessageBox.h>
-#include <SUIT_Tools.h>
-#include <SUIT_FileDlg.h>
-#include <SUIT_Desktop.h>
-#include <SUIT_ViewModel.h>
-#include <SUIT_ViewManager.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_OverrideCursor.h>
+#include <gui/SUIT_MessageBox.h>
+#include <gui/SUIT_Tools.h>
+#include <gui/SUIT_FileDlg.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_ViewModel.h>
+#include <gui/SUIT_ViewManager.h>
 
-#include <SalomeApp_Application.h>
-#include <SalomeApp_Study.h>
-#include <LightApp_SelectionMgr.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/SalomeApp_Study.h>
+#include <gui/LightApp_SelectionMgr.h>
 #include <GEOMImpl_Types.hxx>
 
-#include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
-#include <SALOME_Prs.h>
+#include <gui/SALOME_ListIO.hxx>
+#include <gui/SALOME_ListIteratorOfListIO.hxx>
+#include <gui/SALOME_Prs.h>
 
 // QT Includes
 #include <QApplication>

@@ -33,10 +33,10 @@
 
 #include <GeometryGUI.h>
 
-#include <SUIT_Desktop.h>
-#include <SUIT_MessageBox.h>
-#include <SUIT_Session.h>
-#include <SalomeApp_Application.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_MessageBox.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SalomeApp_Application.h>
 
 //=======================================================================
 // function : BlocksGUI()

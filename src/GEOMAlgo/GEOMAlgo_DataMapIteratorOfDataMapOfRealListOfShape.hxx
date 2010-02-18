@@ -29,7 +29,7 @@
 #include <Standard_Real.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape.hxx>
+#include "Handle_GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape.hxx"
 #endif
 class Standard_NoSuchObject;
 class TopTools_ListOfShape;

@@ -31,8 +31,8 @@
 #include "GEOM_OBJECT_defs.hxx"
 
 #include <Geom_Axis2Placement.hxx>
-#include "SALOME_Actor.h"
-#include "VTKViewer_Trihedron.h"
+#include <gui/SALOME_Actor.h>
+#include <gui/VTKViewer_Trihedron.h>
 
 class vtkRenderer;
 class vtkPolyDataMapper;

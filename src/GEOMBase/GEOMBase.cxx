@@ -30,22 +30,22 @@
 
 ////  SALOME Includes
 #include <GEOM_Actor.h>
-#include <SVTK_ViewModel.h>
-#include <SVTK_ViewWindow.h>
-#include <OCCViewer_ViewPort3d.h>
-#include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewWindow.h>
+#include <gui/SVTK_ViewModel.h>
+#include <gui/SVTK_ViewWindow.h>
+#include <gui/OCCViewer_ViewPort3d.h>
+#include <gui/OCCViewer_ViewModel.h>
+#include <gui/OCCViewer_ViewWindow.h>
 
-#include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <gui/SALOME_ListIO.hxx>
+#include <gui/SALOME_ListIteratorOfListIO.hxx>
 
-#include <SUIT_Desktop.h>
-#include <SUIT_Session.h>
-#include <SUIT_ViewManager.h>
-#include <SUIT_ViewWindow.h>
-#include <SUIT_MessageBox.h>
-#include <SalomeApp_Application.h>
-#include <SalomeApp_Study.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ViewManager.h>
+#include <gui/SUIT_ViewWindow.h>
+#include <gui/SUIT_MessageBox.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/SalomeApp_Study.h>
 
 // // Open CASCADE Includes
 #include <BRep_Tool.hxx>

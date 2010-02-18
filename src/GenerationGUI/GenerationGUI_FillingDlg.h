@@ -26,7 +26,7 @@
 #ifndef GENERATIONGUI_FILLINGDLG_H
 #define GENERATIONGUI_FILLINGDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_1Sel5Spin1Check;
 

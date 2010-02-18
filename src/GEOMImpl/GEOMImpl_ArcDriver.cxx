@@ -48,7 +48,7 @@
 #include <Geom_Circle.hxx>
 #include <Geom_Ellipse.hxx>
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 //=======================================================================
 //function : GetID

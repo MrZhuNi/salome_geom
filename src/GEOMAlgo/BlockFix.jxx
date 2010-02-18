@@ -23,5 +23,5 @@
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _BlockFix_HeaderFile
-#include <BlockFix.hxx>
+#include "BlockFix.hxx"
 #endif

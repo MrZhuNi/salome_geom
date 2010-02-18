@@ -26,7 +26,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_BlockFix_PeriodicSurfaceModifier_HeaderFile
-#include <Handle_BlockFix_PeriodicSurfaceModifier.hxx>
+#include "Handle_BlockFix_PeriodicSurfaceModifier.hxx"
 #endif
 
 #ifndef _Standard_Real_HeaderFile

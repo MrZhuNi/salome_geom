@@ -32,5 +32,5 @@
 #include <gp_Ax3.hxx>
 #endif
 #ifndef _GEOMAlgo_ShapeInfo_HeaderFile
-#include <GEOMAlgo_ShapeInfo.hxx>
+#include "GEOMAlgo_ShapeInfo.hxx"
 #endif

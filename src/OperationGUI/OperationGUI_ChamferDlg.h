@@ -26,7 +26,7 @@
 #ifndef OPERATIONGUI_CHAMFERDLG_H
 #define OPERATIONGUI_CHAMFERDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 

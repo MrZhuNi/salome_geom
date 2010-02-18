@@ -2,5 +2,5 @@
 #include <gp_Pnt.hxx>
 #endif
 #ifndef _NMTDS_BndSphere_HeaderFile
-#include <NMTDS_BndSphere.hxx>
+#include "NMTDS_BndSphere.hxx"
 #endif

@@ -20,8 +20,8 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _GEOMAlgo_ListOfCoupleOfShapes_HeaderFile
-#include <GEOMAlgo_ListOfCoupleOfShapes.hxx>
+#include "GEOMAlgo_ListOfCoupleOfShapes.hxx"
 #endif
 #ifndef _GEOMAlgo_Gluer1_HeaderFile
-#include <GEOMAlgo_Gluer1.hxx>
+#include "GEOMAlgo_Gluer1.hxx"
 #endif

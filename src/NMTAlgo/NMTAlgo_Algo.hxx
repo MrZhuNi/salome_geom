@@ -23,7 +23,7 @@
 #define _NMTAlgo_Algo_HeaderFile
 
 #ifndef _NMTTools_PDSFiller_HeaderFile
-#include <NMTTools_PDSFiller.hxx>
+#include "NMTTools_PDSFiller.hxx"
 #endif
 #ifndef _TopoDS_Shape_HeaderFile
 #include <TopoDS_Shape.hxx>

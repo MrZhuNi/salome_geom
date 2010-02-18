@@ -23,5 +23,5 @@
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _GEOMAlgo_ShapeAlgo_HeaderFile
-#include <GEOMAlgo_ShapeAlgo.hxx>
+#include "GEOMAlgo_ShapeAlgo.hxx"
 #endif

@@ -26,7 +26,7 @@
 #include <TCollection_BasicMap.hxx>
 #endif
 #ifndef _Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox_HeaderFile
-#include <Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx>
+#include "Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx"
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>

@@ -175,12 +175,12 @@
   <customwidget>
    <class>SalomeApp_DoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header location="global" >SalomeApp_DoubleSpinBox.h</header>
+   <header location="global" >gui/SalomeApp_DoubleSpinBox.h</header>
   </customwidget>
   <customwidget>
    <class>SalomeApp_IntSpinBox</class>
    <extends>QSpinBox</extends>
-   <header location="global" >SalomeApp_IntSpinBox.h</header>
+   <header location="global" >gui/SalomeApp_IntSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

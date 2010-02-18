@@ -34,7 +34,7 @@
 #include "GEOMAlgo_CoupleOfShapes.hxx"
 #include "GEOMAlgo_ListOfCoupleOfShapes.hxx"
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <TDataStd_IntegerArray.hxx>
 

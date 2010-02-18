@@ -27,9 +27,9 @@
 
 #include <GeometryGUI.h>
 
-#include <SUIT_Session.h>
-#include <SUIT_Desktop.h>
-#include <SalomeApp_Application.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SalomeApp_Application.h>
 
 #include <TopTools_MapOfShape.hxx>
 #include <TopExp_Explorer.hxx>

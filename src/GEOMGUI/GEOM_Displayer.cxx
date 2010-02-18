@@ -42,27 +42,27 @@
 #include <GEOM_AISTrihedron.hxx>
 #include <GEOM_VTKTrihedron.hxx>
 
-#include <SUIT_Desktop.h>
-#include <SUIT_ViewWindow.h>
-#include <SUIT_Session.h>
-#include <SUIT_ViewManager.h>
-#include <SUIT_ResourceMgr.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_ViewWindow.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ViewManager.h>
+#include <gui/SUIT_ResourceMgr.h>
 
-#include <SalomeApp_Study.h>
-#include <SalomeApp_Application.h>
-#include <LightApp_SelectionMgr.h>
-#include <SalomeApp_TypeFilter.h>
-#include <SalomeApp_Tools.h>
+#include <gui/SalomeApp_Study.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/LightApp_SelectionMgr.h>
+#include <gui/SalomeApp_TypeFilter.h>
+#include <gui/SalomeApp_Tools.h>
 
-#include <SALOME_ListIteratorOfListIO.hxx>
-#include <SALOME_ListIO.hxx>
-#include <SALOME_Prs.h>
+#include <gui/SALOME_ListIteratorOfListIO.hxx>
+#include <gui/SALOME_ListIO.hxx>
+#include <gui/SALOME_Prs.h>
 
-#include <SOCC_Prs.h>
-#include <SOCC_ViewModel.h>
+#include <gui/SOCC_Prs.h>
+#include <gui/SOCC_ViewModel.h>
 
-#include <SVTK_Prs.h>
-#include <SVTK_ViewModel.h>
+#include <gui/SVTK_Prs.h>
+#include <gui/SVTK_ViewModel.h>
 
 // OCCT Includes
 #include <AIS_Drawer.hxx>

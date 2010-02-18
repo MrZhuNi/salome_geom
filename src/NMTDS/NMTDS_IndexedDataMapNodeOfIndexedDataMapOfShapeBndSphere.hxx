@@ -27,7 +27,7 @@
 #include <Standard.hxx>
 #endif
 #ifndef _Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBndSphere_HeaderFile
-#include <Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBndSphere.hxx>
+#include "Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBndSphere.hxx"
 #endif
 
 #ifndef _TopoDS_Shape_HeaderFile
@@ -37,7 +37,7 @@
 #include <Standard_Integer.hxx>
 #endif
 #ifndef _NMTDS_BndSphere_HeaderFile
-#include <NMTDS_BndSphere.hxx>
+#include "NMTDS_BndSphere.hxx"
 #endif
 #ifndef _TCollection_MapNodePtr_HeaderFile
 #include <TCollection_MapNodePtr.hxx>

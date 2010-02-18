@@ -26,7 +26,7 @@
 #ifndef BASICGUI_LINEDLG_H
 #define BASICGUI_LINEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel;
 

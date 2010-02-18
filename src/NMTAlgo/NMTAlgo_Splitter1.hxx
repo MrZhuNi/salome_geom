@@ -32,7 +32,7 @@
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _NMTAlgo_Splitter_HeaderFile
-#include <NMTAlgo_Splitter.hxx>
+#include "NMTAlgo_Splitter.hxx"
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>

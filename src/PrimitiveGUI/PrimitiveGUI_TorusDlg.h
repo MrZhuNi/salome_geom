@@ -26,7 +26,7 @@
 #ifndef PRIMITIVEGUI_TORUSDLG_H
 #define PRIMITIVEGUI_TORUSDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel2Spin;
 class DlgRef_2Spin;

@@ -24,9 +24,9 @@
 // Author:      Pavel TELKOV
 //              <ptv@mutex.nnov.opencascade.com>
 //
-#include "utilities.h"
+#include <kernel/utilities.h>
 
-#include <Basics_Utils.hxx>
+#include <kernel/Basics_Utils.hxx>
 
 #include <IFSelect_ReturnStatus.hxx>
 

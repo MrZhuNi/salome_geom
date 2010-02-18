@@ -20,7 +20,7 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _NMTTools_ListOfCommonBlock_HeaderFile
-#include <NMTTools_ListOfCommonBlock.hxx>
+#include "NMTTools_ListOfCommonBlock.hxx"
 #endif
 #ifndef _BOPTools_ListOfPaveBlock_HeaderFile
 #include <BOPTools_ListOfPaveBlock.hxx>
@@ -29,8 +29,8 @@
 #include <BOPTools_PaveBlock.hxx>
 #endif
 #ifndef _NMTTools_CommonBlock_HeaderFile
-#include <NMTTools_CommonBlock.hxx>
+#include "NMTTools_CommonBlock.hxx"
 #endif
 #ifndef _NMTTools_CommonBlockAPI_HeaderFile
-#include <NMTTools_CommonBlockAPI.hxx>
+#include "NMTTools_CommonBlockAPI.hxx"
 #endif

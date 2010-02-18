@@ -30,23 +30,23 @@
 #include <GeometryGUI.h>
 #include <GEOM_Displayer.h>
 
-#include <SalomeApp_Application.h>
-#include <SalomeApp_Study.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/SalomeApp_Study.h>
 
-#include <LightApp_SelectionMgr.h>
+#include <gui/LightApp_SelectionMgr.h>
 
-#include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewManager.h>
-#include <SVTK_ViewModel.h>
-#include <SALOME_Prs.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <gui/OCCViewer_ViewModel.h>
+#include <gui/OCCViewer_ViewManager.h>
+#include <gui/SVTK_ViewModel.h>
+#include <gui/SALOME_Prs.h>
+#include <gui/SALOME_ListIteratorOfListIO.hxx>
 
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_Desktop.h>
-#include <SUIT_OverrideCursor.h>
-#include <SUIT_Session.h>
-#include <SUIT_ViewWindow.h>
-#include <SUIT_ViewManager.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_OverrideCursor.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_ViewWindow.h>
+#include <gui/SUIT_ViewManager.h>
 
 #include <QLabel>
 #include <QListWidget>

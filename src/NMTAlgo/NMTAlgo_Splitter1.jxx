@@ -26,5 +26,5 @@
 #include <TopTools_DataMapOfShapeInteger.hxx>
 #endif
 #ifndef _NMTAlgo_Splitter1_HeaderFile
-#include <NMTAlgo_Splitter1.hxx>
+#include "NMTAlgo_Splitter1.hxx"
 #endif

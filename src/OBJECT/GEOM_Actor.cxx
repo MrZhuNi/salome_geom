@@ -35,7 +35,7 @@
 #include "GEOM_EdgeSource.h" 
 #include "GEOM_WireframeFace.h" 
 #include "GEOM_ShadingFace.h"
-#include "SVTK_Actor.h"
+#include <gui/SVTK_Actor.h>
 
 #include <vtkObjectFactory.h> 
 #include <vtkRenderer.h> 
@@ -65,9 +65,9 @@
 #include <vtkMath.h>
 #include <vtkCamera.h>
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
-#include "SALOME_InteractiveObject.hxx"
+#include <gui/SALOME_InteractiveObject.hxx>
 
 //vtkStandardNewMacro(GEOM_Actor);
 

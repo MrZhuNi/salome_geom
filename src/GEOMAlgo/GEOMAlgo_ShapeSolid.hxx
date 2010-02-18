@@ -32,7 +32,7 @@
 #include <BOPTools_PDSFiller.hxx>
 #endif
 #ifndef _GEOMAlgo_Algo_HeaderFile
-#include <GEOMAlgo_Algo.hxx>
+#include "GEOMAlgo_Algo.hxx"
 #endif
 #ifndef _TopAbs_State_HeaderFile
 #include <TopAbs_State.hxx>

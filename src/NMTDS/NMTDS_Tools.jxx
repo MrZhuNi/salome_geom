@@ -29,5 +29,5 @@
 #include <TopTools_IndexedDataMapOfShapeShape.hxx>
 #endif
 #ifndef _NMTDS_Tools_HeaderFile
-#include <NMTDS_Tools.hxx>
+#include "NMTDS_Tools.hxx"
 #endif

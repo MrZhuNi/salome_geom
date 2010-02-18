@@ -28,19 +28,19 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
-#include <QtxDoubleSpinBox.h>
+#include <gui/QtxDoubleSpinBox.h>
 
-#include <SUIT_Session.h>
-#include <SUIT_Desktop.h>
-#include <SUIT_ViewManager.h>
-#include <SVTK_ViewWindow.h>
-#include <SVTK_ViewModel.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_ViewManager.h>
+#include <gui/SVTK_ViewWindow.h>
+#include <gui/SVTK_ViewModel.h>
 
-#include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewWindow.h>
-#include <OCCViewer_ViewPort3d.h>
+#include <gui/OCCViewer_ViewModel.h>
+#include <gui/OCCViewer_ViewWindow.h>
+#include <gui/OCCViewer_ViewPort3d.h>
 
-#include <VTKViewer.h>
+#include <gui/VTKViewer.h>
 
 // OCC Includes
 #include <V3d_View.hxx>

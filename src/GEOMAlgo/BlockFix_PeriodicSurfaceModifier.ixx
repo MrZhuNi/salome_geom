@@ -19,7 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-#include <BlockFix_PeriodicSurfaceModifier.jxx>
+#include "BlockFix_PeriodicSurfaceModifier.jxx"
 
 #ifndef _Standard_TypeMismatch_HeaderFile
 #include <Standard_TypeMismatch.hxx>

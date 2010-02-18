@@ -34,8 +34,8 @@
 #include CORBA_CLIENT_HEADER(SALOMEDS_Attributes)
 
 
-#include "SALOME_Component_i.hxx"
-#include "SALOME_NamingService.hxx"
+#include <kernel/SALOME_Component_i.hxx>
+#include <kernel/SALOME_NamingService.hxx>
 
 #include "GEOM_IBasicOperations_i.hh"
 #include "GEOM_ITransformOperations_i.hh"

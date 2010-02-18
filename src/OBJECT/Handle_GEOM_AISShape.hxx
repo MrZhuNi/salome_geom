@@ -34,7 +34,7 @@
 #endif
 
 #ifndef _Handle_SALOME_AISShape_HeaderFile
-#include "Handle_SALOME_AISShape.hxx"
+#include <gui/Handle_SALOME_AISShape.hxx>
 #endif
 
 class Standard_Transient;

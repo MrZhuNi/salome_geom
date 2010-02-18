@@ -20,11 +20,11 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _NMTDS_ShapesDataStructure_HeaderFile
-#include <NMTDS_ShapesDataStructure.hxx>
+#include "NMTDS_ShapesDataStructure.hxx"
 #endif
 #ifndef _TColStd_DataMapOfIntegerListOfInteger_HeaderFile
 #include <TColStd_DataMapOfIntegerListOfInteger.hxx>
 #endif
 #ifndef _NMTDS_Iterator_HeaderFile
-#include <NMTDS_Iterator.hxx>
+#include "NMTDS_Iterator.hxx"
 #endif

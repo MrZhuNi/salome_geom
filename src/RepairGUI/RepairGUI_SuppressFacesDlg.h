@@ -26,7 +26,7 @@
 #ifndef REPAIRGUI_SUPPRESSFACESDLG_H
 #define REPAIRGUI_SUPPRESSFACESDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel;
 

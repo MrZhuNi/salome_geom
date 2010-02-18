@@ -19,7 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-#include <BlockFix_UnionFaces.jxx>
+#include "BlockFix_UnionFaces.jxx"
 
  
 

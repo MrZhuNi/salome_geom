@@ -21,7 +21,7 @@
 //
 #include <Standard_Stream.hxx>
 
-#include "utilities.h"
+#include <kernel/utilities.h>
 
 #include <GEOM_Object.hxx>
 #include <GEOM_Engine.hxx>

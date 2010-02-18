@@ -26,7 +26,7 @@
 #include <TCollection_BasicMapIterator.hxx>
 #endif
 #ifndef _Handle_NMTTools_StdMapNodeOfMapOfPaveBlock_HeaderFile
-#include <Handle_NMTTools_StdMapNodeOfMapOfPaveBlock.hxx>
+#include "Handle_NMTTools_StdMapNodeOfMapOfPaveBlock.hxx"
 #endif
 class Standard_NoSuchObject;
 class BOPTools_PaveBlock;

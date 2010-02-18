@@ -19,7 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-#include <BlockFix_SphereSpaceModifier.jxx>
+#include "BlockFix_SphereSpaceModifier.jxx"
 
 #ifndef _Standard_TypeMismatch_HeaderFile
 #include <Standard_TypeMismatch.hxx>

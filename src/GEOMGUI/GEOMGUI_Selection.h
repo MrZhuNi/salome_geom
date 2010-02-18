@@ -27,8 +27,8 @@
 
 #include "GEOM_GEOMGUI.hxx"
 
-#include <LightApp_Selection.h>
-#include <SALOMEDSClient.hxx>
+#include <gui/LightApp_Selection.h>
+#include <kernel/SALOMEDSClient.hxx>
 
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)

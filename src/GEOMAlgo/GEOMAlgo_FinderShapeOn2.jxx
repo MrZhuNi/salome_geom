@@ -20,7 +20,7 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _GEOMAlgo_Clsf_HeaderFile
-#include <GEOMAlgo_Clsf.hxx>
+#include "GEOMAlgo_Clsf.hxx"
 #endif
 #ifndef _TopTools_ListOfShape_HeaderFile
 #include <TopTools_ListOfShape.hxx>
@@ -29,14 +29,14 @@
 #include <TopoDS_Face.hxx>
 #endif
 #ifndef _GEOMAlgo_ListOfPnt_HeaderFile
-#include <GEOMAlgo_ListOfPnt.hxx>
+#include "GEOMAlgo_ListOfPnt.hxx"
 #endif
 #ifndef _TopoDS_Edge_HeaderFile
 #include <TopoDS_Edge.hxx>
 #endif
 #ifndef _GEOMAlgo_IndexedDataMapOfShapeState_HeaderFile
-#include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
+#include "GEOMAlgo_IndexedDataMapOfShapeState.hxx"
 #endif
 #ifndef _GEOMAlgo_FinderShapeOn2_HeaderFile
-#include <GEOMAlgo_FinderShapeOn2.hxx>
+#include "GEOMAlgo_FinderShapeOn2.hxx"
 #endif

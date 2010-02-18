@@ -21,10 +21,10 @@
 //
 #include "GEOM_OCCFilter.h"
 
-#include <LightApp_SelectionMgr.h> 
-#include <LightApp_DataOwner.h>
+#include <gui/LightApp_SelectionMgr.h> 
+#include <gui/LightApp_DataOwner.h>
 
-#include <SALOME_InteractiveObject.hxx>
+#include <gui/SALOME_InteractiveObject.hxx>
 
 #include <AIS_InteractiveObject.hxx>
 #include <SelectMgr_EntityOwner.hxx>

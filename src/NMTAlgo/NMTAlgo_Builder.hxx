@@ -35,7 +35,7 @@
 #include <TopTools_IndexedDataMapOfShapeShape.hxx>
 #endif
 #ifndef _NMTAlgo_Algo_HeaderFile
-#include <NMTAlgo_Algo.hxx>
+#include "NMTAlgo_Algo.hxx"
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>

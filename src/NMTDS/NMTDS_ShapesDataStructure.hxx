@@ -26,10 +26,10 @@
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _NMTDS_CArray1OfIndexRange_HeaderFile
-#include <NMTDS_CArray1OfIndexRange.hxx>
+#include "NMTDS_CArray1OfIndexRange.hxx"
 #endif
 #ifndef _NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger_HeaderFile
-#include <NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger.hxx>
+#include "NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger.hxx"
 #endif
 #ifndef _BooleanOperations_ShapesDataStructure_HeaderFile
 #include <BooleanOperations_ShapesDataStructure.hxx>

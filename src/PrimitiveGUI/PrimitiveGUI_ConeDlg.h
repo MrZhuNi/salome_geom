@@ -26,7 +26,7 @@
 #ifndef PRIMITIVEGUI_CONEDLG_H
 #define PRIMITIVEGUI_CONEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel3Spin;
 class DlgRef_3Spin;

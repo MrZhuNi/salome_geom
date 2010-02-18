@@ -26,7 +26,7 @@
 #ifndef PRIMITIVEGUI_CYLINDERDLG_H
 #define PRIMITIVEGUI_CYLINDERDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel2Spin;
 class DlgRef_2Spin;

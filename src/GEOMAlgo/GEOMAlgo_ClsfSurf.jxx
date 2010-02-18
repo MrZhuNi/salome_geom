@@ -26,5 +26,5 @@
 #include <Geom_Curve.hxx>
 #endif
 #ifndef _GEOMAlgo_ClsfSurf_HeaderFile
-#include <GEOMAlgo_ClsfSurf.hxx>
+#include "GEOMAlgo_ClsfSurf.hxx"
 #endif

@@ -31,11 +31,11 @@
 
 #include <GEOMImpl_Types.hxx>
 
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_MessageBox.h>
-#include <SUIT_Session.h>
-#include <SalomeApp_Application.h>
-#include <LightApp_SelectionMgr.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SUIT_MessageBox.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/LightApp_SelectionMgr.h>
 
 //=================================================================================
 // class    : BuildGUI_SolidDlg()

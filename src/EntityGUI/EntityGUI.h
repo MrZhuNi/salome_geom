@@ -26,9 +26,9 @@
 #ifndef ENTITYGUI_H
 #define ENTITYGUI_H
 
-#include <GEOMGUI.h>
+#include "GEOMGUI.h"
 
-#include <SALOMEDSClient.hxx>
+#include <kernel/SALOMEDSClient.hxx>
 
 #include <AIS_Shape.hxx>
 

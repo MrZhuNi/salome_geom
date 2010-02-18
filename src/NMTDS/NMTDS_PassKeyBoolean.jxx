@@ -20,5 +20,5 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _NMTDS_PassKeyBoolean_HeaderFile
-#include <NMTDS_PassKeyBoolean.hxx>
+#include "NMTDS_PassKeyBoolean.hxx"
 #endif

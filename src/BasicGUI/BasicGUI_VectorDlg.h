@@ -26,7 +26,7 @@
 #ifndef BASICGUI_VECTORDLG_H
 #define BASICGUI_VECTORDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel;
 class DlgRef_3Spin1Check;

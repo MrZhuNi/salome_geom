@@ -26,5 +26,5 @@
 #include <TopTools_ListOfShape.hxx>
 #endif
 #ifndef _GEOMAlgo_ShapeSolid_HeaderFile
-#include <GEOMAlgo_ShapeSolid.hxx>
+#include "GEOMAlgo_ShapeSolid.hxx"
 #endif

@@ -32,7 +32,7 @@
 #include <IntTools_Context.hxx>
 #endif
 #ifndef _GEOMAlgo_Algo_HeaderFile
-#include <GEOMAlgo_Algo.hxx>
+#include "GEOMAlgo_Algo.hxx"
 #endif
 class TopoDS_Shape;
 

@@ -28,14 +28,14 @@
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
 
-#include <SUIT_Desktop.h>
-#include <SUIT_ViewModel.h>
-#include <SUIT_ViewWindow.h>
-#include <SUIT_ViewManager.h>
-#include <LightApp_SelectionMgr.h>
-#include <SalomeApp_Application.h>
-#include <SalomeApp_Study.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_ViewModel.h>
+#include <gui/SUIT_ViewWindow.h>
+#include <gui/SUIT_ViewManager.h>
+#include <gui/LightApp_SelectionMgr.h>
+#include <gui/SalomeApp_Application.h>
+#include <gui/SalomeApp_Study.h>
+#include <gui/SALOME_ListIteratorOfListIO.hxx>
 
 #include "TransformationGUI_MultiTranslationDlg.h"   // Method MULTI TRANSLATION
 #include "TransformationGUI_MultiRotationDlg.h"      // Method MULTI ROTATION

@@ -28,21 +28,21 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
-#include <QtxDoubleSpinBox.h>
+#include <gui/QtxDoubleSpinBox.h>
 
-#include <SalomeApp_Application.h>
-#include <LightApp_SelectionMgr.h>
-#include <SalomeApp_Study.h>
-#include <SalomeApp_Tools.h>
-#include <SUIT_Session.h>
-#include <SUIT_Desktop.h>
-#include <SUIT_MessageBox.h>
-#include <SUIT_OverrideCursor.h>
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_ViewWindow.h>
-#include <SUIT_ViewManager.h>
-#include <OCCViewer_ViewModel.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <gui/SalomeApp_Application.h>
+#include <gui/LightApp_SelectionMgr.h>
+#include <gui/SalomeApp_Study.h>
+#include <gui/SalomeApp_Tools.h>
+#include <gui/SUIT_Session.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SUIT_MessageBox.h>
+#include <gui/SUIT_OverrideCursor.h>
+#include <gui/SUIT_ResourceMgr.h>
+#include <gui/SUIT_ViewWindow.h>
+#include <gui/SUIT_ViewManager.h>
+#include <gui/OCCViewer_ViewModel.h>
+#include <gui/SALOME_ListIteratorOfListIO.hxx>
 
 #include <GEOMImpl_Types.hxx>
 

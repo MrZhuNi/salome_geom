@@ -26,7 +26,7 @@
 #ifndef BASICGUI_DISKDLG_H
 #define BASICGUI_DISKDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_3Sel;
 class DlgRef_2Sel1Spin;

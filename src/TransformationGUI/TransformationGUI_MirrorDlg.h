@@ -26,7 +26,7 @@
 #ifndef TRANSFORMATIONGUI_MIRRORDLG_H
 #define TRANSFORMATIONGUI_MIRRORDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
 
 class DlgRef_2Sel1Spin2Check;  
 

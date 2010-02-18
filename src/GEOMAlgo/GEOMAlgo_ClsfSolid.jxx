@@ -23,5 +23,5 @@
 #include <TopoDS_Shape.hxx>
 #endif
 #ifndef _GEOMAlgo_ClsfSolid_HeaderFile
-#include <GEOMAlgo_ClsfSolid.hxx>
+#include "GEOMAlgo_ClsfSolid.hxx"
 #endif

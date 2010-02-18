@@ -38,7 +38,7 @@ lib_LTLIBRARIES = libSalomeIDLGEOM.la
 nodist_libSalomeIDLGEOM_la_SOURCES = GEOM_GenSK.cc GEOM_SupervSK.cc
 
 # header files must be exported: other modules have to use this library
-nodist_salomeinclude_HEADERS = $(BASEIDL_FILES:%.idl=%.hh)
+nodist_salomeskel_HEADERS = $(BASEIDL_FILES:%.idl=%.hh)
 
 libSalomeIDLGEOM_la_CPPFLAGS =			\
 	-I$(top_builddir)/idl			\

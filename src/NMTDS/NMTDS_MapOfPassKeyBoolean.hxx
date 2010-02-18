@@ -26,7 +26,7 @@
 #include <TCollection_BasicMap.hxx>
 #endif
 #ifndef _Handle_NMTDS_StdMapNodeOfMapOfPassKeyBoolean_HeaderFile
-#include <Handle_NMTDS_StdMapNodeOfMapOfPassKeyBoolean.hxx>
+#include "Handle_NMTDS_StdMapNodeOfMapOfPassKeyBoolean.hxx"
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>

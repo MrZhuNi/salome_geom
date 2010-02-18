@@ -27,8 +27,8 @@
 
 #include <GeometryGUI.h>
 
-#include <SUIT_Desktop.h>
-#include <SalomeApp_Application.h>
+#include <gui/SUIT_Desktop.h>
+#include <gui/SalomeApp_Application.h>
 
 #include "PrimitiveGUI_BoxDlg.h"      // Method BOX
 #include "PrimitiveGUI_CylinderDlg.h" // Method CYLINDER

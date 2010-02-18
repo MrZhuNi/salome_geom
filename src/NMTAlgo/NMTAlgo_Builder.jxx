@@ -20,7 +20,7 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef _NMTTools_DSFiller_HeaderFile
-#include <NMTTools_DSFiller.hxx>
+#include "NMTTools_DSFiller.hxx"
 #endif
 #ifndef _TopoDS_Edge_HeaderFile
 #include <TopoDS_Edge.hxx>
@@ -29,5 +29,5 @@
 #include <TopoDS_Face.hxx>
 #endif
 #ifndef _NMTAlgo_Builder_HeaderFile
-#include <NMTAlgo_Builder.hxx>
+#include "NMTAlgo_Builder.hxx"
 #endif

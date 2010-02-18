@@ -31,7 +31,7 @@
 #include "GEOM_OBJECT_defs.hxx"
 #include "GEOM_SmartPtr.h"
 
-#include <SALOME_Actor.h>
+#include <gui/SALOME_Actor.h>
 
 #include <TopoDS_Shape.hxx>
 #include <vtkSmartPointer.h>
