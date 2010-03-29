@@ -248,6 +248,12 @@ class GEOM_Object : public MMgt_TShared
   //Get a notebook variables used for object creation
   Standard_EXPORT TCollection_AsciiString GetParameters() const;
 
+  //Set an object associated description
+  Standard_EXPORT void SetDescription(const TCollection_AsciiString& theDescription);
+
+  //Get an object associated description
+  Standard_EXPORT TCollection_AsciiString GetDescription();
+
   //###########################################################
   // Sub shape methods
   //###########################################################

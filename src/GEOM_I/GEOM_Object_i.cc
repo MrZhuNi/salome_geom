@@ -437,3 +437,12 @@ char* GEOM_Object_i::GetParameters()
   return CORBA::string_dup(_impl->GetParameters().ToCString());
 }
 
+void GEOM_Object_i::SetDescription(const char* theDescription)
+{
+  _impl->SetDescription((char*)theDescription);
+}
+
+char* GEOM_Object_i::GetDescription()
+{
+  return CORBA::string_dup(_impl->GetDescription().ToCString());
+}

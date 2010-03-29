@@ -304,6 +304,15 @@ module GEOM
      *  Return list of notebook variables used for object creation separated by ":" symbol
      */
     string GetParameters();
+
+    /*!
+     *  Return description associated to the object
+     */
+    string GetDescription();
+    /*!
+     *  Set the description associated to the object
+     */
+    void SetDescription (in string theDescription);
   };
 
 

@@ -98,6 +98,10 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   Handle(GEOM_Object) GetImpl() { return _impl; }
 
+  virtual char* GetDescription();
+
+  virtual void SetDescription(const char* theDescription);
+
  private:
 
   GEOM::GEOM_Gen_var _engine;

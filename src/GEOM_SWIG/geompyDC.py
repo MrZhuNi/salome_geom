@@ -76,6 +76,7 @@
 
 ## @}
 
+import os
 import salome
 salome.salome_init()
 from salome import *
@@ -4185,6 +4186,42 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             ID = self.InsertOp.AddTexture(Width, Height, Texture)
             RaiseIfFailed("AddTexture", self.InsertOp)
             return ID
+
+
+#Try to load commands that are found in command plugins
+# command plugins are python files named geom_commands.py that are found in special directories.
+# These directories are :
+# $HOME/.salome/Plugins
+# $HOME/$APPLI/Plugins
+# The directory where this file is installed
+# a list of directories given by SALOME_PLUGINS_PATH environment variable (paths separated by ":")
+SEP=":"
+plugindirs=[]
+# USER plugins directory
+plugindirs.append(os.path.expanduser("~/.salome/Plugins"))
+# APPLI plugins directory
+appli=os.getenv("APPLI")
+if appli:
+  plugindirs.append(os.path.join(os.path.expanduser("~"),appli,"Plugins"))
+#This file directory
+plugindirs.append(os.path.dirname(__file__))
+#SALOME_PLUGINS_PATH environment variable (list of directories separated by ":")
+pluginspath=os.getenv("SALOME_PLUGINS_PATH")
+if pluginspath:
+  for directory in pluginspath.split(SEP):
+    plugindirs.append(directory)
+
+for directory in plugindirs:
+  commands_file = os.path.join(directory,"geom_commands.py")
+  if os.path.isfile(commands_file):
+    if directory not in sys.path:
+      sys.path.insert(0,directory)
+    try:
+      execfile(commands_file)
+    except:
+      print "Error while loading plugins from file:",commands_file
+      import traceback
+      traceback.print_exc()
 
 import omniORB
 #Register the new proxy for GEOM_Gen

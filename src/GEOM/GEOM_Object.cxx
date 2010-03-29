@@ -697,3 +697,29 @@ const Handle(GEOM_Object) Handle(GEOM_Object)::DownCast(const Handle(Standard_Tr
 }
 
 
+//=============================================================================
+/*!
+ *  SetDescription
+ */
+//=============================================================================
+void GEOM_Object::SetDescription(const TCollection_AsciiString& theDescription)
+{
+  Handle(GEOM_Function) aFunction = GetFunction(1);
+  if(aFunction.IsNull() ) return;
+  aFunction->SetDescription(theDescription);
+}
+
+//=============================================================================
+/*!
+ *  GetDescription
+ */
+//=============================================================================
+TCollection_AsciiString GEOM_Object::GetDescription()
+{
+  Standard_Integer nb = GetNbFunctions();
+  Handle(GEOM_Function) aFunction = GetFunction(1);
+  if(aFunction.IsNull() ) return "";
+  TCollection_AsciiString aDescr = aFunction->GetDescription();
+  return aDescr;
+}
+
