@@ -54,6 +54,7 @@ GEOM_Object_i::GEOM_Object_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr
 			      Handle(GEOM_Object) theImpl)
 : SALOME::GenericObj_i( thePOA ), _engine(theEngine), _impl(theImpl)
 {
+  std::cerr << "GEOM_Object_i::GEOM_Object_i " << std::endl;
 }
 
 //=============================================================================
@@ -64,6 +65,7 @@ GEOM_Object_i::GEOM_Object_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr
 
 GEOM_Object_i::~GEOM_Object_i()
 {
+  std::cerr << "GEOM_Object_i::~GEOM_Object_i " << std::endl;
   MESSAGE("GEOM_Object_i::~GEOM_Object_i");
   GEOM_Engine::GetEngine()->RemoveObject(_impl);
 }

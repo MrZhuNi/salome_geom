@@ -2850,7 +2850,9 @@ module GEOM
       SEGMENT,      // segment
       EDGE,         // other edge
       // VERTEX
-      VERTEX
+      VERTEX,
+      // ADVANCED shapes
+      ADVANCED      // all advanced shapes (temporary implementation)
     };
   };
 

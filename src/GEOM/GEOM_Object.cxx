@@ -149,6 +149,7 @@ Handle(GEOM_Object) GEOM_Object::GetReferencedObject(TDF_Label& theLabel)
 GEOM_Object::GEOM_Object(TDF_Label& theEntry)
   : _label(theEntry), _ior(""), _docID(-1)
 {
+  std::cerr << "GEOM_Object::GEOM_Object(TDF_Label& theEntry)" << std::endl;
   Handle(TDocStd_Document) aDoc = TDocStd_Owner::GetDocument(_label.Data());
   if(!aDoc.IsNull()) {
     Handle(TDataStd_Integer) anID;
@@ -167,6 +168,7 @@ GEOM_Object::GEOM_Object(TDF_Label& theEntry)
 GEOM_Object::GEOM_Object(TDF_Label& theEntry, int theType)
 : _label(theEntry), _ior(""), _docID(-1)
 {
+  std::cerr << "GEOM_Object::GEOM_Object(TDF_Label& theEntry, int theType)" << std::endl;
   Handle(TDocStd_Document) aDoc = TDocStd_Owner::GetDocument(_label.Data());
   if(!aDoc.IsNull()) {
     Handle(TDataStd_Integer) anID;
@@ -190,6 +192,7 @@ GEOM_Object::GEOM_Object(TDF_Label& theEntry, int theType)
 //=============================================================================
 GEOM_Object::~GEOM_Object()
 {
+  std::cerr << "GEOM_Object::~GEOM_Object()" << std::endl;
   MESSAGE("GEOM_Object::~GEOM_Object()");
 }
 

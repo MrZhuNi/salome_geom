@@ -44,6 +44,8 @@ from PyQt4 import QtCore
 import salome
 
 SEP=":"
+if sys.platform == "win32":
+  SEP = ";"
 
 # Get SALOME PyQt interface
 import SalomePyQt
@@ -119,10 +121,10 @@ class Plugins:
 
         plugins_files=[]
         for directory in self.plugindirs:
-          geom_plugins_file = os.path.join(directory,"geom_plugins.py")
-          if os.path.isfile(geom_plugins_file):
-            plugins_files.append((directory,geom_plugins_file))
-            lasttime=max(lasttime,os.path.getmtime(geom_plugins_file))
+          plugins_file = os.path.join(directory,"geom_plugins.py")
+          if os.path.isfile(plugins_file):
+            plugins_files.append((directory,plugins_file))
+            lasttime=max(lasttime,os.path.getmtime(plugins_file))
 
         plugins_files.sort()
 
