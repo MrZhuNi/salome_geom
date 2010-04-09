@@ -1101,12 +1101,12 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   // import Python module that manages GEOM plugins (need to be here because SalomePyQt API uses active module)
   PyGILState_STATE gstate = PyGILState_Ensure();
-  PyObject* pluginsmanager=PyImport_ImportModule((char*)"geom_pluginsmanager");
+  PyObject* pluginsmanager=PyImport_ImportModule((char*)"salome_pluginsmanager");
   if(pluginsmanager==NULL)
     PyErr_Print();
   else
     {
-      PyObject* result=PyObject_CallMethod( pluginsmanager, (char*)"initialize", (char*)"");
+      PyObject* result=PyObject_CallMethod( pluginsmanager, (char*)"initialize", (char*)"isss",1,"geom","New Entity","Other");
       if(result==NULL)
         PyErr_Print();
       Py_XDECREF(result);

@@ -29,8 +29,6 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # Libraries targets
 lib_LTLIBRARIES = libGEOM.la
 
-salomepython_PYTHON = geom_pluginsmanager.py
-
 # header files 
 salomeinclude_HEADERS = 	\
 	GeometryGUI.h		\
