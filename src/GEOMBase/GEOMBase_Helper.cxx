@@ -53,6 +53,14 @@
 #include <TColStd_MapOfInteger.hxx>
 #include <TCollection_AsciiString.hxx>
 
+#include <sys/time.h>
+static long tcount=0;
+static long cumul;
+#define START_TIMING long tt0; timeval tv; gettimeofday(&tv,0);tt0=tv.tv_usec+tv.tv_sec*1000000;
+#define END_TIMING(NUMBER) \
+  tcount=tcount+1;gettimeofday(&tv,0);cumul=cumul+tv.tv_usec+tv.tv_sec*1000000 -tt0; \
+  if(tcount==NUMBER){ std::cerr << __FILE__ << __LINE__ << " temps CPU(mus): " << cumul << std::endl; tcount=0;cumul=0; }
+
 //To disable automatic genericobj management, the following line should be commented.
 //Otherwise, it should be uncommented. Refer to KERNEL_SRC/src/SALOMEDSImpl/SALOMEDSImpl_AttributeIOR.cxx
 #define WITHGENERICOBJ
@@ -657,7 +665,8 @@ void GEOMBase_Helper::clearShapeBuffer( GEOM::GEOM_Object_ptr theObj )
 
   CORBA::String_var IOR = SalomeApp_Application::orb()->object_to_string( theObj );
   TCollection_AsciiString asciiIOR( (char *)IOR.in() );
-  GEOM_Client().RemoveShapeFromBuffer( asciiIOR );
+  //GEOM_Client().RemoveShapeFromBuffer( asciiIOR );
+  GEOM_Client::ShapeReader.RemoveShapeFromBuffer( asciiIOR );
 
   if ( !getStudy() || !getStudy()->studyDS() )
     return;
@@ -673,7 +682,8 @@ void GEOMBase_Helper::clearShapeBuffer( GEOM::GEOM_Object_ptr theObj )
     if ( anIt->Value()->FindAttribute(anAttr, "AttributeIOR") ) {
       _PTR(AttributeIOR) anIOR ( anAttr );
       TCollection_AsciiString asciiIOR( (char*)anIOR->Value().c_str() );
-      GEOM_Client().RemoveShapeFromBuffer( asciiIOR );
+      //GEOM_Client().RemoveShapeFromBuffer( asciiIOR );
+      GEOM_Client::ShapeReader.RemoveShapeFromBuffer( asciiIOR );
     }
   }
 }
@@ -800,6 +810,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
     return false;
   }
 
+  START_TIMING;
   erasePreview( false );
 
   bool result = false;
@@ -873,6 +884,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
   }
 
   updateViewer();
+  END_TIMING(1);
 
   return result;
 }

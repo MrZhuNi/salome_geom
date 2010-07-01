@@ -61,6 +61,17 @@
 
 #include "SALOMEDS_Tool.hxx"
 
+#include <sys/time.h>
+static long tt0;
+static long tcount=0;
+static long cumul;
+static timeval tv;
+#define START_TIMING gettimeofday(&tv,0);tt0=tv.tv_usec+tv.tv_sec*1000000;
+#define END_TIMING(NUMBER) \
+  tcount=tcount+1;gettimeofday(&tv,0);cumul=cumul+tv.tv_usec+tv.tv_sec*1000000 -tt0; \
+  if(tcount==NUMBER){ std::cerr << __FILE__ << __LINE__ << " temps CPU(mus): " << cumul << std::endl; tcount=0;cumul=0; }
+
+
 //============================================================================
 // function : GEOM_Gen_i()
 // purpose  : constructor to be called for servant creation.
@@ -735,6 +746,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr theStudy,
 {
   SALOMEDS::SObject_var aResultSO;
   if(theObject->_is_nil() || theStudy->_is_nil()) return aResultSO;
+  //START_TIMING;
 
   SALOMEDS::StudyBuilder_var aStudyBuilder = theStudy->NewBuilder();
   CORBA::String_var IOR;
@@ -768,6 +780,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr theStudy,
     aSubSO->Destroy();
   }
 
+  //END_TIMING(100);
   return aResultSO._retn();
 }
 

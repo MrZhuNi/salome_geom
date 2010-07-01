@@ -85,7 +85,8 @@ TopoDS_Shape GEOMBase::GetShapeFromIOR(QString IOR)
   if (GeomObject->_is_nil())
     return result;
 
-  result = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), GeomObject);
+  //result = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), GeomObject);
+  result = GEOM_Client::ShapeReader.GetShape(GeometryGUI::GetGeomGen(), GeomObject);
   return result;
 }
 
@@ -909,7 +910,8 @@ bool GEOMBase::GetShape( const GEOM::GEOM_Object_ptr& theObject, TopoDS_Shape& t
 {
   if ( !CORBA::is_nil( theObject ) )
   {
-    TopoDS_Shape aTopoDSShape = GEOM_Client().GetShape(  GeometryGUI::GetGeomGen(), theObject );
+    //TopoDS_Shape aTopoDSShape = GEOM_Client().GetShape(  GeometryGUI::GetGeomGen(), theObject );
+    TopoDS_Shape aTopoDSShape = GEOM_Client::ShapeReader.GetShape(  GeometryGUI::GetGeomGen(), theObject );
     if ( !aTopoDSShape.IsNull() && ( theType == TopAbs_SHAPE || theType == aTopoDSShape.ShapeType() ) )
     {
        theShape = aTopoDSShape;

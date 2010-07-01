@@ -58,6 +58,17 @@
 
 #define HST_CLIENT_LEN 256
 
+#include <vector>
+
+#include <sys/time.h>
+static long tcount=0;
+static long cumul;
+#define START_TIMING long tt0; timeval tv; gettimeofday(&tv,0);tt0=tv.tv_usec+tv.tv_sec*1000000;
+#define END_TIMING(NUMBER) \
+  tcount=tcount+1;gettimeofday(&tv,0);cumul=cumul+tv.tv_usec+tv.tv_sec*1000000 -tt0; \
+  if(tcount==NUMBER){ std::cerr << __FILE__ << __LINE__ << " temps CPU(mus): " << cumul << std::endl; tcount=0;cumul=0; }
+
+GEOM_Client GEOM_Client::ShapeReader;
 
 //=======================================================================
 // function : Load()
@@ -117,6 +128,19 @@ GEOM_Client::GEOM_Client(Engines::Container_ptr client)
 //=======================================================================
 Standard_Integer GEOM_Client::Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S )
 {
+  //CCAR
+#if 1
+  if(_myIndexes.count(IOR)==0)
+    {
+      return 0;
+    }
+  else
+    {
+      Standard_Integer i =_myIndexes[IOR];
+      S = myShapes.Value(i);
+      return i;
+    }
+#else
   for ( Standard_Integer i = 1; i<= myIORs.Length(); i++ ) {
     if (myIORs.Value(i).IsEqual(IOR)) {
       S = myShapes.Value(i);
@@ -124,6 +148,7 @@ Standard_Integer GEOM_Client::Find( const TCollection_AsciiString& IOR, TopoDS_S
     }
   }
   return 0;
+#endif
 }
 
 //=======================================================================
@@ -149,6 +174,7 @@ void GEOM_Client::Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& 
 {
   myIORs.Append(IOR);
   myShapes.Append(S);
+  _myIndexes[IOR]=myIORs.Length();
 }
 
 //=======================================================================
@@ -165,6 +191,8 @@ void GEOM_Client::RemoveShapeFromBuffer( const TCollection_AsciiString& IOR)
   if( anIndex != 0 ) {
     myIORs.Remove(anIndex);
     myShapes.Remove(anIndex);
+    _myIndexes.erase(IOR);
+    _mySubShapes.erase(IOR);
   }
   return;
 }
@@ -179,6 +207,8 @@ void GEOM_Client::ClearClientBuffer()
     return;
   myIORs.Clear();
   myShapes.Clear();
+  _myIndexes.clear();
+  _mySubShapes.clear();
   return;
 }
 
@@ -202,7 +232,10 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
   TCollection_AsciiString IOR = (char*)anIOR.in();
   Standard_Integer anIndex = Find(IOR, S);
 
-  if (anIndex != 0) return S;
+  if (anIndex != 0)
+    {
+      return S;
+    }
 
   /******* in case of a MAIN GEOM::SHAPE ********/
   if (aShape->IsMainShape()) {
@@ -216,12 +249,28 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
   TopoDS_Shape aMainShape = GetShape (geom, aShape->GetMainShape());
   GEOM::ListOfLong_var list = aShape->GetSubShapeIndices();
 
+  START_TIMING;
+
   TopTools_IndexedMapOfShape anIndices;
-  TopExp::MapShapes(aMainShape, anIndices);
+  anIOR = geom->GetStringFromIOR(aShape->GetMainShape());
+  IOR = (char*)anIOR.in();
+
+  //find subshapes only one time
+  if(_mySubShapes.count(IOR)==0)
+    {
+      std::cerr << "find sub shapes " << std::endl;
+      TopExp::MapShapes(aMainShape, anIndices);
+      Standard_Integer ii = 1, nbSubSh = anIndices.Extent();
+      for (; ii <= nbSubSh; ii++) 
+        {
+          _mySubShapes[IOR].push_back(anIndices.FindKey(ii));
+        }
+    }
 
   /* Case of only one subshape */
   if (list->length() == 1 && list[0] > 0) {
-    S = anIndices.FindKey(list[0]);
+    //S = anIndices.FindKey(list[0]);
+    S = _mySubShapes[IOR][list[0]-1];
   }
   else {
     BRep_Builder B;
@@ -229,7 +278,8 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
     B.MakeCompound(aCompound);
     for (int i = 0; i < list->length(); i++) {
       if (0 < list[i] && list[i] <= anIndices.Extent()) {
-        TopoDS_Shape aSubShape = anIndices.FindKey(list[i]);
+        TopoDS_Shape aSubShape = _mySubShapes[IOR][list[i]-1];
+        //TopoDS_Shape aSubShape = anIndices.FindKey(list[i]);
         B.Add(aCompound, aSubShape);
       }
     }
@@ -237,5 +287,6 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
     S = aCompound;
   }
   Bind(IOR, S);
+  END_TIMING(100);
   return S;
 }

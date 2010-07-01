@@ -213,7 +213,8 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
       _PTR(Study) aStudy = appStudy->studyDS();
 
       TopTools_IndexedMapOfShape aMainMap;
-      TopoDS_Shape aMainShape = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), myObject);
+      TopoDS_Shape aMainShape = GEOM_Client::ShapeReader.GetShape(GeometryGUI::GetGeomGen(), myObject);
+      //TopoDS_Shape aMainShape = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), myObject);
       TopExp::MapShapes(aMainShape, aMainMap);
 
       SALOME_ListIteratorOfListIO anIter (aSelList);

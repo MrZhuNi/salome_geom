@@ -73,6 +73,10 @@ class TopoDS_Shape;
  #define GEOMCLIENT_EXPORT
 #endif
 
+#include <TCollection_AsciiString.hxx>
+#include <map>
+#include <vector>
+
 //=====================================================================
 // GEOM_Client : class definition
 //=====================================================================
@@ -113,12 +117,15 @@ public:
   //Standard_EXPORT   
   unsigned int BufferLength() ;
   TopoDS_Shape Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape);
+  static GEOM_Client ShapeReader;
 
 private: 
   // Fields PRIVATE
   //
   TColStd_SequenceOfAsciiString myIORs ;
   TopTools_SequenceOfShape myShapes ;
+  std::map< TCollection_AsciiString , int > _myIndexes;
+  std::map< TCollection_AsciiString , std::vector<TopoDS_Shape> > _mySubShapes;
   long  pid_client;
 };
 

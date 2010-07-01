@@ -68,6 +68,14 @@
 
 #include <vtkRenderer.h>
 
+#include <sys/time.h>
+static long tcount=0;
+static long cumul;
+#define START_TIMING long tt0; timeval tv; gettimeofday(&tv,0);tt0=tv.tv_usec+tv.tv_sec*1000000;
+#define END_TIMING(NUMBER) \
+  tcount=tcount+1;gettimeofday(&tv,0);cumul=cumul+tv.tv_usec+tv.tv_sec*1000000 -tt0; \
+  if(tcount==NUMBER){ std::cerr << __FILE__ << __LINE__ << " temps CPU(mus): " << cumul << std::endl; tcount=0;cumul=0; }
+
 static GEOM_Client ShapeReader;
 
 inline OCCViewer_Viewer* GetOCCViewer(SUIT_Application* theApp){
@@ -154,7 +162,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry, bool isUpdated)
       std::string anIORValue = anIOR->Value();
 
       GEOM::GEOM_Object_var aShape = Geom->GetIORFromString(anIORValue.c_str());
-      TopoDS_Shape Shape = ShapeReader.GetShape(Geom,aShape);
+      TopoDS_Shape Shape = GEOM_Client::ShapeReader.GetShape(Geom,aShape);
       if (!Shape.IsNull()) {
         if (obj->FindAttribute(anAttr, "AttributeName")) {
           _PTR(AttributeName) aName (anAttr);
@@ -167,6 +175,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry, bool isUpdated)
           aStudyBuilder->Addreference(newObj1, obj);
           // commit transaction
           op->commit();*/
+      START_TIMING;
           Handle(GEOM_InteractiveObject) anIO =
             new GEOM_InteractiveObject (const_cast<char*>(anIORValue.c_str()),
                                         const_cast<char*>(aFatherIOR.c_str()),
@@ -174,6 +183,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry, bool isUpdated)
                                         const_cast<char*>( obj->GetID().c_str()));
 
           GEOM_Displayer(ActiveStudy).Display(anIO, myUpdateViewer);
+      END_TIMING(100);
           /*if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(app)) {
             SVTK_View* aView = aViewWindow->getView();
             int aMode = aView->GetDisplayMode();

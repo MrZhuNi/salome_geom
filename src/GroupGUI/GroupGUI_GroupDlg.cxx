@@ -653,7 +653,8 @@ int GroupGUI_GroupDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMap
         if (GEOMBase::GetShape(aGeomObj, aShape)) {
           if (aGeomObj->GetType() == GEOM_GROUP || aShape.ShapeType() == getShapeType()) {
             TopTools_IndexedMapOfShape aMainMap;
-            TopoDS_Shape aMainShape = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), myMainObj);
+            TopoDS_Shape aMainShape = GEOM_Client::ShapeReader.GetShape(GeometryGUI::GetGeomGen(), myMainObj);
+            //TopoDS_Shape aMainShape = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), myMainObj);
             TopExp::MapShapes(aMainShape, aMainMap);
 
             TopExp_Explorer anExp (aShape, getShapeType());
@@ -802,12 +803,14 @@ void GroupGUI_GroupDlg::activateSelection()
     SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
     if (aView == 0) return;
 
-    TopoDS_Shape aMainShape = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), myMainObj);
+    TopoDS_Shape aMainShape = GEOM_Client::ShapeReader.GetShape(GeometryGUI::GetGeomGen(), myMainObj);
+    //TopoDS_Shape aMainShape = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), myMainObj);
     TopoDS_Shape aRestrictionShape;
     if (subSelectionWay() == ALL_SUBSHAPES)
       aRestrictionShape = aMainShape;
     else if (!myInPlaceObj->_is_nil())
-      aRestrictionShape = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), myInPlaceObj);
+      aRestrictionShape = GEOM_Client::ShapeReader.GetShape(GeometryGUI::GetGeomGen(), myInPlaceObj);
+      //aRestrictionShape = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), myInPlaceObj);
     else ;
 
     TopTools_IndexedMapOfShape aSubShapesMap;

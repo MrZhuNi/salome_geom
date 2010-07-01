@@ -92,6 +92,14 @@
 #include <GEOMImpl_Types.hxx>
 #include <Graphic3d_HArray1OfBytes.hxx>
 
+#include <sys/time.h>
+static long tcount=0;
+static long cumul;
+#define START_TIMING long tt0; timeval tv; gettimeofday(&tv,0);tt0=tv.tv_usec+tv.tv_sec*1000000;
+#define END_TIMING(NUMBER) \
+    tcount=tcount+1;gettimeofday(&tv,0);cumul=cumul+tv.tv_usec+tv.tv_sec*1000000 -tt0; \
+  if(tcount==NUMBER){ std::cerr << __FILE__ << __LINE__ << " temps CPU(mus): " << cumul << std::endl; tcount=0;cumul=0; }
+
 
 //================================================================
 // Function : getActiveStudy
@@ -303,9 +311,11 @@ void GEOM_Displayer::Display( const Handle(SALOME_InteractiveObject)& theIO,
 
     if ( prs )
     {
+    START_TIMING;
       vf->BeforeDisplay( this );
       vf->Display( prs );
       vf->AfterDisplay( this );
+    END_TIMING(100);
 
       if ( updateViewer )
         vf->Repaint();
@@ -935,7 +945,8 @@ SALOME_Prs* GEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )
     return 0;
 
   internalReset();
-  setShape( GEOM_Client().GetShape( GeometryGUI::GetGeomGen(), theObj ) );
+  setShape( GEOM_Client::ShapeReader.GetShape( GeometryGUI::GetGeomGen(), theObj ) );
+  //setShape( GEOM_Client().GetShape( GeometryGUI::GetGeomGen(), theObj ) );
   myType = theObj->GetType();
 
   // Update presentation
@@ -1016,7 +1027,8 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
                 if ( !GeomObject->_is_nil() )
                 {
                   // finally set shape
-                  setShape( GEOM_Client().GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
+                  setShape( GEOM_Client::ShapeReader.GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
+                  //setShape( GEOM_Client().GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
                   myType = GeomObject->GetType();
                 }
               }
@@ -1025,6 +1037,7 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
         }
       }
       UpdatePrs( prs );  // Update presentation by using of the double dispatch
+      myViewFrame->updateViewer( prs );
     }
   }
   return prs;

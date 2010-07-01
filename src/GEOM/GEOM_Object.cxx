@@ -191,7 +191,7 @@ GEOM_Object::GEOM_Object(TDF_Label& theEntry, int theType)
 //=============================================================================
 GEOM_Object::~GEOM_Object()
 {
-  MESSAGE("GEOM_Object::~GEOM_Object()");
+  //MESSAGE("GEOM_Object::~GEOM_Object()");
 }
 
 //=============================================================================

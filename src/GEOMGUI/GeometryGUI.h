@@ -87,7 +87,8 @@ public:
   static CORBA::Object_var    ClientSObjectToObject (_PTR(SObject) theSObject);
   static SALOMEDS::Study_var  ClientStudyToStudy (_PTR(Study) theStudy);
 
-  GEOM_Client&                GetShapeReader()    { return myShapeReader; }
+  GEOM_Client&                GetShapeReader()    { return GEOM_Client::ShapeReader; }
+  //GEOM_Client&                GetShapeReader()    { return myShapeReader; }
 
   // Get active dialog box
   QDialog*                    GetActiveDialogBox(){ return myActiveDialogBox; }
