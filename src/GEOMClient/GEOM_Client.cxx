@@ -252,25 +252,25 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
   START_TIMING;
 
   TopTools_IndexedMapOfShape anIndices;
-  anIOR = geom->GetStringFromIOR(aShape->GetMainShape());
-  IOR = (char*)anIOR.in();
+  CORBA::String_var aMainIOR = geom->GetStringFromIOR(aShape->GetMainShape());
+  TCollection_AsciiString mainIOR = (char*)aMainIOR.in();
 
   //find subshapes only one time
-  if(_mySubShapes.count(IOR)==0)
+  if(_mySubShapes.count(mainIOR)==0)
     {
       std::cerr << "find sub shapes " << std::endl;
       TopExp::MapShapes(aMainShape, anIndices);
       Standard_Integer ii = 1, nbSubSh = anIndices.Extent();
       for (; ii <= nbSubSh; ii++) 
         {
-          _mySubShapes[IOR].push_back(anIndices.FindKey(ii));
+          _mySubShapes[mainIOR].push_back(anIndices.FindKey(ii));
         }
     }
 
   /* Case of only one subshape */
   if (list->length() == 1 && list[0] > 0) {
     //S = anIndices.FindKey(list[0]);
-    S = _mySubShapes[IOR][list[0]-1];
+    S = _mySubShapes[mainIOR][list[0]-1];
   }
   else {
     BRep_Builder B;
@@ -278,7 +278,7 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
     B.MakeCompound(aCompound);
     for (int i = 0; i < list->length(); i++) {
       if (0 < list[i] && list[i] <= anIndices.Extent()) {
-        TopoDS_Shape aSubShape = _mySubShapes[IOR][list[i]-1];
+        TopoDS_Shape aSubShape = _mySubShapes[mainIOR][list[i]-1];
         //TopoDS_Shape aSubShape = anIndices.FindKey(list[i]);
         B.Add(aCompound, aSubShape);
       }
