@@ -810,7 +810,6 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
     return false;
   }
 
-  START_TIMING;
   erasePreview( false );
 
   bool result = false;
@@ -884,7 +883,6 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
   }
 
   updateViewer();
-  END_TIMING(1);
 
   return result;
 }

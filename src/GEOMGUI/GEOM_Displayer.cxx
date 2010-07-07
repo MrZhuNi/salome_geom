@@ -311,11 +311,11 @@ void GEOM_Displayer::Display( const Handle(SALOME_InteractiveObject)& theIO,
 
     if ( prs )
     {
-    START_TIMING;
+    //START_TIMING;
       vf->BeforeDisplay( this );
       vf->Display( prs );
       vf->AfterDisplay( this );
-    END_TIMING(100);
+    //END_TIMING(100);
 
       if ( updateViewer )
         vf->Repaint();

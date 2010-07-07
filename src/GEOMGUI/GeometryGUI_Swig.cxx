@@ -175,7 +175,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry, bool isUpdated)
           aStudyBuilder->Addreference(newObj1, obj);
           // commit transaction
           op->commit();*/
-      START_TIMING;
+      //START_TIMING;
           Handle(GEOM_InteractiveObject) anIO =
             new GEOM_InteractiveObject (const_cast<char*>(anIORValue.c_str()),
                                         const_cast<char*>(aFatherIOR.c_str()),
@@ -183,7 +183,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry, bool isUpdated)
                                         const_cast<char*>( obj->GetID().c_str()));
 
           GEOM_Displayer(ActiveStudy).Display(anIO, myUpdateViewer);
-      END_TIMING(100);
+      //END_TIMING(100);
           /*if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(app)) {
             SVTK_View* aView = aViewWindow->getView();
             int aMode = aView->GetDisplayMode();

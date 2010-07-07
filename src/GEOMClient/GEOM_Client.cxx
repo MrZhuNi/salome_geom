@@ -128,27 +128,13 @@ GEOM_Client::GEOM_Client(Engines::Container_ptr client)
 //=======================================================================
 Standard_Integer GEOM_Client::Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S )
 {
-  //CCAR
-#if 1
-  if(_myIndexes.count(IOR)==0)
-    {
-      return 0;
-    }
-  else
+  if(_myIndexes.count(IOR) != 0)
     {
       Standard_Integer i =_myIndexes[IOR];
       S = myShapes.Value(i);
       return i;
     }
-#else
-  for ( Standard_Integer i = 1; i<= myIORs.Length(); i++ ) {
-    if (myIORs.Value(i).IsEqual(IOR)) {
-      S = myShapes.Value(i);
-      return i;
-    }
-  }
   return 0;
-#endif
 }
 
 //=======================================================================
@@ -249,8 +235,6 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
   TopoDS_Shape aMainShape = GetShape (geom, aShape->GetMainShape());
   GEOM::ListOfLong_var list = aShape->GetSubShapeIndices();
 
-  START_TIMING;
-
   TopTools_IndexedMapOfShape anIndices;
   CORBA::String_var aMainIOR = geom->GetStringFromIOR(aShape->GetMainShape());
   TCollection_AsciiString mainIOR = (char*)aMainIOR.in();
@@ -258,7 +242,6 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
   //find subshapes only one time
   if(_mySubShapes.count(mainIOR)==0)
     {
-      std::cerr << "find sub shapes " << std::endl;
       TopExp::MapShapes(aMainShape, anIndices);
       Standard_Integer ii = 1, nbSubSh = anIndices.Extent();
       for (; ii <= nbSubSh; ii++) 
@@ -269,7 +252,6 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
 
   /* Case of only one subshape */
   if (list->length() == 1 && list[0] > 0) {
-    //S = anIndices.FindKey(list[0]);
     S = _mySubShapes[mainIOR][list[0]-1];
   }
   else {
@@ -279,7 +261,6 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
     for (int i = 0; i < list->length(); i++) {
       if (0 < list[i] && list[i] <= anIndices.Extent()) {
         TopoDS_Shape aSubShape = _mySubShapes[mainIOR][list[i]-1];
-        //TopoDS_Shape aSubShape = anIndices.FindKey(list[i]);
         B.Add(aCompound, aSubShape);
       }
     }
@@ -287,6 +268,5 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
     S = aCompound;
   }
   Bind(IOR, S);
-  END_TIMING(100);
   return S;
 }
