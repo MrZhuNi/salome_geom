@@ -17,12 +17,14 @@ The functions are distributed in the python package
 ``salome.geom``. For example, the usage of the visualization of
 structural elements can be appreciated with this set of instructions:
 
- >>> from salome.geom.structelem import TEST_StructuralElement
- >>> TEST_StructuralElement()
+.. code-block:: python
+
+   from salome.geom.structelem import TEST_StructuralElement
+   TEST_StructuralElement()
 
 This creates the geometrical objects displayed in the study below:
 
-.. image:: /images/salome.geom.structuralelements.png
+.. image:: /images/salome-geom-structuralelements.png
    :align: center
 
 The specification of the programming interface of this package is
