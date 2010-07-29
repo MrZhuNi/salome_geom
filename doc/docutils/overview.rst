@@ -20,6 +20,11 @@ structural elements can be appreciated with this set of instructions:
  >>> from salome.geom.structelem import TEST_StructuralElement
  >>> TEST_StructuralElement()
 
+This creates the geometrical objects displayed in the study below:
+
+.. image:: /images/salome.geom.structuralelements.png
+   :align: center
+
 The specification of the programming interface of this package is
 detailled in the part :doc:`Documentation of the programming interface
 (API)</docapi>` of this documentation.
