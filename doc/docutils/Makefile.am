@@ -22,7 +22,7 @@
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-pydocdir = $(docdir)/docutils/GEOM
+pydocdir = $(docdir)/tui/GEOM/docutils
 
 .PHONY : latex
 

@@ -2,6 +2,17 @@
 
 \page geompypkg_page Programming Interface of GEOM python package
 
+Sorry, but the documentation is not available yet in doxygen format.
+
+Fortunately, a documentation exists in restructured format and then
+can be generated here using sphinx, in the expectative of the doxygen
+version.
+
+Please refer to this <a href="../../tui/GEOM/docutils/index.html">
+documentation of the KERNEL python packages</a>.
+
+Here is a sample generated from the doxygen format:
+
 The GEOM python package essentially contains:
 
 <ul>
