@@ -1,0 +1,35 @@
+/*!
+
+\page geompypkg_page Programming Interface of GEOM python package
+
+The GEOM python package essentially contains:
+
+<ul>
+  <li>The visualization of structural elements: a function to create
+  geometrical 3D representations of mechanical models called
+  "structural elements".
+</ul>
+
+For details, you should refer to the complete
+<a href="../../docutils/GEOM/index.html"> documentation of the GEOM
+python packages</a>, writen using sphinx.
+
+Note that these functions either encapsulate the python programming
+interface of GEOM core (the CORBA or SWIG interfaces for example) or
+extend existing utilities as the ``geompy.py`` module.
+
+The functions are distributed in the python package
+``salome.geom``. For example, the usage of the visualization of
+structural elements can be appreciated with this set of instructions:
+
+\code
+
+   from salome.geom.structelem import TEST_StructuralElement
+   TEST_StructuralElement()
+\endcode
+
+This creates the geometrical objects displayed in the study below:
+
+\image html salome-geom-structuralelements.png "Example of Geometry created from structural elements"
+
+*/
