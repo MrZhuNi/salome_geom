@@ -24,7 +24,7 @@
 SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo SKETCHER GEOM BREPExport	\
           BREPImport IGESExport IGESImport STEPExport STEPImport	\
           STLExport ShHealOper GEOMImpl GEOM_I GEOMClient GEOM_I_Superv	\
-          GEOM_SWIG
+          GEOM_SWIG GEOM_PY
 
 if GEOM_ENABLE_GUI
   SUBDIRS += OBJECT DlgRef GEOMFiltersSelection GEOMGUI GEOMBase GEOMToolsGUI	\
@@ -39,4 +39,4 @@ DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo SKETCHER GEOM BREPExport	\
                OBJECT DlgRef GEOMFiltersSelection GEOMGUI GEOMBase GEOMToolsGUI	\
                DisplayGUI BasicGUI PrimitiveGUI GenerationGUI EntityGUI		\
                BuildGUI BooleanGUI TransformationGUI OperationGUI RepairGUI	\
-               MeasureGUI GroupGUI BlocksGUI AdvancedGUI GEOM_SWIG_WITHIHM
+               MeasureGUI GroupGUI BlocksGUI AdvancedGUI GEOM_SWIG_WITHIHM GEOM_PY
