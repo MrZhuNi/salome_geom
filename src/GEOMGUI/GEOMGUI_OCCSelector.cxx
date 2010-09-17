@@ -114,11 +114,12 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
 
       if (!entryStr.isEmpty())
       {
+        Handle(SALOME_InteractiveObject) anIO = Handle(SALOME_InteractiveObject)::DownCast(io->GetOwner()); 
         LightApp_DataOwner* owner;
         if (index > -1) // Local Selection
           owner = new LightApp_DataSubOwner (entryStr, index);
-        else // Global Selection
-          owner = new LightApp_DataOwner (entryStr);
+        else if ( !anIO.IsNull() ) // Global Selection
+          owner = new LightApp_DataOwner( anIO );
 
         aList.append(SUIT_DataOwnerPtr(owner));
       }
@@ -134,8 +135,11 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
 
       if ( !entryStr.isEmpty() )
       {
-        LightApp_DataOwner* owner = new LightApp_DataOwner( entryStr );
-        aList.append( SUIT_DataOwnerPtr( owner ) );
+        Handle(SALOME_InteractiveObject) anIO = Handle(SALOME_InteractiveObject)::DownCast(io->GetOwner()); 
+        if ( !anIO.IsNull() ) {
+          LightApp_DataOwner* owner = new LightApp_DataOwner( anIO );
+          aList.append( SUIT_DataOwnerPtr( owner ) );
+        }
       }
     }
   }
