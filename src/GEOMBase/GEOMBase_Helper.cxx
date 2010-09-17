@@ -95,7 +95,8 @@ GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop )
 //================================================================
 GEOMBase_Helper::~GEOMBase_Helper()
 {
-  if ( !SUIT_Session::session()->activeApplication()->desktop() )
+  //rnv: Fix for the "IPAL21922 : WinTC5.1.4: incorrect quit salome"
+  if ( !SUIT_Session::session()->activeApplication() || !SUIT_Session::session()->activeApplication()->desktop() )
     return;
 
   if ( myPreview.size() )
