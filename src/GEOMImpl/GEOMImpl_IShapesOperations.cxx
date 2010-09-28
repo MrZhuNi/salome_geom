@@ -19,13 +19,12 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 // File      : GEOMImpl_IShapesOperations.cxx
 // Created   :
 // Author    : modified by Lioka RAZAFINDRAZAKA (CEA) 22/06/2007
 // Project   : SALOME
 // $Header$
-//
+
 #include <Standard_Stream.hxx>
 
 #include "GEOMImpl_IShapesOperations.hxx"
@@ -66,6 +65,7 @@
 #include <TFunction_Logbook.hxx>
 #include <TDataStd_Integer.hxx>
 #include <TDataStd_IntegerArray.hxx>
+#include <TDataStd_ListIteratorOfListOfExtendedString.hxx>
 #include <TDF_Tool.hxx>
 
 #include <BRepExtrema_ExtCF.hxx>
@@ -801,6 +801,70 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
   // to provide warning
   if (!isWarning) SetErrorCode(OK);
   return aGlued;
+}
+
+//=============================================================================
+/*!
+ *  GetExistingSubObjects
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetExistingSubObjects
+                                          (Handle(GEOM_Object)    theShape,
+                                           const Standard_Boolean theGroupsOnly)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aMainShape = theShape->GetLastFunction();
+  if (aMainShape.IsNull()) return NULL;
+
+  Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+  SetErrorCode(NOT_FOUND_ANY);
+
+  if (!aMainShape->HasSubShapeReferences()) return aSeq;
+  const TDataStd_ListOfExtendedString& aListEntries = aMainShape->GetSubShapeReferences();
+  if (aListEntries.IsEmpty()) return aSeq;
+
+  SetErrorCode(KO);
+
+  TCollection_AsciiString anAsciiList;
+
+  TDataStd_ListIteratorOfListOfExtendedString anIt (aListEntries);
+  for (; anIt.More(); anIt.Next()) {
+    TCollection_ExtendedString anEntry = anIt.Value();
+    Standard_Integer aStrLen = anEntry.LengthOfCString();
+    char* anEntryStr = new char[aStrLen];
+    anEntry.ToUTF8CString(anEntryStr);
+    Handle(GEOM_Object) anObj = GetEngine()->GetObject(GetDocID(), anEntryStr, false);
+    if (!anObj.IsNull()) {
+      if (!theGroupsOnly || anObj->GetType() == GEOM_GROUP) {
+        aSeq->Append(anObj);
+
+        // for python command
+        anAsciiList += anEntryStr;
+        anAsciiList += ",";
+      }
+    }
+    delete [] anEntryStr;
+  }
+
+  if (aSeq->Length() == 0) {
+    SetErrorCode(NOT_FOUND_ANY);
+    return aSeq;
+  }
+
+  //Make a Python command
+  anAsciiList.Trunc(anAsciiList.Length() - 1);
+
+  GEOM::TPythonDump pd (aMainShape, /*append=*/true);
+  pd << "[" << anAsciiList.ToCString();
+  pd << "] = geompy.GetExistingSubObjects(";
+  pd << theShape << ", " << (int)theGroupsOnly << ")";
+
+  SetErrorCode(OK);
+
+  return aSeq;
 }
 
 //=============================================================================
@@ -1941,9 +2005,31 @@ Handle(TColStd_HSequenceOfInteger)
     return aSeqOfIDs;
   }
 
+  // BEGIN: Mantis issue 0020961: Error on a pipe T-Shape
+  // Compute tolerance
+  Standard_Real T, VertMax = -RealLast();
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    for (TopExp_Explorer ExV (theShape, TopAbs_VERTEX); ExV.More(); ExV.Next()) {
+      TopoDS_Vertex Vertex = TopoDS::Vertex(ExV.Current());
+      T = BRep_Tool::Tolerance(Vertex);
+      if (T > VertMax)
+        VertMax = T;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return aSeqOfIDs;
+  }
+  // END: Mantis issue 0020961
+
   // Call algo
   GEOMAlgo_FinderShapeOn1 aFinder;
-  Standard_Real aTol = 0.0001; // default value
+  //Standard_Real aTol = 0.0001; // default value
+  Standard_Real aTol = VertMax; // Mantis issue 0020961
 
   aFinder.SetShape(theShape);
   aFinder.SetTolerance(aTol);
@@ -2576,7 +2662,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnCylind
   aSeq = getShapesOnSurfaceIDs( aCylinder, aShape, aShapeType, theState );
 
   // The GetShapesOnCylinder() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = 
+  Handle(GEOM_Function) aFunction =
     GEOM::GetCreatedLast(theShape, GEOM::GetCreatedLast(thePnt,theAxis))->GetLastFunction();
 
   // Make a Python command

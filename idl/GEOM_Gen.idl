@@ -19,10 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 //  File   : GEOM_Gen.idl
 //  Author : Sergey RUIN
-//
+
 #ifndef __GEOM_GEN__
 #define __GEOM_GEN__
 
@@ -45,13 +44,13 @@ module GEOM
    * Marker type
    */
   enum marker_type { MT_NONE, MT_POINT, MT_PLUS, MT_STAR, MT_O, MT_X, MT_O_POINT, MT_O_PLUS,
-		     MT_O_STAR, MT_O_X, MT_BALL, MT_RING1, MT_RING2, MT_RING3, MT_USER };
+                     MT_O_STAR, MT_O_X, MT_BALL, MT_RING1, MT_RING2, MT_RING3, MT_USER };
 
   /*!
    * Marker size
    */
   enum marker_size { MS_NONE, MS_10, MS_15, MS_20, MS_25, MS_30, MS_35,
-		     MS_40, MS_45, MS_50, MS_55, MS_60, MS_65, MS_70 };
+                     MS_40, MS_45, MS_50, MS_55, MS_60, MS_65, MS_70 };
 
   /*!
    *  State of shape relatively geometrical surface like plane, sphere or cylinder.
@@ -166,10 +165,10 @@ module GEOM
      *  Get a <VAR>shape_type</VAR> of the object value.
      */
     shape_type GetShapeType();
-    
+
     /*!
      *  Get the topology type of the object value.
-     *  In contrast to the shape type, this function returns type of the most 
+     *  In contrast to the shape type, this function returns type of the most
      *  top-level sub-shape of the COMPOUND or COMPSOLID, if there is only one
      *  sub-shape there.
      *  \sa GetShapeType()
@@ -385,7 +384,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created point.
      */
     GEOM_Object MakePointWithReference (in GEOM_Object theReference,
-					in double theX, in double theY, in double theZ);
+                                        in double theX, in double theY, in double theZ);
 
     /*!
      *  Create a point, corresponding to the given parameter on the given curve.
@@ -394,7 +393,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created point.
      */
     GEOM_Object MakePointOnCurve (in GEOM_Object theRefCurve,
-				  in double theParameter);
+                                  in double theParameter);
 
     /*!
      *  Create a point on the given curve, projecting given point
@@ -418,8 +417,8 @@ module GEOM
      *  \return New GEOM_Object, containing the created point.
      */
     GEOM_Object MakePointOnSurface (in GEOM_Object theRefSurf,
-				    in double theUParameter,
-				    in double theVParameter);
+                                    in double theUParameter,
+                                    in double theVParameter);
 
     /*!
      *  Create a point on the given surface, projecting given point
@@ -441,7 +440,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created point.
      */
     GEOM_Object MakePointOnLinesIntersection (in GEOM_Object theRefLine1,
-					      in GEOM_Object theRefLine2);
+                                              in GEOM_Object theRefLine2);
 
      /*!
      *  Create a vector, corresponding to tangent to the given parameter on the given curve.
@@ -452,7 +451,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created point.
      */
      GEOM_Object MakeTangentOnCurve (in GEOM_Object theRefCurve,
-				     in double theParameter);
+                                     in double theParameter);
 
     /*!
      *  Create a vector with the given components.
@@ -462,8 +461,8 @@ module GEOM
      *  \return New GEOM_Object, containing the created vector.
      */
     GEOM_Object MakeVectorDXDYDZ (in double theDX,
-				  in double theDY,
-				  in double theDZ);
+                                  in double theDY,
+                                  in double theDZ);
 
     /*!
      *  Create a vector between two points.
@@ -507,9 +506,9 @@ module GEOM
      *  \return New GEOM_Object, containing the created plane.
      */
     GEOM_Object MakePlaneThreePnt (in GEOM_Object thePnt1,
-				   in GEOM_Object thePnt2,
-				   in GEOM_Object thePnt3,
-				   in double theTrimSize);
+                                   in GEOM_Object thePnt2,
+                                   in GEOM_Object thePnt3,
+                                   in double theTrimSize);
 
     /*!
      *  Create a plane, passing through the given point
@@ -520,8 +519,8 @@ module GEOM
      *  \return New GEOM_Object, containing the created plane.
      */
     GEOM_Object MakePlanePntVec (in GEOM_Object thePnt,
-				 in GEOM_Object theVec,
-				 in double theTrimSize);
+                                 in GEOM_Object theVec,
+                                 in double theTrimSize);
 
     /*!
      *  Create a plane, similar to the existing one, but with another size of representing face.
@@ -530,7 +529,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created plane.
      */
     GEOM_Object MakePlaneFace (in GEOM_Object theFace,
-			       in double theTrimSize);
+                               in double theTrimSize);
 
     /*!
      *  Create a plane, by two vectors.
@@ -540,8 +539,8 @@ module GEOM
      *  \return New GEOM_Object, containing the created plane.
      */
     GEOM_Object MakePlane2Vec (in GEOM_Object theVec1,
-			       in GEOM_Object theVec2,
-			       in double theTrimSize);
+                               in GEOM_Object theVec2,
+                               in double theTrimSize);
 
     /*!
      *  Create a plane, defined by local coordinate system.
@@ -551,8 +550,8 @@ module GEOM
      *  \return New GEOM_Object, containing the created plane.
      */
     GEOM_Object MakePlaneLCS (in GEOM_Object theLCS,
-			      in double theTrimSize,
-			      in double theOrientation);
+                              in double theTrimSize,
+                              in double theOrientation);
 
     /*!
      *  Create a local coordinate system.
@@ -562,8 +561,8 @@ module GEOM
      *  \return New GEOM_Object, containing the created coordinate system.
      */
     GEOM_Object MakeMarker (in double theOX , in double theOY , in double theOZ,
-			    in double theXDX, in double theXDY, in double theXDZ,
-			    in double theYDX, in double theYDY, in double theYDZ);
+                            in double theXDX, in double theXDY, in double theXDZ,
+                            in double theYDX, in double theYDY, in double theYDZ);
 
     /*!
      *  Create a local coordinate system from shape.
@@ -571,7 +570,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created coordinate system.
      */
     GEOM_Object MakeMarkerFromShape (in GEOM_Object theShape);
-   
+
     /*!
      *  Create a local coordinate system from point and two vectors (DX, DY).
      *  \param theOrigin Point of coordinate system origin.
@@ -580,7 +579,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created coordinate system.
      */
     GEOM_Object MakeMarkerPntTwoVec (in GEOM_Object theOrigin, in GEOM_Object theXVec, in GEOM_Object theYVec);
-       
+
     /*!
      *  Create a tangent plane to specified face in the point with specified parameters.
      *  Values of parameters should be between 0. and 1.0
@@ -591,9 +590,9 @@ module GEOM
      *  \return New GEOM_Object, containing the face built on tangent plane.
      */
     GEOM_Object MakeTangentPlaneOnFace(in GEOM_Object theFace,
-				       in double theParameterU,
-				       in double theParameterV,
-				       in double theTrimSize);
+                                       in double theParameterU,
+                                       in double theParameterV,
+                                       in double theTrimSize);
   };
 
   interface GEOM_ITransformOperations : GEOM_IOperations
@@ -606,8 +605,8 @@ module GEOM
      *  \return theObject.
      */
     GEOM_Object TranslateTwoPoints (in GEOM_Object theObject,
-				    in GEOM_Object thePoint1,
-				    in GEOM_Object thePoint2);
+                                    in GEOM_Object thePoint1,
+                                    in GEOM_Object thePoint2);
 
     /*!
      *  Translate the given object along the vector, specified
@@ -618,7 +617,7 @@ module GEOM
      *  \return New GEOM_Object, containing the translated object.
      */
     GEOM_Object TranslateTwoPointsCopy (in GEOM_Object theObject,
-					in GEOM_Object thePoint1,
+                                        in GEOM_Object thePoint1,
                                         in GEOM_Object thePoint2);
 
     /*!
@@ -628,7 +627,7 @@ module GEOM
      *  \return theObject.
      */
     GEOM_Object TranslateDXDYDZ (in GEOM_Object theObject,
-				 in double theDX, in double theDY, in double theDZ);
+                                 in double theDX, in double theDY, in double theDZ);
 
     /*!
      *  Translate the given object along the vector, specified
@@ -638,7 +637,7 @@ module GEOM
      *  \return New GEOM_Object, containing the translated object.
      */
     GEOM_Object TranslateDXDYDZCopy (in GEOM_Object theObject,
-				     in double theDX, in double theDY, in double theDZ);
+                                     in double theDX, in double theDY, in double theDZ);
 
 
     /*!
@@ -648,7 +647,7 @@ module GEOM
      *  \return theObject.
      */
     GEOM_Object TranslateVector (in GEOM_Object theObject,
-				 in GEOM_Object theVector);
+                                 in GEOM_Object theVector);
 
     /*!
      *  Translate the given object along the given vector,
@@ -658,7 +657,7 @@ module GEOM
      *  \return New GEOM_Object, containing the translated object.
      */
     GEOM_Object TranslateVectorCopy (in GEOM_Object theObject,
-				     in GEOM_Object theVector);
+                                     in GEOM_Object theVector);
 
     /*!
      *  Translate the given object along the given vector on given distance,
@@ -670,9 +669,9 @@ module GEOM
      *  \return New GEOM_Object, containing the translated object.
      */
     GEOM_Object TranslateVectorDistance (in GEOM_Object theObject,
-					 in GEOM_Object theVector,
-					 in double      theDistance,
-					 in boolean     theCopy);
+                                         in GEOM_Object theVector,
+                                         in double      theDistance,
+                                         in boolean     theCopy);
 
     /*!
      *  Translate the given object along the given vector a given number times
@@ -684,9 +683,9 @@ module GEOM
      *          the shapes, obtained after each translation.
      */
     GEOM_Object MultiTranslate1D (in GEOM_Object theObject,
-				  in GEOM_Object theVector,
-				  in double theStep,
-				  in long theNbTimes);
+                                  in GEOM_Object theVector,
+                                  in double theStep,
+                                  in long theNbTimes);
 
     /*!
      *  Conseqently apply two specified translations to theObject specified number of times.
@@ -701,12 +700,12 @@ module GEOM
      *          the shapes, obtained after each translation.
      */
     GEOM_Object MultiTranslate2D (in GEOM_Object theObject,
-				  in GEOM_Object theVector1,
-				  in double theStep1,
-				  in long theNbTimes1,
-				  in GEOM_Object theVector2,
-				  in double theStep2,
-				  in long theNbTimes2);
+                                  in GEOM_Object theVector1,
+                                  in double theStep1,
+                                  in long theNbTimes1,
+                                  in GEOM_Object theVector2,
+                                  in double theStep2,
+                                  in long theNbTimes2);
 
     /*!
      *  Rotate given object around vector perpendicular to plane containing three points.
@@ -717,9 +716,9 @@ module GEOM
      *  \return theObject.
      */
     GEOM_Object RotateThreePoints (in GEOM_Object theObject,
-				   in GEOM_Object theCentPoint,
-				   in GEOM_Object thePoint1,
-				   in GEOM_Object thePoint2);
+                                   in GEOM_Object theCentPoint,
+                                   in GEOM_Object thePoint1,
+                                   in GEOM_Object thePoint2);
 
 
     /*!
@@ -732,9 +731,9 @@ module GEOM
      *  \return New GEOM_Object, containing the rotated object.
      */
     GEOM_Object RotateThreePointsCopy (in GEOM_Object theObject,
-				       in GEOM_Object theCentPoint,
-				       in GEOM_Object thePoint1,
-				       in GEOM_Object thePoint2);
+                                       in GEOM_Object theCentPoint,
+                                       in GEOM_Object thePoint1,
+                                       in GEOM_Object thePoint2);
 
     /*!
      *  Rotate the given object around the given axis on the given angle.
@@ -744,8 +743,8 @@ module GEOM
      *  \return theObject.
      */
     GEOM_Object Rotate (in GEOM_Object theObject,
-			in GEOM_Object theAxis,
-			in double theAngle);
+                        in GEOM_Object theAxis,
+                        in double theAngle);
 
 
     /*!
@@ -757,8 +756,8 @@ module GEOM
      *  \return New GEOM_Object, containing the rotated object.
      */
     GEOM_Object RotateCopy (in GEOM_Object theObject,
-			    in GEOM_Object theAxis,
-			    in double theAngle);
+                            in GEOM_Object theAxis,
+                            in double theAngle);
 
 
     /*!
@@ -771,8 +770,8 @@ module GEOM
      *          shapes, obtained after each rotation.
      */
     GEOM_Object MultiRotate1D (in GEOM_Object theObject,
-			       in GEOM_Object theAxis,
-			       in long theNbTimes);
+                               in GEOM_Object theAxis,
+                               in long theNbTimes);
 
     /*!
      *  Rotate the given object around the
@@ -790,11 +789,11 @@ module GEOM
      *          shapes, obtained after each transformation.
      */
     GEOM_Object MultiRotate2D (in GEOM_Object theObject,
-			       in GEOM_Object theAxis,
-			       in double theAngle,
-			       in long theNbTimes1,
-			       in double theStep,
-			       in long theNbTimes2);
+                               in GEOM_Object theAxis,
+                               in double theAngle,
+                               in long theNbTimes1,
+                               in double theStep,
+                               in long theNbTimes2);
 
     /*!
      *  Replace the given object by an object,
@@ -871,7 +870,7 @@ module GEOM
      *  \return theObject.
      */
     GEOM_Object ScaleShape (in GEOM_Object theObject, in GEOM_Object thePoint,
-			    in double theFactor);
+                            in double theFactor);
 
     /*!
      *  Scale the given object by the factor, creating its copy before the scaling.
@@ -881,7 +880,7 @@ module GEOM
      *  \return New GEOM_Object, containing the scaled shape.
      */
     GEOM_Object ScaleShapeCopy (in GEOM_Object theObject, in GEOM_Object thePoint,
-				in double theFactor);
+                                in double theFactor);
 
     /*!
      *  Scale the given object by different factors along coordinate axes.
@@ -922,8 +921,8 @@ module GEOM
      *  \return theObject.
      */
     GEOM_Object PositionShape (in GEOM_Object theObject,
-			       in GEOM_Object theStartLCS,
-			       in GEOM_Object theEndLCS);
+                               in GEOM_Object theStartLCS,
+                               in GEOM_Object theEndLCS);
 
     /*!
      *  Modify the Location of the given object by LCS,
@@ -938,24 +937,24 @@ module GEOM
      *  \return New GEOM_Object, containing the displaced shape.
      */
     GEOM_Object PositionShapeCopy (in GEOM_Object theObject,
-				   in GEOM_Object theStartLCS,
-				   in GEOM_Object theEndLCS);
+                                   in GEOM_Object theStartLCS,
+                                   in GEOM_Object theEndLCS);
 
     /*!
      *  Modify the Location of the given object by Path,
      *  \param  theObject The object to be displaced.
      *  \param  thePath Wire or Edge along that the object will be translated.
-     *	\param  theDistance progress of Path (0 = actual location, 1 = end of path location).
-     *	\param  theCopy is a true or false parameter. true is to create a copy, false to move the object.
-     *	\param  theCopy is a true or false parameter. true is to reverse direction, false is to move normal direction.
+     *        \param  theDistance progress of Path (0 = actual location, 1 = end of path location).
+     *        \param  theCopy is a true or false parameter. true is to create a copy, false to move the object.
+     *        \param  theCopy is a true or false parameter. true is to reverse direction, false is to move normal direction.
      *  \return New GEOM_Object, containing the displaced shape.
      */
 
     GEOM_Object PositionAlongPath (in GEOM_Object theObject,
-				   in GEOM_Object thePath,
-				   in double theDistance,
-				   in boolean theCopy,
-				   in boolean theReverse);
+                                   in GEOM_Object thePath,
+                                   in double theDistance,
+                                   in boolean theCopy,
+                                   in boolean theReverse);
 
     /*!
      *  Recompute the shape from its arguments.
@@ -1019,16 +1018,16 @@ module GEOM
      *  \return New GEOM_Object, containing the created disk.
      */
     GEOM_Object MakeDiskPntVecR (in GEOM_Object thePnt,
-				 in GEOM_Object theVec,
-				 in double theR);
+                                 in GEOM_Object theVec,
+                                 in double theR);
     /*!
      *  Create a disk (circular face), passing through three given points
      *  \param thePnt1, thePnt2, thePnt3 Points, defining the disk.
      *  \return New GEOM_Object, containing the created disk.
      */
     GEOM_Object MakeDiskThreePnt (in GEOM_Object thePnt1,
-				  in GEOM_Object thePnt2,
-				  in GEOM_Object thePnt3);
+                                  in GEOM_Object thePnt2,
+                                  in GEOM_Object thePnt3);
 
     /*!
      *  Create a disk specified dimensions along OX-OY coordinate axes,
@@ -1058,9 +1057,9 @@ module GEOM
      *  \return New GEOM_Object, containing the created cylinder.
      */
     GEOM_Object MakeCylinderPntVecRH (in GEOM_Object thePnt,
-				      in GEOM_Object theAxis,
-				      in double      theR,
-				      in double      theH);
+                                      in GEOM_Object theAxis,
+                                      in double      theR,
+                                      in double      theH);
 
     /*!
      *  Create a cone with given height and radiuses at
@@ -1087,10 +1086,10 @@ module GEOM
      *  \return New GEOM_Object, containing the created cone.
      */
     GEOM_Object MakeConePntVecR1R2H (in GEOM_Object thePnt,
-				     in GEOM_Object theAxis,
-				     in double      theR1,
-				     in double      theR2,
-				     in double      theH);
+                                     in GEOM_Object theAxis,
+                                     in double      theR1,
+                                     in double      theR2,
+                                     in double      theH);
 
     /*!
      *  Create a torus with given radiuses at the origin of coordinate system.
@@ -1099,7 +1098,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created torus.
      */
     GEOM_Object MakeTorusRR (in double theRMajor,
-			     in double theRMinor);
+                             in double theRMinor);
 
     /*!
      *  Create a torus with given center, normal vector and radiuses.
@@ -1110,9 +1109,9 @@ module GEOM
      *  \return New GEOM_Object, containing the created torus.
      */
     GEOM_Object MakeTorusPntVecRR (in GEOM_Object thePnt,
-				   in GEOM_Object theVec,
-				   in double theRMajor,
-				   in double theRMinor);
+                                   in GEOM_Object theVec,
+                                   in double theRMajor,
+                                   in double theRMinor);
 
     /*!
      *  Create a sphere with given radius at the origin of coordinate system.
@@ -1139,12 +1138,12 @@ module GEOM
      *  \return New GEOM_Object, containing the created prism.
      */
     GEOM_Object MakePrismVecH (in GEOM_Object theBase,
-			       in GEOM_Object theVec,
-			       in double      theH);
+                               in GEOM_Object theVec,
+                               in double      theH);
     /*  The Same Prism but in 2 directions (forward&backward) */
     GEOM_Object MakePrismVecH2Ways (in GEOM_Object theBase,
-				    in GEOM_Object theVec,
-				    in double      theH);
+                                    in GEOM_Object theVec,
+                                    in double      theH);
 
     /*!
      *  Create a shape by extrusion of the base shape along a vector, defined by two points.
@@ -1154,12 +1153,12 @@ module GEOM
      *  \return New GEOM_Object, containing the created prism.
      */
     GEOM_Object MakePrismTwoPnt (in GEOM_Object theBase,
-				 in GEOM_Object thePoint1,
-				 in GEOM_Object thePoint2);
+                                 in GEOM_Object thePoint1,
+                                 in GEOM_Object thePoint2);
     /*  The same prism but in two directions forward&backward */
     GEOM_Object MakePrismTwoPnt2Ways (in GEOM_Object theBase,
-				      in GEOM_Object thePoint1,
-				      in GEOM_Object thePoint2);
+                                      in GEOM_Object thePoint1,
+                                      in GEOM_Object thePoint2);
 
     /*!
      *  Create a shape by extrusion of the base shape along a vector, defined by DX DY DZ.
@@ -1168,7 +1167,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created prism.
      */
     GEOM_Object MakePrismDXDYDZ (in GEOM_Object theBase,
-                          	 in double theDX, in double theDY, in double theDZ);
+                                   in double theDX, in double theDY, in double theDZ);
     /*  The same prism but in two directions forward&backward */
     GEOM_Object MakePrismDXDYDZ2Ways (in GEOM_Object theBase,
                                       in double theDX, in double theDY, in double theDZ);
@@ -1192,12 +1191,12 @@ module GEOM
      *  \return New GEOM_Object, containing the created revolution.
      */
     GEOM_Object MakeRevolutionAxisAngle (in GEOM_Object theBase,
-					 in GEOM_Object theAxis,
-					 in double theAngle);
+                                         in GEOM_Object theAxis,
+                                         in double theAngle);
     /*  The Same Revolution but in both ways forward&backward */
     GEOM_Object MakeRevolutionAxisAngle2Ways (in GEOM_Object theBase,
-					      in GEOM_Object theAxis,
-					      in double theAngle);
+                                              in GEOM_Object theAxis,
+                                              in double theAngle);
 
     /*!
      *  Create a filling from the given compound of contours.
@@ -1210,9 +1209,9 @@ module GEOM
      *  \return New GEOM_Object, containing the created filling surface.
      */
     GEOM_Object MakeFilling (in GEOM_Object theShape,
-			     in long theMinDeg, in long theMaxDeg,
-			     in double theTol2D, in double theTol3D,
-			     in long theNbIter,
+                             in long theMinDeg, in long theMaxDeg,
+                             in double theTol2D, in double theTol3D,
+                             in long theNbIter,
                              in filling_oper_method theMethod,
                              in boolean theApprox);
 
@@ -1225,8 +1224,8 @@ module GEOM
      *  \return New GEOM_Object, containing the created shell or solid.
      */
     GEOM_Object MakeThruSections(in ListOfGO theSeqSections,
-				 in boolean theModeSolid,
-				 in double thePreci,
+                                 in boolean theModeSolid,
+                                 in double thePreci,
                                  in boolean theRuled);
 
       /*!
@@ -1241,14 +1240,14 @@ module GEOM
      *  \param theWithContact - the mode defining that the section is translated to be in
      *                          contact with the spine.
      *  \param - WithCorrection - defining that the section is rotated to be
-     *	                         orthogonal to the spine tangent in the correspondent point
+     *                                 orthogonal to the spine tangent in the correspondent point
      *  \return New GEOM_Object, containing the created pipe.
      */
     GEOM_Object MakePipeWithDifferentSections (in ListOfGO theSeqBases,
-					       in ListOfGO theLocations,
-					       in GEOM_Object thePath,
-					       in boolean theWithContact ,
-					       in boolean theWithCorrection );
+                                               in ListOfGO theLocations,
+                                               in GEOM_Object thePath,
+                                               in boolean theWithContact ,
+                                               in boolean theWithCorrection );
 
     /*!
      *  Create a shape by extrusion of the profile shape along
@@ -1263,15 +1262,15 @@ module GEOM
      *  \param theWithContact - the mode defining that the section is translated to be in
      *                          contact with the spine.
      *  \param - WithCorrection - defining that the section is rotated to be
-     *	                         orthogonal to the spine tangent in the correspondent point
+     *                                 orthogonal to the spine tangent in the correspondent point
      *  \return New GEOM_Object, containing the created pipe.
      */
     GEOM_Object MakePipeWithShellSections (in ListOfGO theSeqBases,
-					   in ListOfGO theSeqSubBases,
-					   in ListOfGO theLocations,
-					   in GEOM_Object thePath,
-					   in boolean theWithContact ,
-					   in boolean theWithCorrection );
+                                           in ListOfGO theSeqSubBases,
+                                           in ListOfGO theLocations,
+                                           in GEOM_Object thePath,
+                                           in boolean theWithContact ,
+                                           in boolean theWithCorrection );
 
     /*!
      * Create solids between given sections
@@ -1280,7 +1279,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created solids.
      */
     GEOM_Object MakePipeShellsWithoutPath (in ListOfGO theSeqBases,
-					   in ListOfGO theLocations);
+                                           in ListOfGO theLocations);
 
     /*!
      *  Create a shape by extrusion of the base shape along
@@ -1294,8 +1293,8 @@ module GEOM
      *  \return New GEOM_Object, containing the created pipe.
      */
     GEOM_Object MakePipeBiNormalAlongVector (in GEOM_Object theBase,
-					     in GEOM_Object thePath,
-					     in GEOM_Object theVec);
+                                             in GEOM_Object thePath,
+                                             in GEOM_Object theVec);
 
   };
 
@@ -1397,7 +1396,18 @@ module GEOM
      *  \return New GEOM_Object, containing a copy of theShape without some faces.
      */
     GEOM_Object MakeGlueFacesByList (in GEOM_Object theShape, in double theTolerance,
-				     in ListOfGO theFaces, in boolean doKeepNonSolids);
+                                     in ListOfGO theFaces, in boolean doKeepNonSolids);
+
+    /*!
+     *  Get all sub-shapes and groups of \a theShape,
+     *  that were created already by any other methods.
+     *  \param theShape Any shape.
+     *  \param theGroupsOnly If this parameter is TRUE, only groups will be
+     *                       returned, else all found sub-shapes and groups.
+     *  \return List of existing sub-objects of \a theShape.
+     */
+    ListOfGO GetExistingSubObjects (in GEOM_Object theShape,
+                                    in boolean     theGroupsOnly);
 
     /*!
      *  Explode a shape on subshapes of a given type.
@@ -1408,8 +1418,8 @@ module GEOM
      *  \return List of sub-shapes of type theShapeType, contained in theShape.
      */
     ListOfGO MakeExplode (in GEOM_Object theShape,
-			  in long        theShapeType,
-			  in boolean     isSorted);
+                          in long        theShapeType,
+                          in boolean     isSorted);
 
     /*!
      *  Explode a shape on subshapes of a given type.
@@ -1422,8 +1432,8 @@ module GEOM
      *  \return List of IDs of sub-shapes of type theShapeType, contained in theShape.
      */
     ListOfLong SubShapeAllIDs (in GEOM_Object theShape,
-			       in long        theShapeType,
-			       in boolean     isSorted);
+                               in long        theShapeType,
+                               in boolean     isSorted);
 
     /*!
      *  Get a sub shape defined by its unique ID inside \a theMainShape
@@ -1431,7 +1441,7 @@ module GEOM
      *        Don't try to apply modification operations on them.
      */
     GEOM_Object GetSubShape (in GEOM_Object theMainShape,
-			     in long        theID);
+                             in long        theID);
 
     /*!
      *  Get global index of \a theSubShape in \a theMainShape.
@@ -1508,8 +1518,8 @@ module GEOM
      *  \return List of sub-shapes of theShape1, shared with theShape2.
      */
     ListOfGO GetSharedShapes (in GEOM_Object theShape1,
-			      in GEOM_Object theShape2,
-			      in long        theShapeType);
+                              in GEOM_Object theShape2,
+                              in long        theShapeType);
 
     /*!
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1522,9 +1532,9 @@ module GEOM
      *  \return List of all found sub-shapes.
      */
     ListOfGO GetShapesOnPlane (in GEOM_Object theShape,
-			       in long        theShapeType,
-			       in GEOM_Object theAx1,
-			       in shape_state theState);
+                               in long        theShapeType,
+                               in GEOM_Object theAx1,
+                               in shape_state theState);
     /*!
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
      *  the specified plane by the certain way, defined through \a theState parameter.
@@ -1537,10 +1547,10 @@ module GEOM
      *  \return List of all found sub-shapes.
      */
     ListOfGO GetShapesOnPlaneWithLocation (in GEOM_Object theShape,
-					   in long        theShapeType,
-					   in GEOM_Object theAx1,
-					   in GEOM_Object thePnt,
-					   in shape_state theState);
+                                           in long        theShapeType,
+                                           in GEOM_Object theAx1,
+                                           in GEOM_Object thePnt,
+                                           in shape_state theState);
 
 
 
@@ -1556,10 +1566,10 @@ module GEOM
      *  \return List of all found sub-shapes.
      */
     ListOfGO GetShapesOnCylinder (in GEOM_Object theShape,
-				  in long        theShapeType,
-				  in GEOM_Object theAxis,
-				  in double      theRadius,
-				  in shape_state theState);
+                                  in long        theShapeType,
+                                  in GEOM_Object theAxis,
+                                  in double      theRadius,
+                                  in shape_state theState);
 
     /*!
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1591,10 +1601,10 @@ module GEOM
      *  \return List of all found sub-shapes.
      */
     ListOfGO GetShapesOnSphere (in GEOM_Object theShape,
-				in long        theShapeType,
-				in GEOM_Object theCenter,
-				in double      theRadius,
-				in shape_state theState);
+                                in long        theShapeType,
+                                in GEOM_Object theCenter,
+                                in double      theRadius,
+                                in shape_state theState);
 
     /*!
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1627,9 +1637,9 @@ module GEOM
      *  \return List of IDs of all found sub-shapes.
      */
     ListOfLong GetShapesOnPlaneIDs (in GEOM_Object theShape,
-				    in long        theShapeType,
-				    in GEOM_Object theAx1,
-				    in shape_state theState);
+                                    in long        theShapeType,
+                                    in GEOM_Object theAx1,
+                                    in shape_state theState);
 
     /*!
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1643,10 +1653,10 @@ module GEOM
      *  \return List of IDs of all found sub-shapes.
      */
     ListOfLong GetShapesOnPlaneWithLocationIDs (in GEOM_Object theShape,
-						in long        theShapeType,
-						in GEOM_Object theAx1,
-						in GEOM_Object thePnt,
-						in shape_state theState);
+                                                in long        theShapeType,
+                                                in GEOM_Object theAx1,
+                                                in GEOM_Object thePnt,
+                                                in shape_state theState);
 
     /*!
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1660,10 +1670,10 @@ module GEOM
      *  \return List of IDs of all found sub-shapes.
      */
     ListOfLong GetShapesOnCylinderIDs (in GEOM_Object theShape,
-				       in long        theShapeType,
-				       in GEOM_Object theAxis,
-				       in double      theRadius,
-				       in shape_state theState);
+                                       in long        theShapeType,
+                                       in GEOM_Object theAxis,
+                                       in double      theRadius,
+                                       in shape_state theState);
 
     /*!
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1695,10 +1705,10 @@ module GEOM
      *  \return List of IDs of all found sub-shapes.
      */
     ListOfLong GetShapesOnSphereIDs (in GEOM_Object theShape,
-				     in long        theShapeType,
-				     in GEOM_Object theCenter,
-				     in double      theRadius,
-				     in shape_state theState);
+                                     in long        theShapeType,
+                                     in GEOM_Object theCenter,
+                                     in double      theRadius,
+                                     in shape_state theState);
 
     /*!
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -1729,9 +1739,9 @@ module GEOM
      * \return List of IDs of all found sub-shapes.
      */
     ListOfLong GetShapesOnBoxIDs (in GEOM_Object theBox,
-				  in GEOM_Object theShape,
-				  in long        theShapeType,
-				  in shape_state theState);
+                                  in GEOM_Object theShape,
+                                  in long        theShapeType,
+                                  in shape_state theState);
 
     /*!
      * \brief Find subshapes complying with given status
@@ -1742,9 +1752,9 @@ module GEOM
      * \return List of all found sub-shapes.
      */
     ListOfGO GetShapesOnBox (in GEOM_Object theBox,
-			     in GEOM_Object theShape,
-			     in long        theShapeType,
-			     in shape_state theState);
+                             in GEOM_Object theShape,
+                             in long        theShapeType,
+                             in shape_state theState);
 
     /*!
      * \brief Find subshapes complying with given status
@@ -1755,9 +1765,9 @@ module GEOM
      * \return List of IDs of all found sub-shapes.
      */
     ListOfLong GetShapesOnShapeIDs (in GEOM_Object theCheckShape,
-				    in GEOM_Object theShape,
-				    in short       theShapeType,
-				    in shape_state theState);
+                                    in GEOM_Object theShape,
+                                    in short       theShapeType,
+                                    in shape_state theState);
 
     /*!
      * \brief Find subshapes complying with given status
@@ -1768,9 +1778,9 @@ module GEOM
      * \return List of all found sub-shapes.
      */
     ListOfGO GetShapesOnShape (in GEOM_Object theCheckShape,
-			       in GEOM_Object theShape,
-			       in short       theShapeType,
-			       in shape_state theState);
+                               in GEOM_Object theShape,
+                               in short       theShapeType,
+                               in shape_state theState);
 
     /*!
      * \brief Find subshapes complying with given status
@@ -1781,9 +1791,9 @@ module GEOM
      * \return compound includes all found sub-shapes.
      */
     GEOM_Object GetShapesOnShapeAsCompound (in GEOM_Object theCheckShape,
-					    in GEOM_Object theShape,
-					    in short       theShapeType,
-					    in shape_state theState);
+                                            in GEOM_Object theShape,
+                                            in short       theShapeType,
+                                            in shape_state theState);
 
     /*!
      *  Get sub-shape(s) of \a theShapeWhere, which are
@@ -1793,7 +1803,7 @@ module GEOM
      *  \return Group of all found sub-shapes or a single found sub-shape.
      */
     GEOM_Object GetInPlace (in GEOM_Object theShapeWhere,
-			    in GEOM_Object theShapeWhat);
+                            in GEOM_Object theShapeWhat);
 
     /*!
      *  Get sub-shape(s) of \a theShapeWhere, which are
@@ -1810,7 +1820,7 @@ module GEOM
      *  \return Group of all found sub-shapes or a single found sub-shape.
      */
     GEOM_Object GetInPlaceByHistory (in GEOM_Object theShapeWhere,
-				     in GEOM_Object theShapeWhat);
+                                     in GEOM_Object theShapeWhat);
 
     /*!
      *  Get sub-shape of theShapeWhere, which are
@@ -1820,7 +1830,7 @@ module GEOM
      *  \return found sub-shape.
      */
     GEOM_Object GetSame (in GEOM_Object theShapeWhere,
-	       	         in GEOM_Object theShapeWhat);
+                                in GEOM_Object theShapeWhat);
   };
 
   /*!
@@ -1841,9 +1851,9 @@ module GEOM
      *  \return New GEOM_Object, containing the created face.
      */
     GEOM_Object MakeQuad (in GEOM_Object theEdge1,
-			  in GEOM_Object theEdge2,
-			  in GEOM_Object theEdge3,
-			  in GEOM_Object theEdge4);
+                          in GEOM_Object theEdge2,
+                          in GEOM_Object theEdge3,
+                          in GEOM_Object theEdge4);
 
     /*!
      *  Create a quadrangle face on two edges.
@@ -1852,7 +1862,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created face.
      */
     GEOM_Object MakeQuad2Edges (in GEOM_Object theEdge1,
-				in GEOM_Object theEdge2);
+                                in GEOM_Object theEdge2);
 
     /*!
      *  Create a quadrangle face with specified corners.
@@ -1861,9 +1871,9 @@ module GEOM
      *  \return New GEOM_Object, containing the created face.
      */
     GEOM_Object MakeQuad4Vertices (in GEOM_Object thePnt1,
-				   in GEOM_Object thePnt2,
-				   in GEOM_Object thePnt3,
-				   in GEOM_Object thePnt4);
+                                   in GEOM_Object thePnt2,
+                                   in GEOM_Object thePnt3,
+                                   in GEOM_Object thePnt4);
 
     /*!
      *  Create a hexahedral solid, bounded by the six given faces. Order of
@@ -1872,11 +1882,11 @@ module GEOM
      *  \return New GEOM_Object, containing the created solid.
      */
     GEOM_Object MakeHexa (in GEOM_Object theFace1,
-			  in GEOM_Object theFace2,
-			  in GEOM_Object theFace3,
-			  in GEOM_Object theFace4,
-			  in GEOM_Object theFace5,
-			  in GEOM_Object theFace6);
+                          in GEOM_Object theFace2,
+                          in GEOM_Object theFace3,
+                          in GEOM_Object theFace4,
+                          in GEOM_Object theFace5,
+                          in GEOM_Object theFace6);
 
     /*!
      *  Create a hexahedral solid between two given faces.
@@ -1885,7 +1895,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created solid.
      */
     GEOM_Object MakeHexa2Faces (in GEOM_Object theFace1,
-				in GEOM_Object theFace2);
+                                in GEOM_Object theFace2);
 
     /*!
      *  Extract elements of blocks and blocks compounds
@@ -1900,10 +1910,19 @@ module GEOM
      *  \return New GEOM_Object, containing the found vertex.
      */
     GEOM_Object GetPoint (in GEOM_Object theShape,
-			  in double      theX,
-			  in double      theY,
-			  in double      theZ,
-			  in double      theEpsilon);
+                          in double      theX,
+                          in double      theY,
+                          in double      theZ,
+                          in double      theEpsilon);
+
+    /*!
+     *  Find a vertex of the given shape, which has minimal distance to the given point.
+     *  \param theShape Any shape.
+     *  \param thePoint Point, close to the desired vertex.
+     *  \return New GEOM_Object, containing the found vertex.
+     */
+    GEOM_Object GetVertexNearPoint (in GEOM_Object theShape,
+                                    in GEOM_Object thePoint);
 
     /*!
      *  Get an edge, found in the given shape by two given vertices.
@@ -1912,8 +1931,8 @@ module GEOM
      *  \return New GEOM_Object, containing the found edge.
      */
     GEOM_Object GetEdge (in GEOM_Object theShape,
-			 in GEOM_Object thePoint1,
-			 in GEOM_Object thePoint2);
+                         in GEOM_Object thePoint1,
+                         in GEOM_Object thePoint2);
 
     /*!
      *  Find an edge of the given shape, which has minimal distance to the given point.
@@ -1922,7 +1941,7 @@ module GEOM
      *  \return New GEOM_Object, containing the found edge.
      */
     GEOM_Object GetEdgeNearPoint (in GEOM_Object theShape,
-				  in GEOM_Object thePoint);
+                                  in GEOM_Object thePoint);
 
     /*!
      *  Returns a face, found in the given shape by four given corner vertices.
@@ -1931,10 +1950,10 @@ module GEOM
      *  \return New GEOM_Object, containing the found face.
      */
     GEOM_Object GetFaceByPoints (in GEOM_Object theShape,
-				 in GEOM_Object thePoint1,
-				 in GEOM_Object thePoint2,
-				 in GEOM_Object thePoint3,
-				 in GEOM_Object thePoint4);
+                                 in GEOM_Object thePoint1,
+                                 in GEOM_Object thePoint2,
+                                 in GEOM_Object thePoint3,
+                                 in GEOM_Object thePoint4);
 
     /*!
      *  Get a face of block, found in the given shape by two given edges.
@@ -1943,8 +1962,8 @@ module GEOM
      *  \return New GEOM_Object, containing the found face.
      */
     GEOM_Object GetFaceByEdges (in GEOM_Object theShape,
-				in GEOM_Object theEdge1,
-				in GEOM_Object theEdge2);
+                                in GEOM_Object theEdge1,
+                                in GEOM_Object theEdge2);
 
     /*!
      *  Find a face, opposite to the given one in the given block.
@@ -1953,7 +1972,7 @@ module GEOM
      *  \return New GEOM_Object, containing the found face.
      */
     GEOM_Object GetOppositeFace (in GEOM_Object theBlock,
-				 in GEOM_Object theFace);
+                                 in GEOM_Object theFace);
 
     /*!
      *  Find a face of the given shape, which has minimal distance to the given point.
@@ -1962,7 +1981,7 @@ module GEOM
      *  \return New GEOM_Object, containing the found face.
      */
     GEOM_Object GetFaceNearPoint (in GEOM_Object theShape,
-				  in GEOM_Object thePoint);
+                                  in GEOM_Object thePoint);
 
     /*!
      *  Find a face of block, whose outside normale has minimal angle with the given vector.
@@ -1971,7 +1990,23 @@ module GEOM
      *  \return New GEOM_Object, containing the found face.
      */
     GEOM_Object GetFaceByNormale (in GEOM_Object theBlock,
-				  in GEOM_Object theVector);
+                                  in GEOM_Object theVector);
+
+    /*!
+     *  Find all subshapes of type \a theShapeType of the given shape,
+     *  which have minimal distance to the given point.
+     *  \param theShape Any shape.
+     *  \param thePoint Point, close to the desired shape.
+     *  \param theShapeType Defines what kind of subshapes is searched.
+     *  \param theTolerance The tolerance for distances comparison. All shapes
+     *                      with distances to the given point in interval
+     *                      [minimal_distance, minimal_distance + theTolerance] will be gathered.
+     *  \return New GEOM_Object, containing a group of all found shapes.
+     */
+    GEOM_Object GetShapesNearPoint (in GEOM_Object theShape,
+                                    in GEOM_Object thePoint,
+                                    in long        theShapeType,
+                                    in double      theTolerance);
 
     /*!
      *  Extract blocks from blocks compounds
@@ -1987,9 +2022,9 @@ module GEOM
      *  \return theNbBlocks Number of specified blocks in theCompound.
      */
     boolean IsCompoundOfBlocks (in GEOM_Object theCompound,
-				in long        theMinNbFaces,
-				in long        theMaxNbFaces,
-				out long       theNbBlocks);
+                                in long        theMinNbFaces,
+                                in long        theMaxNbFaces,
+                                out long       theNbBlocks);
 
     /*!
      *  Enumeration of Blocks Compound defects.
@@ -2040,7 +2075,7 @@ module GEOM
      *  \return theErrors Structure, containing discovered errors and incriminated sub-shapes.
      */
     boolean CheckCompoundOfBlocks (in GEOM_Object theCompound,
-				   out BCErrors   theErrors);
+                                   out BCErrors   theErrors);
 
     /*!
      *  Convert sequence of Blocks Compound errors, returned by
@@ -2050,7 +2085,7 @@ module GEOM
      *  \return String, describing all the errors in form, suitable for printing.
      */
     string PrintBCErrors (in GEOM_Object theCompound,
-			  in BCErrors    theErrors);
+                          in BCErrors    theErrors);
 
     /*!
      *  Remove all seam and degenerated edges from \a theShape.
@@ -2083,8 +2118,8 @@ module GEOM
      *  \return List of GEOM_Objects, containing the retrieved blocks.
      */
     ListOfGO ExplodeCompoundOfBlocks (in GEOM_Object theCompound,
-				      in long        theMinNbFaces,
-				      in long        theMaxNbFaces);
+                                      in long        theMinNbFaces,
+                                      in long        theMaxNbFaces);
 
     /*!
      *  Find block, containing the given point inside its volume or on boundary.
@@ -2094,7 +2129,7 @@ module GEOM
      *  \return New GEOM_Object, containing the found block.
      */
     GEOM_Object GetBlockNearPoint (in GEOM_Object theCompound,
-				   in GEOM_Object thePoint);
+                                   in GEOM_Object thePoint);
 
     /*!
      *  Find block, containing all the elements, passed as the parts, or maximum quantity of them.
@@ -2103,7 +2138,7 @@ module GEOM
      *  \return New GEOM_Object, containing the found block.
      */
     GEOM_Object GetBlockByParts (in GEOM_Object theCompound,
-				 in ListOfGO    theParts);
+                                 in ListOfGO    theParts);
 
     /*!
      *  Return all blocks, containing all the elements, passed as the parts.
@@ -2112,7 +2147,7 @@ module GEOM
      *  \return List of GEOM_Objects, containing the found blocks.
      */
     ListOfGO GetBlocksByParts (in GEOM_Object theCompound,
-			       in ListOfGO    theParts);
+                               in ListOfGO    theParts);
 
     /*!
      *  Operations on blocks with gluing of result
@@ -2130,9 +2165,9 @@ module GEOM
      *  \return New GEOM_Object, containing the result shape.
      */
     GEOM_Object MakeMultiTransformation1D (in GEOM_Object theBlock,
-					   in long        theDirFace1,
-					   in long        theDirFace2,
-					   in long        theNbTimes);
+                                           in long        theDirFace1,
+                                           in long        theDirFace2,
+                                           in long        theNbTimes);
 
     /*!
      *  Multi-transformate block and glue the result.
@@ -2726,6 +2761,14 @@ module GEOM
     GEOM_Object ChangeOrientation (in GEOM_Object theObject);
     GEOM_Object ChangeOrientationCopy (in GEOM_Object theObject);
 
+    /*!
+     *  Try to limit tolerance of the given object by value \a theTolerance.
+     *  \param theObject Shape to be processed.
+     *  \param theTolerance Required tolerance value.
+     *  \return New GEOM_Object, containing processed shape.
+     */
+    GEOM_Object LimitTolerance (in GEOM_Object theObject, in double theTolerance);
+
   };
 
   /*!
@@ -2916,8 +2959,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created point.
      */
     GEOM_Object GetCentreOfMass (in GEOM_Object theShape);
-    
-    
+        
     /*
      *  Get the vertex by index for 1D objects depends the edge/wire orientation
      *  \param theShape Shape (wire or edge) to find the vertex on it

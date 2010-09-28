@@ -16,10 +16,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 //  File   : GeometryGUI_Operations.h
 //  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
+
 #ifndef GEOMETRYGUI_OPERATIONS_H
 #define GEOMETRYGUI_OPERATIONS_H
 
@@ -41,10 +40,14 @@ namespace GEOMOp {
     OpDeflection        = 1200,   // POPUP MENU - DEFLECTION COEFFICIENT
     OpColor             = 1201,   // POPUP MENU - COLOR
     OpTransparency      = 1202,   // POPUP MENU - TRANSPARENCY
-    OpIsos              = 1203,   // POPUP MENU - ISOS
-    OpAutoColor         = 1204,   // POPUP MENU - AUTO COLOR
-    OpNoAutoColor       = 1205,   // POPUP MENU - DISABLE AUTO COLOR
-    OpPointMarker       = 1206,   // POPUP MENU - POINT MARKER
+    OpIncrTransparency  = 1203,   // SHORTCUT   - INCREASE TRANSPARENCY
+    OpDecrTransparency  = 1204,   // SHORTCUT   - DECREASE TRANSPARENCY
+    OpIsos              = 1205,   // POPUP MENU - ISOS
+    OpIncrNbIsos        = 1206,   // SHORTCUT   - INCREASE NB ISOS
+    OpDecrNbIsos        = 1207,   // SHORTCUT   - DECREASE NB ISOS
+    OpAutoColor         = 1208,   // POPUP MENU - AUTO COLOR
+    OpNoAutoColor       = 1209,   // POPUP MENU - DISABLE AUTO COLOR
+    OpPointMarker       = 1210,   // POPUP MENU - POINT MARKER
     OpShowChildren      = 1250,   // POPUP MENU - SHOW CHILDREN
     OpHideChildren      = 1251,   // POPUP MENU - HIDE CHILDREN
     OpRename            = 1252,   // POPUP MENU - RENAME
@@ -131,6 +134,7 @@ namespace GEOMOp {
     OpOrientation       = 4009,   // MENU REPAIR - CHANGE ORIENTATION
     OpGlueFaces         = 4010,   // MENU REPAIR - GLUE FACES
     OpRemoveExtraEdges  = 4011,   // MENU REPAIR - REMOVE EXTRA EDGES
+    OpLimitTolerance    = 4012,   // MENU REPAIR - LIMIT TOLERANCE
     // MeasureGUI ----------------//--------------------------------
     OpProperties        = 5000,   // MENU MEASURES - PROPERTIES
     OpCenterMass        = 5001,   // MENU MEASURES - CENTRE OF MASS
@@ -160,6 +164,6 @@ namespace GEOMOp {
 //     OpPipeTShapeGroups  = 10002,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
     //@@ insert new functions before this line @@ do not remove this line @@//
   };
-} 
+}
 
 #endif // GEOMETRYGUI_OPERATIONS_H

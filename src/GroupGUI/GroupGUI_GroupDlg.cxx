@@ -473,7 +473,7 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
     }
   }
   else { // an attempt to synchronize list box selection with 3d viewer
-    if (myBusy) {
+    if ( myBusy || myMainObj->_is_nil() ) {
       return;
     }
 
@@ -617,7 +617,8 @@ int GroupGUI_GroupDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMap
   theMapIndex.Clear();
 
   SalomeApp_Application* app = myGeomGUI->getApp();
-  if (!app) return 0;
+  if ( !app || myMainObj->_is_nil() )
+    return 0;
 
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   SALOME_ListIO aSelList;
@@ -787,6 +788,7 @@ void GroupGUI_GroupDlg::activateSelection()
       myIsShapeType) // check if shape type is already choosen by user
   {
     GEOM_Displayer* aDisplayer = getDisplayer();
+    int prevDisplayMode = aDisplayer->SetDisplayMode(0);
 
     SUIT_ViewWindow* aViewWindow = 0;
     SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
@@ -831,6 +833,7 @@ void GroupGUI_GroupDlg::activateSelection()
       }
     }
     aDisplayer->UpdateViewer();
+    aDisplayer->SetDisplayMode(prevDisplayMode);
   }
 
   globalSelection(GEOM_ALLSHAPES);

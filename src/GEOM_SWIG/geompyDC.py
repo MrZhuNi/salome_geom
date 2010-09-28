@@ -448,7 +448,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
-        def MakeVertex(self,theX, theY, theZ):
+        def MakeVertex(self, theX, theY, theZ):
             # Example: see GEOM_TestAll.py
             theX,theY,theZ,Parameters = ParseParameters(theX, theY, theZ)
             anObj = self.BasicOp.MakePointXYZ(theX, theY, theZ)
@@ -1358,13 +1358,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theTol3D a 3d tolerance to be reached
         #  @param theNbIter a number of iteration of approximation algorithm
         #  @param theMethod Kind of method to perform filling operation:
-        #                   0 - Default - standard behaviour
-        #                   1 - Use edges orientation - orientation of edges are
-        #                       used: if edge is reversed curve from this edge
-        #                       is reversed before using in filling algorithm.
-        #                   2 - Auto-correct orientation - change orientation
-        #                       of curves using minimization of sum of distances
-        #                       between ends points of edges.
+        #                   GEOM.FOM_Default - Default - standard behaviour
+        #                   /GEOM.FOM_UseOri - Use edges orientation - orientation of edges is
+        #                       used: if the edge is reversed, the curve from this edge
+        #                       is reversed before using it in the filling algorithm.
+        #                   /GEOM.FOM_AutoCorrect - Auto-correct orientation - changes the orientation
+        #                       of the curves using minimization of sum of distances
+        #                       between the end points of the edges.
         #  @param isApprox if True, BSpline curves are generated in the process
         #                  of surface construction. By default it is False, that means
         #                  the surface is created using Besier curves. The usage of
@@ -2052,6 +2052,32 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## @addtogroup l4_decompose
         ## @{
 
+        ## Get all sub-shapes and groups of \a theShape,
+        #  that were created already by any other methods.
+        #  @param theShape Any shape.
+        #  @param theGroupsOnly If this parameter is TRUE, only groups will be
+        #                       returned, else all found sub-shapes and groups.
+        #  @return List of existing sub-objects of \a theShape.
+        #
+        #  @ref swig_all_decompose "Example"
+        def GetExistingSubObjects(self, theShape, theGroupsOnly = False):
+            # Example: see GEOM_TestAll.py
+            ListObj = self.ShapesOp.GetExistingSubObjects(theShape, theGroupsOnly)
+            RaiseIfFailed("GetExistingSubObjects", self.ShapesOp)
+            return ListObj
+
+        ## Get all groups of \a theShape,
+        #  that were created already by any other methods.
+        #  @param theShape Any shape.
+        #  @return List of existing groups of \a theShape.
+        #
+        #  @ref swig_all_decompose "Example"
+        def GetGroups(self, theShape):
+            # Example: see GEOM_TestAll.py
+            ListObj = self.ShapesOp.GetExistingSubObjects(theShape, True)
+            RaiseIfFailed("GetExistingSubObjects", self.ShapesOp)
+            return ListObj
+
         ## Explode a shape on subshapes of a given type.
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved.
@@ -2266,9 +2292,20 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing processed shape.
         #
         #  @ref swig_todo "Example"
-        def ChangeOrientationShellCopy(self,theObject):
+        def ChangeOrientationShellCopy(self, theObject):
             anObj = self.HealOp.ChangeOrientationCopy(theObject)
             RaiseIfFailed("ChangeOrientationCopy", self.HealOp)
+            return anObj
+
+        ## Try to limit tolerance of the given object by value \a theTolerance.
+        #  @param theObject Shape to be processed.
+        #  @param theTolerance Required tolerance value.
+        #  @return New GEOM_Object, containing processed shape.
+        #
+        #  @ref tui_limit_tolerance "Example"
+        def LimitTolerance(self, theObject, theTolerance = 1e-07):
+            anObj = self.HealOp.LimitTolerance(theObject, theTolerance)
+            RaiseIfFailed("LimitTolerance", self.HealOp)
             return anObj
 
         ## Get a list of wires (wrapped in GEOM_Object-s),
@@ -2280,7 +2317,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  theOpenWires: Open wires on the free boundary of the given shape.
         #
         #  @ref tui_measurement_tools_page "Example"
-        def GetFreeBoundary(self,theObject):
+        def GetFreeBoundary(self, theObject):
             # Example: see GEOM_TestHealing.py
             anObj = self.HealOp.GetFreeBoundary(theObject)
             RaiseIfFailed("GetFreeBoundary", self.HealOp)
@@ -3620,10 +3657,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the found vertex.
         #
         #  @ref swig_GetPoint "Example"
-        def GetPoint(self,theShape, theX, theY, theZ, theEpsilon):
+        def GetPoint(self, theShape, theX, theY, theZ, theEpsilon):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetPoint(theShape, theX, theY, theZ, theEpsilon)
             RaiseIfFailed("GetPoint", self.BlocksOp)
+            return anObj
+
+        ## Find a vertex of the given shape, which has minimal distance to the given point.
+        #  @param theShape Any shape.
+        #  @param thePoint Point, close to the desired vertex.
+        #  @return New GEOM_Object, containing the found vertex.
+        #
+        #  @ref swig_GetVertexNearPoint "Example"
+        def GetVertexNearPoint(self, theShape, thePoint):
+            # Example: see GEOM_TestOthers.py
+            anObj = self.BlocksOp.GetVertexNearPoint(theShape, thePoint)
+            RaiseIfFailed("GetVertexNearPoint", self.BlocksOp)
             return anObj
 
         ## Get an edge, found in the given shape by two given vertices.
@@ -3631,8 +3680,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePoint1,thePoint2 Points, close to the ends of the desired edge.
         #  @return New GEOM_Object, containing the found edge.
         #
-        #  @ref swig_todo "Example"
-        def GetEdge(self,theShape, thePoint1, thePoint2):
+        #  @ref swig_GetEdge "Example"
+        def GetEdge(self, theShape, thePoint1, thePoint2):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetEdge(theShape, thePoint1, thePoint2)
             RaiseIfFailed("GetEdge", self.BlocksOp)
@@ -3644,7 +3693,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the found edge.
         #
         #  @ref swig_GetEdgeNearPoint "Example"
-        def GetEdgeNearPoint(self,theShape, thePoint):
+        def GetEdgeNearPoint(self, theShape, thePoint):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetEdgeNearPoint(theShape, thePoint)
             RaiseIfFailed("GetEdgeNearPoint", self.BlocksOp)
@@ -3692,7 +3741,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the found face.
         #
         #  @ref swig_GetFaceNearPoint "Example"
-        def GetFaceNearPoint(self,theShape, thePoint):
+        def GetFaceNearPoint(self, theShape, thePoint):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetFaceNearPoint(theShape, thePoint)
             RaiseIfFailed("GetFaceNearPoint", self.BlocksOp)
@@ -3708,6 +3757,23 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetFaceByNormale(theBlock, theVector)
             RaiseIfFailed("GetFaceByNormale", self.BlocksOp)
+            return anObj
+
+        ## Find all subshapes of type \a theShapeType of the given shape,
+        #  which have minimal distance to the given point.
+        #  @param theShape Any shape.
+        #  @param thePoint Point, close to the desired shape.
+        #  @param theShapeType Defines what kind of subshapes is searched.
+        #  @param theTolerance The tolerance for distances comparison. All shapes
+        #                      with distances to the given point in interval
+        #                      [minimal_distance, minimal_distance + theTolerance] will be gathered.
+        #  @return New GEOM_Object, containing a group of all found shapes.
+        #
+        #  @ref swig_GetShapesNearPoint "Example"
+        def GetShapesNearPoint(self, theShape, thePoint, theShapeType, theTolerance = 1e-07):
+            # Example: see GEOM_TestOthers.py
+            anObj = self.BlocksOp.GetShapesNearPoint(theShape, thePoint, theShapeType, theTolerance)
+            RaiseIfFailed("GetShapesNearPoint", self.BlocksOp)
             return anObj
 
         # end of l3_blocks_op
