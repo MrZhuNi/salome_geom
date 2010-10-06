@@ -119,11 +119,17 @@ void OperationGUI_PartitionDlg::Init()
 {
   /* type for sub shape selection */
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_SOLID" ) );
+  GroupPoints->ComboBox1->setItemData(GroupPoints->ComboBox1->count()-1, GEOM::SOLID);
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_SHELL" ) );
+  GroupPoints->ComboBox1->setItemData(GroupPoints->ComboBox1->count()-1, GEOM::SHELL);
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_FACE" ) );
+  GroupPoints->ComboBox1->setItemData(GroupPoints->ComboBox1->count()-1, GEOM::FACE);
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_WIRE" ) );
+  GroupPoints->ComboBox1->setItemData(GroupPoints->ComboBox1->count()-1, GEOM::WIRE);
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_EDGE" ) );
+  GroupPoints->ComboBox1->setItemData(GroupPoints->ComboBox1->count()-1, GEOM::EDGE);
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_VERTEX" ) );
+  GroupPoints->ComboBox1->setItemData(GroupPoints->ComboBox1->count()-1, GEOM::VERTEX);
   GroupPoints->CheckButton1->setChecked( false );
   
   mainFrame()->GroupBoxPublish->show();
@@ -270,6 +276,13 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
   if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
     GEOMBase::ConvertListOfIOInListOfGO(aSelList, myListShapes, true);
     myListMaterials.length( 0 );
+    
+    GEOM::shape_type type = GEOM::SOLID;
+    for (int i = 0; i < myListShapes.length(); i++)
+      type = qMax( type, myListShapes[i]->GetMinShapeType() );
+    int idx = qMax( 0, GroupPoints->ComboBox1->findData( type ) );
+    GroupPoints->ComboBox1->setCurrentIndex( idx );
+
     if ( !myListShapes.length() )
       return;
   }
@@ -278,7 +291,7 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
     if ( !myListTools.length() )
       return;
   }
-  
+
   myEditCurrentArgument->setText( aString );
 }
 

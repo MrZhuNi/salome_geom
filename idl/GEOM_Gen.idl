@@ -176,6 +176,15 @@ module GEOM
     shape_type GetTopologyType();
 
     /*!
+     *  Get a minimal type of the top-level shapes contained in the object.
+     *  This function is useful for the compounds only; for simple shapes it
+     *  exactly the same value as GetShapeType().
+     *  Note, that compounds are procesed recursively.
+     *  \sa GetShapeType(), GetTopologyType()
+     */
+    shape_type GetMinShapeType();
+
+    /*!
      *  Set name of the object.
      *  \param theName is a name which will be associated with this object.
      */
