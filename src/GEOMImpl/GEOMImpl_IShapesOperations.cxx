@@ -212,6 +212,77 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdge
 
 //=============================================================================
 /*!
+ *  MakeEdgeWire
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeWire
+                    (Handle(GEOM_Object) theWire,
+		     const Standard_Real theLinearTolerance,
+		     const Standard_Real theAngularTolerance)
+{
+  SetErrorCode(KO);
+
+  if (theWire.IsNull()) return NULL;
+
+  //Add a new Edge object
+  Handle(GEOM_Object) anEdge = GetEngine()->AddObject(GetDocID(), GEOM_EDGE);
+
+  //Add a new Vector function
+  Handle(GEOM_Function) aFunction =
+    anEdge->AddFunction(GEOMImpl_ShapeDriver::GetID(), EDGE_WIRE);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) return NULL;
+
+  GEOMImpl_IShapes aCI (aFunction);
+
+  Handle(GEOM_Function) aWire = theWire->GetLastFunction();
+
+  if (aWire.IsNull()) return NULL;
+
+  aCI.SetBase(aWire);
+  aCI.SetTolerance(theLinearTolerance);
+  aCI.SetAngularTolerance(theAngularTolerance);
+
+  //Compute the Edge value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  const double DEF_LIN_TOL = Precision::Confusion();
+  const double DEF_ANG_TOL = Precision::Angular();
+  //Make a Python command
+  if ( theAngularTolerance == DEF_ANG_TOL ) {
+    if ( theLinearTolerance == DEF_LIN_TOL )
+      GEOM::TPythonDump(aFunction) << anEdge  << " = geompy.MakeEdgeWire("
+				   << theWire << ")";
+    else 
+      GEOM::TPythonDump(aFunction) << anEdge  << " = geompy.MakeEdgeWire("
+				   << theWire << ", " << theLinearTolerance << ")";
+  }
+  else {
+    GEOM::TPythonDump(aFunction) << anEdge  << " = geompy.MakeEdgeWire("
+				 << theWire << ", " << theLinearTolerance << ", "
+				 << theAngularTolerance << ")";
+  }
+
+  SetErrorCode(OK);
+  return anEdge;
+}
+
+//=============================================================================
+/*!
  *  MakeWire
  */
 //=============================================================================
@@ -433,60 +504,6 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidShells
                              (std::list<Handle(GEOM_Object)> theShapes)
 {
   return MakeShape(theShapes, GEOM_SOLID, SOLID_SHELLS, "MakeSolid");
-}
-
-//=============================================================================
-/*!
- *  MakeSolidShell
- */
-//=============================================================================
-Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidShell (Handle(GEOM_Object) theShell)
-{
-  SetErrorCode(KO);
-
-  if (theShell.IsNull()) return NULL;
-
-  //Add a new Solid object
-  Handle(GEOM_Object) aSolid = GetEngine()->AddObject(GetDocID(), GEOM_SOLID);
-
-  //Add a new Solid function for creation of a solid from a shell
-  Handle(GEOM_Function) aFunction =
-    aSolid->AddFunction(GEOMImpl_ShapeDriver::GetID(), SOLID_SHELL);
-  if (aFunction.IsNull()) return NULL;
-
-  //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) return NULL;
-
-  GEOMImpl_IShapes aCI (aFunction);
-
-  Handle(GEOM_Function) aRefShell = theShell->GetLastFunction();
-
-  if (aRefShell.IsNull()) return NULL;
-
-  aCI.SetBase(aRefShell);
-
-  //Compute the Solid value
-  try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
-    OCC_CATCH_SIGNALS;
-#endif
-    if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Solid driver failed");
-      return NULL;
-    }
-  }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
-    return NULL;
-  }
-
-  //Make a Python command
-  GEOM::TPythonDump(aFunction) << aSolid
-    << " = geompy.MakeSolid(" << theShell << ")";
-
-  SetErrorCode(OK);
-  return aSolid;
 }
 
 //=============================================================================
@@ -3212,7 +3229,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   bool isFound = false;
   Standard_Integer iType = TopAbs_SOLID;
   Standard_Integer compType = TopAbs_SOLID;
-  Standard_Real    aWhat_Mass = 0., aWhere_Mass = 0.;
+  //Standard_Real    aWhat_Mass = 0., aWhere_Mass = 0.;
   Standard_Real    tab_aWhat[4],    tab_aWhere[4];
   Standard_Real    dl_l = 1e-3;
   Standard_Real    min_l, Tol_0D, Tol_1D, Tol_2D, Tol_3D, Tol_Mass;
@@ -3293,6 +3310,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   else if ( iType == TopAbs_FACE ) Tol_Mass = Tol_2D;
 
   // Compute the ShapeWhat Mass
+  /*
   for ( ; Exp_aWhat.More(); Exp_aWhat.Next() ) {
     if ( iType == TopAbs_VERTEX ) {
       aWhat_Mass += 1;
@@ -3303,6 +3321,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     else                             BRepGProp::VolumeProperties(Exp_aWhat.Current(),  aProps);
     aWhat_Mass += aProps.Mass();
   }
+  */
 
   // Searching for the sub-shapes inside the ShapeWhere shape
   TopTools_MapOfShape map_aWhere;
@@ -3344,12 +3363,13 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
       if ( isFound ) {
         aWhereIndex = aWhereIndices.FindIndex(Exp_aWhere.Current());
         aModifiedList.Append(aWhereIndex);
-        aWhere_Mass += tab_aWhere[3];
+        //aWhere_Mass += tab_aWhere[3];
         isFound = false;
         break;
       }
     }
-    if ( fabs( aWhat_Mass - aWhere_Mass ) <= Tol_Mass ) break;
+    //if ( fabs( aWhat_Mass - aWhere_Mass ) <= Tol_Mass )
+      //break;
   }
 
   if (aModifiedList.Extent() == 0) { // Not found any Results

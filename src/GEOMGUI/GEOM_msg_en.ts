@@ -278,9 +278,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Center</translation>
     </message>
     <message>
+        <source>GEOM_CENTER_DEFAULT</source>
+        <translation>(Origin by default)</translation>
+    </message>
+    <message>
         <source>GEOM_CENTER_POINT</source>
         <translation>Center Point</translation>
     </message>
+
     <message>
         <source>GEOM_CENTRAL_POINT</source>
         <translation>Central Point</translation>
@@ -555,15 +560,15 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION_BSV</source>
-        <translation>Base Shape + Vector</translation>
+        <translation>Base Shapes + Vector</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION_BSV_2P</source>
-        <translation>Base Shape + 2 Points</translation>
+        <translation>Base Shapes + 2 Points</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION_DXDYDZ</source>
-        <translation>Base Shape + DX DY DZ Vector</translation>
+        <translation>Base Shapes + DX DY DZ Vector</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION_TITLE</source>
@@ -1822,6 +1827,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Tolerance</translation>
     </message>
     <message>
+        <source>GEOM_LINEAR_TOLERANCE</source>
+        <translation>Linear Tolerance</translation>
+    </message>
+    <message>
+        <source>GEOM_ANGULAR_TOLERANCE</source>
+        <translation>Angular Tolerance</translation>
+    </message>
+    <message>
         <source>GEOM_TOLERANCE_CONSTR</source>
         <translation>Object And Its Tolerances</translation>
     </message>
@@ -1897,6 +1910,11 @@ Please, select face, shell or solid and try again</translation>
         <source>GEOM_VECTOR</source>
         <translation>Vector</translation>
     </message>
+    <message>
+        <source>GEOM_AXIS_DEFAULT</source>
+        <translation>(Z axis by default)</translation>
+    </message>
+
     <message>
         <source>GEOM_VECTOR_LENGTH</source>
         <translation>Vector Length :</translation>
@@ -3778,6 +3796,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Keep shapes of lower type</translation>
     </message>
     <message>
+        <source>GEOM_NO_SELF_INTERSECTION</source>
+        <translation>No sub-shapes intersection (Compounds only)</translation>
+    </message>
+    <message>
         <source>GEOM_CENTER_2POINTS</source>
         <translation>Center and two points</translation>
     </message>
@@ -4132,6 +4154,10 @@ Input value precision can be adjusted using
         <source>JUNCTION_FACE_3</source>
         <translation>Junction 3</translation>
     </message>
+    <message>
+        <source>GEOM_PLUGINS_OTHER</source>
+        <translation>Other</translation>
+    </message>  
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
@@ -4374,6 +4400,18 @@ Number of sketch points too small</translation>
         <source>REMOVE</source>
         <translation>Remove</translation>
     </message>
+    <message>
+        <source>SHOW_ONLY_SELECTED</source>
+        <translation>Show only selected</translation>
+    </message>
+    <message>
+        <source>HIDE_SELECTED</source>
+        <translation>Hide selected</translation>
+    </message>
+    <message>
+        <source>SHOW_ALL_SUB_SHAPES</source>
+        <translation>Show all sub-shapes</translation>
+    </message> 
     <message>
         <source>SELECT_ALL</source>
         <translation>Select All</translation>

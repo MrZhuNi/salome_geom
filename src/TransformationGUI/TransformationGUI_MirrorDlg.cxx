@@ -197,6 +197,12 @@ bool TransformationGUI_MirrorDlg::ClickOnApply()
     return false;
 
   initName();
+
+  myObjects.length(0);
+  myEditCurrentArgument = GroupPoints->LineEdit1;
+  myEditCurrentArgument->setText("");
+  myGeomGUI->getApp()->selectionMgr()->clearSelected();
+
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());
   return true;
@@ -524,5 +530,5 @@ void TransformationGUI_MirrorDlg::addSubshapesToStudy()
       return;
     }
     addSubshapesToFather(objMap);
-  }
+    }
 }

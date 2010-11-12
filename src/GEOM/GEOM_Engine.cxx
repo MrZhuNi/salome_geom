@@ -189,10 +189,12 @@ GEOM_Engine::GEOM_Engine()
 GEOM_Engine::~GEOM_Engine()
 {
   GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It(_objects);
+  std::list< Handle(GEOM_Object) > objs;
   for(; It.More(); It.Next())
-    {
-      RemoveObject(Handle(GEOM_Object)::DownCast(It.Value()));
-    }
+    objs.push_back( Handle(GEOM_Object)::DownCast(It.Value()) );
+  std::list< Handle(GEOM_Object) >::iterator objit;
+  for(objit = objs.begin(); objit != objs.end(); ++objit)
+    RemoveObject(*objit);
 
   //Close all documents not closed
   for(Interface_DataMapIteratorOfDataMapOfIntegerTransient anItr(_mapIDDocument); anItr.More(); anItr.Next())
@@ -403,7 +405,9 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
     Handle(GEOM_Function) aFunction = theObject->GetFunction(1);
     GEOM_ISubShape aSSI (aFunction);
     Handle(GEOM_Function) aMainShape = aSSI.GetMainShape();
-    aMainShape->RemoveSubShapeReference(aFunction);
+    //If main shape is not null, then remove
+    if(!aMainShape.IsNull())
+      aMainShape->RemoveSubShapeReference(aFunction);
   }
 
   int nb = theObject->GetNbFunctions();
