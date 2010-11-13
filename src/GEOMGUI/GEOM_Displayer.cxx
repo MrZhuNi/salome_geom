@@ -66,6 +66,12 @@
 #include <SVTK_ViewModel.h>
 
 // OCCT Includes
+#include <Standard_Version.hxx>
+#ifdef OCC_VERSION_SERVICEPACK
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK)
+#else
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8)
+#endif
 #include <AIS_Drawer.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <Prs3d_IsoAspect.hxx>
@@ -93,7 +99,11 @@
 #include CORBA_CLIENT_HEADER(SALOMEDS_Attributes)
 
 #include <GEOMImpl_Types.hxx>
+#if OCC_VERSION_LARGE >= 0x06030100
+#include <TColStd_HArray1OfByte.hxx>
+#else
 #include <Graphic3d_HArray1OfBytes.hxx>
+#endif
 
 
 //================================================================
@@ -788,8 +798,12 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
                       Quantity_Color aQuanColor = SalomeApp_Tools::color( aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) ) );
                       if ( hasColor ) aQuanColor = Quantity_Color( aSColor.R, aSColor.G, aSColor.B, Quantity_TOC_RGB );
                       Standard_Integer aWidth, aHeight;
-                      Handle(Graphic3d_HArray1OfBytes) aTexture = GeometryGUI::getTexture( getStudy(), aTextureId, aWidth, aHeight );
-                      if ( !aTexture.IsNull() ) {
+#if OCC_VERSION_LARGE >= 0x06030100
+                      Handle(TColStd_HArray1OfByte) aTexture = GeometryGUI::getTexture( getStudy(), aTextureId, aWidth, aHeight );
+#else
+		      Handle(Graphic3d_HArray1OfBytes) aTexture = GeometryGUI::getTexture( getStudy(), aTextureId, aWidth, aHeight );
+#endif
+		      if ( !aTexture.IsNull() ) {
                         static int TextureId = 0;
                         Handle(Prs3d_PointAspect) aTextureAspect = new Prs3d_PointAspect(aQuanColor,
                                                                                          ++TextureId,

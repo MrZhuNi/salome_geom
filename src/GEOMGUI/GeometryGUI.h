@@ -41,8 +41,18 @@
 #include <QMap>
 
 // OCCT Includes
+#include <Standard_Version.hxx>
+#ifdef OCC_VERSION_SERVICEPACK
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK)
+#else
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8)
+#endif
 #include <gp_Ax3.hxx>
+#if OCC_VERSION_LARGE >= 0x06030100
+#include <TColStd_HArray1OfByte.hxx>
+#else
 #include <Graphic3d_HArray1OfBytes.hxx>
+#endif
 
 // IDL headers
 #include "SALOMEconfig.h"
@@ -77,8 +87,11 @@ public:
   virtual LightApp_Displayer* displayer();
   virtual void                initialize( CAM_Application* );
   virtual QString             engineIOR() const;
-
+#if OCC_VERSION_LARGE >= 0x06030100
+  static Handle(TColStd_HArray1OfByte) getTexture( SalomeApp_Study*, int, int&, int& );
+#else
   static Handle(Graphic3d_HArray1OfBytes) getTexture( SalomeApp_Study*, int, int&, int& );
+#endif
 
   static bool                 InitGeomGen();
 
@@ -162,8 +175,11 @@ public:
   static GEOM::GEOM_Gen_var   myComponentGeom;   // GEOM engine!!!
 
 private:  
-
+#if OCC_VERSION_LARGE >= 0x06030100
+  typedef QMap<long, Handle(TColStd_HArray1OfByte)> TextureMap;
+#else
   typedef QMap<long, Handle(Graphic3d_HArray1OfBytes)> TextureMap;
+#endif
   typedef QMap<long, TextureMap> StudyTextureMap;
   typedef QMap<QString, GEOMGUI*> GUIMap;
 

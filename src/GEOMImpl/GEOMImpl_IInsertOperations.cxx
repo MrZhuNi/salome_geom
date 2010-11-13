@@ -49,7 +49,13 @@
 #include <TopoDS_Vertex.hxx>
 #include <BRep_Tool.hxx>
 #include <gp_Pnt.hxx>
+
+
+#if OCC_VERSION_LARGE >= 0x06030100
+#include <TColStd_HArray1OfByte.hxx>
+#else
 #include <TDataStd_HArray1OfByte.hxx>
+#endif
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -551,8 +557,12 @@ int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTe
   SetErrorCode(KO);
 
   if (theTextureFile.IsEmpty()) return 0;
-
+#if OCC_VERSION_LARGE >= 0x06030100
+  Handle(TColStd_HArray1OfByte) aTexture;
+#else
   Handle(TDataStd_HArray1OfByte) aTexture;
+#endif
+
 
   FILE* fp = fopen(theTextureFile.ToCString(), "r");
   if (!fp) return 0;
@@ -593,8 +603,11 @@ int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTe
 
   if (bytedata.empty() || bytedata.size() != lines.size()*lenbytes)
     return 0;
-
+#if OCC_VERSION_LARGE >= 0x06030100
+  aTexture = new TColStd_HArray1OfByte(1, lines.size()*lenbytes);
+#else
   aTexture = new TDataStd_HArray1OfByte(1, lines.size()*lenbytes);
+#endif
   std::list<unsigned char>::iterator bdit;
   int i;
   for (i = 1, bdit = bytedata.begin(); bdit != bytedata.end(); ++bdit, ++i)
@@ -606,7 +619,12 @@ int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTe
 }
   
 int GEOMImpl_IInsertOperations::AddTexture(int theWidth, int theHeight, 
-                                           const Handle(TDataStd_HArray1OfByte)& theTexture)
+#if OCC_VERSION_LARGE >= 0x06030100
+                                           const Handle(TColStd_HArray1OfByte)&
+#else
+					   const Handle(TDataStd_HArray1OfByte)&
+#endif 
+					   theTexture)
 {
   SetErrorCode(KO);
   int aTextureId = GetEngine()->addTexture(GetDocID(), theWidth, theHeight, theTexture);
@@ -614,12 +632,20 @@ int GEOMImpl_IInsertOperations::AddTexture(int theWidth, int theHeight,
   return aTextureId;
 }
 
-Handle(TDataStd_HArray1OfByte) GEOMImpl_IInsertOperations::GetTexture(int theTextureId,
+#if OCC_VERSION_LARGE >= 0x06030100
+Handle(TColStd_HArray1OfByte) 
+#else
+Handle(TDataStd_HArray1OfByte) 
+#endif
+GEOMImpl_IInsertOperations::GetTexture(int theTextureId,
                                                                       int& theWidth, int& theHeight)
 {
   SetErrorCode(KO);
-  
+#if OCC_VERSION_LARGE >= 0x06030100
+  Handle(TColStd_HArray1OfByte) aTexture;
+#else
   Handle(TDataStd_HArray1OfByte) aTexture;
+#endif
   theWidth = theHeight = 0;
   TCollection_AsciiString aFileName;
 

@@ -70,11 +70,22 @@
 #include "utilities.h"
 
 // OCCT Includes
+#include <Standard_Version.hxx>
+#ifdef OCC_VERSION_SERVICEPACK
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK)
+#else
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8)
+#endif
 #include <AIS_Drawer.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
+#if OCC_VERSION_LARGE >= 0x06030100
+#include <TColStd_HArray1OfByte.hxx>
+#else
 #include <Graphic3d_HArray1OfBytes.hxx>
+#endif
+
 
 // QT Includes
 #include <QColorDialog>
@@ -256,7 +267,11 @@ void GEOMToolsGUI::OnAutoColor()
       else {
         Standard_Integer aWidth, aHeight;
         aCurPointAspect->GetTextureSize( aWidth, aHeight );
-        Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
+#if OCC_VERSION_LARGE >= 0x06030100
+        Handle(TColStd_HArray1OfByte) aTexture = aCurPointAspect->GetTexture();
+#else
+	Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
+#endif
         aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aQuanColor, 1, aWidth, aHeight, aTexture ) );
       }
       ic->SetLocalAttributes( io, aCurDrawer );
@@ -359,7 +374,11 @@ void GEOMToolsGUI::OnColor()
                   else {
                     Standard_Integer aWidth, aHeight;
                     aCurPointAspect->GetTextureSize( aWidth, aHeight );
-                    Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
+#if OCC_VERSION_LARGE >= 0x06030100
+                    Handle(TColStd_HArray1OfByte) aTexture = aCurPointAspect->GetTexture();
+#else
+		    Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
+#endif
                     aCurDrawer->SetPointAspect(new Prs3d_PointAspect(aColor, 1, aWidth, aHeight, aTexture));
                   }
                   ic->SetLocalAttributes(io, aCurDrawer);

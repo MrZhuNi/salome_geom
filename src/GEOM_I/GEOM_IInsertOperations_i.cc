@@ -35,8 +35,20 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
+
+#include <Standard_Version.hxx>
+#ifdef OCC_VERSION_SERVICEPACK
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK)
+#else
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8)
+#endif
+
 #include <TColStd_HSequenceOfAsciiString.hxx>
+#if OCC_VERSION_LARGE >= 0x06030100
+#include <TColStd_HArray1OfByte.hxx>
+#else
 #include <TDataStd_HArray1OfByte.hxx>
+#endif
 
 //=============================================================================
 /*!
@@ -228,9 +240,17 @@ CORBA::Long GEOM_IInsertOperations_i::AddTexture(CORBA::Long theWidth, CORBA::Lo
 						 const SALOMEDS::TMPFile& theTexture)
 {
   GetOperations()->SetNotDone();
+#if OCC_VERSION_LARGE >= 0x06030100
+  Handle(TColStd_HArray1OfByte) aTexture;
+#else
   Handle(TDataStd_HArray1OfByte) aTexture;
+#endif
   if ( theTexture.length() > 0 ) {
+#if OCC_VERSION_LARGE >= 0x06030100
+    aTexture = new TColStd_HArray1OfByte( 1, theTexture.length() );
+#else
     aTexture = new TDataStd_HArray1OfByte( 1, theTexture.length() );
+#endif
     for ( int i = 0; i < theTexture.length(); i++ )
       aTexture->SetValue( i+1, (Standard_Byte)theTexture[i] );
   }
@@ -242,7 +262,11 @@ SALOMEDS::TMPFile* GEOM_IInsertOperations_i::GetTexture(CORBA::Long theID,
 							CORBA::Long& theHeight)
 {
   int aWidth, aHeight;
+#if OCC_VERSION_LARGE >= 0x06030100
+  Handle(TColStd_HArray1OfByte) aTextureImpl = GetOperations()->GetTexture( theID, aWidth, aHeight );
+#else
   Handle(TDataStd_HArray1OfByte) aTextureImpl = GetOperations()->GetTexture( theID, aWidth, aHeight );
+#endif 
   theWidth  = aWidth;
   theHeight = aHeight;
   SALOMEDS::TMPFile_var aTexture;

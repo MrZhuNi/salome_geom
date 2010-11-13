@@ -34,6 +34,13 @@
 #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
 
+#include <Standard_Version.hxx>
+#ifdef OCC_VERSION_SERVICEPACK
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK)
+#else
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8)
+#endif
+
 #include <QButtonGroup>
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -320,7 +327,11 @@ void GEOMToolsGUI_MarkerDlg::addTexture( int id, bool select ) const
 {
   if ( id > 0 && myCustomTypeCombo->index( id ) == -1 ) {
     int tWidth, tHeight;
+#if OCC_VERSION_LARGE >= 0x06030100
+    Handle(TColStd_HArray1OfByte) texture = GeometryGUI::getTexture( getStudy(), id, tWidth, tHeight );
+#else
     Handle(Graphic3d_HArray1OfBytes) texture = GeometryGUI::getTexture( getStudy(), id, tWidth, tHeight );
+#endif
     if ( !texture.IsNull() && texture->Length() == tWidth*tHeight/8 ) {
       QImage image( tWidth, tHeight, QImage::Format_Mono );
       image.setColor( 0, qRgba( 0, 0, 0, 0   ) );

@@ -33,7 +33,18 @@
 #include <Resource_Manager.hxx>
 #include <list>
 
+#include <Standard_Version.hxx>
+#ifdef OCC_VERSION_SERVICEPACK
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK)
+#else
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8)
+#endif
+
+#if OCC_VERSION_LARGE >= 0x06030100
+class Handle_TColStd_HArray1OfByte;
+#else
 class Handle_TDataStd_HArray1OfByte;
+#endif
 
 class GEOMImpl_IInsertOperations : public GEOM_IOperations {
  public:
@@ -62,11 +73,21 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
 
   Standard_EXPORT int LoadTexture(const TCollection_AsciiString& theTextureFile);
   
+#if OCC_VERSION_LARGE >= 0x06030100
+  Standard_EXPORT int AddTexture(int theWidth, int theHeight, 
+                                 const Handle(TColStd_HArray1OfByte)& theTexture);
+
+  Standard_EXPORT Handle(TColStd_HArray1OfByte) GetTexture(int theTextureId, 
+                                                            int& theWidth, int& theHeight);
+#else
   Standard_EXPORT int AddTexture(int theWidth, int theHeight, 
                                  const Handle(TDataStd_HArray1OfByte)& theTexture);
 
   Standard_EXPORT Handle(TDataStd_HArray1OfByte) GetTexture(int theTextureId, 
                                                             int& theWidth, int& theHeight);
+#endif
+
+
 
   Standard_EXPORT std::list<int> GetAllTextures();
   

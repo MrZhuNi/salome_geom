@@ -83,7 +83,11 @@
 #include <Aspect_TypeOfMarker.hxx>
 #include <OSD_SharedLibrary.hxx>
 #include <NCollection_DataMap.hxx>
+#if OCC_VERSION_LARGE >= 0x06030100
+#include <TColStd_HArray1OfByte.hxx>
+#else
 #include <Graphic3d_HArray1OfBytes.hxx>
+#endif
 
 #include <utilities.h>
 
@@ -1428,10 +1432,19 @@ QString GeometryGUI::engineIOR() const
   return "";
 }
 
-Handle(Graphic3d_HArray1OfBytes) GeometryGUI::getTexture( SalomeApp_Study* theStudy, int theId, int& theWidth, int& theHeight )
+#if OCC_VERSION_LARGE >= 0x06030100
+Handle(TColStd_HArray1OfByte) 
+#else
+Handle(Graphic3d_HArray1OfBytes) 
+#endif
+GeometryGUI::getTexture( SalomeApp_Study* theStudy, int theId, int& theWidth, int& theHeight )
 {
   theWidth = theHeight = 0;
+#if OCC_VERSION_LARGE >= 0x06030100
+  Handle(TColStd_HArray1OfByte) aTexture;
+#else
   Handle(Graphic3d_HArray1OfBytes) aTexture;
+#endif
   if ( theStudy ) {
     TextureMap aTextureMap = myTextureMap[ theStudy->studyDS()->StudyId() ];
     aTexture = aTextureMap[ theId ];
@@ -1443,7 +1456,11 @@ Handle(Graphic3d_HArray1OfBytes) GeometryGUI::getTexture( SalomeApp_Study* theSt
         if ( aWidth > 0 && aHeight > 0 && aStream->length() > 0 ) {
           theWidth  = aWidth;
           theHeight = aHeight;
-          aTexture  = new Graphic3d_HArray1OfBytes( 1, aStream->length() );
+#if OCC_VERSION_LARGE >= 0x06030100
+          aTexture  = new TColStd_HArray1OfByte( 1, aStream->length() );
+#else
+	  aTexture  = new Graphic3d_HArray1OfBytes( 1, aStream->length() );
+#endif
           for ( int i = 0; i < aStream->length(); i++ )
             aTexture->SetValue( i+1, (Standard_Byte)aStream[i] );
           aTextureMap[ theId ] = aTexture;

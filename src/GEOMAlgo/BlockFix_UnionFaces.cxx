@@ -42,7 +42,17 @@
 #include <ShapeFix_Wire.hxx>
 #include <ShapeFix_Edge.hxx>
 
+#ifdef OCC_VERSION_SERVICEPACK
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK)
+#else
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8)
+#endif
+
+#if OCC_VERSION_LARGE < 0x06040000
 #include <IntPatch_TheIIIntOfIntersection.hxx>
+#else
+#include <IntPatch_ImpImpIntersection.hxx>
+#endif
 
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
@@ -617,7 +627,11 @@ Standard_Boolean BlockFix_UnionFaces::IsSameDomain(const TopoDS_Face& aFace,
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
       OCC_CATCH_SIGNALS;
 #endif
+#if OCC_VERSION_LARGE < 0x06040000
       IntPatch_TheIIIntOfIntersection anIIInt (aGA1, aTT1, aGA2, aTT2, aPrec, aPrec);
+#else
+      IntPatch_ImpImpIntersection anIIInt (aGA1, aTT1, aGA2, aTT2, aPrec, aPrec);
+#endif
       if (!anIIInt.IsDone() || anIIInt.IsEmpty())
         return false;
 

@@ -45,7 +45,11 @@
 #include <TDataStd_ChildNodeIterator.hxx>
 #include <TFunction_Driver.hxx>
 #include <TFunction_DriverTable.hxx>
+#if OCC_VERSION_LARGE >= 0x06030100
+#include <TColStd_HArray1OfByte.hxx>
+#else
 #include <TDataStd_HArray1OfByte.hxx>
+#endif
 #include <TDataStd_ByteArray.hxx>
 #include <TDataStd_UAttribute.hxx>
 #include <TDF_ChildIterator.hxx>
@@ -60,7 +64,11 @@
 #include <TColStd_MapOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 
+#if OCC_VERSION_LARGE >= 0x06030100
+#include <TColStd_DataMapIteratorOfDataMapOfIntegerTransient.hxx>
+#else 
 #include <Interface_DataMapIteratorOfDataMapOfIntegerTransient.hxx>
+#endif
 #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
 
 #include <set>
@@ -195,8 +203,13 @@ GEOM_Engine::~GEOM_Engine()
     }
 
   //Close all documents not closed
+#if OCC_VERSION_LARGE >= 0x06030100
+  for(TColStd_DataMapIteratorOfDataMapOfIntegerTransient anItr(_mapIDDocument); anItr.More(); anItr.Next())
+    Close(anItr.Key());
+#else
   for(Interface_DataMapIteratorOfDataMapOfIntegerTransient anItr(_mapIDDocument); anItr.More(); anItr.Next())
     Close(anItr.Key());
+#endif
 
   _mapIDDocument.Clear();
   _objects.Clear();
@@ -230,8 +243,13 @@ Handle(TDocStd_Document) GEOM_Engine::GetDocument(int theDocID, bool force)
 int GEOM_Engine::GetDocID(Handle(TDocStd_Document) theDocument)
 {
   if(theDocument.IsNull()) return -1;
+#if OCC_VERSION_LARGE >= 0x06030100
+  for(TColStd_DataMapIteratorOfDataMapOfIntegerTransient anItr(_mapIDDocument); anItr.More(); anItr.Next())
+    if(anItr.Value() == theDocument) return anItr.Key();
+#else
   for(Interface_DataMapIteratorOfDataMapOfIntegerTransient anItr(_mapIDDocument); anItr.More(); anItr.Next())
     if(anItr.Value() == theDocument) return anItr.Key();
+#endif
 
   return -1;
 
@@ -744,7 +762,11 @@ Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
 #define TEXTURE_LABEL_DATA     5
 
 int GEOM_Engine::addTexture(int theDocID, int theWidth, int theHeight,
-                            const Handle(TDataStd_HArray1OfByte)& theTexture,
+#if OCC_VERSION_LARGE >= 0x06030100
+                            const Handle(TColStd_HArray1OfByte)& theTexture,
+#else
+			    const Handle(TDataStd_HArray1OfByte)& theTexture,
+#endif
                             const TCollection_AsciiString& theFileName)
 {
   Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
@@ -789,11 +811,20 @@ int GEOM_Engine::addTexture(int theDocID, int theWidth, int theHeight,
   return aTextureID;
 }
 
-Handle(TDataStd_HArray1OfByte) GEOM_Engine::getTexture(int theDocID, int theTextureID,
+#if OCC_VERSION_LARGE >= 0x06030100
+Handle(TColStd_HArray1OfByte) 
+#else
+Handle(TDataStd_HArray1OfByte) 
+#endif
+GEOM_Engine::getTexture(int theDocID, int theTextureID,
                                                        int& theWidth, int& theHeight,
                                                        TCollection_AsciiString& theFileName)
 {
+#if OCC_VERSION_LARGE >= 0x06030100
+  Handle(TColStd_HArray1OfByte) anArray;
+#else
   Handle(TDataStd_HArray1OfByte) anArray;
+#endif
   theWidth = theHeight = 0;
 
   Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
@@ -1418,7 +1449,13 @@ void AddObjectColors (int                                             theDocID,
   }
 }
 
-static TCollection_AsciiString pack_data(const Handle(TDataStd_HArray1OfByte)& aData )
+static TCollection_AsciiString pack_data(const 
+#if OCC_VERSION_LARGE >= 0x06030100
+Handle(TColStd_HArray1OfByte)& 
+#else 
+Handle(TDataStd_HArray1OfByte)& 
+#endif
+aData )
 {
   TCollection_AsciiString stream;
   if (!aData.IsNull()) {
@@ -1446,7 +1483,11 @@ void AddTextures (int theDocID, TCollection_AsciiString& theScript)
       if (*it <= 0) continue;
       Standard_Integer aWidth, aHeight;
       TCollection_AsciiString aFileName;
+#if OCC_VERSION_LARGE >= 0x06030100
+      Handle(TColStd_HArray1OfByte) aTexture = engine->getTexture(theDocID, *it, aWidth, aHeight, aFileName);
+#else
       Handle(TDataStd_HArray1OfByte) aTexture = engine->getTexture(theDocID, *it, aWidth, aHeight, aFileName);
+#endif
       if (aWidth > 0 && aHeight > 0 && !aTexture.IsNull() && aTexture->Length() > 0 ) {
         TCollection_AsciiString aCommand = "\n\t";
         aCommand += "texture_map["; aCommand += *it; aCommand += "] = ";
