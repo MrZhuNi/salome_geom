@@ -84,7 +84,7 @@ import math
 
 ## Enumeration ShapeType as a dictionary
 #  @ingroup l1_geompy_auxiliary
-ShapeType = {"COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
+ShapeType = {"AUTO":-1, "COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
 
 ## Raise an Error, containing the Method_name, if Operation is Failed
 ## @ingroup l1_geompy_auxiliary
@@ -2454,6 +2454,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #           in order to avoid possible intersection between shapes from
         #           this compound.
         #  @param Limit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
+        #         If this parameter is set to -1 ("Auto"), most appropriate shape limit
+        #         type will be detected automatically.
         #  @param KeepNonlimitShapes: if this parameter == 0, then only shapes of
         #                             target type (equal to Limit) are kept in the result,
         #                             else standalone shapes of lower dimension
@@ -2475,9 +2477,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_partition "Example"
         def MakePartition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-                          Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[],
+                          Limit=ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
                           KeepNonlimitShapes=0):
             # Example: see GEOM_TestAll.py
+            if Limit == ShapeType["AUTO"]:
+                # automatic detection of the most appropriate shape limit type
+                lim = GEOM.SOLID
+                for s in ListShapes: lim = max( lim, s.GetMinShapeType() )
+                Limit = lim._v
+                pass
             anObj = self.BoolOp.MakePartition(ListShapes, ListTools,
                                               ListKeepInside, ListRemoveInside,
                                               Limit, RemoveWebs, ListMaterials,
@@ -2500,8 +2508,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref swig_todo "Example"
         def MakePartitionNonSelfIntersectedShape(self, ListShapes, ListTools=[],
                                                  ListKeepInside=[], ListRemoveInside=[],
-                                                 Limit=ShapeType["SHAPE"], RemoveWebs=0,
+                                                 Limit=ShapeType["AUTO"], RemoveWebs=0,
                                                  ListMaterials=[], KeepNonlimitShapes=0):
+            if Limit == ShapeType["AUTO"]:
+                # automatic detection of the most appropriate shape limit type
+                lim = GEOM.SOLID
+                for s in ListShapes: lim = max( lim, s.GetMinShapeType() )
+                Limit = lim._v
+                pass
             anObj = self.BoolOp.MakePartitionNonSelfIntersectedShape(ListShapes, ListTools,
                                                                      ListKeepInside, ListRemoveInside,
                                                                      Limit, RemoveWebs, ListMaterials,
@@ -2514,7 +2528,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_partition "Example 1"
         #  \n @ref swig_Partition "Example 2"
         def Partition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-                      Limit=ShapeType["SHAPE"], RemoveWebs=0, ListMaterials=[],
+                      Limit=ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
                       KeepNonlimitShapes=0):
             # Example: see GEOM_TestOthers.py
             anObj = self.MakePartition(ListShapes, ListTools,

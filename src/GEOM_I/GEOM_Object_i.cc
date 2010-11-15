@@ -141,6 +141,37 @@ GEOM::shape_type GEOM_Object_i::GetTopologyType()
   return (GEOM::shape_type)shape.ShapeType();
 }
 
+static GEOM::shape_type getMinShapeType( const TopoDS_Shape& shape )
+{
+  if ( shape.IsNull() )
+    return GEOM::SHAPE;
+
+  GEOM::shape_type ret = (GEOM::shape_type)shape.ShapeType();
+
+  if ( shape.ShapeType() == TopAbs_COMPOUND || shape.ShapeType() == TopAbs_COMPSOLID ) {
+    TopoDS_Iterator it(shape, Standard_True, Standard_False);
+    for (; it.More(); it.Next()) {
+      TopoDS_Shape sub_shape = it.Value();
+      if ( sub_shape.IsNull() ) continue;
+      GEOM::shape_type stype = (GEOM::shape_type)sub_shape.ShapeType();
+      if ( stype != GEOM::SHAPE && stype > ret )
+	ret = stype;
+    }
+  }
+
+  return ret;
+}
+
+//=============================================================================
+/*!
+ *  GetMinShapeType
+ */
+//=============================================================================
+GEOM::shape_type GEOM_Object_i::GetMinShapeType()
+{
+  return getMinShapeType( _impl->GetValue() );
+}
+
 //=============================================================================
 /*!
  *  SetName
