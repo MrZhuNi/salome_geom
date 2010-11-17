@@ -2111,3 +2111,16 @@ void GeometryGUI::onViewAboutToShow()
     a->setEnabled(false);
   }
 }
+
+/*!
+ * \brief Virtual public slot
+ *
+ * This method updates visibility state
+ * Redefined to make visible geometry objects
+ */
+void GeometryGUI::initVisibilityState( SUIT_DataObject* theObject )
+{
+  // in fact, here we assume that all geometry objects presentable
+  if ( theObject && theObject->visibilityState() == SUIT_DataObject::Unpresentable )
+    theObject->setVisibilityState( SUIT_DataObject::Hidden );
+}

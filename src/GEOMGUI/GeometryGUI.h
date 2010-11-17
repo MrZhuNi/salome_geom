@@ -56,6 +56,7 @@ class QMenu;
 class GEOMGUI_OCCSelector;
 class LightApp_VTKSelector;
 class LightApp_Selection;
+class SUIT_DataObject;
 class SUIT_ViewManager;
 class SalomeApp_Study;
 
@@ -144,6 +145,7 @@ signals :
 
 protected:
   virtual LightApp_Selection* createSelection() const;
+  virtual void                initVisibilityState( SUIT_DataObject* );
 
 private:
   GEOMGUI*                    getLibrary( const QString& libraryName );
