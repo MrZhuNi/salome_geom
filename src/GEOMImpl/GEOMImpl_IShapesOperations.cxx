@@ -217,8 +217,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdge
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeWire
                     (Handle(GEOM_Object) theWire,
-		     const Standard_Real theLinearTolerance,
-		     const Standard_Real theAngularTolerance)
+                     const Standard_Real theLinearTolerance,
+                     const Standard_Real theAngularTolerance)
 {
   SetErrorCode(KO);
 
@@ -266,15 +266,15 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeWire
   if ( theAngularTolerance == DEF_ANG_TOL ) {
     if ( theLinearTolerance == DEF_LIN_TOL )
       GEOM::TPythonDump(aFunction) << anEdge  << " = geompy.MakeEdgeWire("
-				   << theWire << ")";
+                                   << theWire << ")";
     else 
       GEOM::TPythonDump(aFunction) << anEdge  << " = geompy.MakeEdgeWire("
-				   << theWire << ", " << theLinearTolerance << ")";
+                                   << theWire << ", " << theLinearTolerance << ")";
   }
   else {
     GEOM::TPythonDump(aFunction) << anEdge  << " = geompy.MakeEdgeWire("
-				 << theWire << ", " << theLinearTolerance << ", "
-				 << theAngularTolerance << ")";
+                                 << theWire << ", " << theLinearTolerance << ", "
+                                 << theAngularTolerance << ")";
   }
 
   SetErrorCode(OK);
@@ -920,7 +920,9 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
         }
       }
     }
-  } else {
+  }
+  else if ( aShape.ShapeType() != theShapeType ) // issue 0021079, prevent from returning aShape
+  {
     TopExp_Explorer exp (aShape, TopAbs_ShapeEnum(theShapeType));
     for (; exp.More(); exp.Next())
       if (mapShape.Add(exp.Current()))
@@ -1021,7 +1023,8 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
         }
       }
     }
-  } else {
+  } else  if ( aShape.ShapeType() != theShapeType ) // issue 0021079, prevent from returning aShape
+  {
     TopExp_Explorer exp (aShape, TopAbs_ShapeEnum(theShapeType));
     for (; exp.More(); exp.Next())
       if (mapShape.Add(exp.Current()))
