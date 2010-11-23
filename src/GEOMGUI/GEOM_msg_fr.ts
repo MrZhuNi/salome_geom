@@ -1127,11 +1127,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PIPE</source>
-        <translation>tuyau</translation>
+        <translation>Tuyau</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TITLE</source>
-        <translation>Construction d&apos;un Tuyau </translation>
+        <translation>Construction d&apos;un tuyau</translation>
     </message>
     <message>
         <source>GEOM_SEGMENT</source>
@@ -1910,7 +1910,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Vecteur</translation>
     </message>
     <message>
-      <source>GEOM_AXIS_DEFAULT</source>
+        <source>GEOM_AXIS_DEFAULT</source>
         <translation> (Axe Z par défaut)</translation>
     </message>
     <message>
@@ -2207,7 +2207,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_EDIT</source>
-        <translation>Editer</translation>
+        <translation>Edition</translation>
     </message>
     <message>
         <source>MEN_ELLIPSE</source>
@@ -2575,7 +2575,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_VIEW</source>
-        <translation>Vue</translation>
+        <translation>Affichage</translation>
     </message>
     <message>
         <source>MEN_WHAT_IS</source>
@@ -3387,7 +3387,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_DISK</source>
-        <translation>Créer une disque</translation>
+        <translation>Créer un disque</translation>
     </message>
     <message>
         <source>TOP_DISPLAY</source>
@@ -3463,11 +3463,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_GROUP_CREATE</source>
-        <translation>Créer une groupe</translation>
+        <translation>Créer un groupe</translation>
     </message>
     <message>
         <source>TOP_GROUP_EDIT</source>
-        <translation>Editer une groupe</translation>
+        <translation>Editer un groupe</translation>
     </message>
     <message>
         <source>TOP_HEX_SOLID</source>
@@ -3475,7 +3475,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_IMPORT</source>
-        <translation>Importer une géométry d&apos;un fichier BREP</translation>
+        <translation>Importer une géométrie d&apos;un fichier BREP</translation>
     </message>
     <message>
         <source>TOP_INERTIA</source>
@@ -3495,7 +3495,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_LOCAL_CS</source>
-        <translation>Créer un système local de coordonnées </translation>
+        <translation>Créer un système local de coordonnées</translation>
     </message>
     <message>
         <source>TOP_MASS_CENTER</source>
@@ -3503,7 +3503,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_MIN_DIST</source>
-        <translation>Distance minimale </translation>
+        <translation>Distance minimale</translation>
     </message>
     <message>
         <source>TOP_MIRROR</source>
@@ -4408,7 +4408,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     <message>
         <source>SHOW_ALL_SUB_SHAPES</source>
         <translation>Afficher tous les sous-objets</translation>
-    </message> 
+    </message>
     <message>
         <source>SELECT_ALL</source>
         <translation>Tout sélectionner</translation>
@@ -4638,7 +4638,7 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE</source>
-        <translation>TuyauT</translation>
+        <translation>Tuyau en T</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_MPIPE</source>

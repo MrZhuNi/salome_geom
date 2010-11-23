@@ -1995,8 +1995,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShapeWhat Shape, specifying what to find.
         #  @return Group of all found sub-shapes or a single found sub-shape.
         #
+        #  @note This function has a restriction on argument shapes.
+        #        If \a theShapeWhere has curved parts with significantly
+        #        outstanding centres (i.e. the mass centre of a part is closer to
+        #        \a theShapeWhat than to the part), such parts will not be found.
+        #        @image html get_in_place_lost_part.png
+        #
         #  @ref swig_GetInPlace "Example"
-        def GetInPlace(self,theShapeWhere, theShapeWhat):
+        def GetInPlace(self, theShapeWhere, theShapeWhat):
             # Example: see GEOM_TestOthers.py
             anObj = self.ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
             RaiseIfFailed("GetInPlace", self.ShapesOp)
@@ -2987,8 +2993,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_fillet2d "Example"
         def MakeFillet1D(self,theShape, theR, theListOfVertexes):
             # Example: see GEOM_TestAll.py
+            theR,Parameters = ParseParameters(theR)
             anObj = self.LocalOp.MakeFillet1D(theShape, theR, theListOfVertexes)
             RaiseIfFailed("MakeFillet1D", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Perform a fillet on the specified edges/faces of the given shape
@@ -3001,8 +3009,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_fillet2d "Example"
         def MakeFillet2D(self,theShape, theR, theListOfVertexes):
             # Example: see GEOM_TestAll.py
+            theR,Parameters = ParseParameters(theR)
             anObj = self.LocalOp.MakeFillet2D(theShape, theR, theListOfVertexes)
             RaiseIfFailed("MakeFillet2D", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Perform a symmetric chamfer on all edges of the given shape.
