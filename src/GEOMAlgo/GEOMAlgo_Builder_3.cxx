@@ -459,6 +459,7 @@ static
   // 1. Build solids for interferred source solids
   //
   aSB.SetContext(aCtx);
+  aSB.ComputeInternalShapes(myComputeInternalShapes);
   aNbS=myDraftSolids.Extent();
   for (i=1; i<=aNbS; ++i) {
     const TopoDS_Shape& aS =myDraftSolids.FindKey(i);

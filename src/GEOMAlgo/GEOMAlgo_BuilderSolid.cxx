@@ -155,9 +155,11 @@ static
   if (myErrorStatus) {
     return;
   }
-  PerformInternalShapes();
-  if (myErrorStatus) {
-    return;
+  if (myComputeInternalShapes) {
+    PerformInternalShapes();
+    if (myErrorStatus) {
+      return;
+    }
   }
 }
 //=======================================================================
@@ -441,45 +443,48 @@ static
   //
   aEFMap.Clear();
   AddedFacesMap.Clear();
-  //
-  aNbFA=myShapesToAvoid.Extent();
-  //
-  aItM.Initialize(myShapesToAvoid);
-  for (; aItM.More(); aItM.Next()) {
-    const TopoDS_Shape& aFF=aItM.Key();
-    TopExp::MapShapesAndAncestors(aFF, TopAbs_EDGE, TopAbs_FACE, aEFMap);
-  }
-  //
-  aItM.Initialize(myShapesToAvoid);
-  for (; aItM.More(); aItM.Next()) {
-    const TopoDS_Shape& aFF=aItM.Key();
-    if (!AddedFacesMap.Add(aFF)) {
-      continue;
+
+  if (myComputeInternalShapes) {
+    //
+    aNbFA=myShapesToAvoid.Extent();
+    //
+    aItM.Initialize(myShapesToAvoid);
+    for (; aItM.More(); aItM.Next()) {
+      const TopoDS_Shape& aFF=aItM.Key();
+      TopExp::MapShapesAndAncestors(aFF, TopAbs_EDGE, TopAbs_FACE, aEFMap);
     }
     //
-    // make a new shell
-    TopoDS_Shell aShell;
-    aBB.MakeShell(aShell);
-    aBB.Add(aShell, aFF);
-    //
-    TopoDS_Iterator aItAddedF (aShell);
-    for (; aItAddedF.More(); aItAddedF.Next()) {
-      const TopoDS_Face& aF = TopoDS::Face(aItAddedF.Value());
+    aItM.Initialize(myShapesToAvoid);
+    for (; aItM.More(); aItM.Next()) {
+      const TopoDS_Shape& aFF=aItM.Key();
+      if (!AddedFacesMap.Add(aFF)) {
+        continue;
+      }
       //
-      TopExp_Explorer aEdgeExp(aF, TopAbs_EDGE);
-      for (; aEdgeExp.More(); aEdgeExp.Next()) {
-        const TopoDS_Edge& aE = TopoDS::Edge(aEdgeExp.Current());
-        const TopTools_ListOfShape& aLF=aEFMap.FindFromKey(aE);
-        aItF.Initialize(aLF);
-        for (; aItF.More(); aItF.Next()) { 
-          const TopoDS_Face& aFL=TopoDS::Face(aItF.Value());
-          if (AddedFacesMap.Add(aFL)){
-            aBB.Add(aShell, aFL);
+      // make a new shell
+      TopoDS_Shell aShell;
+      aBB.MakeShell(aShell);
+      aBB.Add(aShell, aFF);
+      //
+      TopoDS_Iterator aItAddedF (aShell);
+      for (; aItAddedF.More(); aItAddedF.Next()) {
+        const TopoDS_Face& aF = TopoDS::Face(aItAddedF.Value());
+        //
+        TopExp_Explorer aEdgeExp(aF, TopAbs_EDGE);
+        for (; aEdgeExp.More(); aEdgeExp.Next()) {
+          const TopoDS_Edge& aE = TopoDS::Edge(aEdgeExp.Current());
+          const TopTools_ListOfShape& aLF=aEFMap.FindFromKey(aE);
+          aItF.Initialize(aLF);
+          for (; aItF.More(); aItF.Next()) { 
+            const TopoDS_Face& aFL=TopoDS::Face(aItF.Value());
+            if (AddedFacesMap.Add(aFL)){
+              aBB.Add(aShell, aFL);
+            }
           }
         }
       }
+      myLoopsInternal.Append(aShell);
     }
-    myLoopsInternal.Append(aShell);
   }
 }
 //=======================================================================
