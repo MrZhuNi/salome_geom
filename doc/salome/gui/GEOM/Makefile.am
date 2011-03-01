@@ -35,7 +35,7 @@ usr_docs: doxyfile_tui doxyfile_py doxyfile
 	echo "===========================================" ;			\
 	sed -e "/class geompyDC/d" -e "s/^ *#/#/g" -e "s/^ *def /def /g" 	\
 	  -e "s/geompyDC/geompy/g" $(top_srcdir)/src/GEOM_SWIG/geompyDC.py > 	\
-	  $(top_builddir)/src/GEOM_SWIG/geompy.py ; 				\
+	  ./geompy.py ;				 				\
 	echo "===========================================" ;			\
 	echo "Generating examples documentation" ;				\
 	echo "===========================================" ;			\
@@ -48,29 +48,30 @@ usr_docs: doxyfile_tui doxyfile_py doxyfile
 	echo "Generating GUI documentation" ;					\
 	echo "===========================================" ;			\
 	$(DOXYGEN) doxyfile ; 							\
-	rm -f $(top_builddir)/src/GEOM_SWIG/geompy.py
+	rm -f ./geompy.py
 
 docs: usr_docs
 
 clean-local:
 	@for filen in `find . -maxdepth 1` ; do					\
 	  case $${filen} in							\
-	    ./Makefile | ./doxyfile | ./doxyfile_py | ./doxyfile_tui ) ;;	\
-	    . | .. | ./static ) ;;								\
+	    ./Makefile* | ./doxyfile* | ./images | ./input | ./static ) ;;	\
+	    . | .. ) ;;								\
 	    *) echo "Removing $${filen}" ; rm -rf $${filen} ;;			\
 	  esac ;								\
 	done ;
 
-install-data-local: usr_docs
-	$(INSTALL) -d $(DESTDIR)$(docdir)/gui/GEOM
-	@for filen in `find . -maxdepth 1` ; do							\
+install-data-local:
+	@if [ -e main.html ]; then \
+	$(INSTALL) -d $(DESTDIR)$(docdir)/gui/GEOM ; \
+	for filen in `find . -maxdepth 1` ; do							\
 	  case $${filen} in									\
-	    ./Makefile | ./doxyfile | ./doxyfile_py | ./doxyfile_tui ) ;;			\
-	    ./doxyfile.bak | ./doxyfile_py.bak | ./doxyfile_tui.bak ) ;;			\
+	    ./Makefile* | ./doxyfile* ) ;;			\
 	    . | .. | ./static ) ;;										\
 	    *) echo "Installing $${filen}" ; cp -rp $${filen} $(DESTDIR)$(docdir)/gui/GEOM ;;	\
 	  esac ;										\
-	done ;
+	done ; \
+	fi
 
 uninstall-local:
 	rm -rf $(DESTDIR)$(docdir)/gui/GEOM
