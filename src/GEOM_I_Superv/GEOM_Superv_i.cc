@@ -234,8 +234,12 @@ void GEOM_Superv_i::getBasicOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IBasicOperations interface
-  if (CORBA::is_nil(myBasicOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myBasicOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myBasicOp = myGeomEngine->GetIBasicOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -246,8 +250,12 @@ void GEOM_Superv_i::get3DPrimOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_I3DPrimOperations interface
-  if (CORBA::is_nil(my3DPrimOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(my3DPrimOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     my3DPrimOp = myGeomEngine->GetI3DPrimOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -258,8 +266,12 @@ void GEOM_Superv_i::getBoolOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IBooleanOperations interface
-  if (CORBA::is_nil(myBoolOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myBoolOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myBoolOp = myGeomEngine->GetIBooleanOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -270,8 +282,12 @@ void GEOM_Superv_i::getInsOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IInsertOperations interface
-  if (CORBA::is_nil(myInsOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myInsOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myInsOp = myGeomEngine->GetIInsertOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -282,8 +298,12 @@ void GEOM_Superv_i::getTransfOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_ITransformOperations interface
-  if (CORBA::is_nil(myTransfOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myTransfOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myTransfOp = myGeomEngine->GetITransformOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -294,8 +314,12 @@ void GEOM_Superv_i::getShapesOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IShapesOperations interface
-  if (CORBA::is_nil(myShapesOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myShapesOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myShapesOp = myGeomEngine->GetIShapesOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -306,8 +330,12 @@ void GEOM_Superv_i::getBlocksOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IBlocksOperations interface
-  if (CORBA::is_nil(myBlocksOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myBlocksOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myBlocksOp = myGeomEngine->GetIBlocksOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -318,8 +346,12 @@ void GEOM_Superv_i::getCurvesOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_ICurvesOperations interface
-  if (CORBA::is_nil(myCurvesOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myCurvesOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myCurvesOp = myGeomEngine->GetICurvesOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -330,8 +362,12 @@ void GEOM_Superv_i::getLocalOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_ILocalOperations interface
-  if (CORBA::is_nil(myLocalOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myLocalOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myLocalOp = myGeomEngine->GetILocalOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -342,8 +378,12 @@ void GEOM_Superv_i::getGroupOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IGroupOperations interface
-  if (CORBA::is_nil(myGroupOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myGroupOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myGroupOp = myGeomEngine->GetIGroupOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -354,8 +394,12 @@ void GEOM_Superv_i::getAdvancedOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IAdvancedOperations interface
-  if (CORBA::is_nil(myAdvancedOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myAdvancedOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);    
     myAdvancedOp = myGeomEngine->GetIAdvancedOperations(myStudyID);
+  }
 }
 
 //=============================================================================
