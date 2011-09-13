@@ -61,15 +61,14 @@ libGEOMBase_la_CPPFLAGS =		\
 	$(GUI_CXXFLAGS)			\
 	$(CORBA_CXXFLAGS)		\
 	$(CORBA_INCLUDES)		\
+	$(OPENCV_INCLUDES)		\
 	-I$(srcdir)/../OBJECT		\
 	-I$(srcdir)/../GEOMClient	\
 	-I$(srcdir)/../GEOMImpl		\
 	-I$(srcdir)/../GEOMGUI		\
 	-I$(srcdir)/../DlgRef		\
 	-I$(top_builddir)/src/DlgRef	\
-	-I$(top_builddir)/idl		\
-	-I/home/palmco/OpenCV/OpenCV-2.3.0/install/include/opencv \
-	-I/home/palmco/OpenCV/OpenCV-2.3.0/install/include
+	-I$(top_builddir)/idl		
 
 libGEOMBase_la_LDFLAGS  =		\
 	../../idl/libSalomeIDLGEOM.la	\
@@ -78,5 +77,4 @@ libGEOMBase_la_LDFLAGS  =		\
 	$(KERNEL_LDFLAGS) -lOpUtil	\
 	$(GUI_LDFLAGS) -lsuit -lOCCViewer -lVTKViewer -lSVTK -lSalomePrs -lSalomeApp -lCAM \
 	$(CAS_LDPATH) -lTKPrim		\
-	-L/home/palmco/OpenCV/OpenCV-2.3.0/install/lib -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy -lopencv_flann  
-
+	$(OPENCV_LIBS)

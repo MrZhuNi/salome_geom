@@ -93,6 +93,7 @@ libBasicGUI_la_CPPFLAGS =			\
 	$(GUI_CXXFLAGS)				\
 	$(CORBA_CXXFLAGS)			\
 	$(CORBA_INCLUDES)			\
+	$(OPENCV_INCLUDES)			\
 	-I$(srcdir)/../OBJECT			\
 	-I$(srcdir)/../DlgRef			\
 	-I$(srcdir)/../GEOMGUI			\
@@ -101,9 +102,7 @@ libBasicGUI_la_CPPFLAGS =			\
 	-I$(srcdir)/../GEOMImpl			\
 	-I$(srcdir)/../GEOMClient		\
 	-I$(top_builddir)/src/DlgRef		\
-	-I$(top_builddir)/idl			\
-	-I/home/palmco/OpenCV/OpenCV-2.3.0/install/include/opencv \
-	-I/home/palmco/OpenCV/OpenCV-2.3.0/install/include
+	-I$(top_builddir)/idl
 
 
 libBasicGUI_la_LDFLAGS  =					\
@@ -112,4 +111,4 @@ libBasicGUI_la_LDFLAGS  =					\
 	../GEOMGUI/libGEOM.la					\
 	$(CAS_LDFLAGS) -lTKGeomBase                             \
 	$(GUI_LDFLAGS) -lsuit					\
-	-L/home/palmco/OpenCV/OpenCV-2.3.0/install/lib -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy -lopencv_flann  
+	$(OPENCV_LIBS) 
