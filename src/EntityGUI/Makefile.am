@@ -33,20 +33,23 @@ salomeinclude_HEADERS =			\
 	EntityGUI_Widgets.h		\
 	EntityGUI_SketcherDlg.h		\
 	EntityGUI_3DSketcherDlg.h	\
-	EntityGUI_SubShapeDlg.h	
+	EntityGUI_SubShapeDlg.h		\
+	EntityGUI_FeatureDetectorDlg.h	
 
 dist_libEntityGUI_la_SOURCES = 		\
 	EntityGUI.cxx			\
 	EntityGUI_Widgets.cxx		\
 	EntityGUI_SketcherDlg.cxx	\
 	EntityGUI_3DSketcherDlg.cxx	\
-	EntityGUI_SubShapeDlg.cxx
+	EntityGUI_SubShapeDlg.cxx	\
+	EntityGUI_FeatureDetectorDlg.cxx	
 
 MOC_FILES =				\
 	EntityGUI_Widgets_moc.cxx	\
 	EntityGUI_SketcherDlg_moc.cxx	\
 	EntityGUI_3DSketcherDlg_moc.cxx	\
-	EntityGUI_SubShapeDlg_moc.cxx
+	EntityGUI_SubShapeDlg_moc.cxx	\
+	EntityGUI_FeatureDetectorDlg_moc.cxx	
 
 nodist_libEntityGUI_la_SOURCES =	\
 	 $(MOC_FILES)
@@ -88,8 +91,11 @@ libEntityGUI_la_CPPFLAGS =			\
 	-I$(srcdir)/../GEOMImpl			\
 	-I$(srcdir)/../GEOMFiltersSelection	\
 	-I$(srcdir)/../SKETCHER			\
+	-I$(srcdir)/../GEOM			\
 	-I$(top_builddir)/src/DlgRef		\
-	-I$(top_builddir)/idl
+	-I$(top_builddir)/idl			\
+	-I/home/palmco/OpenCV/OpenCV-2.3.0/install/include/opencv \
+	-I/home/palmco/OpenCV/OpenCV-2.3.0/install/include
 
 libEntityGUI_la_LDFLAGS  =					\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
@@ -97,5 +103,6 @@ libEntityGUI_la_LDFLAGS  =					\
 	../SKETCHER/libGEOMSketcher.la				\
 	../GEOMGUI/libGEOM.la 					\
 	$(QT_MT_LIBS)						\
-	$(CAS_TKTopAlgo) -lTKernel
+	$(CAS_TKTopAlgo) -lTKernel				\
+	-L/home/palmco/OpenCV/OpenCV-2.3.0/install/lib -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy -lopencv_flann  
 

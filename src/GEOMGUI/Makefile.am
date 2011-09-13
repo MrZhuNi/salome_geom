@@ -76,7 +76,9 @@ libGEOM_la_CPPFLAGS =				\
 	-I$(srcdir)/../GEOMClient		\
 	-I$(srcdir)/../GEOMImpl			\
 	-I$(top_builddir)/idl                   \
-	-I$(top_builddir)
+	-I$(top_builddir)                       \   
+	-I/home/palmco/OpenCV/OpenCV-2.3.0/install/include/opencv \
+	-I/home/palmco/OpenCV/OpenCV-2.3.0/install/include
 
 libGEOM_la_LDFLAGS =						\
 	$(PYTHON_LIBS)						\
@@ -84,7 +86,9 @@ libGEOM_la_LDFLAGS =						\
 	../GEOMClient/libGEOMClient.la				\
 	../OBJECT/libGEOMObject.la				\
 	$(KERNEL_LDFLAGS) -lSalomeLifeCycleCORBA -lSalomeNS -lSalomeDSClient		\
-	$(GUI_LDFLAGS) -lOCCViewer -lVTKViewer -lCAM -lSOCC -lSVTK -lEvent -lSalomePrs -lstd
+	$(GUI_LDFLAGS) -lOCCViewer -lVTKViewer -lCAM -lSOCC -lSVTK -lEvent -lSalomePrs -lstd	\
+	-L/home/palmco/OpenCV/OpenCV-2.3.0/install/lib -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy -lopencv_flann  
+
 # -lSalomeApp 
 # -lToolsGUI
 #	$(CORBA_LIBS) \
