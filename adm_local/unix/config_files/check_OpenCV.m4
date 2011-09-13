@@ -46,8 +46,8 @@ if test "$with_opencv" != "no" ; then
   fi
 
   if test "$OPENCV_HOME" == "" ; then
-    if test "x$OPENCVHOME" != "x" ; then
-      OPENCV_HOME=$OPENCVHOME
+    if test "x$OPENCV_INSTALL_DIR" != "x" ; then
+      OPENCV_HOME=$OPENCV_INSTALL_DIR
     fi
   fi
 
