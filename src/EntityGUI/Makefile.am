@@ -83,6 +83,7 @@ libEntityGUI_la_CPPFLAGS =			\
 	$(GUI_CXXFLAGS)				\
 	$(CORBA_CXXFLAGS)			\
 	$(CORBA_INCLUDES)			\
+	$(OPENCV_INCLUDES)			\
 	-I$(srcdir)/../GEOMGUI			\
 	-I$(srcdir)/../DlgRef			\
 	-I$(srcdir)/../GEOMBase 		\
@@ -93,9 +94,7 @@ libEntityGUI_la_CPPFLAGS =			\
 	-I$(srcdir)/../SKETCHER			\
 	-I$(srcdir)/../GEOM			\
 	-I$(top_builddir)/src/DlgRef		\
-	-I$(top_builddir)/idl			\
-	-I/home/palmco/OpenCV/OpenCV-2.3.0/install/include/opencv \
-	-I/home/palmco/OpenCV/OpenCV-2.3.0/install/include
+	-I$(top_builddir)/idl
 
 libEntityGUI_la_LDFLAGS  =					\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
@@ -104,5 +103,4 @@ libEntityGUI_la_LDFLAGS  =					\
 	../GEOMGUI/libGEOM.la 					\
 	$(QT_MT_LIBS)						\
 	$(CAS_TKTopAlgo) -lTKernel				\
-	-L/home/palmco/OpenCV/OpenCV-2.3.0/install/lib -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy -lopencv_flann  
-
+	$(OPENCV_LIBS)

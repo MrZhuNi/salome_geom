@@ -75,8 +75,8 @@ libGEOM_la_CPPFLAGS =				\
 	-I$(srcdir)/../GEOMFiltersSelection	\
 	-I$(srcdir)/../GEOMClient		\
 	-I$(srcdir)/../GEOMImpl			\
-	-I$(top_builddir)/idl                   \
-	-I$(top_builddir)                       \   
+	-I$(top_builddir)/idl			\
+	-I$(top_builddir) 			\
 	-I/home/palmco/OpenCV/OpenCV-2.3.0/install/include/opencv \
 	-I/home/palmco/OpenCV/OpenCV-2.3.0/install/include
 
