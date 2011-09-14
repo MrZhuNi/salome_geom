@@ -516,10 +516,10 @@ void EntityGUI_FeatureDetectorDlg::setEndPnt(const QPoint& theEndPnt)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr EntityGUI_FeatureDetectorDlg::createOperation()
 {
-  if (myConstructorId == CORNERS)
+//   if (myConstructorId == CORNERS)
     return myGeomGUI->GetGeomGen()->GetIShapesOperations( getStudyId() );
-  else 
-    return myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
+//   else 
+//     return myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
 }
 
 //=================================================================================
@@ -529,6 +529,7 @@ GEOM::GEOM_IOperations_ptr EntityGUI_FeatureDetectorDlg::createOperation()
 bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 {
   MESSAGE("EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )")
+  
   bool res = false;
   SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
   OCCViewer_ViewPort3d*  vp             = ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
@@ -580,6 +581,9 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
   
   QRect aRect = QRect(myStartPnt, myEndPnt);
   
+  
+  GEOM::GEOM_IBasicOperations_var  aBasicOperations  = myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
+  GEOM::GEOM_IShapesOperations_var aShapesOperations = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
   if (myConstructorId == CORNERS)
   {
     if( !aRect.isEmpty() )
@@ -592,10 +596,7 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     CvPoint2D32f* corners     = aDetector->GetCorners();
     int cornerCount           = aDetector->GetCornerCount();
     
-    // Build the geom objects associated to the detected corners and returned by execute
-    GEOM::GEOM_IBasicOperations_var  aBasicOperations  = myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
-    GEOM::GEOM_IShapesOperations_var aShapesOperations = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
-    
+    // Build the geom objects associated to the detected corners and returned by execute   
     if( !aBasicOperations->_is_nil() && !aShapesOperations->_is_nil() ) 
     {
       GEOM::GEOM_Object_var  aGeomCorner;
@@ -642,8 +643,8 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
       aDetector->SetROI( aRect );
     }
     
-    GEOM::GEOM_IBasicOperations_var  aBasicOperations  = myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
-    GEOM::GEOM_ICurvesOperations_var aCurveOperations = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() );
+    GEOM::GEOM_ICurvesOperations_var aCurveOperations = myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
+//     GEOM::GEOM_ICurvesOperations::_narrow( getOperation() );
     
     aDetector->ComputeContours();
     std::vector< std::vector<cv::Point> >   contours  = aDetector->GetContours();
@@ -651,6 +652,11 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     
     std::vector< cv::Point >                contour;
     int idx = 0;
+    
+    GEOM::ListOfGO_var                      geomContours = new GEOM::ListOfGO();
+    int contourCount = 0;
+    
+    MESSAGE("hierarchy.size() =" << hierarchy.size()) 
     for( ; idx >= 0; idx = hierarchy[idx][0] )
     {
       contour = contours[idx];
@@ -659,6 +665,7 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
       GEOM::ListOfGO_var     geomContourPnts = new GEOM::ListOfGO();
       geomContourPnts->length( contour.size() );
 
+      std::cout<<"repere1"<<std::endl;
       int j = 0;
       for ( it=contour.begin() ; it < contour.end(); it++ )
       {
@@ -676,12 +683,24 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
         geomContourPnts[j] = aGeomContourPnt;
         j++;
       }
+      std::cout<<"repere2"<<std::endl;
       GEOM::GEOM_Object_var aWire = aCurveOperations->MakePolyline(geomContourPnts.in(), false);
 //       GEOM::GEOM_Object_var aWire = aCurveOperations->MakeSplineInterpolation(geomContourPnts.in(), false, true);
+      std::cout<<"repere3"<<std::endl;
       if ( !aWire->_is_nil() )
       {
-        objects.push_back( aWire._retn() );
+        geomContours->length(contourCount + 1);
+        geomContours[contourCount] = aWire;
+        contourCount++;
+//         objects.push_back( aWire._retn() );
       }
+    }
+    std::cout<<"repere4,  contourCount = "<<contourCount<<std::endl;
+    GEOM::GEOM_Object_var aContoursCompound = aShapesOperations->MakeCompound(geomContours);
+    std::cout<<"repere5"<<std::endl;
+    if ( !aContoursCompound->_is_nil() )
+    {
+      objects.push_back( aContoursCompound._retn() );
     }
 
     res=true;
