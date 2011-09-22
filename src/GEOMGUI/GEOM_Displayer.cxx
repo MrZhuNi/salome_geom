@@ -87,6 +87,8 @@
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopoDS.hxx>
 
+#include <Prs3d_ShadingAspect.hxx>
+
 // VTK Includes
 #include <vtkActorCollection.h>
 #include <vtkProperty.h>
@@ -312,6 +314,7 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   myColor = -1;
   // This color is used for shape displaying. If it is equal -1 then
   // default color is used.
+  myTexture = "";
 
   myWidth = -1;
   myType = -1;
@@ -721,6 +724,17 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
               useObjMarker = true;
             }
           }
+        }
+        if ( HasTexture() )
+        {
+          MESSAGE("GEOM_Displayer::Update HasTexture() == true")
+          AISShape->SetTextureMapOn();
+          AISShape->DisableTextureModulate();
+          AISShape->SetMaterial(Graphic3d_NOM_SATIN);
+          AISShape->SetDisplayMode( 3 );
+          AISShape->SetTextureFileName(TCollection_AsciiString(myTexture.c_str()));
+//           Attributes()->ShadingAspect()
+          MESSAGE("AISShape->TextureFile() = "<<AISShape->TextureFile())
         }
         else
         {
@@ -1516,6 +1530,31 @@ void GEOM_Displayer::UnsetColor()
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   QColor col = resMgr->colorValue( "Geometry", "shading_color", QColor( 255, 0, 0 ) );
   myShadingColor = SalomeApp_Tools::color( col );
+}
+
+//=================================================================
+/*!
+ *  GEOM_Displayer::SetTexture
+ *  Set color for shape displaying. If it is equal -1 then default color is used.
+ *  Available values are from Quantity_NameOfColor enumeration
+ */
+//=================================================================
+void GEOM_Displayer::SetTexture( const std::string& texureFileName )
+{
+  if(texureFileName!="")
+  {
+    myTexture = texureFileName;
+  }
+}
+
+bool GEOM_Displayer::HasTexture() const
+{
+  return myTexture != "";
+}
+
+std::string GEOM_Displayer::GetTexture() const
+{
+  return myTexture;
 }
 
 //=================================================================

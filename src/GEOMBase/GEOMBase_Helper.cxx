@@ -142,8 +142,10 @@ void GEOMBase_Helper::display( GEOM::GEOM_Object_ptr object, const bool updateVi
 {
   // Unset color of shape ( this color may be set during preview displaying )
   // Default color will be used
-  getDisplayer()->UnsetColor();
+//   getDisplayer()->UnsetColor();
   getDisplayer()->UnsetWidth();
+  
+  MESSAGE("GEOMBase_Helper::display myTexture = "<<getDisplayer()->GetTexture())
 
   // Enable activisation of selection
   getDisplayer()->SetToActivate( true );
@@ -832,9 +834,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
   bool result = false;
 
   try {
-    MESSAGE("publish ="<<publish<<"useTransaction ="<<useTransaction)
     if ( ( !publish && !useTransaction ) || openCommand() ) {
-      MESSAGE("Entered the if")
       SUIT_OverrideCursor wc;
       SUIT_Session::session()->activeApplication()->putInfo( "" );
       ObjectList objects;

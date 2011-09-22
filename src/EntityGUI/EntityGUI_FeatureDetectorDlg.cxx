@@ -65,10 +65,13 @@
 
 #include <Precision.hxx>
 
+#include <set>
+#include <utility>
+
 // Constructors
 enum{
-  CORNERS,
   CONTOURS,
+  CORNERS
 };
 
 enum {
@@ -117,8 +120,8 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   /***************************************************************/
   
   mainFrame()->GroupConstructors->setTitle(tr("GEOM_FEATURES"));
-  mainFrame()->RadioButton1->setText(tr("GEOM_CORNERS"));
-  mainFrame()->RadioButton2->setText(tr("GEOM_CONTOURS"));
+  mainFrame()->RadioButton1->setText(tr("GEOM_CONTOURS"));
+  mainFrame()->RadioButton2->setText(tr("GEOM_CORNERS"));
 //   mainFrame()->RadioButton2->setAttribute(Qt::WA_DeleteOnClose);
 //   mainFrame()->RadioButton2->close();
 //   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
@@ -140,7 +143,7 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   myPushButton->setIcon(image0);
   myPushButton->setCheckable(true);
   
-  mySnapshotLabel = new QLabel(tr("GEOM_DETECT_ZONE"), mySelectionGroup);
+  mySnapshotLabel = new QLabel(mySelectionGroup);
   mySelectGrpLayout->addWidget(mySnapshotLabel, 0);
   mySelectGrpLayout->addWidget(myPushButton, 0);
   mySelectGrpLayout->addStretch(1);
@@ -268,7 +271,7 @@ void EntityGUI_FeatureDetectorDlg::Init()
   myY2->setEnabled(false);
   myZ2->setEnabled(false);
   
-  initName(tr("GEOM_CORNERS")); 
+  initName(tr("GEOM_CONTOURS")); 
   resize(100,100);
   
   myViewGroup->RadioButton1->setChecked(true);
@@ -284,6 +287,8 @@ void EntityGUI_FeatureDetectorDlg::Init()
   
   myGeomGUI->SetWorkingPlane( aGlobalCS );
   myGeomGUI->ActiveWorkingPlane();
+  
+  ConstructorsClicked(myConstructorId);
   
 //   SUIT_ViewWindow*       theViewWindow    = getDesktop()->activeWindow();
 //   OCCViewer_Viewer*      anOCCViewer      = ( (OCCViewer_ViewManager*)( theViewWindow->getViewManager() ) )->getOCCViewer();
@@ -516,10 +521,12 @@ void EntityGUI_FeatureDetectorDlg::setEndPnt(const QPoint& theEndPnt)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr EntityGUI_FeatureDetectorDlg::createOperation()
 {
-//   if (myConstructorId == CORNERS)
-    return myGeomGUI->GetGeomGen()->GetIShapesOperations( getStudyId() );
-//   else 
-//     return myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
+  GEOM::GEOM_IOperations_ptr anOp;
+  if (myConstructorId == CORNERS || myConstructorId == CONTOURS)
+    anOp=myGeomGUI->GetGeomGen()->GetIShapesOperations( getStudyId() );
+  else 
+    anOp=myGeomGUI->GetGeomGen()->GetIBlocksOperations( getStudyId() );  
+  return anOp;
 }
 
 //=================================================================================
@@ -665,8 +672,9 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
       GEOM::ListOfGO_var     geomContourPnts = new GEOM::ListOfGO();
       geomContourPnts->length( contour.size() );
 
-      std::cout<<"repere1"<<std::endl;
       int j = 0;
+      std::set< std::vector<int> > existing_points;
+      std::pair< std::set< std::vector<int> >::iterator,bool > pnt_it;
       for ( it=contour.begin() ; it < contour.end(); it++ )
       {
 //         gp_Pnt  aContourPnt = EntityGUI::ConvertClickToPoint(viewLeft + it->x*imgZoomRatio, viewTop + it->y*imgZoomRatio, vp->getView());
@@ -675,18 +683,24 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 //         double z = aContourPnt.Z();
         
          // When using the new way with textures on shapes we just have to do the following
+//         double pnt_array[] = {it->x,it->y}; 
+//         std::vector<int> pnt (pnt_array, pnt_array + sizeof(pnt_array) / sizeof(double) );
+// 
+//         pnt_it=existing_points.insert(pnt);
+//         if (pnt_it.second == true)
+//         {
+//           MESSAGE("point absent du contour insere")
         double x = it->x;
         double y = height - it->y;
         double z = 0;
-
         aGeomContourPnt    = aBasicOperations->MakePointXYZ( x,y,z );
         geomContourPnts[j] = aGeomContourPnt;
         j++;
+//         }
       }
-      std::cout<<"repere2"<<std::endl;
       GEOM::GEOM_Object_var aWire = aCurveOperations->MakePolyline(geomContourPnts.in(), false);
+//       GEOM::GEOM_Object_var aContourCompound = aShapesOperations->MakeCompound(geomContourPnts);
 //       GEOM::GEOM_Object_var aWire = aCurveOperations->MakeSplineInterpolation(geomContourPnts.in(), false, true);
-      std::cout<<"repere3"<<std::endl;
       if ( !aWire->_is_nil() )
       {
         geomContours->length(contourCount + 1);
@@ -694,15 +708,48 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
         contourCount++;
 //         objects.push_back( aWire._retn() );
       }
+//        if ( !aContourCompound->_is_nil() )
+//       {
+//         geomContours->length(contourCount + 1);
+//         geomContours[contourCount] = aContourCompound;
+//         contourCount++;
+// //         objects.push_back( aWire._retn() );
+//       }
     }
-    std::cout<<"repere4,  contourCount = "<<contourCount<<std::endl;
     GEOM::GEOM_Object_var aContoursCompound = aShapesOperations->MakeCompound(geomContours);
-    std::cout<<"repere5"<<std::endl;
     if ( !aContoursCompound->_is_nil() )
     {
       objects.push_back( aContoursCompound._retn() );
     }
 
+    res=true;
+  }
+  else if (myConstructorId == 2)
+  {
+//     gp_Pnt p1(0,0,0);
+//     gp_Pnt p2(0,height,0);
+//     gp_Pnt p3(width,height,0);
+//     gp_Pnt p4(width,0,0);
+    
+    GEOM::GEOM_Object_var P1 = aBasicOperations->MakePointXYZ( 0,0,0 );
+    GEOM::GEOM_Object_var P2 = aBasicOperations->MakePointXYZ( 0,height,0 );
+    GEOM::GEOM_Object_var P3 = aBasicOperations->MakePointXYZ( width,height,0 );
+    GEOM::GEOM_Object_var P4 = aBasicOperations->MakePointXYZ( width,0,0 );
+    
+    GEOM::GEOM_IBlocksOperations_var aBlocksOperations = myGeomGUI->GetGeomGen()->GetIBlocksOperations( getStudyId() );
+    GEOM::GEOM_Object_var aFace = aBlocksOperations->MakeQuad4Vertices(P1,P2,P3,P4);
+    getDisplayer()->SetTexture(theImgFileName.toStdString());
+//     getDisplayer()->SetDisplayMode(3);
+    vp->getView()->SetSurfaceDetail(V3d_TEX_ALL);
+//     OCCViewer_Viewer*              anOCCViewer =((OCCViewer_ViewWindow*)theViewWindow)->getViewManager())->getOCCViewer();
+//     Handle(AIS_InteractiveContext) aContext = anOCCViewer->getAISContext(); 
+    
+    MESSAGE("EntityGUI_FeatureDetectorDlg::execute() theImgFileName = "<<theImgFileName.toStdString());
+    if ( !aFace->_is_nil() )
+    {
+      objects.push_back( aFace._retn() );
+    }
+    
     res=true;
   }
 //   else
