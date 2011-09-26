@@ -64,6 +64,7 @@ namespace GEOMOp {
     OpWireframe         = 2200,   // POPUP MENU - DISPLAY MODE - WIREFRAME
     OpShading           = 2201,   // POPUP MENU - DISPLAY MODE - SHADING
     OpVectors           = 2202,   // POPUP MENU - DISPLAY MODE - SHOW EDGE DIRECTION
+    OpTexture           = 2203,   // POPUP MENU - DISPLAY MODE - TEXTURE
     // BasicGUI ------------------//--------------------------------
     OpPoint             = 3000,   // MENU NEW ENTITY - BASIC - POINT
     OpLine              = 3001,   // MENU NEW ENTITY - BASIC - LINE

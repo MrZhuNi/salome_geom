@@ -652,6 +652,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           } else
             useObjColor = true;
         }else {
+          MESSAGE("myDisplayMode = "<< myDisplayMode)
           AISShape->SetDisplayMode( myDisplayMode );
           AISShape->SetShadingColor( myShadingColor );
         }
@@ -731,6 +732,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           AISShape->SetTextureFileName(TCollection_AsciiString(myTexture.c_str()));
           AISShape->SetTextureMapOn();
           AISShape->DisableTextureModulate();
+          AISShape->SetDisplayMode(3);
 //           AISShape->SetDisplayMode( (Standard_Integer) StdSelect_DM_HLR );
         }
         else

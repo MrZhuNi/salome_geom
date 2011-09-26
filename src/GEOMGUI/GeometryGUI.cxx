@@ -428,6 +428,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpSwitchVectors:    // MENU VIEW - VECTOR MODE
   case GEOMOp::OpWireframe:        // POPUP MENU - WIREFRAME
   case GEOMOp::OpShading:          // POPUP MENU - SHADING
+  case GEOMOp::OpTexture:          // POPUP MENU - TEXTURE
   case GEOMOp::OpVectors:          // POPUP MENU - VECTORS
     libName = "DisplayGUI";
     break;
@@ -797,6 +798,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createGeomAction( GEOMOp::OpWireframe,        "POP_WIREFRAME", "", 0, true );
   createGeomAction( GEOMOp::OpShading,          "POP_SHADING", "", 0, true );
+  createGeomAction( GEOMOp::OpTexture,          "POP_TEXTURE", "", 0, true );
   createGeomAction( GEOMOp::OpVectors,          "POP_VECTORS", "", 0, true );
   createGeomAction( GEOMOp::OpDeflection,       "POP_DEFLECTION" );
   createGeomAction( GEOMOp::OpColor,            "POP_COLOR" );
@@ -1146,6 +1148,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpShading ), dispmodeId, -1 ); // shading
   mgr->setRule( action( GEOMOp::OpShading ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpShading ), clientOCCorVTK + " and displaymode='Shading'", QtxPopupMgr::ToggleRule );
+  mgr->insert( action(  GEOMOp::OpTexture ), dispmodeId, -1 ); // wireframe
+  mgr->setRule( action( GEOMOp::OpTexture ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpTexture), clientOCCorVTK + " and displaymode='Texture'", QtxPopupMgr::ToggleRule );
   mgr->insert( separator(), dispmodeId, -1 );
   mgr->insert( action(  GEOMOp::OpVectors ), dispmodeId, -1 ); // vectors
   mgr->setRule( action( GEOMOp::OpVectors ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );

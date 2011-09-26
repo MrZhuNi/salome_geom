@@ -128,6 +128,9 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpShading:        // POPUP MENU - DISPLAY MODE - SHADING
     ChangeDisplayMode( 1 );
     break;
+  case GEOMOp::OpTexture:        // POPUP MENU - DISPLAY MODE - TEXTURE
+    ChangeDisplayMode( 3 );
+    break;
   case GEOMOp::OpVectors:        // POPUP MENU - DISPLAY MODE - SHOW EDGE DIRECTION
     ChangeDisplayMode( 2 );
     break;
@@ -543,20 +546,22 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
             ic->SetDisplayMode( interIter.Value(), AIS_WireFrame, false );
           else if ( mode == 1 )
             ic->SetDisplayMode( interIter.Value(), AIS_Shaded, false );
-          if (mode == 2 ) {
+          else if ( mode == 3 )
+            ic->SetDisplayMode( interIter.Value(), AIS_ExactHLR, false );
+          else if (mode == 2 ) {
             Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
             if ( !aSh.IsNull() ) {
-	      vectorMode = !aSh->isShowVectors();      
+              vectorMode = !aSh->isShowVectors();      
               aSh->SetDisplayVectors(vectorMode);
               ic->RecomputePrsOnly(interIter.Value());
             }
           }
         }
-	if(mode == 0 || mode == 1) {
-	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),DISPLAY_MODE_PROP, mode);
-	} else if (mode == 2) {
-	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),VECTOR_MODE_PROP, vectorMode);
-	}
+        if(mode == 0 || mode == 1) {
+          aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),DISPLAY_MODE_PROP, mode);
+        } else if (mode == 2) {
+          aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),VECTOR_MODE_PROP, vectorMode);
+        }
       }
     }
     ic->UpdateCurrentViewer();
