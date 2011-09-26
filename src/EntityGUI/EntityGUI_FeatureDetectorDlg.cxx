@@ -60,6 +60,7 @@
 
 #include <AIS_TexturedShape.hxx>
 #include <TCollection_AsciiString.hxx>
+#include <StdSelect_DisplayMode.hxx>
 
 #include <Graphic3d_MaterialAspect.hxx>
 
@@ -739,8 +740,7 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     GEOM::GEOM_IBlocksOperations_var aBlocksOperations = myGeomGUI->GetGeomGen()->GetIBlocksOperations( getStudyId() );
     GEOM::GEOM_Object_var aFace = aBlocksOperations->MakeQuad4Vertices(P1,P2,P3,P4);
     getDisplayer()->SetTexture(theImgFileName.toStdString());
-//     getDisplayer()->SetDisplayMode(3);
-    vp->getView()->SetSurfaceDetail(V3d_TEX_ALL);
+    getDisplayer()->SetDisplayMode((Standard_Integer) StdSelect_DM_HLR);
 //     OCCViewer_Viewer*              anOCCViewer =((OCCViewer_ViewWindow*)theViewWindow)->getViewManager())->getOCCViewer();
 //     Handle(AIS_InteractiveContext) aContext = anOCCViewer->getAISContext(); 
     

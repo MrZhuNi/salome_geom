@@ -73,6 +73,7 @@
 #include <Prs3d_PointAspect.hxx>
 #include <StdSelect_TypeOfEdge.hxx>
 #include <StdSelect_TypeOfFace.hxx>
+#include <StdSelect_DisplayMode.hxx>
 #include <TopoDS_Face.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom_Plane.hxx>
@@ -727,14 +728,10 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         }
         if ( HasTexture() )
         {
-          MESSAGE("GEOM_Displayer::Update HasTexture() == true")
+          AISShape->SetTextureFileName(TCollection_AsciiString(myTexture.c_str()));
           AISShape->SetTextureMapOn();
           AISShape->DisableTextureModulate();
-          AISShape->SetMaterial(Graphic3d_NOM_SATIN);
-          AISShape->SetDisplayMode( 3 );
-          AISShape->SetTextureFileName(TCollection_AsciiString(myTexture.c_str()));
-//           Attributes()->ShadingAspect()
-          MESSAGE("AISShape->TextureFile() = "<<AISShape->TextureFile())
+//           AISShape->SetDisplayMode( (Standard_Integer) StdSelect_DM_HLR );
         }
         else
         {
@@ -922,6 +919,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           }
         }
         // AISShape->SetName(???); ??? necessary to set name ???
+//         AISShape->SetDisplayMode(3);
         occPrs->AddObject( AISShape );
 
         // In accordance with ToActivate() value object will be activated/deactivated

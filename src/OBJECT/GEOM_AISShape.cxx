@@ -207,6 +207,11 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
       break;
     }
+  case StdSelect_DM_HLR:
+    {
+      AIS_TexturedShape::Compute(aPresentationManager, aPrs, 3);
+      break;
+    }
   }
 
   if (isShowVectors())
