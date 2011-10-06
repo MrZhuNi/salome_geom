@@ -34,7 +34,8 @@ salomeinclude_HEADERS =			\
 	EntityGUI_SketcherDlg.h		\
 	EntityGUI_3DSketcherDlg.h	\
 	EntityGUI_SubShapeDlg.h		\
-	EntityGUI_FeatureDetectorDlg.h	
+	EntityGUI_FeatureDetectorDlg.h	\
+	EntityGUI_PictureImportDlg.h
 
 dist_libEntityGUI_la_SOURCES = 		\
 	EntityGUI.cxx			\
@@ -42,14 +43,16 @@ dist_libEntityGUI_la_SOURCES = 		\
 	EntityGUI_SketcherDlg.cxx	\
 	EntityGUI_3DSketcherDlg.cxx	\
 	EntityGUI_SubShapeDlg.cxx	\
-	EntityGUI_FeatureDetectorDlg.cxx	
+	EntityGUI_FeatureDetectorDlg.cxx\
+	EntityGUI_PictureImportDlg.cxx
 
 MOC_FILES =				\
 	EntityGUI_Widgets_moc.cxx	\
 	EntityGUI_SketcherDlg_moc.cxx	\
 	EntityGUI_3DSketcherDlg_moc.cxx	\
 	EntityGUI_SubShapeDlg_moc.cxx	\
-	EntityGUI_FeatureDetectorDlg_moc.cxx	
+	EntityGUI_FeatureDetectorDlg_moc.cxx \
+	EntityGUI_PictureImportDlg_moc.cxx	
 
 nodist_libEntityGUI_la_SOURCES =	\
 	 $(MOC_FILES)

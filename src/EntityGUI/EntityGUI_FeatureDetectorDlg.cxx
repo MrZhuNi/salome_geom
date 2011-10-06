@@ -43,7 +43,8 @@
 #include <SUIT_Session.h>
 #include <SUIT_ViewWindow.h>
 #include <SalomeApp_Application.h>
-// #include <LightApp_Application.h>
+#include <LightApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
 #include <SalomeApp_Study.h>
 
@@ -125,8 +126,8 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   mainFrame()->RadioButton2->setText(tr("GEOM_CORNERS"));
 //   mainFrame()->RadioButton2->setAttribute(Qt::WA_DeleteOnClose);
 //   mainFrame()->RadioButton2->close();
-//   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
-//   mainFrame()->RadioButton3->close();
+  mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
+  mainFrame()->RadioButton3->close();
   
   myViewGroup = new DlgRef_3Radio(centralWidget());
   myViewGroup->GroupBox1->setTitle(tr("GEOM_VIEW"));
@@ -139,15 +140,19 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   myViewButtonGroup->addButton( myViewGroup->RadioButton3, XZ ); // Left View
   
   mySelectionGroup = new QGroupBox(tr("GEOM_DETECT"), centralWidget());
-  QHBoxLayout* mySelectGrpLayout = new QHBoxLayout(mySelectionGroup);
+  QGridLayout* mySelectGrpLayout = new QGridLayout(mySelectionGroup);
   myPushButton = new QPushButton(mySelectionGroup);
   myPushButton->setIcon(image0);
   myPushButton->setCheckable(true);
   
+  mySelButton = new QPushButton(mySelectionGroup);
+  myLineEdit = new QLineEdit(mySelectionGroup);
+  
   mySnapshotLabel = new QLabel(mySelectionGroup);
-  mySelectGrpLayout->addWidget(mySnapshotLabel, 0);
-  mySelectGrpLayout->addWidget(myPushButton, 0);
-  mySelectGrpLayout->addStretch(1);
+  mySelectGrpLayout->addWidget(myLineEdit,      0, 0);
+  mySelectGrpLayout->addWidget(mySelButton,     0, 1);
+  mySelectGrpLayout->addWidget(mySnapshotLabel, 1, 0);
+  mySelectGrpLayout->addWidget(myPushButton,    1, 1);
   
   myCoordGrp1 = new QGroupBox(tr("GEOM_SCALING"), centralWidget());
   QGridLayout* myCoordGrpLayout = new QGridLayout(myCoordGrp1);
@@ -241,10 +246,13 @@ void EntityGUI_FeatureDetectorDlg::Init()
   connect( this,              SIGNAL(constructorsClicked(int)),  this, SLOT(ConstructorsClicked(int)));
   
   connect( myPushButton,      SIGNAL( toggled( bool ) ),         this, SLOT( onButtonToggled( bool ) ) );
+  connect( mySelButton,       SIGNAL( clicked() ),               this, SLOT( SetEditCurrentArgument() ) );
   connect( myPushButton1,     SIGNAL( clicked() ),               this, SLOT( SetEditCurrentArgument() ) );
   connect( myPushButton2,     SIGNAL( clicked() ),               this, SLOT( SetEditCurrentArgument() ) );
   
   connect( myViewButtonGroup, SIGNAL( buttonClicked( int ) ),    this, SLOT( onViewClicked( int ) ) );
+  
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),this, SLOT( SelectionIntoArgument() ) );
   
 //   /* Get setting of step value from file configuration */
 //   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
@@ -331,30 +339,44 @@ void EntityGUI_FeatureDetectorDlg::Init()
 void EntityGUI_FeatureDetectorDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  if ( send == myPushButton1 ) { 
-    myPushButton2->setDown(false);
-    myX2->setEnabled(false);
-    myY2->setEnabled(false);
-    myZ2->setEnabled(false);
-    myX->setEnabled(true);
-    myX->setFocus();
-    myY->setEnabled(true);
-    myZ->setEnabled(true);
-    
+  if ( send == mySelButton ) { 
+    myEditCurrentArgument = myLineEdit;
+    myLineEdit->setEnabled(true);
   }
-  else if ( send == myPushButton2 ) {
-    myPushButton1->setDown(false);
-    myX2->setEnabled(true);
-    myX2->setFocus();
-    myY2->setEnabled(true);
-    myZ2->setEnabled(true);
-    myX->setEnabled(false);
-    myY->setEnabled(false);
-    myZ->setEnabled(false);
-  }
-  
   send->setDown(true);
 }
+
+//=================================================================================
+// function : SelectionIntoArgument()
+// purpose  : Called when selection as changed or other case
+//=================================================================================
+void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
+{
+  myEditCurrentArgument->setText( "" );
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
+    if (myEditCurrentArgument == myLineEdit) 
+      myFace.nullify();
+    return;
+  }
+
+  TopAbs_ShapeEnum aNeedType = TopAbs_FACE ;
+  GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
+  TopoDS_Shape aShape;
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
+    myEditCurrentArgument->setText( aName );
+    if ( myEditCurrentArgument == myLineEdit ) {
+      myFace = aSelectedObject;
+    } 
+  }
+  
+}
+
 
 //=================================================================================
 // function : OnPointSelected
@@ -522,12 +544,7 @@ void EntityGUI_FeatureDetectorDlg::setEndPnt(const QPoint& theEndPnt)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr EntityGUI_FeatureDetectorDlg::createOperation()
 {
-  GEOM::GEOM_IOperations_ptr anOp;
-  if (myConstructorId == CORNERS || myConstructorId == CONTOURS)
-    anOp=myGeomGUI->GetGeomGen()->GetIShapesOperations( getStudyId() );
-  else 
-    anOp=myGeomGUI->GetGeomGen()->GetIBlocksOperations( getStudyId() );  
-  return anOp;
+  return myGeomGUI->GetGeomGen()->GetIShapesOperations( getStudyId() );
 }
 
 //=================================================================================
@@ -725,38 +742,6 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 
     res=true;
   }
-  else if (myConstructorId == 2)
-  {
-//     gp_Pnt p1(0,0,0);
-//     gp_Pnt p2(0,height,0);
-//     gp_Pnt p3(width,height,0);
-//     gp_Pnt p4(width,0,0);
-    
-    GEOM::GEOM_Object_var P1 = aBasicOperations->MakePointXYZ( 0,0,0 );
-    GEOM::GEOM_Object_var P2 = aBasicOperations->MakePointXYZ( 0,height,0 );
-    GEOM::GEOM_Object_var P3 = aBasicOperations->MakePointXYZ( width,height,0 );
-    GEOM::GEOM_Object_var P4 = aBasicOperations->MakePointXYZ( width,0,0 );
-    
-    GEOM::GEOM_IBlocksOperations_var aBlocksOperations = myGeomGUI->GetGeomGen()->GetIBlocksOperations( getStudyId() );
-    GEOM::GEOM_Object_var aFace = aBlocksOperations->MakeQuad4Vertices(P1,P2,P3,P4);
-    getDisplayer()->SetTexture(theImgFileName.toStdString());
-    getDisplayer()->SetDisplayMode( 3 );
-//     OCCViewer_Viewer*              anOCCViewer =((OCCViewer_ViewWindow*)theViewWindow)->getViewManager())->getOCCViewer();
-//     Handle(AIS_InteractiveContext) aContext = anOCCViewer->getAISContext(); 
-    
-    MESSAGE("EntityGUI_FeatureDetectorDlg::execute() theImgFileName = "<<theImgFileName.toStdString());
-    if ( !aFace->_is_nil() )
-    {
-      objects.push_back( aFace._retn() );
-    }
-    
-    res=true;
-  }
-//   else
-//   {
-//     
-//     res = true;
-//   }
   
   return res;
 }

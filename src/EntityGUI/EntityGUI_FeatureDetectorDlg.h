@@ -29,6 +29,7 @@ class QPushButton;
 class QLabel;
 class QPoint;
 class DlgRef_3Radio;
+class DlgRef_1Sel;
 
 class gp_Pnt;
 
@@ -60,6 +61,7 @@ private:
   
 private slots:
   void                               SetEditCurrentArgument();
+  void                               SelectionIntoArgument();
   void                               ConstructorsClicked( int );
   void                               onViewClicked( int );
   void                               onButtonToggled( bool ); 
@@ -68,6 +70,7 @@ private slots:
   
   
 private:
+  GEOM::GeomObjPtr                   myFace;
   
   int                                myConstructorId;
   
@@ -75,6 +78,8 @@ private:
   QGroupBox*                         mySelectionGroup;
   
   QLabel*                            mySnapshotLabel;
+  
+  DlgRef_1Sel*                       mySelWidget;
   
   QLineEdit*                         myX;
   QLineEdit*                         myY;
@@ -99,6 +104,10 @@ private:
   gp_Ax3                             aGlobalCS;
   
   QPushButton*                       myPushButton;
+  QPushButton*                       mySelButton;
+  
+  QLineEdit*                         myLineEdit;
+  
   QPushButton*                       myPushButton1;
   QPushButton*                       myPushButton2;
   

@@ -52,6 +52,7 @@
 #include "EntityGUI_3DSketcherDlg.h"      // Sketcher
 #include "EntityGUI_SubShapeDlg.h"        // Method SUBSHAPE
 #include "EntityGUI_FeatureDetectorDlg.h" // Feature Detection
+#include "EntityGUI_PictureImportDlg.h"   // Import Picture in viewer
 
 //=======================================================================
 // function : EntityGUI()
@@ -95,8 +96,11 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpExplode:    // EXPLODE
     aDlg = new EntityGUI_SubShapeDlg( getGeometryGUI(), parent );
     break;
-  case GEOMOp::OpFeatureDetect:    // CORNER DETECTION
+  case GEOMOp::OpFeatureDetect:    // FEATURE DETECTION
     aDlg = new EntityGUI_FeatureDetectorDlg( getGeometryGUI(), parent );
+    break;
+  case GEOMOp::OpPictureImport:    // IMPORT PICTURE IN VIEWER
+    aDlg = new EntityGUI_PictureImportDlg( getGeometryGUI(), parent );
     break;
   default:
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
