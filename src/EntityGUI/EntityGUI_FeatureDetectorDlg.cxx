@@ -32,6 +32,8 @@
 #include <OCCViewer_FeatureDetector.h>
 #include <OCCViewer_ViewManager.h>
 
+#include <SOCC_ViewModel.h>
+
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <EntityGUI.h>
@@ -45,6 +47,8 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+
+#include <SALOME_ListIteratorOfListIO.hxx>
 
 #include <SalomeApp_Study.h>
 
@@ -357,6 +361,12 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
+  SALOME_ListIteratorOfListIO anIt( aSelList );
+  for( ; anIt.More(); anIt.Next() )
+    if( !anIt.Value().IsNull() )
+    {
+      myFaceEntry = anIt.Value()->getEntry();
+    }
 
   if (aSelList.Extent() != 1) {
     if (myEditCurrentArgument == myLineEdit) 
@@ -558,7 +568,27 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
   bool res = false;
   SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
   OCCViewer_ViewPort3d*  vp             = ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
-  QString                theImgFileName = vp->backgroundImageFilename();
+//   QString                theImgFileName = vp->backgroundImageFilename();
+  
+  MESSAGE("myFaceEntry = "<< myFaceEntry.toStdString());
+  std::map< std::string , std::vector<Handle(AIS_InteractiveObject)> >::iterator AISit;
+  SOCC_Viewer* soccViewer = (SOCC_Viewer*)(theViewWindow->getViewManager()->getViewModel());
+  
+  MESSAGE("repere1")
+  AISit = soccViewer->entry2aisobjects.find(myFaceEntry.toStdString());
+  if (AISit == soccViewer->entry2aisobjects.end())
+    return res;
+  
+  Handle(AIS_InteractiveObject) myAIS = (*AISit).second[0];
+  Handle(GEOM_AISShape) myAISShape;
+  if( myAIS->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
+    myAISShape = Handle(GEOM_AISShape)::DownCast( myAIS );
+  }
+  else
+    return res;
+  
+  QString theImgFileName = QString::fromStdString( myAISShape->TextureFile() );
+   
   
   if ( theImgFileName.isEmpty() )
     return res;
@@ -637,9 +667,9 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 //         double z = aCornerPnt.Z();
 
         // When using the new way with textures on shapes we just have to do the following
-        double x = corners[i].x;
-        double y = height - corners[i].y;
-        double z = 0;
+        double x = -0.5*width  + corners[i].x;
+        double y =  0.5*height - corners[i].y;
+        double z =  0;
         
         aGeomCorner = aBasicOperations->MakePointXYZ( x,y,z );
         
@@ -708,8 +738,8 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 //         if (pnt_it.second == true)
 //         {
 //           MESSAGE("point absent du contour insere")
-        double x = it->x;
-        double y = height - it->y;
+        double x = -0.5*width  + it->x;
+        double y = 0.5 *height - it->y;
         double z = 0;
         aGeomContourPnt    = aBasicOperations->MakePointXYZ( x,y,z );
         geomContourPnts[j] = aGeomContourPnt;

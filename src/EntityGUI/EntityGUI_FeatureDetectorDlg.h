@@ -71,6 +71,7 @@ private slots:
   
 private:
   GEOM::GeomObjPtr                   myFace;
+  QString                            myFaceEntry;
   
   int                                myConstructorId;
   
