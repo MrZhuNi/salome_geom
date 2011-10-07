@@ -143,6 +143,8 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   myViewButtonGroup->addButton( myViewGroup->RadioButton2, YZ ); // Front View
   myViewButtonGroup->addButton( myViewGroup->RadioButton3, XZ ); // Left View
   
+  myViewGroup->hide();
+  
   mySelectionGroup = new QGroupBox(tr("GEOM_DETECT"), centralWidget());
   QGridLayout* mySelectGrpLayout = new QGridLayout(mySelectionGroup);
   myPushButton = new QPushButton(mySelectionGroup);
@@ -280,6 +282,12 @@ void EntityGUI_FeatureDetectorDlg::Init()
   myConstructorId = 0;
   myPushButton1->setDown(true);
   
+  mySelButton->click();
+  mySelButton->setDown(true);
+  
+//   SetEditCurrentArgument();
+  SelectionIntoArgument();
+  
   myX2->setEnabled(false);
   myY2->setEnabled(false);
   myZ2->setEnabled(false);
@@ -347,6 +355,8 @@ void EntityGUI_FeatureDetectorDlg::SetEditCurrentArgument()
     myEditCurrentArgument = myLineEdit;
     myLineEdit->setEnabled(true);
   }
+  else 
+    myLineEdit->setEnabled(false);
   send->setDown(true);
 }
 
@@ -356,6 +366,9 @@ void EntityGUI_FeatureDetectorDlg::SetEditCurrentArgument()
 //=================================================================================
 void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
 {
+  if (!myEditCurrentArgument->isEnabled())
+    return;
+  
   myEditCurrentArgument->setText( "" );
 
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
