@@ -2186,6 +2186,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Feature detection</translation>
     </message>
     <message>
+        <source>MEN_PICTURE_IMPORT</source>
+        <translation>Import picture in viewer</translation>
+    </message>
+    <message>
         <source>MEN_CHAMFER</source>
         <translation>Chamfer</translation>
     </message>
@@ -4613,6 +4617,17 @@ Number of sketch points too small</translation>
     <message>
         <source>GEOM_LEFT</source>
         <translation>Left (X-Z)</translation>
+    </message>
+</context>
+<context>
+    <name>EntityGUI_PictureImportDlg</name>
+    <message>
+        <source>GEOM_PICTURE</source>
+        <translation>Picture</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORT_PICT_TITLE</source>
+        <translation>Import picture in viewer</translation>
     </message>
 </context>
 <context>
