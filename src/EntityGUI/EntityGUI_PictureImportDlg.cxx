@@ -79,6 +79,7 @@ EntityGUI_PictureImportDlg::EntityGUI_PictureImportDlg( GeometryGUI* theGeometry
   QHBoxLayout* myFileSelGrpLayout = new QHBoxLayout(GroupFileSel );
   myPushButton = new QPushButton( GroupFileSel );
   myLineEdit = new QLineEdit( GroupFileSel );
+  myPushButton->setText("...");
   
   myFileSelGrpLayout->addWidget( myLineEdit, 1);
   myFileSelGrpLayout->addWidget( myPushButton, 0);

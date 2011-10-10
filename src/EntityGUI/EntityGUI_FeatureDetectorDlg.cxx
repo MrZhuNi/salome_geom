@@ -152,13 +152,14 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   myPushButton->setCheckable(true);
   
   mySelButton = new QPushButton(mySelectionGroup);
+  mySelButton->setIcon(image1);
   myLineEdit = new QLineEdit(mySelectionGroup);
   
   mySnapshotLabel = new QLabel(mySelectionGroup);
-  mySelectGrpLayout->addWidget(myLineEdit,      0, 0);
-  mySelectGrpLayout->addWidget(mySelButton,     0, 1);
-  mySelectGrpLayout->addWidget(mySnapshotLabel, 1, 0);
-  mySelectGrpLayout->addWidget(myPushButton,    1, 1);
+  mySelectGrpLayout->addWidget(myLineEdit,      0, 1);
+  mySelectGrpLayout->addWidget(mySelButton,     0, 0);
+  mySelectGrpLayout->addWidget(mySnapshotLabel, 1, 1);
+  mySelectGrpLayout->addWidget(myPushButton,    1, 0);
   
   myCoordGrp1 = new QGroupBox(tr("GEOM_SCALING"), centralWidget());
   QGridLayout* myCoordGrpLayout = new QGridLayout(myCoordGrp1);
