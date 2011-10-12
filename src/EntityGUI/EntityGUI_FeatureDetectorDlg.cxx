@@ -760,9 +760,9 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
         j++;
 //         }
       }
-      GEOM::GEOM_Object_var aWire = aCurveOperations->MakePolyline(geomContourPnts.in(), false);
+//       GEOM::GEOM_Object_var aWire = aCurveOperations->MakePolyline(geomContourPnts.in(), false);
 //       GEOM::GEOM_Object_var aContourCompound = aShapesOperations->MakeCompound(geomContourPnts);
-//       GEOM::GEOM_Object_var aWire = aCurveOperations->MakeSplineInterpolation(geomContourPnts.in(), false, true);
+      GEOM::GEOM_Object_var aWire = aCurveOperations->MakeSplineInterpolation(geomContourPnts.in(), false, false);
       if ( !aWire->_is_nil() )
       {
         geomContours->length(contourCount + 1);
