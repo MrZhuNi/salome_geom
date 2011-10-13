@@ -27,6 +27,8 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
+#include <list>
+
 class GEOMImpl_IBasicOperations;
 class GEOMImpl_IBooleanOperations;
 class GEOMImpl_IShapesOperations;
@@ -109,6 +111,7 @@ public:
                                                    Handle(GEOM_Object) P1 = 0,
                                                    Handle(GEOM_Object) P2 = 0,
                                                    Handle(GEOM_Object) P3 = 0);
+  Standard_EXPORT Handle(GEOM_Object) MakeSmoothingSurface (std::list<Handle(GEOM_Object)> thePoints, bool theisClosed);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 };
 #endif

@@ -321,4 +321,37 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeFilletWithPosition (CO
   return aSeq._retn();
 }
 
+//=============================================================================
+/*!
+ *  Create a smoothing surface from a set of points
+ *  \param thePoints list of points
+ *  \param theisClosed Define if the created surface must be closed
+ *  \return New GEOM_Object, containing the created shape.
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeSmoothingSurface (const GEOM::ListOfGO& thePoints, CORBA::Boolean theisClosed)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference point
+  int ind = 0;
+  int aLen = thePoints.length();
+  std::list<Handle(GEOM_Object)> aPoints;
+  for (; ind < aLen; ind++) {
+    Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
+    if (aPnt.IsNull()) return aGEOMObject._retn();
+    aPoints.push_back(aPnt);
+  }
+
+  //Create the SmoothingSurface
+  Handle(GEOM_Object) anObject = GetOperations()->MakeSmoothingSurface(aPoints, theisClosed);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
 /*@@ insert new functions before this line @@ do not remove this line @@*/

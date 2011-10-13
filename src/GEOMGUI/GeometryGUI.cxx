@@ -544,7 +544,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpAdvancedNoOp:     // NO OPERATION (advanced operations base)
   case GEOMOp::OpPipeTShape:       // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
 //   case GEOMOp::OpPipeTShapeGroups:     // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
-    //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
+  case GEOMOp::OpSmoothingSurface:           // MENU NEW ENTITY - ADVANCED - SMOOTHINGSURFACE
     libName = "AdvancedGUI";
     break;
   default:
@@ -810,6 +810,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
 
   createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
+  createGeomAction( GEOMOp::OpSmoothingSurface, "SMOOTHINGSURFACE" );
 
   // Create actions for increase/decrease transparency shortcuts
   createGeomAction( GEOMOp::OpIncrTransparency, "", "", 0, false,
@@ -870,6 +871,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
   createMenu( GEOMOp::OpPipeTShape, advId, -1 );
 //   createMenu( GEOMOp::OpPipeTShapeGroups, advId, -1 );
+  createMenu( GEOMOp::OpSmoothingSurface, advId, -1 );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   createMenu( separator(), newEntId, -1 );
@@ -1104,6 +1106,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
   createTool( GEOMOp::OpPipeTShape, advancedTbId );
+  createTool( GEOMOp::OpSmoothingSurface, advancedTbId );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create popup menus --------------------------
