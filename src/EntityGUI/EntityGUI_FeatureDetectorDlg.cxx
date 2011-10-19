@@ -320,38 +320,6 @@ void EntityGUI_FeatureDetectorDlg::Init()
   myGeomGUI->ActiveWorkingPlane();
   
   ConstructorsClicked(myConstructorId);
-  
-//   SUIT_ViewWindow*       theViewWindow    = getDesktop()->activeWindow();
-//   OCCViewer_Viewer*      anOCCViewer      = ( (OCCViewer_ViewManager*)( theViewWindow->getViewManager() ) )->getOCCViewer();
-//   OCCViewer_ViewPort3d*  vp               = ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
-//   QString                theImgFileName   = vp->backgroundImageFilename();
-//   Handle(AIS_InteractiveContext) aContext = anOCCViewer->getAISContext(); 
-//   
-//   gp_Pnt p1(0,0,0);
-//   gp_Pnt p2(0,100,0);
-//   gp_Pnt p3(100,100,0);
-//   gp_Pnt p4(100,0,0);
-//   
-//   BRepBuilderAPI_MakePolygon Wire(p1,p2,p3,p4, Standard_True); 
-//   BRepBuilderAPI_MakeFace Face(Wire,Standard_True);
-//   const TopoDS_Shape& S = Face.Shape();
-//   Handle(AIS_TexturedShape) anAIS = new AIS_TexturedShape(S);
-//   if (!theImgFileName.isEmpty())
-//   {
-//     MESSAGE("filename is not empty")
-//     anAIS->SetTextureFileName(TCollection_AsciiString(theImgFileName.toStdString().c_str()));
-//     anAIS->SetTextureMapOn();
-//     vp->getView()->SetSurfaceDetail(V3d_TEX_ALL);
-// //     anAIS->SetDisplayMode(AIS_Shaded); 
-//   }
-//   else
-//     anAIS->SetTextureMapOff();
-//   //creation of the presentable object
-//   aContext->SetDisplayMode(anAIS,3);
-//   aContext->SetMaterial(anAIS,Graphic3d_NOM_SATIN);
-//   aContext->Display(anAIS);
-//   aContext->UpdateCurrentViewer();
-  //Display the presentable object in the 3d viewer.
 }
 
 //=================================================================================
@@ -760,9 +728,9 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
         pnt_it=existing_points.insert(pnt);
         if (pnt_it.second == true)         // To avoid double points in the contours
         {
-          double x = -0.5*width  + it->x;
-          double y = 0.5 *height - it->y;
-          double z = 0;
+          double x = -0.5 *width  + it->x;
+          double y =  0.5 *height - it->y;
+          double z =  0;
           aGeomContourPnt    = aBasicOperations->MakePointXYZ( x,y,z );
           geomContourPnts->length( j+1 );
           geomContourPnts[j] = aGeomContourPnt;
@@ -774,7 +742,6 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
       if(myOutputGroup->RadioButton2->isChecked())
       {
         aWire = aCurveOperations->MakePolyline(geomContourPnts.in(), false);
-//       GEOM::GEOM_Object_var aContourCompound = aShapesOperations->MakeCompound(geomContourPnts);
       }
       else if(myOutputGroup->RadioButton1->isChecked())
       {
@@ -788,15 +755,7 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
         geomContours->length(contourCount + 1);
         geomContours[contourCount] = aWire;
         contourCount++;
-//         objects.push_back( aWire._retn() );
       }
-//        if ( !aContourCompound->_is_nil() )
-//       {
-//         geomContours->length(contourCount + 1);
-//         geomContours[contourCount] = aContourCompound;
-//         contourCount++;
-// //         objects.push_back( aWire._retn() );
-//       }
     }
     GEOM::GEOM_Object_var aContoursCompound = aShapesOperations->MakeCompound(geomContours);
     if ( !aContoursCompound->_is_nil() )
