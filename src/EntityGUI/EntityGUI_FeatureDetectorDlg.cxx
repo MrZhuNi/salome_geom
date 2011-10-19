@@ -753,18 +753,13 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 //         double y = aContourPnt.Y();
 //         double z = aContourPnt.Z();
         
-         // When using the new way with textures on shapes we just have to do the following
-        // TEST pour éviter les points doubles
+        // When using the new way with textures on shapes we just have to do the following
         int pnt_array[] = {it->x,it->y}; 
         std::vector<int> pnt (pnt_array, pnt_array + sizeof(pnt_array) / sizeof(int) );
-        
-        MESSAGE("pnt[x] = "<<pnt[0]<<",pnt[y] = "<<pnt[1])
 
         pnt_it=existing_points.insert(pnt);
-        if (pnt_it.second == true)
+        if (pnt_it.second == true)         // To avoid double points in the contours
         {
-          MESSAGE("point absent du contour insere")
-          //fin TEST
           double x = -0.5*width  + it->x;
           double y = 0.5 *height - it->y;
           double z = 0;
@@ -772,10 +767,6 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
           geomContourPnts->length( j+1 );
           geomContourPnts[j] = aGeomContourPnt;
           j++;
-        }
-        else
-        {
-          MESSAGE("point deja insere")
         }
       }
       
@@ -787,7 +778,7 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
       }
       else if(myOutputGroup->RadioButton1->isChecked())
       {
-        aWire = aCurveOperations->MakeSplineInterpolation(geomContourPnts.in(), false, false);
+        aWire = aCurveOperations->MakeSplineInterpolation(geomContourPnts.in(), /*closed =*/ false, /*reordering =*/ false);
       }
       else
         return res;
