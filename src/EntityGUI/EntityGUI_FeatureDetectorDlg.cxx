@@ -161,6 +161,13 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   mySelectGrpLayout->addWidget(mySnapshotLabel, 1, 1);
   mySelectGrpLayout->addWidget(myPushButton,    1, 0);
   
+  myOutputGroup = new DlgRef_3Radio(centralWidget());
+  myOutputGroup->GroupBox1->setTitle(tr("GEOM_DETECT_OUTPUT"));
+  myOutputGroup->RadioButton2->setText(tr( "GEOM_POLYLINE"  ));
+  myOutputGroup->RadioButton1->setText(tr( "GEOM_SPLINE"));
+  myOutputGroup->RadioButton3->hide();
+  
+  // NOTE what follows is mostly unuseful but is kept until end of development as code examples
   myCoordGrp1 = new QGroupBox(tr("GEOM_SCALING"), centralWidget());
   QGridLayout* myCoordGrpLayout = new QGridLayout(myCoordGrp1);
   
@@ -224,6 +231,7 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   layout->addWidget( myCoordGrp1);
   layout->addWidget( myViewGroup);
   layout->addWidget( mySelectionGroup);
+  layout->addWidget( myOutputGroup);
   
 //   mainFrame()->GroupBoxName->hide();
   
@@ -297,6 +305,7 @@ void EntityGUI_FeatureDetectorDlg::Init()
   resize(100,100);
   
   myViewGroup->RadioButton1->setChecked(true);
+  myOutputGroup->RadioButton1->setChecked(true);
   
   gp_Pnt aOrigin = gp_Pnt(0, 0, 0);
   gp_Dir aDirZ = gp_Dir(0, 0, 1);
@@ -745,24 +754,44 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 //         double z = aContourPnt.Z();
         
          // When using the new way with textures on shapes we just have to do the following
-//         double pnt_array[] = {it->x,it->y}; 
-//         std::vector<int> pnt (pnt_array, pnt_array + sizeof(pnt_array) / sizeof(double) );
-// 
-//         pnt_it=existing_points.insert(pnt);
-//         if (pnt_it.second == true)
-//         {
-//           MESSAGE("point absent du contour insere")
-        double x = -0.5*width  + it->x;
-        double y = 0.5 *height - it->y;
-        double z = 0;
-        aGeomContourPnt    = aBasicOperations->MakePointXYZ( x,y,z );
-        geomContourPnts[j] = aGeomContourPnt;
-        j++;
-//         }
+        // TEST pour éviter les points doubles
+        int pnt_array[] = {it->x,it->y}; 
+        std::vector<int> pnt (pnt_array, pnt_array + sizeof(pnt_array) / sizeof(int) );
+        
+        MESSAGE("pnt[x] = "<<pnt[0]<<",pnt[y] = "<<pnt[1])
+
+        pnt_it=existing_points.insert(pnt);
+        if (pnt_it.second == true)
+        {
+          MESSAGE("point absent du contour insere")
+          //fin TEST
+          double x = -0.5*width  + it->x;
+          double y = 0.5 *height - it->y;
+          double z = 0;
+          aGeomContourPnt    = aBasicOperations->MakePointXYZ( x,y,z );
+          geomContourPnts->length( j+1 );
+          geomContourPnts[j] = aGeomContourPnt;
+          j++;
+        }
+        else
+        {
+          MESSAGE("point deja insere")
+        }
       }
-//       GEOM::GEOM_Object_var aWire = aCurveOperations->MakePolyline(geomContourPnts.in(), false);
+      
+      GEOM::GEOM_Object_var aWire;
+      if(myOutputGroup->RadioButton2->isChecked())
+      {
+        aWire = aCurveOperations->MakePolyline(geomContourPnts.in(), false);
 //       GEOM::GEOM_Object_var aContourCompound = aShapesOperations->MakeCompound(geomContourPnts);
-      GEOM::GEOM_Object_var aWire = aCurveOperations->MakeSplineInterpolation(geomContourPnts.in(), false, false);
+      }
+      else if(myOutputGroup->RadioButton1->isChecked())
+      {
+        aWire = aCurveOperations->MakeSplineInterpolation(geomContourPnts.in(), false, false);
+      }
+      else
+        return res;
+      
       if ( !aWire->_is_nil() )
       {
         geomContours->length(contourCount + 1);

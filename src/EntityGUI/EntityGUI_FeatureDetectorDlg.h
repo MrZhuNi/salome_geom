@@ -113,6 +113,7 @@ private:
   QPushButton*                       myPushButton2;
   
   DlgRef_3Radio*                     myViewGroup;
+  DlgRef_3Radio*                     myOutputGroup;
   QButtonGroup*                      myViewButtonGroup;
 
 };
