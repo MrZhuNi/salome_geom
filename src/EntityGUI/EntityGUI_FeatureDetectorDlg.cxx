@@ -74,6 +74,8 @@
 #include <set>
 #include <utility>
 
+#include <boost/utility.hpp>
+
 // Constructors
 enum{
   CONTOURS,
@@ -166,6 +168,8 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   myOutputGroup->RadioButton2->setText(tr( "GEOM_POLYLINE"  ));
   myOutputGroup->RadioButton1->setText(tr( "GEOM_SPLINE"));
   myOutputGroup->RadioButton3->hide();
+  
+  myOutputGroup->hide(); //caché pour la demo
   
   // NOTE what follows is mostly unuseful but is kept until end of development as code examples
   myCoordGrp1 = new QGroupBox(tr("GEOM_SCALING"), centralWidget());
@@ -702,11 +706,15 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     GEOM::ListOfGO_var                      geomContours = new GEOM::ListOfGO();
     int contourCount = 0;
     
+    bool insert;
+    
     MESSAGE("hierarchy.size() =" << hierarchy.size()) 
     for( ; idx >= 0; idx = hierarchy[idx][0] )
     {
       contour = contours[idx];
       std::vector< cv::Point >::iterator it;
+      std::vector< cv::Point >::iterator it_previous;
+      std::vector< cv::Point >::iterator it_next;
       GEOM::GEOM_Object_var  aGeomContourPnt;
       GEOM::ListOfGO_var     geomContourPnts = new GEOM::ListOfGO();
       geomContourPnts->length( contour.size() );
@@ -722,19 +730,49 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 //         double z = aContourPnt.Z();
         
         // When using the new way with textures on shapes we just have to do the following
-        int pnt_array[] = {it->x,it->y}; 
+        int pnt_array[] = {it->x,it->y};     
         std::vector<int> pnt (pnt_array, pnt_array + sizeof(pnt_array) / sizeof(int) );
 
         pnt_it=existing_points.insert(pnt);
         if (pnt_it.second == true)         // To avoid double points in the contours
         {
-          double x = -0.5 *width  + it->x;
-          double y =  0.5 *height - it->y;
-          double z =  0;
-          aGeomContourPnt    = aBasicOperations->MakePointXYZ( x,y,z );
-          geomContourPnts->length( j+1 );
-          geomContourPnts[j] = aGeomContourPnt;
-          j++;
+          insert = true;
+          if (it!=contour.begin())         // From the second point on perform some checking to avoid loops in the contours we build
+          {
+            it_previous = boost::prior(it);
+            it_next = boost::next(it);
+            
+            double u_v_scalar_product = (it->x - it_previous->x) * (it_next->x - it->x) + 
+                                        (it->y - it_previous->y) * (it_next->y - it->y);                                       
+            if (u_v_scalar_product < 0)
+            {
+              double u_v_cross_product = (it->x - it_previous->x) * (it_next->y - it->y) - 
+                                         (it->y - it_previous->y) * (it_next->x - it->x);
+                                        
+              double norme_u = sqrt ( (it->x - it_previous->x)*(it->x - it_previous->x) +
+                                      (it->y - it_previous->y)*(it->y - it_previous->y) );
+              
+              double norme_v = sqrt ( (it->x - it_next->x)*(it->x - it_next->x) +
+                                      (it->y - it_next->y)*(it->y - it_next->y) );
+                                                                                               
+              double u_v_sinus = u_v_cross_product / (norme_u * norme_v);
+              
+              if (u_v_sinus < Precision::Confusion())
+              { 
+                insert =false;
+              }                         
+            }
+          }
+          if (insert)
+          {
+            double x = -0.5 *width  + it->x;
+            double y =  0.5 *height - it->y;
+            double z =  0;
+            aGeomContourPnt    = aBasicOperations->MakePointXYZ( x,y,z );
+            geomContourPnts->length( j+1 );
+            geomContourPnts[j] = aGeomContourPnt;
+            j++;
+          }
         }
       }
       
