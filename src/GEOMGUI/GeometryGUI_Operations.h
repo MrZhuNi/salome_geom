@@ -48,6 +48,7 @@ namespace GEOMOp {
     OpAutoColor         = 1208,   // POPUP MENU - AUTO COLOR
     OpNoAutoColor       = 1209,   // POPUP MENU - DISABLE AUTO COLOR
     OpPointMarker       = 1210,   // POPUP MENU - POINT MARKER
+    OpSetTexture        = 1211,   // POPUP MENU - SETTEXTURE
     OpShowChildren      = 1250,   // POPUP MENU - SHOW CHILDREN
     OpHideChildren      = 1251,   // POPUP MENU - HIDE CHILDREN
     OpUnpublishObject   = 1253,   // POPUP MENU - UNPUBLISH
