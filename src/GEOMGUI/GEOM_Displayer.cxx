@@ -727,14 +727,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
             }
           }
         }
-        if ( HasTexture() )
-        {
-          AISShape->SetTextureFileName(TCollection_AsciiString(myTexture.c_str()));
-          AISShape->SetTextureMapOn();
-          AISShape->DisableTextureModulate();
-          AISShape->SetDisplayMode(3);
-//           AISShape->SetDisplayMode( (Standard_Integer) StdSelect_DM_HLR );
-        }
+        
         else
         {
           if ( onlyVertex )
@@ -822,6 +815,14 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           }
         }
 
+        if ( HasTexture() )
+        {
+          AISShape->SetTextureFileName(TCollection_AsciiString(myTexture.c_str()));
+          AISShape->SetTextureMapOn();
+          AISShape->DisableTextureModulate();
+          AISShape->SetDisplayMode(3);
+        }
+        
         if ( HasWidth() )
           AISShape->SetWidth( GetWidth() );
 
@@ -921,7 +922,6 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           }
         }
         // AISShape->SetName(???); ??? necessary to set name ???
-//         AISShape->SetDisplayMode(3);
         occPrs->AddObject( AISShape );
 
         // In accordance with ToActivate() value object will be activated/deactivated
