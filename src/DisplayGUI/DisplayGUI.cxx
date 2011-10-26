@@ -512,15 +512,16 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
           anActors->InitTraversal();
           while (vtkActor* anAct = anActors->GetNextActor()) {
             GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(anAct);
-	    vectorMode = !aGeomActor->GetVectorMode();
-	    aGeomActor->SetVectorMode(vectorMode);
+            vectorMode = !aGeomActor->GetVectorMode();
+            aGeomActor->SetVectorMode(vectorMode);
           }
         }
-	if(mode == 0 || mode == 1) {
-	  aStudy->setObjectProperty(mgrId,It.Value()->getEntry(),DISPLAY_MODE_PROP, mode);
-	} else if (mode == 3) {
-	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),VECTOR_MODE_PROP , vectorMode);
-	}
+        if(mode == 0 || mode == 1) {
+          aStudy->setObjectProperty(mgrId,It.Value()->getEntry(),DISPLAY_MODE_PROP, mode);
+        } 
+        else if (mode == 3) {
+          aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),VECTOR_MODE_PROP , vectorMode);
+        }
       }
     }
     aView->Repaint();
