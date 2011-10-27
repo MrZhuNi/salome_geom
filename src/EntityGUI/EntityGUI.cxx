@@ -179,7 +179,7 @@ bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWi
           aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
         }
         
-        aCornerDlg->OnPointSelected( aPnt );  // "feed" the point to corner detection dialog
+//         aCornerDlg->OnPointSelected( aPnt );  // "feed" the point to corner detection dialog
         
         QPoint start = QPoint(pe->x(),pe->y());
         aCornerDlg->setStartPnt( start );

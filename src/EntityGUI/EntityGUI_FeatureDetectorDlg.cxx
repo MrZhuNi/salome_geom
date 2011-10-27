@@ -86,27 +86,14 @@ enum {
   RADIO_BUTTONS,
   MSG,
   PUSH_BUTTON,
-  X_COORD,
-  Y_COORD,
-  Z_COORD
 };
 
-// View
-enum {
-  XY,
-  YZ,
-  XZ
-};
-
-enum {
-  LABEL1,
-  SPINBOX11,
-//   SPINBOX12,
-  LABEL2,
-  SPINBOX21,
-//   SPINBOX22,
-  NB_COLS
-};
+// // // View
+// // enum {
+// //   XY,
+// //   YZ,
+// //   XZ
+// // };
   
 
 //=================================================================================
@@ -135,17 +122,17 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
   
-  myViewGroup = new DlgRef_3Radio(centralWidget());
-  myViewGroup->GroupBox1->setTitle(tr("GEOM_VIEW"));
-  myViewGroup->RadioButton1->setText(tr( "GEOM_TOP"  ));
-  myViewGroup->RadioButton2->setText(tr( "GEOM_FRONT"));
-  myViewGroup->RadioButton3->setText(tr( "GEOM_LEFT" ));
-  myViewButtonGroup = new QButtonGroup( this );
-  myViewButtonGroup->addButton( myViewGroup->RadioButton1, XY ); // Top view
-  myViewButtonGroup->addButton( myViewGroup->RadioButton2, YZ ); // Front View
-  myViewButtonGroup->addButton( myViewGroup->RadioButton3, XZ ); // Left View
-  
-  myViewGroup->hide();
+//   myViewGroup = new DlgRef_3Radio(centralWidget());
+//   myViewGroup->GroupBox1->setTitle(tr("GEOM_VIEW"));
+//   myViewGroup->RadioButton1->setText(tr( "GEOM_TOP"  ));
+//   myViewGroup->RadioButton2->setText(tr( "GEOM_FRONT"));
+//   myViewGroup->RadioButton3->setText(tr( "GEOM_LEFT" ));
+//   myViewButtonGroup = new QButtonGroup( this );
+//   myViewButtonGroup->addButton( myViewGroup->RadioButton1, XY ); // Top view
+//   myViewButtonGroup->addButton( myViewGroup->RadioButton2, YZ ); // Front View
+//   myViewButtonGroup->addButton( myViewGroup->RadioButton3, XZ ); // Left View
+//   
+//   myViewGroup->hide();
   
   mySelectionGroup = new QGroupBox(tr("GEOM_DETECT"), centralWidget());
   QGridLayout* mySelectGrpLayout = new QGridLayout(mySelectionGroup);
@@ -169,71 +156,11 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   myOutputGroup->RadioButton1->setText(tr( "GEOM_SPLINE"));
   myOutputGroup->RadioButton3->hide();
   
-  myOutputGroup->hide(); //caché pour la demo
-  
-  // NOTE what follows is mostly unuseful but is kept until end of development as code examples
-  myCoordGrp1 = new QGroupBox(tr("GEOM_SCALING"), centralWidget());
-  QGridLayout* myCoordGrpLayout = new QGridLayout(myCoordGrp1);
-  
-  std::string msg = "Please point the top left and the top right corners \non the backgound image \n";
-//   in order to determine \n the right scale to use to display the result \n" ;
-  
-  QLabel* msgLabel = new QLabel(tr(msg.c_str()), myCoordGrp1);
-//   msgLabel->setAlignment(Qt::AlignHCenter);
-  myCoordGrpLayout->addWidget(msgLabel
-  , MSG, 0, 1, NB_COLS);
-  
-  myPushButton1 = new QPushButton(myCoordGrp1);
-  myCoordGrpLayout->addWidget(myPushButton1, PUSH_BUTTON, 0);
-//   myCoordGrpLayout->addWidget(new QLabel(tr("GEOM_PNT1"), myCoordGrp1), PUSH_BUTTON, 1);
-  myPushButton2 = new QPushButton(myCoordGrp1);
-  myCoordGrpLayout->addWidget(myPushButton2, PUSH_BUTTON, 2);
-//   myCoordGrpLayout->addWidget(new QLabel(tr("GEOM_PNT2"), myCoordGrp1), PUSH_BUTTON, 3);
-  
-  myPushButton1->setIcon(image1);
-  myPushButton2->setIcon(image1);
-  
-//   myCoordGrpLayout->addWidget(new QLabel(tr("GEOM_X"), myCoordGrp1), X_COORD, 0);
-  myX = new QLineEdit(myCoordGrp1);
-  myCoordGrpLayout->addWidget(myX, X_COORD, 1, 1, 1);
-//   myCoordGrpLayout->addWidget(new QLabel(tr("GEOM_Y"), myCoordGrp1), Y_COORD, 0);
-  myY = new QLineEdit(myCoordGrp1);
-  myCoordGrpLayout->addWidget(myY, Y_COORD, 1, 1, 1);
-//   myCoordGrpLayout->addWidget(new QLabel(tr("GEOM_Z"), myCoordGrp1), Z_COORD, 0);
-  myZ = new QLineEdit(myCoordGrp1);
-  myCoordGrpLayout->addWidget(myZ, Z_COORD, 1, 1, 1);
-//   myCoordGrpLayout->addWidget(new QLabel(tr("GEOM_X"), myCoordGrp1), X_COORD, 2);
-  myX2 = new QLineEdit(myCoordGrp1);
-  myCoordGrpLayout->addWidget(myX2, X_COORD, 3, 1, 1);
-//   myCoordGrpLayout->addWidget(new QLabel(tr("GEOM_Y"), myCoordGrp1), Y_COORD, 2);
-  myY2 = new QLineEdit(myCoordGrp1);
-  myCoordGrpLayout->addWidget(myY2, Y_COORD, 3, 1, 1);
-//   myCoordGrpLayout->addWidget(new QLabel(tr("GEOM_Z"), myCoordGrp1), Z_COORD, 2);
-  myZ2 = new QLineEdit(myCoordGrp1);
-  myCoordGrpLayout->addWidget(myZ2, Z_COORD, 3, 1, 1);
-  
-  myX->hide();
-  myY->hide();
-  myZ->hide();
-  
-  myX2->hide();
-  myY2->hide();
-  myZ2->hide();
-  
-  myPushButton1->hide();
-  myPushButton2->hide();
-  
-  msgLabel->hide();
-  
-  myCoordGrp1->hide();
-  
-  myCoordGrpLayout->setColumnStretch(SPINBOX11,1);
-  myCoordGrpLayout->setColumnStretch(SPINBOX21,1);
-  
+//   myOutputGroup->hide(); //caché pour la demo
+    
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
-  layout->addWidget( myCoordGrp1);
-  layout->addWidget( myViewGroup);
+//   layout->addWidget( myViewGroup);
   layout->addWidget( mySelectionGroup);
   layout->addWidget( myOutputGroup);
   
@@ -261,39 +188,17 @@ void EntityGUI_FeatureDetectorDlg::Init()
   connect( myGeomGUI,         SIGNAL( SignalCloseAllDialogs() ), this, SLOT( ClickOnCancel() ) );
   connect( buttonOk(),        SIGNAL( clicked() ),               this, SLOT( ClickOnOk() ) );
   connect( buttonApply(),     SIGNAL( clicked() ),               this, SLOT( ClickOnApply() ) );
-  
+ 
   connect( this,              SIGNAL(constructorsClicked(int)),  this, SLOT(ConstructorsClicked(int)));
   
   connect( myPushButton,      SIGNAL( toggled( bool ) ),         this, SLOT( onButtonToggled( bool ) ) );
   connect( mySelButton,       SIGNAL( clicked() ),               this, SLOT( SetEditCurrentArgument() ) );
-  connect( myPushButton1,     SIGNAL( clicked() ),               this, SLOT( SetEditCurrentArgument() ) );
-  connect( myPushButton2,     SIGNAL( clicked() ),               this, SLOT( SetEditCurrentArgument() ) );
   
-  connect( myViewButtonGroup, SIGNAL( buttonClicked( int ) ),    this, SLOT( onViewClicked( int ) ) );
+//   connect( myViewButtonGroup, SIGNAL( buttonClicked( int ) ),    this, SLOT( onViewClicked( int ) ) );
   
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),this, SLOT( SelectionIntoArgument() ) );
   
-//   /* Get setting of step value from file configuration */
-//   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-//   double step = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
-// 
-//   /* min, max, step and decimals for spin boxes */
-//   initSpinBox(myX, COORD_MIN, COORD_MAX, step, "length_precision");
-//   initSpinBox(myY, COORD_MIN, COORD_MAX, step, "length_precision");
-//   initSpinBox(myZ, COORD_MIN, COORD_MAX, step, "length_precision");
-//   myX->setValue(0.0);
-//   myY->setValue(0.0);
-//   myZ->setValue(0.0);
-  
-//   initSpinBox(myX2, COORD_MIN, COORD_MAX, step, "length_precision");
-//   initSpinBox(myY2, COORD_MIN, COORD_MAX, step, "length_precision");
-//   initSpinBox(myZ2, COORD_MIN, COORD_MAX, step, "length_precision");
-//   myX2->setValue(0.0);
-//   myY2->setValue(0.0);
-//   myZ2->setValue(0.0);
-  
   myConstructorId = 0;
-  myPushButton1->setDown(true);
   
   mySelButton->click();
   mySelButton->setDown(true);
@@ -301,14 +206,10 @@ void EntityGUI_FeatureDetectorDlg::Init()
 //   SetEditCurrentArgument();
   SelectionIntoArgument();
   
-  myX2->setEnabled(false);
-  myY2->setEnabled(false);
-  myZ2->setEnabled(false);
-  
   initName(tr("GEOM_CONTOURS")); 
   resize(100,100);
   
-  myViewGroup->RadioButton1->setChecked(true);
+//   myViewGroup->RadioButton1->setChecked(true);
   myOutputGroup->RadioButton1->setChecked(true);
   
   gp_Pnt aOrigin = gp_Pnt(0, 0, 0);
@@ -383,42 +284,42 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
 }
 
 
-//=================================================================================
-// function : OnPointSelected
-// purpose  :
-//=================================================================================
-void EntityGUI_FeatureDetectorDlg::OnPointSelected(const gp_Pnt& thePnt)
-{
-  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  int aPrecision = resMgr->integerValue("Geometry", "length_precision", 6);
-  if (myPushButton1->isDown())
-  {
-//     myX->setValue(thePnt.X());
-//     myY->setValue(thePnt.Y());
-//     myZ->setValue(thePnt.Z());
-    myX->setText(DlgRef::PrintDoubleValue(thePnt.X(), aPrecision));
-    myY->setText(DlgRef::PrintDoubleValue(thePnt.Y(), aPrecision));
-    myZ->setText(DlgRef::PrintDoubleValue(thePnt.Z(), aPrecision));
-    x1 = thePnt.X(); 
-    y1 = thePnt.Y();
-    z1 = thePnt.Z();
-  
-    myPushButton2->click();
-  }
-  else
-  {
-//     myX2->setValue(thePnt.X());
-//     myY2->setValue(thePnt.Y());
-//     myZ2->setValue(thePnt.Z());
-    myX2->setText(DlgRef::PrintDoubleValue(thePnt.X(), aPrecision));
-    myY2->setText(DlgRef::PrintDoubleValue(thePnt.Y(), aPrecision));
-    myZ2->setText(DlgRef::PrintDoubleValue(thePnt.Z(), aPrecision));
-    x2 = thePnt.X(); 
-    y2 = thePnt.Y();
-    z2 = thePnt.Z();
-   
-  }
-}
+// //=================================================================================
+// // function : OnPointSelected
+// // purpose  :
+// //=================================================================================
+// void EntityGUI_FeatureDetectorDlg::OnPointSelected(const gp_Pnt& thePnt)
+// {
+//   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+//   int aPrecision = resMgr->integerValue("Geometry", "length_precision", 6);
+//   if (myPushButton1->isDown())
+//   {
+// //     myX->setValue(thePnt.X());
+// //     myY->setValue(thePnt.Y());
+// //     myZ->setValue(thePnt.Z());
+//     myX->setText(DlgRef::PrintDoubleValue(thePnt.X(), aPrecision));
+//     myY->setText(DlgRef::PrintDoubleValue(thePnt.Y(), aPrecision));
+//     myZ->setText(DlgRef::PrintDoubleValue(thePnt.Z(), aPrecision));
+//     x1 = thePnt.X(); 
+//     y1 = thePnt.Y();
+//     z1 = thePnt.Z();
+//   
+//     myPushButton2->click();
+//   }
+//   else
+//   {
+// //     myX2->setValue(thePnt.X());
+// //     myY2->setValue(thePnt.Y());
+// //     myZ2->setValue(thePnt.Z());
+//     myX2->setText(DlgRef::PrintDoubleValue(thePnt.X(), aPrecision));
+//     myY2->setText(DlgRef::PrintDoubleValue(thePnt.Y(), aPrecision));
+//     myZ2->setText(DlgRef::PrintDoubleValue(thePnt.Z(), aPrecision));
+//     x2 = thePnt.X(); 
+//     y2 = thePnt.Y();
+//     z2 = thePnt.Z();
+//    
+//   }
+// }
 
 //=================================================================================
 // function : acceptMouseEvent()
@@ -450,7 +351,7 @@ bool EntityGUI_FeatureDetectorDlg::ClickOnApply()
     return false;
 
 //   initName();
-//   ConstructorsClicked(getConstructorId());
+  ConstructorsClicked(getConstructorId());
   return true;
 }
 
@@ -480,37 +381,37 @@ void EntityGUI_FeatureDetectorDlg::ConstructorsClicked(int id)
   }
 }
 
-//=================================================================================
-// function : onViewClicked()
-// purpose  :
-//=================================================================================
-void EntityGUI_FeatureDetectorDlg::onViewClicked(int id)
-{
-  gp_Pnt aOrigin = gp_Pnt(0, 0, 0);
-  gp_Dir aDirZ;
-  gp_Dir aDirX;
-  
-  switch(id)
-  {
-    case XY:
-        aDirZ = gp_Dir(0, 0, 1);
-        aDirX = gp_Dir(1, 0, 0);
-      break;
-    case YZ:
-        aDirZ = gp_Dir(1, 0, 0);
-        aDirX = gp_Dir(0, 1, 0);
-      break;
-    case XZ:
-        aDirZ = gp_Dir(0, -1, 0);
-        aDirX = gp_Dir(1, 0 , 0);
-      break;
-  }
-  
-  myWPlane = gp_Ax3(aOrigin, aDirZ, aDirX);
-  myGeomGUI->SetWorkingPlane( myWPlane );
-  myGeomGUI->ActiveWorkingPlane();
-  
-}
+// //=================================================================================
+// // function : onViewClicked()
+// // purpose  :
+// //=================================================================================
+// void EntityGUI_FeatureDetectorDlg::onViewClicked(int id)
+// {
+//   gp_Pnt aOrigin = gp_Pnt(0, 0, 0);
+//   gp_Dir aDirZ;
+//   gp_Dir aDirX;
+//   
+//   switch(id)
+//   {
+//     case XY:
+//         aDirZ = gp_Dir(0, 0, 1);
+//         aDirX = gp_Dir(1, 0, 0);
+//       break;
+//     case YZ:
+//         aDirZ = gp_Dir(1, 0, 0);
+//         aDirX = gp_Dir(0, 1, 0);
+//       break;
+//     case XZ:
+//         aDirZ = gp_Dir(0, -1, 0);
+//         aDirX = gp_Dir(1, 0 , 0);
+//       break;
+//   }
+//   
+//   myWPlane = gp_Ax3(aOrigin, aDirZ, aDirX);
+//   myGeomGUI->SetWorkingPlane( myWPlane );
+//   myGeomGUI->ActiveWorkingPlane();
+//   
+// }
 
 //=================================================================================
 // function : onButtonToggled()
@@ -522,6 +423,11 @@ void EntityGUI_FeatureDetectorDlg::onButtonToggled( bool checked)
   {
     myStartPnt = QPoint(0,0);
     myEndPnt = myStartPnt;
+    myLineEdit->setEnabled(true);
+  }
+  else
+  {
+    myLineEdit->setEnabled(false);
   }
 }
 
@@ -563,7 +469,6 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
   bool res = false;
   SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
   OCCViewer_ViewPort3d*  vp             = ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
-//   QString                theImgFileName = vp->backgroundImageFilename();
   
   MESSAGE("myFaceEntry = "<< myFaceEntry.toStdString());
   std::map< std::string , std::vector<Handle(AIS_InteractiveObject)> >::iterator AISit;
@@ -709,91 +614,95 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     bool insert;
     
     MESSAGE("hierarchy.size() =" << hierarchy.size()) 
-    for( ; idx >= 0; idx = hierarchy[idx][0] )
+    for( ; idx >= 0; idx = hierarchy[idx][0])
     {
-      contour = contours[idx];
-      std::vector< cv::Point >::iterator it;
-      std::vector< cv::Point >::iterator it_previous;
-      std::vector< cv::Point >::iterator it_next;
-      GEOM::GEOM_Object_var  aGeomContourPnt;
-      GEOM::ListOfGO_var     geomContourPnts = new GEOM::ListOfGO();
-      geomContourPnts->length( contour.size() );
+//       for(int count=0, child=idx; child>=0, count<1; child=hierarchy[idx][2], count++)
+//       {     
+//         contour = contours[child];
+        contour = contours[idx];
+        std::vector< cv::Point >::iterator it;
+        std::vector< cv::Point >::iterator it_previous;
+        std::vector< cv::Point >::iterator it_next;
+        GEOM::GEOM_Object_var  aGeomContourPnt;
+        GEOM::ListOfGO_var     geomContourPnts = new GEOM::ListOfGO();
+        geomContourPnts->length( contour.size() );
 
-      int j = 0;
-      std::set< std::vector<int> > existing_points;
-      std::pair< std::set< std::vector<int> >::iterator,bool > pnt_it;
-      for ( it=contour.begin() ; it < contour.end(); it++ )
-      {
-//         gp_Pnt  aContourPnt = EntityGUI::ConvertClickToPoint(viewLeft + it->x*imgZoomRatio, viewTop + it->y*imgZoomRatio, vp->getView());
-//         double x = aContourPnt.X();
-//         double y = aContourPnt.Y();
-//         double z = aContourPnt.Z();
-        
-        // When using the new way with textures on shapes we just have to do the following
-        int pnt_array[] = {it->x,it->y};     
-        std::vector<int> pnt (pnt_array, pnt_array + sizeof(pnt_array) / sizeof(int) );
-
-        pnt_it=existing_points.insert(pnt);
-        if (pnt_it.second == true)         // To avoid double points in the contours
+        int j = 0;
+        std::set< std::vector<int> > existing_points;
+        std::pair< std::set< std::vector<int> >::iterator,bool > pnt_it;
+        for ( it=contour.begin() ; it < contour.end(); it++ )
         {
-          insert = true;
-          if (it!=contour.begin())         // From the second point on perform some checking to avoid loops in the contours we build
+  //         gp_Pnt  aContourPnt = EntityGUI::ConvertClickToPoint(viewLeft + it->x*imgZoomRatio, viewTop + it->y*imgZoomRatio, vp->getView());
+  //         double x = aContourPnt.X();
+  //         double y = aContourPnt.Y();
+  //         double z = aContourPnt.Z();
+          
+          // When using the new way with textures on shapes we just have to do the following
+          int pnt_array[] = {it->x,it->y};     
+          std::vector<int> pnt (pnt_array, pnt_array + sizeof(pnt_array) / sizeof(int) );
+
+          pnt_it=existing_points.insert(pnt);
+          if (pnt_it.second == true)         // To avoid double points in the contours
           {
-            it_previous = boost::prior(it);
-            it_next = boost::next(it);
-            
-            double u_v_scalar_product = (it->x - it_previous->x) * (it_next->x - it->x) + 
-                                        (it->y - it_previous->y) * (it_next->y - it->y);                                       
-            if (u_v_scalar_product < 0)
+            insert = true;
+            if (it!=contour.begin())         // From the second point on perform some checking to avoid loops in the contours we build
             {
-              double u_v_cross_product = (it->x - it_previous->x) * (it_next->y - it->y) - 
-                                         (it->y - it_previous->y) * (it_next->x - it->x);
-                                        
-              double norme_u = sqrt ( (it->x - it_previous->x)*(it->x - it_previous->x) +
-                                      (it->y - it_previous->y)*(it->y - it_previous->y) );
+              it_previous = boost::prior(it);
+              it_next = boost::next(it);
               
-              double norme_v = sqrt ( (it->x - it_next->x)*(it->x - it_next->x) +
-                                      (it->y - it_next->y)*(it->y - it_next->y) );
-                                                                                               
-              double u_v_sinus = u_v_cross_product / (norme_u * norme_v);
-              
-              if (u_v_sinus < Precision::Confusion())
-              { 
-                insert =false;
-              }                         
+              double u_v_scalar_product = (it->x - it_previous->x) * (it_next->x - it->x) + 
+                                          (it->y - it_previous->y) * (it_next->y - it->y);                                       
+              if (u_v_scalar_product < 0)
+              {
+                double u_v_det = (it->x - it_previous->x) * (it_next->y - it->y) - 
+                                 (it->y - it_previous->y) * (it_next->x - it->x);
+                                          
+                double norme_u = sqrt ( (it->x - it_previous->x)*(it->x - it_previous->x) +
+                                        (it->y - it_previous->y)*(it->y - it_previous->y) );
+                
+                double norme_v = sqrt ( (it->x - it_next->x)*(it->x - it_next->x) +
+                                        (it->y - it_next->y)*(it->y - it_next->y) );
+                                                                                                
+                double u_v_sinus = u_v_det / (norme_u * norme_v);
+                
+                if (u_v_sinus < Precision::Confusion())
+                { 
+                  insert =false;
+                }                         
+              }
+            }
+            if (insert)
+            {
+              double x = -0.5 *width  + it->x;
+              double y =  0.5 *height - it->y;
+              double z =  0;
+              aGeomContourPnt    = aBasicOperations->MakePointXYZ( x,y,z );
+              geomContourPnts->length( j+1 );
+              geomContourPnts[j] = aGeomContourPnt;
+              j++;
             }
           }
-          if (insert)
-          {
-            double x = -0.5 *width  + it->x;
-            double y =  0.5 *height - it->y;
-            double z =  0;
-            aGeomContourPnt    = aBasicOperations->MakePointXYZ( x,y,z );
-            geomContourPnts->length( j+1 );
-            geomContourPnts[j] = aGeomContourPnt;
-            j++;
-          }
         }
-      }
-      
-      GEOM::GEOM_Object_var aWire;
-      if(myOutputGroup->RadioButton2->isChecked())
-      {
-        aWire = aCurveOperations->MakePolyline(geomContourPnts.in(), false);
-      }
-      else if(myOutputGroup->RadioButton1->isChecked())
-      {
-        aWire = aCurveOperations->MakeSplineInterpolation(geomContourPnts.in(), /*closed =*/ false, /*reordering =*/ false);
-      }
-      else
-        return res;
-      
-      if ( !aWire->_is_nil() )
-      {
-        geomContours->length(contourCount + 1);
-        geomContours[contourCount] = aWire;
-        contourCount++;
-      }
+        
+        GEOM::GEOM_Object_var aWire;
+        if(myOutputGroup->RadioButton2->isChecked())
+        {
+          aWire = aCurveOperations->MakePolyline(geomContourPnts.in(), false);
+        }
+        else if(myOutputGroup->RadioButton1->isChecked())
+        {
+          aWire = aCurveOperations->MakeSplineInterpolation(geomContourPnts.in(), /*closed =*/ false, /*reordering =*/ false);
+        }
+        else
+          return res;
+        
+        if ( !aWire->_is_nil() )
+        {
+          geomContours->length(contourCount + 1);
+          geomContours[contourCount] = aWire;
+          contourCount++;
+        }
+//       }
     }
     GEOM::GEOM_Object_var aContoursCompound = aShapesOperations->MakeCompound(geomContours);
     if ( !aContoursCompound->_is_nil() )

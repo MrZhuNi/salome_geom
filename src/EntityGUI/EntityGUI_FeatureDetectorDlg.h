@@ -46,9 +46,10 @@ public:
   ~EntityGUI_FeatureDetectorDlg();
   
   bool                               acceptMouseEvent() const;
-  void                               OnPointSelected( const gp_Pnt& );
+//   void                               OnPointSelected( const gp_Pnt& );
   void                               setStartPnt    ( const QPoint& );
   void                               setEndPnt      ( const QPoint& );
+  int                                getConstructorId() {return myConstructorId;};
   
 protected:
   // redefined from GEOMBase_Helper
@@ -57,13 +58,13 @@ protected:
   
 private:
   void                               Init();
-//   void                               createCorners();
+
   
 private slots:
   void                               SetEditCurrentArgument();
   void                               SelectionIntoArgument();
   void                               ConstructorsClicked( int );
-  void                               onViewClicked( int );
+//   void                               onViewClicked( int );
   void                               onButtonToggled( bool ); 
   void                               ClickOnOk();
   bool                               ClickOnApply();
@@ -75,28 +76,11 @@ private:
   
   int                                myConstructorId;
   
-  QGroupBox*                         myCoordGrp1;
   QGroupBox*                         mySelectionGroup;
   
   QLabel*                            mySnapshotLabel;
   
   DlgRef_1Sel*                       mySelWidget;
-  
-  QLineEdit*                         myX;
-  QLineEdit*                         myY;
-  QLineEdit*                         myZ;
-  
-  double                             x1;
-  double                             y1;
-  double                             z1;
-  
-  QLineEdit*                         myX2;
-  QLineEdit*                         myY2;
-  QLineEdit*                         myZ2;
-  
-  double                             x2;
-  double                             y2;
-  double                             z2;
   
   QPoint                             myStartPnt;
   QPoint                             myEndPnt;
@@ -109,11 +93,8 @@ private:
   
   QLineEdit*                         myLineEdit;
   
-  QPushButton*                       myPushButton1;
-  QPushButton*                       myPushButton2;
-  
-  DlgRef_3Radio*                     myViewGroup;
+//   DlgRef_3Radio*                     myViewGroup;
   DlgRef_3Radio*                     myOutputGroup;
-  QButtonGroup*                      myViewButtonGroup;
+//   QButtonGroup*                      myViewButtonGroup;
 
 };

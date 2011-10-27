@@ -42,7 +42,6 @@
 
 #include <OCCViewer_FeatureDetector.h>
 
-
 #include <QFileDialog>
 
 //=================================================================================
