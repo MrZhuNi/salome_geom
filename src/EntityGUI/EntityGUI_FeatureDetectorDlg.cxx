@@ -79,7 +79,8 @@
 // Constructors
 enum{
   CONTOURS,
-  CORNERS
+  CORNERS,
+  LINES
 };
 
 enum {
@@ -119,8 +120,8 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   mainFrame()->RadioButton2->setText(tr("GEOM_CORNERS"));
 //   mainFrame()->RadioButton2->setAttribute(Qt::WA_DeleteOnClose);
 //   mainFrame()->RadioButton2->close();
-  mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
-  mainFrame()->RadioButton3->close();
+//   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
+//   mainFrame()->RadioButton3->close();
   
 //   myViewGroup = new DlgRef_3Radio(centralWidget());
 //   myViewGroup->GroupBox1->setTitle(tr("GEOM_VIEW"));
@@ -143,12 +144,14 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   mySelButton = new QPushButton(mySelectionGroup);
   mySelButton->setIcon(image1);
   myLineEdit = new QLineEdit(mySelectionGroup);
+  myCheckBox = new QCheckBox(mySelectionGroup);
   
   mySnapshotLabel = new QLabel(mySelectionGroup);
   mySelectGrpLayout->addWidget(myLineEdit,      0, 1);
   mySelectGrpLayout->addWidget(mySelButton,     0, 0);
   mySelectGrpLayout->addWidget(mySnapshotLabel, 1, 1);
   mySelectGrpLayout->addWidget(myPushButton,    1, 0);
+  mySelectGrpLayout->addWidget(myCheckBox,      2, 0);
   
   myOutputGroup = new DlgRef_3Radio(centralWidget());
   myOutputGroup->GroupBox1->setTitle(tr("GEOM_DETECT_OUTPUT"));
@@ -378,6 +381,13 @@ void EntityGUI_FeatureDetectorDlg::ConstructorsClicked(int id)
       mySnapshotLabel->setText(tr("GEOM_COLOR_FILTER"));
       initName(tr("GEOM_CONTOURS"));
       break;
+    case LINES:
+//       myViewGroup->hide();
+//       mySelectionGroup->hide();
+//       mySelectionGroup->show();
+      mySnapshotLabel->setText(tr(""));
+      initName(tr("GEOM_LINES"));
+      break;
   }
 }
 
@@ -593,15 +603,17 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
   }
   else if (myConstructorId == CONTOURS)
   {
-    if( !aRect.isEmpty() )
+    int method = 0 ; //CANNY
+    if( !aRect.isEmpty() && aRect.width() > 1 )
     {
       aDetector->SetROI( aRect );
+      method = 1 ; //COLORFILTER    
     }
     
     GEOM::GEOM_ICurvesOperations_var aCurveOperations = myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
 //     GEOM::GEOM_ICurvesOperations::_narrow( getOperation() );
     
-    aDetector->ComputeContours();
+    aDetector->ComputeContours( method );
     std::vector< std::vector<cv::Point> >   contours  = aDetector->GetContours();
     std::vector<cv::Vec4i>                  hierarchy = aDetector->GetContoursHierarchy();
     
@@ -612,6 +624,11 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     int contourCount = 0;
     
     bool insert;
+    
+    // TEST for debug only
+//     GEOM::GEOM_Object_var  aRemovedPnt;
+//     GEOM::ListOfGO_var     removedPnts     = new GEOM::ListOfGO();
+//     int r = 0;
     
     MESSAGE("hierarchy.size() =" << hierarchy.size()) 
     for( ; idx >= 0; idx = hierarchy[idx][0])
@@ -625,6 +642,7 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
         std::vector< cv::Point >::iterator it_next;
         GEOM::GEOM_Object_var  aGeomContourPnt;
         GEOM::ListOfGO_var     geomContourPnts = new GEOM::ListOfGO();
+       
         geomContourPnts->length( contour.size() );
 
         int j = 0;
@@ -642,7 +660,7 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
           std::vector<int> pnt (pnt_array, pnt_array + sizeof(pnt_array) / sizeof(int) );
 
           pnt_it=existing_points.insert(pnt);
-          if (pnt_it.second == true)         // To avoid double points in the contours
+          if (pnt_it.second == true || !myCheckBox->isChecked() )         // To avoid double points in the contours
           {
             insert = true;
             if (it!=contour.begin())         // From the second point on perform some checking to avoid loops in the contours we build
@@ -665,22 +683,44 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
                                                                                                 
                 double u_v_sinus = u_v_det / (norme_u * norme_v);
                 
-                if (u_v_sinus < Precision::Confusion())
+                if (fabs(u_v_sinus) < Precision::Confusion())
                 { 
-                  insert =false;
+                  // TEST for debug only
+//                   if (myCheckBox->isChecked())
+//                   {
+//                     MESSAGE("correction appliquee : fabs(u_v_sinus) ="<<fabs(u_v_sinus))
+//                     MESSAGE("it->x = "<<it->x)
+//                     MESSAGE("it->y = "<<it->y)
+//                     MESSAGE("it_previous->x = "<<it_previous->x)
+//                     MESSAGE("it_previous->y = "<<it_previous->y)
+//                     MESSAGE("it_next->x = "<<it_next->x)
+//                     MESSAGE("it_next->y = "<<it_next->y)
+//                     MESSAGE("norme_u = "<<norme_u)
+//                     MESSAGE("norme_v = "<<norme_v)
+//                     MESSAGE("u_v_det = "<<u_v_det)
+//                   }
+                  insert = !myCheckBox->isChecked();  // TEST correction appliquee que si la checkbox est cochee
                 }                         
               }
             }
+            double x = -0.5 *width  + it->x;
+            double y =  0.5 *height - it->y;
+            double z =  0;
             if (insert)
             {
-              double x = -0.5 *width  + it->x;
-              double y =  0.5 *height - it->y;
-              double z =  0;
               aGeomContourPnt    = aBasicOperations->MakePointXYZ( x,y,z );
               geomContourPnts->length( j+1 );
               geomContourPnts[j] = aGeomContourPnt;
               j++;
             }
+//             TEST for debug only
+//             else
+//             { 
+//               aRemovedPnt   = aBasicOperations->MakePointXYZ( x,y,z );
+//               removedPnts->length( r+1 );
+//               removedPnts[r] = aRemovedPnt;
+//               r++;
+//             }
           }
         }
         
@@ -705,9 +745,46 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 //       }
     }
     GEOM::GEOM_Object_var aContoursCompound = aShapesOperations->MakeCompound(geomContours);
+//   TEST for debu only  GEOM::GEOM_Object_var aRemovedPntsCompound = aShapesOperations->MakeCompound(removedPnts);
     if ( !aContoursCompound->_is_nil() )
     {
       objects.push_back( aContoursCompound._retn() );
+    }
+//   TEST for debug only
+//     if ( !aRemovedPntsCompound->_is_nil() )
+//     {
+//       objects.push_back( aRemovedPntsCompound._retn() );
+//     }
+
+    res=true;
+  }
+  
+  else if(myConstructorId ==LINES)
+  {
+    aDetector->ComputeLines();
+    std::vector<cv::Vec4i>  lines = aDetector->GetLines();
+    GEOM::GEOM_Object_var  Pnt1;
+    GEOM::GEOM_Object_var  Pnt2;
+    GEOM::GEOM_Object_var  aLine;
+    
+    GEOM::ListOfGO_var     geomLines = new GEOM::ListOfGO();
+    int linesCount=0;
+    for( int i = 0; i < lines.size(); i++ )
+    {
+      Pnt1 = aBasicOperations->MakePointXYZ( -0.5 *width + lines[i][0], 0.5 *height - lines[i][1], 0 );
+      Pnt2 = aBasicOperations->MakePointXYZ( -0.5 *width + lines[i][2], 0.5 *height - lines[i][3], 0 );
+      aLine = aBasicOperations->MakeLineTwoPnt( Pnt1, Pnt2 );
+      if ( !aLine->_is_nil() )
+      {
+        geomLines->length(linesCount + 1);
+        geomLines[linesCount] = aLine;
+        linesCount++;
+      }
+    }
+    GEOM::GEOM_Object_var aLinesCompound = aShapesOperations->MakeCompound(geomLines);
+    if ( !aLinesCompound->_is_nil() )
+    {
+      objects.push_back( aLinesCompound._retn() );
     }
 
     res=true;

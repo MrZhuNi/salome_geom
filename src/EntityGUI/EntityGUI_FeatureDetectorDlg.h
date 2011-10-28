@@ -24,6 +24,7 @@
 #include <gp_Ax3.hxx>
 
 class QLineEdit;
+class QCheckBox;
 class QGroupBox;
 class QPushButton;
 class QLabel;
@@ -92,6 +93,7 @@ private:
   QPushButton*                       mySelButton;
   
   QLineEdit*                         myLineEdit;
+  QCheckBox*                         myCheckBox;
   
 //   DlgRef_3Radio*                     myViewGroup;
   DlgRef_3Radio*                     myOutputGroup;
