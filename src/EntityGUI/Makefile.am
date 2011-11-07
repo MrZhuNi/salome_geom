@@ -32,7 +32,7 @@ if WITH_OPENCV
   PictureImportDlg_Sources = EntityGUI_PictureImportDlg.cxx
   PictureImportDlg_moc = EntityGUI_PictureImportDlg_moc.cxx
   Opencv_libs = $(OPENCV_LIBS)
-  Opencv_Includes = $(OPENCV_INCLUDES)
+  Opencv_includes = $(OPENCV_INCLUDES)
 endif
 
 # Libraries targets

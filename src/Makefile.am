@@ -21,6 +21,7 @@
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
 # Package : src (source files directory)
 #
+
 SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo SKETCHER OCC2VTK GEOM	\
           BREPExport BREPImport IGESExport IGESImport STEPExport	\
           STEPImport STLExport VTKExport ShHealOper GEOMImpl GEOM_I	\
@@ -31,6 +32,10 @@ if GEOM_ENABLE_GUI
              DisplayGUI BasicGUI PrimitiveGUI GenerationGUI EntityGUI BuildGUI	\
              BooleanGUI TransformationGUI OperationGUI RepairGUI MeasureGUI	\
              GroupGUI BlocksGUI AdvancedGUI GEOM_SWIG_WITHIHM
+endif
+
+if WITH_OPENCV
+  SUBDIRS += ShapeRecognition
 endif
 
 DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo SKETCHER OCC2VTK GEOM BREPExport\

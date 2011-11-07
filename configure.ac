@@ -470,6 +470,7 @@ AC_OUTPUT([ \
   src/STEPImport/Makefile \
   src/STLExport/Makefile \
   src/ShHealOper/Makefile \
+  src/ShapeRecognition/Makefile \
   src/TransformationGUI/Makefile \
   src/VTKExport/Makefile \
   resources/Makefile \
