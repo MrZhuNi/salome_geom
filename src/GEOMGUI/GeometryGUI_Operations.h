@@ -94,8 +94,10 @@ namespace GEOMOp {
     Op2dSketcher        = 3300,   // MENU NEW ENTITY - SKETCHER
     Op3dSketcher        = 3301,   // MENU NEW ENTITY - 3D SKETCHER
     OpExplode           = 3302,   // MENU NEW ENTITY - EXPLODE
+#ifdef WITH_OPENCV
     OpFeatureDetect     = 3303,   // MENU NEW ENTITY - FEATURE DETECTION
     OpPictureImport     = 3304,   // MENU NEW ENTITY - IMPORT PICTURE IN VIEWER
+#endif
     // BuildGUI ------------------//--------------------------------
     OpEdge              = 3400,   // MENU NEW ENTITY - BUILD - EDGE
     OpWire              = 3401,   // MENU NEW ENTITY - BUILD - WIRE

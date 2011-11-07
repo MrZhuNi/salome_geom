@@ -461,8 +461,10 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::Op2dSketcher:       // MENU ENTITY - SKETCHER
   case GEOMOp::Op3dSketcher:       // MENU ENTITY - 3D SKETCHER
   case GEOMOp::OpExplode:          // MENU ENTITY - EXPLODE
+#ifdef WITH_OPENCV
   case GEOMOp::OpFeatureDetect:    // MENU ENTITY - FEATURE DETECTION
   case GEOMOp::OpPictureImport:    // MENU ENTITY - IMPORT PICTURE IN VIEWER
+#endif
     libName = "EntityGUI";
     break;
   case GEOMOp::OpEdge:             // MENU BUILD - EDGE
@@ -710,8 +712,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::Op2dSketcher,  "SKETCH" );
   createGeomAction( GEOMOp::Op3dSketcher,  "3DSKETCH" );
   createGeomAction( GEOMOp::OpExplode,     "EXPLODE" );
+#ifdef WITH_OPENCV
   createGeomAction( GEOMOp::OpFeatureDetect,"FEATURE_DETECTION" );
   createGeomAction( GEOMOp::OpPictureImport,"PICTURE_IMPORT" );
+#endif
 
   createGeomAction( GEOMOp::OpEdge,        "EDGE" );
   createGeomAction( GEOMOp::OpWire,        "WIRE" );
@@ -910,8 +914,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   
   createMenu( separator(),          newEntId, -1 );
   
+#ifdef WITH_OPENCV
   createMenu( GEOMOp::OpFeatureDetect, newEntId, -1 );
   createMenu( GEOMOp::OpPictureImport, newEntId, -1 );
+#endif
 
   int operId = createMenu( tr( "MEN_OPERATIONS" ), -1, -1, 10 );
 
@@ -1077,9 +1083,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( separator(),               operTbId );
   createTool( GEOMOp::OpExplode,         operTbId );
   createTool( separator(),               operTbId );
+#ifdef WITH_OPENCV
   createTool( GEOMOp::OpFeatureDetect,   operTbId );
   createTool( GEOMOp::OpPictureImport,   operTbId );
   createTool( separator(),               operTbId );
+#endif
   createTool( GEOMOp::OpPartition,       operTbId );
   createTool( GEOMOp::OpArchimede,       operTbId );
   createTool( GEOMOp::OpShapesOnShape,   operTbId );

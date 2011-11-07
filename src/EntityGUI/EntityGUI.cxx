@@ -96,12 +96,14 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpExplode:    // EXPLODE
     aDlg = new EntityGUI_SubShapeDlg( getGeometryGUI(), parent );
     break;
+#ifdef WITH_OPENCV
   case GEOMOp::OpFeatureDetect:    // FEATURE DETECTION
     aDlg = new EntityGUI_FeatureDetectorDlg( getGeometryGUI(), parent );
     break;
   case GEOMOp::OpPictureImport:    // IMPORT PICTURE IN VIEWER
     aDlg = new EntityGUI_PictureImportDlg( getGeometryGUI(), parent );
     break;
+#endif
   default:
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
     break;
