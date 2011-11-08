@@ -1,23 +1,23 @@
--- Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+--  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 --
--- Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
--- CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+--  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+--  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 --
--- This library is free software; you can redistribute it and/or
--- modify it under the terms of the GNU Lesser General Public
--- License as published by the Free Software Foundation; either
--- version 2.1 of the License.
+--  This library is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public
+--  License as published by the Free Software Foundation; either
+--  version 2.1 of the License.
 --
--- This library is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
--- Lesser General Public License for more details.
+--  This library is distributed in the hope that it will be useful,
+--  but WITHOUT ANY WARRANTY; without even the implied warranty of
+--  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+--  Lesser General Public License for more details.
 --
--- You should have received a copy of the GNU Lesser General Public
--- License along with this library; if not, write to the Free Software
--- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+--  You should have received a copy of the GNU Lesser General Public
+--  License along with this library; if not, write to the Free Software
+--  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 --
--- See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+--  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 --
 -- File:	NMTTools_PaveFiller.cdl
 -- Created:	Fri Dec  5 14:35:00 2003
@@ -347,7 +347,7 @@ is
     	         nF  :Integer from Standard;  
     	         aLCB:out ListOfCommonBlock from NMTTools) 
     	returns Integer from Standard;   
-	
+ 
     PrepareFace(me:out;  
     	    nF  :  Integer from Standard; 
     	    aF  : out Face from TopoDS); 
@@ -383,8 +383,14 @@ is
     RealSplitsInFace(me:out; 
     	         nE1 :Integer from Standard;  
     	         nF2 :Integer from Standard;  
-    	         aLs :out ListOfPaveBlock from BOPTools); 
-     
+    	         aLs :out ListOfPaveBlock from BOPTools);  
+ 
+--modified by NIZNHY-PKV Mon Oct 17 11:43:23 2011f 
+     RealSplitsInFace(me:out; 
+    	         nF1 :Integer from Standard;  
+    	         aLPB :out ListOfPaveBlock from BOPTools); 
+--modified by NIZNHY-PKV Mon Oct 17 11:43:39 2011t 
+ 
     RealSplitsOnEdge(me:out; 
     	         nE1 :Integer from Standard;  
     	         nE2 :Integer from Standard;  
@@ -413,7 +419,6 @@ is
 		aBC : out Curve from BOPTools);  
 		
 
- 
     PutBoundPaveOnCurve (me:out; 
     	    	    aBC :out Curve from BOPTools;	 
      	    	    aFF :out SSInterference from BOPTools); 
@@ -497,7 +502,6 @@ is
     	    	    aPB2 : PaveBlock   from BOPTools) 
     	returns Boolean from Standard;     
 	
---modified by NIZNHY-PKV Wed Feb 09 10:10:48 2011f	 
     FillFaceInfo (me:out) 
     	is protected;
  
@@ -505,8 +509,11 @@ is
     	    	aFF     : SSInterference from BOPTools;  
     	    	aMVStick: MapOfInteger from TColStd; 
 		aTolR3D:  out Real from Standard) 
-    	is protected; 
---modified by NIZNHY-PKV Wed Feb 09 10:11:52 2011t	
+    	is protected;  
+	 
+    PutClosingPaveOnCurve (me:out; 
+    	    	    aBC :out Curve from BOPTools;	 
+     	    	    aFF :out SSInterference from BOPTools); 
  
 fields 
     myDS               :  PShapesDataStructure from NMTDS   	is protected;   
@@ -527,7 +534,5 @@ fields
     myDSIt             :  PIterator from NMTDS is protected;  
     myCompositeShape   :  Shape from TopoDS is protected;
     myIP               :  PInterfPool from NMTDS is protected;     
---modified by NIZNHY-PKV Wed Feb 09 10:51:50 2011f 
     myFaceInfo         :  DataMapOfIntegerFaceInfo from NMTTools is protected;
---modified by NIZNHY-PKV Wed Feb 09 10:51:50 2011t
 end PaveFiller;

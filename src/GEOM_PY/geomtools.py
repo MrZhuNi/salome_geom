@@ -31,6 +31,11 @@ from salome.kernel import termcolor
 logger = Logger("salome.geom.geomtools", color = termcolor.RED)
 
 from salome.kernel.studyedit import getActiveStudyId, getStudyEditor
+from salome.kernel.services import IDToObject
+try:
+    from salome.gui import helper
+except ImportError:
+    pass
 
 _geompys = {}
 
@@ -61,6 +66,10 @@ def getGeompy(studyId = None):
     return _geompys[studyId]
 
 
+ModeWireFrame = 0
+ModeShading = 1
+DisplayMode=ModeShading
+
 class GeomStudyTools:
     """
     This class provides several methods to manipulate geom objects in Salome
@@ -82,7 +91,7 @@ class GeomStudyTools:
         if GEOM is None:
             GEOM = __import__("GEOM")
         if studyEditor is None:
-            studyEditor = getStudyEditor()
+            studyEditor = helper.getStudyEditor()
         self.editor = studyEditor
 
     def displayShapeByName(self, shapeName, color = None):
@@ -108,8 +117,60 @@ class GeomStudyTools:
                 if shape:                
                     geomgui = salome.ImportComponentGUI("GEOM")            
                     geomgui.createAndDisplayGO(entry)
-                    geomgui.setDisplayMode(entry, 1)
+                    geomgui.setDisplayMode(entry, DisplayMode)
                     if color is not None:
                         geomgui.setColor(entry, color[0], color[1], color[2])
                     return True
         return False
+
+    def getGeomObjectSelected(self):
+        '''
+        Returns the GEOM object currently selected in the objects browser.
+        '''
+        sobject, entry = helper.getSObjectSelected()
+        geomObject = self.getGeomObjectFromEntry(entry)
+        return geomObject
+
+    def getGeomObjectFromEntry(self,entry):
+        '''
+        Returns the GEOM object associated to the specified entry,
+        (the entry is the identifier of an item in the active study)
+        '''
+        if entry is None:
+            return None
+        geomObject=IDToObject(entry, self.editor.study)
+        return geomObject._narrow(GEOM.GEOM_Object)
+
+#
+# ==================================================================
+# Use cases and demo functions
+# ==================================================================
+#
+
+# How to test?
+# 1. Run a SALOME application including GEOM, and create a new study
+# 2. In the console, enter:
+#    >>> from salome.geom import geomtools
+#    >>> geomtools.TEST_createBox()
+# 3. Select the object named "box" in the browser
+# 4. In the console, enter:
+#    >>> geomtools.TEST_getGeomObjectSelected()
+
+def TEST_createBox():
+    geompy = getGeompy()
+    box = geompy.MakeBoxDXDYDZ(200, 200, 200)
+    geompy.addToStudy( box, 'box' )    
+    if salome.sg.hasDesktop():
+        salome.sg.updateObjBrowser(1)
+
+
+def TEST_getGeomObjectSelected():
+    tool = GeomStudyTools()
+    myGeomObject = tool.getGeomObjectSelected()
+    print myGeomObject
+
+if __name__ == "__main__":
+    TEST_getGeomObjectSelected()
+
+
+    

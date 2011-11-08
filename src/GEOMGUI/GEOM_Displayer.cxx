@@ -90,6 +90,8 @@
 
 #include <Prs3d_ShadingAspect.hxx>
 
+#include <BRepMesh_IncrementalMesh.hxx>
+
 // VTK Includes
 #include <vtkActorCollection.h>
 #include <vtkProperty.h>
@@ -322,6 +324,17 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
 
   myToActivate = true;
   // This parameter is used for activisation/deactivisation of objects to be displayed
+  
+  #if OCC_VERSION_LARGE > 0x06050100 // Functionnality available only in OCCT 6.5.2
+  // Activate parallel vizualisation only for testing purpose  
+  // and if the corresponding env variable is set to 1 
+  char* parallel_visu = getenv("PARALLEL_VISU");
+  if (parallel_visu && atoi(parallel_visu))
+  {
+    MESSAGE("Parallel visualisation on");
+    BRepMesh_IncrementalMesh::SetParallelDefault(Standard_True);
+  }
+  #endif
 
   myViewFrame = 0;
 }
