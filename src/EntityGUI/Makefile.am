@@ -106,6 +106,7 @@ libEntityGUI_la_CPPFLAGS =			\
 	-I$(srcdir)/../GEOMImpl			\
 	-I$(srcdir)/../GEOMFiltersSelection	\
 	-I$(srcdir)/../SKETCHER			\
+	-I$(srcdir)/../ShapeRecognition		\
 	-I$(srcdir)/../GEOM			\
 	-I$(top_builddir)/src/DlgRef		\
 	-I$(top_builddir)/idl
@@ -115,6 +116,7 @@ libEntityGUI_la_LDFLAGS  =					\
 	../GEOMBase/libGEOMBase.la				\
 	../SKETCHER/libGEOMSketcher.la				\
 	../GEOMGUI/libGEOM.la 					\
+	../ShapeRecognition/libGEOMShapeRec.la			\
 	$(QT_MT_LIBS)						\
 	$(CAS_TKTopAlgo) -lTKernel				\
 	$(Opencv_libs)

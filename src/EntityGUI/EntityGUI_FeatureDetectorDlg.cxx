@@ -28,8 +28,6 @@
 
 #include <OCCViewer_ViewPort3d.h>
 #include <OCCViewer_ViewWindow.h>
-#include <OCCViewer_ViewSketcher.h>
-#include <OCCViewer_FeatureDetector.h>
 #include <OCCViewer_ViewManager.h>
 
 #include <SOCC_ViewModel.h>
@@ -39,6 +37,7 @@
 #include <EntityGUI.h>
 #include <GEOMBase.h>
 #include <GEOM_Object.hxx>
+#include <ShapeRec_FeatureDetector.hxx>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_ResourceMgr.h>
@@ -504,15 +503,18 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     return res;
   
   // Build an instance of detection used to perform image processing operations
-  OCCViewer_FeatureDetector* aDetector = new OCCViewer_FeatureDetector( theImgFileName );
+  ShapeRec_FeatureDetector* aDetector = new ShapeRec_FeatureDetector( theImgFileName );
     
   int height            =  aDetector->GetImgHeight();
   int width             =  aDetector->GetImgWidth();
+  
+//   NOTE: OLD
   int winHeight         =  vp->height();
   int winWidth          =  vp->width();
   double x_offset, y_offset;
   int i;
 
+//   NOTE: OLD
   // Recompute of the values computed in OCC OpenGl_view.c 
   // while waiting for a function to retrieve parameters of the displayed backgroun image 
   double hratio = winHeight * 1.0 / height;

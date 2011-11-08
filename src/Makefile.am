@@ -27,15 +27,15 @@ SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo SKETCHER OCC2VTK GEOM	\
           STEPImport STLExport VTKExport ShHealOper GEOMImpl GEOM_I	\
           GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
 
+if WITH_OPENCV
+  SUBDIRS += ShapeRecognition
+endif
+
 if GEOM_ENABLE_GUI
   SUBDIRS += OBJECT DlgRef GEOMFiltersSelection GEOMGUI GEOMBase GEOMToolsGUI	\
              DisplayGUI BasicGUI PrimitiveGUI GenerationGUI EntityGUI BuildGUI	\
              BooleanGUI TransformationGUI OperationGUI RepairGUI MeasureGUI	\
              GroupGUI BlocksGUI AdvancedGUI GEOM_SWIG_WITHIHM
-endif
-
-if WITH_OPENCV
-  SUBDIRS += ShapeRecognition
 endif
 
 DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo SKETCHER OCC2VTK GEOM BREPExport\

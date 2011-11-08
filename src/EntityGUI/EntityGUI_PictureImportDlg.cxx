@@ -40,7 +40,7 @@
 
 #include <GEOMImpl_Types.hxx>
 
-#include <OCCViewer_FeatureDetector.h>
+#include <ShapeRec_FeatureDetector.hxx>
 
 #include <QFileDialog>
 
@@ -182,7 +182,7 @@ bool EntityGUI_PictureImportDlg::execute( ObjectList& objects )
   if ( theImgFileName.isEmpty() )
     return res;
   
-  OCCViewer_FeatureDetector* aDetector = new OCCViewer_FeatureDetector( theImgFileName );
+  ShapeRec_FeatureDetector* aDetector = new ShapeRec_FeatureDetector( theImgFileName );
     
   int height            =  aDetector->GetImgHeight();
   int width             =  aDetector->GetImgWidth();

@@ -337,6 +337,7 @@ echo testing Opencv
 echo ---------------------------------------------
 echo
 CHECK_OPENCV
+AC_DEFINE_UNQUOTED(WITH_OPENCV,${WITH_OPENCV})
 
 echo
 echo ---------------------------------------------
