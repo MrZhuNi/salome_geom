@@ -37,6 +37,8 @@
 
 #include <TColgp_SequenceOfPnt.hxx>
 #include <TColgp_Array2OfPnt.hxx>
+#include <TColgp_SequenceOfXY.hxx>
+#include <TColgp_SequenceOfXYZ.hxx>
 
 #include <BRepAdaptor_HSurface.hxx>
 
@@ -44,17 +46,21 @@
 #include <BRepGProp.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepPrimAPI_MakeSphere.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
 
 #include <GeomPlate_Surface.hxx>
 #include <GeomPlate_BuildPlateSurface.hxx>
 #include <GeomPlate_PointConstraint.hxx>
+#include <GeomPlate_MakeApprox.hxx>
+#include <GeomPlate_PlateG0Criterion.hxx>
 
 #include <Geom_BSplineSurface.hxx>
+#include <Geom_Surface.hxx>
 
 #include <GProp_GProps.hxx>
 #include <Bnd_Box.hxx>
 #include <BRepBndLib.hxx>
-
+#include <gp_Pnt.hxx>
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -95,53 +101,114 @@ Standard_Integer GEOMImpl_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log
   int nbPoints = aData.GetLength();
 
   TopoDS_Shape aShape;
+  TopoDS_Face aInitShape;
   
   GeomPlate_BuildPlateSurface aBuilder(3,0);
+
+  // ** Creation of compound
+  BRep_Builder aB;
+  TopoDS_Compound aComp;
+  aB.MakeCompound(aComp);
+  for (int ind=1;ind<=nbPoints;ind++)
+  {
+    Handle(GEOM_Function) aPoint = aData.GetPoint(ind);
+    TopoDS_Shape aShapePnt = aPoint->GetValue();
+    aB.Add(aComp,aShapePnt);
+  }
+
+  Bnd_Box BoundingBox;
+  Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+  BRepBndLib::Add(aComp, BoundingBox);
+  BoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+
   if (isClosed) 
   {
     // Initial surface : Sphere
-    // ** Creation of compound
-    BRep_Builder aB;
-    TopoDS_Compound aComp;
-    aB.MakeCompound(aComp);
-    for (int ind=1;ind<=nbPoints;ind++)
-    {
-      Handle(GEOM_Function) aPoint = aData.GetPoint(ind);
-      TopoDS_Shape aShapePnt = aPoint->GetValue();
-      aB.Add(aComp,aShapePnt);
-    }
     // ** Retrieve center of mass
     GProp_GProps aSystem;
     BRepGProp::SurfaceProperties(aComp, aSystem);
     gp_Pnt aCenterMass = aSystem.CentreOfMass();
+    
     // ** Computation of radius
-    Bnd_Box BoundingBox;
-    Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-    BRepBndLib::Add(aComp, BoundingBox);
-    BoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
     Standard_Real aRMax = aXmax-aXmin;
     if (aRMax < aYmax-aYmin )
       aRMax = aYmax-aYmin;
     if (aRMax < aZmax-aZmin )
       aRMax = aZmax-aZmin;
     // ** Creation of sphere
-    aShape/*TopoDS_Shape aSphere*/ = BRepPrimAPI_MakeSphere(aCenterMass, aRMax).Face();
-    // ** Extraction of surface
-    // ** Initialization of surface
-    /*Handle(BRepAdaptor_HSurface) HSI = new BRepAdaptor_HSurface();
-    HSI->ChangeSurface().Initialize(aSphere);
-    aBuilder.LoadInitSurface( BRep_Tool::Surface(HSI->ChangeSurface().Face()));*/
+    aInitShape = BRepPrimAPI_MakeSphere(aCenterMass, aRMax).Face();
+  }
+  else 
+  {
+    Standard_Real aX = aXmax-aXmin;
+    Standard_Real aY = aYmax-aYmin;
+    Standard_Real aZ = aZmax-aZmin;
+    gp_Pnt aPnt1 = gp_Pnt(aXmin, aYmin, aZmin);
+    gp_Pnt aPnt2 = gp_Pnt(aXmax, aYmax, aZmax);
+    gp_Pnt aPnt3;
+    if (aX > aY)
+    {
+      if (aZ > aY)
+      {
+        aPnt3 = gp_Pnt(aXmin, aYmax, aZmax);
+      }
+      else
+      {
+        aPnt3 = gp_Pnt(aXmax, aYmin, aZmax);
+      }
+    }
+    else 
+    {
+      if (aZ > aY)
+      {
+        aPnt3 = gp_Pnt(aXmax, aYmin, aZmax);
+      }
+      else
+      {
+        aPnt3 = gp_Pnt(aXmax, aYmin, aZmax);
+      }
+    }
   }
 
-  /*for (int i=1; i<=nbPoints ; i++)
+  // ** Initialization of surface
+  Handle(BRepAdaptor_HSurface) HSI = new BRepAdaptor_HSurface();
+  HSI->ChangeSurface().Initialize(aInitShape);
+  aBuilder.LoadInitSurface( BRep_Tool::Surface(HSI->ChangeSurface().Face()));
+
+  for (int i=1; i<=nbPoints ; i++)
   {
     Handle(GEOM_Function) aPoint = aData.GetPoint(i);
     TopoDS_Shape aShapePnt = aPoint->GetValue();
-    Handle(GeomPlate_PointConstraint) PCont= new GeomPlate_PointConstraint(aShapePnt,0);
+    TopoDS_Vertex aVertexPnt = TopoDS::Vertex(aShapePnt);
+    gp_Pnt aPnt = BRep_Tool::Pnt( aVertexPnt ); 
+    Handle(GeomPlate_PointConstraint) PCont= new GeomPlate_PointConstraint(aPnt,0);
     aBuilder.Add(PCont);
   }
   aBuilder.Perform();
-  Handle(GeomPlate_Surface) gpPlate = aBuilder.Surface();*/
+  
+  Handle(GeomPlate_Surface) gpPlate = aBuilder.Surface();
+  
+  Standard_Integer nbcarreau=9;
+  Standard_Integer degmax=8;
+  Standard_Real seuil;
+  TColgp_SequenceOfXY S2d;
+  TColgp_SequenceOfXYZ S3d;
+  S2d.Clear();
+  S3d.Clear();
+  aBuilder.Disc2dContour(4,S2d);
+  aBuilder.Disc3dContour(4,0,S3d);
+  seuil = Max(0.0001,10*aBuilder.G0Error());
+  GeomPlate_PlateG0Criterion critere (S2d,S3d,seuil);
+  GeomPlate_MakeApprox Mapp(gpPlate,critere,0.0001,nbcarreau,degmax);
+
+  Handle (Geom_Surface) Surf (Mapp.Surface());
+
+  Standard_Real Umin, Umax, Vmin, Vmax;
+  
+  aBuilder.Surface()->Bounds( Umin, Umax, Vmin, Vmax);
+  
+  BRepBuilderAPI_MakeFace MF(Surf,Umin, Umax, Vmin, Vmax);
+  
   if (aShape.IsNull()) return 0;
 
   aFunction->SetValue(aShape);
