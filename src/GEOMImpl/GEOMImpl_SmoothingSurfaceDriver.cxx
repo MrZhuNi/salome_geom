@@ -61,6 +61,8 @@
 #include <Bnd_Box.hxx>
 #include <BRepBndLib.hxx>
 #include <gp_Pnt.hxx>
+
+#include <GC_MakePlane.hxx>
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -122,13 +124,13 @@ Standard_Integer GEOMImpl_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log
   BoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
 
   if (isClosed) 
-  {
+  {   
     // Initial surface : Sphere
     // ** Retrieve center of mass
     GProp_GProps aSystem;
     BRepGProp::SurfaceProperties(aComp, aSystem);
     gp_Pnt aCenterMass = aSystem.CentreOfMass();
-    
+
     // ** Computation of radius
     Standard_Real aRMax = aXmax-aXmin;
     if (aRMax < aYmax-aYmin )
@@ -140,34 +142,54 @@ Standard_Integer GEOMImpl_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log
   }
   else 
   {
+    // Initial surface : Plane
     Standard_Real aX = aXmax-aXmin;
     Standard_Real aY = aYmax-aYmin;
     Standard_Real aZ = aZmax-aZmin;
-    gp_Pnt aPnt1 = gp_Pnt(aXmin, aYmin, aZmin);
-    gp_Pnt aPnt2 = gp_Pnt(aXmax, aYmax, aZmax);
+    gp_Pnt aPnt1;
+    gp_Pnt aPnt2;
     gp_Pnt aPnt3;
     if (aX > aY)
     {
-      if (aZ > aY)
+      if (aX > aZ)
       {
-        aPnt3 = gp_Pnt(aXmin, aYmax, aZmax);
+        // X Plane
+        aPnt1 = gp_Pnt(aXmin, aYmin+aY/2, aZmin);
+        aPnt2 = gp_Pnt(aXmin, aYmin+aY/2, aZmax);
+        aPnt3 = gp_Pnt(aXmax, aYmin+aY/2, aZmin);
       }
       else
       {
-        aPnt3 = gp_Pnt(aXmax, aYmin, aZmax);
+        // Z Plane
+        aPnt1 = gp_Pnt(aXmin+aX/2, aYmin, aZmin);
+        aPnt2 = gp_Pnt(aXmin+aX/2, aYmin, aZmax);
+        aPnt3 = gp_Pnt(aXmin+aX/2, aYmax, aZmin);
       }
     }
     else 
     {
-      if (aZ > aY)
+      if (aY > aZ)
       {
-        aPnt3 = gp_Pnt(aXmax, aYmin, aZmax);
+        // Y Plane
+        aPnt1 = gp_Pnt(aXmin, aYmin, aZmin+aZ/2);
+        aPnt2 = gp_Pnt(aXmin, aYmax, aZmin+aZ/2);
+        aPnt3 = gp_Pnt(aXmax, aYmin, aZmin+aZ/2);
       }
       else
       {
-        aPnt3 = gp_Pnt(aXmax, aYmin, aZmax);
+        // Z Plane
+        aPnt1 = gp_Pnt(aXmin+aX/2, aYmin, aZmin);
+        aPnt2 = gp_Pnt(aXmin+aX/2, aYmin, aZmax);
+        aPnt3 = gp_Pnt(aXmin+aX/2, aYmax, aZmin);
       }
     }
+    GC_MakePlane aMakePlane (aPnt1, aPnt2, aPnt3);
+    double aSize = (aX+aY+aZ)/2;
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+    aInitShape = BRepBuilderAPI_MakeFace(aMakePlane, -aSize, aSize, -aSize, aSize, Precision::Confusion()).Face();
+#else
+    aInitShape = BRepBuilderAPI_MakeFace(aMakePlane, -aSize, aSize, -aSize, aSize).Face();
+#endif
   }
 
   // ** Initialization of surface
