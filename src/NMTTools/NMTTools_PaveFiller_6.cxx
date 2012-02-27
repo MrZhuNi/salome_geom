@@ -1064,8 +1064,8 @@ Standard_Boolean NMTTools_PaveFiller::FindPave(const gp_Pnt& aP,
 // function: PrepareSetForFace
 // purpose:
 //=======================================================================
-void NMTTools_PaveFiller::PrepareSetForFace(const Standard_Integer ,//nF1,
-                                            const Standard_Integer ,//nF2,
+void NMTTools_PaveFiller::PrepareSetForFace(const Standard_Integer nF1,
+                                            const Standard_Integer nF2,
                                             const BOPTools_ListOfPaveBlock& aLPBC,
                                             BOPTools_PaveSet& aPSF)
 {
@@ -1087,6 +1087,28 @@ void NMTTools_PaveFiller::PrepareSetForFace(const Standard_Integer ,//nF1,
     if (!aMap.Contains(nV2)) {
       aMap.Add(nV2);
       aPSF.Append(aPave2);
+    }
+  }
+
+  TColStd_MapIteratorOfMapOfInteger aItMI;
+  //
+  const NMTTools_FaceInfo& aFI1=myFaceInfo.Find(nF1);
+  const NMTTools_FaceInfo& aFI2=myFaceInfo.Find(nF2);
+  //
+  const TColStd_MapOfInteger& aMVIn1=aFI1.VerticesIn();
+  const TColStd_MapOfInteger& aMVIn2=aFI2.VerticesIn();
+  //
+  aItMI.Initialize(aMVIn1);
+  for (; aItMI.More(); aItMI.Next()) {
+    nV1=aItMI.Key();
+    if (aMVIn2.Contains(nV1)) {
+      if (!aMap.Contains(nV1)) {
+	BOPTools_Pave aPave1;
+	//
+	aMap.Add(nV1);
+	aPave1.SetIndex(nV1);
+	aPSF.Append(aPave1);
+      }
     }
   }
 }

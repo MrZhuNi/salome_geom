@@ -144,6 +144,9 @@ Standard_Boolean GEOMAlgo_Tools3D::IsInternalFace(const TopoDS_Face& theFace,
     if (!theMEF.Contains(aE)) {
       continue;
     }
+    if (BRep_Tool::Degenerated(aE)){
+      continue;
+    }
     //
     const TopTools_ListOfShape& aLF=theMEF.FindFromKey(aE);
     aNbF=aLF.Extent();
