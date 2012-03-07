@@ -105,7 +105,7 @@ Standard_Integer GEOMImpl_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log
   TopoDS_Shape aShape;
   TopoDS_Face aInitShape;
   
-  GeomPlate_BuildPlateSurface aBuilder(3,0);
+  GeomPlate_BuildPlateSurface aBuilder(3,10);
 
   // ** Creation of compound
   BRep_Builder aB;
@@ -123,6 +123,7 @@ Standard_Integer GEOMImpl_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log
   BRepBndLib::Add(aComp, BoundingBox);
   BoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
 
+  cout << "test isClosed" << endl;
   if (isClosed) 
   {   
     // Initial surface : Sphere
@@ -139,6 +140,7 @@ Standard_Integer GEOMImpl_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log
       aRMax = aZmax-aZmin;
     // ** Creation of sphere
     aInitShape = BRepPrimAPI_MakeSphere(aCenterMass, aRMax).Face();
+  cout << "Closed " << endl;
   }
   else 
   {
@@ -151,9 +153,10 @@ Standard_Integer GEOMImpl_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log
     gp_Pnt aPnt3;
     if (aX > aY)
     {
-      if (aX > aZ)
+      if (aZ > aY)
       {
-        // X Plane
+        // Y Plane
+        cout << "cas 1 " << endl;
         aPnt1 = gp_Pnt(aXmin, aYmin+aY/2, aZmin);
         aPnt2 = gp_Pnt(aXmin, aYmin+aY/2, aZmax);
         aPnt3 = gp_Pnt(aXmax, aYmin+aY/2, aZmin);
@@ -161,29 +164,34 @@ Standard_Integer GEOMImpl_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log
       else
       {
         // Z Plane
-        aPnt1 = gp_Pnt(aXmin+aX/2, aYmin, aZmin);
-        aPnt2 = gp_Pnt(aXmin+aX/2, aYmin, aZmax);
-        aPnt3 = gp_Pnt(aXmin+aX/2, aYmax, aZmin);
-      }
-    }
-    else 
-    {
-      if (aY > aZ)
-      {
-        // Y Plane
+        cout << "cas 2 " << endl;
         aPnt1 = gp_Pnt(aXmin, aYmin, aZmin+aZ/2);
         aPnt2 = gp_Pnt(aXmin, aYmax, aZmin+aZ/2);
         aPnt3 = gp_Pnt(aXmax, aYmin, aZmin+aZ/2);
       }
-      else
+    }
+    else 
+    {
+      // aY > aX
+      if (aZ > aX)
       {
-        // Z Plane
+        // X Plane
+        cout << "cas 3 " << endl;
         aPnt1 = gp_Pnt(aXmin+aX/2, aYmin, aZmin);
         aPnt2 = gp_Pnt(aXmin+aX/2, aYmin, aZmax);
         aPnt3 = gp_Pnt(aXmin+aX/2, aYmax, aZmin);
       }
+      else
+      {
+        // Z Plane
+        cout << "cas 4 " << endl;
+        aPnt1 = gp_Pnt(aXmin, aYmin, aZmin+aZ/2);
+        aPnt2 = gp_Pnt(aXmin, aYmax, aZmin+aZ/2);
+        aPnt3 = gp_Pnt(aXmax, aYmin, aZmin+aZ/2);
+      }
     }
     GC_MakePlane aMakePlane (aPnt1, aPnt2, aPnt3);
+  cout << "Not closed " << endl;
     double aSize = (aX+aY+aZ)/2;
 #if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
     aInitShape = BRepBuilderAPI_MakeFace(aMakePlane, -aSize, aSize, -aSize, aSize, Precision::Confusion()).Face();
@@ -197,6 +205,7 @@ Standard_Integer GEOMImpl_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log
   HSI->ChangeSurface().Initialize(aInitShape);
   aBuilder.LoadInitSurface( BRep_Tool::Surface(HSI->ChangeSurface().Face()));
 
+  cout << "Init surface" << endl;
   for (int i=1; i<=nbPoints ; i++)
   {
     Handle(GEOM_Function) aPoint = aData.GetPoint(i);
@@ -206,22 +215,26 @@ Standard_Integer GEOMImpl_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log
     Handle(GeomPlate_PointConstraint) PCont= new GeomPlate_PointConstraint(aPnt,0);
     aBuilder.Add(PCont);
   }
+  cout << "avant Perform surface" << endl;
   aBuilder.Perform();
+  cout << "Perform surface" << endl;
   
+  // A ce niveau : surface algo
   Handle(GeomPlate_Surface) gpPlate = aBuilder.Surface();
   
   Standard_Integer nbcarreau=9;
   Standard_Integer degmax=8;
   Standard_Real seuil;
-  TColgp_SequenceOfXY S2d;
+  /*TColgp_SequenceOfXY S2d;
   TColgp_SequenceOfXYZ S3d;
   S2d.Clear();
   S3d.Clear();
   aBuilder.Disc2dContour(4,S2d);
-  aBuilder.Disc3dContour(4,0,S3d);
+  aBuilder.Disc3dContour(4,0,S3d);*/
   seuil = Max(0.0001,10*aBuilder.G0Error());
-  GeomPlate_PlateG0Criterion critere (S2d,S3d,seuil);
-  GeomPlate_MakeApprox Mapp(gpPlate,critere,0.0001,nbcarreau,degmax);
+  //GeomPlate_PlateG0Criterion critere (S2d,S3d,seuil);
+  GeomPlate_MakeApprox Mapp(gpPlate,0.0001,nbcarreau,degmax,seuil);
+  cout << "Approx surface" << endl;
 
   Handle (Geom_Surface) Surf (Mapp.Surface());
 
@@ -230,7 +243,9 @@ Standard_Integer GEOMImpl_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log
   aBuilder.Surface()->Bounds( Umin, Umax, Vmin, Vmax);
   
   BRepBuilderAPI_MakeFace MF(Surf,Umin, Umax, Vmin, Vmax);
-  
+  aShape = MF.Shape();
+   cout << "RES surface" << endl;
+ 
   if (aShape.IsNull()) return 0;
 
   aFunction->SetValue(aShape);
