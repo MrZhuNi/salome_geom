@@ -518,8 +518,6 @@ AC_OUTPUT([ \
   src/IGESExport/Makefile \
   src/IGESImport/Makefile \
   src/MeasureGUI/Makefile \
-  src/NMTDS/Makefile \
-  src/NMTTools/Makefile \
   src/OBJECT/Makefile \
   src/OCC2VTK/Makefile \
   src/OperationGUI/Makefile \

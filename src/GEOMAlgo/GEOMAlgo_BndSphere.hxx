@@ -1,8 +1,5 @@
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -20,37 +17,57 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        GEOMAlgo_VertexSolid.hxx
-// Created:     Wed Jan 12 16:36:40 2005
-// Author:      Peter KURNEV
-//              <pkv@irinox>
-//
-#ifndef _GEOMAlgo_VertexSolid_HeaderFile
-#define _GEOMAlgo_VertexSolid_HeaderFile
+// File:	GEOMAlgo_BndSphere.hxx
+// Created:	
+// Author:	Peter KURNEV
+//		<pkv@irinox>
+
+#ifndef _GEOMAlgo_BndSphere_HeaderFile
+#define _GEOMAlgo_BndSphere_HeaderFile
 
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
-
-#include <GEOMAlgo_ShapeSolid.hxx>
+#include <gp_Pnt.hxx>
+#include <Standard_Real.hxx>
+#include <Standard_Boolean.hxx>
 
 //=======================================================================
-//class    : GEOMAlgo_VertexSolid
-//purpose  :
+//class : GEOMAlgo_BndSphere
+//purpose  : 
 //=======================================================================
-class GEOMAlgo_VertexSolid  : public GEOMAlgo_ShapeSolid
-{
+class GEOMAlgo_BndSphere  {
  public:
-  Standard_EXPORT
-    GEOMAlgo_VertexSolid();
+  Standard_EXPORT   
+    GEOMAlgo_BndSphere();
+  
+  Standard_EXPORT 
+    virtual ~GEOMAlgo_BndSphere();
+  
+  void SetCenter(const gp_Pnt& theP) ;
+  
+  const gp_Pnt& Center() const;
+  
+  void SetRadius(const Standard_Real theR) ;
+  
+  Standard_Real Radius() const;
+  
+  void SetGap(const Standard_Real theGap) ;
+  
+  Standard_Real Gap() const;
+  
+  void Add(const GEOMAlgo_BndSphere& theOther) ;
+  
+  Standard_EXPORT 
+    Standard_Boolean IsOut(const GEOMAlgo_BndSphere& theOther) const;
+  
+  Standard_Real SquareExtent() const;
 
-  Standard_EXPORT
-    virtual ~GEOMAlgo_VertexSolid();
-
-  Standard_EXPORT
-    virtual  void Perform() ;
-
-protected:
-  Standard_EXPORT
-    virtual  void BuildResult() ;
+ protected:
+  gp_Pnt myCenter;
+  Standard_Real myRadius;
+  Standard_Real myGap;
 };
+
+#include <GEOMAlgo_BndSphere.lxx>
+
 #endif

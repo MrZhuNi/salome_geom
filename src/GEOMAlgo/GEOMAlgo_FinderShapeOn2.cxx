@@ -70,7 +70,6 @@
 #include <BRepLib_MakeEdge.hxx>
 
 #include <GEOMAlgo_ListIteratorOfListOfPnt.hxx>
-
 #include <GEOMAlgo_SurfaceTools.hxx>
 #include <GEOMAlgo_StateCollector.hxx>
 #include <GEOMAlgo_FinderShapeOn.hxx>
@@ -80,7 +79,7 @@
 #include <GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx>
 
 //=======================================================================
-//function : GEOMAlgo_FinderShapeOn1
+//function : 
 //purpose  :
 //=======================================================================
   GEOMAlgo_FinderShapeOn2::GEOMAlgo_FinderShapeOn2()

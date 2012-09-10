@@ -31,10 +31,10 @@
 #include <TopoDS_Shape.hxx>
 #include <Standard_Real.hxx>
 #include <Standard_Boolean.hxx>
+
 #include <IntTools_Context.hxx>
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TopTools_DataMapOfShapeShape.hxx>
-#include <GEOMAlgo_BuilderShape.hxx>
 
 //=======================================================================
 //class    : GEOMAlgo_GluerAlgo

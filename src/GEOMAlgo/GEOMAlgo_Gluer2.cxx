@@ -45,7 +45,7 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <GEOMAlgo_GlueDetector.hxx>
-#include <GEOMAlgo_Tools3D.hxx>
+#include <GEOMAlgo_AlgoTools.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_Gluer2
@@ -441,7 +441,7 @@ void GEOMAlgo_Gluer2::FillContainers(const TopAbs_ShapeEnum aType)
       continue;
     }
     //
-    GEOMAlgo_Tools3D::MakeContainer(aType, aWnew);
+    GEOMAlgo_AlgoTools::MakeContainer(aType, aWnew);
     aWnew.Orientation(aW.Orientation());
     //
     aItS.Initialize(aW);
@@ -450,7 +450,7 @@ void GEOMAlgo_Gluer2::FillContainers(const TopAbs_ShapeEnum aType)
       if (myOrigins.IsBound(aE)) {
         aEnew=myOrigins.Find(aE);
         //
-        bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aEnew, aE, myContext);
+        bToReverse=GEOMAlgo_AlgoTools::IsSplitToReverse(aEnew, aE, myContext);
         if (bToReverse) {
           aEnew.Reverse();
         }
@@ -509,7 +509,7 @@ void GEOMAlgo_Gluer2::FillCompound(const TopoDS_Shape& aC)
     return;
   }
   //
-  GEOMAlgo_Tools3D::MakeContainer(TopAbs_COMPOUND, aCnew);
+  GEOMAlgo_AlgoTools::MakeContainer(TopAbs_COMPOUND, aCnew);
   //
   aItC.Initialize(aC);
   for (; aItC.More(); aItC.Next()) {
@@ -599,7 +599,7 @@ void GEOMAlgo_Gluer2::BuildResult()
     return;
   }
   //
-  GEOMAlgo_Tools3D::MakeContainer(TopAbs_COMPOUND, aCnew);
+  GEOMAlgo_AlgoTools::MakeContainer(TopAbs_COMPOUND, aCnew);
   //
   aItC.Initialize(myArgument);
   for (; aItC.More(); aItC.Next()) {
@@ -619,7 +619,7 @@ void GEOMAlgo_Gluer2::BuildResult()
     TopoDS_Shape aCnew1;
     TopTools_IndexedMapOfShape aM;
     //
-    GEOMAlgo_Tools3D::MakeContainer(TopAbs_COMPOUND, aCnew1);
+    GEOMAlgo_AlgoTools::MakeContainer(TopAbs_COMPOUND, aCnew1);
     //
     TopExp::MapShapes(aCnew, TopAbs_SOLID, aM);
 
