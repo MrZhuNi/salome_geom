@@ -264,6 +264,10 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   virtual bool hasObjectInfo();
   virtual char* getObjectInfo(CORBA::Long studyId, const char* entry);
 
+  virtual Engines::ListOfIdentifiers* importData(
+    CORBA::Long studyId, Engines::DataContainer_ptr data, const Engines::ListOfOptions& options);
+  virtual Engines::ListOfData* getModifiedData(CORBA::Long studyId);
+
   //-----------------------------------------------------------------------//
   // Internal methods                                                      //
   //-----------------------------------------------------------------------//

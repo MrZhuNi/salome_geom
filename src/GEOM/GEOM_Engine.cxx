@@ -944,6 +944,17 @@ std::list<int> GEOM_Engine::getAllTextures(int theDocID)
   return id_list;
 }
 
+void GEOM_Engine::DocumentModified(const int theDocId, const bool isModified)
+{
+  if (isModified) _mapModifiedDocs.Add(theDocId);
+  else _mapModifiedDocs.Remove(theDocId);
+}
+ 
+bool GEOM_Engine::DocumentModified(const int theDocId)
+{
+  return _mapModifiedDocs.Contains(theDocId);
+}
+
 //===========================================================================
 //                     Internal functions
 //===========================================================================
@@ -1669,3 +1680,8 @@ void ObjectStates::IncrementState()
 {
   _dumpstate++;
 }
+
+ void DocumentModified(const int theDocId, const bool isModified);
+ 
+   bool DocumentModified(const int theDocId);
+   
