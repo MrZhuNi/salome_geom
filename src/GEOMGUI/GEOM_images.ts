@@ -1276,6 +1276,18 @@
             <translation>pipetshapegroups.png</translation>
         </message>
 -->
+        <message>
+            <source>ICON_DLG_SMOOTHINGSURFACE_POINTS_ISCLOSED</source>
+            <translation>smoothingsurface_points_isclosed.png</translation>
+        </message>
+        <message>
+            <source>ICO_SMOOTHINGSURFACE</source>
+            <translation>smoothingsurface.png</translation>
+        </message>
+        <message>
+            <source>ICON_OBJBROWSER_ADVANCED_202</source>
+            <translation>tree_smoothingsurface.png</translation>
+        </message>
 	<!-- @@ insert new functions before this line @@ do not remove this line @@ -->
     </context>
 </TS>

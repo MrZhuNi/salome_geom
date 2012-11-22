@@ -5415,6 +5415,33 @@ Do you want to create new material?</translation>
     </message>
 </context>
 <context>
+    <name>AdvancedGUI_SmoothingSurfaceDlg</name>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE_TITLE</source>
+        <translation>Smoothing surface Construction</translation>
+    </message>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE</source>
+        <translation>Smoothing surface</translation>
+    </message>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE_RESULT</source>
+        <translation>Result name</translation>
+    </message>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE_ARG</source>
+        <translation>Nodes</translation>
+    </message>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE_ARG_POINTS</source>
+        <translation>Points</translation>
+    </message>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE_ARG_ISCLOSED</source>
+        <translation>Build a closed surface</translation>
+    </message>
+</context>
+<context>
     <name>GEOMToolsGUI_PublishDlg</name>
     <message>
         <source>GEOM_PUBLISH_OBJECTS_TLT</source>

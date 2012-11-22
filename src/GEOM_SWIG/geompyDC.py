@@ -8513,6 +8513,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if Parameters: anObj[0].SetParameters(Parameters)
             return anObj
 
+        ## Create a smoothing surface from a set of points
+        #  @param thePoints list of points
+        #  @param theisClosed Define if the created surface must be closed
+        #  @return New GEOM_Object, containing the created shape.
+        #
+        #  @ref tui_creation_smoothingsurface "Example"
+        def MakeSmoothingSurface(self, thePoints, theisClosed):
+            thePoints, theisClosed, Parameters = ParseParameters(thePoints, theisClosed)
+            anObj = self.AdvOp.MakeSmoothingSurface(thePoints, theisClosed)
+            RaiseIfFailed("MakeSmoothingSurface", self.AdvOp)
+            if Parameters: anObj.SetParameters(Parameters)
+            return anObj
+
         #@@ insert new functions before this line @@ do not remove this line @@#
 
         # end of l4_advanced

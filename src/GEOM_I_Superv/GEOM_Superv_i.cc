@@ -3402,6 +3402,26 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFilletWithPosition
   return aSeqPtr->_this();
 }
 
+//=============================================================================
+//  MakeSmoothingSurface
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSmoothingSurface (GEOM::GEOM_List_ptr thePoints, CORBA::Boolean theisClosed)
+{
+  beginService( " GEOM_Superv_i::MakeSmoothingSurface" );
+  MESSAGE("GEOM_Superv_i::MakeSmoothingSurface");
+  getAdvancedOp();
+  //GEOM::GEOM_Object_ptr anObj = myAdvancedOp->MakeSmoothingSurface(thePoints, theisClosed);
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP =
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thePoints, myPOA).in())) {
+    getCurvesOp();
+    GEOM::GEOM_Object_ptr anObj = myAdvancedOp->MakeSmoothingSurface(aListImplP->GetList(), theisClosed);
+    endService( " GEOM_Superv_i::MakeSmoothingSurface" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::MakeSmoothingSurface" );
+  return NULL;
+}
+
 /*@@ insert new functions before this line @@ do not remove this line @@*/
 
 //=====================================================================================

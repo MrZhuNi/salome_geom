@@ -45,6 +45,8 @@
 
 #include "GEOMImpl_PipeTShapeDriver.hxx"
 #include "GEOMImpl_IPipeTShape.hxx"
+#include <GEOMImpl_SmoothingSurfaceDriver.hxx>
+#include <GEOMImpl_ISmoothingSurface.hxx>
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
 #include <TopExp.hxx>
@@ -2227,4 +2229,73 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
   return aSeq;
 }
 
+//=============================================================================
+/*!
+ *  Create a smoothing surface from a set of points
+ *  \param thePoints list of points
+ *  \param theisClosed Define if the created surface must be closed
+ *  \return New GEOM_Object, containing the created shape.
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeSmoothingSurface (std::list<Handle(GEOM_Object)> thePoints, bool theisClosed)
+{
+  SetErrorCode(KO);
+
+  //Add a new object
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_SMOOTHINGSURFACE);
+
+  //Add a new shape function with parameters
+  Handle(GEOM_Function) aFunction = aShape->AddFunction(GEOMImpl_SmoothingSurfaceDriver::GetID(), SMOOTHINGSURFACE_POINTS_ISCLOSED);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_SmoothingSurfaceDriver::GetID()) return NULL;
+
+  GEOMImpl_ISmoothingSurface aData (aFunction);
+
+  int aLen = thePoints.size();
+  aData.SetLength(aLen);
+  int ind = 1;
+  std::list<Handle(GEOM_Object)>::iterator it = thePoints.begin();
+  for (; it != thePoints.end(); it++, ind++) {
+    Handle(GEOM_Function) aRefPnt = (*it)->GetLastFunction();
+    if (aRefPnt.IsNull()) {
+      SetErrorCode("NULL point for bSplineFaceShape");
+      return NULL;
+    }
+    aData.SetPoint(ind, aRefPnt);
+  }
+
+  aData.SetisClosed(theisClosed);
+
+  //Compute the resulting value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("SmoothingSurface driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aShape << " = geompy.MakeSmoothingSurface([";
+  it = thePoints.begin();
+  pd << (*it++);
+  while (it != thePoints.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "], " << theisClosed << ")";
+
+  SetErrorCode(OK);
+
+  return aShape;
+}
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/

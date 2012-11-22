@@ -83,6 +83,7 @@
 #include <GEOMImpl_MeasureDriver.hxx>
 // Advanced operations
 #include <GEOMImpl_PipeTShapeDriver.hxx>
+#include <GEOMImpl_SmoothingSurfaceDriver.hxx>
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
 //=============================================================================
@@ -166,6 +167,7 @@ GEOMImpl_Gen::GEOMImpl_Gen()
 
    // Advanced operations
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PipeTShapeDriver::GetID(), new GEOMImpl_PipeTShapeDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_SmoothingSurfaceDriver::GetID(), new GEOMImpl_SmoothingSurfaceDriver());
    /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
    SetEngine(this);
