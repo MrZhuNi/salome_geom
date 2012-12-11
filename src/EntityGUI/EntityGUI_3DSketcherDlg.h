@@ -45,6 +45,9 @@ class gp_Dir;
 #  define DBL_DIGITS_DISPLAY 16
 #endif // COORD_MIN
 
+// For convenience
+bool isSame (double d1, double d2);
+
 //=================================================================================
 // class    : EntityGUI_Dlg
 // purpose  :
@@ -55,18 +58,19 @@ class EntityGUI_3DSketcherDlg : public GEOMBase_Skeleton
 
   struct XYZ
   {
-    XYZ() { x = y = z = 0.0; command = params = ""; L=A=0; }
+    XYZ() { x = y = z = 0.0; command = params = ""; L=A=T=0; }
     double  x,  y,  z; // for preview only
-    int L, A;          // for preview only
+    int L, A, T;       // for preview only
     QString command;
     QString params;
   };
   
   struct prsType
   {
-    prsType(){L=A=0;}
+    prsType(){L=A=T=0;}
     int L;
     int A;
+    int T;
   };
   
   typedef QList<XYZ> XYZList;
@@ -115,6 +119,10 @@ private:
                                                    gp_Dir theNormal,
                                                    bool store = false);
   
+  void                               displayText(std::string theText,
+                                                 gp_Pnt P,
+                                                 bool store = false);
+  
   void                               displayTrihedron( int );
   
   void                               displayDimensions(bool store = false);
@@ -131,14 +139,23 @@ private:
   
   std::string                        doubleToString( double );
   
+  gp_Trsf                            toReferenceSystem(gp_Pnt origin) const;
+  gp_Trsf                            toCurrentSystem(gp_Pnt origin) const;
+  
   void                               removeLastIOFromPrs();
   void                               restoreLastIOToPrs();
+  
+  double                             radius(gp_Pnt) const;
+  double                             height(gp_Pnt) const;
+  double                             longitude(gp_Pnt) const;
+  double                             latitude(gp_Pnt) const;
 
 private:
   XYZList                            myPointsList;
   XYZList                            myRedoList;
   AIS_ListOfInteractive              myLengthIORedoList;
   AIS_ListOfInteractive              myAngleIORedoList;
+  AIS_ListOfInteractive              myTextIORedoList;
   prsType                            myPrsType;
 
   EntityGUI_3Spin*                   Group3Spin;
@@ -159,6 +176,7 @@ private:
   GeometryGUI*                       myGeometryGUI;
   SOCC_Prs*                          myAnglePrs;
   SOCC_Prs*                          myLengthPrs;
+  SOCC_Prs*                          myTextPrs;
 
 private slots:
   void                               ClickOnOk();

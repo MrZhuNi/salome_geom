@@ -26,7 +26,8 @@
 
 #include "EntityGUI_3DSketcherDlg.h"
 #include "EntityGUI_Widgets.h"
-#include <SalomeApp_DoubleSpinBox.h>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
@@ -42,6 +43,7 @@
 #include <SOCC_Prs.h>
 #include <SOCC_ViewModel.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_DoubleSpinBox.h>
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
@@ -65,6 +67,15 @@
 #include <Prs3d_AngleAspect.hxx>
 #include <Prs3d_LineAspect.hxx>
 #include <Prs3d_LengthAspect.hxx>
+#if OCC_VERSION_LARGE > 0x06050300
+#include <Prs3d_TextAspect.hxx>
+#include <Prs3d_Presentation.hxx>
+#include <Prs3d_Text.hxx>
+#include <Graphic3d_VerticalTextAlignment.hxx>
+#include <Graphic3d_HorizontalTextAlignment.hxx>
+#include <Graphic3d_AspectText3d.hxx>
+#include <Font_FontAspect.hxx>
+#endif // OCC_VERSION_LARGE > 0x06050300
 
 // This include must be *AFTER* SOCC_ViewModel.h because
 // of the constant ROTATE which is a #define in
@@ -73,19 +84,8 @@
 
 // TODO
 //
-// + Ecrire la partie absolute / relative pour les coordonnées angulaires       Done
-// + Ecrire les bons tests pour les coordonnées cylindriques                    Done
-// + Finir refactoring des outils de display (displayLength)                    Done
-// + Mettre en place la visualisation (côtes ...) pour les coordonnées cylindriques Done
-// + Changement du mode de représentation (côtes) pour le cas absolu                Half done
-// + Dump pour les coordonnées cylindriques et 
-//   report des modifs sur les autres types de coordonnées                          Done
-// + Correction BUG coordonées cylindriques relatives --> la hauteur est absolue    Done
-// + Améliorer rendu des cotes pour coordonées cylindriques (tailles relatives      Done
-//   de la cote rayon et de la cote hauteur)
-// + Prendre en compte les remarques de Raphaël        Done
-// + Traductions                                       Done
-// + Doc
+// Avoid duplication of angle coordinates in cylindrical mode
+// Check spherical mode in absolute
 
 enum
 {
@@ -102,6 +102,107 @@ public:
 private:
   bool& myLock;
 };
+
+#if OCC_VERSION_LARGE > 0x06050300
+DEFINE_STANDARD_HANDLE(AIS_Text, AIS_InteractiveObject)
+
+class AIS_Text:public AIS_InteractiveObject
+{
+public:
+  // CASCADE RTTI
+  DEFINE_STANDARD_RTTI(AIS_Text );
+
+  AIS_Text(){};
+
+  AIS_Text
+    (
+      const TCollection_ExtendedString& , const gp_Pnt& ,
+      Quantity_Color color,
+      Standard_Integer aHJust,
+      Standard_Integer aVJust ,
+      Standard_Real Angle ,
+      Standard_Boolean Zoom ,
+      Standard_Real  Height,
+      Font_FontAspect FontAspect,
+      Standard_CString Font
+    );
+
+private:
+
+  void Compute (  const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
+                  const Handle(Prs3d_Presentation)& aPresentation,
+                  const Standard_Integer aMode);
+
+  void ComputeSelection (  const Handle(SelectMgr_Selection)& aSelection,
+                           const Standard_Integer aMode){} ;
+
+protected:
+  TCollection_ExtendedString          aText;
+  gp_Pnt                              aPosition;
+  Standard_Real                       Red;
+  Standard_Real                       Green;
+  Standard_Real                       Blue;
+  Standard_Real                       aAngle;
+  Standard_Real                       aHeight;
+  Standard_Boolean                    aZoomable;
+  Quantity_Color                      aColor;
+  Standard_CString                    aFont;
+  Font_FontAspect                      aFontAspect;
+  Graphic3d_HorizontalTextAlignment   aHJustification;
+  Graphic3d_VerticalTextAlignment     aVJustification;
+};
+
+IMPLEMENT_STANDARD_HANDLE(AIS_Text, AIS_InteractiveObject)
+IMPLEMENT_STANDARD_RTTIEXT(AIS_Text, AIS_InteractiveObject)
+
+AIS_Text::AIS_Text( const TCollection_ExtendedString& text, const gp_Pnt& position,
+                          Quantity_Color    color       = Quantity_NOC_YELLOW,
+                          Standard_Integer  aHJust      = Graphic3d_HTA_LEFT,
+                          Standard_Integer  aVJust      = Graphic3d_VTA_BOTTOM,
+                          Standard_Real     angle       = 0.0 ,
+                          Standard_Boolean  zoomable    = Standard_False,
+                          Standard_Real     height      = 16.,
+                          Font_FontAspect    fontAspect  = Font_FA_Regular,
+                          Standard_CString  font        = "Courier")
+{
+  aText           = text;
+  aPosition       = position;
+  aHJustification = Graphic3d_HorizontalTextAlignment(aHJust);
+  aVJustification = Graphic3d_VerticalTextAlignment(aVJust);
+  aAngle          = angle;
+  aZoomable       = zoomable;
+  aHeight         = height;
+  aColor          = color;
+  aFontAspect     = fontAspect;
+  aFont           = font;
+};
+
+void AIS_Text::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
+                          const Handle(Prs3d_Presentation)& aPresentation,
+                          const Standard_Integer aMode)
+{
+
+  aPresentation->Clear();
+
+  Handle_Prs3d_TextAspect asp = myDrawer->TextAspect();
+
+  asp->SetFont(aFont);
+  asp->SetColor(aColor);
+  asp->SetHeight(aHeight); // I am changing the myHeight value
+
+  asp->SetHorizontalJustification(aHJustification);
+  asp->SetVerticalJustification(aVJustification);
+  asp->Aspect()->SetTextZoomable(aZoomable);
+  asp->Aspect()->SetTextAngle(aAngle);
+  asp->Aspect()->SetTextFontAspect(aFontAspect);
+  Prs3d_Text::Draw(aPresentation, asp, aText, aPosition);
+};
+#endif // OCC_VERSION_LARGE > 0x06050300
+
+bool isSame (double d1, double d2)
+{ 
+  return Abs(d1 - d2) <= Precision::Confusion();
+}
 
 //=================================================================================
 // class    : EntityGUI_3DSketcherDlg()
@@ -228,6 +329,9 @@ void EntityGUI_3DSketcherDlg::Init()
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
   myAnglePrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
   myLengthPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
+#if OCC_VERSION_LARGE > 0x06050300
+  myTextPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
+#endif // OCC_VERSION_LARGE > 0x06050300
 
   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
 
@@ -426,6 +530,7 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
   myRedoList.clear();
   myLengthIORedoList.Clear();
   myAngleIORedoList.Clear();
+  myTextIORedoList.Clear();
 
   if (myCoordType == 0 && myMode == 1)     // RELATIVE CARTESIAN COORDINATES
   {
@@ -518,6 +623,7 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
     SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true);
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true);
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myTextPrs, true);
     
     removeLastIOFromPrs();
 
@@ -526,6 +632,7 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myLengthPrs);
     if (isAngleVisible)
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myTextPrs);
     
     // Remove last point from list
     myPointsList.removeLast();
@@ -553,6 +660,7 @@ void EntityGUI_3DSketcherDlg::ClickOnRedo()
     SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true);
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true);
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myTextPrs, true);
     
     restoreLastIOToPrs();
 
@@ -561,6 +669,7 @@ void EntityGUI_3DSketcherDlg::ClickOnRedo()
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myLengthPrs);
     if (isAngleVisible)
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myTextPrs);
     
     // Remove last point from redo list
     myRedoList.removeLast();
@@ -595,6 +704,12 @@ void EntityGUI_3DSketcherDlg::removeLastIOFromPrs ()
     myAngleIORedoList.Prepend(anIOList.First());  // Store last prepended Angle IO in redo list
     myAnglePrs->RemoveFirst();                    // Remove it from myAnglePrs
   }
+  for (int t = 0; t<Last.T; t++)
+  {
+    myTextPrs->GetObjects(anIOList);
+    myTextIORedoList.Prepend(anIOList.First());  // Store last prepended Text IO in redo list
+    myTextPrs->RemoveFirst();                    // Remove it from myTextPrs
+  }
 }
 
 //=================================================================================
@@ -614,6 +729,11 @@ void EntityGUI_3DSketcherDlg::restoreLastIOToPrs ()
   {
     myAnglePrs->PrependObject(myAngleIORedoList.First());  // Restore last removed IO
     myAngleIORedoList.RemoveFirst();                       // Remove it from redo list
+  }
+  for (int t = 0; t<LastDeleted.T; t++)
+  {
+    myTextPrs->PrependObject(myTextIORedoList.First());  // Restore last removed IO
+    myTextIORedoList.RemoveFirst();                       // Remove it from redo list
   }
 }
 
@@ -1105,6 +1225,7 @@ EntityGUI_3DSketcherDlg::XYZ EntityGUI_3DSketcherDlg::getCurrentPoint() const
   // Update point presentation type
   xyz.A = myPrsType.A;  // Number of angle diomensions
   xyz.L = myPrsType.L;  // Number of length dimensions
+  xyz.T = myPrsType.T;  // Number of text objects
   
   return xyz;
 }
@@ -1133,65 +1254,43 @@ gp_Dir EntityGUI_3DSketcherDlg::getPresentationPlane() const
   
   gp_Vec Vec1(P1,P2);
   gp_Vec Vec2(P1,P3);
-  gp_Vec Vec3 = Vec1;
   
   gp_Dir aNormal;                  // Normal defining the plane of the presentation 
   
   if (withAngle)                   // If one angle
   {
-    switch(myOrientation)
+    // Transformation from the current coordinate system 
+    // to the reference coordinate system
+    gp_Trsf aTransform = toReferenceSystem (P1);
+    gp_Dir N1 = gp::DZ();
+    gp_Dir N2 = gp::DY();
+    N1.Transform(aTransform);
+    N2.Transform(aTransform);
+    
+    if (Vec1.CrossMagnitude(N1) > Precision::Confusion())
     {
-      case OXY:
-      {
-        if (Vec1.CrossMagnitude(gp::DZ()) > Precision::Confusion())
-          aNormal = gp::DZ().Crossed(gp_Dir(Vec1)); // --> the plane is orthogonal to the angle presentation   
-        else                                        //     plane and contains the current edge
-          aNormal = gp::DY();
-
-        if (twoAngles)            // If two angles 
-        { 
-          gp_XYZ Vec1_XY(Vec1.X(),Vec1.Y(),0.0);// --> define Vec3 as the projection of the current 
-          Vec3 = gp_Vec(Vec1_XY);               //     edge on the plane chosen for the first angle
-        }
-        break;
-      }
-      case OYZ:
-      {
-        if (Vec1.CrossMagnitude(gp::DX()) > Precision::Confusion())
-          aNormal = gp::DX().Crossed(gp_Dir(Vec1));
-        else
-          aNormal = gp::DZ();
-          
-        if (twoAngles)
-        {
-          gp_XYZ Vec1_YZ(0.0,Vec1.Y(),Vec1.Z());
-          Vec3 = gp_Vec(Vec1_YZ);
-        }
-        break;
-      }
-      case OXZ:
-      {
-        if (Vec1.CrossMagnitude(gp::DY()) > Precision::Confusion())
-          aNormal = gp::DY().Crossed(gp_Dir(Vec1));
-        else
-          aNormal = gp::DZ();
-        
-        if (twoAngles)
-        {
-          gp_XYZ Vec1_XZ(Vec1.X(),0.0,Vec1.Z());
-          Vec3 = gp_Vec(Vec1_XZ);
-        }
-        break;
-      }
+      // The plane is orthogonal to the angle presentation plane 
+      // and contains the current edge
+      aNormal = N1.Crossed(gp_Dir(Vec1));
     }
- 
-    if(twoAngles                  // If two angles 
-      && Abs(Vec1.CrossMagnitude(Vec3)) > Precision::Confusion())                                  
+    else
+      aNormal = N2;
+
+    if (twoAngles)
     { 
-      aNormal = gp_Dir(Vec1.Crossed(Vec3));//       --> set the normal as the cross product of
-    }                                      //           the current edge with its projection           
-  }                                        //           it ensures that the dimension changes
-                                           //           side when the angle becomes negative
+      gp_Vec V = Vec1.Transformed(aTransform.Inverted());
+      gp_Vec Vec3(V.X(),V.Y(),0.0);
+      
+      // Express the coordinates in the refernce coordinate system (OXY)
+      Vec3.Transform(aTransform);   
+      if(Abs(Vec1.CrossMagnitude(Vec3)) > Precision::Confusion())                                  
+      { 
+        //  set the normal as the cross product of the current edge with its projection
+        //  it ensures that the dimension changes side when the angle becomes negative
+        aNormal = gp_Dir(Vec1.Crossed(Vec3));  
+      } 
+    }         
+  }
   else
   {
     // Check colinearity
@@ -1203,8 +1302,9 @@ gp_Dir EntityGUI_3DSketcherDlg::getPresentationPlane() const
         Vec2 = gp_Vec(gp::DY());
       }
     }
-    aNormal = gp_Dir(Vec1.Crossed(Vec2)); // If no angles --> the plane is the one formed by
-  }                                       //                  the last edge and the current one
+    // If no angles, the plane is the one formed by the last edge and the current one
+    aNormal = gp_Dir(Vec1.Crossed(Vec2)); 
+  }
   return aNormal;
 }
 
@@ -1299,7 +1399,7 @@ void EntityGUI_3DSketcherDlg::displayTrihedron (int selMode)
 
 //================================================================
 // Function : displayDimensions( bool store )
-// Purpose  : Method for displaying dimensions if store = true
+// Purpose  : Method for displaying dimensions. If store = true
 //            the presentation is stored in a list
 //================================================================
 void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
@@ -1308,31 +1408,51 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
   XYZ Last    = getLastPoint();
   XYZ Current = getCurrentPoint();
 
-  gp_Pnt P0(Last.x,Last.y,Last.z);
+  gp_Pnt Last_Pnt(Last.x,Last.y,Last.z);
+  
+  gp_Pnt P0 = Last_Pnt;
+  gp_Pnt Origin = gp::Origin();
   if (myMode == 0)                 // Absolute coordinates
-    P0=gp::Origin();
+    P0 = Origin;
+  
   gp_Pnt Current_Pnt(Current.x,Current.y,Current.z);
   gp_Pnt P1, P2;
+  
+  // Check if last end current point are coincident
+  if (Last_Pnt.IsEqual(Current_Pnt, 1e-7))
+    return;
+  
   gp_Dir aNormal = getPresentationPlane();
   
   if (myCoordType == 0)
   {
-    if((( Abs(Last.x-Current.x) <= Precision::Confusion() && 
-          Abs(Last.y-Current.y) <= Precision::Confusion() ) ||
-        ( Abs(Last.x-Current.x) <= Precision::Confusion() && 
-          Abs(Last.z-Current.z) <= Precision::Confusion() ) ||
-        ( Abs(Last.y-Current.y) <= Precision::Confusion() && 
-          Abs(Last.z-Current.z) <= Precision::Confusion() ))&&
-         myMode == 1)
-    { 
-      // For better colocation of dimensions if only one coordinate changes (aNormal is a better choice)
-      displayLength(P0, Current_Pnt, aNormal, store);
-    }
-    else
+    bool oneDimensionalMove =  (isSame(Last_Pnt.X(), Current_Pnt.X()) && 
+                                isSame(Last_Pnt.Y(), Current_Pnt.Y()) ) ||
+                               (isSame(Last_Pnt.Y(), Current_Pnt.Y()) && 
+                                isSame(Last_Pnt.Z(), Current_Pnt.Z()) ) ||
+                               (isSame(Last_Pnt.X(), Current_Pnt.X()) && 
+                                isSame(Last_Pnt.Z(), Current_Pnt.Z()) );
+     
+    if (myMode == 0)
     {
-      displayLength(gp_Pnt(P0.X(),Current.y,P0.Z()), gp_Pnt(Current.x,Current.y,P0.Z()), gp::DZ().Reversed(), store);
-      displayLength(gp_Pnt(Current.x,P0.Y(),P0.Z()), gp_Pnt(Current.x,Current.y,P0.Z()), gp::DZ(), store);
-      displayLength(gp_Pnt(Current.x,Current.y,P0.Z()), Current_Pnt, gp::DX(), store);
+      std::string aCoordText = "( " + doubleToString(Current_Pnt.X()) + 
+                               ", " + doubleToString(Current_Pnt.Y()) +
+                               ", " + doubleToString(Current_Pnt.Z()) + " )";
+      displayText(aCoordText, Current_Pnt, store);
+    }
+    else 
+    { 
+      if (oneDimensionalMove)
+      {
+        // For better colocation of dimensions if only one coordinate changes (aNormal is a better choice)
+        displayLength(P0, Current_Pnt, aNormal, store);
+      }
+      else
+      {
+        displayLength(gp_Pnt(P0.X(),Current.y,P0.Z()), gp_Pnt(Current.x,Current.y,P0.Z()), gp::DZ().Reversed(), store);
+        displayLength(gp_Pnt(Current.x,P0.Y(),P0.Z()), gp_Pnt(Current.x,Current.y,P0.Z()), gp::DZ(), store);
+        displayLength(gp_Pnt(Current.x,Current.y,P0.Z()), Current_Pnt, gp::DX(), store);
+      }
     }
   }
   else if (myCoordType == 1)             // ANGLES
@@ -1343,52 +1463,50 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
     double anAngle1 = GroupAngles->SpinBox_DA->value();
     double aLength  = GroupAngles->SpinBox_DL->value();
     
-    switch(myOrientation)
-    {
-      case OXY:
-      {
-        P1 = gp_Pnt(P0.X() + aLength,P0.Y(),P0.Z());    // X direction
-        P2 = gp_Pnt(P0.X() + aLength * cos(anAngle1 * M_PI / 180.),
-                    P0.Y() + aLength * sin(anAngle1 * M_PI / 180.),
-                    P0.Z());     
-        break;
-      }
-      case OYZ:
-      {
-        P1 = gp_Pnt(P0.X(), P0.Y() + aLength,P0.Z());     // Y direction
-        P2 = gp_Pnt(P0.X(),
-                    P0.Y() + aLength * cos(anAngle1 * M_PI / 180.),
-                    P0.Z() + aLength * sin(anAngle1 * M_PI / 180.));   
-        break;
-      }
-      case OXZ:
-      {
-        P1 = gp_Pnt(P0.X() + aLength,P0.Y(),P0.Z());     // X direction
-        P2 = gp_Pnt(P0.X() + aLength * cos(anAngle1 * M_PI / 180.) ,
-                    P0.Y(),
-                    P0.Z() + aLength * sin(anAngle1 * M_PI / 180.));    
-        break;
-      }
-    }
+    // Set the coordinates in the current coordinate system
+    P1.SetCoord( aLength, 0.0, 0.0);    // X direction
+    P2.SetCoord( aLength * cos(anAngle1 * M_PI / 180. ),
+                 aLength * sin(anAngle1 * M_PI / 180. ),
+                 0.0); 
     
-    if(!cylindrical)
-      displayLength(P0, Current_Pnt, aNormal, store);
+    // Express the coordinates in the refernce coordinate system (OXY)
+    gp_Trsf aTranform = toReferenceSystem(P0);
+    P1.Transform(aTranform);    
+    P2.Transform(aTranform);
+    P1.Translate(Origin, P0);
+    P2.Translate(Origin, P0);
+    
     if(myMode !=0  || !store)
       displayAngle(anAngle1, P0, P1, P2, store);
+    else
+    {
+      std::string anAngleText = doubleToString(anAngle1) + " deg.";
+      displayText(anAngleText, Current_Pnt, store);
+    }
     
     if(spherical)
     {
       double anAngle2 = GroupAngles->SpinBox_DA2->value();
       displayAngle(anAngle2, P0, P2, Current_Pnt, store);
+      displayLength(P0, Current_Pnt, aNormal, store);
     }
-    if(cylindrical)
-    { 
+    else
+    {
+      bool sameRadius = isSame ( radius(Last_Pnt), radius(Current_Pnt) );
+      bool sameHeight = isSame ( height(Last_Pnt), height(Current_Pnt) );
+                            
       gp_Vec aVec(P2, Current_Pnt);
-      if (myMode == 0)
+      
+      if (myMode == 0 && !sameRadius)
+      {
         displayLength(P0.Translated(aVec), P2.Translated(aVec), aNormal, store);  // Radius  
-      else
+      }
+      else if (myMode == 1)
         displayLength(P0, P2, aNormal, store);
-      displayLength(P2, Current_Pnt, aNormal.Reversed(), store); // Height
+      
+      if ( cylindrical && 
+          (myMode == 1 || !sameHeight) )
+        displayLength(P2, Current_Pnt, aNormal.Reversed(), store); // Height
     }
   }
 }
@@ -1485,6 +1603,45 @@ void EntityGUI_3DSketcherDlg::displayLength (gp_Pnt P1,
 }
 
 //================================================================
+// Function : displayText()
+// Purpose  : Method for displaying length dimensions for a segment
+//            creation step
+//================================================================
+void EntityGUI_3DSketcherDlg::displayText ( std::string theText,
+                                            gp_Pnt P,
+                                            bool store )
+{
+#if OCC_VERSION_LARGE > 0x06050300
+  SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+    
+  Handle(AIS_Text) anIO = new AIS_Text(TCollection_ExtendedString(theText.c_str()), P);
+
+  if (store)
+  {
+    // Erase length dimensions presentation
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myTextPrs, true);
+    myTextPrs->PrependObject(anIO);
+
+    // Display modified presentation
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myTextPrs);
+    
+    // Update dimension presentation text count for later undo / redo
+    myPrsType.T += 1;
+  }
+  else
+  {
+    SOCC_Prs* aSPrs = dynamic_cast<SOCC_Prs*>
+      (((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
+    if (aSPrs)
+    {
+      aSPrs->PrependObject(anIO);
+      GEOMBase_Helper::displayPreview(aSPrs, true, true);
+    }
+  }
+#endif // OCC_VERSION_LARGE > 0x06050300
+}
+
+//================================================================
 // Function : createAISLengthDimension()
 // Purpose  : Method for creation of a length dimension object
 //            Returns an Handle on the AIS_LengthDimension obect
@@ -1535,7 +1692,7 @@ Handle(AIS_AngleDimension) EntityGUI_3DSketcherDlg::createAISAngleDimension(doub
   double aLength = P0.Distance(P1);
   
   // Check input data
-  if (Abs(theAngle - 90.0) < Precision::Angular() ||
+  if (Abs(theAngle) < Precision::Angular() ||
       aLength < Precision::Confusion())
     return NULL;
   
@@ -1656,4 +1813,70 @@ std::string EntityGUI_3DSketcherDlg::doubleToString (double num)
   char format = 'g'; // truncated to a number of significant digits
 
   return QString::number(num, format, digNum).toStdString();
+}
+
+//================================================================
+// Function : toReferenceSystem ()
+// Purpose  :
+//================================================================
+gp_Trsf EntityGUI_3DSketcherDlg::toReferenceSystem(gp_Pnt origin) const
+{ 
+  gp_Trsf T;                        // Identity transformation
+  gp_Ax3 reference_system;          // OXY
+  reference_system.SetLocation(origin);
+  
+  gp_Ax3 current_system = reference_system;
+  switch (myOrientation)
+  {
+    case OYZ:
+    {
+      current_system = gp_Ax3(origin, gp::DX(), gp::DY());
+      break;
+    }
+    case OXZ:
+    {
+      current_system = gp_Ax3(origin, gp::DY().Reversed(), gp::DX());
+      break;
+    }
+  }
+  
+  T.SetTransformation( current_system, reference_system );
+  
+  return T;
+}
+
+//================================================================
+// Function : toCurrentSystem ()
+// Purpose  :
+//================================================================
+gp_Trsf EntityGUI_3DSketcherDlg::toCurrentSystem(gp_Pnt origin) const
+{
+  return toReferenceSystem(origin).Inverted();
+}
+
+//================================================================
+// Function : radius (gp_Pnt) const
+// Purpose  :
+//================================================================
+double EntityGUI_3DSketcherDlg::radius (gp_Pnt thePnt) const
+{
+  // Get the point coordinates in the current coordinates system
+  gp_Trsf aTrsf = toCurrentSystem(gp::Origin());
+  gp_Pnt aPnt = thePnt.Transformed(aTrsf);
+  
+  double radius = sqrt(aPnt.X()*aPnt.X() + aPnt.Y()*aPnt.Y());
+  return radius;
+}
+
+//================================================================
+// Function : height (gp_Pnt) const
+// Purpose  :
+//================================================================
+double EntityGUI_3DSketcherDlg::height (gp_Pnt thePnt) const
+{
+  // Get the point coordinates in the current coordinates system
+  gp_Trsf aTrsf = toCurrentSystem(gp::Origin());
+  gp_Pnt aPnt = thePnt.Transformed(aTrsf);
+  
+  return aPnt.Z();
 }
