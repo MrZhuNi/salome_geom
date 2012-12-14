@@ -554,9 +554,10 @@ QString GEOMBase_Helper::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* t
     getGeomEngine()->AddInStudy(aStudyDS, theObj, theName, aFatherObj);
 
   QString anEntry;
-  if ( !aSO->_is_nil() )
-    anEntry = aSO->GetID();
-
+  if ( !aSO->_is_nil() ) {
+    CORBA::String_var entry = aSO->GetID();
+    anEntry = entry.in();
+  }
   // Each dialog is responsible for this method implementation,
   // default implementation does nothing
   restoreSubShapes(aStudyDS, aSO);
@@ -770,7 +771,6 @@ bool GEOMBase_Helper::commitCommand( const char* )
 //================================================================
 bool GEOMBase_Helper::hasCommand() const
 {
-  bool res = (bool) myCommand;
   return (bool)myCommand;
 }
 
@@ -1137,17 +1137,17 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr
     if ( sobject ) {
       _PTR(ChildIterator) it( studyDS->NewChildIterator( sobject ) );
       for ( ; it->More() && !found; it->Next() ) {
-	GEOM::GEOM_Object_var cobject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( it->Value() ) );
-	if ( !CORBA::is_nil( cobject ) ) {
-	  GEOM::ListOfLong_var indices = cobject->GetSubShapeIndices();
-	  int length = indices->length();
-	  for ( int i = 0; i < length && !found; i++ ) {
-	    if ( indices[i] == theIndex ) {
-	      object = cobject;
-	      found = true;
-	    }
-	  }
-	}
+        GEOM::GEOM_Object_var cobject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( it->Value() ) );
+        if ( !CORBA::is_nil( cobject ) ) {
+          GEOM::ListOfLong_var indices = cobject->GetSubShapeIndices();
+          int length = indices->length();
+          for ( int i = 0; i < length && !found; i++ ) {
+            if ( indices[i] == theIndex ) {
+              object = cobject;
+              found = true;
+            }
+          }
+        }
       }
     }
   }
@@ -1277,58 +1277,58 @@ QList<GEOM::GeomObjPtr> GEOMBase_Helper::getSelected( const QList<TopAbs_ShapeEn
       SALOME_ListIteratorOfListIO it( selected );
       bool stopped = false;
       for ( ; it.More() && !stopped; it.Next() ) {
-	Handle(SALOME_InteractiveObject) IO = it.Value();
-	GEOM::GeomObjPtr object = GEOMBase::ConvertIOinGEOMObject( IO );
-	if ( object ) {
-	  TColStd_IndexedMapOfInteger subShapes;
-	  selMgr->GetIndexes( IO, subShapes );
-	  int nbSubShapes = subShapes.Extent();
-	  if ( nbSubShapes == 0 ) {
-	    // global selection
-	    if ( typeInList( (TopAbs_ShapeEnum)(object->GetShapeType()), types ) ) {
-	      result << object;
-	      if ( count > 0 ) {
-		if ( strict && result.count() > count ) {
-		  result.clear();
-		  stopped = true;
-		}
-		else if ( !strict && result.count() == count )
-		  stopped = true;
-	      }
-	    }
-	    else if ( strict ) {
-	      result.clear();
-	      stopped = true;
-	    }
-	  }
-	  else {
-	    // local selection
-	    for ( int i = 1; i <= nbSubShapes && !stopped; i++ ) {
-	      int idx = subShapes( i );
-	      GEOM::GeomObjPtr subShape = findObjectInFather( object.get(), idx );
-	      if ( !subShape ) {
-		// sub-shape is not yet published in the study
-		GEOM::ShapesOpPtr shapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-		subShape.take( shapesOp->GetSubShape( object.get(), idx ) ); // take ownership!
-	      }
-	      if ( typeInList( (TopAbs_ShapeEnum)(subShape->GetShapeType()), types ) ) {
-		result << subShape;
-		if ( count > 0 ) {
-		  if ( strict && result.count() > count ) {
-		    result.clear();
-		    stopped = true;
-		  }
-		  else if ( !strict && result.count() == count )
-		    stopped = true;
-		}
-	      }
-	      else if ( strict ) {
-		result.clear();
-		stopped = true;
-	      }
-	    }
-	  }
-	}
+        Handle(SALOME_InteractiveObject) IO = it.Value();
+        GEOM::GeomObjPtr object = GEOMBase::ConvertIOinGEOMObject( IO );
+        if ( object ) {
+          TColStd_IndexedMapOfInteger subShapes;
+          selMgr->GetIndexes( IO, subShapes );
+          int nbSubShapes = subShapes.Extent();
+          if ( nbSubShapes == 0 ) {
+            // global selection
+            if ( typeInList( (TopAbs_ShapeEnum)(object->GetShapeType()), types ) ) {
+              result << object;
+              if ( count > 0 ) {
+                if ( strict && result.count() > count ) {
+                  result.clear();
+                  stopped = true;
+                }
+                else if ( !strict && result.count() == count )
+                  stopped = true;
+              }
+            }
+            else if ( strict ) {
+              result.clear();
+              stopped = true;
+            }
+          }
+          else {
+            // local selection
+            for ( int i = 1; i <= nbSubShapes && !stopped; i++ ) {
+              int idx = subShapes( i );
+              GEOM::GeomObjPtr subShape = findObjectInFather( object.get(), idx );
+              if ( !subShape ) {
+                // sub-shape is not yet published in the study
+                GEOM::ShapesOpPtr shapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+                subShape.take( shapesOp->GetSubShape( object.get(), idx ) ); // take ownership!
+              }
+              if ( typeInList( (TopAbs_ShapeEnum)(subShape->GetShapeType()), types ) ) {
+                result << subShape;
+                if ( count > 0 ) {
+                  if ( strict && result.count() > count ) {
+                    result.clear();
+                    stopped = true;
+                  }
+                  else if ( !strict && result.count() == count )
+                    stopped = true;
+                }
+              }
+              else if ( strict ) {
+                result.clear();
+                stopped = true;
+              }
+            }
+          }
+        }
       }
     }
   }
