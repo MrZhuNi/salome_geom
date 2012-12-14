@@ -77,8 +77,8 @@ if two above check boxes are not checked.
 </ul>
 
 \n <b>TUI Command:</b>
-<em>geompy.MakeInterpol(ListOfShapes,isClosed,doReordering)</em>
-<em>geompy.MakeInterpolWithTangents(ListOfShapes,Vector1,Vector2)</em>
+<br><em>geompy.MakeInterpol(ListOfShapes,isClosed,doReordering)</em>
+<br><em>geompy.MakeInterpolWithTangents(ListOfShapes,Vector1,Vector2)</em>
 
 <b>Analytical Definition</b>
 
