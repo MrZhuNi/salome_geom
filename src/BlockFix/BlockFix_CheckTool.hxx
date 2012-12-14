@@ -18,14 +18,42 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-#ifndef _ShapeBuild_ReShape_HeaderFile
-#include <ShapeBuild_ReShape.hxx>
-#endif
-#ifndef _TopoDS_Shape_HeaderFile
+#ifndef _BlockFix_CheckTool_HeaderFile
+#define _BlockFix_CheckTool_HeaderFile
+
 #include <TopoDS_Shape.hxx>
-#endif
-#ifndef _BlockFix_UnionEdges_HeaderFile
-#include <BlockFix_UnionEdges.hxx>
+#include <Standard_Boolean.hxx>
+#include <Standard_Integer.hxx>
+#include <TopTools_SequenceOfShape.hxx>
+#include <Standard_OStream.hxx>
+
+class TopoDS_Shape;
+
+#include <Standard.hxx>
+#include <Standard_Macro.hxx>
+
+class BlockFix_CheckTool {
+
+public:
+  Standard_EXPORT BlockFix_CheckTool();
+  Standard_EXPORT void SetShape(const TopoDS_Shape& aShape) ;
+  Standard_EXPORT void Perform() ;
+  Standard_EXPORT Standard_Integer NbPossibleBlocks() const;
+  Standard_EXPORT TopoDS_Shape PossibleBlock(const Standard_Integer num) const;
+  Standard_EXPORT void DumpCheckResult(Standard_OStream& S) const;
+
+private:
+  TopoDS_Shape myShape;
+  Standard_Boolean myHasCheck;
+  Standard_Integer myNbSolids;
+  Standard_Integer myNbBlocks;
+  TopTools_SequenceOfShape myPossibleBlocks;
+  Standard_Integer myNbDegen;
+  Standard_Integer myNbUF;
+  Standard_Integer myNbUE;
+  Standard_Integer myNbUFUE;
+  Standard_Integer myBadRanges;
+};
+
 #endif

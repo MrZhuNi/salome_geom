@@ -23,7 +23,7 @@
 //  Created: Tue Dec  7 11:59:05 2004
 //  Author:  Pavel DURANDIN
 
-#include <BlockFix_BlockFixAPI.ixx>
+#include <BlockFix_BlockFixAPI.hxx>
 
 #include <BlockFix.hxx>
 #include <BlockFix_UnionFaces.hxx>
@@ -35,11 +35,13 @@
 
 #include <Precision.hxx>
 
+IMPLEMENT_STANDARD_HANDLE(BlockFix_BlockFixAPI, MMgt_TShared);
+IMPLEMENT_STANDARD_RTTIEXT(BlockFix_BlockFixAPI, MMgt_TShared);
+
 //=======================================================================
-//function : ShapeConvert_CanonicAPI
+//function : BlockFix_BlockFixAPI
 //purpose  :
 //=======================================================================
-
 BlockFix_BlockFixAPI::BlockFix_BlockFixAPI()
 {
   myTolerance = Precision::Confusion();
@@ -47,10 +49,15 @@ BlockFix_BlockFixAPI::BlockFix_BlockFixAPI()
 }
 
 //=======================================================================
+//function : ~BlockFix_BlockFixAPI
+//purpose  :
+//=======================================================================
+BlockFix_BlockFixAPI::~BlockFix_BlockFixAPI() {}
+
+//=======================================================================
 //function : Perform
 //purpose  :
 //=======================================================================
-
 void BlockFix_BlockFixAPI::Perform()
 {
   // processing spheres with degenerativities

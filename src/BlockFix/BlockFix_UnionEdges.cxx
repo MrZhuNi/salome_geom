@@ -23,9 +23,11 @@
 // Created:   07.12.04 15:27:30
 // Author:    Sergey KUUL
 
-#include <BlockFix_UnionEdges.ixx>
+#include <BlockFix_UnionEdges.hxx>
 
 #include <ShapeAnalysis_Edge.hxx>
+
+#include <ShapeBuild_ReShape.hxx>
 
 #include <ShapeFix_Edge.hxx>
 #include <ShapeFix_Face.hxx>
@@ -57,6 +59,7 @@
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Iterator.hxx>
+#include <TopoDS_Shape.hxx>
 
 #include <Approx_Curve3d.hxx>
 

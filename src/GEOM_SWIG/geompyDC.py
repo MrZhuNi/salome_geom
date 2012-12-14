@@ -1579,9 +1579,32 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeSplineInterpolation(thePoints, theIsClosed, theDoReordering)
-            RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
+            RaiseIfFailed("MakeInterpol", self.CurvesOp)
             return anObj
 
+        ## Create B-Spline curve on the set of points.
+        #  @param thePoints Sequence of points for the B-Spline curve.
+        #  @param theFirstVec Vector object, defining the curve direction at its first point.
+        #  @param theLastVec Vector object, defining the curve direction at its last point.
+        #  @return New GEOM.GEOM_Object, containing the created B-Spline curve.
+        #
+        #  @ref tui_creation_curve "Example"
+        def MakeInterpolWithTangents(self, thePoints, theFirstVec, theLastVec):
+            """
+            Create B-Spline curve on the set of points.
+
+            Parameters:
+                thePoints Sequence of points for the B-Spline curve.
+                theFirstVec Vector object, defining the curve direction at its first point.
+                theLastVec Vector object, defining the curve direction at its last point.
+
+            Returns:                     
+                New GEOM.GEOM_Object, containing the created B-Spline curve.
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.CurvesOp.MakeSplineInterpolWithTangents(thePoints, theFirstVec, theLastVec)
+            RaiseIfFailed("MakeInterpolWithTangents", self.CurvesOp)
+            return anObj
 
         ## Creates a curve using the parametric definition of the basic points.
         #  @param thexExpr parametric equation of the coordinates X.
@@ -1622,8 +1645,6 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
             anObj.SetParameters(Parameters)
             return anObj
-            
-
 
         # end of l4_curves
         ## @}

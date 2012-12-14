@@ -2805,6 +2805,17 @@ module GEOM
                                          in boolean  theDoReordering);
 
     /*!
+     *  \brief Create B-Spline curve on the set of points.
+     *  \param thePoints Sequence of points for the B-Spline curve.
+     *  \param theFirstVec Vector object, defining the curve direction at its first point.
+     *  \param theLastVec Vector object, defining the curve direction at its last point.
+     *  \return New GEOM_Object, containing the created B-Spline curve.
+     */
+    GEOM_Object MakeSplineInterpolWithTangents (in ListOfGO    thePoints,
+                                                in GEOM_Object theFirstVec,
+                                                in GEOM_Object theLastVec);
+
+    /*!
      *  \brief Creates a curve using the parametric definition of the basic points.
      *  \param thexExpr parametric equation of the coordinates X.
      *  \param theyExpr parametric equation of the coordinates Y.

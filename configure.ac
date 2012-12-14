@@ -499,12 +499,14 @@ AC_OUTPUT([ \
   src/DlgRef/Makefile \
   src/EntityGUI/Makefile \
   src/GEOM/Makefile \
+  src/BlockFix/Makefile \
   src/GEOMAlgo/Makefile \
   src/GEOMBase/Makefile \
   src/GEOMClient/Makefile \
   src/GEOMFiltersSelection/Makefile \
   src/Material/Makefile \
   src/GEOMGUI/Makefile \
+  src/GEOMUtils/Makefile \
   src/GEOMImpl/Makefile \
   src/GEOMToolsGUI/Makefile \
   src/GEOM_I/Makefile \

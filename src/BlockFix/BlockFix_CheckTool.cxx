@@ -18,48 +18,43 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File:      BlockFix_CheckTool.cxx
 //  Created:   17.12.04 11:15:25
 //  Author:    Sergey KUUL
-//
-#include <BlockFix_CheckTool.ixx>
 
-//#include <BlockFix_UnionEdges.hxx>
-//#include <BlockFix_UnionFaces.hxx>
+#include <BlockFix_CheckTool.hxx>
 
 #include <BRep_Tool.hxx>
 
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
+
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Solid.hxx>
+#include <TopoDS_Shape.hxx>
+
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 
-
 //=======================================================================
 //function : BlockFix_CheckTool()
 //purpose  : Constructor
 //=======================================================================
-
 BlockFix_CheckTool::BlockFix_CheckTool( )
 {
   myHasCheck = Standard_False;
   myPossibleBlocks.Clear();
 }
 
-
 //=======================================================================
 //function : SetShape
 //purpose  :
 //=======================================================================
-
 void BlockFix_CheckTool::SetShape(const TopoDS_Shape& aShape)
 {
   myHasCheck = Standard_False;
@@ -67,12 +62,10 @@ void BlockFix_CheckTool::SetShape(const TopoDS_Shape& aShape)
   myPossibleBlocks.Clear();
 }
 
-
 //=======================================================================
 //function : Perform
 //purpose  :
 //=======================================================================
-
 void BlockFix_CheckTool::Perform()
 {
   myNbSolids=0;
@@ -229,23 +222,19 @@ void BlockFix_CheckTool::Perform()
   myHasCheck = Standard_True;
 }
 
-
 //=======================================================================
 //function : NbPossibleBlocks
 //purpose  :
 //=======================================================================
-
 Standard_Integer BlockFix_CheckTool::NbPossibleBlocks() const
 {
   return myPossibleBlocks.Length();
 }
 
-
 //=======================================================================
 //function : PossibleBlock
 //purpose  :
 //=======================================================================
-
 TopoDS_Shape BlockFix_CheckTool::PossibleBlock(const Standard_Integer num) const
 {
   TopoDS_Shape res;
@@ -254,12 +243,10 @@ TopoDS_Shape BlockFix_CheckTool::PossibleBlock(const Standard_Integer num) const
   return res;
 }
 
-
 //=======================================================================
 //function : DumpCheckResult
 //purpose  :
 //=======================================================================
-
 void BlockFix_CheckTool::DumpCheckResult(Standard_OStream& S) const
 {
   if(!myHasCheck)

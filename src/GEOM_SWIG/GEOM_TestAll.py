@@ -102,6 +102,8 @@ def TestAll (geompy, math):
   Polyline = geompy.MakePolyline([p0, pz, py, p200])      #(List of GEOM_Object)->GEOM_Object
   Bezier   = geompy.MakeBezier([p0, pz, p200, px])        #(List of GEOM_Object)->GEOM_Object
   Interpol = geompy.MakeInterpol([px, py, p200, pxyz], True) #(List of GEOM_Object,Boolean)->GEOM_Object
+  InterpT1 = geompy.MakeInterpolWithTangents([px, py, pxyz], vx, vz) #(List of GO, GO, GO)->GEOM_Object
+  InterpT2 = geompy.MakeInterpolWithTangents([px, py, pxyz], vxy, vxyz) #(List of GO, GO, GO)->GEOM_Object
   Sketcher = geompy.MakeSketcher("Sketcher:F -100 -100:TT 250 -100:R 0:C 100 150:R 0:L 300:WW",
                                  [100,0,0, 1,1,1, -1,1,0]) #(String, List of Doubles)->GEOM_Object
 
@@ -343,6 +345,8 @@ def TestAll (geompy, math):
   id_Polyline = geompy.addToStudy(Polyline, "Polyline")
   id_Bezier   = geompy.addToStudy(Bezier,   "Bezier")
   id_Interpol = geompy.addToStudy(Interpol, "Interpol")
+  id_InterpT1 = geompy.addToStudy(InterpT1, "InterpT1")
+  id_InterpT2 = geompy.addToStudy(InterpT2, "InterpT2")
   id_Sketcher = geompy.addToStudy(Sketcher, "Sketcher")
 
   id_Sketcher3d_1 = geompy.addToStudy(Sketcher3d_1, "Sketcher 3D by interface")

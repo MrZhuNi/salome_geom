@@ -18,15 +18,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_MeasureDriver.hxx>
 #include <GEOMImpl_IMeasure.hxx>
-#include <GEOMImpl_IMeasureOperations.hxx>
 #include <GEOMImpl_Types.hxx>
+
 #include <GEOM_Function.hxx>
+
+#include <GEOMUtils.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRepGProp.hxx>
@@ -96,7 +97,7 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
       Standard_NullObject::Raise("Shape for centre of mass calculation is null");
     }
 
-    gp_Ax3 aPos = GEOMImpl_IMeasureOperations::GetPosition(aShapeBase);
+    gp_Ax3 aPos = GEOMUtils::GetPosition(aShapeBase);
     gp_Pnt aCenterMass = aPos.Location();
     aShape = BRepBuilderAPI_MakeVertex(aCenterMass).Shape();
   }
@@ -189,7 +190,7 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
     }
     else
     {
-      gp_Ax3 aPos = GEOMImpl_IMeasureOperations::GetPosition(aFace);
+      gp_Ax3 aPos = GEOMUtils::GetPosition(aFace);
       p1 = aPos.Location();
     }
 

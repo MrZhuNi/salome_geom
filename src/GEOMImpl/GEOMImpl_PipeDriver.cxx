@@ -19,11 +19,8 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
-#include <Standard_Stream.hxx>
-
 #include <GEOMImpl_PipeDriver.hxx>
 
-#include <GEOMImpl_IShapesOperations.hxx>
 #include <GEOMImpl_IPipeDiffSect.hxx>
 #include <GEOMImpl_IPipeShellSect.hxx>
 #include <GEOMImpl_IPipeBiNormal.hxx>
@@ -31,7 +28,10 @@
 #include <GEOMImpl_IPipePath.hxx>
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOMImpl_Types.hxx>
+
 #include <GEOM_Function.hxx>
+
+#include <GEOMUtils.hxx>
 
 #include <ShapeAnalysis_FreeBounds.hxx>
 #include <ShapeAnalysis_Edge.hxx>
@@ -2491,7 +2491,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
     //aShape = GEOMImpl_GlueDriver::GlueFaces(aShape, Precision::Confusion(), Standard_True);
   }
 
-  TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
+  TopoDS_Shape aRes = GEOMUtils::CompsolidToCompound(aShape);
   aFunction->SetValue(aRes);
 
   log.SetTouched(Label());

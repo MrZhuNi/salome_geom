@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_IMeasureOperations_HXX_
 #define _GEOMImpl_IMeasureOperations_HXX_
@@ -167,9 +166,6 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                                             Standard_Real& theVParam);
   Standard_EXPORT Standard_Real MinSurfaceCurvatureByPoint (Handle(GEOM_Object) theSurf,
                                                             Handle(GEOM_Object) thePoint);
-
- public:
-  Standard_EXPORT static gp_Ax3 GetPosition (const TopoDS_Shape& theShape);
 
  private:
   void StructuralDump (const BRepCheck_Analyzer& theAna,

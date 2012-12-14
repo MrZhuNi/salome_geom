@@ -18,10 +18,30 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-#include <BlockFix_UnionEdges.jxx>
+#ifndef _BlockFix_UnionEdges_HeaderFile
+#define _BlockFix_UnionEdges_HeaderFile
 
+#include <Standard_Real.hxx>
 
+#include <ShapeBuild_ReShape.hxx>
 
+#include <Standard.hxx>
+#include <Standard_Macro.hxx>
 
+class TopoDS_Shape;
+
+class BlockFix_UnionEdges {
+
+public:
+  Standard_EXPORT BlockFix_UnionEdges();
+
+  Standard_EXPORT TopoDS_Shape Perform (const TopoDS_Shape& Shape,const Standard_Real Tol);
+
+private:
+  Standard_Real myTolerance;
+  Handle_ShapeBuild_ReShape myContext;
+
+};
+
+#endif

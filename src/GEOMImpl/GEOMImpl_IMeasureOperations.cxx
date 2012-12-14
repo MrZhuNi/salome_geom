@@ -28,6 +28,8 @@
 #include <GEOMImpl_IMeasure.hxx>
 #include <GEOMImpl_IShapesOperations.hxx>
 
+#include <GEOMUtils.hxx>
+
 #include <GEOMAlgo_ShapeInfo.hxx>
 #include <GEOMAlgo_ShapeInfoFiller.hxx>
 
@@ -766,69 +768,6 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
 }
 
 //=============================================================================
-/*! Get LCS, corresponding to the given shape.
- *  Origin of the LCS is situated at the shape's center of mass.
- *  Axes of the LCS are obtained from shape's location or,
- *  if the shape is a planar face, from position of its plane.
- */
-//=============================================================================
-gp_Ax3 GEOMImpl_IMeasureOperations::GetPosition (const TopoDS_Shape& theShape)
-{
-  gp_Ax3 aResult;
-
-  if (theShape.IsNull())
-    return aResult;
-
-  // Axes
-  aResult.Transform(theShape.Location().Transformation());
-  if (theShape.ShapeType() == TopAbs_FACE) {
-    Handle(Geom_Surface) aGS = BRep_Tool::Surface(TopoDS::Face(theShape));
-    if (!aGS.IsNull() && aGS->IsKind(STANDARD_TYPE(Geom_Plane))) {
-      Handle(Geom_Plane) aGPlane = Handle(Geom_Plane)::DownCast(aGS);
-      gp_Pln aPln = aGPlane->Pln();
-      aResult = aPln.Position();
-      // In case of reverse orinetation of the face invert the plane normal
-      // (the face's normal does not mathc the plane's normal in this case)
-      if(theShape.Orientation() == TopAbs_REVERSED)
-      {
-        gp_Dir Vx =  aResult.XDirection();
-        gp_Dir N  =  aResult.Direction().Mirrored(Vx);
-        gp_Pnt P  =  aResult.Location();
-        aResult = gp_Ax3(P, N, Vx);
-      }
-    }
-  }
-
-  // Origin
-  gp_Pnt aPnt;
-
-  TopAbs_ShapeEnum aShType = theShape.ShapeType();
-
-  if (aShType == TopAbs_VERTEX) {
-    aPnt = BRep_Tool::Pnt(TopoDS::Vertex(theShape));
-  }
-  else {
-    if (aShType == TopAbs_COMPOUND) {
-      aShType = GEOMImpl_IShapesOperations::GetTypeOfSimplePart(theShape);
-    }
-
-    GProp_GProps aSystem;
-    if (aShType == TopAbs_EDGE || aShType == TopAbs_WIRE)
-      BRepGProp::LinearProperties(theShape, aSystem);
-    else if (aShType == TopAbs_FACE || aShType == TopAbs_SHELL)
-      BRepGProp::SurfaceProperties(theShape, aSystem);
-    else
-      BRepGProp::VolumeProperties(theShape, aSystem);
-
-    aPnt = aSystem.CentreOfMass();
-  }
-
-  aResult.SetLocation(aPnt);
-
-  return aResult;
-}
-
-//=============================================================================
 /*!
  *  GetPosition
  */
@@ -861,7 +800,7 @@ void GEOMImpl_IMeasureOperations::GetPosition
     OCC_CATCH_SIGNALS;
 #endif
 
-    gp_Ax3 anAx3 = GetPosition(aShape);
+    gp_Ax3 anAx3 = GEOMUtils::GetPosition(aShape);
 
     gp_Pnt anOri = anAx3.Location();
     gp_Dir aDirZ = anAx3.Direction();

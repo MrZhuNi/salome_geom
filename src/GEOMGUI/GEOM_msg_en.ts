@@ -4872,6 +4872,22 @@ be specified in meters).</translation>
         <translation>Reorder vertices taking into account distances</translation>
     </message>
     <message>
+        <source>GEOM_INTERPOL_TANGENTS</source>
+        <translation>Tangents</translation>
+    </message>
+    <message>
+        <source>GEOM_INTERPOL_FIRST_VEC</source>
+        <translation>First tangent vector</translation>
+    </message>
+    <message>
+        <source>GEOM_INTERPOL_LAST_VEC</source>
+        <translation>Last tangent vector</translation>
+    </message>
+    <message>
+        <source>GEOM_BOTH_TANGENTS_REQUIRED</source>
+        <translation>Both tangent vectors must be defined</translation>
+    </message>
+    <message>
         <source>GEOM_CURVE_CRMODE</source>
         <translation>Creation Mode</translation>
     </message>

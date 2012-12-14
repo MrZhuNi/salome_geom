@@ -18,37 +18,50 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        BlockFix.cxx
 // Created:     Tue Dec  7 11:59:05 2004
 // Author:      Pavel DURANDIN
 
-#include <BlockFix_SphereSpaceModifier.ixx>
+#include <BlockFix_SphereSpaceModifier.hxx>
+
+#include <ShapeAnalysis.hxx>
+
+#include <ShapeFix_Edge.hxx>
+
+#include <TopExp.hxx>
 
 #include <TopLoc_Location.hxx>
+
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Vertex.hxx>
+
 #include <BRep_Tool.hxx>
+#include <BRep_Builder.hxx>
+
+#include <BRepGProp.hxx>
+#include <GProp_GProps.hxx>
+
 #include <Geom_SphericalSurface.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
-#include <ShapeAnalysis.hxx>
-#include <gp_Sphere.hxx>
-#include <BRep_Builder.hxx>
-#include <TopoDS.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopExp.hxx>
-#include <ShapeFix_Edge.hxx>
-#include <Geom_Curve.hxx>
-#include <Geom2d_Curve.hxx>
-#include <GProp_GProps.hxx>
-#include <BRepGProp.hxx>
 
+#include <Geom_Curve.hxx>
+#include <Geom_Surface.hxx>
+
+#include <Geom2d_Curve.hxx>
+
+#include <gp_Pnt.hxx>
+#include <gp_Sphere.hxx>
+
+IMPLEMENT_STANDARD_HANDLE(BlockFix_SphereSpaceModifier, BRepTools_Modification);
+IMPLEMENT_STANDARD_RTTIEXT(BlockFix_SphereSpaceModifier, BRepTools_Modification);
 
 //=======================================================================
 //function : BlockFix_SphereSpaceModifier
 //purpose  :
 //=======================================================================
-
 BlockFix_SphereSpaceModifier::BlockFix_SphereSpaceModifier()
 {
   myMapOfFaces.Clear();
@@ -56,22 +69,24 @@ BlockFix_SphereSpaceModifier::BlockFix_SphereSpaceModifier()
 }
 
 //=======================================================================
+//function : ~BlockFix_SphereSpaceModifier
+//purpose  :
+//=======================================================================
+BlockFix_SphereSpaceModifier::~BlockFix_SphereSpaceModifier() {}
+
+//=======================================================================
 //function : SetTolerance
 //purpose  :
 //=======================================================================
-
 void BlockFix_SphereSpaceModifier::SetTolerance(const Standard_Real Tol)
 {
   myTolerance = Tol;
 }
 
-
 //=======================================================================
 //function : NewSurface
 //purpose  :
 //=======================================================================
-
-
 static Standard_Boolean ModifySurface(const TopoDS_Face& aFace,
                                       const Handle(Geom_Surface)& aSurface,
                                       Handle(Geom_Surface)& aNewSurface)
@@ -132,7 +147,6 @@ static Standard_Boolean ModifySurface(const TopoDS_Face& aFace,
   return Standard_False;
 }
 
-
 Standard_Boolean BlockFix_SphereSpaceModifier::NewSurface(const TopoDS_Face& F,
                                                         Handle(Geom_Surface)& S,
                                                         TopLoc_Location& L,Standard_Real& Tol,
@@ -163,7 +177,6 @@ Standard_Boolean BlockFix_SphereSpaceModifier::NewSurface(const TopoDS_Face& F,
 //function : NewCurve
 //purpose  :
 //=======================================================================
-
 Standard_Boolean BlockFix_SphereSpaceModifier::NewCurve(const TopoDS_Edge& /*E*/,Handle(Geom_Curve)& /*C*/,
                                                         TopLoc_Location& /*L*/,Standard_Real& /*Tol*/)
 {
@@ -174,7 +187,6 @@ Standard_Boolean BlockFix_SphereSpaceModifier::NewCurve(const TopoDS_Edge& /*E*/
 //function : NewPoint
 //purpose  :
 //=======================================================================
-
 Standard_Boolean BlockFix_SphereSpaceModifier::NewPoint(const TopoDS_Vertex& /*V*/,
                                                       gp_Pnt& /*P*/,
                                                       Standard_Real& /*Tol*/)
@@ -186,7 +198,6 @@ Standard_Boolean BlockFix_SphereSpaceModifier::NewPoint(const TopoDS_Vertex& /*V
 //function : NewCurve2d
 //purpose  :
 //=======================================================================
-
 Standard_Boolean BlockFix_SphereSpaceModifier::NewCurve2d(const TopoDS_Edge& E,const TopoDS_Face& F,
                                                         const TopoDS_Edge& /*NewE*/,const TopoDS_Face& /*NewF*/,
                                                         Handle(Geom2d_Curve)& C,Standard_Real& Tol)
@@ -249,24 +260,20 @@ Standard_Boolean BlockFix_SphereSpaceModifier::NewCurve2d(const TopoDS_Edge& E,c
   return Standard_False;
 }
 
-
 //=======================================================================
 //function : NewParameter
 //purpose  :
 //=======================================================================
-
 Standard_Boolean BlockFix_SphereSpaceModifier::NewParameter(const TopoDS_Vertex& /*V*/,const TopoDS_Edge& /*E*/,
                                                             Standard_Real& /*P*/,Standard_Real& /*Tol*/)
 {
   return Standard_False;
 }
 
-
 //=======================================================================
 //function : Continuity
 //purpose  :
 //=======================================================================
-
 GeomAbs_Shape BlockFix_SphereSpaceModifier::Continuity(const TopoDS_Edge& E,const TopoDS_Face& F1,
                                                      const TopoDS_Face& F2,const TopoDS_Edge& /*NewE*/,
                                                      const TopoDS_Face& /*NewF1*/,const TopoDS_Face& /*NewF2*/)

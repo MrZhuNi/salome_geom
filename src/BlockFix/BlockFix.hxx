@@ -18,32 +18,39 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-#ifndef _TopoDS_Face_HeaderFile
-#include <TopoDS_Face.hxx>
-#endif
-#ifndef _Geom_Surface_HeaderFile
-#include <Geom_Surface.hxx>
-#endif
-#ifndef _TopLoc_Location_HeaderFile
-#include <TopLoc_Location.hxx>
-#endif
-#ifndef _TopoDS_Edge_HeaderFile
-#include <TopoDS_Edge.hxx>
-#endif
-#ifndef _Geom_Curve_HeaderFile
-#include <Geom_Curve.hxx>
-#endif
-#ifndef _TopoDS_Vertex_HeaderFile
-#include <TopoDS_Vertex.hxx>
-#endif
-#ifndef _gp_Pnt_HeaderFile
-#include <gp_Pnt.hxx>
-#endif
-#ifndef _Geom2d_Curve_HeaderFile
-#include <Geom2d_Curve.hxx>
-#endif
-#ifndef _BlockFix_SphereSpaceModifier_HeaderFile
-#include <BlockFix_SphereSpaceModifier.hxx>
+#ifndef _BlockFix_HeaderFile
+#define _BlockFix_HeaderFile
+
+#include <Standard_Real.hxx>
+
+class TopoDS_Shape;
+class BlockFix_SphereSpaceModifier;
+class BlockFix_UnionFaces;
+class BlockFix_UnionEdges;
+class BlockFix_BlockFixAPI;
+class BlockFix_PeriodicSurfaceModifier;
+class BlockFix_CheckTool;
+
+#include <Standard.hxx>
+#include <Standard_Macro.hxx>
+
+class BlockFix {
+
+public:
+  Standard_EXPORT static  TopoDS_Shape RotateSphereSpace(const TopoDS_Shape& S,const Standard_Real Tol);
+  Standard_EXPORT static  TopoDS_Shape RefillProblemFaces(const TopoDS_Shape& S);
+  Standard_EXPORT static  TopoDS_Shape FixRanges(const TopoDS_Shape& S,const Standard_Real Tol);
+
+private:
+
+friend class BlockFix_SphereSpaceModifier;
+friend class BlockFix_UnionFaces;
+friend class BlockFix_UnionEdges;
+friend class BlockFix_BlockFixAPI;
+friend class BlockFix_PeriodicSurfaceModifier;
+friend class BlockFix_CheckTool;
+
+};
+
 #endif

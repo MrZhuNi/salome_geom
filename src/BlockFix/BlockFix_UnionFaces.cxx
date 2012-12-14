@@ -18,13 +18,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File:    BlockFix_UnionFaces.cxx
 //  Created: Tue Dec  7 17:15:42 2004
 //  Author:  Pavel DURANDIN
 
-#include <BlockFix_UnionFaces.ixx>
+#include <BlockFix_UnionFaces.hxx>
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -73,6 +72,7 @@
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Shell.hxx>
 #include <TopoDS_Iterator.hxx>
+#include <TopoDS_Shape.hxx>
 
 #include <TColGeom_HArray2OfSurface.hxx>
 
@@ -104,43 +104,37 @@
 //function : BlockFix_UnionFaces
 //purpose  :
 //=======================================================================
-
 BlockFix_UnionFaces::BlockFix_UnionFaces()
   : myTolerance(Precision::Confusion()),
     myOptimumNbFaces(6)
 {
 }
 
-
 //=======================================================================
 //function : GetTolerance
 //purpose  :
 //=======================================================================
-
 Standard_Real& BlockFix_UnionFaces::GetTolerance()
 {
   return myTolerance;
 }
 
-
 //=======================================================================
 //function : GetOptimumNbFaces
 //purpose  :
 //=======================================================================
-
 Standard_Integer& BlockFix_UnionFaces::GetOptimumNbFaces()
 {
   return myOptimumNbFaces;
 }
 
-
 //=======================================================================
 //function : AddOrdinaryEdges
 //purpose  : auxilary
+//           adds edges from the shape to the sequence
+//           seams and equal edges are dropped
+//           Returns true if one of original edges dropped
 //=======================================================================
-// adds edges from the shape to the sequence
-// seams and equal edges are dropped
-// Returns true if one of original edges dropped
 static Standard_Boolean AddOrdinaryEdges(TopTools_SequenceOfShape& edges,
                                          const TopoDS_Shape aShape,
                                          Standard_Integer& anIndex)
@@ -180,7 +174,6 @@ static Standard_Boolean AddOrdinaryEdges(TopTools_SequenceOfShape& edges,
   return isDropped;
 }
 
-
 //=======================================================================
 //function : ClearRts
 //purpose  : auxilary
@@ -195,12 +188,10 @@ static Handle(Geom_Surface) ClearRts(const Handle(Geom_Surface)& aSurface)
   return aSurface;
 }
 
-
 //=======================================================================
 //function : Perform
 //purpose  :
 //=======================================================================
-
 TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
 {
   Handle(ShapeBuild_ReShape) myContext = new ShapeBuild_ReShape;
@@ -519,12 +510,10 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
   return aResShape;
 }
 
-
 //=======================================================================
 //function : IsSameDomain
 //purpose  :
 //=======================================================================
-
 bool getCylinder (Handle(Geom_Surface)& theInSurface, gp_Cylinder& theOutCylinder)
 {
   bool isCylinder = false;
@@ -683,12 +672,10 @@ Standard_Boolean BlockFix_UnionFaces::IsSameDomain(const TopoDS_Face& aFace,
   return false;
 }
 
-
 //=======================================================================
 //function : MovePCurves
 //purpose  :
 //=======================================================================
-
 void BlockFix_UnionFaces::MovePCurves(TopoDS_Face& aTarget,
                                       const TopoDS_Face& aSource) const
 {

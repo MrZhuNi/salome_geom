@@ -18,23 +18,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _BlockFix_UnionFaces_HeaderFile
 #define _BlockFix_UnionFaces_HeaderFile
 
-#ifndef _Standard_Real_HeaderFile
 #include <Standard_Real.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
-#endif
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
 
 class TopoDS_Shape;
 class TopoDS_Face;
@@ -42,24 +33,9 @@ class TopoDS_Face;
 class BlockFix_UnionFaces
 {
 public:
-  void* operator new(size_t,void* anAddress)
-  {
-    return anAddress;
-  }
-  void* operator new(size_t size)
-  {
-    return Standard::Allocate(size);
-  }
-  void  operator delete(void *anAddress)
-  {
-    if (anAddress) Standard::Free((Standard_Address&)anAddress);
-  }
-
-  // Methods PUBLIC
-  //
   Standard_EXPORT BlockFix_UnionFaces();
 
-  Standard_EXPORT   Standard_Real& GetTolerance();
+  Standard_EXPORT Standard_Real& GetTolerance();
 
   /* \brief To get/set the OptimumNbFaces parameter
    *
@@ -71,18 +47,17 @@ public:
    *                 negative - do not perform any unions, regardless the faces quantity.
    *
    */
-  Standard_EXPORT   Standard_Integer& GetOptimumNbFaces();
+  Standard_EXPORT Standard_Integer& GetOptimumNbFaces();
 
-  Standard_EXPORT   TopoDS_Shape Perform(const TopoDS_Shape& Shape);
+  Standard_EXPORT TopoDS_Shape Perform(const TopoDS_Shape& Shape);
 
-  Standard_EXPORT virtual  Standard_Boolean IsSameDomain(const TopoDS_Face& aFace,
-                                                         const TopoDS_Face& aChekedFace) const;
-  Standard_EXPORT virtual  void MovePCurves(TopoDS_Face& aTarget,
-                                            const TopoDS_Face& aSource) const;
+  Standard_EXPORT virtual Standard_Boolean IsSameDomain(const TopoDS_Face& aFace,
+                                                        const TopoDS_Face& aChekedFace) const;
+
+  Standard_EXPORT virtual void MovePCurves(TopoDS_Face& aTarget,
+                                           const TopoDS_Face& aSource) const;
 
 private:
-  // Fields PRIVATE
-  //
   Standard_Real myTolerance;
   Standard_Integer myOptimumNbFaces;
 };
