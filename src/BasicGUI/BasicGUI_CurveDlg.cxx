@@ -207,6 +207,7 @@ void BasicGUI_CurveDlg::Init()
 
   connect(myGroupPoints->CheckButton1, SIGNAL(toggled(bool)),    this, SLOT(CheckButtonToggled()));
   connect(myGroupPoints->CheckButton2, SIGNAL(toggled(bool)),    this, SLOT(CheckButtonToggled()));
+  connect(myGroupTangents,             SIGNAL(toggled(bool)),    this, SLOT(CheckButtonToggled()));
 
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
@@ -304,12 +305,20 @@ void BasicGUI_CurveDlg::SetEditCurrentArgument()
 //=================================================================================
 void BasicGUI_CurveDlg::CheckButtonToggled()
 {
-  if (getConstructorId() == 2) { // Interpolation
-    bool disableTangents = (myGroupPoints->CheckButton1->isChecked() ||
-                            myGroupPoints->CheckButton2->isChecked());
-    myGroupTangents->setEnabled(!disableTangents);
+  if (sender() == myGroupTangents) {
+    if (myGroupTangents->isChecked())
+      myPushBtnV1->click();
+    else
+      myGroupPoints->PushButton1->click();
   }
-  processPreview();
+  else {
+    if (getConstructorId() == 2) { // Interpolation
+      bool disableTangents = (myGroupPoints->CheckButton1->isChecked() ||
+                              myGroupPoints->CheckButton2->isChecked());
+      myGroupTangents->setEnabled(!disableTangents);
+    }
+    processPreview();
+  }
 }
 
 //=================================================================================
