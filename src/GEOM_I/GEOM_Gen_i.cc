@@ -577,9 +577,6 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
   // Remove the created file and tmp directory
   if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.c_str(), aSeq.in(), true);
 
-  SALOMEDS::Study_var Study = theComponent->GetStudy();
-  TCollection_AsciiString name (Study->Name());
-
   return true;
 }
 
