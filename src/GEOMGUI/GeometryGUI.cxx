@@ -188,8 +188,7 @@ void GeometryGUI::Modified (bool theIsUpdateActions)
 // purpose  : Constructor
 //=======================================================================
 GeometryGUI::GeometryGUI() :
-  SalomeApp_Module( "GEOM" ),
-  LightApp_Module( "GEOM" )
+  SalomeApp_Module( "GEOM" )
 {
   if ( CORBA::is_nil( myComponentGeom ) )
   {
