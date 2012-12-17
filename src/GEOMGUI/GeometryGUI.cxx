@@ -1769,6 +1769,17 @@ void GeometryGUI::createPreferences()
     setPreferenceProperty( wd[i], "min", 1 );
     setPreferenceProperty( wd[i], "max", 5 );
   }
+ 
+  int isoGroup = addPreference( tr( "PREF_ISOS" ), tabId );
+  setPreferenceProperty( isoGroup, "columns", 2 );
+  int isoU = addPreference( tr( "PREF_ISOS_U" ), isoGroup,
+                                  LightApp_Preferences::IntSpin, "Geometry", "iso_number_u" );
+  setPreferenceProperty( isoU, "min", 0 );
+  setPreferenceProperty( isoU, "max", 100000 );
+  int isoV = addPreference( tr( "PREF_ISOS_V" ), isoGroup,
+                                 LightApp_Preferences::IntSpin, "Geometry", "iso_number_v" );
+  setPreferenceProperty( isoV, "min", 0 );
+  setPreferenceProperty( isoV, "max", 100000 );
 
   // Quantities with individual precision settings
   int precGroup = addPreference( tr( "GEOM_PREF_GROUP_PRECISION" ), tabId );
@@ -1855,7 +1866,7 @@ void GeometryGUI::createPreferences()
   // Set property for default material
   Material_ResourceMgr aMatResMgr;
   setPreferenceProperty( material, "strings", aMatResMgr.materials() );
-
+  
   // Set property vertex marker type
   QList<QVariant> aMarkerTypeIndicesList;
   QList<QVariant> aMarkerTypeIconsList;

@@ -62,6 +62,8 @@
     <parameter name="isolines_width"      value="1" />
     <parameter name="preview_edge_width"  value="1" />
     <parameter name="measures_line_width" value="1" />
+    <parameter name="iso_number_u"        value="1" />
+    <parameter name="iso_number_v"        value="1" />
 
     <!-- Input field precisions -->
     <parameter name="def_precision"       value="3"  />

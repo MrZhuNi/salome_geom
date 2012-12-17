@@ -3187,6 +3187,18 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Epaisseur des traits de mesure</translation>
     </message>
     <message>
+        <source>PREF_ISOS</source>
+        <translation>Nombre d&apos;isolignes</translation>
+    </message>
+    <message>
+        <source>PREF_ISOS_U</source>
+        <translation>Selon U</translation>
+    </message>
+    <message>
+        <source>PREF_ISOS_V</source>
+        <translation>Selon V</translation>
+    </message>
+    <message>
         <source>PROCESS_SHAPE_NEW_OBJ_NAME</source>
         <translation>FormeRetraitee</translation>
     </message>

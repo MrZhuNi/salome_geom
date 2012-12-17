@@ -665,7 +665,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         // Temporary staff: vertex must be infinite for correct visualization
         AISShape->SetInfiniteState( myShape.Infinite() ); // || myShape.ShapeType() == TopAbs_VERTEX // VSR: 05/04/2010: Fix 20668 (Fit All for points & lines)
 
-        if(useStudy){
+        if(useStudy) {
           aPropMap = aStudy->getObjectPropMap(aMgrId,anEntry);
           aDefPropMap = getDefaultPropertyMap(SOCC_Viewer::Type());
           Quantity_Color  quant_col;
@@ -706,20 +706,20 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           QString anIsos = aPropMap.value(ISOS_PROP).toString();
           QStringList uv =  anIsos.split(DIGIT_SEPARATOR);
           anUIsoNumber = uv[0].toInt();
-          aVIsoNumber = uv[1].toInt();
+          aVIsoNumber  = uv[1].toInt();
           AISShape->SetTransparency(aPropMap.value(TRANSPARENCY_PROP).toDouble());
         } else {
-          anUIsoNumber = aResMgr->integerValue("OCCViewer", "iso_number_u", 1);
-          aVIsoNumber  = aResMgr->integerValue("OCCViewer", "iso_number_v", 1);
+	  anUIsoNumber = aResMgr->integerValue("Geometry", "iso_number_u", 1);
+	  aVIsoNumber  = aResMgr->integerValue("Geometry", "iso_number_v", 1);
         }
-
+	
         Handle(Prs3d_IsoAspect) anAspect = AISShape->Attributes()->UIsoAspect();
         anAspect->SetNumber( anUIsoNumber );
         anAspect->SetColor( aColor );
-
         if(HasIsosWidth())
           anAspect->SetWidth( GetIsosWidth() );
         AISShape->Attributes()->SetUIsoAspect( anAspect );
+
         anAspect = AISShape->Attributes()->VIsoAspect();
         anAspect->SetNumber( aVIsoNumber );
         if(HasIsosWidth())
@@ -1927,17 +1927,10 @@ PropMap GEOM_Displayer::getDefaultPropertyMap(const QString& viewer_type) {
   aDefaultMap.insert(VISIBILITY_PROP , 1);
 
   //2. Nb Isos
-  int anUIsoNumber;
-  int aVIsoNumber;
-  if(viewer_type == SOCC_Viewer::Type()) {
-    anUIsoNumber = aResMgr->integerValue("OCCViewer", "iso_number_u", 1);
-    aVIsoNumber = aResMgr->integerValue("OCCViewer", "iso_number_v", 1);
-  } else if( viewer_type==SVTK_Viewer::Type()) {
-    anUIsoNumber = aResMgr->integerValue("VTKViewer", "iso_number_u", 1);
-    aVIsoNumber = aResMgr->integerValue("VTKViewer", "iso_number_u", 1);
-  }
-  QString anIsos("%1%2%3");
-  anIsos = anIsos.arg(anUIsoNumber);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(aVIsoNumber);
+  int anUIsoNumber = aResMgr->integerValue("Geometry", "iso_number_u", 1);
+  int aVIsoNumber  = aResMgr->integerValue("Geometry", "iso_number_v", 1);
+
+  QString anIsos = QString("%1%2%3").arg(anUIsoNumber).arg(DIGIT_SEPARATOR).arg(aVIsoNumber);
   aDefaultMap.insert(ISOS_PROP , anIsos);
 
   //3. Transparency
@@ -1972,7 +1965,6 @@ PropMap GEOM_Displayer::getDefaultPropertyMap(const QString& viewer_type) {
 
   //9. Width of the edges
   aDefaultMap.insert( EDGE_WIDTH_PROP , aResMgr->integerValue("Geometry", "edge_width", 1));
-
 
   //10. Width of iso-lines
   aDefaultMap.insert( ISOS_WIDTH_PROP , aResMgr->integerValue("Geometry", "isolines_width", 1));

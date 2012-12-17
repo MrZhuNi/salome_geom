@@ -3187,6 +3187,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Measures lines width</translation>
     </message>
     <message>
+        <source>PREF_ISOS</source>
+        <translation>Number of isolines</translation>
+    </message>
+    <message>
+        <source>PREF_ISOS_U</source>
+        <translation>Along U</translation>
+    </message>
+    <message>
+        <source>PREF_ISOS_V</source>
+        <translation>Along V</translation>
+    </message>
+    <message>
         <source>PROCESS_SHAPE_NEW_OBJ_NAME</source>
         <translation>ProcessShape</translation>
     </message>
