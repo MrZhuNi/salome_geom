@@ -44,7 +44,7 @@
 
 static 
   void TreatCompound(const TopoDS_Shape& aC, 
-		     BOPCol_ListOfShape& aLSX);
+                     BOPCol_ListOfShape& aLSX);
 
 //=======================================================================
 //function : 
@@ -162,19 +162,19 @@ void GEOMAlgo_Splitter::BuildResult(const TopAbs_ShapeEnum theType)
     aType=aS.ShapeType();
     if (aType==theType && !myMapTools.Contains(aS)) {
       if (myImages.IsBound(aS)) {
-	const BOPCol_ListOfShape& aLSIm=myImages.Find(aS);
-	aItIm.Initialize(aLSIm);
-	for (; aItIm.More(); aItIm.Next()) {
-	  const TopoDS_Shape& aSIm=aItIm.Value();
-	  if (aM.Add(aSIm)) {
-	    aBB.Add(myShape, aSIm);
-	  }
-	}
+        const BOPCol_ListOfShape& aLSIm=myImages.Find(aS);
+        aItIm.Initialize(aLSIm);
+        for (; aItIm.More(); aItIm.Next()) {
+          const TopoDS_Shape& aSIm=aItIm.Value();
+          if (aM.Add(aSIm)) {
+            aBB.Add(myShape, aSIm);
+          }
+        }
       }
       else {
-	if (aM.Add(aS)) {
-	  aBB.Add(myShape, aS);
-	}
+        if (aM.Add(aS)) {
+          aBB.Add(myShape, aS);
+        }
       }
     }
   }
@@ -211,55 +211,61 @@ void GEOMAlgo_Splitter::PostTreat()
       // 1. Collect the shapes to process aLSP
       aIt.Initialize(myArguments);
       for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aS=aIt.Value();
-	if (myMapTools.Contains(aS)) {
-	  continue;
-	}
-	//
-	aType=aS.ShapeType();
-	iType=(Standard_Integer)aType;
-	//
-	if (iType>iLimit) {
-	  aLSP.Append(aS);
-	}
-	//
-	else if (aType==TopAbs_COMPOUND) {
-	  aLSX.Clear();
-	  //
-	  TreatCompound(aS, aLSX);
-	  //
-	  aItX.Initialize(aLSX);
-	  for (; aItX.More(); aItX.Next()) {
-	    const TopoDS_Shape& aSX=aItX.Value();
-	    aTypeX=aSX.ShapeType();
-	    iTypeX=(Standard_Integer)aTypeX;
-	    //
-	    if (iTypeX>iLimit) {
-	      aLSP.Append(aSX);
-	    }
-	  }
-	}
+        const TopoDS_Shape& aS=aIt.Value();
+        if (myMapTools.Contains(aS)) {
+          continue;
+        }
+        //
+        aType=aS.ShapeType();
+        iType=(Standard_Integer)aType;
+        //
+        if (iType>iLimit) {
+          aLSP.Append(aS);
+        }
+        //
+        else if (aType==TopAbs_COMPOUND) {
+          aLSX.Clear();
+          //
+          TreatCompound(aS, aLSX);
+          //
+          aItX.Initialize(aLSX);
+          for (; aItX.More(); aItX.Next()) {
+            const TopoDS_Shape& aSX=aItX.Value();
+            aTypeX=aSX.ShapeType();
+            iTypeX=(Standard_Integer)aTypeX;
+            //
+            if (iTypeX>iLimit) {
+              aLSP.Append(aSX);
+            }
+          }
+        }
       }// for (; aIt.More(); aIt.Next()) {
       //
-      // 2. Add them to aC
+      aMx.Clear();
+      BOPTools::MapShapes(aC, aMx);
+       // 2. Add them to aC
       aIt.Initialize(aLSP);
       for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aS=aIt.Value();
-	if (myImages.IsBound(aS)) {
-	  const BOPCol_ListOfShape& aLSIm=myImages.Find(aS);
-	  aItIm.Initialize(aLSIm);
-	  for (; aItIm.More(); aItIm.Next()) {
-	    const TopoDS_Shape& aSIm=aItIm.Value();
-	    if (aM.Add(aSIm)) {
-	      aBB.Add(aC, aSIm);
-	    }
-	  }
-	}
-	else {
-	  if (aM.Add(aS)) {
-	    aBB.Add(aC, aS);
-	  }
-	}
+        const TopoDS_Shape& aS=aIt.Value();
+        if (myImages.IsBound(aS)) {
+          const BOPCol_ListOfShape& aLSIm=myImages.Find(aS);
+          aItIm.Initialize(aLSIm);
+          for (; aItIm.More(); aItIm.Next()) {
+            const TopoDS_Shape& aSIm=aItIm.Value();
+            if (aM.Add(aSIm)) {
+              if (!aMx.Contains(aSIm)) {
+                aBB.Add(aC, aSIm);
+              }
+            }
+          }
+        }
+        else {
+          if (aM.Add(aS)) {
+            if (!aMx.Contains(aS)) {
+              aBB.Add(aC, aS);
+            }
+          }
+        }
       }
     }// if (myLimitMode) {
     myShape=aC;
@@ -272,7 +278,7 @@ void GEOMAlgo_Splitter::PostTreat()
 //purpose  : 
 //=======================================================================
 void TreatCompound(const TopoDS_Shape& aC1, 
-		   BOPCol_ListOfShape& aLSX)
+                   BOPCol_ListOfShape& aLSX)
 {
   Standard_Integer aNbC1;
   TopAbs_ShapeEnum aType;
@@ -289,14 +295,14 @@ void TreatCompound(const TopoDS_Shape& aC1,
       //
       aItC.Initialize(aC);
       for (; aItC.More(); aItC.Next()) {
-	const TopoDS_Shape& aS=aItC.Value();
-	aType=aS.ShapeType();
-	if (aType==TopAbs_COMPOUND) {
-	  aLC1.Append(aS);
-	}
-	else {
-	  aLSX.Append(aS);
-	}
+        const TopoDS_Shape& aS=aItC.Value();
+        aType=aS.ShapeType();
+        if (aType==TopAbs_COMPOUND) {
+          aLC1.Append(aS);
+        }
+        else {
+          aLSX.Append(aS);
+        }
       }
     }
     //
