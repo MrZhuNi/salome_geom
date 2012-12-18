@@ -5483,8 +5483,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theVector The translation vector.
         #  @param theDistance The translation distance.
         #  @param theCopy Flag used to translate object itself or create a copy.
-        #  @return Translated @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False or
-        #  new GEOM.GEOM_Object, containing the translated object if @a theCopy flag is @c True.
+        #  @return New GEOM.GEOM_Object, containing the translated object.
         #
         #  @ref tui_translation "Example"
         def TranslateVectorDistance(self, theObject, theVector, theDistance, theCopy):
@@ -5497,9 +5496,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theDistance The translation distance.
                 theCopy Flag used to translate object itself or create a copy.
 
-            Returns:
-                Translated theObject (GEOM.GEOM_Object) if theCopy flag is False or
-                new GEOM.GEOM_Object, containing the translated object if theCopy flag is True.
+            Returns: 
+                New GEOM.GEOM_Object, containing the translated object.
             """
             # Example: see GEOM_TestAll.py
             theDistance,Parameters = ParseParameters(theDistance)
@@ -5540,9 +5538,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theObject The object to be rotated.
         #  @param theAxis Rotation axis.
         #  @param theAngle Rotation angle in radians.
-        #  @return Rotated @a theObject (GEOM.GEOM_Object).
+        #  @return New GEOM.GEOM_Object, containing the rotated object.
+        #
         #  @ref tui_rotation "Example"
-        def Rotate(self, theObject, theAxis, theAngle):
+        def Rotate(self,theObject, theAxis, theAngle):
             """
             Rotate the given object around the given axis on the given angle.
 
@@ -5552,7 +5551,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theAngle Rotation angle in radians.
 
             Returns: 
-                Rotated theObject (GEOM.GEOM_Object).
+                New GEOM.GEOM_Object, containing the rotated object.
             """
             # Example: see GEOM_TestAll.py
             flag = False
@@ -5562,7 +5561,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if flag:
                 theAngle = theAngle*math.pi/180.0
             anObj = self.TrsfOp.Rotate(theObject, theAxis, theAngle)
-            RaiseIfFailed("Rotate", self.TrsfOp)
+            RaiseIfFailed("RotateCopy", self.TrsfOp)
             anObj.SetParameters(Parameters)
             return anObj
 
@@ -5802,8 +5801,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param  theDistance progress of Path (0 = start location, 1 = end of path location).
         #  @param  theCopy is to create a copy objects if true.
         #  @param  theReverse  0 - for usual direction, 1 - to reverse path direction.
-        #  @return Displaced @a theObject (GEOM.GEOM_Object) if @a theCopy is @c False or
-        #          new GEOM.GEOM_Object, containing the displaced shape if @a theCopy is @c True.
+        #  @return New GEOM.GEOM_Object, containing the displaced shape.
         #
         #  @ref tui_modify_location "Example"
         def PositionAlongPath(self,theObject, thePath, theDistance, theCopy, theReverse):
@@ -5818,9 +5816,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                  theReverse  0 - for usual direction, 1 - to reverse path direction.
 
             Returns:  
-                   Displaced theObject (GEOM.GEOM_Object) if theCopy is False or
-                   new GEOM.GEOM_Object, containing the displaced shape if theCopy is True.
-                   
+                New GEOM.GEOM_Object, containing the displaced shape.
+
             Example of usage:
                 position = geompy.PositionAlongPath(cylinder, circle, 0.75, 1, 1)
             """
@@ -7523,7 +7520,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theObject Shape to be stored in the file.
         #  @param theFileName Name of the file to store the given shape in.
         #  @param theFormatName Specify format for the shape storage.
-        #         Available formats can be obtained with InsertOp.ImportTranslators() method.
+        #         Available formats can be obtained with
+        #         geompy.InsertOp.ExportTranslators()[0] method.
         #
         #  @ref swig_Import_Export "Example"
         def Export(self, theObject, theFileName, theFormatName):
@@ -7534,7 +7532,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theObject Shape to be stored in the file.
                 theFileName Name of the file to store the given shape in.
                 theFormatName Specify format for the shape storage.
-                              Available formats can be obtained with geompy.InsertOp.ImportTranslators() method.
+                              Available formats can be obtained with
+                              geompy.InsertOp.ExportTranslators()[0] method.
             """
             # Example: see GEOM_TestOthers.py
             self.InsertOp.Export(theObject, theFileName, theFormatName)
