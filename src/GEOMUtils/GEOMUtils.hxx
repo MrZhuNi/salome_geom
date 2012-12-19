@@ -33,6 +33,8 @@
 
 #include <NCollection_DataMap.hxx>
 
+#include <functional>
+
 inline Standard_Boolean IsEqual (const TopoDS_Shape& S1, const TopoDS_Shape& S2)
 {
   return S1.IsSame(S2);
