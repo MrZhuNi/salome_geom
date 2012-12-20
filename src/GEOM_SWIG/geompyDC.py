@@ -5483,7 +5483,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theVector The translation vector.
         #  @param theDistance The translation distance.
         #  @param theCopy Flag used to translate object itself or create a copy.
-        #  @return New GEOM.GEOM_Object, containing the translated object.
+        #  @return Translated @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False or
+        #  new GEOM.GEOM_Object, containing the translated object if @a theCopy flag is @c True.
         #
         #  @ref tui_translation "Example"
         def TranslateVectorDistance(self, theObject, theVector, theDistance, theCopy):
@@ -5497,7 +5498,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theCopy Flag used to translate object itself or create a copy.
 
             Returns: 
-                New GEOM.GEOM_Object, containing the translated object.
+                Translated theObject (GEOM.GEOM_Object) if theCopy flag is False or
+                new GEOM.GEOM_Object, containing the translated object if theCopy flag is True.
             """
             # Example: see GEOM_TestAll.py
             theDistance,Parameters = ParseParameters(theDistance)
@@ -5538,10 +5540,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theObject The object to be rotated.
         #  @param theAxis Rotation axis.
         #  @param theAngle Rotation angle in radians.
-        #  @return New GEOM.GEOM_Object, containing the rotated object.
+        #  @return Rotated @a theObject (GEOM.GEOM_Object).
         #
         #  @ref tui_rotation "Example"
-        def Rotate(self,theObject, theAxis, theAngle):
+        def Rotate(self, theObject, theAxis, theAngle):
             """
             Rotate the given object around the given axis on the given angle.
 
@@ -5551,7 +5553,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theAngle Rotation angle in radians.
 
             Returns: 
-                New GEOM.GEOM_Object, containing the rotated object.
+                Rotated theObject (GEOM.GEOM_Object).
             """
             # Example: see GEOM_TestAll.py
             flag = False
@@ -5561,7 +5563,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if flag:
                 theAngle = theAngle*math.pi/180.0
             anObj = self.TrsfOp.Rotate(theObject, theAxis, theAngle)
-            RaiseIfFailed("RotateCopy", self.TrsfOp)
+            RaiseIfFailed("Rotate", self.TrsfOp)
             anObj.SetParameters(Parameters)
             return anObj
 
@@ -5801,7 +5803,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param  theDistance progress of Path (0 = start location, 1 = end of path location).
         #  @param  theCopy is to create a copy objects if true.
         #  @param  theReverse  0 - for usual direction, 1 - to reverse path direction.
-        #  @return New GEOM.GEOM_Object, containing the displaced shape.
+        #  @return Displaced @a theObject (GEOM.GEOM_Object) if @a theCopy is @c False or
+        #          new GEOM.GEOM_Object, containing the displaced shape if @a theCopy is @c True.
         #
         #  @ref tui_modify_location "Example"
         def PositionAlongPath(self,theObject, thePath, theDistance, theCopy, theReverse):
@@ -5816,7 +5819,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                  theReverse  0 - for usual direction, 1 - to reverse path direction.
 
             Returns:  
-                New GEOM.GEOM_Object, containing the displaced shape.
+                 Displaced theObject (GEOM.GEOM_Object) if theCopy is False or
+                 new GEOM.GEOM_Object, containing the displaced shape if theCopy is True.
 
             Example of usage:
                 position = geompy.PositionAlongPath(cylinder, circle, 0.75, 1, 1)
