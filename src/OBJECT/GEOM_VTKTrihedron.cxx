@@ -24,7 +24,6 @@
 //  File   : GEOM_VTKTrihedron.cxx
 //  Author : Sergey LITONIN
 //  Module : SALOME
-//  $Header:
 //
 #include "GEOM_VTKTrihedron.hxx"
 

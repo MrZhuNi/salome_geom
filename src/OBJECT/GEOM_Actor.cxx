@@ -24,7 +24,6 @@
 //  File   : GEOM_Actor.cxx
 //  Author : Christophe ATTANASIO
 //  Module : GEOM
-//  $Header$
 //
 /*!
   \class GEOM_Actor GEOM_Actor.h

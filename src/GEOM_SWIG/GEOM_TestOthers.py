@@ -23,7 +23,6 @@
 #  File   : GEOM_TestOthers.py
 #  Author : Julia DOROVSKIKH
 #  Module : GEOM
-#  $Header$
 #
 # ! Please, if you edit this example file, update also
 # ! GEOM_SRC/doc/salome/gui/GEOM/input/tui_test_others.doc

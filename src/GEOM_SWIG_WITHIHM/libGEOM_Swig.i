@@ -22,7 +22,6 @@
 //  Author    : Nicolas REJNERI, Paul RASCLE
 //  Project   : SALOME
 //  Module    : GEOM
-//  $Header$
 //
 %module libGEOM_Swig
 

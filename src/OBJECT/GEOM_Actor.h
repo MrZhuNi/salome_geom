@@ -24,7 +24,6 @@
 //  File   : GEOM_Actor.h
 //  Author : Christophe ATTANASIO
 //  Module : GEOM
-//  $Header$
 //
 #ifndef GEOM_ACTOR_H
 #define GEOM_ACTOR_H
