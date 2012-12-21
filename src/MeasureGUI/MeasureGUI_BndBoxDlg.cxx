@@ -151,6 +151,31 @@ bool MeasureGUI_BndBoxDlg::ClickOnApply()
 }
 
 //=================================================================================
+// function : ActivateThisDialog()
+// purpose  :
+//=================================================================================
+void MeasureGUI_BndBoxDlg::ActivateThisDialog()
+{
+  GEOMBase_Skeleton::ActivateThisDialog();
+
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
+
+  globalSelection();
+  displayPreview(true);
+}
+
+//=================================================================================
+// function : enterEvent()
+// purpose  :
+//=================================================================================
+void MeasureGUI_BndBoxDlg::enterEvent(QEvent*)
+{
+  if (!mainFrame()->GroupConstructors->isEnabled())
+    ActivateThisDialog();
+}
+
+//=================================================================================
 // function : processObject
 // purpose  :
 //=================================================================================

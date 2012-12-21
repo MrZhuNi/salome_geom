@@ -54,6 +54,7 @@ protected:
 
 private:
   void                               Init();
+  void                               enterEvent (QEvent*);
   bool                               getParameters (double&, double&, double&, double&, double&, double&);
 
 private:
@@ -64,6 +65,7 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               SelectionIntoArgument();
+  void                               ActivateThisDialog();
 };
 
 #endif // MEASUREGUI_BNDBOXDLG_H
