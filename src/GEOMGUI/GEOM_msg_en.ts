@@ -5414,6 +5414,14 @@ Number of sketch points too small</translation>
         <source>NUMBER_OPEN</source>
         <translation>Number of open free boundaries: </translation>
     </message>
+    <message>
+        <source>NAME_CLOSED</source>
+        <translation>Closed_Free_Boundary_%1</translation>
+    </message>
+    <message>
+        <source>NAME_OPEN</source>
+        <translation>Open_Free_Boundary_%1</translation>
+    </message>
 </context>
 <context>
     <name>RepairGUI_GlueDlg</name>

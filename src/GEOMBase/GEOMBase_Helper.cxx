@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  GEOM GEOMGUI : GUI for Geometry component
 //  File   : GEOMBase_Helper.cxx
 //  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
-//
+
 #include "GEOMBase_Helper.h"
 #include "GEOMBase.h"
 #include "GEOM_Operation.h"
@@ -858,11 +857,11 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
         addSubshapesToStudy(); // add Sub-shapes if local selection
         const int nbObjs = objects.size();
         QStringList anEntryList;
-        int aNumber = 1;
-        for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) {
+        int currObj = 1, aNumber = 1;
+        for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it, currObj++ ) {
           GEOM::GEOM_Object_var obj=*it;
           if ( publish ) {
-            QString aName = getNewObjectName();
+            QString aName = getNewObjectName(currObj);
             if ( nbObjs > 1 ) {
               if (aName.isEmpty())
                 aName = getPrefix(obj);
@@ -1006,7 +1005,7 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::getFather( GEOM::GEOM_Object_ptr theObj )
 // Function : getNewObjectName
 // Purpose  : Redefine this method to return proper name for a new object
 //================================================================
-QString GEOMBase_Helper::getNewObjectName() const
+QString GEOMBase_Helper::getNewObjectName (int) const
 {
   return QString::null;
 }
