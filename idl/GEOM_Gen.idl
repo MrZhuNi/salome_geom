@@ -3559,6 +3559,13 @@ module GEOM
                          out double Zmin, out double Zmax);
 
     /*!
+     *  \brief Get bounding box of the given shape
+     *  \param theShape Shape to obtain bounding box of.
+     *  \return New GEOM_Object, containing the created bounding box.
+     */
+    GEOM_Object MakeBoundingBox (in GEOM_Object theShape);
+
+    /*!
      *  \brief Get min and max tolerances of sub-shapes of theShape
      *  \param theShape Shape, to get tolerances of.
      *  \param FaceMin,FaceMax Output. Min and max tolerances of the faces.

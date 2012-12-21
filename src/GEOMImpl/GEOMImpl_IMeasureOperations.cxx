@@ -1168,6 +1168,59 @@ void GEOMImpl_IMeasureOperations::GetBoundingBox
 
 //=============================================================================
 /*!
+ *  GetBoundingBox
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetBoundingBox
+                                                (Handle(GEOM_Object) theShape)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+
+  //Add a new BoundingBox object
+  Handle(GEOM_Object) aBnd = GetEngine()->AddObject(GetDocID(), GEOM_BOX);
+
+  //Add a new BoundingBox function
+  Handle(GEOM_Function) aFunction =
+    aBnd->AddFunction(GEOMImpl_MeasureDriver::GetID(), BND_BOX_MEASURE);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_MeasureDriver::GetID()) return NULL;
+
+  GEOMImpl_IMeasure aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aCI.SetBase(aRefShape);
+
+  //Compute the BoundingBox value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Measure driver failed to compute a bounding box");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aBnd << " = geompy.MakeBoundingBox(" << theShape << ")";
+
+  SetErrorCode(OK);
+  return aBnd;
+}
+
+//=============================================================================
+/*!
  *  GetTolerance
  */
 //=============================================================================

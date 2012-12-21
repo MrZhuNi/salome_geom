@@ -6644,7 +6644,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Zmin,Zmax: Limits of shape along OZ axis.
         #
         #  @ref tui_measurement_tools_page "Example"
-        def BoundingBox(self,theShape):
+        def BoundingBox (self, theShape):
             """
             Get parameters of bounding box of the given shape
 
@@ -6661,6 +6661,26 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             aTuple = self.MeasuOp.GetBoundingBox(theShape)
             RaiseIfFailed("GetBoundingBox", self.MeasuOp)
             return aTuple
+
+        ## Get bounding box of the given shape
+        #  @param theShape Shape to obtain bounding box of.
+        #  @return New GEOM.GEOM_Object, containing the created box.
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def MakeBoundingBox (self, theShape):
+            """
+            Get bounding box of the given shape
+
+            Parameters: 
+                theShape Shape to obtain bounding box of.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created box.
+            """
+            # Example: see GEOM_TestMeasures.py
+            anObj = self.MeasuOp.MakeBoundingBox(theShape)
+            RaiseIfFailed("MakeBoundingBox", self.MeasuOp)
+            return anObj
 
         ## Get inertia matrix and moments of inertia of theShape.
         #  @param theShape Shape to calculate inertia of.

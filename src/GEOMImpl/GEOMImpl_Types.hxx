@@ -309,6 +309,7 @@
 
 // Measures
 #define CDG_MEASURE 1
+#define BND_BOX_MEASURE 2
 #define VECTOR_FACE_NORMALE 4
 #define VERTEX_BY_INDEX 5
 

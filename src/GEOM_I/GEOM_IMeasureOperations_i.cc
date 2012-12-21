@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -271,6 +270,31 @@ void GEOM_IMeasureOperations_i::GetBoundingBox (GEOM::GEOM_Object_ptr theShape,
 
   // Get shape parameters
   GetOperations()->GetBoundingBox(aShape, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
+}
+
+//=============================================================================
+/*!
+ *  MakeBoundingBox
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::MakeBoundingBox
+                                              (GEOM::GEOM_Object_ptr theShape)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aGEOMObject._retn();
+
+  // Make Box - bounding box of theShape
+  Handle(GEOM_Object) anObject = GetOperations()->GetBoundingBox(aShape);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
 }
 
 //=============================================================================

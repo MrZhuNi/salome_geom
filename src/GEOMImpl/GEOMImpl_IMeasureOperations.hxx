@@ -117,6 +117,8 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                        Standard_Real& Ymin, Standard_Real& Ymax,
                                        Standard_Real& Zmin, Standard_Real& Zmax);
 
+  Standard_EXPORT Handle(GEOM_Object) GetBoundingBox (Handle(GEOM_Object) theShape);
+
   Standard_EXPORT void GetTolerance (Handle(GEOM_Object) theShape,
                                      Standard_Real& FaceMin, Standard_Real& FaceMax,
                                      Standard_Real& EdgeMin, Standard_Real& EdgeMax,

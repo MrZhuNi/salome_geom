@@ -19,7 +19,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 def TestMeasureOperations (geompy, math):
 
@@ -98,6 +97,8 @@ def TestMeasureOperations (geompy, math):
   print " Xmin = ", BB[0], ", Xmax = ", BB[1]
   print " Ymin = ", BB[2], ", Ymax = ", BB[3]
   print " Zmin = ", BB[4], ", Zmax = ", BB[5]
+  BB = geompy.MakeBoundingBox(box)
+  geompy.addToStudy(BB, "BoundingBox")
 
   ####### Inertia #######
 

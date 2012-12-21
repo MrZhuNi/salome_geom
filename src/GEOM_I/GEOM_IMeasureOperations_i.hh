@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_IMeasureOperations_i_HeaderFile
 #define _GEOM_IMeasureOperations_i_HeaderFile
@@ -74,6 +73,8 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
                        CORBA::Double& Xmin, CORBA::Double& Xmax,
                        CORBA::Double& Ymin, CORBA::Double& Ymax,
                        CORBA::Double& Zmin, CORBA::Double& Zmax);
+
+  GEOM::GEOM_Object_ptr MakeBoundingBox (GEOM::GEOM_Object_ptr theShape);
 
   void GetTolerance (GEOM::GEOM_Object_ptr theShape,
                      CORBA::Double& FaceMin, CORBA::Double& FaceMax,
