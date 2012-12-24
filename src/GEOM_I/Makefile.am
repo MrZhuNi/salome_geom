@@ -46,7 +46,8 @@ salomeinclude_HEADERS =			\
 	GEOM_IGroupOperations_i.hh	\
 	GEOM_IAdvancedOperations_i.hh	\
 	GEOM_Gen_i.hh			\
-	GEOM_GEOM_I.hxx
+	GEOM_GEOM_I.hxx                 \
+	GEOM_wrap.hxx
 
 dist_libGEOMEngine_la_SOURCES =		\
 	GEOM_Object_i.cc		\
