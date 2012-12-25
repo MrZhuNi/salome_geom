@@ -3321,7 +3321,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnSphere
 
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
-    << "listShapesOnCylinder = geompy.GetShapesOnCylinderIDs"
+    << "listShapesOnCylinder = geompy.GetShapesOnSphereIDs"
     << "(" << theShape << ", " << aShapeType << ", " << theCenter << ", "
     << theRadius << ", " << theState << ")";
 
