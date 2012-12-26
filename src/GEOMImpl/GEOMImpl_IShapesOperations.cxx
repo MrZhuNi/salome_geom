@@ -2302,7 +2302,7 @@ Handle(TColStd_HSequenceOfInteger)
   Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theBox)->GetLastFunction();
 
   // Make a Python command
-  GEOM::TPythonDump(aFunction)
+  GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnBoxIDs = geompy.GetShapesOnBoxIDs("
     << theBox << ", "
     << theShape << ", "
@@ -2475,7 +2475,7 @@ Handle(TColStd_HSequenceOfInteger)
     GEOM::GetCreatedLast(theShape,theCheckShape)->GetLastFunction();
 
   // Make a Python command
-  GEOM::TPythonDump(aFunction)
+  GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnBoxIDs = geompy.GetShapesOnShapeIDs("
     << theCheckShape << ", "
     << theShape << ", "
@@ -4671,7 +4671,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSameIDs
     Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShapeWhere,theShapeWhat)->GetLastFunction();
 
   // Make a Python command
-  GEOM::TPythonDump(aFunction)
+  GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listSameIDs = geompy.GetSameIDs("
     << theShapeWhere << ", "
     << theShapeWhat << ")";
