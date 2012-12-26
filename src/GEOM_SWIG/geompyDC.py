@@ -376,6 +376,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         def __init__(self):
             GEOM._objref_GEOM_Gen.__init__(self)
+            self.myMaxNbSubShapesAllowed = 0 # auto-publishing is disabled by default
             self.myBuilder = None
             self.myStudyId = 0
             self.father    = None
@@ -393,6 +394,46 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             self.BlocksOp = None
             self.GroupOp  = None
             self.AdvOp    = None
+            pass
+
+        ## Process object publication in the study, as follows:
+        #  - if @a theName is specified (not None), the object is published in the study
+        #    with this name, not taking into account "auto-publishing" option;
+        #  - if @a theName is NOT specified, the object is published in the study
+        #    (using default name, which can be customized using @a theDefaultName parameter)
+        #    only if auto-publishing is switched on.
+        #
+        #  @param theObj  object, a subject for publishing
+        #  @param theName object name for study
+        #  @param theDefaultName default name for the auto-publishing
+        #
+        #  @sa addToStudyAuto()
+        def _autoPublish(self, theObj, theName, theDefaultName="noname"):
+            if not theObj: return
+            aName = theName
+            if not aName and self.myMaxNbSubShapesAllowed != 0: aName = theDefaultName
+            if not aName: return
+            import types
+            if type(theObj) in [types.ListType, types.TupleType]:
+                # if list of objects is being published
+                idx = 1
+                for obj in theObj:
+                    if obj.IsMainShape():
+                        self.addToStudy(obj, "%s_%d"%(aName, idx))
+                    else:
+                        self.addToStudyInFather(obj.GetMainShape(), obj, "%s_%d"%(aName, idx))
+                        pass
+                    if not theName and idx == self.myMaxNbSubShapesAllowed: break
+                    idx = idx+1
+                    pass
+                pass
+            else:
+                if theObj.IsMainShape():
+                    self.addToStudy(theObj, aName)
+                else:
+                    self.addToStudyInFather(theObj.GetMainShape(), theObj, aName)
+                    pass
+                pass
             pass
 
         ## @addtogroup l1_geompy_auxiliary
@@ -425,6 +466,40 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             self.BlocksOp = self.GetIBlocksOperations   (self.myStudyId)
             self.GroupOp  = self.GetIGroupOperations    (self.myStudyId)
             self.AdvOp    = self.GetIAdvancedOperations (self.myStudyId)
+            pass
+
+        ## Enable / disable results auto-publishing
+        # 
+        #  The automatic publishing is managed in the following way:
+        #  - if @a maxNbSubShapes = 0, automatic publishing is disabled.
+        #  - if @a maxNbSubShapes = -1 (default), automatic publishing is enabled and
+        #  maximum number of sub-shapes allowed for publishing is unlimited; any negative
+        #  value passed as parameter has the same effect.
+        #  - if @a maxNbSubShapes is any positive value, automatic publishing is enabled and
+        #  maximum number of sub-shapes allowed for publishing is set to specified value.
+        #
+        #  @param maxNbSubShapes maximum number of sub-shapes allowed for publishing.
+        def addToStudyAuto(self, maxNbSubShapes=-1):
+            """
+            Enable / disable results auto-publishing
+
+            The automatic publishing is managed in the following way:
+            - if @a maxNbSubShapes = 0, automatic publishing is disabled;
+            - if @a maxNbSubShapes = -1 (default), automatic publishing is enabled and
+            maximum number of sub-shapes allowed for publishing is unlimited; any negative
+            value passed as parameter has the same effect.
+            - if @a maxNbSubShapes is any positive value, automatic publishing is enabled and
+            maximum number of sub-shapes allowed for publishing is set to this value.
+
+            Parameters:
+                maxNbSubShapes maximum number of sub-shapes allowed for publishing.
+
+            Example of usage:
+                geompy.addToStudyAuto()   # enable auto-publishing
+                geompy.MakeBoxDXDYDZ(100) # box is created and published with default name
+                geompy.addToStudyAuto(0)  # disable auto-publishing
+            """
+            self.myMaxNbSubShapesAllowed = max(-1, maxNbSubShapes)
             pass
 
         ## Dump component to the Python script
@@ -662,10 +737,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theX The X coordinate of the point.
         #  @param theY The Y coordinate of the point.
         #  @param theZ The Z coordinate of the point.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
-        def MakeVertex(self, theX, theY, theZ):
+        def MakeVertex(self, theX, theY, theZ, theName=None):
             """
             Create point by three coordinates.
 
@@ -673,6 +752,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theX The X coordinate of the point.
                 theY The Y coordinate of the point.
                 theZ The Z coordinate of the point.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
                 
             Returns: 
                 New GEOM.GEOM_Object, containing the created point.
@@ -682,6 +764,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointXYZ(theX, theY, theZ)
             RaiseIfFailed("MakePointXYZ", self.BasicOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a point, distant from the referenced point
@@ -690,10 +773,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theX Displacement from the referenced point along OX axis.
         #  @param theY Displacement from the referenced point along OY axis.
         #  @param theZ Displacement from the referenced point along OZ axis.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
-        def MakeVertexWithRef(self,theReference, theX, theY, theZ):
+        def MakeVertexWithRef(self, theReference, theX, theY, theZ, theName=None):
             """
             Create a point, distant from the referenced point
             on the given distances along the coordinate axes.
@@ -703,6 +790,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theX Displacement from the referenced point along OX axis.
                 theY Displacement from the referenced point along OY axis.
                 theZ Displacement from the referenced point along OZ axis.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created point.
@@ -712,21 +802,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointWithReference(theReference, theX, theY, theZ)
             RaiseIfFailed("MakePointWithReference", self.BasicOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a point, corresponding to the given parameter on the given curve.
         #  @param theRefCurve The referenced curve.
         #  @param theParameter Value of parameter on the referenced curve.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
-        def MakeVertexOnCurve(self,theRefCurve, theParameter):
+        def MakeVertexOnCurve(self, theRefCurve, theParameter, theName=None):
             """
             Create a point, corresponding to the given parameter on the given curve.
 
             Parameters:
                 theRefCurve The referenced curve.
                 theParameter Value of parameter on the referenced curve.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created point.
@@ -739,6 +837,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakePointOnCurve", self.BasicOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a point by projection give coordinates on the given curve
@@ -746,10 +845,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theX X-coordinate in 3D space
         #  @param theY Y-coordinate in 3D space
         #  @param theZ Z-coordinate in 3D space
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
-        def MakeVertexOnCurveByCoord(self,theRefCurve, theX, theY, theZ):
+        def MakeVertexOnCurveByCoord(self, theRefCurve, theX, theY, theZ, theName=None):
             """
             Create a point by projection give coordinates on the given curve
             
@@ -758,6 +861,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theX X-coordinate in 3D space
                 theY Y-coordinate in 3D space
                 theZ Z-coordinate in 3D space
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created point.
@@ -770,6 +876,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointOnCurveByCoord(theRefCurve, theX, theY, theZ)
             RaiseIfFailed("MakeVertexOnCurveByCoord", self.BasicOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a point, corresponding to the given length on the given curve.
@@ -777,10 +884,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theLength Length on the referenced curve. It can be negative.
         #  @param theStartPoint Point allowing to choose the direction for the calculation
         #                       of the length. If None, start from the first point of theRefCurve.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
-        def MakeVertexOnCurveByLength(self, theRefCurve, theLength, theStartPoint = None):
+        def MakeVertexOnCurveByLength(self, theRefCurve, theLength, theStartPoint = None, theName=None):
             """
             Create a point, corresponding to the given length on the given curve.
 
@@ -789,6 +900,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theLength Length on the referenced curve. It can be negative.
                 theStartPoint Point allowing to choose the direction for the calculation
                               of the length. If None, start from the first point of theRefCurve.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created point.
@@ -798,6 +912,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointOnCurveByLength(theRefCurve, theLength, theStartPoint)
             RaiseIfFailed("MakePointOnCurveByLength", self.BasicOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a point, corresponding to the given parameters on the
@@ -805,10 +920,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theRefSurf The referenced surface.
         #  @param theUParameter Value of U-parameter on the referenced surface.
         #  @param theVParameter Value of V-parameter on the referenced surface.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref swig_MakeVertexOnSurface "Example"
-        def MakeVertexOnSurface(self, theRefSurf, theUParameter, theVParameter):
+        def MakeVertexOnSurface(self, theRefSurf, theUParameter, theVParameter, theName=None):
             """
             Create a point, corresponding to the given parameters on the
             given surface.
@@ -817,6 +936,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theRefSurf The referenced surface.
                 theUParameter Value of U-parameter on the referenced surface.
                 theVParameter Value of V-parameter on the referenced surface.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created point.
@@ -829,6 +951,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointOnSurface(theRefSurf, theUParameter, theVParameter)
             RaiseIfFailed("MakePointOnSurface", self.BasicOp)
             anObj.SetParameters(Parameters);
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a point by projection give coordinates on the given surface
@@ -836,10 +959,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theX X-coordinate in 3D space
         #  @param theY Y-coordinate in 3D space
         #  @param theZ Z-coordinate in 3D space
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref swig_MakeVertexOnSurfaceByCoord "Example"
-        def MakeVertexOnSurfaceByCoord(self, theRefSurf, theX, theY, theZ):
+        def MakeVertexOnSurfaceByCoord(self, theRefSurf, theX, theY, theZ, theName=None):
             """
             Create a point by projection give coordinates on the given surface
 
@@ -848,6 +975,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theX X-coordinate in 3D space
                 theY Y-coordinate in 3D space
                 theZ Z-coordinate in 3D space
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created point.
@@ -860,6 +990,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointOnSurfaceByCoord(theRefSurf, theX, theY, theZ)
             RaiseIfFailed("MakeVertexOnSurfaceByCoord", self.BasicOp)
             anObj.SetParameters(Parameters);
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a point, which lays on the given face.
@@ -868,10 +999,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Such point can be used to uniquely identify the face inside any
         #  shape in case, when the shape does not contain overlapped faces.
         #  @param theFace The referenced face.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref swig_MakeVertexInsideFace "Example"
-        def MakeVertexInsideFace (self, theFace):
+        def MakeVertexInsideFace (self, theFace, theName=None):
             """
             Create a point, which lays on the given face.
             The point will lay in arbitrary place of the face.
@@ -881,6 +1016,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theFace The referenced face.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created point.
@@ -891,19 +1029,27 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakePointOnFace(theFace)
             RaiseIfFailed("MakeVertexInsideFace", self.BasicOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a point on intersection of two lines.
         #  @param theRefLine1, theRefLine2 The referenced lines.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref swig_MakeVertexOnLinesIntersection "Example"
-        def MakeVertexOnLinesIntersection(self, theRefLine1, theRefLine2):
+        def MakeVertexOnLinesIntersection(self, theRefLine1, theRefLine2, theName=None):
             """
             Create a point on intersection of two lines.
 
             Parameters:
                 theRefLine1, theRefLine2 The referenced lines.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created point.
@@ -911,21 +1057,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakePointOnLinesIntersection(theRefLine1, theRefLine2)
             RaiseIfFailed("MakePointOnLinesIntersection", self.BasicOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a tangent, corresponding to the given parameter on the given curve.
         #  @param theRefCurve The referenced curve.
         #  @param theParameter Value of parameter on the referenced curve.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created tangent.
         #
         #  @ref swig_MakeTangentOnCurve "Example"
-        def MakeTangentOnCurve(self, theRefCurve, theParameter):
+        def MakeTangentOnCurve(self, theRefCurve, theParameter, theName=None):
             """
             Create a tangent, corresponding to the given parameter on the given curve.
 
             Parameters:
                 theRefCurve The referenced curve.
                 theParameter Value of parameter on the referenced curve.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created tangent.
@@ -935,6 +1089,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.BasicOp.MakeTangentOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakeTangentOnCurve", self.BasicOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a tangent plane, corresponding to the given parameter on the given face.
@@ -942,10 +1097,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theParameterV vertical value of the center point (0.0 - 1.0).
         #  @param theParameterU horisontal value of the center point (0.0 - 1.0).
         #  @param theTrimSize the size of plane.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created tangent.
         #
         #  @ref swig_MakeTangentPlaneOnFace "Example"
-        def MakeTangentPlaneOnFace(self, theFace, theParameterU, theParameterV, theTrimSize):
+        def MakeTangentPlaneOnFace(self, theFace, theParameterU, theParameterV, theTrimSize, theName=None):
             """
             Create a tangent plane, corresponding to the given parameter on the given face.
 
@@ -954,6 +1113,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theParameterV vertical value of the center point (0.0 - 1.0).
                 theParameterU horisontal value of the center point (0.0 - 1.0).
                 theTrimSize the size of plane.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
            Returns: 
                 New GEOM.GEOM_Object, containing the created tangent.
@@ -963,16 +1125,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.BasicOp.MakeTangentPlaneOnFace(theFace, theParameterU, theParameterV, theTrimSize)
             RaiseIfFailed("MakeTangentPlaneOnFace", self.BasicOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a vector with the given components.
         #  @param theDX X component of the vector.
         #  @param theDY Y component of the vector.
         #  @param theDZ Z component of the vector.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created vector.
         #
         #  @ref tui_creation_vector "Example"
-        def MakeVectorDXDYDZ(self,theDX, theDY, theDZ):
+        def MakeVectorDXDYDZ(self, theDX, theDY, theDZ, theName=None):
             """
             Create a vector with the given components.
 
@@ -980,6 +1147,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theDX X component of the vector.
                 theDY Y component of the vector.
                 theDZ Z component of the vector.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:     
                 New GEOM.GEOM_Object, containing the created vector.
@@ -989,21 +1159,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakeVectorDXDYDZ(theDX, theDY, theDZ)
             RaiseIfFailed("MakeVectorDXDYDZ", self.BasicOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a vector between two points.
         #  @param thePnt1 Start point for the vector.
         #  @param thePnt2 End point for the vector.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created vector.
         #
         #  @ref tui_creation_vector "Example"
-        def MakeVector(self,thePnt1, thePnt2):
+        def MakeVector(self, thePnt1, thePnt2, theName=None):
             """
             Create a vector between two points.
 
             Parameters:
                 thePnt1 Start point for the vector.
                 thePnt2 End point for the vector.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:        
                 New GEOM.GEOM_Object, containing the created vector.
@@ -1011,16 +1189,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakeVectorTwoPnt(thePnt1, thePnt2)
             RaiseIfFailed("MakeVectorTwoPnt", self.BasicOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a line, passing through the given point
         #  and parrallel to the given direction
         #  @param thePnt Point. The resulting line will pass through it.
         #  @param theDir Direction. The resulting line will be parallel to it.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created line.
         #
         #  @ref tui_creation_line "Example"
-        def MakeLine(self,thePnt, theDir):
+        def MakeLine(self, thePnt, theDir, theName=None):
             """
             Create a line, passing through the given point
             and parrallel to the given direction
@@ -1028,6 +1211,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 thePnt Point. The resulting line will pass through it.
                 theDir Direction. The resulting line will be parallel to it.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created line.
@@ -1035,21 +1221,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakeLine(thePnt, theDir)
             RaiseIfFailed("MakeLine", self.BasicOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a line, passing through the given points
         #  @param thePnt1 First of two points, defining the line.
         #  @param thePnt2 Second of two points, defining the line.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created line.
         #
         #  @ref tui_creation_line "Example"
-        def MakeLineTwoPnt(self,thePnt1, thePnt2):
+        def MakeLineTwoPnt(self, thePnt1, thePnt2, theName=None):
             """
             Create a line, passing through the given points
 
             Parameters:
                 thePnt1 First of two points, defining the line.
                 thePnt2 Second of two points, defining the line.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created line.
@@ -1057,21 +1251,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakeLineTwoPnt(thePnt1, thePnt2)
             RaiseIfFailed("MakeLineTwoPnt", self.BasicOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a line on two faces intersection.
         #  @param theFace1 First of two faces, defining the line.
         #  @param theFace2 Second of two faces, defining the line.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created line.
         #
         #  @ref swig_MakeLineTwoFaces "Example"
-        def MakeLineTwoFaces(self, theFace1, theFace2):
+        def MakeLineTwoFaces(self, theFace1, theFace2, theName=None):
             """
             Create a line on two faces intersection.
 
             Parameters:
                 theFace1 First of two faces, defining the line.
                 theFace2 Second of two faces, defining the line.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created line.
@@ -1079,6 +1281,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakeLineTwoFaces(theFace1, theFace2)
             RaiseIfFailed("MakeLineTwoFaces", self.BasicOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a plane, passing through the given point
@@ -1086,10 +1289,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePnt Point, the plane has to pass through.
         #  @param theVec Vector, defining the plane normal direction.
         #  @param theTrimSize Half size of a side of quadrangle face, representing the plane.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created plane.
         #
         #  @ref tui_creation_plane "Example"
-        def MakePlane(self,thePnt, theVec, theTrimSize):
+        def MakePlane(self, thePnt, theVec, theTrimSize, theName=None):
             """
             Create a plane, passing through the given point
             and normal to the given vector.
@@ -1098,6 +1305,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 thePnt Point, the plane has to pass through.
                 theVec Vector, defining the plane normal direction.
                 theTrimSize Half size of a side of quadrangle face, representing the plane.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:    
                 New GEOM.GEOM_Object, containing the created plane.
@@ -1107,6 +1317,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePlanePntVec(thePnt, theVec, theTrimSize)
             RaiseIfFailed("MakePlanePntVec", self.BasicOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a plane, passing through the three given points
@@ -1114,10 +1325,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePnt2 Second of three points, defining the plane.
         #  @param thePnt3 Fird of three points, defining the plane.
         #  @param theTrimSize Half size of a side of quadrangle face, representing the plane.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created plane.
         #
         #  @ref tui_creation_plane "Example"
-        def MakePlaneThreePnt(self,thePnt1, thePnt2, thePnt3, theTrimSize):
+        def MakePlaneThreePnt(self, thePnt1, thePnt2, thePnt3, theTrimSize, theName=None):
             """
             Create a plane, passing through the three given points
 
@@ -1126,6 +1341,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 thePnt2 Second of three points, defining the plane.
                 thePnt3 Fird of three points, defining the plane.
                 theTrimSize Half size of a side of quadrangle face, representing the plane.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created plane.
@@ -1135,21 +1353,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePlaneThreePnt(thePnt1, thePnt2, thePnt3, theTrimSize)
             RaiseIfFailed("MakePlaneThreePnt", self.BasicOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a plane, similar to the existing one, but with another size of representing face.
         #  @param theFace Referenced plane or LCS(Marker).
         #  @param theTrimSize New half size of a side of quadrangle face, representing the plane.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created plane.
         #
         #  @ref tui_creation_plane "Example"
-        def MakePlaneFace(self,theFace, theTrimSize):
+        def MakePlaneFace(self, theFace, theTrimSize, theName=None):
             """
             Create a plane, similar to the existing one, but with another size of representing face.
 
             Parameters:
                 theFace Referenced plane or LCS(Marker).
                 theTrimSize New half size of a side of quadrangle face, representing the plane.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created plane.
@@ -1159,6 +1385,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePlaneFace(theFace, theTrimSize)
             RaiseIfFailed("MakePlaneFace", self.BasicOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a plane, passing through the 2 vectors
@@ -1166,10 +1393,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theVec1 Vector, defining center point and plane direction.
         #  @param theVec2 Vector, defining the plane normal direction.
         #  @param theTrimSize Half size of a side of quadrangle face, representing the plane.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created plane.
         #
         #  @ref tui_creation_plane "Example"
-        def MakePlane2Vec(self,theVec1, theVec2, theTrimSize):
+        def MakePlane2Vec(self, theVec1, theVec2, theTrimSize, theName=None):
             """
             Create a plane, passing through the 2 vectors
             with center in a start point of the first vector.
@@ -1178,6 +1409,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theVec1 Vector, defining center point and plane direction.
                 theVec2 Vector, defining the plane normal direction.
                 theTrimSize Half size of a side of quadrangle face, representing the plane.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created plane.
@@ -1187,16 +1421,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePlane2Vec(theVec1, theVec2, theTrimSize)
             RaiseIfFailed("MakePlane2Vec", self.BasicOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a plane, based on a Local coordinate system.
         #  @param theLCS  coordinate system, defining plane.
         #  @param theTrimSize Half size of a side of quadrangle face, representing the plane.
         #  @param theOrientation OXY, OYZ or OZX orientation - (1, 2 or 3)
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created plane.
         #
         #  @ref tui_creation_plane "Example"
-        def MakePlaneLCS(self,theLCS, theTrimSize, theOrientation):
+        def MakePlaneLCS(self, theLCS, theTrimSize, theOrientation, theName=None):
             """
             Create a plane, based on a Local coordinate system.
 
@@ -1204,6 +1443,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theLCS  coordinate system, defining plane.
                 theTrimSize Half size of a side of quadrangle face, representing the plane.
                 theOrientation OXY, OYZ or OZX orientation - (1, 2 or 3)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created plane.
@@ -1213,16 +1455,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePlaneLCS(theLCS, theTrimSize, theOrientation)
             RaiseIfFailed("MakePlaneLCS", self.BasicOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a local coordinate system.
         #  @param OX,OY,OZ Three coordinates of coordinate system origin.
         #  @param XDX,XDY,XDZ Three components of OX direction
         #  @param YDX,YDY,YDZ Three components of OY direction
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created coordinate system.
         #
         #  @ref swig_MakeMarker "Example"
-        def MakeMarker(self, OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ):
+        def MakeMarker(self, OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ, theName=None):
             """
             Create a local coordinate system.
 
@@ -1230,6 +1477,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 OX,OY,OZ Three coordinates of coordinate system origin.
                 XDX,XDY,XDZ Three components of OX direction
                 YDX,YDY,YDZ Three components of OY direction
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created coordinate system.
@@ -1239,35 +1489,48 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ)
             RaiseIfFailed("MakeMarker", self.BasicOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a local coordinate system from shape.
         #  @param theShape The initial shape to detect the coordinate system.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created coordinate system.
         #
         #  @ref tui_creation_lcs "Example"
-        def MakeMarkerFromShape(self, theShape):
+        def MakeMarkerFromShape(self, theShape, theName=None):
             """
             Create a local coordinate system from shape.
 
             Parameters:
                 theShape The initial shape to detect the coordinate system.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
                 
             Returns: 
                 New GEOM.GEOM_Object, containing the created coordinate system.
             """
             anObj = self.BasicOp.MakeMarkerFromShape(theShape)
             RaiseIfFailed("MakeMarkerFromShape", self.BasicOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a local coordinate system from point and two vectors.
         #  @param theOrigin Point of coordinate system origin.
         #  @param theXVec Vector of X direction
         #  @param theYVec Vector of Y direction
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created coordinate system.
         #
         #  @ref tui_creation_lcs "Example"
-        def MakeMarkerPntTwoVec(self, theOrigin, theXVec, theYVec):
+        def MakeMarkerPntTwoVec(self, theOrigin, theXVec, theYVec, theName=None):
             """
             Create a local coordinate system from point and two vectors.
 
@@ -1275,6 +1538,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theOrigin Point of coordinate system origin.
                 theXVec Vector of X direction
                 theYVec Vector of Y direction
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created coordinate system.
@@ -1282,6 +1548,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.BasicOp.MakeMarkerPntTwoVec(theOrigin, theXVec, theYVec)
             RaiseIfFailed("MakeMarkerPntTwoVec", self.BasicOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         # end of l3_basic_go
@@ -1294,10 +1561,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePnt1 Start point of the arc.
         #  @param thePnt2 Middle point of the arc.
         #  @param thePnt3 End point of the arc.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created arc.
         #
         #  @ref swig_MakeArc "Example"
-        def MakeArc(self,thePnt1, thePnt2, thePnt3):
+        def MakeArc(self, thePnt1, thePnt2, thePnt3, theName=None):
             """
             Create an arc of circle, passing through three given points.
 
@@ -1305,6 +1576,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 thePnt1 Start point of the arc.
                 thePnt2 Middle point of the arc.
                 thePnt3 End point of the arc.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created arc.
@@ -1312,6 +1586,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeArc(thePnt1, thePnt2, thePnt3)
             RaiseIfFailed("MakeArc", self.CurvesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ##  Create an arc of circle from a center and 2 points.
@@ -1319,10 +1594,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePnt2 Start point of the arc. (Gives also the radius of the arc)
         #  @param thePnt3 End point of the arc (Gives also a direction)
         #  @param theSense Orientation of the arc
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created arc.
         #
         #  @ref swig_MakeArc "Example"
-        def MakeArcCenter(self, thePnt1, thePnt2, thePnt3, theSense=False):
+        def MakeArcCenter(self, thePnt1, thePnt2, thePnt3, theSense=False, theName=None):
             """
             Create an arc of circle from a center and 2 points.
 
@@ -1331,6 +1610,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 thePnt2 Start point of the arc. (Gives also the radius of the arc)
                 thePnt3 End point of the arc (Gives also a direction)
                 theSense Orientation of the arc
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created arc.
@@ -1338,16 +1620,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeArcCenter(thePnt1, thePnt2, thePnt3, theSense)
             RaiseIfFailed("MakeArcCenter", self.CurvesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ##  Create an arc of ellipse, of center and two points.
         #  @param theCenter Center of the arc.
         #  @param thePnt1 defines major radius of the arc by distance from Pnt1 to Pnt2.
         #  @param thePnt2 defines plane of ellipse and minor radius as distance from Pnt3 to line from Pnt1 to Pnt2.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created arc.
         #
         #  @ref swig_MakeArc "Example"
-        def MakeArcOfEllipse(self,theCenter, thePnt1, thePnt2):
+        def MakeArcOfEllipse(self, theCenter, thePnt1, thePnt2, theName=None):
             """
             Create an arc of ellipse, of center and two points.
 
@@ -1355,6 +1642,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theCenter Center of the arc.
                 thePnt1 defines major radius of the arc by distance from Pnt1 to Pnt2.
                 thePnt2 defines plane of ellipse and minor radius as distance from Pnt3 to line from Pnt1 to Pnt2.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created arc.
@@ -1362,16 +1652,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeArcOfEllipse(theCenter, thePnt1, thePnt2)
             RaiseIfFailed("MakeArcOfEllipse", self.CurvesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a circle with given center, normal vector and radius.
         #  @param thePnt Circle center.
         #  @param theVec Vector, normal to the plane of the circle.
         #  @param theR Circle radius.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created circle.
         #
         #  @ref tui_creation_circle "Example"
-        def MakeCircle(self, thePnt, theVec, theR):
+        def MakeCircle(self, thePnt, theVec, theR, theName=None):
             """
             Create a circle with given center, normal vector and radius.
 
@@ -1379,6 +1674,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 thePnt Circle center.
                 theVec Vector, normal to the plane of the circle.
                 theR Circle radius.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created circle.
@@ -1388,14 +1686,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeCirclePntVecR(thePnt, theVec, theR)
             RaiseIfFailed("MakeCirclePntVecR", self.CurvesOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a circle with given radius.
         #  Center of the circle will be in the origin of global
         #  coordinate system and normal vector will be codirected with Z axis
         #  @param theR Circle radius.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created circle.
-        def MakeCircleR(self, theR):
+        def MakeCircleR(self, theR, theName=None):
             """
             Create a circle with given radius.
             Center of the circle will be in the origin of global
@@ -1403,25 +1706,36 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theR Circle radius.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created circle.
             """
             anObj = self.CurvesOp.MakeCirclePntVecR(None, None, theR)
             RaiseIfFailed("MakeCirclePntVecR", self.CurvesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a circle, passing through three given points
         #  @param thePnt1,thePnt2,thePnt3 Points, defining the circle.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created circle.
         #
         #  @ref tui_creation_circle "Example"
-        def MakeCircleThreePnt(self,thePnt1, thePnt2, thePnt3):
+        def MakeCircleThreePnt(self, thePnt1, thePnt2, thePnt3, theName=None):
             """
             Create a circle, passing through three given points
 
             Parameters:
                 thePnt1,thePnt2,thePnt3 Points, defining the circle.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created circle.
@@ -1429,16 +1743,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeCircleThreePnt(thePnt1, thePnt2, thePnt3)
             RaiseIfFailed("MakeCircleThreePnt", self.CurvesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a circle, with given point1 as center,
         #  passing through the point2 as radius and laying in the plane,
         #  defined by all three given points.
         #  @param thePnt1,thePnt2,thePnt3 Points, defining the circle.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created circle.
         #
         #  @ref swig_MakeCircle "Example"
-        def MakeCircleCenter2Pnt(self,thePnt1, thePnt2, thePnt3):
+        def MakeCircleCenter2Pnt(self, thePnt1, thePnt2, thePnt3, theName=None):
             """
             Create a circle, with given point1 as center,
             passing through the point2 as radius and laying in the plane,
@@ -1446,6 +1765,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 thePnt1,thePnt2,thePnt3 Points, defining the circle.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created circle.
@@ -1453,6 +1775,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_example6.py
             anObj = self.CurvesOp.MakeCircleCenter2Pnt(thePnt1, thePnt2, thePnt3)
             RaiseIfFailed("MakeCircleCenter2Pnt", self.CurvesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create an ellipse with given center, normal vector and radiuses.
@@ -1461,10 +1784,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theRMajor Major ellipse radius.
         #  @param theRMinor Minor ellipse radius.
         #  @param theVecMaj Vector, direction of the ellipse's main axis.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created ellipse.
         #
         #  @ref tui_creation_ellipse "Example"
-        def MakeEllipse(self, thePnt, theVec, theRMajor, theRMinor, theVecMaj=None):
+        def MakeEllipse(self, thePnt, theVec, theRMajor, theRMinor, theVecMaj=None, theName=None):
             """
             Create an ellipse with given center, normal vector and radiuses.
 
@@ -1474,6 +1801,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theRMajor Major ellipse radius.
                 theRMinor Minor ellipse radius.
                 theVecMaj Vector, direction of the ellipse's main axis.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:    
                 New GEOM.GEOM_Object, containing the created ellipse.
@@ -1487,6 +1817,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 pass
             RaiseIfFailed("MakeEllipse", self.CurvesOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create an ellipse with given radiuses.
@@ -1494,8 +1825,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  coordinate system and normal vector will be codirected with Z axis
         #  @param theRMajor Major ellipse radius.
         #  @param theRMinor Minor ellipse radius.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created ellipse.
-        def MakeEllipseRR(self, theRMajor, theRMinor):
+        def MakeEllipseRR(self, theRMajor, theRMinor, theName=None):
             """
             Create an ellipse with given radiuses.
             Center of the ellipse will be in the origin of global
@@ -1504,27 +1839,38 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theRMajor Major ellipse radius.
                 theRMinor Minor ellipse radius.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created ellipse.
+            New GEOM.GEOM_Object, containing the created ellipse.
             """
             anObj = self.CurvesOp.MakeEllipse(None, None, theRMajor, theRMinor)
             RaiseIfFailed("MakeEllipse", self.CurvesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a polyline on the set of points.
         #  @param thePoints Sequence of points for the polyline.
         #  @param theIsClosed If True, build a closed wire.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created polyline.
         #
         #  @ref tui_creation_curve "Example"
-        def MakePolyline(self, thePoints, theIsClosed=False):
+        def MakePolyline(self, thePoints, theIsClosed=False, theName=None):
             """
             Create a polyline on the set of points.
 
             Parameters:
                 thePoints Sequence of points for the polyline.
                 theIsClosed If True, build a closed wire.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created polyline.
@@ -1532,21 +1878,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakePolyline(thePoints, theIsClosed)
             RaiseIfFailed("MakePolyline", self.CurvesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create bezier curve on the set of points.
         #  @param thePoints Sequence of points for the bezier curve.
         #  @param theIsClosed If True, build a closed curve.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created bezier curve.
         #
         #  @ref tui_creation_curve "Example"
-        def MakeBezier(self, thePoints, theIsClosed=False):
+        def MakeBezier(self, thePoints, theIsClosed=False, theName=None):
             """
             Create bezier curve on the set of points.
 
             Parameters:
                 thePoints Sequence of points for the bezier curve.
                 theIsClosed If True, build a closed curve.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created bezier curve.
@@ -1554,6 +1908,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeSplineBezier(thePoints, theIsClosed)
             RaiseIfFailed("MakeSplineBezier", self.CurvesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create B-Spline curve on the set of points.
@@ -1561,10 +1916,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theIsClosed If True, build a closed curve.
         #  @param theDoReordering If TRUE, the algo does not follow the order of
         #                         \a thePoints but searches for the closest vertex.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created B-Spline curve.
         #
         #  @ref tui_creation_curve "Example"
-        def MakeInterpol(self, thePoints, theIsClosed=False, theDoReordering=False):
+        def MakeInterpol(self, thePoints, theIsClosed=False, theDoReordering=False, theName=None):
             """
             Create B-Spline curve on the set of points.
 
@@ -1573,6 +1932,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theIsClosed If True, build a closed curve.
                 theDoReordering If True, the algo does not follow the order of
                                 thePoints but searches for the closest vertex.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:                     
                 New GEOM.GEOM_Object, containing the created B-Spline curve.
@@ -1580,16 +1942,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeSplineInterpolation(thePoints, theIsClosed, theDoReordering)
             RaiseIfFailed("MakeInterpol", self.CurvesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create B-Spline curve on the set of points.
         #  @param thePoints Sequence of points for the B-Spline curve.
         #  @param theFirstVec Vector object, defining the curve direction at its first point.
         #  @param theLastVec Vector object, defining the curve direction at its last point.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created B-Spline curve.
         #
         #  @ref tui_creation_curve "Example"
-        def MakeInterpolWithTangents(self, thePoints, theFirstVec, theLastVec):
+        def MakeInterpolWithTangents(self, thePoints, theFirstVec, theLastVec, theName=None):
             """
             Create B-Spline curve on the set of points.
 
@@ -1597,6 +1964,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 thePoints Sequence of points for the B-Spline curve.
                 theFirstVec Vector object, defining the curve direction at its first point.
                 theLastVec Vector object, defining the curve direction at its last point.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:                     
                 New GEOM.GEOM_Object, containing the created B-Spline curve.
@@ -1604,6 +1974,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeSplineInterpolWithTangents(thePoints, theFirstVec, theLastVec)
             RaiseIfFailed("MakeInterpolWithTangents", self.CurvesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Creates a curve using the parametric definition of the basic points.
@@ -1615,11 +1986,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theParamStep the number of steps if theNewMethod = True, else step value of the parameter.
         #  @param theCurveType the type of the curve.
         #  @param theNewMethod flag for switching to the new method if the flag is set to false a deprecated method is used which can lead to a bug.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created curve.
         #
         #  @ref tui_creation_curve "Example"
         def MakeCurveParametric(self, thexExpr, theyExpr, thezExpr,
-                                theParamMin, theParamMax, theParamStep, theCurveType, theNewMethod=False ):
+                                theParamMin, theParamMax, theParamStep, theCurveType, theNewMethod=False, theName=None ):
             """
             Creates a curve using the parametric definition of the basic points.
 
@@ -1633,6 +2008,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theCurveType the type of the curve.
                 theNewMethod flag for switching to the new method if the flag is set to false a deprecated
                              method is used which can lead to a bug.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created curve.
@@ -1644,6 +2022,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
               anObj = self.CurvesOp.MakeCurveParametric(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)   
             RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         # end of l4_curves
@@ -1700,10 +2079,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                    coordinates of the working plane.
         #  @param theWorkingPlane Nine double values, defining origin,
         #                         OZ and OX directions of the working plane.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created wire.
         #
         #  @ref tui_sketcher_page "Example"
-        def MakeSketcher(self, theCommand, theWorkingPlane = [0,0,0, 0,0,1, 1,0,0]):
+        def MakeSketcher(self, theCommand, theWorkingPlane = [0,0,0, 0,0,1, 1,0,0], theName=None):
             """
             Create a sketcher (wire or face), following the textual description, passed
             through theCommand argument.
@@ -1747,6 +2130,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                            coordinates of the working plane.
                 theWorkingPlane Nine double values, defining origin,
                                 OZ and OX directions of the working plane.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created wire.
@@ -1756,6 +2142,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeSketcher(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcher", self.CurvesOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a sketcher (wire or face), following the textual description,
@@ -1764,10 +2151,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theCommand String, defining the sketcher in local
         #                    coordinates of the working plane.
         #  @param theWorkingPlane Planar Face or LCS(Marker) of the working plane.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created wire.
         #
         #  @ref tui_sketcher_page "Example"
-        def MakeSketcherOnPlane(self, theCommand, theWorkingPlane):
+        def MakeSketcherOnPlane(self, theCommand, theWorkingPlane, theName=None):
             """
             Create a sketcher (wire or face), following the textual description,
             passed through theCommand argument.
@@ -1777,6 +2168,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theCommand String, defining the sketcher in local
                            coordinates of the working plane.
                 theWorkingPlane Planar Face or LCS(Marker) of the working plane.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created wire.
@@ -1785,16 +2179,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeSketcherOnPlane(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcherOnPlane", self.CurvesOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a sketcher wire, following the numerical description,
         #  passed through <VAR>theCoordinates</VAR> argument. \n
         #  @param theCoordinates double values, defining points to create a wire,
         #                                                      passing from it.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created wire.
         #
         #  @ref tui_3dsketcher_page "Example"
-        def Make3DSketcher(self, theCoordinates):
+        def Make3DSketcher(self, theCoordinates, theName=None):
             """
             Create a sketcher wire, following the numerical description,
             passed through theCoordinates argument.
@@ -1802,6 +2201,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theCoordinates double values, defining points to create a wire,
                                passing from it.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM_Object, containing the created wire.
@@ -1810,6 +2212,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.Make3DSketcher(theCoordinates)
             RaiseIfFailed("Make3DSketcher", self.CurvesOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Obtain a 3D sketcher interface
@@ -1842,16 +2245,23 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @param x1,y1,z1 double values, defining first point it.
         #  @param x2,y2,z2 double values, defining first point it.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
         #
         #  @return New GEOM.GEOM_Object, containing the created box.
+        #
         #  @ref tui_creation_box "Example"
-        def MakeBox (self, x1,y1,z1, x2,y2,z2):
+        def MakeBox(self, x1, y1, z1, x2, y2, z2, theName=None):
             """
             Create a box by coordinates of two opposite vertices.
             
             Parameters:
                 x1,y1,z1 double values, defining first point.
                 x2,y2,z2 double values, defining second point.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
                 
             Returns:
                 New GEOM.GEOM_Object, containing the created box.
@@ -1859,7 +2269,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             pnt1 = self.MakeVertex(x1,y1,z1)
             pnt2 = self.MakeVertex(x2,y2,z2)
-            return self.MakeBoxTwoPnt(pnt1,pnt2)
+            # note: auto-publishing is done in self.MakeBoxTwoPnt()
+            return self.MakeBoxTwoPnt(pnt1, pnt2, theName)
 
         ## Create a box with specified dimensions along the coordinate axes
         #  and with edges, parallel to the coordinate axes.
@@ -1867,10 +2278,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theDX Length of Box edges, parallel to OX axis.
         #  @param theDY Length of Box edges, parallel to OY axis.
         #  @param theDZ Length of Box edges, parallel to OZ axis.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created box.
         #
         #  @ref tui_creation_box "Example"
-        def MakeBoxDXDYDZ(self,theDX, theDY, theDZ):
+        def MakeBoxDXDYDZ(self, theDX, theDY, theDZ, theName=None):
             """
             Create a box with specified dimensions along the coordinate axes
             and with edges, parallel to the coordinate axes.
@@ -1880,6 +2295,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theDX Length of Box edges, parallel to OX axis.
                 theDY Length of Box edges, parallel to OY axis.
                 theDZ Length of Box edges, parallel to OZ axis.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:   
                 New GEOM.GEOM_Object, containing the created box.
@@ -1889,16 +2307,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeBoxDXDYDZ(theDX, theDY, theDZ)
             RaiseIfFailed("MakeBoxDXDYDZ", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a box with two specified opposite vertices,
         #  and with edges, parallel to the coordinate axes
         #  @param thePnt1 First of two opposite vertices.
         #  @param thePnt2 Second of two opposite vertices.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created box.
         #
         #  @ref tui_creation_box "Example"
-        def MakeBoxTwoPnt(self,thePnt1, thePnt2):
+        def MakeBoxTwoPnt(self, thePnt1, thePnt2, theName=None):
             """
             Create a box with two specified opposite vertices,
             and with edges, parallel to the coordinate axes
@@ -1906,6 +2329,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 thePnt1 First of two opposite vertices.
                 thePnt2 Second of two opposite vertices.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created box.
@@ -1913,16 +2339,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.PrimOp.MakeBoxTwoPnt(thePnt1, thePnt2)
             RaiseIfFailed("MakeBoxTwoPnt", self.PrimOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a face with specified dimensions with edges parallel to coordinate axes.
         #  @param theH height of Face.
         #  @param theW width of Face.
         #  @param theOrientation face orientation: 1-OXY, 2-OYZ, 3-OZX
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
-        def MakeFaceHW(self,theH, theW, theOrientation):
+        def MakeFaceHW(self, theH, theW, theOrientation, theName=None):
             """
             Create a face with specified dimensions with edges parallel to coordinate axes.
 
@@ -1930,6 +2361,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theH height of Face.
                 theW width of Face.
                 theOrientation face orientation: 1-OXY, 2-OYZ, 3-OZX
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created face.
@@ -1939,6 +2373,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeFaceHW(theH, theW, theOrientation)
             RaiseIfFailed("MakeFaceHW", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a face from another plane and two sizes,
@@ -1947,10 +2382,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  the face object.
         #  @param theH     Height (vertical size).
         #  @param theW     Width (horisontal size).
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
-        def MakeFaceObjHW(self, theObj, theH, theW):
+        def MakeFaceObjHW(self, theObj, theH, theW, theName=None):
             """
             Create a face from another plane and two sizes,
             vertical size and horisontal size.
@@ -1960,6 +2399,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                          the face object.
                 theH     Height (vertical size).
                 theW     Width (horisontal size).
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM_Object, containing the created face.
@@ -1969,16 +2411,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeFaceObjHW(theObj, theH, theW)
             RaiseIfFailed("MakeFaceObjHW", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a disk with given center, normal vector and radius.
         #  @param thePnt Disk center.
         #  @param theVec Vector, normal to the plane of the disk.
         #  @param theR Disk radius.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created disk.
         #
         #  @ref tui_creation_disk "Example"
-        def MakeDiskPntVecR(self,thePnt, theVec, theR):
+        def MakeDiskPntVecR(self, thePnt, theVec, theR, theName=None):
             """
             Create a disk with given center, normal vector and radius.
 
@@ -1986,6 +2433,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 thePnt Disk center.
                 theVec Vector, normal to the plane of the disk.
                 theR Disk radius.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:    
                 New GEOM.GEOM_Object, containing the created disk.
@@ -1995,19 +2445,27 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeDiskPntVecR(thePnt, theVec, theR)
             RaiseIfFailed("MakeDiskPntVecR", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a disk, passing through three given points
         #  @param thePnt1,thePnt2,thePnt3 Points, defining the disk.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created disk.
         #
         #  @ref tui_creation_disk "Example"
-        def MakeDiskThreePnt(self,thePnt1, thePnt2, thePnt3):
+        def MakeDiskThreePnt(self, thePnt1, thePnt2, thePnt3, theName=None):
             """
             Create a disk, passing through three given points
 
             Parameters:
                 thePnt1,thePnt2,thePnt3 Points, defining the disk.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:    
                 New GEOM.GEOM_Object, containing the created disk.
@@ -2015,21 +2473,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.PrimOp.MakeDiskThreePnt(thePnt1, thePnt2, thePnt3)
             RaiseIfFailed("MakeDiskThreePnt", self.PrimOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a disk with specified dimensions along OX-OY coordinate axes.
         #  @param theR Radius of Face.
         #  @param theOrientation set the orientation belong axis OXY or OYZ or OZX
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created disk.
         #
         #  @ref tui_creation_face "Example"
-        def MakeDiskR(self,theR, theOrientation):
+        def MakeDiskR(self, theR, theOrientation, theName=None):
             """
             Create a disk with specified dimensions along OX-OY coordinate axes.
 
             Parameters:
                 theR Radius of Face.
                 theOrientation set the orientation belong axis OXY or OYZ or OZX
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created disk.
@@ -2042,6 +2508,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeDiskR(theR, theOrientation)
             RaiseIfFailed("MakeDiskR", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a cylinder with given base point, axis, radius and height.
@@ -2049,10 +2516,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theAxis Cylinder axis.
         #  @param theR Cylinder radius.
         #  @param theH Cylinder height.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created cylinder.
         #
         #  @ref tui_creation_cylinder "Example"
-        def MakeCylinder(self,thePnt, theAxis, theR, theH):
+        def MakeCylinder(self, thePnt, theAxis, theR, theH, theName=None):
             """
             Create a cylinder with given base point, axis, radius and height.
 
@@ -2061,6 +2532,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theAxis Cylinder axis.
                 theR Cylinder radius.
                 theH Cylinder height.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created cylinder.
@@ -2070,6 +2544,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeCylinderPntVecRH(thePnt, theAxis, theR, theH)
             RaiseIfFailed("MakeCylinderPntVecRH", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a cylinder with given radius and height at
@@ -2077,10 +2552,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  will be collinear to the OZ axis of the coordinate system.
         #  @param theR Cylinder radius.
         #  @param theH Cylinder height.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created cylinder.
         #
         #  @ref tui_creation_cylinder "Example"
-        def MakeCylinderRH(self,theR, theH):
+        def MakeCylinderRH(self, theR, theH, theName=None):
             """
             Create a cylinder with given radius and height at
             the origin of coordinate system. Axis of the cylinder
@@ -2089,6 +2568,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theR Cylinder radius.
                 theH Cylinder height.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:    
                 New GEOM.GEOM_Object, containing the created cylinder.
@@ -2098,21 +2580,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeCylinderRH(theR, theH)
             RaiseIfFailed("MakeCylinderRH", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a sphere with given center and radius.
         #  @param thePnt Sphere center.
         #  @param theR Sphere radius.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created sphere.
         #
         #  @ref tui_creation_sphere "Example"
-        def MakeSpherePntR(self, thePnt, theR):
+        def MakeSpherePntR(self, thePnt, theR, theName=None):
             """
             Create a sphere with given center and radius.
 
             Parameters:
                 thePnt Sphere center.
                 theR Sphere radius.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:    
                 New GEOM.GEOM_Object, containing the created sphere.            
@@ -2122,41 +2612,57 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeSpherePntR(thePnt, theR)
             RaiseIfFailed("MakeSpherePntR", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a sphere with given center and radius.
         #  @param x,y,z Coordinates of sphere center.
         #  @param theR Sphere radius.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created sphere.
         #
         #  @ref tui_creation_sphere "Example"
-        def MakeSphere(self, x, y, z, theR):
+        def MakeSphere(self, x, y, z, theR, theName=None):
             """
             Create a sphere with given center and radius.
 
             Parameters: 
                 x,y,z Coordinates of sphere center.
                 theR Sphere radius.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created sphere.
             """
             # Example: see GEOM_TestAll.py
             point = self.MakeVertex(x, y, z)
-            anObj = self.MakeSpherePntR(point, theR)
+            # note: auto-publishing is done in self.MakeSpherePntR()
+            anObj = self.MakeSpherePntR(point, theR, theName)
             return anObj
 
         ## Create a sphere with given radius at the origin of coordinate system.
         #  @param theR Sphere radius.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created sphere.
         #
         #  @ref tui_creation_sphere "Example"
-        def MakeSphereR(self, theR):
+        def MakeSphereR(self, theR, theName=None):
             """
             Create a sphere with given radius at the origin of coordinate system.
 
             Parameters: 
                 theR Sphere radius.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created sphere.            
@@ -2166,6 +2672,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeSphereR(theR)
             RaiseIfFailed("MakeSphereR", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a cone with given base point, axis, height and radiuses.
@@ -2176,10 +2683,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #    \note If both radiuses are non-zero, the cone will be truncated.
         #    \note If the radiuses are equal, a cylinder will be created instead.
         #  @param theH Cone height.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created cone.
         #
         #  @ref tui_creation_cone "Example"
-        def MakeCone(self,thePnt, theAxis, theR1, theR2, theH):
+        def MakeCone(self, thePnt, theAxis, theR1, theR2, theH, theName=None):
             """
             Create a cone with given base point, axis, height and radiuses.
 
@@ -2189,6 +2700,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theR1 Radius of the first cone base.
                 theR2 Radius of the second cone base.
                 theH Cone height.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Note:
                 If both radiuses are non-zero, the cone will be truncated.
@@ -2202,6 +2716,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeConePntVecR1R2H(thePnt, theAxis, theR1, theR2, theH)
             RaiseIfFailed("MakeConePntVecR1R2H", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a cone with given height and radiuses at
@@ -2212,10 +2727,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #    \note If both radiuses are non-zero, the cone will be truncated.
         #    \note If the radiuses are equal, a cylinder will be created instead.
         #  @param theH Cone height.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created cone.
         #
         #  @ref tui_creation_cone "Example"
-        def MakeConeR1R2H(self,theR1, theR2, theH):
+        def MakeConeR1R2H(self, theR1, theR2, theH, theName=None):
             """
             Create a cone with given height and radiuses at
             the origin of coordinate system. Axis of the cone will
@@ -2225,6 +2744,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theR1 Radius of the first cone base.
                 theR2 Radius of the second cone base.
                 theH Cone height.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Note:
                 If both radiuses are non-zero, the cone will be truncated.
@@ -2238,6 +2760,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeConeR1R2H(theR1, theR2, theH)
             RaiseIfFailed("MakeConeR1R2H", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a torus with given center, normal vector and radiuses.
@@ -2245,10 +2768,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theVec Torus axis of symmetry.
         #  @param theRMajor Torus major radius.
         #  @param theRMinor Torus minor radius.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created torus.
         #
         #  @ref tui_creation_torus "Example"
-        def MakeTorus(self, thePnt, theVec, theRMajor, theRMinor):
+        def MakeTorus(self, thePnt, theVec, theRMajor, theRMinor, theName=None):
             """
             Create a torus with given center, normal vector and radiuses.
 
@@ -2257,6 +2784,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theVec Torus axis of symmetry.
                 theRMajor Torus major radius.
                 theRMinor Torus minor radius.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
            Returns:
                 New GEOM.GEOM_Object, containing the created torus.
@@ -2266,21 +2796,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeTorusPntVecRR(thePnt, theVec, theRMajor, theRMinor)
             RaiseIfFailed("MakeTorusPntVecRR", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a torus with given radiuses at the origin of coordinate system.
         #  @param theRMajor Torus major radius.
         #  @param theRMinor Torus minor radius.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created torus.
         #
         #  @ref tui_creation_torus "Example"
-        def MakeTorusRR(self, theRMajor, theRMinor):
+        def MakeTorusRR(self, theRMajor, theRMinor, theName=None):
             """
            Create a torus with given radiuses at the origin of coordinate system.
 
            Parameters: 
                 theRMajor Torus major radius.
                 theRMinor Torus minor radius.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
            Returns:
                 New GEOM.GEOM_Object, containing the created torus.            
@@ -2290,6 +2828,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeTorusRR(theRMajor, theRMinor)
             RaiseIfFailed("MakeTorusRR", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         # end of l3_3d_primitives
@@ -2304,10 +2843,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePoint2 Second end of extrusion vector.
         #  @param theScaleFactor Use it to make prism with scaled second base.
         #                        Nagative value means not scaled second base.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
-        def MakePrism(self, theBase, thePoint1, thePoint2, theScaleFactor = -1.0):
+        def MakePrism(self, theBase, thePoint1, thePoint2, theScaleFactor = -1.0, theName=None):
             """
             Create a shape by extrusion of the base shape along a vector, defined by two points.
 
@@ -2317,6 +2860,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 thePoint2 Second end of extrusion vector.
                 theScaleFactor Use it to make prism with scaled second base.
                                Nagative value means not scaled second base.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created prism.
@@ -2331,6 +2877,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 anObj = self.PrimOp.MakePrismTwoPnt(theBase, thePoint1, thePoint2)
             RaiseIfFailed("MakePrismTwoPnt", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a shape by extrusion of the base shape along a
@@ -2338,10 +2885,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theBase Base shape to be extruded.
         #  @param thePoint1 First end of extrusion vector.
         #  @param thePoint2 Second end of extrusion vector.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
-        def MakePrism2Ways(self, theBase, thePoint1, thePoint2):
+        def MakePrism2Ways(self, theBase, thePoint1, thePoint2, theName=None):
             """
             Create a shape by extrusion of the base shape along a
             vector, defined by two points, in 2 Ways (forward/backward).
@@ -2350,6 +2901,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theBase Base shape to be extruded.
                 thePoint1 First end of extrusion vector.
                 thePoint2 Second end of extrusion vector.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created prism.
@@ -2357,6 +2911,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.PrimOp.MakePrismTwoPnt2Ways(theBase, thePoint1, thePoint2)
             RaiseIfFailed("MakePrismTwoPnt", self.PrimOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a shape by extrusion of the base shape along the vector,
@@ -2367,10 +2922,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theH Prism dimension along theVec.
         #  @param theScaleFactor Use it to make prism with scaled second base.
         #                        Negative value means not scaled second base.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
-        def MakePrismVecH(self, theBase, theVec, theH, theScaleFactor = -1.0):
+        def MakePrismVecH(self, theBase, theVec, theH, theScaleFactor = -1.0, theName=None):
             """
             Create a shape by extrusion of the base shape along the vector,
             i.e. all the space, transfixed by the base shape during its translation
@@ -2382,6 +2941,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theH Prism dimension along theVec.
                 theScaleFactor Use it to make prism with scaled second base.
                                Negative value means not scaled second base.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created prism.
@@ -2397,6 +2959,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 anObj = self.PrimOp.MakePrismVecH(theBase, theVec, theH)
             RaiseIfFailed("MakePrismVecH", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a shape by extrusion of the base shape along the vector,
@@ -2405,10 +2968,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theBase Base shape to be extruded.
         #  @param theVec Direction of extrusion.
         #  @param theH Prism dimension along theVec in forward direction.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
-        def MakePrismVecH2Ways(self, theBase, theVec, theH):
+        def MakePrismVecH2Ways(self, theBase, theVec, theH, theName=None):
             """
             Create a shape by extrusion of the base shape along the vector,
             i.e. all the space, transfixed by the base shape during its translation
@@ -2418,6 +2985,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theBase Base shape to be extruded.
                 theVec Direction of extrusion.
                 theH Prism dimension along theVec in forward direction.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created prism.
@@ -2427,6 +2997,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakePrismVecH2Ways(theBase, theVec, theH)
             RaiseIfFailed("MakePrismVecH2Ways", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a shape by extrusion of the base shape along the dx, dy, dz direction
@@ -2434,10 +3005,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theDX, theDY, theDZ Directions of extrusion.
         #  @param theScaleFactor Use it to make prism with scaled second base.
         #                        Nagative value means not scaled second base.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
-        def MakePrismDXDYDZ(self, theBase, theDX, theDY, theDZ, theScaleFactor = -1.0):
+        def MakePrismDXDYDZ(self, theBase, theDX, theDY, theDZ, theScaleFactor = -1.0, theName=None):
             """
             Create a shape by extrusion of the base shape along the dx, dy, dz direction
 
@@ -2446,6 +3021,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theDX, theDY, theDZ Directions of extrusion.
                 theScaleFactor Use it to make prism with scaled second base.
                                Nagative value means not scaled second base.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created prism.
@@ -2461,6 +3039,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 anObj = self.PrimOp.MakePrismDXDYDZ(theBase, theDX, theDY, theDZ)
             RaiseIfFailed("MakePrismDXDYDZ", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a shape by extrusion of the base shape along the dx, dy, dz direction
@@ -2468,10 +3047,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  along the vector on the given distance in 2 Ways (forward/backward).
         #  @param theBase Base shape to be extruded.
         #  @param theDX, theDY, theDZ Directions of extrusion.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
-        def MakePrismDXDYDZ2Ways(self, theBase, theDX, theDY, theDZ):
+        def MakePrismDXDYDZ2Ways(self, theBase, theDX, theDY, theDZ, theName=None):
             """
             Create a shape by extrusion of the base shape along the dx, dy, dz direction
             i.e. all the space, transfixed by the base shape during its translation
@@ -2480,6 +3063,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theBase Base shape to be extruded.
                 theDX, theDY, theDZ Directions of extrusion.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created prism.
@@ -2489,6 +3075,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakePrismDXDYDZ2Ways(theBase, theDX, theDY, theDZ)
             RaiseIfFailed("MakePrismDXDYDZ2Ways", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a shape by revolution of the base shape around the axis
@@ -2497,10 +3084,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theBase Base shape to be rotated.
         #  @param theAxis Rotation axis.
         #  @param theAngle Rotation angle in radians.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created revolution.
         #
         #  @ref tui_creation_revolution "Example"
-        def MakeRevolution(self, theBase, theAxis, theAngle):
+        def MakeRevolution(self, theBase, theAxis, theAngle, theName=None):
             """
             Create a shape by revolution of the base shape around the axis
             on the given angle, i.e. all the space, transfixed by the base
@@ -2510,6 +3101,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theBase Base shape to be rotated.
                 theAxis Rotation axis.
                 theAngle Rotation angle in radians.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created revolution.
@@ -2519,6 +3113,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeRevolutionAxisAngle(theBase, theAxis, theAngle)
             RaiseIfFailed("MakeRevolutionAxisAngle", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a shape by revolution of the base shape around the axis
@@ -2528,10 +3123,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theBase Base shape to be rotated.
         #  @param theAxis Rotation axis.
         #  @param theAngle Rotation angle in radians.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created revolution.
         #
         #  @ref tui_creation_revolution "Example"
-        def MakeRevolution2Ways(self, theBase, theAxis, theAngle):
+        def MakeRevolution2Ways(self, theBase, theAxis, theAngle, theName=None):
             """
             Create a shape by revolution of the base shape around the axis
             on the given angle, i.e. all the space, transfixed by the base
@@ -2542,6 +3141,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theBase Base shape to be rotated.
                 theAxis Rotation axis.
                 theAngle Rotation angle in radians.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created revolution.
@@ -2550,6 +3152,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeRevolutionAxisAngle2Ways(theBase, theAxis, theAngle)
             RaiseIfFailed("MakeRevolutionAxisAngle2Ways", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a filling from the given compound of contours.
@@ -2565,11 +3168,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                  the surface is created using given curves. The usage of
         #                  Approximation makes the algorithm work slower, but allows
         #                  building the surface for rather complex cases.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created filling surface.
         #
         #  @ref tui_creation_filling "Example"
         def MakeFilling(self, theShape, theMinDeg=2, theMaxDeg=5, theTol2D=0.0001,
-                        theTol3D=0.0001, theNbIter=0, theMethod=GEOM.FOM_Default, isApprox=0):
+                        theTol3D=0.0001, theNbIter=0, theMethod=GEOM.FOM_Default, isApprox=0, theName=None):
             """
             Create a filling from the given compound of contours.
 
@@ -2586,6 +3193,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                          the surface is created using given curves. The usage of
                          Approximation makes the algorithm work slower, but allows
                          building the surface for rather complex cases
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created filling surface.
@@ -2600,6 +3210,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                             theMethod, isApprox)
             RaiseIfFailed("MakeFilling", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
 
@@ -2609,10 +3220,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theMinDeg a minimal degree of BSpline surface to create
         #  @param theMaxDeg a maximal degree of BSpline surface to create
         #  @param theTol3D a 3d tolerance to be reached
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created filling surface.
         #
         #  @ref tui_creation_filling "Example"
-        def MakeFillingNew(self, theShape, theMinDeg=2, theMaxDeg=5, theTol3D=0.0001):
+        def MakeFillingNew(self, theShape, theMinDeg=2, theMaxDeg=5, theTol3D=0.0001, theName=None):
             """
             Create a filling from the given compound of contours.
             This method corresponds to MakeFilling with isApprox=True
@@ -2622,6 +3237,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theMinDeg a minimal degree of BSpline surface to create
                 theMaxDeg a maximal degree of BSpline surface to create
                 theTol3D a 3d tolerance to be reached
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created filling surface.
@@ -2635,6 +3253,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                             0, theTol3D, 0, GEOM.FOM_Default, True)
             RaiseIfFailed("MakeFillingNew", self.PrimOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a shell or solid passing through set of sections.Sections should be wires,edges or vertices.
@@ -2642,10 +3261,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theModeSolid - mode defining building solid or shell
         #  @param thePreci - precision 3D used for smoothing
         #  @param theRuled - mode defining type of the result surfaces (ruled or smoothed).
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created shell or solid.
         #
         #  @ref swig_todo "Example"
-        def MakeThruSections(self,theSeqSections,theModeSolid,thePreci,theRuled):
+        def MakeThruSections(self, theSeqSections, theModeSolid, thePreci, theRuled, theName=None):
             """
             Create a shell or solid passing through set of sections.Sections should be wires,edges or vertices.
 
@@ -2654,6 +3277,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theModeSolid - mode defining building solid or shell
                 thePreci - precision 3D used for smoothing
                 theRuled - mode defining type of the result surfaces (ruled or smoothed).
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created shell or solid.
@@ -2661,16 +3287,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.PrimOp.MakeThruSections(theSeqSections,theModeSolid,thePreci,theRuled)
             RaiseIfFailed("MakeThruSections", self.PrimOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a shape by extrusion of the base shape along
         #  the path shape. The path shape can be a wire or an edge.
         #  @param theBase Base shape to be extruded.
         #  @param thePath Path shape to extrude the base shape along it.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created pipe.
         #
         #  @ref tui_creation_pipe "Example"
-        def MakePipe(self,theBase, thePath):
+        def MakePipe(self, theBase, thePath, theName=None):
             """
             Create a shape by extrusion of the base shape along
             the path shape. The path shape can be a wire or an edge.
@@ -2678,6 +3309,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theBase Base shape to be extruded.
                 thePath Path shape to extrude the base shape along it.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created pipe.
@@ -2685,6 +3319,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.PrimOp.MakePipe(theBase, thePath)
             RaiseIfFailed("MakePipe", self.PrimOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a shape by extrusion of the profile shape along
@@ -2699,12 +3334,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                          contact with the spine.
         #  @param theWithCorrection - defining that the section is rotated to be
         #                             orthogonal to the spine tangent in the correspondent point
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created pipe.
         #
         #  @ref tui_creation_pipe_with_diff_sec "Example"
         def MakePipeWithDifferentSections(self, theSeqBases,
                                           theLocations, thePath,
-                                          theWithContact, theWithCorrection):
+                                          theWithContact, theWithCorrection, theName=None):
             """
             Create a shape by extrusion of the profile shape along
             the path shape. The path shape can be a wire or an edge.
@@ -2720,6 +3359,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                  contact with the spine(0/1)
                 theWithCorrection - defining that the section is rotated to be
                                     orthogonal to the spine tangent in the correspondent point (0/1)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created pipe.
@@ -2728,6 +3370,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                               theLocations, thePath,
                                                               theWithContact, theWithCorrection)
             RaiseIfFailed("MakePipeWithDifferentSections", self.PrimOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a shape by extrusion of the profile shape along
@@ -2751,12 +3394,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                          contact with the spine.
         #  @param theWithCorrection - defining that the section is rotated to be
         #                             orthogonal to the spine tangent in the correspondent point
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created solids.
         #
         #  @ref tui_creation_pipe_with_shell_sec "Example"
-        def MakePipeWithShellSections(self,theSeqBases, theSeqSubBases,
+        def MakePipeWithShellSections(self, theSeqBases, theSeqSubBases,
                                       theLocations, thePath,
-                                      theWithContact, theWithCorrection):
+                                      theWithContact, theWithCorrection, theName=None):
             """
             Create a shape by extrusion of the profile shape along
             the path shape. The path shape can be a wire or a edge.
@@ -2781,6 +3428,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                  contact with the spine (0/1)
                 theWithCorrection - defining that the section is rotated to be
                                     orthogonal to the spine tangent in the correspondent point (0/1)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:                           
                 New GEOM.GEOM_Object, containing the created solids.
@@ -2789,6 +3439,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                           theLocations, thePath,
                                                           theWithContact, theWithCorrection)
             RaiseIfFailed("MakePipeWithShellSections", self.PrimOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a shape by extrusion of the profile shape along
@@ -2798,7 +3449,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  creating pipe between each pair of sections step by step.
         def MakePipeWithShellSectionsBySteps(self, theSeqBases, theSeqSubBases,
                                              theLocations, thePath,
-                                             theWithContact, theWithCorrection):
+                                             theWithContact, theWithCorrection, theName=None):
             """
             Create a shape by extrusion of the profile shape along
             the path shape. This function is used only for debug pipe
@@ -2833,27 +3484,36 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             resc = self.MakeCompound(res)
             #resc = self.MakeSewing(res, 0.001)
             #print "resc: ",resc
+            self._autoPublish(resc, theName)
             return resc
 
         ## Create solids between given sections
         #  @param theSeqBases - list of sections (shell or face).
         #  @param theLocations - list of corresponding vertexes
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created solids.
         #
         #  @ref tui_creation_pipe_without_path "Example"
-        def MakePipeShellsWithoutPath(self, theSeqBases, theLocations):
+        def MakePipeShellsWithoutPath(self, theSeqBases, theLocations, theName=None):
             """
             Create solids between given sections
 
             Parameters:
                 theSeqBases - list of sections (shell or face).
                 theLocations - list of corresponding vertexes
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created solids.
             """
             anObj = self.PrimOp.MakePipeShellsWithoutPath(theSeqBases, theLocations)
             RaiseIfFailed("MakePipeShellsWithoutPath", self.PrimOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a shape by extrusion of the base shape along
@@ -2864,10 +3524,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theVec Vector defines a constant binormal direction to keep the
         #                same angle beetween the direction and the sections
         #                along the sweep surface.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created pipe.
         #
         #  @ref tui_creation_pipe "Example"
-        def MakePipeBiNormalAlongVector(self,theBase, thePath, theVec):
+        def MakePipeBiNormalAlongVector(self, theBase, thePath, theVec, theName=None):
             """
             Create a shape by extrusion of the base shape along
             the path shape with constant bi-normal direction along the given vector.
@@ -2879,6 +3543,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theVec Vector defines a constant binormal direction to keep the
                        same angle beetween the direction and the sections
                        along the sweep surface.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:              
                 New GEOM.GEOM_Object, containing the created pipe.
@@ -2886,6 +3553,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.PrimOp.MakePipeBiNormalAlongVector(theBase, thePath, theVec)
             RaiseIfFailed("MakePipeBiNormalAlongVector", self.PrimOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Build a middle path of a pipe-like shape.
@@ -2894,17 +3562,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                  or a pipe-like solid.
         #  @param theBase1, theBase2 Two bases of the supposed pipe. This
         #                            should be wires or faces of theShape.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @note It is not assumed that exact or approximate copy of theShape
         #        can be obtained by applying existing Pipe operation on the
         #        resulting "Path" wire taking theBase1 as the base - it is not
         #        always possible; though in some particular cases it might work
         #        it is not guaranteed. Thus, RestorePath function should not be
         #        considered as an exact reverse operation of the Pipe.
+        #
         #  @return New GEOM.GEOM_Object, containing an edge or wire that represent
         #                                source pipe's "path".
         #
         #  @ref tui_creation_pipe_path "Example"
-        def RestorePath (self, theShape, theBase1, theBase2):
+        def RestorePath (self, theShape, theBase1, theBase2, theName=None):
             """
             Build a middle path of a pipe-like shape.
             The path shape can be a wire or an edge.
@@ -2914,6 +3587,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                          or a pipe-like solid.
                 theBase1, theBase2 Two bases of the supposed pipe. This
                                    should be wires or faces of theShape.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM_Object, containing an edge or wire that represent
@@ -2921,6 +3597,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.PrimOp.RestorePath(theShape, theBase1, theBase2)
             RaiseIfFailed("RestorePath", self.PrimOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Build a middle path of a pipe-like shape.
@@ -2929,17 +3606,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                  or a pipe-like solid.
         #  @param listEdges1, listEdges2 Two bases of the supposed pipe. This
         #                                should be lists of edges of theShape.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @note It is not assumed that exact or approximate copy of theShape
         #        can be obtained by applying existing Pipe operation on the
         #        resulting "Path" wire taking theBase1 as the base - it is not
         #        always possible; though in some particular cases it might work
         #        it is not guaranteed. Thus, RestorePath function should not be
         #        considered as an exact reverse operation of the Pipe.
+        #
         #  @return New GEOM.GEOM_Object, containing an edge or wire that represent
         #                                source pipe's "path".
         #
         #  @ref tui_creation_pipe_path "Example"
-        def RestorePathEdges (self, theShape, listEdges1, listEdges2):
+        def RestorePathEdges (self, theShape, listEdges1, listEdges2, theName=None):
             """
             Build a middle path of a pipe-like shape.
             The path shape can be a wire or an edge.
@@ -2949,6 +3631,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                          or a pipe-like solid.
                 listEdges1, listEdges2 Two bases of the supposed pipe. This
                                        should be lists of edges of theShape.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM_Object, containing an edge or wire that represent
@@ -2956,6 +3641,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.PrimOp.RestorePathEdges(theShape, listEdges1, listEdges2)
             RaiseIfFailed("RestorePath", self.PrimOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         # end of l3_complex
@@ -2967,16 +3653,23 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Create a linear edge with specified ends.
         #  @param thePnt1 Point for the first end of edge.
         #  @param thePnt2 Point for the second end of edge.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created edge.
         #
         #  @ref tui_creation_edge "Example"
-        def MakeEdge(self,thePnt1, thePnt2):
+        def MakeEdge(self, thePnt1, thePnt2, theName=None):
             """
             Create a linear edge with specified ends.
 
             Parameters:
                 thePnt1 Point for the first end of edge.
                 thePnt2 Point for the second end of edge.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:           
                 New GEOM.GEOM_Object, containing the created edge.
@@ -2984,6 +3677,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeEdge(thePnt1, thePnt2)
             RaiseIfFailed("MakeEdge", self.ShapesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a new edge, corresponding to the given length on the given curve.
@@ -2992,10 +3686,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theStartPoint Any point can be selected for it, the new edge will begin
         #                       at the end of \a theRefCurve, close to the selected point.
         #                       If None, start from the first point of \a theRefCurve.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created edge.
         #
         #  @ref tui_creation_edge "Example"
-        def MakeEdgeOnCurveByLength(self, theRefCurve, theLength, theStartPoint = None):
+        def MakeEdgeOnCurveByLength(self, theRefCurve, theLength, theStartPoint = None, theName=None):
             """
             Create a new edge, corresponding to the given length on the given curve.
 
@@ -3005,6 +3703,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theStartPoint Any point can be selected for it, the new edge will begin
                               at the end of theRefCurve, close to the selected point.
                               If None, start from the first point of theRefCurve.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:              
                 New GEOM.GEOM_Object, containing the created edge.
@@ -3014,16 +3715,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.ShapesOp.MakeEdgeOnCurveByLength(theRefCurve, theLength, theStartPoint)
             RaiseIfFailed("MakeEdgeOnCurveByLength", self.ShapesOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create an edge from specified wire.
         #  @param theWire source Wire
         #  @param theLinearTolerance linear tolerance value (default = 1e-07)
         #  @param theAngularTolerance angular tolerance value (default = 1e-12)
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created edge.
         #
         #  @ref tui_creation_edge "Example"
-        def MakeEdgeWire(self, theWire, theLinearTolerance = 1e-07, theAngularTolerance = 1e-12):
+        def MakeEdgeWire(self, theWire, theLinearTolerance = 1e-07, theAngularTolerance = 1e-12, theName=None):
             """
             Create an edge from specified wire.
 
@@ -3031,6 +3737,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theWire source Wire
                 theLinearTolerance linear tolerance value (default = 1e-07)
                 theAngularTolerance angular tolerance value (default = 1e-12)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created edge.
@@ -3038,16 +3747,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeEdgeWire(theWire, theLinearTolerance, theAngularTolerance)
             RaiseIfFailed("MakeEdgeWire", self.ShapesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a wire from the set of edges and wires.
         #  @param theEdgesAndWires List of edges and/or wires.
         #  @param theTolerance Maximum distance between vertices, that will be merged.
         #                      Values less than 1e-07 are equivalent to 1e-07 (Precision::Confusion())
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created wire.
         #
         #  @ref tui_creation_wire "Example"
-        def MakeWire(self, theEdgesAndWires, theTolerance = 1e-07):
+        def MakeWire(self, theEdgesAndWires, theTolerance = 1e-07, theName=None):
             """
             Create a wire from the set of edges and wires.
 
@@ -3055,6 +3769,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theEdgesAndWires List of edges and/or wires.
                 theTolerance Maximum distance between vertices, that will be merged.
                              Values less than 1e-07 are equivalent to 1e-07 (Precision::Confusion()).
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:                    
                 New GEOM.GEOM_Object, containing the created wire.
@@ -3062,6 +3779,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeWire(theEdgesAndWires, theTolerance)
             RaiseIfFailed("MakeWire", self.ShapesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a face on the given wire.
@@ -3071,10 +3789,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                        than 1e-06, this face will be returned, otherwise the
         #                        algorithm tries to build any suitable face on the given
         #                        wire and prints a warning message.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
-        def MakeFace(self, theWire, isPlanarWanted):
+        def MakeFace(self, theWire, isPlanarWanted, theName=None):
             """
             Create a face on the given wire.
 
@@ -3085,6 +3807,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                than 1e-06, this face will be returned, otherwise the
                                algorithm tries to build any suitable face on the given
                                wire and prints a warning message.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created face.
@@ -3095,6 +3820,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
             else:
                 RaiseIfFailed("MakeFace", self.ShapesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a face on the given wires set.
@@ -3104,10 +3830,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                        than 1e-06, this face will be returned, otherwise the
         #                        algorithm tries to build any suitable face on the given
         #                        wire and prints a warning message.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
-        def MakeFaceWires(self, theWires, isPlanarWanted):
+        def MakeFaceWires(self, theWires, isPlanarWanted, theName=None):
             """
             Create a face on the given wires set.
 
@@ -3118,6 +3848,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                than 1e-06, this face will be returned, otherwise the
                                algorithm tries to build any suitable face on the given
                                wire and prints a warning message.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created face.
@@ -3128,31 +3861,40 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
             else:
                 RaiseIfFailed("MakeFaceWires", self.ShapesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## See MakeFaceWires() method for details.
         #
         #  @ref tui_creation_face "Example 1"
         #  \n @ref swig_MakeFaces  "Example 2"
-        def MakeFaces(self, theWires, isPlanarWanted):
+        def MakeFaces(self, theWires, isPlanarWanted, theName=None):
             """
             See geompy.MakeFaceWires() method for details.
             """
             # Example: see GEOM_TestOthers.py
-            anObj = self.MakeFaceWires(theWires, isPlanarWanted)
+            # note: auto-publishing is done in self.MakeFaceWires()
+            anObj = self.MakeFaceWires(theWires, isPlanarWanted, theName)
             return anObj
 
         ## Create a shell from the set of faces and shells.
         #  @param theFacesAndShells List of faces and/or shells.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created shell.
         #
         #  @ref tui_creation_shell "Example"
-        def MakeShell(self,theFacesAndShells):
+        def MakeShell(self, theFacesAndShells, theName=None):
             """
             Create a shell from the set of faces and shells.
 
             Parameters:
                 theFacesAndShells List of faces and/or shells.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created shell.
@@ -3160,19 +3902,27 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeShell(theFacesAndShells)
             RaiseIfFailed("MakeShell", self.ShapesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a solid, bounded by the given shells.
         #  @param theShells Sequence of bounding shells.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created solid.
         #
         #  @ref tui_creation_solid "Example"
-        def MakeSolid(self, theShells):
+        def MakeSolid(self, theShells, theName=None):
             """
             Create a solid, bounded by the given shells.
 
             Parameters:
                 theShells Sequence of bounding shells.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created solid.
@@ -3186,19 +3936,27 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                     raise RuntimeError, "MakeSolidShells : Unable to create solid from unclosed shape"
             anObj = self.ShapesOp.MakeSolidShells(theShells)
             RaiseIfFailed("MakeSolidShells", self.ShapesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a compound of the given shapes.
         #  @param theShapes List of shapes to put in compound.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created compound.
         #
         #  @ref tui_creation_compound "Example"
-        def MakeCompound(self,theShapes):
+        def MakeCompound(self, theShapes, theName=None):
             """
             Create a compound of the given shapes.
 
             Parameters:
                 theShapes List of shapes to put in compound.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created compound.
@@ -3206,6 +3964,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeCompound(theShapes)
             RaiseIfFailed("MakeCompound", self.ShapesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         # end of l3_advanced
@@ -3304,15 +4063,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Reverses an orientation the given shape.
         #  @param theShape Shape to be reversed.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return The reversed copy of theShape.
         #
         #  @ref swig_ChangeOrientation "Example"
-        def ChangeOrientation(self,theShape):
+        def ChangeOrientation(self, theShape, theName=None):
             """
             Reverses an orientation the given shape.
 
             Parameters:
                 theShape Shape to be reversed.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:   
                 The reversed copy of theShape.
@@ -3320,17 +4086,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.ChangeOrientation(theShape)
             RaiseIfFailed("ChangeOrientation", self.ShapesOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## See ChangeOrientation() method for details.
         #
         #  @ref swig_OrientationChange "Example"
-        def OrientationChange(self,theShape):
+        def OrientationChange(self, theShape, theName=None):
             """
             See geompy.ChangeOrientation method for details.
             """
             # Example: see GEOM_TestOthers.py
-            anObj = self.ChangeOrientation(theShape)
+            # note: auto-publishing is done in self.ChangeOrientation()
+            anObj = self.ChangeOrientation(theShape, theName)
             return anObj
 
         # end of l3_healing
@@ -4457,7 +5225,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                    ("FixShape.Tolerance3d", "SplitClosedFaces.NbSplitPoints", etc.).
         #  @param theValues List of values of parameters, in the same order
         #                    as parameters are listed in <VAR>theParameters</VAR> list.
-        #
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
         #
         #  <b> Operators and Parameters: </b> \n
         #
@@ -4529,7 +5299,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  \n @ref tui_shape_processing "Example"
-        def ProcessShape(self, theShape, theOperators, theParameters, theValues):
+        def ProcessShape(self, theShape, theOperators, theParameters, theValues, theName=None):
             """
             Apply a sequence of Shape Healing operators to the given object.
 
@@ -4540,7 +5310,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theOperators List of names of operators ("FixShape", "SplitClosedFaces", etc.).
                 theParameters List of names of parameters
                               ("FixShape.Tolerance3d", "SplitClosedFaces.NbSplitPoints", etc.).
-                 Operators and Parameters:
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+                Operators and Parameters:
 
                  * FixShape - corrects invalid shapes.
                      * FixShape.Tolerance3d - work tolerance for detection of the problems and correction of them.
@@ -4619,16 +5393,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 Parameters = ":" + Parameters
                 pass
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Remove faces from the given object (shape).
         #  @param theObject Shape to be processed.
         #  @param theFaces Indices of faces to be removed, if EMPTY then the method
         #                  removes ALL faces of the given object.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_suppress_faces "Example"
-        def SuppressFaces(self,theObject, theFaces):
+        def SuppressFaces(self, theObject, theFaces, theName=None):
             """
             Remove faces from the given object (shape).
 
@@ -4636,6 +5415,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theObject Shape to be processed.
                 theFaces Indices of faces to be removed, if EMPTY then the method
                          removes ALL faces of the given object.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing processed shape.
@@ -4643,41 +5425,57 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestHealing.py
             anObj = self.HealOp.SuppressFaces(theObject, theFaces)
             RaiseIfFailed("SuppressFaces", self.HealOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Sewing of some shapes into single shape.
         #  @param ListShape Shapes to be processed.
         #  @param theTolerance Required tolerance value.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_sewing "Example"
-        def MakeSewing(self, ListShape, theTolerance):
+        def MakeSewing(self, ListShape, theTolerance, theName=None):
             """
             Sewing of some shapes into single shape.
 
             Parameters:
                 ListShape Shapes to be processed.
                 theTolerance Required tolerance value.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing processed shape.
             """
             # Example: see GEOM_TestHealing.py
             comp = self.MakeCompound(ListShape)
-            anObj = self.Sew(comp, theTolerance)
+            # note: auto-publishing is done in self.Sew()
+            anObj = self.Sew(comp, theTolerance, theName)
             return anObj
 
         ## Sewing of the given object.
         #  @param theObject Shape to be processed.
         #  @param theTolerance Required tolerance value.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing processed shape.
-        def Sew(self, theObject, theTolerance):
+        def Sew(self, theObject, theTolerance, theName=None):
             """
             Sewing of the given object.
 
             Parameters:
                 theObject Shape to be processed.
                 theTolerance Required tolerance value.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing processed shape.
@@ -4687,16 +5485,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.HealOp.Sew(theObject, theTolerance)
             RaiseIfFailed("Sew", self.HealOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Remove internal wires and edges from the given object (face).
         #  @param theObject Shape to be processed.
         #  @param theWires Indices of wires to be removed, if EMPTY then the method
         #                  removes ALL internal wires of the given object.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_suppress_internal_wires "Example"
-        def SuppressInternalWires(self,theObject, theWires):
+        def SuppressInternalWires(self, theObject, theWires, theName=None):
             """
             Remove internal wires and edges from the given object (face).
 
@@ -4704,6 +5507,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theObject Shape to be processed.
                 theWires Indices of wires to be removed, if EMPTY then the method
                          removes ALL internal wires of the given object.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:                
                 New GEOM.GEOM_Object, containing processed shape.
@@ -4711,16 +5517,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestHealing.py
             anObj = self.HealOp.RemoveIntWires(theObject, theWires)
             RaiseIfFailed("RemoveIntWires", self.HealOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Remove internal closed contours (holes) from the given object.
         #  @param theObject Shape to be processed.
         #  @param theWires Indices of wires to be removed, if EMPTY then the method
         #                  removes ALL internal holes of the given object
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_suppress_holes "Example"
-        def SuppressHoles(self,theObject, theWires):
+        def SuppressHoles(self, theObject, theWires, theName=None):
             """
             Remove internal closed contours (holes) from the given object.
 
@@ -4728,6 +5539,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theObject Shape to be processed.
                 theWires Indices of wires to be removed, if EMPTY then the method
                          removes ALL internal holes of the given object
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:    
                 New GEOM.GEOM_Object, containing processed shape.
@@ -4735,6 +5549,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestHealing.py
             anObj = self.HealOp.FillHoles(theObject, theWires)
             RaiseIfFailed("FillHoles", self.HealOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Close an open wire.
@@ -4743,10 +5558,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                  if [ ], then <VAR>theObject</VAR> itself is a wire.
         #  @param isCommonVertex If True  : closure by creation of a common vertex,
         #                        If False : closure by creation of an edge between ends.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_close_contour "Example"
-        def CloseContour(self,theObject, theWires, isCommonVertex):
+        def CloseContour(self,theObject, theWires, isCommonVertex, theName=None):
             """
             Close an open wire.
 
@@ -4756,6 +5575,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                          if [ ], then theObject itself is a wire.
                 isCommonVertex If True  : closure by creation of a common vertex,
                                If False : closure by creation of an edge between ends.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:                      
                 New GEOM.GEOM_Object, containing processed shape. 
@@ -4763,6 +5585,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestHealing.py
             anObj = self.HealOp.CloseContour(theObject, theWires, isCommonVertex)
             RaiseIfFailed("CloseContour", self.HealOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Addition of a point to a given edge object.
@@ -4773,10 +5596,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                  depending on \a isByParameter.
         #  @param isByParameter If TRUE : \a theValue is treated as a curve parameter [0..1], \n
         #                       if FALSE : \a theValue is treated as a length parameter [0..1]
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_add_point_on_edge "Example"
-        def DivideEdge(self,theObject, theEdgeIndex, theValue, isByParameter):
+        def DivideEdge(self, theObject, theEdgeIndex, theValue, isByParameter, theName=None):
             """
             Addition of a point to a given edge object.
 
@@ -4788,6 +5615,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                          depending on isByParameter.
                 isByParameter If TRUE :  theValue is treated as a curve parameter [0..1],
                               if FALSE : theValue is treated as a length parameter [0..1]
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:  
                 New GEOM.GEOM_Object, containing processed shape.
@@ -4797,16 +5627,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.HealOp.DivideEdge(theObject, theEdgeIndex, theValue, isByParameter)
             RaiseIfFailed("DivideEdge", self.HealOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Suppress the vertices in the wire in case if adjacent edges are C1 continuous.
         #  @param theWire Wire to minimize the number of C1 continuous edges in.
         #  @param theVertices A list of vertices to suppress. If the list
         #                     is empty, all vertices in a wire will be assumed.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object with modified wire.
         #
         #  @ref tui_fuse_collinear_edges "Example"
-        def FuseCollinearEdgesWithinWire(self, theWire, theVertices = []):
+        def FuseCollinearEdgesWithinWire(self, theWire, theVertices = [], theName=None):
             """
             Suppress the vertices in the wire in case if adjacent edges are C1 continuous.
 
@@ -4814,12 +5649,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theWire Wire to minimize the number of C1 continuous edges in.
                 theVertices A list of vertices to suppress. If the list
                             is empty, all vertices in a wire will be assumed.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:  
                 New GEOM.GEOM_Object with modified wire.
             """
             anObj = self.HealOp.FuseCollinearEdgesWithinWire(theWire, theVertices)
             RaiseIfFailed("FuseCollinearEdgesWithinWire", self.HealOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Change orientation of the given object. Updates given shape.
@@ -4843,42 +5682,58 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Change orientation of the given object.
         #  @param theObject Shape to be processed.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref swig_todo "Example"
-        def ChangeOrientationShellCopy(self, theObject):
+        def ChangeOrientationShellCopy(self, theObject, theName=None):
             """
             Change orientation of the given object.
 
             Parameters:
                 theObject Shape to be processed.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:   
                 New GEOM.GEOM_Object, containing processed shape.
             """
             anObj = self.HealOp.ChangeOrientationCopy(theObject)
             RaiseIfFailed("ChangeOrientationCopy", self.HealOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Try to limit tolerance of the given object by value \a theTolerance.
         #  @param theObject Shape to be processed.
         #  @param theTolerance Required tolerance value.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_limit_tolerance "Example"
-        def LimitTolerance(self, theObject, theTolerance = 1e-07):
+        def LimitTolerance(self, theObject, theTolerance = 1e-07, theName=None):
             """
             Try to limit tolerance of the given object by value theTolerance.
 
             Parameters:
                 theObject Shape to be processed.
                 theTolerance Required tolerance value.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:   
                 New GEOM.GEOM_Object, containing processed shape.
             """
             anObj = self.HealOp.LimitTolerance(theObject, theTolerance)
             RaiseIfFailed("LimitTolerance", self.HealOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Get a list of wires (wrapped in GEOM.GEOM_Object-s),
@@ -4914,10 +5769,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theTolerance Maximum distance between faces, which can be considered as coincident.
         #  @param doKeepNonSolids If FALSE, only solids will present in the result,
         #                         otherwise all initial shapes.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing a copy of theShape without coincident faces.
         #
         #  @ref tui_glue_faces "Example"
-        def MakeGlueFaces(self, theShape, theTolerance, doKeepNonSolids=True):
+        def MakeGlueFaces(self, theShape, theTolerance, doKeepNonSolids=True, theName=None):
             """
             Replace coincident faces in theShape by one face.
 
@@ -4926,6 +5785,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theTolerance Maximum distance between faces, which can be considered as coincident.
                 doKeepNonSolids If FALSE, only solids will present in the result,
                                 otherwise all initial shapes.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing a copy of theShape without coincident faces.
@@ -4936,6 +5798,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if anObj is None:
                 raise RuntimeError, "MakeGlueFaces : " + self.ShapesOp.GetErrorCode()
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Find coincident faces in theShape for possible gluing.
@@ -4972,12 +5835,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param doGlueAllEdges If TRUE, all coincident edges of <VAR>theShape</VAR>
         #                        will be glued, otherwise only the edges,
         #                        belonging to <VAR>theFaces</VAR>.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing a copy of theShape
         #          without some faces.
         #
         #  @ref tui_glue_faces "Example"
         def MakeGlueFacesByList(self, theShape, theTolerance, theFaces,
-                                doKeepNonSolids=True, doGlueAllEdges=True):
+                                doKeepNonSolids=True, doGlueAllEdges=True, theName=None):
             """
             Replace coincident faces in theShape by one face
             in compliance with given list of faces
@@ -4992,6 +5859,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 doGlueAllEdges If TRUE, all coincident edges of theShape
                                will be glued, otherwise only the edges,
                                belonging to theFaces.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing a copy of theShape
@@ -5001,21 +5871,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                       doKeepNonSolids, doGlueAllEdges)
             if anObj is None:
                 raise RuntimeError, "MakeGlueFacesByList : " + self.ShapesOp.GetErrorCode()
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Replace coincident edges in theShape by one edge.
         #  @param theShape Initial shape.
         #  @param theTolerance Maximum distance between edges, which can be considered as coincident.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing a copy of theShape without coincident edges.
         #
         #  @ref tui_glue_edges "Example"
-        def MakeGlueEdges(self, theShape, theTolerance):
+        def MakeGlueEdges(self, theShape, theTolerance, theName=None):
             """
             Replace coincident edges in theShape by one edge.
 
             Parameters:
                 theShape Initial shape.
                 theTolerance Maximum distance between edges, which can be considered as coincident.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:    
                 New GEOM.GEOM_Object, containing a copy of theShape without coincident edges.
@@ -5025,6 +5903,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if anObj is None:
                 raise RuntimeError, "MakeGlueEdges : " + self.ShapesOp.GetErrorCode()
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Find coincident edges in theShape for possible gluing.
@@ -5056,11 +5935,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theTolerance Maximum distance between edges,
         #                      which can be considered as coincident.
         #  @param theEdges List of edges for gluing.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing a copy of theShape
         #          without some edges.
         #
         #  @ref tui_glue_edges "Example"
-        def MakeGlueEdgesByList(self, theShape, theTolerance, theEdges):
+        def MakeGlueEdgesByList(self, theShape, theTolerance, theEdges, theName=None):
             """
             Replace coincident edges in theShape by one edge
             in compliance with given list of edges.
@@ -5070,6 +5953,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theTolerance Maximum distance between edges,
                              which can be considered as coincident.
                 theEdges List of edges for gluing.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:  
                 New GEOM.GEOM_Object, containing a copy of theShape
@@ -5078,6 +5964,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.ShapesOp.MakeGlueEdgesByList(theShape, theTolerance, theEdges)
             if anObj is None:
                 raise RuntimeError, "MakeGlueEdgesByList : " + self.ShapesOp.GetErrorCode()
+            self._autoPublish(anObj, theName)
             return anObj
 
         # end of l3_healing
@@ -5095,10 +5982,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape2 Second argument for boolean operation.
         #  @param theOperation Indicates the operation to be done:\n
         #                      1 - Common, 2 - Cut, 3 - Fuse, 4 - Section.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_fuse "Example"
-        def MakeBoolean(self,theShape1, theShape2, theOperation):
+        def MakeBoolean(self, theShape1, theShape2, theOperation, theName=None):
             """
             Perform one of boolean operations on two given shapes.
 
@@ -5107,6 +5998,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape2 Second argument for boolean operation.
                 theOperation Indicates the operation to be done:
                              1 - Common, 2 - Cut, 3 - Fuse, 4 - Section.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:   
                 New GEOM.GEOM_Object, containing the result shape.
@@ -5114,94 +6008,127 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BoolOp.MakeBoolean(theShape1, theShape2, theOperation)
             RaiseIfFailed("MakeBoolean", self.BoolOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Perform Common boolean operation on two given shapes.
         #  @param theShape1 First argument for boolean operation.
         #  @param theShape2 Second argument for boolean operation.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_common "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeCommon(self, theShape1, theShape2):
+        def MakeCommon(self, theShape1, theShape2, theName=None):
             """
             Perform Common boolean operation on two given shapes.
 
             Parameters: 
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
- 
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
             Returns:   
                 New GEOM.GEOM_Object, containing the result shape.
             """
             # Example: see GEOM_TestOthers.py
-            return self.MakeBoolean(theShape1, theShape2, 1)
+            # note: auto-publishing is done in self.MakeBoolean()
+            return self.MakeBoolean(theShape1, theShape2, 1, theName)
 
         ## Perform Cut boolean operation on two given shapes.
         #  @param theShape1 First argument for boolean operation.
         #  @param theShape2 Second argument for boolean operation.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_cut "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeCut(self, theShape1, theShape2):
+        def MakeCut(self, theShape1, theShape2, theName=None):
             """
             Perform Cut boolean operation on two given shapes.
 
             Parameters: 
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
- 
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
             Returns:   
                 New GEOM.GEOM_Object, containing the result shape.
             
             """
             # Example: see GEOM_TestOthers.py
-            return self.MakeBoolean(theShape1, theShape2, 2)
+            # note: auto-publishing is done in self.MakeBoolean()
+            return self.MakeBoolean(theShape1, theShape2, 2, theName)
 
         ## Perform Fuse boolean operation on two given shapes.
         #  @param theShape1 First argument for boolean operation.
         #  @param theShape2 Second argument for boolean operation.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_fuse "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeFuse(self, theShape1, theShape2):
+        def MakeFuse(self, theShape1, theShape2, theName=None):
             """
             Perform Fuse boolean operation on two given shapes.
 
             Parameters: 
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
- 
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
             Returns:   
                 New GEOM.GEOM_Object, containing the result shape.
             
             """
             # Example: see GEOM_TestOthers.py
-            return self.MakeBoolean(theShape1, theShape2, 3)
+            # note: auto-publishing is done in self.MakeBoolean()
+            return self.MakeBoolean(theShape1, theShape2, 3, theName)
 
         ## Perform Section boolean operation on two given shapes.
         #  @param theShape1 First argument for boolean operation.
         #  @param theShape2 Second argument for boolean operation.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_section "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeSection(self, theShape1, theShape2):
+        def MakeSection(self, theShape1, theShape2, theName=None):
             """
             Perform Section boolean operation on two given shapes.
 
             Parameters: 
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
- 
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
             Returns:   
                 New GEOM.GEOM_Object, containing the result shape.
             
             """
             # Example: see GEOM_TestOthers.py
-            return self.MakeBoolean(theShape1, theShape2, 4)
+            # note: auto-publishing is done in self.MakeBoolean()
+            return self.MakeBoolean(theShape1, theShape2, 4, theName)
 
         # end of l3_boolean
         ## @}
@@ -5219,6 +6146,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                             target type (equal to Limit) are kept in the result,
         #                             else standalone shapes of lower dimension
         #                             are kept also (if they exist).
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @note Each compound from ListShapes and ListTools will be exploded
         #        in order to avoid possible intersection between shapes from this compound.
         #
@@ -5238,7 +6169,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_partition "Example"
         def MakePartition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                           Limit=ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
-                          KeepNonlimitShapes=0):
+                          KeepNonlimitShapes=0, theName=None):
             """
             Perform partition operation.
 
@@ -5252,6 +6183,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                     target type (equal to Limit) are kept in the result,
                                     else standalone shapes of lower dimension
                                     are kept also (if they exist).
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
             Note:
                     Each compound from ListShapes and ListTools will be exploded
                     in order to avoid possible intersection between shapes from
@@ -5284,6 +6218,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                               Limit, RemoveWebs, ListMaterials,
                                               KeepNonlimitShapes);
             RaiseIfFailed("MakePartition", self.BoolOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Perform partition operation.
@@ -5302,7 +6237,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakePartitionNonSelfIntersectedShape(self, ListShapes, ListTools=[],
                                                  ListKeepInside=[], ListRemoveInside=[],
                                                  Limit=ShapeType["AUTO"], RemoveWebs=0,
-                                                 ListMaterials=[], KeepNonlimitShapes=0):
+                                                 ListMaterials=[], KeepNonlimitShapes=0,
+                                                 theName=None):
             """
             Perform partition operation.
             This method may be useful if it is needed to make a partition for
@@ -5330,6 +6266,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                                      Limit, RemoveWebs, ListMaterials,
                                                                      KeepNonlimitShapes);
             RaiseIfFailed("MakePartitionNonSelfIntersectedShape", self.BoolOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## See method MakePartition() for more information.
@@ -5338,30 +6275,38 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  \n @ref swig_Partition "Example 2"
         def Partition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                       Limit=ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
-                      KeepNonlimitShapes=0):
+                      KeepNonlimitShapes=0, theName=None):
             """
             See method geompy.MakePartition for more information.
             """
             # Example: see GEOM_TestOthers.py
+            # note: auto-publishing is done in self.MakePartition()
             anObj = self.MakePartition(ListShapes, ListTools,
                                        ListKeepInside, ListRemoveInside,
                                        Limit, RemoveWebs, ListMaterials,
-                                       KeepNonlimitShapes);
+                                       KeepNonlimitShapes, theName);
             return anObj
 
         ## Perform partition of the Shape with the Plane
         #  @param theShape Shape to be intersected.
         #  @param thePlane Tool shape, to intersect theShape.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_partition "Example"
-        def MakeHalfPartition(self,theShape, thePlane):
+        def MakeHalfPartition(self, theShape, thePlane, theName=None):
             """
             Perform partition of the Shape with the Plane
 
             Parameters: 
                 theShape Shape to be intersected.
                 thePlane Tool shape, to intersect theShape.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:  
                 New GEOM.GEOM_Object, containing the result shape.
@@ -5369,6 +6314,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BoolOp.MakeHalfPartition(theShape, thePlane)
             RaiseIfFailed("MakeHalfPartition", self.BoolOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         # end of l3_basic_op
@@ -5378,15 +6324,48 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## @{
 
         ## Translate the given object along the vector, specified
+        #  by its end points.
+        #  @param theObject The object to be translated.
+        #  @param thePoint1 Start point of translation vector.
+        #  @param thePoint2 End point of translation vector.
+        #  @param theCopy Flag used to translate object itself or create a copy.
+        #  @return Translated @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
+        #  new GEOM.GEOM_Object, containing the translated object if @a theCopy flag is @c True.
+        def TranslateTwoPoints(self, theObject, thePoint1, thePoint2, theCopy=False):
+            """
+            Translate the given object along the vector, specified by its end points.
+
+            Parameters: 
+                theObject The object to be translated.
+                thePoint1 Start point of translation vector.
+                thePoint2 End point of translation vector.
+                theCopy Flag used to translate object itself or create a copy.
+
+            Returns: 
+                Translated theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
+                new GEOM.GEOM_Object, containing the translated object if theCopy flag is True.
+            """
+            if theCopy:
+                anObj = self.TrsfOp.TranslateTwoPointsCopy(theObject, thePoint1, thePoint2)
+            else:
+                anObj = self.TrsfOp.TranslateTwoPoints(theObject, thePoint1, thePoint2)
+            RaiseIfFailed("TranslateTwoPoints", self.TrsfOp)
+            return anObj
+
+        ## Translate the given object along the vector, specified
         #  by its end points, creating its copy before the translation.
         #  @param theObject The object to be translated.
         #  @param thePoint1 Start point of translation vector.
         #  @param thePoint2 End point of translation vector.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the translated object.
         #
         #  @ref tui_translation "Example 1"
         #  \n @ref swig_MakeTranslationTwoPoints "Example 2"
-        def MakeTranslationTwoPoints(self,theObject, thePoint1, thePoint2):
+        def MakeTranslationTwoPoints(self, theObject, thePoint1, thePoint2, theName=None):
             """
             Translate the given object along the vector, specified
             by its end points, creating its copy before the translation.
@@ -5395,6 +6374,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theObject The object to be translated.
                 thePoint1 Start point of translation vector.
                 thePoint2 End point of translation vector.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:  
                 New GEOM.GEOM_Object, containing the translated object.
@@ -5402,28 +6384,36 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.TranslateTwoPointsCopy(theObject, thePoint1, thePoint2)
             RaiseIfFailed("TranslateTwoPointsCopy", self.TrsfOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Translate the given object along the vector, specified by its components.
         #  @param theObject The object to be translated.
         #  @param theDX,theDY,theDZ Components of translation vector.
-        #  @return Translated GEOM.GEOM_Object.
+        #  @param theCopy Flag used to translate object itself or create a copy.
+        #  @return Translated @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
+        #  new GEOM.GEOM_Object, containing the translated object if @a theCopy flag is @c True.
         #
         #  @ref tui_translation "Example"
-        def TranslateDXDYDZ(self,theObject, theDX, theDY, theDZ):
+        def TranslateDXDYDZ(self, theObject, theDX, theDY, theDZ, theCopy=False):
             """
             Translate the given object along the vector, specified by its components.
 
             Parameters: 
                 theObject The object to be translated.
                 theDX,theDY,theDZ Components of translation vector.
+                theCopy Flag used to translate object itself or create a copy.
 
             Returns: 
-                Translated GEOM.GEOM_Object.
+                Translated theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
+                new GEOM.GEOM_Object, containing the translated object if theCopy flag is True.
             """
             # Example: see GEOM_TestAll.py
             theDX, theDY, theDZ, Parameters = ParseParameters(theDX, theDY, theDZ)
-            anObj = self.TrsfOp.TranslateDXDYDZ(theObject, theDX, theDY, theDZ)
+            if theCopy:
+                anObj = self.TrsfOp.TranslateDXDYDZCopy(theObject, theDX, theDY, theDZ)
+            else:
+                anObj = self.TrsfOp.TranslateDXDYDZ(theObject, theDX, theDY, theDZ)
             anObj.SetParameters(Parameters)
             RaiseIfFailed("TranslateDXDYDZ", self.TrsfOp)
             return anObj
@@ -5432,10 +6422,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  by its components, creating its copy before the translation.
         #  @param theObject The object to be translated.
         #  @param theDX,theDY,theDZ Components of translation vector.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the translated object.
         #
         #  @ref tui_translation "Example"
-        def MakeTranslation(self,theObject, theDX, theDY, theDZ):
+        def MakeTranslation(self,theObject, theDX, theDY, theDZ, theName=None):
             """
             Translate the given object along the vector, specified
             by its components, creating its copy before the translation.
@@ -5443,6 +6437,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters: 
                 theObject The object to be translated.
                 theDX,theDY,theDZ Components of translation vector.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the translated object.
@@ -5452,16 +6449,47 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.TranslateDXDYDZCopy(theObject, theDX, theDY, theDZ)
             anObj.SetParameters(Parameters)
             RaiseIfFailed("TranslateDXDYDZ", self.TrsfOp)
+            self._autoPublish(anObj, theName)
+            return anObj
+
+        ## Translate the given object along the given vector.
+        #  @param theObject The object to be translated.
+        #  @param theVector The translation vector.
+        #  @param theCopy Flag used to translate object itself or create a copy.
+        #  @return Translated @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
+        #  new GEOM.GEOM_Object, containing the translated object if @a theCopy flag is @c True.
+        def TranslateVector(self, theObject, theVector, theCopy=False):
+            """
+            Translate the given object along the given vector.
+
+            Parameters: 
+                theObject The object to be translated.
+                theVector The translation vector.
+                theCopy Flag used to translate object itself or create a copy.
+
+            Returns: 
+                Translated theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
+                new GEOM.GEOM_Object, containing the translated object if theCopy flag is True.
+            """
+            if theCopy:
+                anObj = self.TrsfOp.TranslateVectorCopy(theObject, theVector)
+            else:
+                anObj = self.TrsfOp.TranslateVector(theObject, theVector)
+            RaiseIfFailed("TranslateVector", self.TrsfOp)
             return anObj
 
         ## Translate the given object along the given vector,
         #  creating its copy before the translation.
         #  @param theObject The object to be translated.
         #  @param theVector The translation vector.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the translated object.
         #
         #  @ref tui_translation "Example"
-        def MakeTranslationVector(self,theObject, theVector):
+        def MakeTranslationVector(self, theObject, theVector, theName=None):
             """
             Translate the given object along the given vector,
             creating its copy before the translation.
@@ -5469,6 +6497,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters: 
                 theObject The object to be translated.
                 theVector The translation vector.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the translated object.
@@ -5476,6 +6507,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.TranslateVectorCopy(theObject, theVector)
             RaiseIfFailed("TranslateVectorCopy", self.TrsfOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Translate the given object along the given vector on given distance.
@@ -5483,11 +6515,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theVector The translation vector.
         #  @param theDistance The translation distance.
         #  @param theCopy Flag used to translate object itself or create a copy.
-        #  @return Translated @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False or
+        #  @return Translated @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
         #  new GEOM.GEOM_Object, containing the translated object if @a theCopy flag is @c True.
         #
         #  @ref tui_translation "Example"
-        def TranslateVectorDistance(self, theObject, theVector, theDistance, theCopy):
+        def TranslateVectorDistance(self, theObject, theVector, theDistance, theCopy=False):
             """
             Translate the given object along the given vector on given distance.
 
@@ -5498,7 +6530,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theCopy Flag used to translate object itself or create a copy.
 
             Returns: 
-                Translated theObject (GEOM.GEOM_Object) if theCopy flag is False or
+                Translated theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
                 new GEOM.GEOM_Object, containing the translated object if theCopy flag is True.
             """
             # Example: see GEOM_TestAll.py
@@ -5513,10 +6545,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theObject The object to be translated.
         #  @param theVector The translation vector.
         #  @param theDistance The translation distance.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the translated object.
         #
         #  @ref tui_translation "Example"
-        def MakeTranslationVectorDistance(self, theObject, theVector, theDistance):
+        def MakeTranslationVectorDistance(self, theObject, theVector, theDistance, theName=None):
             """
             Translate the given object along the given vector on given distance,
             creating its copy before the translation.
@@ -5525,6 +6561,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theObject The object to be translated.
                 theVector The translation vector.
                 theDistance The translation distance.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the translated object.
@@ -5534,16 +6573,20 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.TranslateVectorDistance(theObject, theVector, theDistance, 1)
             RaiseIfFailed("TranslateVectorDistance", self.TrsfOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Rotate the given object around the given axis on the given angle.
         #  @param theObject The object to be rotated.
         #  @param theAxis Rotation axis.
         #  @param theAngle Rotation angle in radians.
-        #  @return Rotated @a theObject (GEOM.GEOM_Object).
+        #  @param theCopy Flag used to rotate object itself or create a copy.
+        #
+        #  @return Rotated @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
+        #  new GEOM.GEOM_Object, containing the rotated object if @a theCopy flag is @c True.
         #
         #  @ref tui_rotation "Example"
-        def Rotate(self, theObject, theAxis, theAngle):
+        def Rotate(self, theObject, theAxis, theAngle, theCopy=False):
             """
             Rotate the given object around the given axis on the given angle.
 
@@ -5551,9 +6594,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theObject The object to be rotated.
                 theAxis Rotation axis.
                 theAngle Rotation angle in radians.
+                theCopy Flag used to rotate object itself or create a copy.
 
-            Returns: 
-                Rotated theObject (GEOM.GEOM_Object).
+            Returns:
+                Rotated theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
+                new GEOM.GEOM_Object, containing the rotated object if theCopy flag is True.
             """
             # Example: see GEOM_TestAll.py
             flag = False
@@ -5562,7 +6607,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             theAngle, Parameters = ParseParameters(theAngle)
             if flag:
                 theAngle = theAngle*math.pi/180.0
-            anObj = self.TrsfOp.Rotate(theObject, theAxis, theAngle)
+            if theCopy:
+                anObj = self.TrsfOp.RotateCopy(theObject, theAxis, theAngle)
+            else:
+                anObj = self.TrsfOp.Rotate(theObject, theAxis, theAngle)
             RaiseIfFailed("Rotate", self.TrsfOp)
             anObj.SetParameters(Parameters)
             return anObj
@@ -5572,10 +6620,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theObject The object to be rotated.
         #  @param theAxis Rotation axis.
         #  @param theAngle Rotation angle in radians.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the rotated object.
         #
         #  @ref tui_rotation "Example"
-        def MakeRotation(self,theObject, theAxis, theAngle):
+        def MakeRotation(self, theObject, theAxis, theAngle, theName=None):
             """
             Rotate the given object around the given axis
             on the given angle, creating its copy before the rotatation.
@@ -5584,6 +6636,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theObject The object to be rotated.
                 theAxis Rotation axis.
                 theAngle Rotation angle in radians.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the rotated object.
@@ -5598,6 +6653,39 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.RotateCopy(theObject, theAxis, theAngle)
             RaiseIfFailed("RotateCopy", self.TrsfOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
+            return anObj
+
+        ## Rotate given object around vector perpendicular to plane
+        #  containing three points.
+        #  @param theObject The object to be rotated.
+        #  @param theCentPoint central point the axis is the vector perpendicular to the plane
+        #  containing the three points.
+        #  @param thePoint1,thePoint2 points in a perpendicular plane of the axis.
+        #  @param theCopy Flag used to rotate object itself or create a copy.
+        #  @return Rotated @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
+        #  new GEOM.GEOM_Object, containing the rotated object if @a theCopy flag is @c True.
+        def RotateThreePoints(self, theObject, theCentPoint, thePoint1, thePoint2, theCopy=False):
+            """
+            Rotate given object around vector perpendicular to plane
+            containing three points.
+
+            Parameters:
+                theObject The object to be rotated.
+                theCentPoint central point  the axis is the vector perpendicular to the plane
+                             containing the three points.
+                thePoint1,thePoint2 points in a perpendicular plane of the axis.
+                theCopy Flag used to rotate object itself or create a copy.
+
+            Returns:
+                Rotated theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
+                new GEOM.GEOM_Object, containing the rotated object if theCopy flag is True.
+            """
+            if theCopy:
+                anObj = self.TrsfOp.RotateThreePointsCopy(theObject, theCentPoint, thePoint1, thePoint2)
+            else:
+                anObj = self.TrsfOp.RotateThreePoints(theObject, theCentPoint, thePoint1, thePoint2)
+            RaiseIfFailed("RotateThreePoints", self.TrsfOp)
             return anObj
 
         ## Rotate given object around vector perpendicular to plane
@@ -5606,10 +6694,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theCentPoint central point the axis is the vector perpendicular to the plane
         #  containing the three points.
         #  @param thePoint1,thePoint2 in a perpendicular plane of the axis.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the rotated object.
         #
         #  @ref tui_rotation "Example"
-        def MakeRotationThreePoints(self,theObject, theCentPoint, thePoint1, thePoint2):
+        def MakeRotationThreePoints(self, theObject, theCentPoint, thePoint1, thePoint2, theName=None):
             """
             Rotate given object around vector perpendicular to plane
             containing three points, creating its copy before the rotatation.
@@ -5619,6 +6711,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theCentPoint central point  the axis is the vector perpendicular to the plane
                              containing the three points.
                 thePoint1,thePoint2  in a perpendicular plane of the axis.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the rotated object.
@@ -5626,6 +6721,40 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.RotateThreePointsCopy(theObject, theCentPoint, thePoint1, thePoint2)
             RaiseIfFailed("RotateThreePointsCopy", self.TrsfOp)
+            self._autoPublish(anObj, theName)
+            return anObj
+
+        ## Scale the given object by the specified factor.
+        #  @param theObject The object to be scaled.
+        #  @param thePoint Center point for scaling.
+        #                  Passing None for it means scaling relatively the origin of global CS.
+        #  @param theFactor Scaling factor value.
+        #  @param theCopy Flag used to scale object itself or create a copy.
+        #  @return Scaled @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
+        #  new GEOM.GEOM_Object, containing the scaled object if @a theCopy flag is @c True.
+        def Scale(self, theObject, thePoint, theFactor, theCopy=False):
+            """
+            Scale the given object by the specified factor.
+
+            Parameters:
+                theObject The object to be scaled.
+                thePoint Center point for scaling.
+                         Passing None for it means scaling relatively the origin of global CS.
+                theFactor Scaling factor value.
+                theCopy Flag used to scale object itself or create a copy.
+
+            Returns:    
+                Scaled theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
+                new GEOM.GEOM_Object, containing the scaled object if theCopy flag is True.
+            """
+            # Example: see GEOM_TestAll.py
+            theFactor, Parameters = ParseParameters(theFactor)
+            if theCopy:
+                anObj = self.TrsfOp.ScaleShapeCopy(theObject, thePoint, theFactor)
+            else:
+                anObj = self.TrsfOp.ScaleShape(theObject, thePoint, theFactor)
+            RaiseIfFailed("Scale", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Scale the given object by the factor, creating its copy before the scaling.
@@ -5633,10 +6762,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePoint Center point for scaling.
         #                  Passing None for it means scaling relatively the origin of global CS.
         #  @param theFactor Scaling factor value.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the scaled shape.
         #
         #  @ref tui_scale "Example"
-        def MakeScaleTransform(self, theObject, thePoint, theFactor):
+        def MakeScaleTransform(self, theObject, thePoint, theFactor, theName=None):
             """
             Scale the given object by the factor, creating its copy before the scaling.
 
@@ -5645,6 +6778,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 thePoint Center point for scaling.
                          Passing None for it means scaling relatively the origin of global CS.
                 theFactor Scaling factor value.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:    
                 New GEOM.GEOM_Object, containing the scaled shape.
@@ -5654,6 +6790,42 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.ScaleShapeCopy(theObject, thePoint, theFactor)
             RaiseIfFailed("ScaleShapeCopy", self.TrsfOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
+            return anObj
+
+        ## Scale the given object by different factors along coordinate axes.
+        #  @param theObject The object to be scaled.
+        #  @param thePoint Center point for scaling.
+        #                  Passing None for it means scaling relatively the origin of global CS.
+        #  @param theFactorX,theFactorY,theFactorZ Scaling factors along each axis.
+        #  @param theCopy Flag used to scale object itself or create a copy.
+        #  @return Scaled @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
+        #  new GEOM.GEOM_Object, containing the scaled object if @a theCopy flag is @c True.
+        def ScaleAlongAxes(self, theObject, thePoint, theFactorX, theFactorY, theFactorZ, theCopy=False):
+            """
+            Scale the given object by different factors along coordinate axes.
+
+            Parameters:
+                theObject The object to be scaled.
+                thePoint Center point for scaling.
+                            Passing None for it means scaling relatively the origin of global CS.
+                theFactorX,theFactorY,theFactorZ Scaling factors along each axis.
+                theCopy Flag used to scale object itself or create a copy.
+
+            Returns:    
+                Scaled theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
+                new GEOM.GEOM_Object, containing the scaled object if theCopy flag is True.
+            """
+            # Example: see GEOM_TestAll.py
+            theFactorX, theFactorY, theFactorZ, Parameters = ParseParameters(theFactorX, theFactorY, theFactorZ)
+            if theCopy:
+                anObj = self.TrsfOp.ScaleShapeAlongAxesCopy(theObject, thePoint,
+                                                            theFactorX, theFactorY, theFactorZ)
+            else:
+                anObj = self.TrsfOp.ScaleShapeAlongAxes(theObject, thePoint,
+                                                        theFactorX, theFactorY, theFactorZ)
+            RaiseIfFailed("ScaleAlongAxes", self.TrsfOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Scale the given object by different factors along coordinate axes,
@@ -5662,10 +6834,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePoint Center point for scaling.
         #                  Passing None for it means scaling relatively the origin of global CS.
         #  @param theFactorX,theFactorY,theFactorZ Scaling factors along each axis.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the scaled shape.
         #
         #  @ref swig_scale "Example"
-        def MakeScaleAlongAxes(self, theObject, thePoint, theFactorX, theFactorY, theFactorZ):
+        def MakeScaleAlongAxes(self, theObject, thePoint, theFactorX, theFactorY, theFactorZ, theName=None):
             """
             Scale the given object by different factors along coordinate axes,
             creating its copy before the scaling.
@@ -5675,6 +6851,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 thePoint Center point for scaling.
                             Passing None for it means scaling relatively the origin of global CS.
                 theFactorX,theFactorY,theFactorZ Scaling factors along each axis.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the scaled shape.
@@ -5685,22 +6864,56 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                         theFactorX, theFactorY, theFactorZ)
             RaiseIfFailed("MakeScaleAlongAxes", self.TrsfOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
+            return anObj
+
+        ## Mirror an object relatively the given plane.
+        #  @param theObject The object to be mirrored.
+        #  @param thePlane Plane of symmetry.
+        #  @param theCopy Flag used to mirror object itself or create a copy.
+        #  @return Mirrored @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
+        #  new GEOM.GEOM_Object, containing the mirrored object if @a theCopy flag is @c True.
+        def MirrorByPlane(self, theObject, thePlane, theCopy=False):
+            """
+            Mirror an object relatively the given plane.
+
+            Parameters:
+                theObject The object to be mirrored.
+                thePlane Plane of symmetry.
+                theCopy Flag used to mirror object itself or create a copy.
+
+            Returns:
+                Mirrored theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
+                new GEOM.GEOM_Object, containing the mirrored object if theCopy flag is True.
+            """
+            if theCopy:
+                anObj = self.TrsfOp.MirrorPlaneCopy(theObject, thePlane)
+            else:
+                anObj = self.TrsfOp.MirrorPlane(theObject, thePlane)
+            RaiseIfFailed("MirrorByPlane", self.TrsfOp)
             return anObj
 
         ## Create an object, symmetrical
         #  to the given one relatively the given plane.
         #  @param theObject The object to be mirrored.
         #  @param thePlane Plane of symmetry.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the mirrored shape.
         #
         #  @ref tui_mirror "Example"
-        def MakeMirrorByPlane(self,theObject, thePlane):
+        def MakeMirrorByPlane(self, theObject, thePlane, theName=None):
             """
             Create an object, symmetrical to the given one relatively the given plane.
 
             Parameters:
                 theObject The object to be mirrored.
                 thePlane Plane of symmetry.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the mirrored shape.
@@ -5708,22 +6921,56 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.MirrorPlaneCopy(theObject, thePlane)
             RaiseIfFailed("MirrorPlaneCopy", self.TrsfOp)
+            self._autoPublish(anObj, theName)
+            return anObj
+
+        ## Mirror an object relatively the given axis.
+        #  @param theObject The object to be mirrored.
+        #  @param theAxis Axis of symmetry.
+        #  @param theCopy Flag used to mirror object itself or create a copy.
+        #  @return Mirrored @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
+        #  new GEOM.GEOM_Object, containing the mirrored object if @a theCopy flag is @c True.
+        def MirrorByAxis(self, theObject, theAxis, theCopy=False):
+            """
+            Mirror an object relatively the given axis.
+
+            Parameters:
+                theObject The object to be mirrored.
+                theAxis Axis of symmetry.
+                theCopy Flag used to mirror object itself or create a copy.
+
+            Returns:
+                Mirrored theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
+                new GEOM.GEOM_Object, containing the mirrored object if theCopy flag is True.
+            """
+            if theCopy:
+                anObj = self.TrsfOp.MirrorAxisCopy(theObject, theAxis)
+            else:
+                anObj = self.TrsfOp.MirrorAxis(theObject, theAxis)
+            RaiseIfFailed("MirrorByAxis", self.TrsfOp)
             return anObj
 
         ## Create an object, symmetrical
         #  to the given one relatively the given axis.
         #  @param theObject The object to be mirrored.
         #  @param theAxis Axis of symmetry.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the mirrored shape.
         #
         #  @ref tui_mirror "Example"
-        def MakeMirrorByAxis(self,theObject, theAxis):
+        def MakeMirrorByAxis(self, theObject, theAxis, theName=None):
             """
             Create an object, symmetrical to the given one relatively the given axis.
 
             Parameters:
                 theObject The object to be mirrored.
                 theAxis Axis of symmetry.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the mirrored shape.
@@ -5731,16 +6978,48 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.MirrorAxisCopy(theObject, theAxis)
             RaiseIfFailed("MirrorAxisCopy", self.TrsfOp)
+            self._autoPublish(anObj, theName)
+            return anObj
+
+        ## Mirror an object relatively the given point.
+        #  @param theObject The object to be mirrored.
+        #  @param thePoint Point of symmetry.
+        #  @param theCopy Flag used to mirror object itself or create a copy.
+        #  @return Mirrored @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
+        #  new GEOM.GEOM_Object, containing the mirrored object if @a theCopy flag is @c True.
+        def MirrorByPoint(self, theObject, thePoint, theCopy=False):
+            """
+            Mirror an object relatively the given point.
+
+            Parameters:
+                theObject The object to be mirrored.
+                thePoint Point of symmetry.
+                theCopy Flag used to mirror object itself or create a copy.
+
+            Returns:
+                Mirrored theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
+                new GEOM.GEOM_Object, containing the mirrored object if theCopy flag is True.
+            """
+            # Example: see GEOM_TestAll.py
+            if theCopy:
+                anObj = self.TrsfOp.MirrorPointCopy(theObject, thePoint)
+            else:
+                anObj = self.TrsfOp.MirrorPoint(theObject, thePoint)
+            RaiseIfFailed("MirrorByPoint", self.TrsfOp)
             return anObj
 
         ## Create an object, symmetrical
         #  to the given one relatively the given point.
         #  @param theObject The object to be mirrored.
         #  @param thePoint Point of symmetry.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the mirrored shape.
         #
         #  @ref tui_mirror "Example"
-        def MakeMirrorByPoint(self,theObject, thePoint):
+        def MakeMirrorByPoint(self, theObject, thePoint, theName=None):
             """
             Create an object, symmetrical
             to the given one relatively the given point.
@@ -5748,6 +7027,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theObject The object to be mirrored.
                 thePoint Point of symmetry.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:  
                 New GEOM.GEOM_Object, containing the mirrored shape.
@@ -5755,10 +7037,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.MirrorPointCopy(theObject, thePoint)
             RaiseIfFailed("MirrorPointCopy", self.TrsfOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
-        ## Modify the Location of the given object by LCS,
-        #  creating its copy before the setting.
+        ## Modify the location of the given object.
         #  @param theObject The object to be displaced.
         #  @param theStartLCS Coordinate system to perform displacement from it.\n
         #                     If \a theStartLCS is NULL, displacement
@@ -5766,10 +7048,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                     If \a theObject itself is used as \a theStartLCS,
         #                     its location will be changed to \a theEndLCS.
         #  @param theEndLCS Coordinate system to perform displacement to it.
-        #  @return New GEOM.GEOM_Object, containing the displaced shape.
-        #
-        #  @ref tui_modify_location "Example"
-        def MakePosition(self,theObject, theStartLCS, theEndLCS):
+        #  @param theCopy Flag used to displace object itself or create a copy.
+        #  @return Displaced @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
+        #  new GEOM.GEOM_Object, containing the displaced object if @a theCopy flag is @c True.
+        def Position(self, theObject, theStartLCS, theEndLCS, theCopy=False):
             """
             Modify the Location of the given object by LCS, creating its copy before the setting.
 
@@ -5781,6 +7063,51 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                             If theObject itself is used as theStartLCS,
                             its location will be changed to theEndLCS.
                 theEndLCS Coordinate system to perform displacement to it.
+                theCopy Flag used to displace object itself or create a copy.
+
+            Returns:
+                Displaced theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
+                new GEOM.GEOM_Object, containing the displaced object if theCopy flag is True.
+            """
+            # Example: see GEOM_TestAll.py
+            if theCopy:
+                anObj = self.TrsfOp.PositionShapeCopy(theObject, theStartLCS, theEndLCS)
+            else:
+                anObj = self.TrsfOp.PositionShape(theObject, theStartLCS, theEndLCS)
+            RaiseIfFailed("Displace", self.TrsfOp)
+            return anObj
+
+        ## Modify the Location of the given object by LCS,
+        #  creating its copy before the setting.
+        #  @param theObject The object to be displaced.
+        #  @param theStartLCS Coordinate system to perform displacement from it.\n
+        #                     If \a theStartLCS is NULL, displacement
+        #                     will be performed from global CS.\n
+        #                     If \a theObject itself is used as \a theStartLCS,
+        #                     its location will be changed to \a theEndLCS.
+        #  @param theEndLCS Coordinate system to perform displacement to it.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the displaced shape.
+        #
+        #  @ref tui_modify_location "Example"
+        def MakePosition(self, theObject, theStartLCS, theEndLCS, theName=None):
+            """
+            Modify the Location of the given object by LCS, creating its copy before the setting.
+
+            Parameters:
+                theObject The object to be displaced.
+                theStartLCS Coordinate system to perform displacement from it.
+                            If theStartLCS is NULL, displacement
+                            will be performed from global CS.
+                            If theObject itself is used as theStartLCS,
+                            its location will be changed to theEndLCS.
+                theEndLCS Coordinate system to perform displacement to it.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:  
                 New GEOM.GEOM_Object, containing the displaced shape.
@@ -5795,9 +7122,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.PositionShapeCopy(theObject, theStartLCS, theEndLCS)
             RaiseIfFailed("PositionShapeCopy", self.TrsfOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
-        ## Modify the Location of the given object by Path,
+        ## Modify the Location of the given object by Path.
         #  @param  theObject The object to be displaced.
         #  @param  thePath Wire or Edge along that the object will be translated.
         #  @param  theDistance progress of Path (0 = start location, 1 = end of path location).
@@ -5809,7 +7137,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_modify_location "Example"
         def PositionAlongPath(self,theObject, thePath, theDistance, theCopy, theReverse):
             """
-            Modify the Location of the given object by Path
+            Modify the Location of the given object by Path.
 
             Parameters:
                  theObject The object to be displaced.
@@ -5830,19 +7158,86 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("PositionAlongPath", self.TrsfOp)
             return anObj
 
+        ## Modify the Location of the given object by Path, creating its copy before the operation.
+        #  @param theObject The object to be displaced.
+        #  @param thePath Wire or Edge along that the object will be translated.
+        #  @param theDistance progress of Path (0 = start location, 1 = end of path location).
+        #  @param theReverse  0 - for usual direction, 1 - to reverse path direction.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the displaced shape.
+        def MakePositionAlongPath(self, theObject, thePath, theDistance, theReverse, theName=None):
+            """
+            Modify the Location of the given object by Path, creating its copy before the operation.
+
+            Parameters:
+                 theObject The object to be displaced.
+                 thePath Wire or Edge along that the object will be translated.
+                 theDistance progress of Path (0 = start location, 1 = end of path location).
+                 theReverse  0 - for usual direction, 1 - to reverse path direction.
+                 theName Object name; when specified, this parameter is used
+                         for result publication in the study. Otherwise, if automatic
+                         publication is switched on, default value is used for result name.
+
+            Returns:  
+                New GEOM.GEOM_Object, containing the displaced shape.
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.TrsfOp.PositionAlongPath(theObject, thePath, theDistance, 1, theReverse)
+            RaiseIfFailed("PositionAlongPath", self.TrsfOp)
+            self._autoPublish(anObj, theName)
+            return anObj
+
+        ## Offset given shape.
+        #  @param theObject The base object for the offset.
+        #  @param theOffset Offset value.
+        #  @param theCopy Flag used to offset object itself or create a copy.
+        #  @return Modified @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
+        #  new GEOM.GEOM_Object, containing the result of offset operation if @a theCopy flag is @c True.
+        def Offset(self, theObject, theOffset, theCopy=False):
+            """
+            Offset given shape.
+
+            Parameters:
+                theObject The base object for the offset.
+                theOffset Offset value.
+                theCopy Flag used to offset object itself or create a copy.
+
+            Returns: 
+                Modified theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
+                new GEOM.GEOM_Object, containing the result of offset operation if theCopy flag is True.
+            """
+            theOffset, Parameters = ParseParameters(theOffset)
+            if theCopy:
+                anObj = self.TrsfOp.OffsetShapeCopy(theObject, theOffset)
+            else:
+                anObj = self.TrsfOp.OffsetShape(theObject, theOffset)
+            RaiseIfFailed("Offset", self.TrsfOp)
+            anObj.SetParameters(Parameters)
+            return anObj
+
         ## Create new object as offset of the given one.
         #  @param theObject The base object for the offset.
         #  @param theOffset Offset value.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the offset object.
         #
         #  @ref tui_offset "Example"
-        def MakeOffset(self,theObject, theOffset):
+        def MakeOffset(self, theObject, theOffset, theName=None):
             """
             Create new object as offset of the given one.
 
             Parameters:
                 theObject The base object for the offset.
                 theOffset Offset value.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:  
                 New GEOM.GEOM_Object, containing the offset object.
@@ -5857,21 +7252,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.OffsetShapeCopy(theObject, theOffset)
             RaiseIfFailed("OffsetShapeCopy", self.TrsfOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create new object as projection of the given one on a 2D surface.
         #  @param theSource The source object for the projection. It can be a point, edge or wire.
         #  @param theTarget The target object. It can be planar or cylindrical face.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the projection.
         #
         #  @ref tui_projection "Example"
-        def MakeProjection(self, theSource, theTarget):
+        def MakeProjection(self, theSource, theTarget, theName=None):
             """
             Create new object as projection of the given one on a 2D surface.
 
             Parameters:
                 theSource The source object for the projection. It can be a point, edge or wire.
                 theTarget The target object. It can be planar or cylindrical face.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:  
                 New GEOM.GEOM_Object, containing the projection.
@@ -5879,6 +7282,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.ProjectShapeCopy(theSource, theTarget)
             RaiseIfFailed("ProjectShapeCopy", self.TrsfOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         # -----------------------------------------------------------------------------
@@ -5890,11 +7294,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theVector Direction of the translation.
         #  @param theStep Distance to translate on.
         #  @param theNbTimes Quantity of translations to be done.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing compound of all
         #          the shapes, obtained after each translation.
         #
         #  @ref tui_multi_translation "Example"
-        def MakeMultiTranslation1D(self,theObject, theVector, theStep, theNbTimes):
+        def MakeMultiTranslation1D(self, theObject, theVector, theStep, theNbTimes, theName=None):
             """
             Translate the given object along the given vector a given number times
 
@@ -5903,6 +7311,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theVector Direction of the translation.
                 theStep Distance to translate on.
                 theNbTimes Quantity of translations to be done.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:     
                 New GEOM.GEOM_Object, containing compound of all
@@ -5916,6 +7327,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.MultiTranslate1D(theObject, theVector, theStep, theNbTimes)
             RaiseIfFailed("MultiTranslate1D", self.TrsfOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Conseqently apply two specified translations to theObject specified number of times.
@@ -5926,12 +7338,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theVector2 Direction of the second translation.
         #  @param theStep2 Step of the second translation.
         #  @param theNbTimes2 Quantity of translations to be done along theVector2.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing compound of all
         #          the shapes, obtained after each translation.
         #
         #  @ref tui_multi_translation "Example"
-        def MakeMultiTranslation2D(self,theObject, theVector1, theStep1, theNbTimes1,
-                                   theVector2, theStep2, theNbTimes2):
+        def MakeMultiTranslation2D(self, theObject, theVector1, theStep1, theNbTimes1,
+                                   theVector2, theStep2, theNbTimes2, theName=None):
             """
             Conseqently apply two specified translations to theObject specified number of times.
 
@@ -5943,6 +7359,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theVector2 Direction of the second translation.
                 theStep2 Step of the second translation.
                 theNbTimes2 Quantity of translations to be done along theVector2.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing compound of all
@@ -5957,6 +7376,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                  theVector2, theStep2, theNbTimes2)
             RaiseIfFailed("MultiTranslate2D", self.TrsfOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Rotate the given object around the given axis a given number times.
@@ -5964,11 +7384,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theObject The object to be rotated.
         #  @param theAxis The rotation axis.
         #  @param theNbTimes Quantity of rotations to be done.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing compound of all the
         #          shapes, obtained after each rotation.
         #
         #  @ref tui_multi_rotation "Example"
-        def MultiRotate1D(self,theObject, theAxis, theNbTimes):
+        def MultiRotate1D(self, theObject, theAxis, theNbTimes, theName=None):
             """
             Rotate the given object around the given axis a given number times.
             Rotation angle will be 2*PI/theNbTimes.
@@ -5977,6 +7401,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theObject The object to be rotated.
                 theAxis The rotation axis.
                 theNbTimes Quantity of rotations to be done.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:     
                 New GEOM.GEOM_Object, containing compound of all the
@@ -5990,6 +7417,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.MultiRotate1D(theObject, theAxis, theNbTimes)
             RaiseIfFailed("MultiRotate1D", self.TrsfOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Rotate the given object around the
@@ -5999,15 +7427,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  of rotated shape and its projection on the rotation axis.
         #  @param theObject The object to be rotated.
         #  @param theAxis Rotation axis.
-        #  @param theAngle Rotation angle in graduces.
+        #  @param theAngle Rotation angle in degrees.
         #  @param theNbTimes1 Quantity of rotations to be done.
         #  @param theStep Translation distance.
         #  @param theNbTimes2 Quantity of translations to be done.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing compound of all the
         #          shapes, obtained after each transformation.
         #
         #  @ref tui_multi_rotation "Example"
-        def MultiRotate2D(self,theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2):
+        def MultiRotate2D(self, theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2, theName=None):
             """
             Rotate the given object around the
             given axis on the given angle a given number
@@ -6018,10 +7450,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theObject The object to be rotated.
                 theAxis Rotation axis.
-                theAngle Rotation angle in graduces.
+                theAngle Rotation angle in degrees.
                 theNbTimes1 Quantity of rotations to be done.
                 theStep Translation distance.
                 theNbTimes2 Quantity of translations to be done.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:    
                 New GEOM.GEOM_Object, containing compound of all the
@@ -6035,12 +7470,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.MultiRotate2D(theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2)
             RaiseIfFailed("MultiRotate2D", self.TrsfOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## The same, as MultiRotate1D(), but axis is given by direction and point
         #
         #  @ref swig_MakeMultiRotation "Example"
-        def MakeMultiRotation1D(self,aShape,aDir,aPoint,aNbTimes):
+        def MakeMultiRotation1D(self, aShape, aDir, aPoint, aNbTimes, theName=None):
             """
             The same, as geompy.MultiRotate1D, but axis is given by direction and point
 
@@ -6051,13 +7487,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestOthers.py
             aVec = self.MakeLine(aPoint,aDir)
-            anObj = self.MultiRotate1D(aShape,aVec,aNbTimes)
+            # note: auto-publishing is done in self.MultiRotate1D()
+            anObj = self.MultiRotate1D(aShape, aVec, aNbTimes, theName)
             return anObj
 
         ## The same, as MultiRotate2D(), but axis is given by direction and point
         #
         #  @ref swig_MakeMultiRotation "Example"
-        def MakeMultiRotation2D(self,aShape,aDir,aPoint,anAngle,nbtimes1,aStep,nbtimes2):
+        def MakeMultiRotation2D(self, aShape, aDir, aPoint, anAngle, nbtimes1, aStep, nbtimes2, theName=None):
             """
             The same, as MultiRotate2D(), but axis is given by direction and point
             
@@ -6068,7 +7505,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestOthers.py
             aVec = self.MakeLine(aPoint,aDir)
-            anObj = self.MultiRotate2D(aShape,aVec,anAngle,nbtimes1,aStep,nbtimes2)
+            # note: auto-publishing is done in self.MultiRotate2D()
+            anObj = self.MultiRotate2D(aShape, aVec, anAngle, nbtimes1, aStep, nbtimes2, theName)
             return anObj
 
         # end of l3_transform
@@ -6080,17 +7518,24 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Perform a fillet on all edges of the given shape.
         #  @param theShape Shape, to perform fillet on.
         #  @param theR Fillet radius.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_fillet "Example 1"
         #  \n @ref swig_MakeFilletAll "Example 2"
-        def MakeFilletAll(self,theShape, theR):
+        def MakeFilletAll(self, theShape, theR, theName=None):
             """
             Perform a fillet on all edges of the given shape.
 
             Parameters:
                 theShape Shape, to perform fillet on.
                 theR Fillet radius.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the result shape.
@@ -6103,6 +7548,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeFilletAll(theShape, theR)
             RaiseIfFailed("MakeFilletAll", self.LocalOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Perform a fillet on the specified edges/faces of the given shape
@@ -6110,11 +7556,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theR Fillet radius.
         #  @param theShapeType Type of shapes in <VAR>theListShapes</VAR> (see ShapeType())
         #  @param theListShapes Global indices of edges/faces to perform fillet on.
-        #    \note Global index of sub-shape can be obtained, using method GetSubShapeID().
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @note Global index of sub-shape can be obtained, using method GetSubShapeID().
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_fillet "Example"
-        def MakeFillet(self,theShape, theR, theShapeType, theListShapes):
+        def MakeFillet(self, theShape, theR, theShapeType, theListShapes, theName=None):
             """
             Perform a fillet on the specified edges/faces of the given shape
 
@@ -6123,6 +7574,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theR Fillet radius.
                 theShapeType Type of shapes in theListShapes (see geompy.ShapeTypes)
                 theListShapes Global indices of edges/faces to perform fillet on.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Note:
                 Global index of sub-shape can be obtained, using method geompy.GetSubShapeID
@@ -6150,10 +7604,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 anObj = self.LocalOp.MakeFilletFaces(theShape, theR, theListShapes)
                 RaiseIfFailed("MakeFilletFaces", self.LocalOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## The same that MakeFillet() but with two Fillet Radius R1 and R2
-        def MakeFilletR1R2(self, theShape, theR1, theR2, theShapeType, theListShapes):
+        def MakeFilletR1R2(self, theShape, theR1, theR2, theShapeType, theListShapes, theName=None):
             """
             The same that geompy.MakeFillet but with two Fillet Radius R1 and R2
 
@@ -6176,6 +7631,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 anObj = self.LocalOp.MakeFilletFacesR1R2(theShape, theR1, theR2, theListShapes)
                 RaiseIfFailed("MakeFilletFacesR1R2", self.LocalOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Perform a fillet on the specified edges of the given shape
@@ -6191,10 +7647,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #         the fillet point, and such two (or more) edges can be united to allow
         #         bigger radius. Set this flag to TRUE to allow collinear edges union,
         #         thus ignoring the secant vertex (vertices).
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_fillet2d "Example"
-        def MakeFillet1D(self,theShape, theR, theListOfVertexes, doIgnoreSecantVertices = True):
+        def MakeFillet1D(self, theShape, theR, theListOfVertexes, doIgnoreSecantVertices = True, theName=None):
             """
             Perform a fillet on the specified edges of the given shape
 
@@ -6208,6 +7668,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                     the fillet point, and such two (or more) edges can be united to allow
                     bigger radius. Set this flag to TRUE to allow collinear edges union,
                     thus ignoring the secant vertex (vertices).
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
             Note:
                 Global index of sub-shape can be obtained, using method geompy.GetSubShapeID
 
@@ -6227,17 +7690,23 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeFillet1D(theShape, theR, theListOfVertexes, doIgnoreSecantVertices)
             RaiseIfFailed("MakeFillet1D", self.LocalOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Perform a fillet at the specified vertices of the given face/shell.
         #  @param theShape Face or Shell shape to perform fillet on.
         #  @param theR Fillet radius.
         #  @param theListOfVertexes Global indices of vertexes to perform fillet on.
-        #    \note Global index of sub-shape can be obtained, using method GetSubShapeID().
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @note Global index of sub-shape can be obtained, using method GetSubShapeID().
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_fillet2d "Example"
-        def MakeFillet2D(self, theShape, theR, theListOfVertexes):
+        def MakeFillet2D(self, theShape, theR, theListOfVertexes, theName=None):
             """
             Perform a fillet at the specified vertices of the given face/shell.
 
@@ -6245,6 +7714,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape  Face or Shell shape to perform fillet on.
                 theR  Fillet radius.
                 theListOfVertexes Global indices of vertexes to perform fillet on.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
             Note:
                 Global index of sub-shape can be obtained, using method geompy.GetSubShapeID
 
@@ -6260,22 +7732,30 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeFillet2D(theShape, theR, theListOfVertexes)
             RaiseIfFailed("MakeFillet2D", self.LocalOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Perform a symmetric chamfer on all edges of the given shape.
         #  @param theShape Shape, to perform chamfer on.
         #  @param theD Chamfer size along each face.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_chamfer "Example 1"
         #  \n @ref swig_MakeChamferAll "Example 2"
-        def MakeChamferAll(self,theShape, theD):
+        def MakeChamferAll(self, theShape, theD, theName=None):
             """
             Perform a symmetric chamfer on all edges of the given shape.
 
             Parameters:
                 theShape Shape, to perform chamfer on.
                 theD Chamfer size along each face.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:     
                 New GEOM.GEOM_Object, containing the result shape.
@@ -6288,6 +7768,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferAll(theShape, theD)
             RaiseIfFailed("MakeChamferAll", self.LocalOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Perform a chamfer on edges, common to the specified faces,
@@ -6296,11 +7777,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theD1 Chamfer size along \a theFace1.
         #  @param theD2 Chamfer size along \a theFace2.
         #  @param theFace1,theFace2 Global indices of two faces of \a theShape.
-        #    \note Global index of sub-shape can be obtained, using method GetSubShapeID().
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @note Global index of sub-shape can be obtained, using method GetSubShapeID().
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_chamfer "Example"
-        def MakeChamferEdge(self,theShape, theD1, theD2, theFace1, theFace2):
+        def MakeChamferEdge(self, theShape, theD1, theD2, theFace1, theFace2, theName=None):
             """
             Perform a chamfer on edges, common to the specified faces,
             with distance D1 on the Face1
@@ -6310,6 +7796,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theD1 Chamfer size along theFace1.
                 theD2 Chamfer size along theFace2.
                 theFace1,theFace2 Global indices of two faces of theShape.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Note:
                 Global index of sub-shape can be obtained, using method geompy.GetSubShapeID
@@ -6328,6 +7817,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferEdge(theShape, theD1, theD2, theFace1, theFace2)
             RaiseIfFailed("MakeChamferEdge", self.LocalOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Perform a chamfer on edges
@@ -6335,9 +7825,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theD Chamfer length
         #  @param theAngle Angle of chamfer (angle in radians or a name of variable which defines angle in degrees)
         #  @param theFace1,theFace2 Global indices of two faces of \a theShape.
-        #    \note Global index of sub-shape can be obtained, using method GetSubShapeID().
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @note Global index of sub-shape can be obtained, using method GetSubShapeID().
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
-        def MakeChamferEdgeAD(self, theShape, theD, theAngle, theFace1, theFace2):
+        def MakeChamferEdgeAD(self, theShape, theD, theAngle, theFace1, theFace2, theName=None):
             """
             Perform a chamfer on edges
 
@@ -6346,6 +7841,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theD1 Chamfer size along theFace1.
                 theAngle Angle of chamfer (angle in radians or a name of variable which defines angle in degrees).
                 theFace1,theFace2 Global indices of two faces of theShape.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Note:
                 Global index of sub-shape can be obtained, using method geompy.GetSubShapeID
@@ -6369,6 +7867,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferEdgeAD(theShape, theD, theAngle, theFace1, theFace2)
             RaiseIfFailed("MakeChamferEdgeAD", self.LocalOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Perform a chamfer on all edges of the specified faces,
@@ -6379,11 +7878,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #               will be get along face, which is nearer to \a theFaces beginning.
         #  @param theD2 Chamfer size along another of two faces, connected to the edge.
         #  @param theFaces Sequence of global indices of faces of \a theShape.
-        #    \note Global index of sub-shape can be obtained, using method GetSubShapeID().
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @note Global index of sub-shape can be obtained, using method GetSubShapeID().
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_chamfer "Example"
-        def MakeChamferFaces(self,theShape, theD1, theD2, theFaces):
+        def MakeChamferFaces(self, theShape, theD1, theD2, theFaces, theName=None):
             """
             Perform a chamfer on all edges of the specified faces,
             with distance D1 on the first specified face (if several for one edge)
@@ -6395,7 +7899,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                       will be get along face, which is nearer to theFaces beginning.
                 theD2 Chamfer size along another of two faces, connected to the edge.
                 theFaces Sequence of global indices of faces of theShape.
-
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
                 
             Note: Global index of sub-shape can be obtained, using method geompy.GetSubShapeID().
 
@@ -6407,13 +7913,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferFaces(theShape, theD1, theD2, theFaces)
             RaiseIfFailed("MakeChamferFaces", self.LocalOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## The Same that MakeChamferFaces() but with params theD is chamfer lenght and
         #  theAngle is Angle of chamfer (angle in radians or a name of variable which defines angle in degrees)
         #
         #  @ref swig_FilletChamfer "Example"
-        def MakeChamferFacesAD(self, theShape, theD, theAngle, theFaces):
+        def MakeChamferFacesAD(self, theShape, theD, theAngle, theFaces, theName=None):
             """
             The Same that geompy.MakeChamferFaces but with params theD is chamfer lenght and
             theAngle is Angle of chamfer (angle in radians or a name of variable which defines angle in degrees)
@@ -6427,6 +7934,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferFacesAD(theShape, theD, theAngle, theFaces)
             RaiseIfFailed("MakeChamferFacesAD", self.LocalOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Perform a chamfer on edges,
@@ -6434,10 +7942,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape, to perform chamfer on.
         #  @param theD1,theD2 Chamfer size
         #  @param theEdges Sequence of edges of \a theShape.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref swig_FilletChamfer "Example"
-        def MakeChamferEdges(self, theShape, theD1, theD2, theEdges):
+        def MakeChamferEdges(self, theShape, theD1, theD2, theEdges, theName=None):
             """
             Perform a chamfer on edges,
             with distance D1 on the first specified face (if several for one edge)
@@ -6446,6 +7958,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape Shape, to perform chamfer on.
                 theD1,theD2 Chamfer size
                 theEdges Sequence of edges of theShape.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the result shape.
@@ -6454,11 +7969,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferEdges(theShape, theD1, theD2, theEdges)
             RaiseIfFailed("MakeChamferEdges", self.LocalOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## The Same that MakeChamferEdges() but with params theD is chamfer lenght and
         #  theAngle is Angle of chamfer (angle in radians or a name of variable which defines angle in degrees)
-        def MakeChamferEdgesAD(self, theShape, theD, theAngle, theEdges):
+        def MakeChamferEdgesAD(self, theShape, theD, theAngle, theEdges, theName=None):
             """
             The Same that geompy.MakeChamferEdges but with params theD is chamfer lenght and
             theAngle is Angle of chamfer (angle in radians or a name of variable which defines angle in degrees)
@@ -6472,21 +7988,23 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferEdgesAD(theShape, theD, theAngle, theEdges)
             RaiseIfFailed("MakeChamferEdgesAD", self.LocalOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
-        ## /sa MakeChamferEdge() and MakeChamferFaces()
+        ## @sa MakeChamferEdge(), MakeChamferFaces()
         #
         #  @ref swig_MakeChamfer "Example"
-        def MakeChamfer(self,aShape,d1,d2,aShapeType,ListShape):
+        def MakeChamfer(self, aShape, d1, d2, aShapeType, ListShape, theName=None):
             """
             See geompy.MakeChamferEdge() and geompy.MakeChamferFaces() functions for more information.
             """
             # Example: see GEOM_TestOthers.py
             anObj = None
+            # note: auto-publishing is done in self.MakeChamferEdge() or self.MakeChamferFaces()
             if aShapeType == ShapeType["EDGE"]:
-                anObj = self.MakeChamferEdge(aShape,d1,d2,ListShape[0],ListShape[1])
+                anObj = self.MakeChamferEdge(aShape,d1,d2,ListShape[0],ListShape[1],theName)
             else:
-                anObj = self.MakeChamferFaces(aShape,d1,d2,ListShape)
+                anObj = self.MakeChamferFaces(aShape,d1,d2,ListShape,theName)
             return anObj
             
         ## Remove material from a solid by extrusion of the base shape on the given distance.
@@ -6495,10 +8013,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theBase Closed edge or wire defining the base shape to be extruded.
         #  @param theH Prism dimension along the normal to theBase
         #  @param theAngle Draft angle in degrees.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the initial shape with removed material 
         #
         #  @ref tui_creation_prism "Example"
-        def MakeExtrudedCut(self, theInit, theBase, theH, theAngle):
+        def MakeExtrudedCut(self, theInit, theBase, theH, theAngle, theName=None):
             """
             Add material to a solid by extrusion of the base shape on the given distance.
 
@@ -6507,6 +8029,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theBase Closed edge or wire defining the base shape to be extruded.
                 theH Prism dimension along the normal  to theBase
                 theAngle Draft angle in degrees.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object,  containing the initial shape with removed material.
@@ -6516,6 +8041,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeDraftPrism(theInit, theBase, theH, theAngle, False)
             RaiseIfFailed("MakeExtrudedBoss", self.PrimOp)
             #anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj   
             
         ## Add material to a solid by extrusion of the base shape on the given distance.
@@ -6524,10 +8050,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theBase Closed edge or wire defining the base shape to be extruded.
         #  @param theH Prism dimension along the normal to theBase
         #  @param theAngle Draft angle in degrees.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the initial shape with added material 
         #
         #  @ref tui_creation_prism "Example"
-        def MakeExtrudedBoss(self, theInit, theBase, theH, theAngle):
+        def MakeExtrudedBoss(self, theInit, theBase, theH, theAngle, theName=None):
             """
             Add material to a solid by extrusion of the base shape on the given distance.
 
@@ -6536,6 +8066,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theBase Closed edge or wire defining the base shape to be extruded.
                 theH Prism dimension along the normal  to theBase
                 theAngle Draft angle in degrees.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object,  containing the initial shape with added material.
@@ -6545,6 +8078,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeDraftPrism(theInit, theBase, theH, theAngle, True)
             RaiseIfFailed("MakeExtrudedBoss", self.PrimOp)
             #anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj   
 
         # end of l3_local
@@ -6559,11 +8093,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theWeight Weight og the shape.
         #  @param theWaterDensity Density of the water.
         #  @param theMeshDeflection Deflection of the mesh, using to compute the section.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing a section of \a theShape
         #          by a plane, corresponding to water level.
         #
         #  @ref tui_archimede "Example"
-        def Archimede(self,theShape, theWeight, theWaterDensity, theMeshDeflection):
+        def Archimede(self, theShape, theWeight, theWaterDensity, theMeshDeflection, theName=None):
             """
             Perform an Archimde operation on the given shape with given parameters.
             The object presenting the resulting face is returned.
@@ -6573,6 +8111,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theWeight Weight og the shape.
                 theWaterDensity Density of the water.
                 theMeshDeflection Deflection of the mesh, using to compute the section.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing a section of theShape
@@ -6584,6 +8125,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeArchimede(theShape, theWeight, theWaterDensity, theMeshDeflection)
             RaiseIfFailed("MakeArchimede", self.LocalOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         # end of l3_basic_op
@@ -6664,15 +8206,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Get bounding box of the given shape
         #  @param theShape Shape to obtain bounding box of.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created box.
         #
         #  @ref tui_measurement_tools_page "Example"
-        def MakeBoundingBox (self, theShape):
+        def MakeBoundingBox (self, theShape, theName=None):
             """
             Get bounding box of the given shape
 
             Parameters: 
                 theShape Shape to obtain bounding box of.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created box.
@@ -6680,6 +8229,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             anObj = self.MeasuOp.MakeBoundingBox(theShape)
             RaiseIfFailed("MakeBoundingBox", self.MeasuOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Get inertia matrix and moments of inertia of theShape.
@@ -6747,7 +8297,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Get minimal distance between the given shapes.
         #  @param theShape1,theShape2 Shapes to find minimal distance between.
-        #  @return Value of the minimal distance between the given shapes.
+        #  @return Value of the minimal distance between the given shapes, in form of list
+        #          [Distance, DX, DY, DZ].
         #
         #  @ref swig_all_measure "Example"
         def MinDistanceComponents(self, theShape1, theShape2):
@@ -6758,7 +8309,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape1,theShape2 Shapes to find minimal distance between.
 
             Returns:  
-                Value of the minimal distance between the given shapes.
+                Value of the minimal distance between the given shapes, in form of list
+                [Distance, DX, DY, DZ]
             """
             # Example: see GEOM_TestMeasures.py
             aTuple = self.MeasuOp.GetMinDistance(theShape1, theShape2)
@@ -7111,15 +8663,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Get a point, situated at the centre of mass of theShape.
         #  @param theShape Shape to define centre of mass of.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref tui_measurement_tools_page "Example"
-        def MakeCDG(self,theShape):
+        def MakeCDG(self, theShape, theName=None):
             """
             Get a point, situated at the centre of mass of theShape.
 
             Parameters:
                 theShape Shape to define centre of mass of.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created point.
@@ -7127,21 +8686,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             anObj = self.MeasuOp.GetCentreOfMass(theShape)
             RaiseIfFailed("GetCentreOfMass", self.MeasuOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Get a vertex sub-shape by index depended with orientation.
         #  @param theShape Shape to find sub-shape.
         #  @param theIndex Index to find vertex by this index (starting from zero)
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created vertex.
         #
         #  @ref tui_measurement_tools_page "Example"
-        def GetVertexByIndex(self,theShape, theIndex):
+        def GetVertexByIndex(self, theShape, theIndex, theName=None):
             """
             Get a vertex sub-shape by index depended with orientation.
 
             Parameters:
                 theShape Shape to find sub-shape.
                 theIndex Index to find vertex by this index (starting from zero)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created vertex.
@@ -7149,46 +8716,63 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             anObj = self.MeasuOp.GetVertexByIndex(theShape, theIndex)
             RaiseIfFailed("GetVertexByIndex", self.MeasuOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Get the first vertex of wire/edge depended orientation.
         #  @param theShape Shape to find first vertex.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created vertex.
         #
         #  @ref tui_measurement_tools_page "Example"
-        def GetFirstVertex(self,theShape):
+        def GetFirstVertex(self, theShape, theName=None):
             """
             Get the first vertex of wire/edge depended orientation.
 
             Parameters:
                 theShape Shape to find first vertex.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:    
                 New GEOM.GEOM_Object, containing the created vertex.
             """
             # Example: see GEOM_TestMeasures.py
-            anObj = self.GetVertexByIndex(theShape, 0)
+            # note: auto-publishing is done in self.GetVertexByIndex()
+            anObj = self.GetVertexByIndex(theShape, 0, theName)
             RaiseIfFailed("GetFirstVertex", self.MeasuOp)
             return anObj
 
         ## Get the last vertex of wire/edge depended orientation.
         #  @param theShape Shape to find last vertex.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created vertex.
         #
         #  @ref tui_measurement_tools_page "Example"
-        def GetLastVertex(self,theShape):
+        def GetLastVertex(self, theShape, theName=None):
             """
             Get the last vertex of wire/edge depended orientation.
 
             Parameters: 
                 theShape Shape to find last vertex.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:   
                 New GEOM.GEOM_Object, containing the created vertex.
             """
             # Example: see GEOM_TestMeasures.py
             nb_vert =  self.ShapesOp.NumberOfSubShapes(theShape, ShapeType["VERTEX"])
-            anObj = self.GetVertexByIndex(theShape, (nb_vert-1))
+            # note: auto-publishing is done in self.GetVertexByIndex()
+            anObj = self.GetVertexByIndex(theShape, (nb_vert-1), theName)
             RaiseIfFailed("GetLastVertex", self.MeasuOp)
             return anObj
 
@@ -7196,10 +8780,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  the normale is calculated at the center of mass.
         #  @param theFace Face to define normale of.
         #  @param theOptionalPoint Point to compute the normale at.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created vector.
         #
         #  @ref swig_todo "Example"
-        def GetNormal(self, theFace, theOptionalPoint = None):
+        def GetNormal(self, theFace, theOptionalPoint = None, theName=None):
             """
             Get a normale to the given face. If the point is not given,
             the normale is calculated at the center of mass.
@@ -7207,6 +8795,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters: 
                 theFace Face to define normale of.
                 theOptionalPoint Point to compute the normale at.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:   
                 New GEOM.GEOM_Object, containing the created vector.
@@ -7214,6 +8805,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             anObj = self.MeasuOp.GetNormal(theFace, theOptionalPoint)
             RaiseIfFailed("GetNormal", self.MeasuOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Check a topology of the given shape.
@@ -7369,10 +8961,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #         If format 'IGES_SCALE' is used instead of 'IGES' or
         #            format 'STEP_SCALE' is used instead of 'STEP',
         #            length unit will be set to 'meter' and result model will be scaled.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the imported shape.
         #
         #  @ref swig_Import_Export "Example"
-        def ImportFile(self, theFileName, theFormatName):
+        def ImportFile(self, theFileName, theFormatName, theName=None):
             """
             Import a shape from the BREP or IGES or STEP file
             (depends on given format) with given name.
@@ -7384,44 +8980,55 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                     If format 'IGES_SCALE' is used instead of 'IGES' or
                        format 'STEP_SCALE' is used instead of 'STEP',
                        length unit will be set to 'meter' and result model will be scaled.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the imported shape.
             """
             # Example: see GEOM_TestOthers.py
             anObj = self.InsertOp.ImportFile(theFileName, theFormatName)
-            RaiseIfFailed("Import", self.InsertOp)
+            RaiseIfFailed("ImportFile", self.InsertOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Deprecated analog of ImportFile()
-        def Import(self, theFileName, theFormatName):
+        def Import(self, theFileName, theFormatName, theName=None):
             """
-            Deprecated analog of geompy.ImportFile
+            Deprecated analog of geompy.ImportFile, kept for backward compatibility only.
             """
             print "WARNING: Function Import is deprecated, use ImportFile instead"
-            anObj = self.InsertOp.ImportFile(theFileName, theFormatName)
-            RaiseIfFailed("Import", self.InsertOp)
-            return anObj
+            # note: auto-publishing is done in self.ImportFile()
+            return self.ImportFile(theFileName, theFormatName, theName)
 
         ## Shortcut to ImportFile() for BREP format.
         #  Import a shape from the BREP file with given name.
         #  @param theFileName The file, containing the shape.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the imported shape.
         #
         #  @ref swig_Import_Export "Example"
-        def ImportBREP(self, theFileName):
+        def ImportBREP(self, theFileName, theName=None):
             """
             geompy.ImportFile(...) function for BREP format
             Import a shape from the BREP file with given name.
 
             Parameters: 
                 theFileName The file, containing the shape.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the imported shape.
             """
             # Example: see GEOM_TestOthers.py
-            return self.ImportFile(theFileName, "BREP")
+            # note: auto-publishing is done in self.ImportFile()
+            return self.ImportFile(theFileName, "BREP", theName)
 
         ## Shortcut to ImportFile() for IGES format
         #  Import a shape from the IGES file with given name.
@@ -7429,10 +9036,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param ignoreUnits If True, file length units will be ignored (set to 'meter')
         #                     and result model will be scaled, if its units are not meters.
         #                     If False (default), file length units will be taken into account.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the imported shape.
         #
         #  @ref swig_Import_Export "Example"
-        def ImportIGES(self, theFileName, ignoreUnits = False):
+        def ImportIGES(self, theFileName, ignoreUnits = False, theName=None):
             """
             geompy.ImportFile(...) function for IGES format
 
@@ -7441,14 +9052,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 ignoreUnits If True, file length units will be ignored (set to 'meter')
                             and result model will be scaled, if its units are not meters.
                             If False (default), file length units will be taken into account.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the imported shape.
             """
             # Example: see GEOM_TestOthers.py
+            # note: auto-publishing is done in self.ImportFile()
             if ignoreUnits:
-                return self.ImportFile(theFileName, "IGES_SCALE")
-            return self.ImportFile(theFileName, "IGES")
+                return self.ImportFile(theFileName, "IGES_SCALE", theName)
+            return self.ImportFile(theFileName, "IGES", theName)
 
         ## Return length unit from given IGES file
         #  @param theFileName The file, containing the shape.
@@ -7475,10 +9090,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param ignoreUnits If True, file length units will be ignored (set to 'meter')
         #                     and result model will be scaled, if its units are not meters.
         #                     If False (default), file length units will be taken into account.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the imported shape.
         #
         #  @ref swig_Import_Export "Example"
-        def ImportSTEP(self, theFileName, ignoreUnits = False):
+        def ImportSTEP(self, theFileName, ignoreUnits = False, theName=None):
             """
             geompy.ImportFile(...) function for STEP format
 
@@ -7487,14 +9106,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 ignoreUnits If True, file length units will be ignored (set to 'meter')
                             and result model will be scaled, if its units are not meters.
                             If False (default), file length units will be taken into account.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the imported shape.
             """
             # Example: see GEOM_TestOthers.py
+            # note: auto-publishing is done in self.ImportFile()
             if ignoreUnits:
-                return self.ImportFile(theFileName, "STEP_SCALE")
-            return self.ImportFile(theFileName, "STEP")
+                return self.ImportFile(theFileName, "STEP_SCALE", theName)
+            return self.ImportFile(theFileName, "STEP", theName)
 
         ## Return length unit from given IGES or STEP file
         #  @param theFileName The file, containing the shape.
@@ -7519,10 +9142,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @note This method will not be dumped to the python script by DumpStudy functionality.
         #  @note GEOM.GEOM_Object.GetShapeStream() method can be used to obtain the shape's BRep stream.
         #  @param theStream The BRep binary stream.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM_Object, containing the shape, read from theStream.
         #
         #  @ref swig_Import_Export "Example"
-        def RestoreShape (self, theStream):
+        def RestoreShape (self, theStream, theName=None):
             """
             Read a shape from the binary stream, containing its bounding representation (BRep).
 
@@ -7531,6 +9158,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters: 
                 theStream The BRep binary stream.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM_Object, containing the shape, read from theStream.
@@ -7538,6 +9168,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.InsertOp.RestoreShape(theStream)
             RaiseIfFailed("RestoreShape", self.InsertOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Export the given shape into a file with given name.
@@ -7605,16 +9236,23 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Create a quadrangle face from four edges. Order of Edges is not
         #  important. It is  not necessary that edges share the same vertex.
         #  @param E1,E2,E3,E4 Edges for the face bound.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_building_by_blocks_page "Example"
-        def MakeQuad(self,E1, E2, E3, E4):
+        def MakeQuad(self, E1, E2, E3, E4, theName=None):
             """
             Create a quadrangle face from four edges. Order of Edges is not
             important. It is  not necessary that edges share the same vertex.
 
             Parameters: 
                 E1,E2,E3,E4 Edges for the face bound.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created face.
@@ -7625,21 +9263,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.MakeQuad(E1, E2, E3, E4)
             RaiseIfFailed("MakeQuad", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a quadrangle face on two edges.
         #  The missing edges will be built by creating the shortest ones.
         #  @param E1,E2 Two opposite edges for the face.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_building_by_blocks_page "Example"
-        def MakeQuad2Edges(self,E1, E2):
+        def MakeQuad2Edges(self, E1, E2, theName=None):
             """
             Create a quadrangle face on two edges.
             The missing edges will be built by creating the shortest ones.
 
             Parameters: 
                 E1,E2 Two opposite edges for the face.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created face.
@@ -7659,22 +9305,30 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.MakeQuad2Edges(E1, E2)
             RaiseIfFailed("MakeQuad2Edges", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a quadrangle face with specified corners.
         #  The missing edges will be built by creating the shortest ones.
         #  @param V1,V2,V3,V4 Corner vertices for the face.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_building_by_blocks_page "Example 1"
         #  \n @ref swig_MakeQuad4Vertices "Example 2"
-        def MakeQuad4Vertices(self,V1, V2, V3, V4):
+        def MakeQuad4Vertices(self, V1, V2, V3, V4, theName=None):
             """
             Create a quadrangle face with specified corners.
             The missing edges will be built by creating the shortest ones.
 
             Parameters: 
                 V1,V2,V3,V4 Corner vertices for the face.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created face.
@@ -7691,22 +9345,30 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.MakeQuad4Vertices(V1, V2, V3, V4)
             RaiseIfFailed("MakeQuad4Vertices", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a hexahedral solid, bounded by the six given faces. Order of
         #  faces is not important. It is  not necessary that Faces share the same edge.
         #  @param F1,F2,F3,F4,F5,F6 Faces for the hexahedral solid.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created solid.
         #
         #  @ref tui_building_by_blocks_page "Example 1"
         #  \n @ref swig_MakeHexa "Example 2"
-        def MakeHexa(self,F1, F2, F3, F4, F5, F6):
+        def MakeHexa(self, F1, F2, F3, F4, F5, F6, theName=None):
             """
             Create a hexahedral solid, bounded by the six given faces. Order of
             faces is not important. It is  not necessary that Faces share the same edge.
 
             Parameters: 
                 F1,F2,F3,F4,F5,F6 Faces for the hexahedral solid.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:    
                 New GEOM.GEOM_Object, containing the created solid.
@@ -7717,22 +9379,30 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.MakeHexa(F1, F2, F3, F4, F5, F6)
             RaiseIfFailed("MakeHexa", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Create a hexahedral solid between two given faces.
         #  The missing faces will be built by creating the smallest ones.
         #  @param F1,F2 Two opposite faces for the hexahedral solid.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the created solid.
         #
         #  @ref tui_building_by_blocks_page "Example 1"
         #  \n @ref swig_MakeHexa2Faces "Example 2"
-        def MakeHexa2Faces(self,F1, F2):
+        def MakeHexa2Faces(self, F1, F2, theName=None):
             """
             Create a hexahedral solid between two given faces.
             The missing faces will be built by creating the smallest ones.
 
             Parameters: 
                 F1,F2 Two opposite faces for the hexahedral solid.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created solid.
@@ -7743,6 +9413,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.MakeHexa2Faces(F1, F2)
             RaiseIfFailed("MakeHexa2Faces", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         # end of l3_blocks
@@ -7756,10 +9427,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theX,theY,theZ Coordinates of the sought vertex.
         #  @param theEpsilon Maximum allowed distance between the resulting
         #                    vertex and point with the given coordinates.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the found vertex.
         #
         #  @ref swig_GetPoint "Example"
-        def GetPoint(self, theShape, theX, theY, theZ, theEpsilon):
+        def GetPoint(self, theShape, theX, theY, theZ, theEpsilon, theName=None):
             """
             Get a vertex, found in the given shape by its coordinates.
 
@@ -7768,6 +9443,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theX,theY,theZ Coordinates of the sought vertex.
                 theEpsilon Maximum allowed distance between the resulting
                            vertex and point with the given coordinates.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:                  
                 New GEOM.GEOM_Object, containing the found vertex.
@@ -7778,21 +9456,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetPoint(theShape, theX, theY, theZ, theEpsilon)
             RaiseIfFailed("GetPoint", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Find a vertex of the given shape, which has minimal distance to the given point.
         #  @param theShape Any shape.
         #  @param thePoint Point, close to the desired vertex.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the found vertex.
         #
         #  @ref swig_GetVertexNearPoint "Example"
-        def GetVertexNearPoint(self, theShape, thePoint):
+        def GetVertexNearPoint(self, theShape, thePoint, theName=None):
             """
             Find a vertex of the given shape, which has minimal distance to the given point.
 
             Parameters: 
                 theShape Any shape.
                 thePoint Point, close to the desired vertex.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the found vertex.
@@ -7804,21 +9490,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetVertexNearPoint(theShape, thePoint)
             RaiseIfFailed("GetVertexNearPoint", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Get an edge, found in the given shape by two given vertices.
         #  @param theShape Block or a compound of blocks.
         #  @param thePoint1,thePoint2 Points, close to the ends of the desired edge.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the found edge.
         #
         #  @ref swig_GetEdge "Example"
-        def GetEdge(self, theShape, thePoint1, thePoint2):
+        def GetEdge(self, theShape, thePoint1, thePoint2, theName=None):
             """
             Get an edge, found in the given shape by two given vertices.
 
             Parameters: 
                 theShape Block or a compound of blocks.
                 thePoint1,thePoint2 Points, close to the ends of the desired edge.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the found edge.
@@ -7826,21 +9520,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetEdge(theShape, thePoint1, thePoint2)
             RaiseIfFailed("GetEdge", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Find an edge of the given shape, which has minimal distance to the given point.
         #  @param theShape Block or a compound of blocks.
         #  @param thePoint Point, close to the desired edge.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the found edge.
         #
         #  @ref swig_GetEdgeNearPoint "Example"
-        def GetEdgeNearPoint(self, theShape, thePoint):
+        def GetEdgeNearPoint(self, theShape, thePoint, theName=None):
             """
             Find an edge of the given shape, which has minimal distance to the given point.
 
             Parameters: 
                 theShape Block or a compound of blocks.
                 thePoint Point, close to the desired edge.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the found edge.
@@ -7848,21 +9550,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetEdgeNearPoint(theShape, thePoint)
             RaiseIfFailed("GetEdgeNearPoint", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Returns a face, found in the given shape by four given corner vertices.
         #  @param theShape Block or a compound of blocks.
         #  @param thePoint1,thePoint2,thePoint3,thePoint4 Points, close to the corners of the desired face.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the found face.
         #
         #  @ref swig_todo "Example"
-        def GetFaceByPoints(self,theShape, thePoint1, thePoint2, thePoint3, thePoint4):
+        def GetFaceByPoints(self, theShape, thePoint1, thePoint2, thePoint3, thePoint4, theName=None):
             """
             Returns a face, found in the given shape by four given corner vertices.
 
             Parameters:
                 theShape Block or a compound of blocks.
                 thePoint1,thePoint2,thePoint3,thePoint4 Points, close to the corners of the desired face.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the found face.
@@ -7870,21 +9580,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetFaceByPoints(theShape, thePoint1, thePoint2, thePoint3, thePoint4)
             RaiseIfFailed("GetFaceByPoints", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Get a face of block, found in the given shape by two given edges.
         #  @param theShape Block or a compound of blocks.
         #  @param theEdge1,theEdge2 Edges, close to the edges of the desired face.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the found face.
         #
         #  @ref swig_todo "Example"
-        def GetFaceByEdges(self,theShape, theEdge1, theEdge2):
+        def GetFaceByEdges(self, theShape, theEdge1, theEdge2, theName=None):
             """
             Get a face of block, found in the given shape by two given edges.
 
             Parameters:
                 theShape Block or a compound of blocks.
                 theEdge1,theEdge2 Edges, close to the edges of the desired face.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the found face.
@@ -7892,21 +9610,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetFaceByEdges(theShape, theEdge1, theEdge2)
             RaiseIfFailed("GetFaceByEdges", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Find a face, opposite to the given one in the given block.
         #  @param theBlock Must be a hexahedral solid.
         #  @param theFace Face of \a theBlock, opposite to the desired face.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the found face.
         #
         #  @ref swig_GetOppositeFace "Example"
-        def GetOppositeFace(self,theBlock, theFace):
+        def GetOppositeFace(self, theBlock, theFace, theName=None):
             """
             Find a face, opposite to the given one in the given block.
 
             Parameters:
                 theBlock Must be a hexahedral solid.
                 theFace Face of theBlock, opposite to the desired face.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the found face.
@@ -7914,21 +9640,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetOppositeFace(theBlock, theFace)
             RaiseIfFailed("GetOppositeFace", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Find a face of the given shape, which has minimal distance to the given point.
         #  @param theShape Block or a compound of blocks.
         #  @param thePoint Point, close to the desired face.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the found face.
         #
         #  @ref swig_GetFaceNearPoint "Example"
-        def GetFaceNearPoint(self, theShape, thePoint):
+        def GetFaceNearPoint(self, theShape, thePoint, theName=None):
             """
             Find a face of the given shape, which has minimal distance to the given point.
 
             Parameters:
                 theShape Block or a compound of blocks.
                 thePoint Point, close to the desired face.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the found face.
@@ -7936,21 +9670,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetFaceNearPoint(theShape, thePoint)
             RaiseIfFailed("GetFaceNearPoint", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Find a face of block, whose outside normale has minimal angle with the given vector.
         #  @param theBlock Block or a compound of blocks.
         #  @param theVector Vector, close to the normale of the desired face.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the found face.
         #
         #  @ref swig_todo "Example"
-        def GetFaceByNormale(self, theBlock, theVector):
+        def GetFaceByNormale(self, theBlock, theVector, theName=None):
             """
             Find a face of block, whose outside normale has minimal angle with the given vector.
 
             Parameters:
                 theBlock Block or a compound of blocks.
                 theVector Vector, close to the normale of the desired face.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the found face.
@@ -7958,6 +9700,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetFaceByNormale(theBlock, theVector)
             RaiseIfFailed("GetFaceByNormale", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Find all sub-shapes of type \a theShapeType of the given shape,
@@ -7968,10 +9711,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theTolerance The tolerance for distances comparison. All shapes
         #                      with distances to the given point in interval
         #                      [minimal_distance, minimal_distance + theTolerance] will be gathered.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM_Object, containing a group of all found shapes.
         #
         #  @ref swig_GetShapesNearPoint "Example"
-        def GetShapesNearPoint(self, theShape, thePoint, theShapeType, theTolerance = 1e-07):
+        def GetShapesNearPoint(self, theShape, thePoint, theShapeType, theTolerance = 1e-07, theName=None):
             """
             Find all sub-shapes of type theShapeType of the given shape,
             which have minimal distance to the given point.
@@ -7983,6 +9730,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theTolerance The tolerance for distances comparison. All shapes
                                 with distances to the given point in interval
                                 [minimal_distance, minimal_distance + theTolerance] will be gathered.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM_Object, containing a group of all found shapes.
@@ -7990,6 +9740,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetShapesNearPoint(theShape, thePoint, theShapeType, theTolerance)
             RaiseIfFailed("GetShapesNearPoint", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         # end of l3_blocks_op
@@ -8072,10 +9823,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape The compound or single solid to remove irregular edges from.
         #  @param doUnionFaces If True, then unite faces. If False (the default value),
         #         do not unite faces.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return Improved shape.
         #
         #  @ref swig_RemoveExtraEdges "Example"
-        def RemoveExtraEdges(self, theShape, doUnionFaces=False):
+        def RemoveExtraEdges(self, theShape, doUnionFaces=False, theName=None):
             """
             Remove all seam and degenerated edges from theShape.
             Unite faces and edges, sharing one surface. It means that
@@ -8085,6 +9840,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape The compound or single solid to remove irregular edges from.
                 doUnionFaces If True, then unite faces. If False (the default value),
                              do not unite faces.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 Improved shape.
@@ -8094,16 +9852,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if doUnionFaces is True: nbFacesOptimum = 0 # 0 means unite faces
             anObj = self.BlocksOp.RemoveExtraEdges(theShape, nbFacesOptimum)
             RaiseIfFailed("RemoveExtraEdges", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Check, if the given shape is a blocks compound.
         #  Fix all detected errors.
         #    \note Single block can be also fixed by this method.
         #  @param theShape The compound to check and improve.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return Improved compound.
         #
         #  @ref swig_CheckAndImprove "Example"
-        def CheckAndImprove(self,theShape):
+        def CheckAndImprove(self, theShape, theName=None):
             """
             Check, if the given shape is a blocks compound.
             Fix all detected errors.
@@ -8113,6 +9876,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theShape The compound to check and improve.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 Improved compound.
@@ -8120,6 +9886,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.CheckAndImprove(theShape)
             RaiseIfFailed("CheckAndImprove", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         # end of l4_blocks_measure
@@ -8165,10 +9932,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theCompound Compound, to find block in.
         #  @param thePoint Point, close to the desired block. If the point lays on
         #         boundary between some blocks, we return block with nearest center.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the found block.
         #
         #  @ref swig_todo "Example"
-        def GetBlockNearPoint(self,theCompound, thePoint):
+        def GetBlockNearPoint(self, theCompound, thePoint, theName=None):
             """
             Find block, containing the given point inside its volume or on boundary.
 
@@ -8176,6 +9947,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theCompound Compound, to find block in.
                 thePoint Point, close to the desired block. If the point lays on
                          boundary between some blocks, we return block with nearest center.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the found block.
@@ -8183,21 +9957,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetBlockNearPoint(theCompound, thePoint)
             RaiseIfFailed("GetBlockNearPoint", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Find block, containing all the elements, passed as the parts, or maximum quantity of them.
         #  @param theCompound Compound, to find block in.
         #  @param theParts List of faces and/or edges and/or vertices to be parts of the found block.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the found block.
         #
         #  @ref swig_GetBlockByParts "Example"
-        def GetBlockByParts(self,theCompound, theParts):
+        def GetBlockByParts(self, theCompound, theParts, theName=None):
             """
              Find block, containing all the elements, passed as the parts, or maximum quantity of them.
 
              Parameters:
                 theCompound Compound, to find block in.
                 theParts List of faces and/or edges and/or vertices to be parts of the found block.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 New GEOM_Object, containing the found block.
@@ -8205,6 +9987,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetBlockByParts(theCompound, theParts)
             RaiseIfFailed("GetBlockByParts", self.BlocksOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Return all blocks, containing all the elements, passed as the parts.
@@ -8235,11 +10018,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param DirFace1 ID of First direction face.
         #  @param DirFace2 ID of Second direction face.
         #  @param NbTimes Quantity of transformations to be done.
-        #    \note Unique ID of sub-shape can be obtained, using method GetSubShapeID().
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @note Unique ID of sub-shape can be obtained, using method GetSubShapeID().
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_multi_transformation "Example"
-        def MakeMultiTransformation1D(self,Block, DirFace1, DirFace2, NbTimes):
+        def MakeMultiTransformation1D(self,Block, DirFace1, DirFace2, NbTimes, theName=None):
             """
             Multi-transformate block and glue the result.
             Transformation is defined so, as to superpose direction faces.
@@ -8249,6 +10037,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 DirFace1 ID of First direction face.
                 DirFace2 ID of Second direction face.
                 NbTimes Quantity of transformations to be done.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Note:
                 Unique ID of sub-shape can be obtained, using method GetSubShapeID().
@@ -8261,6 +10052,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BlocksOp.MakeMultiTransformation1D(Block, DirFace1, DirFace2, NbTimes)
             RaiseIfFailed("MakeMultiTransformation1D", self.BlocksOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Multi-transformate block and glue the result.
@@ -8268,11 +10060,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param DirFace1U,DirFace2U IDs of Direction faces for the first transformation.
         #  @param DirFace1V,DirFace2V IDs of Direction faces for the second transformation.
         #  @param NbTimesU,NbTimesV Quantity of transformations to be done.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_multi_transformation "Example"
         def MakeMultiTransformation2D(self,Block, DirFace1U, DirFace2U, NbTimesU,
-                                      DirFace1V, DirFace2V, NbTimesV):
+                                      DirFace1V, DirFace2V, NbTimesV, theName=None):
             """
             Multi-transformate block and glue the result.
 
@@ -8281,6 +10077,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 DirFace1U,DirFace2U IDs of Direction faces for the first transformation.
                 DirFace1V,DirFace2V IDs of Direction faces for the second transformation.
                 NbTimesU,NbTimesV Quantity of transformations to be done.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object, containing the result shape.
@@ -8292,6 +10091,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                             DirFace1V, DirFace2V, NbTimesV)
             RaiseIfFailed("MakeMultiTransformation2D", self.BlocksOp)
             anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Build all possible propagation groups.
@@ -8329,11 +10129,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Creates a new group which will store sub-shapes of theMainShape
         #  @param theMainShape is a GEOM object on which the group is selected
         #  @param theShapeType defines a shape type of the group (see GEOM::shape_type)
-        #  @return a newly created GEOM group
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return a newly created GEOM group (GEOM.GEOM_Object)
         #
         #  @ref tui_working_with_groups_page "Example 1"
         #  \n @ref swig_CreateGroup "Example 2"
-        def CreateGroup(self,theMainShape, theShapeType):
+        def CreateGroup(self, theMainShape, theShapeType, theName=None):
             """
             Creates a new group which will store sub-shapes of theMainShape
 
@@ -8341,6 +10145,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                theMainShape is a GEOM object on which the group is selected
                theShapeType defines a shape type of the group:"COMPOUND", "COMPSOLID",
                             "SOLID", "SHELL", "FACE", "WIRE", "EDGE", "VERTEX", "SHAPE".
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                a newly created GEOM group
@@ -8352,6 +10159,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.GroupOp.CreateGroup(theMainShape, theShapeType)
             RaiseIfFailed("CreateGroup", self.GroupOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Adds a sub-object with ID theSubShapeId to the group
@@ -8477,9 +10285,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  which are present in groups theGroup1 and theGroup2.
         #  @param theGroup1, theGroup2 are the initial GEOM groups
         #                              to create the united group from.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return a newly created GEOM group.
+        #
         #  @ref tui_union_groups_anchor "Example"
-        def UnionGroups (self, theGroup1, theGroup2):
+        def UnionGroups (self, theGroup1, theGroup2, theName=None):
             """
             Union of two groups.
             New group is created. It will contain all entities
@@ -8488,6 +10301,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theGroup1, theGroup2 are the initial GEOM groups
                                      to create the united group from.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 a newly created GEOM group.
@@ -8495,15 +10311,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aGroup = self.GroupOp.UnionGroups(theGroup1, theGroup2)
             RaiseIfFailed("UnionGroups", self.GroupOp)
+            self._autoPublish(aGroup, theName)
             return aGroup
 
         ## Intersection of two groups.
         #  New group is created. It will contain only those entities
         #  which are present in both groups theGroup1 and theGroup2.
         #  @param theGroup1, theGroup2 are the initial GEOM groups to get common part of.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return a newly created GEOM group.
+        #
         #  @ref tui_intersect_groups_anchor "Example"
-        def IntersectGroups (self, theGroup1, theGroup2):
+        def IntersectGroups (self, theGroup1, theGroup2, theName=None):
             """
             Intersection of two groups.
             New group is created. It will contain only those entities
@@ -8511,6 +10333,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theGroup1, theGroup2 are the initial GEOM groups to get common part of.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 a newly created GEOM group.
@@ -8518,6 +10343,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aGroup = self.GroupOp.IntersectGroups(theGroup1, theGroup2)
             RaiseIfFailed("IntersectGroups", self.GroupOp)
+            self._autoPublish(aGroup, theName)
             return aGroup
 
         ## Cut of two groups.
@@ -8525,9 +10351,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  present in group theGroup1 but are not present in group theGroup2.
         #  @param theGroup1 is a GEOM group to include elements of.
         #  @param theGroup2 is a GEOM group to exclude elements of.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return a newly created GEOM group.
+        #
         #  @ref tui_cut_groups_anchor "Example"
-        def CutGroups (self, theGroup1, theGroup2):
+        def CutGroups (self, theGroup1, theGroup2, theName=None):
             """
             Cut of two groups.
             New group is created. It will contain entities which are
@@ -8536,6 +10367,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theGroup1 is a GEOM group to include elements of.
                 theGroup2 is a GEOM group to exclude elements of.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 a newly created GEOM group.
@@ -8543,15 +10377,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aGroup = self.GroupOp.CutGroups(theGroup1, theGroup2)
             RaiseIfFailed("CutGroups", self.GroupOp)
+            self._autoPublish(aGroup, theName)
             return aGroup
 
         ## Union of list of groups.
         #  New group is created. It will contain all entities that are
         #  present in groups listed in theGList.
         #  @param theGList is a list of GEOM groups to create the united group from.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return a newly created GEOM group.
+        #
         #  @ref tui_union_groups_anchor "Example"
-        def UnionListOfGroups (self, theGList):
+        def UnionListOfGroups (self, theGList, theName=None):
             """
             Union of list of groups.
             New group is created. It will contain all entities that are
@@ -8559,6 +10399,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theGList is a list of GEOM groups to create the united group from.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 a newly created GEOM group.
@@ -8566,6 +10409,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aGroup = self.GroupOp.UnionListOfGroups(theGList)
             RaiseIfFailed("UnionListOfGroups", self.GroupOp)
+            self._autoPublish(aGroup, theName)
             return aGroup
 
         ## Cut of lists of groups.
@@ -8574,9 +10418,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  are not present in groups from theGList2.
         #  @param theGList1 is a list of GEOM groups to include elements of.
         #  @param theGList2 is a list of GEOM groups to exclude elements of.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return a newly created GEOM group.
+        #
         #  @ref tui_intersect_groups_anchor "Example"
-        def IntersectListOfGroups (self, theGList):
+        def IntersectListOfGroups (self, theGList, theName=None):
             """
             Cut of lists of groups.
             New group is created. It will contain only entities
@@ -8586,6 +10435,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theGList1 is a list of GEOM groups to include elements of.
                 theGList2 is a list of GEOM groups to exclude elements of.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 a newly created GEOM group.
@@ -8593,6 +10445,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aGroup = self.GroupOp.IntersectListOfGroups(theGList)
             RaiseIfFailed("IntersectListOfGroups", self.GroupOp)
+            self._autoPublish(aGroup, theName)
             return aGroup
 
         ## Cut of lists of groups.
@@ -8601,9 +10454,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  are not present in groups from theGList2.
         #  @param theGList1 is a list of GEOM groups to include elements of.
         #  @param theGList2 is a list of GEOM groups to exclude elements of.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return a newly created GEOM group.
+        #
         #  @ref tui_cut_groups_anchor "Example"
-        def CutListOfGroups (self, theGList1, theGList2):
+        def CutListOfGroups (self, theGList1, theGList2, theName=None):
             """
             Cut of lists of groups.
             New group is created. It will contain only entities
@@ -8613,6 +10471,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theGList1 is a list of GEOM groups to include elements of.
                 theGList2 is a list of GEOM groups to exclude elements of.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 a newly created GEOM group.
@@ -8620,6 +10481,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aGroup = self.GroupOp.CutListOfGroups(theGList1, theGList2)
             RaiseIfFailed("CutListOfGroups", self.GroupOp)
+            self._autoPublish(aGroup, theName)
             return aGroup
 
         ## Returns a list of sub-objects ID stored in the group
@@ -8795,9 +10657,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param max_length maximum length of edges of theShape
         #  @param include_max indicating if edges with length == max_length should be included in result, 1-yes, 0-no (default=1)
         #  @param include_min indicating if edges with length == min_length should be included in result, 1-yes, 0-no (default=1)
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return a newly created GEOM group of edges
+        #
         #  @@ref swig_todo "Example"
-        def GetEdgesByLength (self, theShape, min_length, max_length, include_min = 1, include_max = 1):
+        def GetEdgesByLength (self, theShape, min_length, max_length, include_min = 1, include_max = 1, theName=None):
             """
             Create group of edges of theShape, whose length is in range [min_length, max_length].
             If include_min/max == 0, edges with length == min/max_length will not be included in result.
@@ -8808,6 +10675,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 max_length maximum length of edges of theShape
                 include_max indicating if edges with length == max_length should be included in result, 1-yes, 0-no (default=1)
                 include_min indicating if edges with length == min_length should be included in result, 1-yes, 0-no (default=1)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
              Returns:
                 a newly created GEOM group of edges.
@@ -8827,9 +10697,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             if len(edges_in_range) <= 0:
                 print "No edges found by given criteria"
-                return 0
+                return None
 
-            group_edges = self.CreateGroup(theShape, ShapeType["EDGE"])
+            # note: auto-publishing is done in self.CreateGroup()
+            group_edges = self.CreateGroup(theShape, ShapeType["EDGE"], theName)
             self.UnionList(group_edges, edges_in_range)
 
             return group_edges
@@ -9078,14 +10949,35 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theOrientation Orientation of the plane on which the disk will be built
         #         1 = XOY, 2 = OYZ, 3 = OZX
         #  @param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM_Object, containing the created shape.
         #
         #  @ref tui_creation_divideddisk "Example"
-        def MakeDividedDisk(self, theR, theOrientation, thePattern ):
+        def MakeDividedDisk(self, theR, theOrientation, thePattern, theName=None):
+            """
+            Creates a disk, divided into blocks. It can be used to create divided pipes
+            for later meshing in hexaedra.
+
+            Parameters:
+                theR Radius of the disk
+                theOrientation Orientation of the plane on which the disk will be built:
+                               1 = XOY, 2 = OYZ, 3 = OZX
+                thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM_Object, containing the created shape.
+            """
             theR, Parameters = ParseParameters(theR)
             anObj = self.AdvOp.MakeDividedDisk(theR, 67.0, theOrientation, thePattern)
             RaiseIfFailed("MakeDividedDisk", self.AdvOp)
             if Parameters: anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
             
         ## This function allows creating a disk already divided into blocks. It
@@ -9094,28 +10986,68 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theVector Normal vector to the plane of the created disk
         #  @param theRadius Radius of the disk
         #  @param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM_Object, containing the created shape.
         #
         #  @ref tui_creation_divideddisk "Example"
-        def MakeDividedDiskPntVecR(self, theCenter, theVector, theRadius, thePattern):
+        def MakeDividedDiskPntVecR(self, theCenter, theVector, theRadius, thePattern, theName=None):
+            """
+            Creates a disk already divided into blocks. It can be used to create divided pipes
+            for later meshing in hexaedra.
+
+            Parameters:
+                theCenter Center of the disk
+                theVector Normal vector to the plane of the created disk
+                theRadius Radius of the disk
+                thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM_Object, containing the created shape.
+            """
             theRadius, Parameters = ParseParameters(theRadius)
             anObj = self.AdvOp.MakeDividedDiskPntVecR(theCenter, theVector, theRadius, 67.0, thePattern)
             RaiseIfFailed("MakeDividedDiskPntVecR", self.AdvOp)
             if Parameters: anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Builds a cylinder prepared for hexa meshes
         #  @param theR Radius of the cylinder
         #  @param theH Height of the cylinder
         #  @param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM_Object, containing the created shape.
         #
         #  @ref tui_creation_dividedcylinder "Example"
-        def MakeDividedCylinder(self, theR, theH, thePattern):
+        def MakeDividedCylinder(self, theR, theH, thePattern, theName=None):
+            """
+            Builds a cylinder prepared for hexa meshes
+
+            Parameters:
+                theR Radius of the cylinder
+                theH Height of the cylinder
+                thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM_Object, containing the created shape.
+            """
             theR, theH, Parameters = ParseParameters(theR, theH)
             anObj = self.AdvOp.MakeDividedCylinder(theR, theH, thePattern)
             RaiseIfFailed("MakeDividedCylinder", self.AdvOp)
             if Parameters: anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName)
             return anObj
 
         #@@ insert new functions before this line @@ do not remove this line @@#
@@ -9126,24 +11058,33 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Create a copy of the given object
         #
         #  @param theOriginal geometry object for copy
-        #  @return unique object identifier
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM_Object, containing the copied shape.
+        #
         #  @ingroup l1_geompy_auxiliary
         #  @ref swig_MakeCopy "Example"
-        def MakeCopy(self,theOriginal):
+        def MakeCopy(self, theOriginal, theName=None):
             """
             Create a copy of the given object
 
             Paremeters:
                 theOriginal geometry object for copy
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
-                unique object identifier
+                New GEOM_Object, containing the copied shape.
 
             Example of usage: Copy = geompy.MakeCopy(Box)
             """
             # Example: see GEOM_TestAll.py
             anObj = self.InsertOp.MakeCopy(theOriginal)
             RaiseIfFailed("MakeCopy", self.InsertOp)
+            self._autoPublish(anObj, theName)
             return anObj
 
         ## Add Path to load python scripts from

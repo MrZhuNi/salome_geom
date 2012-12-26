@@ -143,7 +143,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateTwoPoints
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.TranslateTwoPoints("
+  GEOM::TPythonDump(aFunction) << "geompy.TranslateTwoPoints("
     << theObject << ", " << thePoint1 << ", " << thePoint2 << ")";
 
   SetErrorCode(OK);
@@ -362,7 +362,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVector
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.TranslateVector("
+  GEOM::TPythonDump(aFunction) << "geompy.TranslateVector("
                                << theObject << ", " << theVector << ")";
 
   SetErrorCode(OK);
@@ -799,7 +799,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPlane
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.MirrorPlane("
+  GEOM::TPythonDump(aFunction) << "geompy.MirrorByPlane("
                                << theObject << ", " << thePlane << ")";
 
   SetErrorCode(OK);
@@ -906,7 +906,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPoint
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.MirrorPoint("
+  GEOM::TPythonDump(aFunction) << "geompy.MirrorByPoint("
                                << theObject << ", " << thePoint << ")";
 
   SetErrorCode(OK);
@@ -1013,7 +1013,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorAxis
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.MirrorAxis("
+  GEOM::TPythonDump(aFunction) << "geompy.MirrorByAxis("
                                << theObject << ", " << theAxis << ")";
 
   SetErrorCode(OK);
@@ -1118,7 +1118,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShape
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.OffsetShape("
+  GEOM::TPythonDump(aFunction) << "geompy.Offset("
                                << theObject << ", " << theOffset << ")";
 
   SetErrorCode(OK);
@@ -1285,7 +1285,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShape
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.ScaleShape("
+  GEOM::TPythonDump(aFunction) << "geompy.Scale("
     << theObject << ", " << thePoint << ", " << theFactor << ")";
 
   SetErrorCode(OK);
@@ -1426,7 +1426,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeAlongAxes (Handle(G
     return aCopy;
   }
 
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.ScaleShapeAlongAxes("
+  GEOM::TPythonDump(aFunction) << "geompy.ScaleAlongAxes("
                                << theObject << ", " << thePoint << ", "
                                << theFactorX << ", " << theFactorY << ", " << theFactorZ << ")";
   return theObject;
@@ -1482,7 +1482,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShape
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.PositionShape("
+  GEOM::TPythonDump(aFunction) << "geompy.Position("
     << theObject << ", " << theStartLCS << ", " << theEndLCS << ")";
 
   SetErrorCode(OK);
@@ -1604,13 +1604,13 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionAlongPath
 
   //Make a Python command
   if (theCopy) {
-    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.PositionAlongPath("
+    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakePositionAlongPath("
                                  << theObject << ", " << thePath << ", " << theDistance << ", " << theCopy << ", " << theReverse << ")";
     SetErrorCode(OK);
     return aCopy;
   }
 
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.PositionAlongPath("
+  GEOM::TPythonDump(aFunction) << "geompy.PositionAlongPath("
     << theObject << ", " << thePath << ", " << theDistance << ", " << theCopy << ", " << theReverse << ")";
 
   SetErrorCode(OK);
@@ -1897,7 +1897,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateThreePoints (Handle(GEO
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.RotateThreePoints(" << theObject
+  GEOM::TPythonDump(aFunction) << "geompy.RotateThreePoints(" << theObject
                                << ", " << theCentPoint << ", "<<thePoint1 << ", " << thePoint2 << ")";
 
   SetErrorCode(OK);
