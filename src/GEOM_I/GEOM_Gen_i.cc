@@ -61,7 +61,7 @@
 #include <TopExp.hxx>
 #include <OSD.hxx>
 
-#include "SALOMEDS_Tool.hxx"
+#include <SALOMEDS_Tool.hxx>
 
 //============================================================================
 // function : GEOM_Gen_i()
@@ -965,6 +965,9 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
     GEOM::GEOM_IGroupOperations_var    aGroupOp = GetIGroupOperations(theStudy->StudyId());
     GEOM::GEOM_ITransformOperations_var aTrsfOp = GetITransformOperations(theStudy->StudyId());
 
+    PortableServer::Servant aServant = _poa->reference_to_servant(aTrsfOp.in());
+    GEOM_ITransformOperations_i*      aTrsfOpSv = dynamic_cast<GEOM_ITransformOperations_i*>(aServant);
+
     // Reconstruct arguments and tree of sub-shapes of the arguments
     CORBA::String_var anIOR;
     SALOMEDS::StudyBuilder_var aStudyBuilder = theStudy->NewBuilder();
@@ -995,7 +998,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
         case GEOM::FSM_MultiTransformed:
           {
             // Only for Multi-transformations
-            GEOM::GEOM_Object_var anArgOTrsf = aTrsfOp->TransformLikeOtherCopy(anArgO, theObject);
+            GEOM::GEOM_Object_var anArgOTrsf = aTrsfOpSv->TransformLikeOtherCopy(anArgO, theObject);
             if (!CORBA::is_nil(anArgOTrsf)) {
               CORBA::String_var anArgOTrsfEntry = anArgOTrsf->GetEntry();
               Handle(GEOM_Object) anArgOTrsfImpl = _impl->GetObject(anArgOTrsf->GetStudyID(), anArgOTrsfEntry);
@@ -1017,7 +1020,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
                   {
                     GEOMImpl_ITranslate aTI (anOFun);
                     aMultiArgShape = GEOMImpl_ITransformOperations::TranslateShape1D(anArgOShape, &aTI);
-                    //anArgOMulti = aTrsfOp->Translate1D(anArgO, , , );
+                    //anArgOMulti = aTrsfOpSv->Translate1D(anArgO, , , );
                   }
                   break;
                 case TRANSLATE_2D:
@@ -1281,6 +1284,9 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesOneLevel (SALOMEDS::Study_ptr     th
   GEOM::GEOM_IGroupOperations_var    aGroupOp = GetIGroupOperations(theStudy->StudyId());
   GEOM::GEOM_ITransformOperations_var aTrsfOp = GetITransformOperations(theStudy->StudyId());
 
+  PortableServer::Servant aServant = _poa->reference_to_servant(aTrsfOp.in());
+  GEOM_ITransformOperations_i*      aTrsfOpSv = dynamic_cast<GEOM_ITransformOperations_i*>(aServant);
+
   // Reconstruct published sub-shapes
   SALOMEDS::ChildIterator_var it = theStudy->NewChildIterator(theOldSO);
 
@@ -1313,7 +1319,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesOneLevel (SALOMEDS::Study_ptr     th
         case GEOM::FSM_MultiTransformed:
           {
             // Only for Multi-transformations
-            GEOM::GEOM_Object_var anArgOTrsf = aTrsfOp->TransformLikeOtherCopy(anOldSubO, theNewO);
+            GEOM::GEOM_Object_var anArgOTrsf = aTrsfOpSv->TransformLikeOtherCopy(anOldSubO, theNewO);
             if (!CORBA::is_nil(anArgOTrsf)) {
               CORBA::String_var anArgOTrsfEntry = anArgOTrsf->GetEntry();
               Handle(GEOM_Object) anArgOTrsfImpl = _impl->GetObject(anArgOTrsf->GetStudyID(), anArgOTrsfEntry);
@@ -1556,6 +1562,9 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
     GEOM::GEOM_IGroupOperations_var    aGroupOp = GetIGroupOperations(theStudy->StudyId());
     GEOM::GEOM_ITransformOperations_var aTrsfOp = GetITransformOperations(theStudy->StudyId());
 
+    PortableServer::Servant aServant = _poa->reference_to_servant(aTrsfOp.in());
+    GEOM_ITransformOperations_i*      aTrsfOpSv = dynamic_cast<GEOM_ITransformOperations_i*>(aServant);
+
     // Reconstruct arguments and tree of sub-shapes of the arguments
     CORBA::String_var anIOR;
     SALOMEDS::StudyBuilder_var aStudyBuilder = theStudy->NewBuilder();
@@ -1586,7 +1595,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
         case GEOM::FSM_MultiTransformed:
           {
             // Only for Multi-transformations
-            GEOM::GEOM_Object_var anArgOTrsf = aTrsfOp->TransformLikeOtherCopy(anArgO, theObject);
+            GEOM::GEOM_Object_var anArgOTrsf = aTrsfOpSv->TransformLikeOtherCopy(anArgO, theObject);
             if (!CORBA::is_nil(anArgOTrsf)) {
               CORBA::String_var anArgOTrsfEntry = anArgOTrsf->GetEntry();
               Handle(GEOM_Object) anArgOTrsfImpl = _impl->GetObject(anArgOTrsf->GetStudyID(), anArgOTrsfEntry);
@@ -1819,6 +1828,9 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapesOneLevel (SALOMEDS::Study_ptr  
   GEOM::GEOM_IGroupOperations_var    aGroupOp = GetIGroupOperations(theStudy->StudyId());
   GEOM::GEOM_ITransformOperations_var aTrsfOp = GetITransformOperations(theStudy->StudyId());
 
+  PortableServer::Servant aServant = _poa->reference_to_servant(aTrsfOp.in());
+  GEOM_ITransformOperations_i*      aTrsfOpSv = dynamic_cast<GEOM_ITransformOperations_i*>(aServant);
+
   // Reconstruct published sub-shapes
   SALOMEDS::ChildIterator_var it = theStudy->NewChildIterator(theOldSO);
 
@@ -1859,7 +1871,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapesOneLevel (SALOMEDS::Study_ptr  
         case GEOM::FSM_MultiTransformed:
           {
             // Only for Multi-transformations
-            GEOM::GEOM_Object_var anArgOTrsf = aTrsfOp->TransformLikeOtherCopy(anOldSubO, theNewO);
+            GEOM::GEOM_Object_var anArgOTrsf = aTrsfOpSv->TransformLikeOtherCopy(anOldSubO, theNewO);
             if (!CORBA::is_nil(anArgOTrsf)) {
               CORBA::String_var anArgOTrsfEntry = anArgOTrsf->GetEntry();
               Handle(GEOM_Object) anArgOTrsfImpl = _impl->GetObject(anArgOTrsf->GetStudyID(), anArgOTrsfEntry);

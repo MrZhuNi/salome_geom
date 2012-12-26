@@ -1096,17 +1096,6 @@ module GEOM
                                    in boolean theReverse);
 
     /*!
-     *  \brief Transform the shape in the same way what was used for the sample shape creation.
-     *  \param theObject The object to be transformed.
-     *  \param theSample The object containing information about required transformation.
-     *  \note Implementation of this method is limited by multi-transformations now.
-     *  \note Internal method.
-     *  \return New GEOM_Object, containing the transformed shape.
-     */
-    GEOM_Object TransformLikeOtherCopy (in GEOM_Object theObject,
-                                        in GEOM_Object theSample);
-
-    /*!
      *  \brief Recompute the shape from its arguments.
      *  \param theObject The object to be recomputed.
      *  \return theObject.
