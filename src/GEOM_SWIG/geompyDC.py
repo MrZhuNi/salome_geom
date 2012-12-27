@@ -409,29 +409,55 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @sa addToStudyAuto()
         def _autoPublish(self, theObj, theName, theDefaultName="noname"):
-            if not theObj: return
-            aName = theName
-            if not aName and self.myMaxNbSubShapesAllowed != 0: aName = theDefaultName
-            if not aName: return
+            # ---
+            def _item_name(_names, _defname, _idx=-1):
+                if not _names: _names = _defname
+                if type(_names) in [types.ListType, types.TupleType]:
+                    if _idx >= 0:
+                        if _idx >= len(_names) or not _names[_idx]:
+                            _name = "%s_%d"%(_defname, _idx+1)
+                        else:
+                            _name = _names[_idx]
+                    else:
+                        # must be wrong  usage
+                        _name = _names[0]
+                    pass
+                else:
+                    if _idx >= 0:
+                        _name = "%s_%d"%(_names, _idx+1)
+                    else:
+                        _name = _names
+                    pass
+                return _name
+            # ---
+            if not theObj:
+                return # null object
+            if not theName and not self.myMaxNbSubShapesAllowed:
+                return # nothing to do: auto-publishing is disabled
+            if not theName and not theDefaultName:
+                return # neither theName nor theDefaultName is given
             import types
             if type(theObj) in [types.ListType, types.TupleType]:
-                # if list of objects is being published
-                idx = 1
+                # list of objects is being published
+                idx = 0
                 for obj in theObj:
+                    name = _item_name(theName, theDefaultName, idx)
                     if obj.IsMainShape():
-                        self.addToStudy(obj, "%s_%d"%(aName, idx))
+                        self.addToStudy(obj, name) # "%s_%d"%(aName, idx)
                     else:
-                        self.addToStudyInFather(obj.GetMainShape(), obj, "%s_%d"%(aName, idx))
+                        self.addToStudyInFather(obj.GetMainShape(), obj, name) # "%s_%d"%(aName, idx)
                         pass
-                    if not theName and idx == self.myMaxNbSubShapesAllowed: break
                     idx = idx+1
+                    if not theName and idx == self.myMaxNbSubShapesAllowed: break
                     pass
                 pass
             else:
+                # single object is published
+                name = _item_name(theName, theDefaultName)
                 if theObj.IsMainShape():
-                    self.addToStudy(theObj, aName)
+                    self.addToStudy(theObj, name)
                 else:
-                    self.addToStudyInFather(theObj.GetMainShape(), theObj, aName)
+                    self.addToStudyInFather(theObj.GetMainShape(), theObj, name)
                     pass
                 pass
             pass
@@ -764,7 +790,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointXYZ(theX, theY, theZ)
             RaiseIfFailed("MakePointXYZ", self.BasicOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "vertex")
             return anObj
 
         ## Create a point, distant from the referenced point
@@ -802,7 +828,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointWithReference(theReference, theX, theY, theZ)
             RaiseIfFailed("MakePointWithReference", self.BasicOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "vertex")
             return anObj
 
         ## Create a point, corresponding to the given parameter on the given curve.
@@ -837,7 +863,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakePointOnCurve", self.BasicOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "vertex")
             return anObj
 
         ## Create a point by projection give coordinates on the given curve
@@ -876,7 +902,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointOnCurveByCoord(theRefCurve, theX, theY, theZ)
             RaiseIfFailed("MakeVertexOnCurveByCoord", self.BasicOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "vertex")
             return anObj
 
         ## Create a point, corresponding to the given length on the given curve.
@@ -912,7 +938,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointOnCurveByLength(theRefCurve, theLength, theStartPoint)
             RaiseIfFailed("MakePointOnCurveByLength", self.BasicOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "vertex")
             return anObj
 
         ## Create a point, corresponding to the given parameters on the
@@ -951,7 +977,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointOnSurface(theRefSurf, theUParameter, theVParameter)
             RaiseIfFailed("MakePointOnSurface", self.BasicOp)
             anObj.SetParameters(Parameters);
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "vertex")
             return anObj
 
         ## Create a point by projection give coordinates on the given surface
@@ -990,7 +1016,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePointOnSurfaceByCoord(theRefSurf, theX, theY, theZ)
             RaiseIfFailed("MakeVertexOnSurfaceByCoord", self.BasicOp)
             anObj.SetParameters(Parameters);
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "vertex")
             return anObj
 
         ## Create a point, which lays on the given face.
@@ -1029,7 +1055,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakePointOnFace(theFace)
             RaiseIfFailed("MakeVertexInsideFace", self.BasicOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "vertex")
             return anObj
 
         ## Create a point on intersection of two lines.
@@ -1057,7 +1083,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakePointOnLinesIntersection(theRefLine1, theRefLine2)
             RaiseIfFailed("MakePointOnLinesIntersection", self.BasicOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "vertex")
             return anObj
 
         ## Create a tangent, corresponding to the given parameter on the given curve.
@@ -1089,7 +1115,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.BasicOp.MakeTangentOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakeTangentOnCurve", self.BasicOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "tangent")
             return anObj
 
         ## Create a tangent plane, corresponding to the given parameter on the given face.
@@ -1125,7 +1151,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.BasicOp.MakeTangentPlaneOnFace(theFace, theParameterU, theParameterV, theTrimSize)
             RaiseIfFailed("MakeTangentPlaneOnFace", self.BasicOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "tangent")
             return anObj
 
         ## Create a vector with the given components.
@@ -1159,7 +1185,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakeVectorDXDYDZ(theDX, theDY, theDZ)
             RaiseIfFailed("MakeVectorDXDYDZ", self.BasicOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "vector")
             return anObj
 
         ## Create a vector between two points.
@@ -1189,7 +1215,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakeVectorTwoPnt(thePnt1, thePnt2)
             RaiseIfFailed("MakeVectorTwoPnt", self.BasicOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "vector")
             return anObj
 
         ## Create a line, passing through the given point
@@ -1221,7 +1247,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakeLine(thePnt, theDir)
             RaiseIfFailed("MakeLine", self.BasicOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "line")
             return anObj
 
         ## Create a line, passing through the given points
@@ -1251,7 +1277,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakeLineTwoPnt(thePnt1, thePnt2)
             RaiseIfFailed("MakeLineTwoPnt", self.BasicOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "line")
             return anObj
 
         ## Create a line on two faces intersection.
@@ -1281,7 +1307,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakeLineTwoFaces(theFace1, theFace2)
             RaiseIfFailed("MakeLineTwoFaces", self.BasicOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "line")
             return anObj
 
         ## Create a plane, passing through the given point
@@ -1317,7 +1343,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePlanePntVec(thePnt, theVec, theTrimSize)
             RaiseIfFailed("MakePlanePntVec", self.BasicOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "plane")
             return anObj
 
         ## Create a plane, passing through the three given points
@@ -1353,7 +1379,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePlaneThreePnt(thePnt1, thePnt2, thePnt3, theTrimSize)
             RaiseIfFailed("MakePlaneThreePnt", self.BasicOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "plane")
             return anObj
 
         ## Create a plane, similar to the existing one, but with another size of representing face.
@@ -1385,7 +1411,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePlaneFace(theFace, theTrimSize)
             RaiseIfFailed("MakePlaneFace", self.BasicOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "plane")
             return anObj
 
         ## Create a plane, passing through the 2 vectors
@@ -1421,7 +1447,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePlane2Vec(theVec1, theVec2, theTrimSize)
             RaiseIfFailed("MakePlane2Vec", self.BasicOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "plane")
             return anObj
 
         ## Create a plane, based on a Local coordinate system.
@@ -1455,7 +1481,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakePlaneLCS(theLCS, theTrimSize, theOrientation)
             RaiseIfFailed("MakePlaneLCS", self.BasicOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "plane")
             return anObj
 
         ## Create a local coordinate system.
@@ -1489,7 +1515,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ)
             RaiseIfFailed("MakeMarker", self.BasicOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "lcs")
             return anObj
 
         ## Create a local coordinate system from shape.
@@ -1516,7 +1542,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.BasicOp.MakeMarkerFromShape(theShape)
             RaiseIfFailed("MakeMarkerFromShape", self.BasicOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "lcs")
             return anObj
 
         ## Create a local coordinate system from point and two vectors.
@@ -1548,7 +1574,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.BasicOp.MakeMarkerPntTwoVec(theOrigin, theXVec, theYVec)
             RaiseIfFailed("MakeMarkerPntTwoVec", self.BasicOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "lcs")
             return anObj
 
         # end of l3_basic_go
@@ -1586,7 +1612,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeArc(thePnt1, thePnt2, thePnt3)
             RaiseIfFailed("MakeArc", self.CurvesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "arc")
             return anObj
 
         ##  Create an arc of circle from a center and 2 points.
@@ -1620,7 +1646,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeArcCenter(thePnt1, thePnt2, thePnt3, theSense)
             RaiseIfFailed("MakeArcCenter", self.CurvesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "arc")
             return anObj
 
         ##  Create an arc of ellipse, of center and two points.
@@ -1652,7 +1678,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeArcOfEllipse(theCenter, thePnt1, thePnt2)
             RaiseIfFailed("MakeArcOfEllipse", self.CurvesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "arc")
             return anObj
 
         ## Create a circle with given center, normal vector and radius.
@@ -1686,7 +1712,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeCirclePntVecR(thePnt, theVec, theR)
             RaiseIfFailed("MakeCirclePntVecR", self.CurvesOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "circle")
             return anObj
 
         ## Create a circle with given radius.
@@ -1715,7 +1741,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.CurvesOp.MakeCirclePntVecR(None, None, theR)
             RaiseIfFailed("MakeCirclePntVecR", self.CurvesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "circle")
             return anObj
 
         ## Create a circle, passing through three given points
@@ -1743,7 +1769,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeCircleThreePnt(thePnt1, thePnt2, thePnt3)
             RaiseIfFailed("MakeCircleThreePnt", self.CurvesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "circle")
             return anObj
 
         ## Create a circle, with given point1 as center,
@@ -1775,7 +1801,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_example6.py
             anObj = self.CurvesOp.MakeCircleCenter2Pnt(thePnt1, thePnt2, thePnt3)
             RaiseIfFailed("MakeCircleCenter2Pnt", self.CurvesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "circle")
             return anObj
 
         ## Create an ellipse with given center, normal vector and radiuses.
@@ -1817,7 +1843,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 pass
             RaiseIfFailed("MakeEllipse", self.CurvesOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "ellipse")
             return anObj
 
         ## Create an ellipse with given radiuses.
@@ -1848,7 +1874,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.CurvesOp.MakeEllipse(None, None, theRMajor, theRMinor)
             RaiseIfFailed("MakeEllipse", self.CurvesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "ellipse")
             return anObj
 
         ## Create a polyline on the set of points.
@@ -1878,7 +1904,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakePolyline(thePoints, theIsClosed)
             RaiseIfFailed("MakePolyline", self.CurvesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "polyline")
             return anObj
 
         ## Create bezier curve on the set of points.
@@ -1908,7 +1934,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeSplineBezier(thePoints, theIsClosed)
             RaiseIfFailed("MakeSplineBezier", self.CurvesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "bezier")
             return anObj
 
         ## Create B-Spline curve on the set of points.
@@ -1942,7 +1968,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeSplineInterpolation(thePoints, theIsClosed, theDoReordering)
             RaiseIfFailed("MakeInterpol", self.CurvesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "bspline")
             return anObj
 
         ## Create B-Spline curve on the set of points.
@@ -1974,7 +2000,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.CurvesOp.MakeSplineInterpolWithTangents(thePoints, theFirstVec, theLastVec)
             RaiseIfFailed("MakeInterpolWithTangents", self.CurvesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "bspline")
             return anObj
 
         ## Creates a curve using the parametric definition of the basic points.
@@ -2022,7 +2048,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
               anObj = self.CurvesOp.MakeCurveParametric(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)   
             RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "curve")
             return anObj
 
         # end of l4_curves
@@ -2142,7 +2168,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeSketcher(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcher", self.CurvesOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "sketch")
             return anObj
 
         ## Create a sketcher (wire or face), following the textual description,
@@ -2179,7 +2205,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeSketcherOnPlane(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcherOnPlane", self.CurvesOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "sketch")
             return anObj
 
         ## Create a sketcher wire, following the numerical description,
@@ -2212,7 +2238,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.Make3DSketcher(theCoordinates)
             RaiseIfFailed("Make3DSketcher", self.CurvesOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "sketch")
             return anObj
 
         ## Obtain a 3D sketcher interface
@@ -2307,7 +2333,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeBoxDXDYDZ(theDX, theDY, theDZ)
             RaiseIfFailed("MakeBoxDXDYDZ", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "box")
             return anObj
 
         ## Create a box with two specified opposite vertices,
@@ -2339,7 +2365,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.PrimOp.MakeBoxTwoPnt(thePnt1, thePnt2)
             RaiseIfFailed("MakeBoxTwoPnt", self.PrimOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "box")
             return anObj
 
         ## Create a face with specified dimensions with edges parallel to coordinate axes.
@@ -2373,7 +2399,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeFaceHW(theH, theW, theOrientation)
             RaiseIfFailed("MakeFaceHW", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "rectangle")
             return anObj
 
         ## Create a face from another plane and two sizes,
@@ -2411,7 +2437,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeFaceObjHW(theObj, theH, theW)
             RaiseIfFailed("MakeFaceObjHW", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "rectangle")
             return anObj
 
         ## Create a disk with given center, normal vector and radius.
@@ -2445,7 +2471,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeDiskPntVecR(thePnt, theVec, theR)
             RaiseIfFailed("MakeDiskPntVecR", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "disk")
             return anObj
 
         ## Create a disk, passing through three given points
@@ -2473,7 +2499,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.PrimOp.MakeDiskThreePnt(thePnt1, thePnt2, thePnt3)
             RaiseIfFailed("MakeDiskThreePnt", self.PrimOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "disk")
             return anObj
 
         ## Create a disk with specified dimensions along OX-OY coordinate axes.
@@ -2508,7 +2534,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeDiskR(theR, theOrientation)
             RaiseIfFailed("MakeDiskR", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "disk")
             return anObj
 
         ## Create a cylinder with given base point, axis, radius and height.
@@ -2544,7 +2570,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeCylinderPntVecRH(thePnt, theAxis, theR, theH)
             RaiseIfFailed("MakeCylinderPntVecRH", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "cylinder")
             return anObj
 
         ## Create a cylinder with given radius and height at
@@ -2580,7 +2606,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeCylinderRH(theR, theH)
             RaiseIfFailed("MakeCylinderRH", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "cylinder")
             return anObj
 
         ## Create a sphere with given center and radius.
@@ -2612,7 +2638,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeSpherePntR(thePnt, theR)
             RaiseIfFailed("MakeSpherePntR", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "sphere")
             return anObj
 
         ## Create a sphere with given center and radius.
@@ -2672,7 +2698,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeSphereR(theR)
             RaiseIfFailed("MakeSphereR", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "sphere")
             return anObj
 
         ## Create a cone with given base point, axis, height and radiuses.
@@ -2716,7 +2742,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeConePntVecR1R2H(thePnt, theAxis, theR1, theR2, theH)
             RaiseIfFailed("MakeConePntVecR1R2H", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "cone")
             return anObj
 
         ## Create a cone with given height and radiuses at
@@ -2760,7 +2786,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeConeR1R2H(theR1, theR2, theH)
             RaiseIfFailed("MakeConeR1R2H", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "cone")
             return anObj
 
         ## Create a torus with given center, normal vector and radiuses.
@@ -2796,7 +2822,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeTorusPntVecRR(thePnt, theVec, theRMajor, theRMinor)
             RaiseIfFailed("MakeTorusPntVecRR", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "torus")
             return anObj
 
         ## Create a torus with given radiuses at the origin of coordinate system.
@@ -2828,7 +2854,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeTorusRR(theRMajor, theRMinor)
             RaiseIfFailed("MakeTorusRR", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "torus")
             return anObj
 
         # end of l3_3d_primitives
@@ -2877,7 +2903,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 anObj = self.PrimOp.MakePrismTwoPnt(theBase, thePoint1, thePoint2)
             RaiseIfFailed("MakePrismTwoPnt", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "prism")
             return anObj
 
         ## Create a shape by extrusion of the base shape along a
@@ -2911,7 +2937,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.PrimOp.MakePrismTwoPnt2Ways(theBase, thePoint1, thePoint2)
             RaiseIfFailed("MakePrismTwoPnt", self.PrimOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "prism")
             return anObj
 
         ## Create a shape by extrusion of the base shape along the vector,
@@ -2959,7 +2985,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 anObj = self.PrimOp.MakePrismVecH(theBase, theVec, theH)
             RaiseIfFailed("MakePrismVecH", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "prism")
             return anObj
 
         ## Create a shape by extrusion of the base shape along the vector,
@@ -2997,7 +3023,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakePrismVecH2Ways(theBase, theVec, theH)
             RaiseIfFailed("MakePrismVecH2Ways", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "prism")
             return anObj
 
         ## Create a shape by extrusion of the base shape along the dx, dy, dz direction
@@ -3039,7 +3065,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 anObj = self.PrimOp.MakePrismDXDYDZ(theBase, theDX, theDY, theDZ)
             RaiseIfFailed("MakePrismDXDYDZ", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "prism")
             return anObj
 
         ## Create a shape by extrusion of the base shape along the dx, dy, dz direction
@@ -3075,7 +3101,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakePrismDXDYDZ2Ways(theBase, theDX, theDY, theDZ)
             RaiseIfFailed("MakePrismDXDYDZ2Ways", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "prism")
             return anObj
 
         ## Create a shape by revolution of the base shape around the axis
@@ -3113,7 +3139,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeRevolutionAxisAngle(theBase, theAxis, theAngle)
             RaiseIfFailed("MakeRevolutionAxisAngle", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "revolution")
             return anObj
 
         ## Create a shape by revolution of the base shape around the axis
@@ -3152,7 +3178,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeRevolutionAxisAngle2Ways(theBase, theAxis, theAngle)
             RaiseIfFailed("MakeRevolutionAxisAngle2Ways", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "revolution")
             return anObj
 
         ## Create a filling from the given compound of contours.
@@ -3210,7 +3236,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                             theMethod, isApprox)
             RaiseIfFailed("MakeFilling", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "filling")
             return anObj
 
 
@@ -3253,7 +3279,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                             0, theTol3D, 0, GEOM.FOM_Default, True)
             RaiseIfFailed("MakeFillingNew", self.PrimOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "filling")
             return anObj
 
         ## Create a shell or solid passing through set of sections.Sections should be wires,edges or vertices.
@@ -3287,7 +3313,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.PrimOp.MakeThruSections(theSeqSections,theModeSolid,thePreci,theRuled)
             RaiseIfFailed("MakeThruSections", self.PrimOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "filling")
             return anObj
 
         ## Create a shape by extrusion of the base shape along
@@ -3319,7 +3345,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.PrimOp.MakePipe(theBase, thePath)
             RaiseIfFailed("MakePipe", self.PrimOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "pipe")
             return anObj
 
         ## Create a shape by extrusion of the profile shape along
@@ -3370,7 +3396,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                               theLocations, thePath,
                                                               theWithContact, theWithCorrection)
             RaiseIfFailed("MakePipeWithDifferentSections", self.PrimOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "pipe")
             return anObj
 
         ## Create a shape by extrusion of the profile shape along
@@ -3439,7 +3465,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                           theLocations, thePath,
                                                           theWithContact, theWithCorrection)
             RaiseIfFailed("MakePipeWithShellSections", self.PrimOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "pipe")
             return anObj
 
         ## Create a shape by extrusion of the profile shape along
@@ -3484,7 +3510,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             resc = self.MakeCompound(res)
             #resc = self.MakeSewing(res, 0.001)
             #print "resc: ",resc
-            self._autoPublish(resc, theName)
+            self._autoPublish(resc, theName, "pipe")
             return resc
 
         ## Create solids between given sections
@@ -3513,7 +3539,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.PrimOp.MakePipeShellsWithoutPath(theSeqBases, theLocations)
             RaiseIfFailed("MakePipeShellsWithoutPath", self.PrimOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "pipe")
             return anObj
 
         ## Create a shape by extrusion of the base shape along
@@ -3553,7 +3579,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.PrimOp.MakePipeBiNormalAlongVector(theBase, thePath, theVec)
             RaiseIfFailed("MakePipeBiNormalAlongVector", self.PrimOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "pipe")
             return anObj
 
         ## Build a middle path of a pipe-like shape.
@@ -3597,7 +3623,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.PrimOp.RestorePath(theShape, theBase1, theBase2)
             RaiseIfFailed("RestorePath", self.PrimOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "path")
             return anObj
 
         ## Build a middle path of a pipe-like shape.
@@ -3641,7 +3667,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.PrimOp.RestorePathEdges(theShape, listEdges1, listEdges2)
             RaiseIfFailed("RestorePath", self.PrimOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "path")
             return anObj
 
         # end of l3_complex
@@ -3677,7 +3703,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeEdge(thePnt1, thePnt2)
             RaiseIfFailed("MakeEdge", self.ShapesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "edge")
             return anObj
 
         ## Create a new edge, corresponding to the given length on the given curve.
@@ -3715,7 +3741,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.ShapesOp.MakeEdgeOnCurveByLength(theRefCurve, theLength, theStartPoint)
             RaiseIfFailed("MakeEdgeOnCurveByLength", self.ShapesOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "edge")
             return anObj
 
         ## Create an edge from specified wire.
@@ -3747,7 +3773,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeEdgeWire(theWire, theLinearTolerance, theAngularTolerance)
             RaiseIfFailed("MakeEdgeWire", self.ShapesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "edge")
             return anObj
 
         ## Create a wire from the set of edges and wires.
@@ -3779,7 +3805,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeWire(theEdgesAndWires, theTolerance)
             RaiseIfFailed("MakeWire", self.ShapesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "wire")
             return anObj
 
         ## Create a face on the given wire.
@@ -3820,7 +3846,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
             else:
                 RaiseIfFailed("MakeFace", self.ShapesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "face")
             return anObj
 
         ## Create a face on the given wires set.
@@ -3861,7 +3887,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
             else:
                 RaiseIfFailed("MakeFaceWires", self.ShapesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "face")
             return anObj
 
         ## See MakeFaceWires() method for details.
@@ -3902,7 +3928,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeShell(theFacesAndShells)
             RaiseIfFailed("MakeShell", self.ShapesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "shell")
             return anObj
 
         ## Create a solid, bounded by the given shells.
@@ -3936,7 +3962,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                     raise RuntimeError, "MakeSolidShells : Unable to create solid from unclosed shape"
             anObj = self.ShapesOp.MakeSolidShells(theShells)
             RaiseIfFailed("MakeSolidShells", self.ShapesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "solid")
             return anObj
 
         ## Create a compound of the given shapes.
@@ -3964,7 +3990,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeCompound(theShapes)
             RaiseIfFailed("MakeCompound", self.ShapesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "compound")
             return anObj
 
         # end of l3_advanced
@@ -4086,7 +4112,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.ChangeOrientation(theShape)
             RaiseIfFailed("ChangeOrientation", self.ShapesOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "reversed")
             return anObj
 
         ## See ChangeOrientation() method for details.
@@ -5393,7 +5419,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 Parameters = ":" + Parameters
                 pass
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "healed")
             return anObj
 
         ## Remove faces from the given object (shape).
@@ -5425,7 +5451,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestHealing.py
             anObj = self.HealOp.SuppressFaces(theObject, theFaces)
             RaiseIfFailed("SuppressFaces", self.HealOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "suppressFaces")
             return anObj
 
         ## Sewing of some shapes into single shape.
@@ -5485,7 +5511,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.HealOp.Sew(theObject, theTolerance)
             RaiseIfFailed("Sew", self.HealOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "sewed")
             return anObj
 
         ## Remove internal wires and edges from the given object (face).
@@ -5517,7 +5543,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestHealing.py
             anObj = self.HealOp.RemoveIntWires(theObject, theWires)
             RaiseIfFailed("RemoveIntWires", self.HealOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "suppressWires")
             return anObj
 
         ## Remove internal closed contours (holes) from the given object.
@@ -5549,7 +5575,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestHealing.py
             anObj = self.HealOp.FillHoles(theObject, theWires)
             RaiseIfFailed("FillHoles", self.HealOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "suppressHoles")
             return anObj
 
         ## Close an open wire.
@@ -5585,7 +5611,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestHealing.py
             anObj = self.HealOp.CloseContour(theObject, theWires, isCommonVertex)
             RaiseIfFailed("CloseContour", self.HealOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "closeContour")
             return anObj
 
         ## Addition of a point to a given edge object.
@@ -5627,7 +5653,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.HealOp.DivideEdge(theObject, theEdgeIndex, theValue, isByParameter)
             RaiseIfFailed("DivideEdge", self.HealOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "divideEdge")
             return anObj
 
         ## Suppress the vertices in the wire in case if adjacent edges are C1 continuous.
@@ -5658,7 +5684,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.HealOp.FuseCollinearEdgesWithinWire(theWire, theVertices)
             RaiseIfFailed("FuseCollinearEdgesWithinWire", self.HealOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "fuseEdges")
             return anObj
 
         ## Change orientation of the given object. Updates given shape.
@@ -5704,7 +5730,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.HealOp.ChangeOrientationCopy(theObject)
             RaiseIfFailed("ChangeOrientationCopy", self.HealOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "reversed")
             return anObj
 
         ## Try to limit tolerance of the given object by value \a theTolerance.
@@ -5733,7 +5759,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             anObj = self.HealOp.LimitTolerance(theObject, theTolerance)
             RaiseIfFailed("LimitTolerance", self.HealOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "limitTolerance")
             return anObj
 
         ## Get a list of wires (wrapped in GEOM.GEOM_Object-s),
@@ -5798,7 +5824,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if anObj is None:
                 raise RuntimeError, "MakeGlueFaces : " + self.ShapesOp.GetErrorCode()
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "glueFaces")
             return anObj
 
         ## Find coincident faces in theShape for possible gluing.
@@ -5871,7 +5897,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                       doKeepNonSolids, doGlueAllEdges)
             if anObj is None:
                 raise RuntimeError, "MakeGlueFacesByList : " + self.ShapesOp.GetErrorCode()
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "glueFaces")
             return anObj
 
         ## Replace coincident edges in theShape by one edge.
@@ -5903,7 +5929,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if anObj is None:
                 raise RuntimeError, "MakeGlueEdges : " + self.ShapesOp.GetErrorCode()
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "glueEdges")
             return anObj
 
         ## Find coincident edges in theShape for possible gluing.
@@ -5964,7 +5990,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.ShapesOp.MakeGlueEdgesByList(theShape, theTolerance, theEdges)
             if anObj is None:
                 raise RuntimeError, "MakeGlueEdgesByList : " + self.ShapesOp.GetErrorCode()
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "glueEdges")
             return anObj
 
         # end of l3_healing
@@ -6008,7 +6034,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BoolOp.MakeBoolean(theShape1, theShape2, theOperation)
             RaiseIfFailed("MakeBoolean", self.BoolOp)
-            self._autoPublish(anObj, theName)
+            def_names = { 1: "common", 2: "cut", 3: "fuse", 4: "section" }
+            self._autoPublish(anObj, theName, def_names[theOperation])
             return anObj
 
         ## Perform Common boolean operation on two given shapes.
@@ -6218,7 +6245,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                               Limit, RemoveWebs, ListMaterials,
                                               KeepNonlimitShapes);
             RaiseIfFailed("MakePartition", self.BoolOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "partition")
             return anObj
 
         ## Perform partition operation.
@@ -6266,7 +6293,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                                      Limit, RemoveWebs, ListMaterials,
                                                                      KeepNonlimitShapes);
             RaiseIfFailed("MakePartitionNonSelfIntersectedShape", self.BoolOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "partition")
             return anObj
 
         ## See method MakePartition() for more information.
@@ -6314,7 +6341,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BoolOp.MakeHalfPartition(theShape, thePlane)
             RaiseIfFailed("MakeHalfPartition", self.BoolOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "partition")
             return anObj
 
         # end of l3_basic_op
@@ -6384,7 +6411,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.TranslateTwoPointsCopy(theObject, thePoint1, thePoint2)
             RaiseIfFailed("TranslateTwoPointsCopy", self.TrsfOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "translated")
             return anObj
 
         ## Translate the given object along the vector, specified by its components.
@@ -6449,7 +6476,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.TranslateDXDYDZCopy(theObject, theDX, theDY, theDZ)
             anObj.SetParameters(Parameters)
             RaiseIfFailed("TranslateDXDYDZ", self.TrsfOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "translated")
             return anObj
 
         ## Translate the given object along the given vector.
@@ -6507,7 +6534,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.TranslateVectorCopy(theObject, theVector)
             RaiseIfFailed("TranslateVectorCopy", self.TrsfOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "translated")
             return anObj
 
         ## Translate the given object along the given vector on given distance.
@@ -6573,7 +6600,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.TranslateVectorDistance(theObject, theVector, theDistance, 1)
             RaiseIfFailed("TranslateVectorDistance", self.TrsfOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "translated")
             return anObj
 
         ## Rotate the given object around the given axis on the given angle.
@@ -6653,7 +6680,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.RotateCopy(theObject, theAxis, theAngle)
             RaiseIfFailed("RotateCopy", self.TrsfOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "rotated")
             return anObj
 
         ## Rotate given object around vector perpendicular to plane
@@ -6721,7 +6748,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.RotateThreePointsCopy(theObject, theCentPoint, thePoint1, thePoint2)
             RaiseIfFailed("RotateThreePointsCopy", self.TrsfOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "rotated")
             return anObj
 
         ## Scale the given object by the specified factor.
@@ -6790,7 +6817,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.ScaleShapeCopy(theObject, thePoint, theFactor)
             RaiseIfFailed("ScaleShapeCopy", self.TrsfOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "scaled")
             return anObj
 
         ## Scale the given object by different factors along coordinate axes.
@@ -6864,7 +6891,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                         theFactorX, theFactorY, theFactorZ)
             RaiseIfFailed("MakeScaleAlongAxes", self.TrsfOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "scaled")
             return anObj
 
         ## Mirror an object relatively the given plane.
@@ -6921,7 +6948,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.MirrorPlaneCopy(theObject, thePlane)
             RaiseIfFailed("MirrorPlaneCopy", self.TrsfOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "mirrored")
             return anObj
 
         ## Mirror an object relatively the given axis.
@@ -6978,7 +7005,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.MirrorAxisCopy(theObject, theAxis)
             RaiseIfFailed("MirrorAxisCopy", self.TrsfOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "mirrored")
             return anObj
 
         ## Mirror an object relatively the given point.
@@ -7037,7 +7064,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.MirrorPointCopy(theObject, thePoint)
             RaiseIfFailed("MirrorPointCopy", self.TrsfOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "mirrored")
             return anObj
 
         ## Modify the location of the given object.
@@ -7122,7 +7149,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.PositionShapeCopy(theObject, theStartLCS, theEndLCS)
             RaiseIfFailed("PositionShapeCopy", self.TrsfOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "displaced")
             return anObj
 
         ## Modify the Location of the given object by Path.
@@ -7187,7 +7214,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.PositionAlongPath(theObject, thePath, theDistance, 1, theReverse)
             RaiseIfFailed("PositionAlongPath", self.TrsfOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "displaced")
             return anObj
 
         ## Offset given shape.
@@ -7252,7 +7279,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.OffsetShapeCopy(theObject, theOffset)
             RaiseIfFailed("OffsetShapeCopy", self.TrsfOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "offset")
             return anObj
 
         ## Create new object as projection of the given one on a 2D surface.
@@ -7282,7 +7309,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.TrsfOp.ProjectShapeCopy(theSource, theTarget)
             RaiseIfFailed("ProjectShapeCopy", self.TrsfOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "projection")
             return anObj
 
         # -----------------------------------------------------------------------------
@@ -7327,7 +7354,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.MultiTranslate1D(theObject, theVector, theStep, theNbTimes)
             RaiseIfFailed("MultiTranslate1D", self.TrsfOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "multitranslation")
             return anObj
 
         ## Conseqently apply two specified translations to theObject specified number of times.
@@ -7376,7 +7403,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                  theVector2, theStep2, theNbTimes2)
             RaiseIfFailed("MultiTranslate2D", self.TrsfOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "multitranslation")
             return anObj
 
         ## Rotate the given object around the given axis a given number times.
@@ -7417,7 +7444,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.MultiRotate1D(theObject, theAxis, theNbTimes)
             RaiseIfFailed("MultiRotate1D", self.TrsfOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "multirotation")
             return anObj
 
         ## Rotate the given object around the
@@ -7470,7 +7497,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.MultiRotate2D(theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2)
             RaiseIfFailed("MultiRotate2D", self.TrsfOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "multirotation")
             return anObj
 
         ## The same, as MultiRotate1D(), but axis is given by direction and point
@@ -7548,7 +7575,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeFilletAll(theShape, theR)
             RaiseIfFailed("MakeFilletAll", self.LocalOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "fillet")
             return anObj
 
         ## Perform a fillet on the specified edges/faces of the given shape
@@ -7604,7 +7631,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 anObj = self.LocalOp.MakeFilletFaces(theShape, theR, theListShapes)
                 RaiseIfFailed("MakeFilletFaces", self.LocalOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "fillet")
             return anObj
 
         ## The same that MakeFillet() but with two Fillet Radius R1 and R2
@@ -7631,7 +7658,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 anObj = self.LocalOp.MakeFilletFacesR1R2(theShape, theR1, theR2, theListShapes)
                 RaiseIfFailed("MakeFilletFacesR1R2", self.LocalOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "fillet")
             return anObj
 
         ## Perform a fillet on the specified edges of the given shape
@@ -7690,7 +7717,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeFillet1D(theShape, theR, theListOfVertexes, doIgnoreSecantVertices)
             RaiseIfFailed("MakeFillet1D", self.LocalOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "fillet")
             return anObj
 
         ## Perform a fillet at the specified vertices of the given face/shell.
@@ -7732,7 +7759,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeFillet2D(theShape, theR, theListOfVertexes)
             RaiseIfFailed("MakeFillet2D", self.LocalOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "fillet")
             return anObj
 
         ## Perform a symmetric chamfer on all edges of the given shape.
@@ -7768,7 +7795,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferAll(theShape, theD)
             RaiseIfFailed("MakeChamferAll", self.LocalOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "chamfer")
             return anObj
 
         ## Perform a chamfer on edges, common to the specified faces,
@@ -7817,7 +7844,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferEdge(theShape, theD1, theD2, theFace1, theFace2)
             RaiseIfFailed("MakeChamferEdge", self.LocalOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "chamfer")
             return anObj
 
         ## Perform a chamfer on edges
@@ -7867,7 +7894,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferEdgeAD(theShape, theD, theAngle, theFace1, theFace2)
             RaiseIfFailed("MakeChamferEdgeAD", self.LocalOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "chamfer")
             return anObj
 
         ## Perform a chamfer on all edges of the specified faces,
@@ -7913,7 +7940,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferFaces(theShape, theD1, theD2, theFaces)
             RaiseIfFailed("MakeChamferFaces", self.LocalOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "chamfer")
             return anObj
 
         ## The Same that MakeChamferFaces() but with params theD is chamfer lenght and
@@ -7934,7 +7961,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferFacesAD(theShape, theD, theAngle, theFaces)
             RaiseIfFailed("MakeChamferFacesAD", self.LocalOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "chamfer")
             return anObj
 
         ## Perform a chamfer on edges,
@@ -7969,7 +7996,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferEdges(theShape, theD1, theD2, theEdges)
             RaiseIfFailed("MakeChamferEdges", self.LocalOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "chamfer")
             return anObj
 
         ## The Same that MakeChamferEdges() but with params theD is chamfer lenght and
@@ -7988,7 +8015,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeChamferEdgesAD(theShape, theD, theAngle, theEdges)
             RaiseIfFailed("MakeChamferEdgesAD", self.LocalOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "chamfer")
             return anObj
 
         ## @sa MakeChamferEdge(), MakeChamferFaces()
@@ -8041,7 +8068,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeDraftPrism(theInit, theBase, theH, theAngle, False)
             RaiseIfFailed("MakeExtrudedBoss", self.PrimOp)
             #anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "extrudedCut")
             return anObj   
             
         ## Add material to a solid by extrusion of the base shape on the given distance.
@@ -8078,7 +8105,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeDraftPrism(theInit, theBase, theH, theAngle, True)
             RaiseIfFailed("MakeExtrudedBoss", self.PrimOp)
             #anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "extrudedBoss")
             return anObj   
 
         # end of l3_local
@@ -8125,7 +8152,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeArchimede(theShape, theWeight, theWaterDensity, theMeshDeflection)
             RaiseIfFailed("MakeArchimede", self.LocalOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "archimede")
             return anObj
 
         # end of l3_basic_op
@@ -8229,7 +8256,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             anObj = self.MeasuOp.MakeBoundingBox(theShape)
             RaiseIfFailed("MakeBoundingBox", self.MeasuOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "bndbox")
             return anObj
 
         ## Get inertia matrix and moments of inertia of theShape.
@@ -8686,7 +8713,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             anObj = self.MeasuOp.GetCentreOfMass(theShape)
             RaiseIfFailed("GetCentreOfMass", self.MeasuOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "centerOfMass")
             return anObj
 
         ## Get a vertex sub-shape by index depended with orientation.
@@ -8716,7 +8743,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             anObj = self.MeasuOp.GetVertexByIndex(theShape, theIndex)
             RaiseIfFailed("GetVertexByIndex", self.MeasuOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "vertex")
             return anObj
 
         ## Get the first vertex of wire/edge depended orientation.
@@ -8805,7 +8832,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             anObj = self.MeasuOp.GetNormal(theFace, theOptionalPoint)
             RaiseIfFailed("GetNormal", self.MeasuOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "normal")
             return anObj
 
         ## Check a topology of the given shape.
@@ -8990,7 +9017,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.InsertOp.ImportFile(theFileName, theFormatName)
             RaiseIfFailed("ImportFile", self.InsertOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "imported")
             return anObj
 
         ## Deprecated analog of ImportFile()
@@ -9168,7 +9195,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.InsertOp.RestoreShape(theStream)
             RaiseIfFailed("RestoreShape", self.InsertOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "restored")
             return anObj
 
         ## Export the given shape into a file with given name.
@@ -9263,7 +9290,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.MakeQuad(E1, E2, E3, E4)
             RaiseIfFailed("MakeQuad", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "quad")
             return anObj
 
         ## Create a quadrangle face on two edges.
@@ -9305,7 +9332,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.MakeQuad2Edges(E1, E2)
             RaiseIfFailed("MakeQuad2Edges", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "quad")
             return anObj
 
         ## Create a quadrangle face with specified corners.
@@ -9345,7 +9372,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.MakeQuad4Vertices(V1, V2, V3, V4)
             RaiseIfFailed("MakeQuad4Vertices", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "quad")
             return anObj
 
         ## Create a hexahedral solid, bounded by the six given faces. Order of
@@ -9379,7 +9406,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.MakeHexa(F1, F2, F3, F4, F5, F6)
             RaiseIfFailed("MakeHexa", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "hexa")
             return anObj
 
         ## Create a hexahedral solid between two given faces.
@@ -9413,7 +9440,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.MakeHexa2Faces(F1, F2)
             RaiseIfFailed("MakeHexa2Faces", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "hexa")
             return anObj
 
         # end of l3_blocks
@@ -9456,7 +9483,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetPoint(theShape, theX, theY, theZ, theEpsilon)
             RaiseIfFailed("GetPoint", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "vertex")
             return anObj
 
         ## Find a vertex of the given shape, which has minimal distance to the given point.
@@ -9490,7 +9517,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetVertexNearPoint(theShape, thePoint)
             RaiseIfFailed("GetVertexNearPoint", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "vertex")
             return anObj
 
         ## Get an edge, found in the given shape by two given vertices.
@@ -9520,7 +9547,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetEdge(theShape, thePoint1, thePoint2)
             RaiseIfFailed("GetEdge", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "edge")
             return anObj
 
         ## Find an edge of the given shape, which has minimal distance to the given point.
@@ -9550,7 +9577,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetEdgeNearPoint(theShape, thePoint)
             RaiseIfFailed("GetEdgeNearPoint", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "edge")
             return anObj
 
         ## Returns a face, found in the given shape by four given corner vertices.
@@ -9580,7 +9607,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetFaceByPoints(theShape, thePoint1, thePoint2, thePoint3, thePoint4)
             RaiseIfFailed("GetFaceByPoints", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "face")
             return anObj
 
         ## Get a face of block, found in the given shape by two given edges.
@@ -9610,7 +9637,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetFaceByEdges(theShape, theEdge1, theEdge2)
             RaiseIfFailed("GetFaceByEdges", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "face")
             return anObj
 
         ## Find a face, opposite to the given one in the given block.
@@ -9640,7 +9667,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetOppositeFace(theBlock, theFace)
             RaiseIfFailed("GetOppositeFace", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "face")
             return anObj
 
         ## Find a face of the given shape, which has minimal distance to the given point.
@@ -9670,7 +9697,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetFaceNearPoint(theShape, thePoint)
             RaiseIfFailed("GetFaceNearPoint", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "face")
             return anObj
 
         ## Find a face of block, whose outside normale has minimal angle with the given vector.
@@ -9700,7 +9727,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetFaceByNormale(theBlock, theVector)
             RaiseIfFailed("GetFaceByNormale", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "face")
             return anObj
 
         ## Find all sub-shapes of type \a theShapeType of the given shape,
@@ -9740,7 +9767,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetShapesNearPoint(theShape, thePoint, theShapeType, theTolerance)
             RaiseIfFailed("GetShapesNearPoint", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "group")
             return anObj
 
         # end of l3_blocks_op
@@ -9852,7 +9879,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if doUnionFaces is True: nbFacesOptimum = 0 # 0 means unite faces
             anObj = self.BlocksOp.RemoveExtraEdges(theShape, nbFacesOptimum)
             RaiseIfFailed("RemoveExtraEdges", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "removeExtraEdges")
             return anObj
 
         ## Check, if the given shape is a blocks compound.
@@ -9886,7 +9913,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.CheckAndImprove(theShape)
             RaiseIfFailed("CheckAndImprove", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "improved")
             return anObj
 
         # end of l4_blocks_measure
@@ -9957,7 +9984,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             anObj = self.BlocksOp.GetBlockNearPoint(theCompound, thePoint)
             RaiseIfFailed("GetBlockNearPoint", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "block")
             return anObj
 
         ## Find block, containing all the elements, passed as the parts, or maximum quantity of them.
@@ -9987,7 +10014,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.BlocksOp.GetBlockByParts(theCompound, theParts)
             RaiseIfFailed("GetBlockByParts", self.BlocksOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "block")
             return anObj
 
         ## Return all blocks, containing all the elements, passed as the parts.
@@ -10052,7 +10079,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BlocksOp.MakeMultiTransformation1D(Block, DirFace1, DirFace2, NbTimes)
             RaiseIfFailed("MakeMultiTransformation1D", self.BlocksOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "transformed")
             return anObj
 
         ## Multi-transformate block and glue the result.
@@ -10091,7 +10118,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                             DirFace1V, DirFace2V, NbTimesV)
             RaiseIfFailed("MakeMultiTransformation2D", self.BlocksOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "transformed")
             return anObj
 
         ## Build all possible propagation groups.
@@ -10159,7 +10186,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.GroupOp.CreateGroup(theMainShape, theShapeType)
             RaiseIfFailed("CreateGroup", self.GroupOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "group")
             return anObj
 
         ## Adds a sub-object with ID theSubShapeId to the group
@@ -10311,7 +10338,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aGroup = self.GroupOp.UnionGroups(theGroup1, theGroup2)
             RaiseIfFailed("UnionGroups", self.GroupOp)
-            self._autoPublish(aGroup, theName)
+            self._autoPublish(aGroup, theName, "group")
             return aGroup
 
         ## Intersection of two groups.
@@ -10343,7 +10370,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aGroup = self.GroupOp.IntersectGroups(theGroup1, theGroup2)
             RaiseIfFailed("IntersectGroups", self.GroupOp)
-            self._autoPublish(aGroup, theName)
+            self._autoPublish(aGroup, theName, "group")
             return aGroup
 
         ## Cut of two groups.
@@ -10377,7 +10404,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aGroup = self.GroupOp.CutGroups(theGroup1, theGroup2)
             RaiseIfFailed("CutGroups", self.GroupOp)
-            self._autoPublish(aGroup, theName)
+            self._autoPublish(aGroup, theName, "group")
             return aGroup
 
         ## Union of list of groups.
@@ -10409,7 +10436,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aGroup = self.GroupOp.UnionListOfGroups(theGList)
             RaiseIfFailed("UnionListOfGroups", self.GroupOp)
-            self._autoPublish(aGroup, theName)
+            self._autoPublish(aGroup, theName, "group")
             return aGroup
 
         ## Cut of lists of groups.
@@ -10445,7 +10472,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aGroup = self.GroupOp.IntersectListOfGroups(theGList)
             RaiseIfFailed("IntersectListOfGroups", self.GroupOp)
-            self._autoPublish(aGroup, theName)
+            self._autoPublish(aGroup, theName, "group")
             return aGroup
 
         ## Cut of lists of groups.
@@ -10481,7 +10508,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aGroup = self.GroupOp.CutListOfGroups(theGList1, theGList2)
             RaiseIfFailed("CutListOfGroups", self.GroupOp)
-            self._autoPublish(aGroup, theName)
+            self._autoPublish(aGroup, theName, "group")
             return aGroup
 
         ## Returns a list of sub-objects ID stored in the group
@@ -10977,7 +11004,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.AdvOp.MakeDividedDisk(theR, 67.0, theOrientation, thePattern)
             RaiseIfFailed("MakeDividedDisk", self.AdvOp)
             if Parameters: anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "dividedDisk")
             return anObj
             
         ## This function allows creating a disk already divided into blocks. It
@@ -11014,7 +11041,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.AdvOp.MakeDividedDiskPntVecR(theCenter, theVector, theRadius, 67.0, thePattern)
             RaiseIfFailed("MakeDividedDiskPntVecR", self.AdvOp)
             if Parameters: anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "dividedDisk")
             return anObj
 
         ## Builds a cylinder prepared for hexa meshes
@@ -11047,7 +11074,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.AdvOp.MakeDividedCylinder(theR, theH, thePattern)
             RaiseIfFailed("MakeDividedCylinder", self.AdvOp)
             if Parameters: anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "dividedCylinder")
             return anObj
 
         #@@ insert new functions before this line @@ do not remove this line @@#
@@ -11084,7 +11111,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.InsertOp.MakeCopy(theOriginal)
             RaiseIfFailed("MakeCopy", self.InsertOp)
-            self._autoPublish(anObj, theName)
+            self._autoPublish(anObj, theName, "copy")
             return anObj
 
         ## Add Path to load python scripts from
