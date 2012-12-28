@@ -172,7 +172,8 @@ private:
   TCollection_AsciiString  myName;
   bool                     myDisplayVectors;
   Standard_Boolean         myTopLevel;
-  Graphic3d_MaterialAspect myCurrentMaterial;
+  Graphic3d_MaterialAspect myCurrentFrontMaterial;
+  Graphic3d_MaterialAspect myCurrentBackMaterial;
   Standard_Integer         myPrevDisplayMode;
 
   static TopLevelDispMode myTopLevelDm;

@@ -58,6 +58,7 @@
     <parameter name="marker_scale"        value="1"  />
     <parameter name="geom_preview"        value="false"  />
     <parameter name="material"            value="Plastic" />
+    <parameter name="predef_materials"    value="true" />
     <parameter name="edge_width"          value="1" />
     <parameter name="isolines_width"      value="1" />
     <parameter name="preview_edge_width"  value="1" />

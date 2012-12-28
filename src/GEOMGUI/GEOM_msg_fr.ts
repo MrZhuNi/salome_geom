@@ -5558,10 +5558,6 @@ Voulez-vous continuer?</translation>
         <translation>Emissive</translation>
     </message>
     <message>
-        <source>ENABLED</source>
-        <translation>Activée</translation>
-    </message>
-    <message>
         <source>SHININESS</source>
         <translation>Brillance:</translation>
     </message>

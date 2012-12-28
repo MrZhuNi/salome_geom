@@ -111,7 +111,7 @@ public:
   void                        EmitSignalDefaultStepValueChanged( double newVal );
 
   // Process action
-  void                        OnGUIEvent( int id );
+  void                        OnGUIEvent( int id, const QVariant& theParam =  QVariant( QVariant::Invalid ) );
 
   // The Working Plane management
   void                        SetWorkingPlane( gp_Ax3 wp ) { myWorkingPlane = wp;   }
@@ -151,6 +151,7 @@ private slots:
   void                        OnGUIEvent();
   void                        onWindowActivated( SUIT_ViewWindow* );
   void                        onViewAboutToShow();
+  void                        OnSetMaterial( const QString& );
 
 signals :
   void                        SignalDeactivateActiveDialog();

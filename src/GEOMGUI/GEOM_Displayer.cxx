@@ -984,7 +984,15 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           aStudy->setObjectProperty( aMgrId, anIO->getEntry(), MATERIAL_PROP, material.toProperties() );
 
           // Set material for the selected shape
-	        AISShape->SetMaterial( material.getMaterialOCCAspect() );
+          // Set front material for the selected shape
+          AISShape->SetCurrentFacingModel(Aspect_TOFM_FRONT_SIDE);
+	        AISShape->SetMaterial( material.getMaterialOCCAspect( true ) );
+          // Set back material for the selected shape
+	        AISShape->SetCurrentFacingModel(Aspect_TOFM_BACK_SIDE);
+	        AISShape->SetMaterial( material.getMaterialOCCAspect( false ) );
+	        // Return to the default facing mode
+	        AISShape->SetCurrentFacingModel(Aspect_TOFM_BOTH_SIDE);
+
 	        if(HasWidth())
 	          aStudy->setObjectProperty( aMgrId, anIO->getEntry(), EDGE_WIDTH_PROP, GetWidth() );
 	        if(HasIsosWidth())
@@ -1191,7 +1199,8 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
         aStudy->setObjectProperty( aMgrId, anEntry, MATERIAL_PROP, material.toProperties() );	  
         // Set the same front and back materials for the selected shape
         std::vector<vtkProperty*> aProps;
-        aProps.push_back( material.getMaterialVTKProperty() );
+        aProps.push_back( material.getMaterialVTKProperty( true ) );
+        aProps.push_back( material.getMaterialVTKProperty( false) );
         aGeomGActor->SetMaterial(aProps);
       	  
         vtkFloatingPointType aColor[3] = {1.,0.,0.};
@@ -1240,7 +1249,8 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 	         aStudy->setObjectProperty( aMgrId, anEntry, MATERIAL_PROP, material.toProperties() );
 	         // Set material for the selected shape
 	         std::vector<vtkProperty*> aProps;
-	         aProps.push_back( material.getMaterialVTKProperty() );
+	         aProps.push_back( material.getMaterialVTKProperty( true ) );
+	         aProps.push_back( material.getMaterialVTKProperty( false ) );
 	         aGeomGActor->SetMaterial(aProps);
         }
       }

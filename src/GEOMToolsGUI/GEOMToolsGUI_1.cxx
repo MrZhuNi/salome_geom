@@ -34,7 +34,9 @@
 #include "GEOMToolsGUI_PublishDlg.h"
 #include "GEOMToolsGUI_MaterialPropertiesDlg.h"
 #include "GEOMToolsGUI_LineWidthDlg.h"
-#include "Material_Model.h"
+#include <Material_Model.h>
+
+#include <GEOM_VTKPropertyMaterial.hxx>
 
 #include <GeometryGUI.h>
 #include <GeometryGUI_Operations.h>
@@ -109,6 +111,7 @@
 // VTK includes
 #include <vtkRenderer.h>
 
+class QtxDialog;
 // If the next macro is defined, autocolor feature works for all sub-shapes;
 // if it is undefined, autocolor feature works for groups only
 #define GENERAL_AUTOCOLOR
@@ -1006,7 +1009,14 @@ void GEOMToolsGUI::OnPointMarker()
 
 void GEOMToolsGUI::OnMaterialProperties()
 {
-  GEOMToolsGUI_MaterialPropertiesDlg dlg( SUIT_Session::session()->activeApplication()->desktop() );
+ GEOMToolsGUI_MaterialPropertiesDlg* dlg = new GEOMToolsGUI_MaterialPropertiesDlg( SUIT_Session::session()->activeApplication()->desktop(), true, false, QtxDialog::OK | QtxDialog::Close | QtxDialog::Apply | QtxDialog::Help );
+ dlg->show();
+}
+
+void GEOMToolsGUI::OnMaterialsLibrary()
+{
+	GEOMToolsGUI_MaterialPropertiesDlg dlg( SUIT_Session::session()->activeApplication()->desktop(), false, true, QtxDialog::Standard );
+	dlg.setWindowTitle( tr( "MATERIAL_LIBRARY_TLT" ) );
   dlg.exec();
 }
 
@@ -1444,3 +1454,90 @@ void GEOMToolsGUI::OnClsBringToFront() {
   }
 }
   
+void GEOMToolsGUI::OnSetMaterial( const QVariant& theParam )
+{
+  QString theName;
+  if ( theParam.canConvert<QString>() ) theName = theParam.toString();
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app )
+    return;
+  SalomeApp_Module* mod = dynamic_cast<SalomeApp_Module*>(app->activeModule());
+  if(!mod)
+    return;
+  GEOM_Displayer* disp  = dynamic_cast<GEOM_Displayer*>(mod->displayer());
+  if(!disp)
+    return;
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( !aSelMgr || !study )
+    return;
+  SALOME_ListIO selected;
+  aSelMgr->selectedObjects( selected );
+  if ( selected.IsEmpty() )
+    return;
+    SUIT_ViewWindow* window = app->desktop()->activeWindow();
+  int mgrId = window->getViewManager()->getGlobalId();
+
+  // convert needed material properties to the string representation
+  Material_Model aModel;
+  aModel.fromResources( theName );
+  QString prop = aModel.toProperties();
+ 
+  if ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() ) {
+    // for VTK viewer
+    SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
+    if ( !vtkVW )
+      return;
+
+    SVTK_View* aView = vtkVW->getView();
+
+    // get VTK material properties from the current model
+    GEOM_VTKPropertyMaterial* vtkPropF = aModel.getMaterialVTKProperty();
+    GEOM_VTKPropertyMaterial* vtkPropB = aModel.getMaterialVTKProperty( false );
+
+    SUIT_OverrideCursor wc();
+
+    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+      // set material property to the presentation
+      aView->SetMaterial( It.Value(), vtkPropF, vtkPropB );
+      // store chosen material in the property map
+      study->setObjectProperty( mgrId, It.Value()->getEntry(), MATERIAL_PROP, prop );
+      // set correct color for the non-physical material
+    }
+    aView->Repaint();
+    GeometryGUI::Modified();
+  }
+  else if ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {    
+    // for OCC viewer
+    OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
+    if ( !vm )
+      return;
+
+    Handle(AIS_InteractiveContext) ic = vm->getAISContext();
+
+    // get OCC material aspect from the current model
+    Graphic3d_MaterialAspect front_occAspect = aModel.getMaterialOCCAspect( true );
+    Graphic3d_MaterialAspect back_occAspect = aModel.getMaterialOCCAspect( false );
+
+    SUIT_OverrideCursor wc();
+
+    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+      Handle(GEOM_AISShape) aisShape = GEOMBase::ConvertIOinGEOMAISShape( It.Value(), true );
+      if ( !aisShape.IsNull() ) {
+        // Set front material for the selected shape
+	      aisShape->SetCurrentFacingModel(Aspect_TOFM_FRONT_SIDE);
+	      aisShape->SetMaterial(front_occAspect);
+	      // Set back material for the selected shape
+	      aisShape->SetCurrentFacingModel(Aspect_TOFM_BACK_SIDE);
+	      aisShape->SetMaterial(back_occAspect);
+	      // Return to the default facing mode
+	      aisShape->SetCurrentFacingModel(Aspect_TOFM_BOTH_SIDE);
+        // store chosen material in the property map
+	      study->setObjectProperty( mgrId, It.Value()->getEntry(), MATERIAL_PROP, prop );
+	      //if ( aisShape->DisplayMode() != AIS_Shaded)
+	      ic->Redisplay( aisShape, Standard_False );
+      }
+    }
+    ic->UpdateCurrentViewer();
+  }
+}

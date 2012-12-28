@@ -2967,6 +2967,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Tools</translation>
     </message>
     <message>
+        <source>MEN_MATERIALS_LIBRARY</source>
+        <translation>Materials library</translation>
+    </message>
+    <message>
         <source>MEN_TORUS</source>
         <translation>Torus</translation>
     </message>
@@ -3025,6 +3029,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_POP_MATERIAL_PROPERTIES</source>
         <translation>Material Properties</translation>
+    </message>
+    <message>
+        <source>MEN_POP_PREDEF_MATER_CUSTOM</source>
+        <translation>Custom...</translation>
     </message>
     <message>
         <source>NAME_LBL</source>
@@ -3171,6 +3179,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Default material</translation>
     </message>
     <message>
+        <source>PREF_PREDEF_MATERIALS</source>
+        <translation>Show predefined materials in popup menu</translation>
+    </message>
+    <message>
         <source>PREF_EDGE_WIDTH</source>
         <translation>Edges width</translation>
     </message>
@@ -3201,6 +3213,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>PROCESS_SHAPE_NEW_OBJ_NAME</source>
         <translation>ProcessShape</translation>
+    </message>
+    <message>
+        <source>MATERIAL_LIBRARY_TLT</source>
+        <translation>Materials Library</translation>
     </message>
     <message>
         <source>REMOVE_HOLES_NEW_OBJ_NAME</source>
@@ -3613,6 +3629,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_POP_WIREFRAME</source>
         <translation>Wireframe</translation>
+    </message>
+    <message>
+        <source>STB_MATERIALS_LIBRARY</source>
+        <translation>Displays content of Materials library</translation>
+    </message>
+    <message>
+        <source>STB_POP_PREDEF_MATER_CUSTOM</source>
+        <translation>Custom...</translation>
     </message>
     <message>
         <source>STB_PROPAGATE</source>
@@ -5567,6 +5591,14 @@ Would you like to continue?</translation>
         <translation>Color and Material Properties</translation>
     </message>
     <message>
+        <source>FRONT_FACE</source>
+        <translation>Front face</translation>
+    </message>
+    <message>
+        <source>BACK_FACE</source>
+        <translation>Back face</translation>
+    </message>
+    <message>
         <source>REFLECTION_0</source>
         <translation>Ambient</translation>
     </message>
@@ -5581,10 +5613,6 @@ Would you like to continue?</translation>
     <message>
         <source>REFLECTION_3</source>
         <translation>Emissive</translation>
-    </message>
-    <message>
-        <source>ENABLED</source>
-        <translation>Enabled</translation>
     </message>
     <message>
         <source>SHININESS</source>

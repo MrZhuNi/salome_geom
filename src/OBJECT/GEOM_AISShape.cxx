@@ -166,7 +166,8 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
   	myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
   	myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(aMatAspect);
   }
-  myCurrentMaterial = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();  
+  myCurrentFrontMaterial = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();  
+  myCurrentBackMaterial = myDrawer->ShadingAspect()->Aspect()->BackMaterial();  
 }
 
 void GEOM_AISShape::setIO(const Handle(SALOME_InteractiveObject)& io){
@@ -327,10 +328,12 @@ void GEOM_AISShape::SetTransparency(const Standard_Real aValue)
     }
 
   Graphic3d_MaterialAspect FMat = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();
+  Graphic3d_MaterialAspect BMat = myDrawer->ShadingAspect()->Aspect()->BackMaterial();
   FMat.SetTransparency(aValue);
   myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(FMat);
-  myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(FMat);
-  myCurrentMaterial = FMat;
+  myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(BMat);
+  myCurrentFrontMaterial = FMat;
+  myCurrentBackMaterial = BMat;
   myTransparency = aValue;
 }
 
@@ -388,9 +391,10 @@ void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPre
 
   Graphic3d_MaterialAspect aMatAspect(Graphic3d_NOM_PLASTIC);
   aMatAspect.SetTransparency(myTransparency);
-  myCurrentMaterial = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();
-  myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial( isTopLevel() ? aMatAspect : myCurrentMaterial );
-  myDrawer->ShadingAspect()->Aspect()->SetBackMaterial( isTopLevel() ? aMatAspect : myCurrentMaterial );
+  myCurrentFrontMaterial = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();
+  myCurrentBackMaterial = myDrawer->ShadingAspect()->Aspect()->BackMaterial();
+  myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial( isTopLevel() ? aMatAspect : myCurrentFrontMaterial );
+  myDrawer->ShadingAspect()->Aspect()->SetBackMaterial( isTopLevel() ? aMatAspect : myCurrentBackMaterial );
 
       //Handle(Graphic3d_AspectFillArea3d) a4bis = myDrawer->ShadingAspect()->Aspect();
       //       P->SetPrimitivesAspect(a4bis);
