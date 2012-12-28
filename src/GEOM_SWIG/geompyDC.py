@@ -2168,7 +2168,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeSketcher(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcher", self.CurvesOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName, "sketch")
+            self._autoPublish(anObj, theName, "wire")
             return anObj
 
         ## Create a sketcher (wire or face), following the textual description,
@@ -2205,7 +2205,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeSketcherOnPlane(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcherOnPlane", self.CurvesOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName, "sketch")
+            self._autoPublish(anObj, theName, "wire")
             return anObj
 
         ## Create a sketcher wire, following the numerical description,
@@ -2238,7 +2238,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.Make3DSketcher(theCoordinates)
             RaiseIfFailed("Make3DSketcher", self.CurvesOp)
             anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName, "sketch")
+            self._autoPublish(anObj, theName, "wire")
             return anObj
 
         ## Obtain a 3D sketcher interface
@@ -4159,10 +4159,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape1 Shape to find sub-shapes in.
         #  @param theShape2 Shape to find shared sub-shapes with.
         #  @param theShapeType Type of sub-shapes to be retrieved.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of sub-shapes of theShape1, shared with theShape2.
         #
         #  @ref swig_GetSharedShapes "Example"
-        def GetSharedShapes(self,theShape1, theShape2, theShapeType):
+        def GetSharedShapes(self, theShape1, theShape2, theShapeType, theName=None):
             """
             Get all sub-shapes of theShape1 of the given type, shared with theShape2.
 
@@ -4170,6 +4174,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape1 Shape to find sub-shapes in.
                 theShape2 Shape to find shared sub-shapes with.
                 theShapeType Type of sub-shapes to be retrieved.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 List of sub-shapes of theShape1, shared with theShape2.
@@ -4177,21 +4184,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetSharedShapes(theShape1, theShape2, theShapeType)
             RaiseIfFailed("GetSharedShapes", self.ShapesOp)
+            self._autoPublish(aList, theName, "shared")
             return aList
 
         ## Get all sub-shapes, shared by all shapes in the list <VAR>theShapes</VAR>.
         #  @param theShapes Shapes to find common sub-shapes of.
         #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType())
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of objects, that are sub-shapes of all given shapes.
         #
         #  @ref swig_GetSharedShapes "Example"
-        def GetSharedShapesMulti(self, theShapes, theShapeType):
+        def GetSharedShapesMulti(self, theShapes, theShapeType, theName=None):
             """
             Get all sub-shapes, shared by all shapes in the list theShapes.
 
             Parameters:
                 theShapes Shapes to find common sub-shapes of.
                 theShapeType Type of sub-shapes to be retrieved (see geompy.ShapeType)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:    
                 List of GEOM.GEOM_Object, that are sub-shapes of all given shapes.
@@ -4199,6 +4214,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetSharedShapesMulti(theShapes, theShapeType)
             RaiseIfFailed("GetSharedShapesMulti", self.ShapesOp)
+            self._autoPublish(aList, theName, "shared")
             return aList
 
         ## Find in <VAR>theShape</VAR> all sub-shapes of type <VAR>theShapeType</VAR>,
@@ -4209,10 +4225,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theAx1 Vector (or line, or linear edge), specifying normal
         #                direction and location of the plane to find shapes on.
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnPlane "Example"
-        def GetShapesOnPlane(self,theShape, theShapeType, theAx1, theState):
+        def GetShapesOnPlane(self, theShape, theShapeType, theAx1, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType,
             situated relatively the specified plane by the certain way,
@@ -4224,6 +4244,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theAx1 Vector (or line, or linear edge), specifying normal
                        direction and location of the plane to find shapes on.
                 theState The state of the sub-shapes to find (see GEOM::shape_state)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 List of all found sub-shapes.
@@ -4231,6 +4254,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnPlane(theShape, theShapeType, theAx1, theState)
             RaiseIfFailed("GetShapesOnPlane", self.ShapesOp)
+            self._autoPublish(aList, theName, "shapeOnPlane")
             return aList
 
         ## Find in <VAR>theShape</VAR> all sub-shapes of type <VAR>theShapeType</VAR>,
@@ -4241,10 +4265,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theAx1 Vector (or line, or linear edge), specifying normal
         #                direction and location of the plane to find shapes on.
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #
         #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetShapesOnPlaneIDs "Example"
-        def GetShapesOnPlaneIDs(self,theShape, theShapeType, theAx1, theState):
+        def GetShapesOnPlaneIDs(self, theShape, theShapeType, theAx1, theState):
             """
             Find in theShape all sub-shapes of type theShapeType,
             situated relatively the specified plane by the certain way,
@@ -4274,10 +4299,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                direction of the plane to find shapes on.
         #  @param thePnt Point specifying location of the plane to find shapes on.
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnPlaneWithLocation "Example"
-        def GetShapesOnPlaneWithLocation(self, theShape, theShapeType, theAx1, thePnt, theState):
+        def GetShapesOnPlaneWithLocation(self, theShape, theShapeType, theAx1, thePnt, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType,
             situated relatively the specified plane by the certain way,
@@ -4290,6 +4319,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                        direction and location of the plane to find shapes on.
                 thePnt Point specifying location of the plane to find shapes on.
                 theState The state of the sub-shapes to find (see GEOM::shape_state)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 List of all found sub-shapes.
@@ -4298,6 +4330,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             aList = self.ShapesOp.GetShapesOnPlaneWithLocation(theShape, theShapeType,
                                                                theAx1, thePnt, theState)
             RaiseIfFailed("GetShapesOnPlaneWithLocation", self.ShapesOp)
+            self._autoPublish(aList, theName, "shapeOnPlane")
             return aList
 
         ## Find in <VAR>theShape</VAR> all sub-shapes of type <VAR>theShapeType</VAR>,
@@ -4309,6 +4342,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                direction of the plane to find shapes on.
         #  @param thePnt Point specifying location of the plane to find shapes on.
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #
         #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetShapesOnPlaneWithLocationIDs "Example"
@@ -4343,10 +4377,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                 axis of the cylinder to find shapes on.
         #  @param theRadius Radius of the cylinder to find shapes on.
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnCylinder "Example"
-        def GetShapesOnCylinder(self, theShape, theShapeType, theAxis, theRadius, theState):
+        def GetShapesOnCylinder(self, theShape, theShapeType, theAxis, theRadius, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
             the specified cylinder by the certain way, defined through theState parameter.
@@ -4358,6 +4396,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                         axis of the cylinder to find shapes on.
                 theRadius Radius of the cylinder to find shapes on.
                 theState The state of the sub-shapes to find (see GEOM::shape_state)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 List of all found sub-shapes.
@@ -4365,6 +4406,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnCylinder(theShape, theShapeType, theAxis, theRadius, theState)
             RaiseIfFailed("GetShapesOnCylinder", self.ShapesOp)
+            self._autoPublish(aList, theName, "shapeOnCylinder")
             return aList
 
         ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -4375,6 +4417,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                 axis of the cylinder to find shapes on.
         #  @param theRadius Radius of the cylinder to find shapes on.
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #
         #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetShapesOnCylinderIDs "Example"
@@ -4408,10 +4451,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePnt Point specifying location of the bottom of the cylinder.
         #  @param theRadius Radius of the cylinder to find shapes on.
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnCylinderWithLocation "Example"
-        def GetShapesOnCylinderWithLocation(self, theShape, theShapeType, theAxis, thePnt, theRadius, theState):
+        def GetShapesOnCylinderWithLocation(self, theShape, theShapeType, theAxis, thePnt, theRadius, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
             the specified cylinder by the certain way, defined through theState parameter.
@@ -4423,6 +4470,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                         axis of the cylinder to find shapes on.
                 theRadius Radius of the cylinder to find shapes on.
                 theState The state of the sub-shapes to find (see GEOM::shape_state)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 List of all found sub-shapes.
@@ -4430,6 +4480,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnCylinderWithLocation(theShape, theShapeType, theAxis, thePnt, theRadius, theState)
             RaiseIfFailed("GetShapesOnCylinderWithLocation", self.ShapesOp)
+            self._autoPublish(aList, theName, "shapeOnCylinder")
             return aList
 
         ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -4441,6 +4492,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thePnt Point specifying location of the bottom of the cylinder.
         #  @param theRadius Radius of the cylinder to find shapes on.
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #
         #  @return List of all found sub-shapes indices
         #
         #  @ref swig_GetShapesOnCylinderWithLocationIDs "Example"
@@ -4472,10 +4524,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theCenter Point, specifying center of the sphere to find shapes on.
         #  @param theRadius Radius of the sphere to find shapes on.
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnSphere "Example"
-        def GetShapesOnSphere(self,theShape, theShapeType, theCenter, theRadius, theState):
+        def GetShapesOnSphere(self, theShape, theShapeType, theCenter, theRadius, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
             the specified sphere by the certain way, defined through theState parameter.
@@ -4486,6 +4542,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theCenter Point, specifying center of the sphere to find shapes on.
                 theRadius Radius of the sphere to find shapes on.
                 theState The state of the sub-shapes to find (see GEOM::shape_state)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 List of all found sub-shapes.
@@ -4493,6 +4552,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnSphere(theShape, theShapeType, theCenter, theRadius, theState)
             RaiseIfFailed("GetShapesOnSphere", self.ShapesOp)
+            self._autoPublish(aList, theName, "shapeOnSphere")
             return aList
 
         ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -4502,10 +4562,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theCenter Point, specifying center of the sphere to find shapes on.
         #  @param theRadius Radius of the sphere to find shapes on.
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #
         #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetShapesOnSphereIDs "Example"
-        def GetShapesOnSphereIDs(self,theShape, theShapeType, theCenter, theRadius, theState):
+        def GetShapesOnSphereIDs(self, theShape, theShapeType, theCenter, theRadius, theState):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
             the specified sphere by the certain way, defined through theState parameter.
@@ -4534,12 +4595,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theBottomLeftPoint Point, specifying bottom left corner of a quadrangle
         #  @param theBottomRigthPoint Point, specifying bottom right corner of a quadrangle
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnQuadrangle "Example"
         def GetShapesOnQuadrangle(self, theShape, theShapeType,
                                   theTopLeftPoint, theTopRigthPoint,
-                                  theBottomLeftPoint, theBottomRigthPoint, theState):
+                                  theBottomLeftPoint, theBottomRigthPoint, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
             the specified quadrangle by the certain way, defined through theState parameter.
@@ -4552,6 +4617,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theBottomLeftPoint Point, specifying bottom left corner of a quadrangle
                 theBottomRigthPoint Point, specifying bottom right corner of a quadrangle
                 theState The state of the sub-shapes to find (see GEOM::shape_state)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 List of all found sub-shapes.
@@ -4561,6 +4629,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                         theTopLeftPoint, theTopRigthPoint,
                                                         theBottomLeftPoint, theBottomRigthPoint, theState)
             RaiseIfFailed("GetShapesOnQuadrangle", self.ShapesOp)
+            self._autoPublish(aList, theName, "shapeOnQuadrangle")
             return aList
 
         ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -4572,6 +4641,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theBottomLeftPoint Point, specifying bottom left corner of a quadrangle
         #  @param theBottomRigthPoint Point, specifying bottom right corner of a quadrangle
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #
         #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetShapesOnQuadrangleIDs "Example"
@@ -4608,10 +4678,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to find sub-shapes of.
         #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType())
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnBox "Example"
-        def GetShapesOnBox(self, theBox, theShape, theShapeType, theState):
+        def GetShapesOnBox(self, theBox, theShape, theShapeType, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
             the specified theBox by the certain way, defined through theState parameter.
@@ -4621,6 +4695,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape Shape to find sub-shapes of.
                 theShapeType Type of sub-shapes to be retrieved (see geompy.ShapeType)
                 theState The state of the sub-shapes to find (see GEOM::shape_state)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 List of all found sub-shapes.
@@ -4628,6 +4705,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnBox(theBox, theShape, theShapeType, theState)
             RaiseIfFailed("GetShapesOnBox", self.ShapesOp)
+            self._autoPublish(aList, theName, "shapeOnBox")
             return aList
 
         ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -4636,6 +4714,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to find sub-shapes of.
         #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType())
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #
         #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetShapesOnBoxIDs "Example"
@@ -4665,10 +4744,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to find sub-shapes of.
         #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType()) 
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnShape "Example"
-        def GetShapesOnShape(self, theCheckShape, theShape, theShapeType, theState):
+        def GetShapesOnShape(self, theCheckShape, theShape, theShapeType, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType,
             situated relatively the specified theCheckShape by the
@@ -4679,6 +4762,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape Shape to find sub-shapes of.
                 theShapeType Type of sub-shapes to be retrieved (see geompy.ShapeType)
                 theState The state of the sub-shapes to find (see GEOM::shape_state)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 List of all found sub-shapes.
@@ -4687,6 +4773,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             aList = self.ShapesOp.GetShapesOnShape(theCheckShape, theShape,
                                                    theShapeType, theState)
             RaiseIfFailed("GetShapesOnShape", self.ShapesOp)
+            self._autoPublish(aList, theName, "shapeOnShape")
             return aList
 
         ## Find in \a theShape all sub-shapes of type \a theShapeType,
@@ -4696,10 +4783,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to find sub-shapes of.
         #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType())
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return All found sub-shapes as compound.
         #
         #  @ref swig_GetShapesOnShapeAsCompound "Example"
-        def GetShapesOnShapeAsCompound(self, theCheckShape, theShape, theShapeType, theState):
+        def GetShapesOnShapeAsCompound(self, theCheckShape, theShape, theShapeType, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType,
             situated relatively the specified theCheckShape by the
@@ -4710,6 +4801,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape Shape to find sub-shapes of.
                 theShapeType Type of sub-shapes to be retrieved (see geompy.ShapeType)
                 theState The state of the sub-shapes to find (see GEOM::shape_state)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 All found sub-shapes as compound.
@@ -4718,6 +4812,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.ShapesOp.GetShapesOnShapeAsCompound(theCheckShape, theShape,
                                                              theShapeType, theState)
             RaiseIfFailed("GetShapesOnShapeAsCompound", self.ShapesOp)
+            self._autoPublish(anObj, theName, "shapeOnShape")
             return anObj
 
         ## Find in \a theShape all sub-shapes of type \a theShapeType,
@@ -4727,6 +4822,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to find sub-shapes of.
         #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType())
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
+        #
         #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetShapesOnShapeIDs "Example"
@@ -4757,6 +4853,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShapeWhat Shape, specifying what to find.
         #  @param isNewImplementation implementation of GetInPlace functionality
         #             (default = False, old alghorithm based on shape properties)
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return Group of all found sub-shapes or a single found sub-shape.
         #
         #  @note This function has a restriction on argument shapes.
@@ -4766,7 +4866,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #        @image html get_in_place_lost_part.png
         #
         #  @ref swig_GetInPlace "Example"
-        def GetInPlace(self, theShapeWhere, theShapeWhat, isNewImplementation = False):
+        def GetInPlace(self, theShapeWhere, theShapeWhat, isNewImplementation = False, theName=None):
             """
             Get sub-shape(s) of theShapeWhere, which are
             coincident with  theShapeWhat or could be a part of it.
@@ -4776,6 +4876,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShapeWhat Shape, specifying what to find.
                 isNewImplementation Implementation of GetInPlace functionality
                                     (default = False, old alghorithm based on shape properties)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 Group of all found sub-shapes or a single found sub-shape.
@@ -4795,6 +4898,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 anObj = self.ShapesOp.GetInPlaceOld(theShapeWhere, theShapeWhat)
                 pass
             RaiseIfFailed("GetInPlace", self.ShapesOp)
+            self._autoPublish(anObj, theName, "inplace")
             return anObj
 
         ## Get sub-shape(s) of \a theShapeWhere, which are
@@ -4809,10 +4913,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShapeWhere Shape to find sub-shapes of.
         #  @param theShapeWhat Shape, specifying what to find (must be in the
         #                      building history of the ShapeWhere).
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return Group of all found sub-shapes or a single found sub-shape.
         #
         #  @ref swig_GetInPlace "Example"
-        def GetInPlaceByHistory(self, theShapeWhere, theShapeWhat):
+        def GetInPlaceByHistory(self, theShapeWhere, theShapeWhat, theName=None):
             """
             Implementation of this method is based on a saved history of an operation,
             produced theShapeWhere. The theShapeWhat must be among this operation's
@@ -4824,6 +4932,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShapeWhere Shape to find sub-shapes of.
                 theShapeWhat Shape, specifying what to find (must be in the
                                 building history of the ShapeWhere).
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 Group of all found sub-shapes or a single found sub-shape.
@@ -4831,16 +4942,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = self.ShapesOp.GetInPlaceByHistory(theShapeWhere, theShapeWhat)
             RaiseIfFailed("GetInPlaceByHistory", self.ShapesOp)
+            self._autoPublish(anObj, theName, "inplace")
             return anObj
 
         ## Get sub-shape of theShapeWhere, which is
         #  equal to \a theShapeWhat.
         #  @param theShapeWhere Shape to find sub-shape of.
         #  @param theShapeWhat Shape, specifying what to find.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return New GEOM.GEOM_Object for found sub-shape.
         #
         #  @ref swig_GetSame "Example"
-        def GetSame(self,theShapeWhere, theShapeWhat):
+        def GetSame(self, theShapeWhere, theShapeWhat, theName=None):
             """
             Get sub-shape of theShapeWhere, which is
             equal to theShapeWhat.
@@ -4848,12 +4964,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theShapeWhere Shape to find sub-shape of.
                 theShapeWhat Shape, specifying what to find.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM.GEOM_Object for found sub-shape.
             """
             anObj = self.ShapesOp.GetSame(theShapeWhere, theShapeWhat)
             RaiseIfFailed("GetSame", self.ShapesOp)
+            self._autoPublish(anObj, theName, "sameShape")
             return anObj
 
 
@@ -4864,7 +4984,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes indices. 
         #
         #  @ref swig_GetSame "Example"
-        def GetSameIDs(self,theShapeWhere, theShapeWhat):
+        def GetSameIDs(self, theShapeWhere, theShapeWhat):
             """
             Get sub-shape indices of theShapeWhere, which is
             equal to theShapeWhat.
@@ -4891,23 +5011,31 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  of aShape, selected by their unique IDs inside <VAR>aShape</VAR>
         #  @param aShape Shape to get sub-shape of.
         #  @param ListOfID List of sub-shapes indices.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return Found sub-shape.
         #
         #  @ref swig_all_decompose "Example"
-        def GetSubShape(self, aShape, ListOfID):
+        def GetSubShape(self, aShape, ListOfID, theName=None):
             """
             Obtain a composite sub-shape of aShape, composed from sub-shapes
             of aShape, selected by their unique IDs inside aShape
 
             Parameters:
-               aShape Shape to get sub-shape of.
-               ListOfID List of sub-shapes indices.
+                aShape Shape to get sub-shape of.
+                ListOfID List of sub-shapes indices.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 Found sub-shape.
             """
             # Example: see GEOM_TestAll.py
             anObj = self.AddSubShape(aShape,ListOfID)
+            self._autoPublish(anObj, theName, "subshape")
             return anObj
 
         ## Obtain unique ID of sub-shape <VAR>aSubShape</VAR> inside <VAR>aShape</VAR>
@@ -4992,10 +5120,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  If the shape itself matches the type, it is also returned.
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved (see ShapeType()) 
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of sub-shapes of type theShapeType, contained in theShape.
         #
         #  @ref swig_all_decompose "Example"
-        def SubShapeAll(self, aShape, aType):
+        def SubShapeAll(self, aShape, aType, theName=None):
             """
             Explode a shape on sub-shapes of a given type.
             If the shape itself matches the type, it is also returned.
@@ -5003,6 +5135,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 aShape Shape to be exploded.
                 aType Type of sub-shapes to be retrieved (see geompy.ShapeType) 
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 List of sub-shapes of type theShapeType, contained in theShape.
@@ -5010,6 +5145,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             ListObj = self.ShapesOp.MakeAllSubShapes(aShape, EnumToLong( aType ), False)
             RaiseIfFailed("SubShapeAll", self.ShapesOp)
+            self._autoPublish(ListObj, theName, "subshape")
             return ListObj
 
         ## Explode a shape on sub-shapes of a given type.
@@ -5039,10 +5175,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param aShape Shape to get sub-shape of.
         #  @param ListOfInd List of sub-shapes indices.
         #  @param aType Type of sub-shapes to be retrieved (see ShapeType())
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return A compound of sub-shapes of aShape.
         #
         #  @ref swig_all_decompose "Example"
-        def SubShape(self, aShape, aType, ListOfInd):
+        def SubShape(self, aShape, aType, ListOfInd, theName=None):
             """
             Obtain a compound of sub-shapes of aShape,
             selected by they indices in list of all sub-shapes of type aType.
@@ -5052,6 +5192,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 aShape Shape to get sub-shape of.
                 ListOfID List of sub-shapes indices.
                 aType Type of sub-shapes to be retrieved (see geompy.ShapeType)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 A compound of sub-shapes of aShape.
@@ -5061,7 +5204,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             AllShapeIDsList = self.SubShapeAllIDs(aShape, EnumToLong( aType ))
             for ind in ListOfInd:
                 ListOfIDs.append(AllShapeIDsList[ind - 1])
-            anObj = self.GetSubShape(aShape, ListOfIDs)
+            # note: auto-publishing is done in self.GetSubShape()
+            anObj = self.GetSubShape(aShape, ListOfIDs, theName)
             return anObj
 
         ## Explode a shape on sub-shapes of a given type.
@@ -5069,10 +5213,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  If the shape itself matches the type, it is also returned.
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved (see ShapeType())
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of sub-shapes of type theShapeType, contained in theShape.
         #
         #  @ref swig_SubShapeAllSorted "Example"
-        def SubShapeAllSortedCentres(self, aShape, aType):
+        def SubShapeAllSortedCentres(self, aShape, aType, theName=None):
             """
             Explode a shape on sub-shapes of a given type.
             Sub-shapes will be sorted by coordinates of their gravity centers.
@@ -5081,6 +5229,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters: 
                 aShape Shape to be exploded.
                 aType Type of sub-shapes to be retrieved (see geompy.ShapeType)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 List of sub-shapes of type theShapeType, contained in theShape.
@@ -5088,6 +5239,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             ListObj = self.ShapesOp.MakeAllSubShapes(aShape, EnumToLong( aType ), True)
             RaiseIfFailed("SubShapeAllSortedCentres", self.ShapesOp)
+            self._autoPublish(ListObj, theName, "subshape")
             return ListObj
 
         ## Explode a shape on sub-shapes of a given type.
@@ -5119,10 +5271,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param aShape Shape to get sub-shape of.
         #  @param ListOfInd List of sub-shapes indices.
         #  @param aType Type of sub-shapes to be retrieved (see ShapeType())
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return A compound of sub-shapes of aShape.
         #
         #  @ref swig_all_decompose "Example"
-        def SubShapeSortedCentres(self, aShape, aType, ListOfInd):
+        def SubShapeSortedCentres(self, aShape, aType, ListOfInd, theName=None):
             """
             Obtain a compound of sub-shapes of aShape,
             selected by they indices in sorted list of all sub-shapes of type aType.
@@ -5132,6 +5288,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 aShape Shape to get sub-shape of.
                 ListOfID List of sub-shapes indices.
                 aType Type of sub-shapes to be retrieved (see geompy.ShapeType)
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 A compound of sub-shapes of aShape.
@@ -5141,17 +5300,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             AllShapeIDsList = self.SubShapeAllSortedCentresIDs(aShape, EnumToLong( aType ))
             for ind in ListOfInd:
                 ListOfIDs.append(AllShapeIDsList[ind - 1])
-            anObj = self.GetSubShape(aShape, ListOfIDs)
+            # note: auto-publishing is done in self.GetSubShape()
+            anObj = self.GetSubShape(aShape, ListOfIDs, theName)
             return anObj
 
         ## Extract shapes (excluding the main shape) of given type.
         #  @param aShape The shape.
         #  @param aType  The shape type (see ShapeType())
         #  @param isSorted Boolean flag to switch sorting on/off.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of sub-shapes of type aType, contained in aShape.
         #
         #  @ref swig_FilletChamfer "Example"
-        def ExtractShapes(self, aShape, aType, isSorted = False):
+        def ExtractShapes(self, aShape, aType, isSorted = False, theName=None):
             """
             Extract shapes (excluding the main shape) of given type.
 
@@ -5159,6 +5323,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 aShape The shape.
                 aType  The shape type (see geompy.ShapeType)
                 isSorted Boolean flag to switch sorting on/off.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:     
                 List of sub-shapes of type aType, contained in aShape.
@@ -5166,21 +5333,28 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             ListObj = self.ShapesOp.ExtractSubShapes(aShape, EnumToLong( aType ), isSorted)
             RaiseIfFailed("ExtractSubShapes", self.ShapesOp)
+            self._autoPublish(ListObj, theName, "subshape")
             return ListObj
 
         ## Get a set of sub-shapes defined by their unique IDs inside <VAR>aShape</VAR>
         #  @param aShape Main shape.
         #  @param anIDs List of unique IDs of sub-shapes inside <VAR>aShape</VAR>.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
         #  @return List of GEOM.GEOM_Object, corresponding to found sub-shapes.
         #
         #  @ref swig_all_decompose "Example"
-        def SubShapes(self, aShape, anIDs):
+        def SubShapes(self, aShape, anIDs, theName=None):
             """
             Get a set of sub-shapes defined by their unique IDs inside theMainShape
 
             Parameters:
                 aShape Main shape.
                 anIDs List of unique IDs of sub-shapes inside theMainShape.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:      
                 List of GEOM.GEOM_Object, corresponding to found sub-shapes.
@@ -5188,6 +5362,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             ListObj = self.ShapesOp.MakeSubShapes(aShape, anIDs)
             RaiseIfFailed("SubShapes", self.ShapesOp)
+            self._autoPublish(ListObj, theName, "subshape")
             return ListObj
 
         # end of l4_decompose
@@ -5199,7 +5374,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Deprecated method
         #  It works like SubShapeAllSortedCentres(), but wrongly
         #  defines centres of faces, shells and solids.
-        def SubShapeAllSorted(self, aShape, aType):
+        def SubShapeAllSorted(self, aShape, aType, theName=None):
             """
             Deprecated method
             It works like geompy.SubShapeAllSortedCentres, but wrongly
@@ -5207,6 +5382,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             ListObj = self.ShapesOp.MakeExplode(aShape, EnumToLong( aType ), True)
             RaiseIfFailed("MakeExplode", self.ShapesOp)
+            self._autoPublish(ListObj, theName, "subshape")
             return ListObj
 
         ## Deprecated method
@@ -5225,7 +5401,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Deprecated method
         #  It works like SubShapeSortedCentres(), but has a bug
         #  (wrongly defines centres of faces, shells and solids).
-        def SubShapeSorted(self, aShape, aType, ListOfInd):
+        def SubShapeSorted(self, aShape, aType, ListOfInd, theName=None):
             """
             Deprecated method
             It works like geompy.SubShapeSortedCentres, but has a bug
@@ -5235,7 +5411,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             AllShapeIDsList = self.SubShapeAllSortedIDs(aShape, EnumToLong( aType ))
             for ind in ListOfInd:
                 ListOfIDs.append(AllShapeIDsList[ind - 1])
-            anObj = self.GetSubShape(aShape, ListOfIDs)
+            # note: auto-publishing is done in self.GetSubShape()
+            anObj = self.GetSubShape(aShape, ListOfIDs, theName)
             return anObj
 
         # end of l4_decompose_d
@@ -5765,19 +5942,26 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Get a list of wires (wrapped in GEOM.GEOM_Object-s),
         #  that constitute a free boundary of the given shape.
         #  @param theObject Shape to get free boundary of.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return [\a status, \a theClosedWires, \a theOpenWires]
         #  \n \a status: FALSE, if an error(s) occured during the method execution.
         #  \n \a theClosedWires: Closed wires on the free boundary of the given shape.
         #  \n \a theOpenWires: Open wires on the free boundary of the given shape.
         #
         #  @ref tui_measurement_tools_page "Example"
-        def GetFreeBoundary(self, theObject):
+        def GetFreeBoundary(self, theObject, theName=None):
             """
             Get a list of wires (wrapped in GEOM.GEOM_Object-s),
             that constitute a free boundary of the given shape.
 
             Parameters:
                 theObject Shape to get free boundary of.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns: 
                 [status, theClosedWires, theOpenWires]
@@ -5788,6 +5972,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestHealing.py
             anObj = self.HealOp.GetFreeBoundary(theObject)
             RaiseIfFailed("GetFreeBoundary", self.HealOp)
+            self._autoPublish(anObj[1], theName, "closedWire")
+            self._autoPublish(anObj[2], theName, "openWire")
             return anObj
 
         ## Replace coincident faces in theShape by one face.
@@ -5831,10 +6017,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Initial shape.
         #  @param theTolerance Maximum distance between faces,
         #                      which can be considered as coincident.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return GEOM.ListOfGO
         #
         #  @ref tui_glue_faces "Example"
-        def GetGlueFaces(self, theShape, theTolerance):
+        def GetGlueFaces(self, theShape, theTolerance, theName=None):
             """
             Find coincident faces in theShape for possible gluing.
 
@@ -5842,12 +6032,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape Initial shape.
                 theTolerance Maximum distance between faces,
                              which can be considered as coincident.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:                    
                 GEOM.ListOfGO
             """
             anObj = self.ShapesOp.GetGlueFaces(theShape, theTolerance)
             RaiseIfFailed("GetGlueFaces", self.ShapesOp)
+            self._autoPublish(anObj, theName, "facesToGlue")
             return anObj
 
         ## Replace coincident faces in theShape by one face
@@ -5936,10 +6130,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Initial shape.
         #  @param theTolerance Maximum distance between edges,
         #                      which can be considered as coincident.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return GEOM.ListOfGO
         #
         #  @ref tui_glue_edges "Example"
-        def GetGlueEdges(self, theShape, theTolerance):
+        def GetGlueEdges(self, theShape, theTolerance, theName=None):
             """
             Find coincident edges in theShape for possible gluing.
 
@@ -5947,12 +6145,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape Initial shape.
                 theTolerance Maximum distance between edges,
                              which can be considered as coincident.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:                         
                 GEOM.ListOfGO
             """
             anObj = self.ShapesOp.GetGlueEdges(theShape, theTolerance)
             RaiseIfFailed("GetGlueEdges", self.ShapesOp)
+            self._autoPublish(anObj, theName, "edgesToGlue")
             return anObj
 
         ## Replace coincident edges in theShape by one edge
@@ -9816,6 +10018,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Retrieve all non blocks solids and faces from \a theShape.
         #  @param theShape The shape to explore.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return A tuple of two GEOM_Objects. The first object is a group of all
         #          non block solids (= not 6 faces, or with 6 faces, but with the
         #          presence of non-quadrangular faces). The second object is a
@@ -9823,12 +10029,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_measurement_tools_page "Example 1"
         #  \n @ref swig_GetNonBlocks "Example 2"
-        def GetNonBlocks (self, theShape):
+        def GetNonBlocks (self, theShape, theName=None):
             """
             Retrieve all non blocks solids and faces from theShape.
 
             Parameters:
                 theShape The shape to explore.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 A tuple of two GEOM_Objects. The first object is a group of all
@@ -9842,6 +10051,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             aTuple = self.BlocksOp.GetNonBlocks(theShape)
             RaiseIfFailed("GetNonBlocks", self.BlocksOp)
+            self._autoPublish(aTuple[0], theName, "groupNonHexas")
+            self._autoPublish(aTuple[1], theName, "groupNonQuads")
             return aTuple
 
         ## Remove all seam and degenerated edges from \a theShape.
@@ -9926,12 +10137,17 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theCompound The compound to explode.
         #  @param theMinNbFaces If solid has lower number of faces, it is not a block.
         #  @param theMaxNbFaces If solid has higher number of faces, it is not a block.
-        #    \note If theMaxNbFaces = 0, the maximum number of faces is not restricted.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @note If theMaxNbFaces = 0, the maximum number of faces is not restricted.
+        #
         #  @return List of GEOM.GEOM_Object, containing the retrieved blocks.
         #
         #  @ref tui_explode_on_blocks "Example 1"
         #  \n @ref swig_MakeBlockExplode "Example 2"
-        def MakeBlockExplode(self,theCompound, theMinNbFaces, theMaxNbFaces):
+        def MakeBlockExplode(self, theCompound, theMinNbFaces, theMaxNbFaces, theName=None):
             """
             Get all the blocks, contained in the given compound.
 
@@ -9939,6 +10155,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theCompound The compound to explode.
                 theMinNbFaces If solid has lower number of faces, it is not a block.
                 theMaxNbFaces If solid has higher number of faces, it is not a block.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Note:
                 If theMaxNbFaces = 0, the maximum number of faces is not restricted.
@@ -9953,6 +10172,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             for anObj in aList:
                 anObj.SetParameters(Parameters)
                 pass
+            self._autoPublish(aList, theName, "block")
             return aList
 
         ## Find block, containing the given point inside its volume or on boundary.
@@ -10020,16 +10240,23 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Return all blocks, containing all the elements, passed as the parts.
         #  @param theCompound Compound, to find blocks in.
         #  @param theParts List of faces and/or edges and/or vertices to be parts of the found blocks.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of GEOM.GEOM_Object, containing the found blocks.
         #
         #  @ref swig_todo "Example"
-        def GetBlocksByParts(self,theCompound, theParts):
+        def GetBlocksByParts(self, theCompound, theParts, theName=None):
             """
             Return all blocks, containing all the elements, passed as the parts.
 
             Parameters:
                 theCompound Compound, to find blocks in.
                 theParts List of faces and/or edges and/or vertices to be parts of the found blocks.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 List of GEOM.GEOM_Object, containing the found blocks.
@@ -10037,6 +10264,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             aList = self.BlocksOp.GetBlocksByParts(theCompound, theParts)
             RaiseIfFailed("GetBlocksByParts", self.BlocksOp)
+            self._autoPublish(aList, theName, "block")
             return aList
 
         ## Multi-transformate block and glue the result.
@@ -10054,7 +10282,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_multi_transformation "Example"
-        def MakeMultiTransformation1D(self,Block, DirFace1, DirFace2, NbTimes, theName=None):
+        def MakeMultiTransformation1D(self, Block, DirFace1, DirFace2, NbTimes, theName=None):
             """
             Multi-transformate block and glue the result.
             Transformation is defined so, as to superpose direction faces.
@@ -10094,7 +10322,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_multi_transformation "Example"
-        def MakeMultiTransformation2D(self,Block, DirFace1U, DirFace2U, NbTimesU,
+        def MakeMultiTransformation2D(self, Block, DirFace1U, DirFace2U, NbTimesU,
                                       DirFace1V, DirFace2V, NbTimesV, theName=None):
             """
             Multi-transformate block and glue the result.
@@ -10126,10 +10354,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  edge of this group directly or through other opposite edges.
         #  Notion of Opposite Edge make sence only on quadrangle face.
         #  @param theShape Shape to build propagation groups on.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of GEOM.GEOM_Object, each of them is a propagation group.
         #
         #  @ref swig_Propagate "Example"
-        def Propagate(self,theShape):
+        def Propagate(self, theShape, theName=None):
             """
             Build all possible propagation groups.
             Propagation group is a set of all edges, opposite to one (main)
@@ -10138,6 +10370,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theShape Shape to build propagation groups on.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 List of GEOM.GEOM_Object, each of them is a propagation group.
@@ -10145,6 +10380,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             listChains = self.BlocksOp.Propagate(theShape)
             RaiseIfFailed("Propagate", self.BlocksOp)
+            self._autoPublish(listChains, theName, "propagate")
             return listChains
 
         # end of l3_blocks_op
@@ -10801,10 +11037,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theP1 1st junction point of main pipe
         #  @param theP2 2nd junction point of main pipe
         #  @param theP3 Junction point of incident pipe
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of GEOM.GEOM_Object, containing the created shape and propagation groups.
         #
         #  @ref tui_creation_pipetshape "Example"
-        def MakePipeTShape(self, theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh=True, theP1=None, theP2=None, theP3=None):
+        def MakePipeTShape(self, theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh=True, theP1=None, theP2=None, theP3=None, theName=None):
             """
             Create a T-shape object with specified caracteristics for the main
             and the incident pipes (radius, width, half-length).
@@ -10824,6 +11064,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theP1 1st junction point of main pipe
                 theP2 2nd junction point of main pipe
                 theP3 Junction point of incident pipe
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 List of GEOM_Object, containing the created shape and propagation groups.
@@ -10841,6 +11084,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 anObj = self.AdvOp.MakePipeTShape(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh)
             RaiseIfFailed("MakePipeTShape", self.AdvOp)
             if Parameters: anObj[0].SetParameters(Parameters)
+            self._autoPublish(anObj[0],  theName, "pipeTShape")
+            self._autoPublish(anObj[1:], theName, "pipeTShape_grp")
             return anObj
 
         ## Create a T-shape object with chamfer and with specified caracteristics for the main
@@ -10862,10 +11107,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theP1 1st junction point of main pipe
         #  @param theP2 2nd junction point of main pipe
         #  @param theP3 Junction point of incident pipe
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of GEOM.GEOM_Object, containing the created shape and propagation groups.
         #
         #  @ref tui_creation_pipetshape "Example"
-        def MakePipeTShapeChamfer(self, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh=True, theP1=None, theP2=None, theP3=None):
+        def MakePipeTShapeChamfer(self, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh=True, theP1=None, theP2=None, theP3=None, theName=None):
             """
             Create a T-shape object with chamfer and with specified caracteristics for the main
             and the incident pipes (radius, width, half-length). The chamfer is
@@ -10888,6 +11137,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theP1 1st junction point of main pipe
                 theP2 2nd junction point of main pipe
                 theP3 Junction point of incident pipe
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
 
             Returns:
                 List of GEOM_Object, containing the created shape and propagation groups.
@@ -10905,6 +11157,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
               anObj = self.AdvOp.MakePipeTShapeChamfer(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh)
             RaiseIfFailed("MakePipeTShapeChamfer", self.AdvOp)
             if Parameters: anObj[0].SetParameters(Parameters)
+            self._autoPublish(anObj[0],  theName, "pipeTShape")
+            self._autoPublish(anObj[1:], theName, "pipeTShape_grp")
             return anObj
 
         ## Create a T-shape object with fillet and with specified caracteristics for the main
@@ -10925,10 +11179,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theP1 1st junction point of main pipe
         #  @param theP2 2nd junction point of main pipe
         #  @param theP3 Junction point of incident pipe
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
         #  @return List of GEOM.GEOM_Object, containing the created shape and propagation groups.
         #
         #  @ref tui_creation_pipetshape "Example"
-        def MakePipeTShapeFillet(self, theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh=True, theP1=None, theP2=None, theP3=None):
+        def MakePipeTShapeFillet(self, theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh=True, theP1=None, theP2=None, theP3=None, theName=None):
             """
             Create a T-shape object with fillet and with specified caracteristics for the main
             and the incident pipes (radius, width, half-length). The fillet is
@@ -10950,6 +11208,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theP1 1st junction point of main pipe
                 theP2 2nd junction point of main pipe
                 theP3 Junction point of incident pipe
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
                 
             Returns:
                 List of GEOM_Object, containing the created shape and propagation groups.
@@ -10968,6 +11229,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
               anObj = self.AdvOp.MakePipeTShapeFillet(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh)
             RaiseIfFailed("MakePipeTShapeFillet", self.AdvOp)
             if Parameters: anObj[0].SetParameters(Parameters)
+            self._autoPublish(anObj[0],  theName, "pipeTShape")
+            self._autoPublish(anObj[1:], theName, "pipeTShape_grp")
             return anObj
 
         ## This function allows creating a disk already divided into blocks. It
