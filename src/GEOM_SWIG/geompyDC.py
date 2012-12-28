@@ -26,6 +26,112 @@
     \brief Module geompy
 """
 
+##
+## @defgroup l1_publish_data Publishing results in SALOME study
+## @{
+##
+## @details
+##
+## By default, all functions of geompy.py Python interface do not publish
+## resulting geometrical objects. This can be done in the Python script
+## by means of geompy.addToStudy() or geompy.addToStudyInFather()
+## functions.
+## 
+## However, it is possible to publish result data in the study
+## automatically. For this, almost each function of geompy.py module has
+## an additional @a theName parameter (@c None by default).
+## As soon as non-empty string value is passed to this parameter,
+## the result object is published in the study automatically.
+## 
+## For example,
+## 
+## @code
+## box = geompy.MakeBoxDXDYDZ(100, 100, 100) # box is not published in the study yet
+## geompy.addToStudy(box, "box")             # explicit publishing
+## @endcode
+## 
+## can be replaced by one-line instruction
+## 
+## @code
+## box = geompy.MakeBoxDXDYDZ(100, 100, 100, theName="box") # box is published in the study with "box" name
+## @endcode
+## 
+## ... or simply
+## 
+## @code
+## box = geompy.MakeBoxDXDYDZ(100, 100, 100, "box") # box is published in the study with "box" name
+## @endcode
+##
+## Note, that some functions produce more than one geometrical objects. For example,
+## geompy.GetNonBlocks() function returns two objects: group of all non-hexa solids and group of
+## all non-quad faces. For such functions it is possible to specify separate names for results.
+##
+## For example
+##
+## @code
+## # create and publish cylinder
+## cyl = geompy.MakeCylinderRH(100, 100, "cylinder")
+## # get non blocks from cylinder
+## g1, g2 = geompy.GetNonBlocks(cyl, "nonblock")
+## @endcode
+##
+## Above example will publish both result compounds (first with non-hexa solids and
+## second with non-quad faces) as two items, both named "nonblock".
+## However, if second command is invoked as
+##
+## @code
+## g1, g2 = geompy.GetNonBlocks(cyl, ("nonhexa", "nonquad"))
+## @endcode
+##
+## ... the first compound will be published with "nonhexa" name, and second will be named "nonquad".
+##
+## Automatic publication of all results can be also enabled/disabled by means of the function
+## geompy.addToStudyAuto(). The automatic publishing is managed by the numeric parameter passed
+## to this function:
+## - if @a maxNbSubShapes = 0, automatic publishing is disabled.
+## - if @a maxNbSubShapes = -1 (default), automatic publishing is enabled and
+##   maximum number of sub-shapes allowed for publishing is unlimited; any negative
+##   value passed as parameter has the same effect.
+## - if @a maxNbSubShapes is any positive value, automatic publishing is enabled and
+##   maximum number of sub-shapes allowed for publishing is set to specified value.
+## 
+## When automatic publishing is enabled, you even do not need to pass @a theName parameter 
+## to the functions creating objects, instead default names will be used. However, you
+## can always change the behavior, by passing explicit name to the @a theName parameter
+## and it will be used instead default one.
+## The publishing of the collections of objects will be done according to the above
+## mentioned rules (maximum allowed number of sub-shapes).
+##
+## For example:
+##
+## @code
+## geompy.addToStudyAuto() # enable automatic publication
+## box = geompy.MakeBoxDXDYDZ(100, 100, 100) 
+## # the box is created and published in the study with default name
+## geompy.addToStudyAuto(5) # set max allowed number of sub-shapes to 5
+## vertices = geompy.SubShapeAll(box, geompy.ShapeType['VERTEX'])
+## # only 5 first vertices will be published, with default names
+## print len(vertices)
+## # note, that result value still containes all 8 vertices
+## geompy.addToStudyAuto(-1) # disable automatic publication
+## @endcode
+##
+## This feature can be used, for example, for debugging purposes.
+##
+## @note
+## - Use automatic publication feature with caution. When it is enabled, any function of geompy.py module
+##   publishes the results in the study, that can lead to the huge size of the study data tree.
+##   For example, repeating call of geompy.SubShapeAll() command on the same main shape each time will
+##   publish all child objects, that will lead to a lot of duplicated items in the study.
+## - Sub-shapes are automatically published as child items of the parent main shape in the study if main
+##   shape was also published before. Otherwise, sub-shapes are published as top-level objects.
+## - Not that some functions of geompy.py module do not have @theName parameter (and, thus, do not support
+##   automatic publication). For example, some transformation operations like geompy.TranslateDXDYDZ().
+##   Refer to the documentation to check if some function has such possibility.
+##
+## @}
+
+
 ## @defgroup l1_geompy_auxiliary Auxiliary data structures and methods
 
 ## @defgroup l1_geompy_purpose   All package methods, grouped by their purpose
@@ -94,6 +200,18 @@ from gsketcher import Sketcher3D
 ## Topological types of shapes (like Open Cascade types). See GEOM::shape_type for details.
 #  @ingroup l1_geompy_auxiliary
 ShapeType = {"AUTO":-1, "COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
+
+# service function
+def _toListOfNames(_names, _size=-1):
+    l = []
+    import types
+    if type(_names) in [types.ListType, types.TupleType]:
+        for i in _names: l.append(i)
+    elif _names:
+        l.append(_names)
+    if l and len(l) < _size:
+        for i in range(len(l), _size): l.append("%s_%d"%(l[0],i))
+    return l
 
 ## Raise an Error, containing the Method_name, if Operation is Failed
 ## @ingroup l1_geompy_auxiliary
@@ -415,9 +533,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 if type(_names) in [types.ListType, types.TupleType]:
                     if _idx >= 0:
                         if _idx >= len(_names) or not _names[_idx]:
-                            _name = "%s_%d"%(_defname, _idx+1)
+                            if type(_defname) not in [types.ListType, types.TupleType]:
+                                _name = "%s_%d"%(_defname, _idx+1)
+                            elif len(_defname) > 0 and _idx >= 0 and _idx < len(_defname):
+                                _name = _defname[_idx]
+                            else:
+                                _name = "%noname_%d"%(dn, _idx+1)
+                            pass
                         else:
                             _name = _names[_idx]
+                        pass
                     else:
                         # must be wrong  usage
                         _name = _names[0]
@@ -441,8 +566,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 # list of objects is being published
                 idx = 0
                 for obj in theObj:
+                    if not obj: continue # bad object
+                    ###if obj.GetStudyEntry(): continue # already published
                     name = _item_name(theName, theDefaultName, idx)
-                    if obj.IsMainShape():
+                    if obj.IsMainShape() or not obj.GetMainShape().GetStudyEntry():
                         self.addToStudy(obj, name) # "%s_%d"%(aName, idx)
                     else:
                         self.addToStudyInFather(obj.GetMainShape(), obj, name) # "%s_%d"%(aName, idx)
@@ -453,6 +580,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 pass
             else:
                 # single object is published
+                ###if theObj.GetStudyEntry(): return # already published
                 name = _item_name(theName, theDefaultName)
                 if theObj.IsMainShape():
                     self.addToStudy(theObj, name)
@@ -505,6 +633,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  maximum number of sub-shapes allowed for publishing is set to specified value.
         #
         #  @param maxNbSubShapes maximum number of sub-shapes allowed for publishing.
+        #  @ingroup l1_publish_data
         def addToStudyAuto(self, maxNbSubShapes=-1):
             """
             Enable / disable results auto-publishing
@@ -565,6 +694,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                                                  these arguments description
         #  \return study entry of the published shape in form of string
         #
+        #  @ingroup l1_publish_data
         #  @ref swig_all_addtostudy "Example"
         def addToStudy(self, aShape, aName, doRestoreSubShapes=False,
                        theArgs=[], theFindMethod=GEOM.FSM_GetInPlace, theInheritFirstArg=False):
@@ -604,6 +734,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  \param aName  the name for the shape
         #
         #  \return study entry of the published shape in form of string
+        #
+        #  @ingroup l1_publish_data
         #  @ref swig_all_addtostudyInFather "Example"
         def addToStudyInFather(self, aFather, aShape, aName):
             """
@@ -10051,8 +10183,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_Spanner.py
             aTuple = self.BlocksOp.GetNonBlocks(theShape)
             RaiseIfFailed("GetNonBlocks", self.BlocksOp)
-            self._autoPublish(aTuple[0], theName, "groupNonHexas")
-            self._autoPublish(aTuple[1], theName, "groupNonQuads")
+            self._autoPublish(aTuple, theName, ("groupNonHexas", "groupNonQuads"))
             return aTuple
 
         ## Remove all seam and degenerated edges from \a theShape.
@@ -11084,8 +11215,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 anObj = self.AdvOp.MakePipeTShape(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh)
             RaiseIfFailed("MakePipeTShape", self.AdvOp)
             if Parameters: anObj[0].SetParameters(Parameters)
-            self._autoPublish(anObj[0],  theName, "pipeTShape")
-            self._autoPublish(anObj[1:], theName, "pipeTShape_grp")
+            def_names = [ "pipeTShape" ] + [ "pipeTShape_grp_%d" % i for i in range(1, len(anObj)) ]
+            self._autoPublish(anObj, _toListOfNames(theName, len(anObj)), def_names)
             return anObj
 
         ## Create a T-shape object with chamfer and with specified caracteristics for the main
@@ -11157,8 +11288,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
               anObj = self.AdvOp.MakePipeTShapeChamfer(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh)
             RaiseIfFailed("MakePipeTShapeChamfer", self.AdvOp)
             if Parameters: anObj[0].SetParameters(Parameters)
-            self._autoPublish(anObj[0],  theName, "pipeTShape")
-            self._autoPublish(anObj[1:], theName, "pipeTShape_grp")
+            def_names = [ "pipeTShape" ] + [ "pipeTShape_grp_%d" % i for i in range(1, len(anObj)) ]
+            self._autoPublish(anObj, _toListOfNames(theName, len(anObj)), def_names)
             return anObj
 
         ## Create a T-shape object with fillet and with specified caracteristics for the main
@@ -11229,8 +11360,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
               anObj = self.AdvOp.MakePipeTShapeFillet(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh)
             RaiseIfFailed("MakePipeTShapeFillet", self.AdvOp)
             if Parameters: anObj[0].SetParameters(Parameters)
-            self._autoPublish(anObj[0],  theName, "pipeTShape")
-            self._autoPublish(anObj[1:], theName, "pipeTShape_grp")
+            def_names = [ "pipeTShape" ] + [ "pipeTShape_grp_%d" % i for i in range(1, len(anObj)) ]
+            self._autoPublish(anObj, _toListOfNames(theName, len(anObj)), def_names)
             return anObj
 
         ## This function allows creating a disk already divided into blocks. It
