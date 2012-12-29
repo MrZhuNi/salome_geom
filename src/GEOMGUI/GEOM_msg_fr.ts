@@ -2967,6 +2967,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Outils</translation>
     </message>
     <message>
+        <source>MEN_MATERIALS_LIBRARY</source>
+        <translation type="unfinished">Materials library</translation>
+    </message>
+    <message>
         <source>MEN_TORUS</source>
         <translation>Tore</translation>
     </message>
@@ -3025,6 +3029,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_POP_MATERIAL_PROPERTIES</source>
         <translation>Propriétés des matériaux</translation>
+    </message>
+    <message>
+        <source>MEN_POP_PREDEF_MATER_CUSTOM</source>
+        <translation type="unfinished">Custom...</translation>
     </message>
     <message>
         <source>NAME_LBL</source>
@@ -3171,6 +3179,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Matériau</translation>
     </message>
     <message>
+        <source>PREF_PREDEF_MATERIALS</source>
+        <translation type="unfinished">Show predefined materials in popup menu</translation>
+    </message>
+    <message>
         <source>PREF_EDGE_WIDTH</source>
         <translation>Epaisseur des arêtes</translation>
     </message>
@@ -3201,6 +3213,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>PROCESS_SHAPE_NEW_OBJ_NAME</source>
         <translation>FormeRetraitee</translation>
+    </message>
+    <message>
+        <source>MATERIAL_LIBRARY_TLT</source>
+        <translation type="unfinished">Materials Library</translation>
     </message>
     <message>
         <source>REMOVE_HOLES_NEW_OBJ_NAME</source>
@@ -3613,6 +3629,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_POP_WIREFRAME</source>
         <translation>Contours</translation>
+    </message>
+    <message>
+        <source>STB_MATERIALS_LIBRARY</source>
+        <translation type="unfinished">Displays content of Materials library</translation>
+    </message>
+    <message>
+        <source>STB_POP_PREDEF_MATER_CUSTOM</source>
+        <translation type="unfinished">Custom...</translation>
     </message>
     <message>
         <source>STB_PROPAGATE</source>
@@ -4883,6 +4907,22 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <translation>Réarranger les points en prenant en compte les distances</translation>
     </message>
     <message>
+        <source>GEOM_INTERPOL_TANGENTS</source>
+        <translation type="unfinished">Tangents</translation>
+    </message>
+    <message>
+        <source>GEOM_INTERPOL_FIRST_VEC</source>
+        <translation type="unfinished">First tangent vector</translation>
+    </message>
+    <message>
+        <source>GEOM_INTERPOL_LAST_VEC</source>
+        <translation type="unfinished">Last tangent vector</translation>
+    </message>
+    <message>
+        <source>GEOM_BOTH_TANGENTS_REQUIRED</source>
+        <translation type="unfinished">Both tangent vectors must be defined</translation>
+    </message>
+    <message>
         <source>GEOM_CURVE_CRMODE</source>
         <translation>Mode de création</translation>
     </message>
@@ -5397,6 +5437,14 @@ Le nombre de points n&apos;est pas suffisant</translation>
         <source>NUMBER_OPEN</source>
         <translation>Nombre de contours libres ouverts</translation>
     </message>
+    <message>
+        <source>NAME_CLOSED</source>
+        <translation type="unfinished">Closed_Free_Boundary_%1</translation>
+    </message>
+    <message>
+        <source>NAME_OPEN</source>
+        <translation type="unfinished">Open_Free_Boundary_%1</translation>
+    </message>
 </context>
 <context>
     <name>RepairGUI_GlueDlg</name>
@@ -5540,6 +5588,14 @@ Voulez-vous continuer?</translation>
     <message>
         <source>MATERIAL_PROPERTIES_TLT</source>
         <translation>Couleur et propriétés des matériaux</translation>
+    </message>
+    <message>
+        <source>FRONT_FACE</source>
+        <translation type="unfinished">Front face</translation>
+    </message>
+    <message>
+        <source>BACK_FACE</source>
+        <translation type="unfinished">Back face</translation>
     </message>
     <message>
         <source>REFLECTION_0</source>
