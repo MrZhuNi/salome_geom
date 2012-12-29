@@ -45,8 +45,8 @@
     <parameter name="transparency"               value="0.0" />
   </section>
   <section name="Plastic" >
-    <parameter name="front_shininess"            value="0.0078125" />
-    <parameter name="back_shininess"             value="0.0078125" />
+    <parameter name="front_shininess"            value="0.0078" />
+    <parameter name="back_shininess"             value="0.0078" />
     <parameter name="front_ambient-coefficient"  value="0.5" />
     <parameter name="back_ambient-coefficient"   value="0.35" />
     <parameter name="front_diffuse-coefficient"  value="0.24" />
@@ -65,8 +65,8 @@
     <parameter name="back_specular-coefficient"  value="1.0" />
   </section>
   <section name="Satin" >
-    <parameter name="front_shininess"            value="0.09375" />
-    <parameter name="back_shininess"             value="0.09375" />
+    <parameter name="front_shininess"            value="0.0938" />
+    <parameter name="back_shininess"             value="0.0938" />
     <parameter name="front_ambient-coefficient"  value="0.33" />
     <parameter name="back_ambient-coefficient"   value="0.28" />
     <parameter name="front_diffuse-coefficient"  value="0.4" />
@@ -101,8 +101,8 @@
   </section>
   <section name="Brass">
     <parameter name="physical"                   value="true" />
-    <parameter name="front_shininess"            value="0.21794844" />
-    <parameter name="back_shininess"             value="0.21794844" />
+    <parameter name="front_shininess"            value="0.2179" />
+    <parameter name="back_shininess"             value="0.2179" />
     <parameter name="front_ambient-coefficient"  value="1.0" />
     <parameter name="back_ambient-coefficient"   value="0.6" />
     <parameter name="ambient-color"              value="#543907" />
@@ -157,8 +157,8 @@
   </section>
   <section name="Pewter" >
     <parameter name="physical"                   value="true" />
-    <parameter name="front_shininess"            value="0.076923047" />
-    <parameter name="back_shininess"             value="0.076923047" />
+    <parameter name="front_shininess"            value="0.0769" />
+    <parameter name="back_shininess"             value="0.0769" />
     <parameter name="front_ambient-coefficient"  value="1.0" />
     <parameter name="back_ambient-coefficient"   value="0.6" />
     <parameter name="ambient-color"              value="#1b0f1d" />
@@ -170,8 +170,8 @@
     <parameter name="specular-color"             value="#555585" />
   </section>
   <section name="Plaster" >
-    <parameter name="front_shininess"            value="0.0078125" />
-    <parameter name="back_shininess"             value="0.0078125" />
+    <parameter name="front_shininess"            value="0.0078" />
+    <parameter name="back_shininess"             value="0.0078" />
     <parameter name="front_ambient-coefficient"  value="0.26" />
     <parameter name="back_ambient-coefficient"   value="0.18" />
     <parameter name="ambient-color"              value="#313131" />
