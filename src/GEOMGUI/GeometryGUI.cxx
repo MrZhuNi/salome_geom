@@ -1088,13 +1088,12 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpGetNonBlocks,    measurId, -1 );
   createMenu( GEOMOp::OpCheckSelfInters, measurId, -1 );
 
-#ifdef _DEBUG_ // PAL16821
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
+#if defined(_DEBUG_) || defined(_DEBUG) // PAL16821
   createMenu( separator(),         toolsId, -1 );
   createMenu( GEOMOp::OpCheckGeom, toolsId, -1 );
 #endif
-  
-  int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1 );
+ 
   createMenu( separator(),         toolsId, -1 );
   createMenu( GEOMOp::OpMaterialsLibrary, toolsId, -1 );
   createMenu( separator(),         toolsId, -1 );
@@ -1316,7 +1315,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and ( $typeid in {%1} or compoundOfVertices=true ) " ).arg(GEOM::VERTEX).arg(GEOM::COMPOUND), QtxPopupMgr::VisibleRule );
   
   // material properties
-  int MaterId = mgr->insert( action(  GEOMOp::OpMaterialProperties ), -1, -1 ); 
+  mgr->insert( action(  GEOMOp::OpMaterialProperties ), -1, -1 ); 
   mgr->setRule( action( GEOMOp::OpMaterialProperties ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
 
  // texture
