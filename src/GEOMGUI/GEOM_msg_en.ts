@@ -126,6 +126,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Angle</translation>
     </message>
     <message>
+        <source>GEOM_ANGLE_STEP</source>
+        <translation>Angular step :</translation>
+    </message>
+    <message>
         <source>GEOM_ARC_ELLIPSE</source>
         <translation>Arc of ellipse</translation>
     </message>
@@ -1949,6 +1953,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_STEP</source>
         <translation>Step :</translation>
+    </message>
+    <message>
+        <source>GEOM_STEP_R</source>
+        <translation>Radial step :</translation>
     </message>
     <message>
         <source>GEOM_STEP_TITLE</source>

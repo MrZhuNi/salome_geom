@@ -520,6 +520,52 @@ CORBA::Double GEOM_IMeasureOperations_i::GetMinDistance
 
 //=============================================================================
 /*!
+ *  ClosestPoints
+ */
+//=============================================================================
+CORBA::Long GEOM_IMeasureOperations_i::ClosestPoints
+  (GEOM::GEOM_Object_ptr theShape1, GEOM::GEOM_Object_ptr theShape2,
+   GEOM::ListOfDouble_out theCoords)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // allocate the CORBA array
+  int nbSols = -1;
+  GEOM::ListOfDouble_var aDoublesArray = new GEOM::ListOfDouble();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
+  Handle(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
+
+  if (!aShape1.IsNull() && !aShape2.IsNull()) {
+    Handle(TColStd_HSequenceOfReal) aDoubles = new TColStd_HSequenceOfReal;
+    // Get shape parameters
+    //nbSols = GetOperations()->ClosestPoints(aShape1, aShape2, aDoubles);
+    //int nbDbls = aDoubles->Length();
+    //aDoublesArray->length(nbDbls);
+    //for (int id = 0; id < nbDbls; id++) {
+    //  aDoublesArray[id] = aDoubles->Value(id + 1);
+    //}
+    // tmp
+    double X1, Y1, Z1, X2, Y2, Z2;
+    GetOperations()->GetMinDistance(aShape1, aShape2, X1, Y1, Z1, X2, Y2, Z2);
+    aDoublesArray->length(6);
+    aDoublesArray[0] = X1;
+    aDoublesArray[1] = Y1;
+    aDoublesArray[2] = Z1;
+    aDoublesArray[3] = X2;
+    aDoublesArray[4] = Y2;
+    aDoublesArray[5] = Z2;
+    nbSols = 1;
+  }
+
+  theCoords = aDoublesArray._retn();
+  return nbSols;
+}
+
+//=============================================================================
+/*!
  *  PointCoordinates
  */
 //=============================================================================

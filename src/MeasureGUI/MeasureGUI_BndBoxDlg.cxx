@@ -162,7 +162,7 @@ void MeasureGUI_BndBoxDlg::ActivateThisDialog()
           this, SLOT(SelectionIntoArgument()));
 
   globalSelection();
-  displayPreview(true);
+  redisplayPreview();
 }
 
 //=================================================================================

@@ -290,9 +290,8 @@ def TestAll (geompy, math):
   #Create Patterns
   MultiTrans1D = geompy.MakeMultiTranslation1D(Fillet, vz, step1, nbtimes1)
   MultiTrans2D = geompy.MakeMultiTranslation2D(Fillet, vz, step1, nbtimes1, vy, step2, nbtimes2)
-  #!!!!Angle In Degree!!!!
-  MultiRot1D   = geompy.MultiRotate1D(Chamfer, vx, nbtimes1)
-  MultiRot2D   = geompy.MultiRotate2D(Chamfer, vx, angle, nbtimes1, step1, nbtimes2)
+  MultiRot1D   = geompy.MultiRotate1DNbTimes(Chamfer, vx, nbtimes1)
+  MultiRot2D   = geompy.MultiRotate2DByStep(Chamfer, vx, angle1, nbtimes1, step1, nbtimes2)
 
   #Create Informations objects
   CDG        = geompy.MakeCDG(Prism)               #(GEOM_Object)->GEOM_Object

@@ -18,16 +18,15 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI_DistanceDlg.h
 // Author : Nicolas REJNERI, Open CASCADE S.A.S.
-//
+
 #ifndef MEASUREGUI_DISTANCEDLG_H
 #define MEASUREGUI_DISTANCEDLG_H
 
-#include "MeasureGUI_Skeleton.h"
+#include <GEOMBase_Skeleton.h>
 
 class MeasureGUI_2Sel4LineEdit;
 class gp_Pnt;
@@ -36,36 +35,41 @@ class gp_Pnt;
 // class    : MeasureGUI_DistanceDlg
 // purpose  :
 //=================================================================================
-
-class MeasureGUI_DistanceDlg : public MeasureGUI_Skeleton
-{ 
+class MeasureGUI_DistanceDlg : public GEOMBase_Skeleton
+{
   Q_OBJECT
-    
+
 public:
-  MeasureGUI_DistanceDlg( GeometryGUI*, QWidget* );
+  MeasureGUI_DistanceDlg (GeometryGUI*, QWidget*);
   ~MeasureGUI_DistanceDlg();
 
 protected:
-  // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
+  // redefined from GEOMBase_Helper and GEOMBase_Skeleton
+  virtual GEOM::GEOM_IOperations_ptr  createOperation();
+  virtual bool                        isValid (QString&);
+  virtual bool                        execute (ObjectList&);
+
+  void                                redisplayPreview();
   virtual void                        processObject();
   virtual SALOME_Prs*                 buildPrs();
-  virtual void                        SelectionIntoArgument();
-  virtual void                        LineEditReturnPressed();
-  virtual void                        SetEditCurrentArgument();
-  virtual bool                        isValid( QString& );
 
 private:
   void                                Init();
-  bool                                getParameters( double&,
-                                                     gp_Pnt&,
-                                                     gp_Pnt& );
+  void                                enterEvent (QEvent*);
+  bool                                getParameters (double&, gp_Pnt&, gp_Pnt&);
+
 private:
-  QLineEdit*                          myEditCurrentArgument;
-  QLineEdit*                          mySelEdit2;
-  QPushButton*                        mySelBtn2;
-  
-  MeasureGUI_2Sel4LineEdit*           myGrp;
+  GEOM::GEOM_Object_var               myObj1;
   GEOM::GEOM_Object_var               myObj2;
+
+  MeasureGUI_2Sel4LineEdit*           myGrp;
+
+private slots:
+  void                                ClickOnOk();
+  bool                                ClickOnApply();
+  void                                ActivateThisDialog();
+  void                                SelectionIntoArgument();
+  void                                SetEditCurrentArgument();
 };
 
 #endif // MEASUREGUI_DISTANCEDLG_H

@@ -103,6 +103,10 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
                                 CORBA::Double& X1, CORBA::Double& Y1, CORBA::Double& Z1,
                                 CORBA::Double& X2, CORBA::Double& Y2, CORBA::Double& Z2);
 
+  CORBA::Long ClosestPoints (GEOM::GEOM_Object_ptr theShape1,
+                             GEOM::GEOM_Object_ptr theShape2,
+                             GEOM::ListOfDouble_out theCoords);
+
   void PointCoordinates (GEOM::GEOM_Object_ptr theShape,
                          CORBA::Double& X, CORBA::Double& Y, CORBA::Double& Z);
 

@@ -186,8 +186,8 @@ def TestOtherOperations (geompy, math):
   pz = geompy.MakeVertex(0, 0, 100)
   vy = geompy.MakeVectorDXDYDZ(0, 100, 0)
 
-  MultiRot1D = geompy.MakeMultiRotation1D(f12, vy, pz, 6)
-  MultiRot2D = geompy.MakeMultiRotation2D(f12, vy, pz, 45, 6, 30, 3)
+  MultiRot1D = geompy.MakeMultiRotation1DNbTimes(f12, vy, pz, 6)
+  MultiRot2D = geompy.MakeMultiRotation2DByStep(f12, vy, pz, math.pi/4, 6, 30, 3)
 
   id_MultiRot1D = geompy.addToStudy(MultiRot1D, "MakeMultiRotation1D")
   id_MultiRot2D = geompy.addToStudy(MultiRot2D, "MakeMultiRotation2D")

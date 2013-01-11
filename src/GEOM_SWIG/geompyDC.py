@@ -169,6 +169,7 @@
 ##     @defgroup l3_basic_op      Basic Operations
 ##     @defgroup l3_boolean       Boolean Operations
 ##     @defgroup l3_transform     Transformation Operations
+##     @defgroup l3_transform_d   Transformation Operations deprecated methods
 ##     @defgroup l3_local         Local Operations (Fillet, Chamfer and other Features)
 ##     @defgroup l3_blocks_op     Blocks Operations
 ##     @defgroup l3_healing       Repairing Operations
@@ -7652,7 +7653,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Translate the given object along the given vector a given number times
         #  @param theObject The object to be translated.
-        #  @param theVector Direction of the translation.
+        #  @param theVector Direction of the translation. DX if None.
         #  @param theStep Distance to translate on.
         #  @param theNbTimes Quantity of translations to be done.
         #  @param theName Object name; when specified, this parameter is used
@@ -7669,7 +7670,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theObject The object to be translated.
-                theVector Direction of the translation.
+                theVector Direction of the translation. DX if None.
                 theStep Distance to translate on.
                 theNbTimes Quantity of translations to be done.
                 theName Object name; when specified, this parameter is used
@@ -7693,10 +7694,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Conseqently apply two specified translations to theObject specified number of times.
         #  @param theObject The object to be translated.
-        #  @param theVector1 Direction of the first translation.
+        #  @param theVector1 Direction of the first translation. DX if None.
         #  @param theStep1 Step of the first translation.
         #  @param theNbTimes1 Quantity of translations to be done along theVector1.
-        #  @param theVector2 Direction of the second translation.
+        #  @param theVector2 Direction of the second translation. DY if None.
         #  @param theStep2 Step of the second translation.
         #  @param theNbTimes2 Quantity of translations to be done along theVector2.
         #  @param theName Object name; when specified, this parameter is used
@@ -7714,10 +7715,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theObject The object to be translated.
-                theVector1 Direction of the first translation.
+                theVector1 Direction of the first translation. DX if None.
                 theStep1 Step of the first translation.
                 theNbTimes1 Quantity of translations to be done along theVector1.
-                theVector2 Direction of the second translation.
+                theVector2 Direction of the second translation. DY if None.
                 theStep2 Step of the second translation.
                 theNbTimes2 Quantity of translations to be done along theVector2.
                 theName Object name; when specified, this parameter is used
@@ -7743,7 +7744,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Rotate the given object around the given axis a given number times.
         #  Rotation angle will be 2*PI/theNbTimes.
         #  @param theObject The object to be rotated.
-        #  @param theAxis The rotation axis.
+        #  @param theAxis The rotation axis. DZ if None.
         #  @param theNbTimes Quantity of rotations to be done.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -7753,14 +7754,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #          shapes, obtained after each rotation.
         #
         #  @ref tui_multi_rotation "Example"
-        def MultiRotate1D(self, theObject, theAxis, theNbTimes, theName=None):
+        def MultiRotate1DNbTimes (self, theObject, theAxis, theNbTimes, theName=None):
             """
             Rotate the given object around the given axis a given number times.
             Rotation angle will be 2*PI/theNbTimes.
 
             Parameters:
                 theObject The object to be rotated.
-                theAxis The rotation axis.
+                theAxis The rotation axis. DZ if None.
                 theNbTimes Quantity of rotations to be done.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
@@ -7771,26 +7772,68 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 shapes, obtained after each rotation.
 
             Example of usage:
-                rot1d = geompy.MultiRotate1D(prism, vect, 4)
+                rot1d = geompy.MultiRotate1DNbTimes(prism, vect, 4)
             """
             # Example: see GEOM_TestAll.py
-            theAxis, theNbTimes, Parameters = ParseParameters(theAxis, theNbTimes)
+            theNbTimes, Parameters = ParseParameters(theNbTimes)
             anObj = self.TrsfOp.MultiRotate1D(theObject, theAxis, theNbTimes)
-            RaiseIfFailed("MultiRotate1D", self.TrsfOp)
+            RaiseIfFailed("MultiRotate1DNbTimes", self.TrsfOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "multirotation")
             return anObj
 
-        ## Rotate the given object around the
-        #  given axis on the given angle a given number
-        #  times and multi-translate each rotation result.
+        ## Rotate the given object around the given axis
+        #  a given number times on the given angle.
+        #  @param theObject The object to be rotated.
+        #  @param theAxis The rotation axis. DZ if None.
+        #  @param theAngleStep Rotation angle in radians.
+        #  @param theNbTimes Quantity of rotations to be done.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing compound of all the
+        #          shapes, obtained after each rotation.
+        #
+        #  @ref tui_multi_rotation "Example"
+        def MultiRotate1DByStep(self, theObject, theAxis, theAngleStep, theNbTimes, theName=None):
+            """
+            Rotate the given object around the given axis
+            a given number times on the given angle.
+
+            Parameters:
+                theObject The object to be rotated.
+                theAxis The rotation axis. DZ if None.
+                theAngleStep Rotation angle in radians.
+                theNbTimes Quantity of rotations to be done.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:     
+                New GEOM.GEOM_Object, containing compound of all the
+                shapes, obtained after each rotation.
+
+            Example of usage:
+                rot1d = geompy.MultiRotate1DByStep(prism, vect, math.pi/4, 4)
+            """
+            # Example: see GEOM_TestAll.py
+            theAngleStep, theNbTimes, Parameters = ParseParameters(theAngleStep, theNbTimes)
+            anObj = self.TrsfOp.MultiRotate1DByStep(theObject, theAxis, theAngleStep, theNbTimes)
+            RaiseIfFailed("MultiRotate1DByStep", self.TrsfOp)
+            anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName, "multirotation")
+            return anObj
+
+        ## Rotate the given object around the given axis a given
+        #  number times and multi-translate each rotation result.
+        #  Rotation angle will be 2*PI/theNbTimes1.
         #  Translation direction passes through center of gravity
         #  of rotated shape and its projection on the rotation axis.
         #  @param theObject The object to be rotated.
-        #  @param theAxis Rotation axis.
-        #  @param theAngle Rotation angle in degrees.
+        #  @param theAxis Rotation axis. DZ if None.
         #  @param theNbTimes1 Quantity of rotations to be done.
-        #  @param theStep Translation distance.
+        #  @param theRadialStep Translation distance.
         #  @param theNbTimes2 Quantity of translations to be done.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -7800,7 +7843,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #          shapes, obtained after each transformation.
         #
         #  @ref tui_multi_rotation "Example"
-        def MultiRotate2D(self, theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2, theName=None):
+        def MultiRotate2DNbTimes(self, theObject, theAxis, theNbTimes1, theRadialStep, theNbTimes2, theName=None):
             """
             Rotate the given object around the
             given axis on the given angle a given number
@@ -7810,10 +7853,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theObject The object to be rotated.
-                theAxis Rotation axis.
-                theAngle Rotation angle in degrees.
+                theAxis Rotation axis. DZ if None.
                 theNbTimes1 Quantity of rotations to be done.
-                theStep Translation distance.
+                theRadialStep Translation distance.
                 theNbTimes2 Quantity of translations to be done.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
@@ -7827,6 +7869,163 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 rot2d = geompy.MultiRotate2D(prism, vect, 60, 4, 50, 5)
             """
             # Example: see GEOM_TestAll.py
+            theNbTimes1, theRadialStep, theNbTimes2, Parameters = ParseParameters(theNbTimes1, theRadialStep, theNbTimes2)
+            anObj = self.TrsfOp.MultiRotate2DNbTimes(theObject, theAxis, theNbTimes1, theRadialStep, theNbTimes2)
+            RaiseIfFailed("MultiRotate2DNbTimes", self.TrsfOp)
+            anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName, "multirotation")
+            return anObj
+
+        ## Rotate the given object around the
+        #  given axis on the given angle a given number
+        #  times and multi-translate each rotation result.
+        #  Translation direction passes through center of gravity
+        #  of rotated shape and its projection on the rotation axis.
+        #  @param theObject The object to be rotated.
+        #  @param theAxis Rotation axis. DZ if None.
+        #  @param theAngleStep Rotation angle in radians.
+        #  @param theNbTimes1 Quantity of rotations to be done.
+        #  @param theRadialStep Translation distance.
+        #  @param theNbTimes2 Quantity of translations to be done.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing compound of all the
+        #          shapes, obtained after each transformation.
+        #
+        #  @ref tui_multi_rotation "Example"
+        def MultiRotate2DByStep (self, theObject, theAxis, theAngleStep, theNbTimes1, theRadialStep, theNbTimes2, theName=None):
+            """
+            Rotate the given object around the
+            given axis on the given angle a given number
+            times and multi-translate each rotation result.
+            Translation direction passes through center of gravity
+            of rotated shape and its projection on the rotation axis.
+
+            Parameters:
+                theObject The object to be rotated.
+                theAxis Rotation axis. DZ if None.
+                theAngleStep Rotation angle in radians.
+                theNbTimes1 Quantity of rotations to be done.
+                theRadialStep Translation distance.
+                theNbTimes2 Quantity of translations to be done.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:    
+                New GEOM.GEOM_Object, containing compound of all the
+                shapes, obtained after each transformation.
+
+            Example of usage:
+                rot2d = geompy.MultiRotate2D(prism, vect, math.pi/3, 4, 50, 5)
+            """
+            # Example: see GEOM_TestAll.py
+            theAngleStep, theNbTimes1, theRadialStep, theNbTimes2, Parameters = ParseParameters(theAngleStep, theNbTimes1, theRadialStep, theNbTimes2)
+            anObj = self.TrsfOp.MultiRotate2DByStep(theObject, theAxis, theAngleStep, theNbTimes1, theRadialStep, theNbTimes2)
+            RaiseIfFailed("MultiRotate2DByStep", self.TrsfOp)
+            anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName, "multirotation")
+            return anObj
+
+        ## The same, as MultiRotate1DNbTimes(), but axis is given by direction and point
+        #
+        #  @ref swig_MakeMultiRotation "Example"
+        def MakeMultiRotation1DNbTimes(self, aShape, aDir, aPoint, aNbTimes, theName=None):
+            """
+            The same, as geompy.MultiRotate1DNbTimes, but axis is given by direction and point
+
+            Example of usage:
+                pz = geompy.MakeVertex(0, 0, 100)
+                vy = geompy.MakeVectorDXDYDZ(0, 100, 0)
+                MultiRot1D = geompy.MakeMultiRotation1DNbTimes(prism, vy, pz, 6)
+            """
+            # Example: see GEOM_TestOthers.py
+            aVec = self.MakeLine(aPoint,aDir)
+            # note: auto-publishing is done in self.MultiRotate1D()
+            anObj = self.MultiRotate1DNbTimes(aShape, aVec, aNbTimes, theName)
+            return anObj
+
+        ## The same, as MultiRotate1DByStep(), but axis is given by direction and point
+        #
+        #  @ref swig_MakeMultiRotation "Example"
+        def MakeMultiRotation1DByStep(self, aShape, aDir, aPoint, anAngle, aNbTimes, theName=None):
+            """
+            The same, as geompy.MultiRotate1D, but axis is given by direction and point
+
+            Example of usage:
+                pz = geompy.MakeVertex(0, 0, 100)
+                vy = geompy.MakeVectorDXDYDZ(0, 100, 0)
+                MultiRot1D = geompy.MakeMultiRotation1DByStep(prism, vy, pz, math.pi/3, 6)
+            """
+            # Example: see GEOM_TestOthers.py
+            aVec = self.MakeLine(aPoint,aDir)
+            # note: auto-publishing is done in self.MultiRotate1D()
+            anObj = self.MultiRotate1DByStep(aShape, aVec, anAngle, aNbTimes, theName)
+            return anObj
+
+        ## The same, as MultiRotate2DNbTimes(), but axis is given by direction and point
+        #
+        #  @ref swig_MakeMultiRotation "Example"
+        def MakeMultiRotation2DNbTimes(self, aShape, aDir, aPoint, nbtimes1, aStep, nbtimes2, theName=None):
+            """
+            The same, as MultiRotate2DNbTimes(), but axis is given by direction and point
+            
+            Example of usage:
+                pz = geompy.MakeVertex(0, 0, 100)
+                vy = geompy.MakeVectorDXDYDZ(0, 100, 0)
+                MultiRot2D = geompy.MakeMultiRotation2DNbTimes(f12, vy, pz, 6, 30, 3)
+            """
+            # Example: see GEOM_TestOthers.py
+            aVec = self.MakeLine(aPoint,aDir)
+            # note: auto-publishing is done in self.MultiRotate2DNbTimes()
+            anObj = self.MultiRotate2DNbTimes(aShape, aVec, nbtimes1, aStep, nbtimes2, theName)
+            return anObj
+
+        ## The same, as MultiRotate2DByStep(), but axis is given by direction and point
+        #
+        #  @ref swig_MakeMultiRotation "Example"
+        def MakeMultiRotation2DByStep(self, aShape, aDir, aPoint, anAngle, nbtimes1, aStep, nbtimes2, theName=None):
+            """
+            The same, as MultiRotate2DByStep(), but axis is given by direction and point
+            
+            Example of usage:
+                pz = geompy.MakeVertex(0, 0, 100)
+                vy = geompy.MakeVectorDXDYDZ(0, 100, 0)
+                MultiRot2D = geompy.MakeMultiRotation2DByStep(f12, vy, pz, math.pi/4, 6, 30, 3)
+            """
+            # Example: see GEOM_TestOthers.py
+            aVec = self.MakeLine(aPoint,aDir)
+            # note: auto-publishing is done in self.MultiRotate2D()
+            anObj = self.MultiRotate2DByStep(aShape, aVec, anAngle, nbtimes1, aStep, nbtimes2, theName)
+            return anObj
+
+        # end of l3_transform
+        ## @}
+
+        ## @addtogroup l3_transform_d
+        ## @{
+
+        ## Deprecated method. Use MultiRotate1DNbTimes instead.
+        def MultiRotate1D(self, theObject, theAxis, theNbTimes, theName=None):
+            """
+            Deprecated method. Use MultiRotate1DNbTimes instead.
+            """
+            print "The method MultiRotate1D is DEPRECATED. Use MultiRotate1DNbTimes instead."
+            return self.MultiRotate1DNbTimes(theObject, theAxis, theNbTimes, theName)
+
+        ## The same, as MultiRotate2DByStep(), but theAngle is in degrees.
+        #  This method is DEPRECATED. Use MultiRotate2DByStep() instead.
+        def MultiRotate2D(self, theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2, theName=None):
+            """
+            The same, as MultiRotate2DByStep(), but theAngle is in degrees.
+            This method is DEPRECATED. Use MultiRotate2DByStep() instead.
+
+            Example of usage:
+                rot2d = geompy.MultiRotate2D(prism, vect, 60, 4, 50, 5)
+            """
+            print "The method MultiRotate2D is DEPRECATED. Use MultiRotate2DByStep instead."
             theAngle, theNbTimes1, theStep, theNbTimes2, Parameters = ParseParameters(theAngle, theNbTimes1, theStep, theNbTimes2)
             anObj = self.TrsfOp.MultiRotate2D(theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2)
             RaiseIfFailed("MultiRotate2D", self.TrsfOp)
@@ -7835,42 +8034,42 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return anObj
 
         ## The same, as MultiRotate1D(), but axis is given by direction and point
-        #
-        #  @ref swig_MakeMultiRotation "Example"
+        #  This method is DEPRECATED. Use MakeMultiRotation1DNbTimes instead.
         def MakeMultiRotation1D(self, aShape, aDir, aPoint, aNbTimes, theName=None):
             """
-            The same, as geompy.MultiRotate1D, but axis is given by direction and point
+            The same, as geompy.MultiRotate1D, but axis is given by direction and point.
+            This method is DEPRECATED. Use MakeMultiRotation1DNbTimes instead.
 
             Example of usage:
                 pz = geompy.MakeVertex(0, 0, 100)
                 vy = geompy.MakeVectorDXDYDZ(0, 100, 0)
                 MultiRot1D = geompy.MakeMultiRotation1D(prism, vy, pz, 6)
             """
-            # Example: see GEOM_TestOthers.py
+            print "The method MakeMultiRotation1D is DEPRECATED. Use MakeMultiRotation1DNbTimes instead."
             aVec = self.MakeLine(aPoint,aDir)
             # note: auto-publishing is done in self.MultiRotate1D()
             anObj = self.MultiRotate1D(aShape, aVec, aNbTimes, theName)
             return anObj
 
         ## The same, as MultiRotate2D(), but axis is given by direction and point
-        #
-        #  @ref swig_MakeMultiRotation "Example"
+        #  This method is DEPRECATED. Use MakeMultiRotation2DByStep instead.
         def MakeMultiRotation2D(self, aShape, aDir, aPoint, anAngle, nbtimes1, aStep, nbtimes2, theName=None):
             """
             The same, as MultiRotate2D(), but axis is given by direction and point
+            This method is DEPRECATED. Use MakeMultiRotation2DByStep instead.
             
             Example of usage:
                 pz = geompy.MakeVertex(0, 0, 100)
                 vy = geompy.MakeVectorDXDYDZ(0, 100, 0)
                 MultiRot2D = geompy.MakeMultiRotation2D(f12, vy, pz, 45, 6, 30, 3)
             """
-            # Example: see GEOM_TestOthers.py
+            print "The method MakeMultiRotation2D is DEPRECATED. Use MakeMultiRotation2DByStep instead."
             aVec = self.MakeLine(aPoint,aDir)
             # note: auto-publishing is done in self.MultiRotate2D()
             anObj = self.MultiRotate2D(aShape, aVec, anAngle, nbtimes1, aStep, nbtimes2, theName)
             return anObj
 
-        # end of l3_transform
+        # end of l3_transform_d
         ## @}
 
         ## @addtogroup l3_local

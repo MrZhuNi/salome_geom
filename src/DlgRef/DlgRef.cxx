@@ -15,7 +15,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File   : DlgRef.cxx
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
@@ -523,20 +522,6 @@ DlgRef_2Sel3Spin::DlgRef_2Sel3Spin( QWidget* parent, Qt::WindowFlags f )
 }
 
 DlgRef_2Sel3Spin::~DlgRef_2Sel3Spin()
-{
-}
-
-//////////////////////////////////////////
-// DlgRef_2Sel4Spin1Check
-//////////////////////////////////////////
-
-DlgRef_2Sel4Spin1Check::DlgRef_2Sel4Spin1Check( QWidget* parent, Qt::WindowFlags f )
-: QWidget( parent, f )
-{
-  setupUi( this );
-}
-
-DlgRef_2Sel4Spin1Check::~DlgRef_2Sel4Spin1Check()
 {
 }
 

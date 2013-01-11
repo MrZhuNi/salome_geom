@@ -153,6 +153,7 @@
 #define ROTATE_2D                 4
 #define ROTATE_THREE_POINTS       5
 #define ROTATE_THREE_POINTS_COPY  6
+#define ROTATE_1D_STEP            7
 
 #define MIRROR_PLANE      1
 #define MIRROR_PLANE_COPY 2
