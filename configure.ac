@@ -310,6 +310,13 @@ echo
 
 CHECK_BOOST
 
+echo        
+echo --------------------------------------------- 
+echo testing LIBXML2
+echo ---------------------------------------------
+
+CHECK_LIBXML
+
 echo
 echo ---------------------------------------------
 echo Testing OpenCascade
@@ -533,6 +540,9 @@ AC_OUTPUT([ \
   src/ShapeRecognition/Makefile \
   src/TransformationGUI/Makefile \
   src/VTKExport/Makefile \
+  src/XAO/Makefile \
+  src/XAOExport/Makefile \
+  src/XAOImport/Makefile \
   resources/Makefile \
   resources/GEOMCatalog.xml \
   resources/SalomeApp.xml \

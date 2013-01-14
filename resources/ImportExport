@@ -1,9 +1,13 @@
-Import: BREP|IGES|STEP|ACIS
-Export: BREP|IGES|IGES_5_3|STEP|STL_Bin|STL_ASCII|ACIS|VTK
+Import: BREP|XAO|IGES|STEP|ACIS
+Export: BREP|XAO|IGES|IGES_5_3|STEP|STL_Bin|STL_ASCII|ACIS|VTK
 
 BREP.Import: libBREPImport
 BREP.Export: libBREPExport
 BREP.Pattern: BREP Files ( *.brep )
+
+XAO.Import: libXAOImport
+XAO.Export: libXAOExport
+XAO.Pattern: XAO Files ( *.xao )
 
 IGES.Import: libIGESImport
 IGES.Export: libIGESExport

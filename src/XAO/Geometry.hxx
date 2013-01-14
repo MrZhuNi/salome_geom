@@ -1,0 +1,84 @@
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+// Author : Nathalie Gore (OpenCascade)
+
+#ifndef __XAO_GEOMETRY_HXX__
+#define __XAO_GEOMETRY_HXX__
+
+#include <string>
+
+#include <SALOMEconfig.h>
+#include <TopoDS_Shape.hxx>
+
+namespace XAO
+{ 
+  class Geometry
+  {
+  public:
+    static Geometry *New();
+    void setName(const char *name) { _myName=name; }
+    const char *getName() const { return _myName.c_str(); }
+    void setFormat(const char *format) { _myFormat=format; }
+    const char *getFormat() const { return _myFormat.c_str(); }
+    
+    void setShape(TopoDS_Shape &Shape) { _myShape=Shape; }
+    TopoDS_Shape getShape() { return _myShape; }
+    
+    void initShapeFromBREP(const char * brep );
+    const char * convertShapeToBREP();
+    
+    void setNbVertices(int nb) { _myNbVertices=nb; }
+    int getNbVertices() { return _myNbVertices; }
+    void setNameVerticesAt(int i, const char *myName);
+    void setNamesVertices(const char **myNames);
+    const char *  getNameVerticesAt(int i) { return _myNamesVertices[i].c_str(); } 
+    void initIdsVertices();
+    int * getIdsVertices();
+
+    void setNbEdges(int nb) { _myNbEdges=nb; }
+    int getNbEdges() { return _myNbEdges; }
+    void setNbFaces(int nb) { _myNbFaces=nb; }
+    int getNbFaces() { return _myNbFaces; }
+    void setNbSolids(int nb) { _myNbSolids=nb; }
+    int getNbSolids() { return _myNbSolids; }
+
+  private:
+    Geometry();
+    ~Geometry();
+
+  private:
+    TopoDS_Shape        _myShape;
+    std::string         _myName;
+    std::string         _myFormat;
+    int                 _myNbVertices;
+    std::string        *_myNamesVertices;
+    int                *_myIdsVertices;
+    int                 _myNbEdges;
+    std::string        *_myNamesEdges;
+    int                *_myIdsEdges;
+    int                 _myNbFaces;
+    std::string        *_myNamesFaces;
+    int                *_myIdsFaces;
+    int                 _myNbSolids;
+    std::string        *_myNamesSolids;
+    int                *_myIdsSolids;
+  };
+}
+
+#endif
