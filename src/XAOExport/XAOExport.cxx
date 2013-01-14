@@ -135,18 +135,8 @@ XAOEXPORT_EXPORT
 	  //nameShape = GEOMBase::GetName( anObj.get() );
 	  nameShape = anObj->GetName();
           
-	  GEOM_Engine* anEngine = GEOM_Engine::GetEngine();
-	  GEOMImpl_Gen* aGen = (GEOMImpl_Gen*)anEngine;
-	  if (aGen) {
-	    /*GEOM::GEOM_IShapesOperations_var aShOp = anEngine->GetIShapesOperations(anObj->GetStudyID());
-	    aSubShapesId = aShOp->SubShapeAllIDs(anObj->GetMainObject(), TopAbs_VERTEX, false);*/
-	    GEOMImpl_IShapesOperations* anIShapesOperations = aGen->GetIShapesOperations(anObj->GetStudyID());
-            aSubShapesId = anIShapesOperations->SubShapeAllIDs(anObj->GetMainShape()->GetImpl(), TopAbs_VERTEX, false);
-	  }
-	  //GEOM::GEOM_Gen_ptr GEOMBase_Helper::getGeomEngine();
-	  /*GEOM::GEOM_IShapesOperations_var aShOp = GEOMBase_Helper::getGeomEngine()->GetIShapesOperations(anObj->GetStudyID());
-	  aSubShapesId = aShOp->SubShapeAllIDs(anObj->GetMainObject(), TopAbs_VERTEX, false);*/
-
+	  GEOM::GEOM_IShapesOperations_var aShOp = GeometryGUI::GetGeomGen()->GetIShapesOperations(anObj->GetStudyID());
+          aSubShapesId = aShOp->SubShapeAllIDs(anObj, TopAbs_VERTEX, false);
       }
     }
 
