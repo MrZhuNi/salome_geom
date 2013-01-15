@@ -20,37 +20,37 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        GEOMAlgo_VertexSolid.hxx
-// Created:     Wed Jan 12 16:36:40 2005
+// File:        GEOMAlgo_BoxBndTree.hxx
+// Created:     Tue Oct 17 12:50:31 2006
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#ifndef _GEOMAlgo_VertexSolid_HeaderFile
-#define _GEOMAlgo_VertexSolid_HeaderFile
+#ifndef GEOMAlgo_BoxBndTree_HeaderFile
+#define GEOMAlgo_BoxBndTree_HeaderFile
 
-#include <Standard.hxx>
-#include <Standard_Macro.hxx>
+#include <NCollection_UBTree.hxx>
+#include <Bnd_Box.hxx>
+#include <TColStd_MapOfInteger.hxx>
+#include <TColStd_ListOfInteger.hxx>
 
-#include <GEOMAlgo_ShapeSolid.hxx>
+typedef NCollection_UBTree <Standard_Integer , Bnd_Box> GEOMAlgo_BoxBndTree;
 
-//=======================================================================
-//class    : GEOMAlgo_VertexSolid
-//purpose  :
-//=======================================================================
-class GEOMAlgo_VertexSolid  : public GEOMAlgo_ShapeSolid
-{
- public:
-  Standard_EXPORT
-    GEOMAlgo_VertexSolid();
+  class GEOMAlgo_BoxBndTreeSelector : public GEOMAlgo_BoxBndTree::Selector {
+    public:
+      Standard_EXPORT GEOMAlgo_BoxBndTreeSelector();
+      Standard_EXPORT virtual Standard_Boolean Reject(const Bnd_Box&) const;
+      Standard_EXPORT virtual Standard_Boolean Accept(const Standard_Integer &);
+      Standard_EXPORT virtual ~GEOMAlgo_BoxBndTreeSelector();
+      
+      Standard_EXPORT void Clear();
+      Standard_EXPORT void SetBox(const Bnd_Box&);
+      Standard_EXPORT const TColStd_ListOfInteger& Indices() const;
 
-  Standard_EXPORT
-    virtual ~GEOMAlgo_VertexSolid();
+    protected:
+      Bnd_Box  myBox;
+      TColStd_MapOfInteger  myFence;
+      TColStd_ListOfInteger myIndices;
+      
+  };
 
-  Standard_EXPORT
-    virtual  void Perform() ;
-
-protected:
-  Standard_EXPORT
-    virtual  void BuildResult() ;
-};
 #endif

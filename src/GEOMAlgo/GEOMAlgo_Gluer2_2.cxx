@@ -32,7 +32,7 @@
 #include <TopoDS_Shape.hxx>
 
 #include <GEOMAlgo_BuilderShape.hxx>
-#include <GEOMAlgo_Tools3D.hxx>
+#include <GEOMAlgo_AlgoTools.hxx>
 
 //=======================================================================
 //function : PrepareHistory
@@ -98,7 +98,7 @@ const TopTools_ListOfShape& GEOMAlgo_Gluer2::Modified(const TopoDS_Shape& theS)
     aSim.Orientation(theS.Orientation());
   }
   else {
-    bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aSim, theS, myContext);
+    bToReverse=GEOMAlgo_AlgoTools::IsSplitToReverse(aSim, theS, myContext);
     if (bToReverse) {
       aSim.Reverse();
     }

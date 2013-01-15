@@ -20,7 +20,7 @@
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
 # Package : src (source files directory)
 
-SUBDIRS = ARCHIMEDE NMTDS NMTTools BlockFix GEOMAlgo SKETCHER OCC2VTK GEOM	\
+SUBDIRS = ARCHIMEDE BlockFix GEOMAlgo SKETCHER OCC2VTK GEOM	\
           BREPExport BREPImport IGESExport IGESImport STEPExport STEPImport	\
           STLExport VTKExport ShHealOper GEOMUtils GEOMImpl GEOM_I		\
           GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
@@ -36,7 +36,7 @@ if GEOM_ENABLE_GUI
              RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI GEOM_SWIG_WITHIHM
 endif
 
-DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools BlockFix GEOMAlgo SKETCHER		\
+DIST_SUBDIRS = ARCHIMEDE BlockFix GEOMAlgo SKETCHER		\
                OCC2VTK GEOM BREPExport BREPImport IGESExport IGESImport		\
                STEPExport STEPImport STLExport VTKExport ShHealOper GEOMUtils	\
                GEOMImpl GEOM_I GEOMClient GEOM_I_Superv GEOM_SWIG OBJECT	\

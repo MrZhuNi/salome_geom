@@ -1,3 +1,4 @@
+
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
@@ -19,81 +20,38 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:        GEOMAlgo_Splitter.hxx
-// Created:     Thu Sep 06 10:54:04 2012
+// File:        GEOMAlgo_CheckerSI.hxx
+// Created:
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
 
-#ifndef GEOMAlgo_Splitter_HeaderFile
-#define GEOMAlgo_Splitter_HeaderFile
+#ifndef GEOMAlgo_IteratorCheckerSI_HeaderFile
+#define GEOMAlgo_IteratorCheckerSI_HeaderFile
 
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
-#include <Standard_Boolean.hxx>
-#include <Standard_Integer.hxx>
-
+#include <BOPDS_Iterator.hxx>
 #include <NCollection_BaseAllocator.hxx>
 
-#include <TopAbs_ShapeEnum.hxx>
-
-#include <TopoDS_Shape.hxx>
-
-#include <BOPCol_ListOfShape.hxx>
-#include <BOPCol_MapOfShape.hxx>
-
-#include <BOPAlgo_Builder.hxx>
-
 //=======================================================================
-//class    : GEOMAlgo_Splitter
-//purpose  :
+//class    : GEOMAlgo_CheckerSI
+//purpose  : 
 //=======================================================================
-class GEOMAlgo_Splitter : public BOPAlgo_Builder
-{
+class GEOMAlgo_IteratorCheckerSI  : public BOPDS_Iterator {
  public:
+  Standard_EXPORT
+    GEOMAlgo_IteratorCheckerSI();
+
+  Standard_EXPORT
+    GEOMAlgo_IteratorCheckerSI(const Handle(NCollection_BaseAllocator)& theAllocator);
   
   Standard_EXPORT
-    GEOMAlgo_Splitter();
+    ~GEOMAlgo_IteratorCheckerSI();
 
   Standard_EXPORT
-    GEOMAlgo_Splitter(const Handle(NCollection_BaseAllocator)& theAllocator);
+    virtual void Intersect();
   
-  Standard_EXPORT
-    virtual ~GEOMAlgo_Splitter();
-
-  Standard_EXPORT
-    void AddTool(const TopoDS_Shape& theShape);
-
-  Standard_EXPORT
-    const BOPCol_ListOfShape& Tools()const;
-
-  Standard_EXPORT
-    void SetLimit(const TopAbs_ShapeEnum aLimit);
-
-  Standard_EXPORT
-    TopAbs_ShapeEnum Limit()const;
-
-  Standard_EXPORT
-    void SetLimitMode(const Standard_Integer aMode);
-
-  Standard_EXPORT
-    Standard_Integer LimitMode()const;
-
-  Standard_EXPORT
-    virtual void Clear();
-
- protected:
-  Standard_EXPORT
-    virtual void BuildResult(const TopAbs_ShapeEnum theType);
-
-  Standard_EXPORT
-    virtual void PostTreat();
-  
- protected:
-  BOPCol_ListOfShape myTools; 
-  BOPCol_MapOfShape myMapTools;        
-  TopAbs_ShapeEnum myLimit;   
-  Standard_Integer myLimitMode;  
 };
 
 #endif
