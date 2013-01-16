@@ -69,7 +69,7 @@ TransformationGUI_MultiRotationDlg::TransformationGUI_MultiRotationDlg
   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
 
-  bool isAngleStep = true;
+  bool isAngleStep = false;
 
   GroupArgs = new TransformationGUI_2Sel4Spin1Check (centralWidget());
   GroupArgs->GroupBox1->setTitle(tr("GEOM_MULTIROTATION_DOUBLE"));
