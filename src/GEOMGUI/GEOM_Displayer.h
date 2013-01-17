@@ -63,6 +63,7 @@ class LightApp_SelectionMgr;
 class SalomeApp_Study;
 class SalomeApp_Application;
 class SUIT_SelectionFilter;
+class Handle_GEOM_AISShape;
 //class SALOME_Selection;
 
 class GEOMGUI_EXPORT GEOM_Displayer : public LightApp_Displayer
@@ -209,6 +210,11 @@ protected:
   SUIT_SelectionFilter* getFilter( const int theMode );
   SUIT_SelectionFilter* getComplexFilter( const QList<int>* );
 
+  Quantity_Color qColorFromResources( const QString&, const QColor& );
+  QColor         colorFromResources( const QString&, const QColor& );
+  bool           setPointMarker( const Handle(GEOM_AISShape)&, const QString&, const Quantity_Color );
+  void           updateShapeProperties( const Handle(GEOM_AISShape)& );
+
 protected:
   Handle(SALOME_InteractiveObject) myIO;
   TopoDS_Shape                     myShape;
@@ -229,6 +235,7 @@ protected:
 
 private:
   SalomeApp_Application* myApp;
+  friend class GEOM_Swig;
 };
 
 #endif // GEOM_DISPLAYER_H
