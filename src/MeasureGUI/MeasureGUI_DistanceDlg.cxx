@@ -102,10 +102,6 @@ MeasureGUI_DistanceDlg::MeasureGUI_DistanceDlg (GeometryGUI* GUI, QWidget* paren
   myGrp->LineEdit4->setReadOnly(true);
   myGrp->LineEdit5->setReadOnly(true);
   myGrp->LineEdit6->setReadOnly(true);
-
-  QVBoxLayout* layout = new QVBoxLayout (centralWidget());
-  layout->setMargin(0); layout->setSpacing(6);
-  layout->addWidget(myGrp);
   /***************************************************************/
 
   myHelpFileName = "min_distance_page.html";
@@ -129,6 +125,7 @@ MeasureGUI_DistanceDlg::~MeasureGUI_DistanceDlg()
 void MeasureGUI_DistanceDlg::Init()
 {
   myEditCurrentArgument = myGrp->LineEdit1;
+  myDbls = new GEOM::ListOfDouble();
 
   // signals and slots connections
   connect(buttonOk(),         SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -200,7 +197,7 @@ void MeasureGUI_DistanceDlg::enterEvent(QEvent*)
 //=================================================================================
 void MeasureGUI_DistanceDlg::SolutionSelected (int i)
 {
-  if (i < 0 || myDbls->length() <= i*6) {
+  if (i < 0 || myDbls->length() < (i+1)*6) {
     myGrp->LineEdit3->setText("");
     myGrp->LineEdit4->setText("");
     myGrp->LineEdit5->setText("");
@@ -303,6 +300,7 @@ void MeasureGUI_DistanceDlg::processObject()
   myGrp->LineEdit2->setText(!myObj2->_is_nil() ? GEOMBase::GetName(myObj2) : "");
 
   myGrp->ComboBox1->clear();
+  myDbls->length(0);
   erasePreview();
 
   int nbSols = 0;
@@ -319,9 +317,13 @@ void MeasureGUI_DistanceDlg::processObject()
     return;
   }
 
-  if (anOper->IsDone() && nbSols > 0) {
+  if (!anOper->IsDone())
+    myGrp->ComboBox1->addItem(tr(anOper->GetErrorCode()));
+  else if (nbSols <= 0)
+    myGrp->ComboBox1->addItem(tr("GEOM_MINDIST_NO_SOL"));
+  else {
     for (int i = 0; i < nbSols; i++) {
-      myGrp->ComboBox1->addItem(QString("Solution %1").arg(i + 1));
+      myGrp->ComboBox1->addItem(tr("GEOM_SOLUTION_I").arg(i + 1));
     }
     myGrp->ComboBox1->setCurrentIndex(0);
   }
@@ -337,7 +339,8 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
 
   int currSol = myGrp->ComboBox1->currentIndex();
 
-  if (myObj1->_is_nil() || myObj2->_is_nil() || currSol == -1 ||
+  if (myObj1->_is_nil() || myObj2->_is_nil() ||
+      currSol == -1 || (currSol+1)*6 > myDbls->length() ||
       vw->getViewManager()->getType() != OCCViewer_Viewer::Type())
     return 0;
 

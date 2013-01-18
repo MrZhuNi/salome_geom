@@ -1075,16 +1075,20 @@ Please, select face, shell or solid and try again</translation>
         <translation>Min :</translation>
     </message>
     <message>
+        <source>GEOM_MINDIST_NAME</source>
+        <translation>MinDist</translation>
+    </message>
+    <message>
+        <source>GEOM_MINDIST_NO_SOL</source>
+        <translation>No solution found</translation>
+    </message>
+    <message>
         <source>GEOM_MINDIST_OBJ</source>
         <translation>Objects And Results</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_TITLE</source>
         <translation>Minimun Distance Between Two Objects</translation>
-    </message>
-    <message>
-        <source>GEOM_MINDIST_NAME</source>
-        <translation>MinDist</translation>
     </message>
     <message>
         <source>GEOM_MIRROR</source>
@@ -1209,6 +1213,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_SOLUTION</source>
         <translation>Solution :</translation>
+    </message>
+    <message>
+        <source>GEOM_SOLUTION_I</source>
+        <translation>Solution %1</translation>
     </message>
     <message>
         <source>GEOM_TARGET_OBJECT</source>

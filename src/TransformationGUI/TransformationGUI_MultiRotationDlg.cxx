@@ -88,10 +88,6 @@ TransformationGUI_MultiRotationDlg::TransformationGUI_MultiRotationDlg
   GroupArgs->LineEdit2->setReadOnly(true);
   GroupArgs->SpinBox_DX1->setEnabled(isAngleStep);
   GroupArgs->CheckButton1->setEnabled(isAngleStep);
-
-  QVBoxLayout* layout = new QVBoxLayout(centralWidget());
-  layout->setMargin(0); layout->setSpacing(6);
-  layout->addWidget(GroupArgs);
   /***************************************************************/
 
   setHelpFileName("multi_rotation_operation_page.html");
