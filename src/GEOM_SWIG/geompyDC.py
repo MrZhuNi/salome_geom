@@ -8878,6 +8878,28 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             aRes = [aTuple[0], aTuple[4] - aTuple[1], aTuple[5] - aTuple[2], aTuple[6] - aTuple[3]]
             return aRes
 
+        ## Get closest points of the given shapes.
+        #  @param theShape1,theShape2 Shapes to find closest points of.
+        #  @return The number of found solutions (-1 in case of infinite number of
+        #          solutions) and a list of (X, Y, Z) coordinates for all couples of points.
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def ClosestPoints (self, theShape1, theShape2):
+            """
+            Get closest points of the given shapes.
+
+            Parameters: 
+                theShape1,theShape2 Shapes to find closest points of.
+
+            Returns:    
+                The number of found solutions (-1 in case of infinite number of
+                solutions) and a list of (X, Y, Z) coordinates for all couples of points.
+            """
+            # Example: see GEOM_TestMeasures.py
+            aTuple = self.MeasuOp.ClosestPoints(theShape1, theShape2)
+            RaiseIfFailed("ClosestPoints", self.MeasuOp)
+            return aTuple
+
         ## Get angle between the given shapes in degrees.
         #  @param theShape1,theShape2 Lines or linear edges to find angle between.
         #  @note If both arguments are vectors, the angle is computed in accordance

@@ -28,8 +28,58 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class MeasureGUI_2Sel4LineEdit;
+// IDL Headers
+#include <SALOMEconfig.h>
+#include CORBA_SERVER_HEADER(GEOM_Gen)
+
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QLabel>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QComboBox>
+
 class gp_Pnt;
+
+//=================================================================================
+// class    : MeasureGUI_DistanceGroup
+// purpose  :
+//=================================================================================
+class MeasureGUI_DistanceGroup : public QWidget
+{
+  Q_OBJECT
+
+ public:
+  MeasureGUI_DistanceGroup (QWidget *parent);
+  ~MeasureGUI_DistanceGroup();
+
+ public:
+  QGridLayout *gridLayout;
+  QGroupBox *GroupBox1;
+  QGridLayout *gridLayout1;
+
+  // 2Sel
+  QLabel *TextLabel1;
+  QLabel *TextLabel2;
+  QPushButton *PushButton1;
+  QPushButton *PushButton2;
+  QLineEdit *LineEdit1;
+  QLineEdit *LineEdit2;
+
+  // 1Combo
+  QLabel *TextLabel7;
+  QComboBox *ComboBox1;
+
+  // 4Text
+  QLabel *TextLabel3;
+  QLabel *TextLabel4;
+  QLabel *TextLabel5;
+  QLabel *TextLabel6;
+  QLineEdit *LineEdit3;
+  QLineEdit *LineEdit4;
+  QLineEdit *LineEdit5;
+  QLineEdit *LineEdit6;
+};
 
 //=================================================================================
 // class    : MeasureGUI_DistanceDlg
@@ -48,6 +98,7 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr  createOperation();
   virtual bool                        isValid (QString&);
   virtual bool                        execute (ObjectList&);
+  virtual QString                     getNewObjectName (int CurrObj = -1) const; 
 
   void                                redisplayPreview();
   virtual void                        processObject();
@@ -56,13 +107,13 @@ protected:
 private:
   void                                Init();
   void                                enterEvent (QEvent*);
-  bool                                getParameters (double&, gp_Pnt&, gp_Pnt&);
 
 private:
   GEOM::GEOM_Object_var               myObj1;
   GEOM::GEOM_Object_var               myObj2;
 
-  MeasureGUI_2Sel4LineEdit*           myGrp;
+  MeasureGUI_DistanceGroup*           myGrp;
+  GEOM::ListOfDouble_var              myDbls;
 
 private slots:
   void                                ClickOnOk();
@@ -70,6 +121,7 @@ private slots:
   void                                ActivateThisDialog();
   void                                SelectionIntoArgument();
   void                                SetEditCurrentArgument();
+  void                                SolutionSelected (int i);
 };
 
 #endif // MEASUREGUI_DISTANCEDLG_H

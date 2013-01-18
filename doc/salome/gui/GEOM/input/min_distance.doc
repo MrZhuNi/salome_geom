@@ -5,7 +5,13 @@
 Returns the minimum distance between two geometrical objects and
 the coordinates of the vector of distance and shows the vector in the viewer.
 
-<b>TUI Command:</b> <em>geompy.MinDistance(Shape1, Shape2),</em>
+\n On \b Apply or <b>Apply and Close</b> it creates a set of closest
+points of the shapes.
+
+<b>TUI Commands:</b>
+\n<em>aDist = geompy.MinDistance(Shape1, Shape2),</em>
+\n<em>[aDist, DX, DY, DZ] = geompy.MinDistanceComponents(Shape1, Shape2),</em>
+\n<em>[nbSols, (x11, y11, z11, x21, y21, z21, ...)] = geompy.ClosestPoints(Shape1, Shape2),</em>
 where \em Shape1 and \em Shape2 are shapes between which the minimal
 distance is computed.
 

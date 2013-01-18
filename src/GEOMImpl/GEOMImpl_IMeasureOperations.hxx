@@ -144,6 +144,10 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                                 Standard_Real& X1, Standard_Real& Y1, Standard_Real& Z1,
                                                 Standard_Real& X2, Standard_Real& Y2, Standard_Real& Z2);
 
+  Standard_EXPORT Standard_Integer ClosestPoints (Handle(GEOM_Object) theShape1,
+                                                  Handle(GEOM_Object) theShape2,
+                                                  Handle(TColStd_HSequenceOfReal)& theDoubles);
+
   Standard_EXPORT void PointCoordinates (Handle(GEOM_Object) theShape,
                                          Standard_Real& theX, Standard_Real& theY, Standard_Real& theZ);
 

@@ -1083,6 +1083,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Minimun Distance Between Two Objects</translation>
     </message>
     <message>
+        <source>GEOM_MINDIST_NAME</source>
+        <translation>MinDist</translation>
+    </message>
+    <message>
         <source>GEOM_MIRROR</source>
         <translation>Mirror</translation>
     </message>
@@ -1201,6 +1205,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_SOURCE_OBJECT</source>
         <translation>Source vertex, edge or wire</translation>
+    </message>
+    <message>
+        <source>GEOM_SOLUTION</source>
+        <translation>Solution :</translation>
     </message>
     <message>
         <source>GEOM_TARGET_OBJECT</source>

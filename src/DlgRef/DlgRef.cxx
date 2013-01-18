@@ -218,34 +218,6 @@ DlgRef_1Sel3Spin1Check::~DlgRef_1Sel3Spin1Check()
 }
 
 //////////////////////////////////////////
-// DlgRef_1Sel4Spin2Check
-//////////////////////////////////////////
-
-DlgRef_1Sel4Spin2Check::DlgRef_1Sel4Spin2Check( QWidget* parent, Qt::WindowFlags f )
-: QWidget( parent, f )
-{
-  setupUi( this );
-}
-
-DlgRef_1Sel4Spin2Check::~DlgRef_1Sel4Spin2Check()
-{
-}
-
-//////////////////////////////////////////
-// DlgRef_1Sel4Spin
-//////////////////////////////////////////
-
-DlgRef_1Sel4Spin::DlgRef_1Sel4Spin( QWidget* parent, Qt::WindowFlags f )
-: QWidget( parent, f )
-{
-  setupUi( this );
-}
-
-DlgRef_1Sel4Spin::~DlgRef_1Sel4Spin()
-{
-}
-
-//////////////////////////////////////////
 // DlgRef_1Sel5Spin1Check
 //////////////////////////////////////////
 
@@ -256,20 +228,6 @@ DlgRef_1Sel5Spin1Check::DlgRef_1Sel5Spin1Check( QWidget* parent, Qt::WindowFlags
 }
 
 DlgRef_1Sel5Spin1Check::~DlgRef_1Sel5Spin1Check()
-{
-}
-
-//////////////////////////////////////////
-// DlgRef_1Sel5Spin
-//////////////////////////////////////////
-
-DlgRef_1Sel5Spin::DlgRef_1Sel5Spin( QWidget* parent, Qt::WindowFlags f )
-: QWidget( parent, f )
-{
-  setupUi( this );
-}
-
-DlgRef_1Sel5Spin::~DlgRef_1Sel5Spin()
 {
 }
 

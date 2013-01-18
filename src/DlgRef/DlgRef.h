@@ -259,38 +259,6 @@ public:
 };
 
 //////////////////////////////////////////
-// DlgRef_1Sel4Spin2Check
-//////////////////////////////////////////
-
-#include "ui_DlgRef_1Sel4Spin2Check_QTD.h"
-
-class DLGREF_EXPORT DlgRef_1Sel4Spin2Check : public QWidget, 
-                                             public Ui::DlgRef_1Sel4Spin2Check_QTD
-{
-  Q_OBJECT
-
-public:
-  DlgRef_1Sel4Spin2Check( QWidget* = 0, Qt::WindowFlags = 0 );
-  ~DlgRef_1Sel4Spin2Check();
-};
-
-//////////////////////////////////////////
-// DlgRef_1Sel4Spin
-//////////////////////////////////////////
-
-#include "ui_DlgRef_1Sel4Spin_QTD.h"
-
-class DLGREF_EXPORT DlgRef_1Sel4Spin : public QWidget, 
-                                       public Ui::DlgRef_1Sel4Spin_QTD
-{
-  Q_OBJECT
-
-public:
-  DlgRef_1Sel4Spin( QWidget* = 0, Qt::WindowFlags = 0 );
-  ~DlgRef_1Sel4Spin();
-};
-
-//////////////////////////////////////////
 // DlgRef_1Sel5Spin1Check
 //////////////////////////////////////////
 
@@ -304,22 +272,6 @@ class DLGREF_EXPORT DlgRef_1Sel5Spin1Check : public QWidget,
 public:
   DlgRef_1Sel5Spin1Check( QWidget* = 0, Qt::WindowFlags = 0 );
   ~DlgRef_1Sel5Spin1Check();
-};
-
-//////////////////////////////////////////
-// DlgRef_1Sel5Spin
-//////////////////////////////////////////
-
-#include "ui_DlgRef_1Sel5Spin_QTD.h"
-
-class DLGREF_EXPORT DlgRef_1Sel5Spin : public QWidget, 
-                                       public Ui::DlgRef_1Sel5Spin_QTD
-{
-  Q_OBJECT
-
-public:
-  DlgRef_1Sel5Spin( QWidget* = 0, Qt::WindowFlags = 0 );
-  ~DlgRef_1Sel5Spin();
 };
 
 //////////////////////////////////////////

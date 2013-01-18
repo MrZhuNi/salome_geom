@@ -1542,6 +1542,36 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
   return Astr;
 }
 
+//=============================================================================
+/*!
+ *  AreCoordsInside
+ */
+//=============================================================================
+std::vector<bool> GEOMImpl_IMeasureOperations::AreCoordsInside(Handle(GEOM_Object) theShape,
+                                                               const std::vector<double>& coords,
+                                                               double tolerance)
+{
+  std::vector<bool> res;
+  if (!theShape.IsNull()) {
+    Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+    if (!aRefShape.IsNull()) {
+      TopoDS_Shape aShape = aRefShape->GetValue();
+      if (!aShape.IsNull()) {
+        BRepClass3d_SolidClassifier SC(aShape);
+        unsigned int nb_points = coords.size()/3;
+        for (int i = 0; i < nb_points; i++) {
+          double x = coords[3*i];
+          double y = coords[3*i+1];
+          double z = coords[3*i+2];
+          gp_Pnt aPnt(x, y, z);
+          SC.Perform(aPnt, tolerance);
+          res.push_back( ( SC.State() == TopAbs_IN ) || ( SC.State() == TopAbs_ON ) );
+        }
+      }
+    }
+  }
+  return res;
+}
 
 //=======================================================================
 //function : CheckSingularCase
@@ -1845,38 +1875,6 @@ static bool CheckSingularCase(const TopoDS_Shape& aSh1,
 }
 */
 
-
-//=============================================================================
-/*!
- *  AreCoordsInside
- */
-//=============================================================================
-std::vector<bool> GEOMImpl_IMeasureOperations::AreCoordsInside(Handle(GEOM_Object) theShape,
-                                                               const std::vector<double>& coords,
-                                                               double tolerance)
-{
-  std::vector<bool> res;
-  if (!theShape.IsNull()) {
-    Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
-    if (!aRefShape.IsNull()) {
-      TopoDS_Shape aShape = aRefShape->GetValue();
-      if (!aShape.IsNull()) {
-        BRepClass3d_SolidClassifier SC(aShape);
-        unsigned int nb_points = coords.size()/3;
-        for (int i = 0; i < nb_points; i++) {
-          double x = coords[3*i];
-          double y = coords[3*i+1];
-          double z = coords[3*i+2];
-          gp_Pnt aPnt(x, y, z);
-          SC.Perform(aPnt, tolerance);
-          res.push_back( ( SC.State() == TopAbs_IN ) || ( SC.State() == TopAbs_ON ) );
-        }
-      }
-    }
-  }
-  return res;
-}
-
 //=============================================================================
 /*!
  *  GetMinDistance
@@ -1941,7 +1939,7 @@ Standard_Real GEOMImpl_IMeasureOperations::GetMinDistance
     // additional workaround for bugs 19899, 19908 and 19910 from Mantis
     gp_Pnt Ptmp1, Ptmp2;
     double dist = CheckSingularCase(aShape1, aShape2, Ptmp1, Ptmp2);
-    if(dist>-1.0) {
+    if (dist > -1.0) {
       Ptmp1.Coord(X1, Y1, Z1);
       Ptmp2.Coord(X2, Y2, Z2);
       SetErrorCode(OK);
@@ -1976,6 +1974,84 @@ Standard_Real GEOMImpl_IMeasureOperations::GetMinDistance
 
   SetErrorCode(OK);
   return MinDist;
+}
+
+//=======================================================================
+/*!
+ *  Get coordinates of closest points of two shapes
+ */
+//=======================================================================
+Standard_Integer GEOMImpl_IMeasureOperations::ClosestPoints (Handle(GEOM_Object) theShape1,
+                                                             Handle(GEOM_Object) theShape2,
+                                                             Handle(TColStd_HSequenceOfReal)& theDoubles)
+{
+  SetErrorCode(KO);
+  Standard_Integer nbSolutions = 0;
+
+  if (theShape1.IsNull() || theShape2.IsNull()) return nbSolutions;
+
+  Handle(GEOM_Function) aRefShape1 = theShape1->GetLastFunction();
+  Handle(GEOM_Function) aRefShape2 = theShape2->GetLastFunction();
+  if (aRefShape1.IsNull() || aRefShape2.IsNull()) return nbSolutions;
+
+  TopoDS_Shape aShape1 = aRefShape1->GetValue();
+  TopoDS_Shape aShape2 = aRefShape2->GetValue();
+  if (aShape1.IsNull() || aShape2.IsNull()) {
+    SetErrorCode("One of Objects has NULL Shape");
+    return nbSolutions;
+  }
+
+  // Compute the extremities
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+
+    // skl 30.06.2008
+    // additional workaround for bugs 19899, 19908 and 19910 from Mantis
+    gp_Pnt P1, P2;
+    double dist = CheckSingularCase(aShape1, aShape2, P1, P2);
+    if (dist > -1.0) {
+      nbSolutions = 1;
+
+      theDoubles->Append(P1.X());
+      theDoubles->Append(P1.Y());
+      theDoubles->Append(P1.Z());
+      theDoubles->Append(P2.X());
+      theDoubles->Append(P2.Y());
+      theDoubles->Append(P2.Z());
+
+      SetErrorCode(OK);
+      return nbSolutions;
+    }
+
+    BRepExtrema_DistShapeShape dst (aShape1, aShape2);
+    if (dst.IsDone()) {
+      nbSolutions = dst.NbSolution();
+      if (theDoubles.IsNull()) theDoubles = new TColStd_HSequenceOfReal;
+
+      gp_Pnt P1, P2;
+      for (int i = 1; i <= nbSolutions; i++) {
+        P1 = dst.PointOnShape1(i);
+        P2 = dst.PointOnShape2(i);
+
+        theDoubles->Append(P1.X());
+        theDoubles->Append(P1.Y());
+        theDoubles->Append(P1.Z());
+        theDoubles->Append(P2.X());
+        theDoubles->Append(P2.Y());
+        theDoubles->Append(P2.Z());
+      }
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return nbSolutions;
+  }
+
+  SetErrorCode(OK);
+  return nbSolutions;
 }
 
 //=======================================================================
