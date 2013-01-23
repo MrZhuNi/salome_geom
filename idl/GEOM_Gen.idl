@@ -1842,6 +1842,14 @@ module GEOM
     long GetSubShapeIndex (in GEOM_Object theMainShape, in GEOM_Object theSubShape);
 
     /*!
+     *  Get global indices of \a theSubShapes in \a theMainShape.
+     *  \param theMainShape Main shape.
+     *  \param theSubShapes List of sub-shapes of the main shape.
+     *  \return list of global indices of \a theSubShapes in \a theMainShape.
+     */
+    ListOfLong GetSubShapesIndices (in GEOM_Object theMainShape, in ListOfGO theSubShapes);
+
+    /*!
      *  \brief Get index of \a theSubShape in \a theMainShape, unique among sub-shapes of the same type.
      *
      *  Together with method <VAR>GetShapeTypeString()</VAR> it can be used

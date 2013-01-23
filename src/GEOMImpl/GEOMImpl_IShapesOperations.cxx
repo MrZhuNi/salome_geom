@@ -1558,13 +1558,61 @@ Standard_Integer GEOMImpl_IShapesOperations::GetSubShapeIndex (Handle(GEOM_Objec
 
   TopTools_IndexedMapOfShape anIndices;
   TopExp::MapShapes(aMainShape, anIndices);
-  if (anIndices.Contains(aSubShape)) {
+//   if (anIndices.Contains(aSubShape)) {
+//     SetErrorCode(OK);
+//     return anIndices.FindIndex(aSubShape);
+//   }
+  int id = anIndices.FindIndex(aSubShape);
+  if (id > 0)
+  {
     SetErrorCode(OK);
-    return anIndices.FindIndex(aSubShape);
+    return id;
   }
-
   return -1;
 }
+
+
+
+//=============================================================================
+/*!
+ *  GetSubShapeIndices
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSubShapesIndices (Handle(GEOM_Object) theMainShape,
+                                                                                    std::list<Handle(GEOM_Object)> theSubShapes)
+{
+  MESSAGE("GEOMImpl_IShapesOperations::GetSubShapesIndices")
+  SetErrorCode(KO);
+  
+  Handle(TColStd_HSequenceOfInteger) aSeq = new TColStd_HSequenceOfInteger;
+  
+  TopoDS_Shape aMainShape = theMainShape->GetValue();
+  if (aMainShape.IsNull())
+  {
+    MESSAGE("NULL main shape")
+    return NULL;
+  }
+  
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aMainShape, anIndices);
+  
+  std::list<Handle(GEOM_Object)>::iterator it;
+  for (it=theSubShapes.begin(); it != theSubShapes.end(); ++it)
+  {
+    TopoDS_Shape aSubShape = (*it)->GetValue(); 
+    if (aSubShape.IsNull())
+    {
+      MESSAGE("NULL subshape")
+      return NULL;
+    }
+    int id = anIndices.FindIndex(aSubShape);
+    aSeq->Append(id);
+  }  
+  
+  SetErrorCode(OK);
+  return aSeq;
+}
+
 
 //=============================================================================
 /*!

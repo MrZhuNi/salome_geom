@@ -5194,6 +5194,32 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anID = self.LocalOp.GetSubShapeIndex(aShape, aSubShape)
             RaiseIfFailed("GetSubShapeIndex", self.LocalOp)
             return anID
+            
+        ## Obtain unique IDs of sub-shapes <VAR>aSubShapes</VAR> inside <VAR>aShape</VAR>
+        #  This function is provided for performance purpose. The complexity is O(n) with n
+        #  the number of subobjects of aShape
+        #  @param aShape Shape to get sub-shape of.
+        #  @param aSubShapes Sub-shapes of aShape.
+        #  @return list of IDs of found sub-shapes.
+        #
+        #  @ref swig_all_decompose "Example"
+        def GetSubShapesIDs(self, aShape, aSubShapes):
+            """
+            Obtain a list of IDs of sub-shapes aSubShapes inside aShape
+            This function is provided for performance purpose. The complexity is O(n) with n
+            the number of subobjects of aShape
+
+            Parameters:
+               aShape Shape to get sub-shape of.
+               aSubShapes Sub-shapes of aShape.
+
+            Returns:
+               List of IDs of found sub-shape.
+            """
+            # Example: see GEOM_TestAll.py
+            anIDs = self.ShapesOp.GetSubShapesIndices(aShape, aSubShapes)
+            RaiseIfFailed("GetSubShapesIndices", self.ShapesOp)
+            return anIDs
 
         # end of l4_access
         ## @}

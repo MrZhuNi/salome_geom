@@ -137,6 +137,9 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
 
   Standard_EXPORT Standard_Integer GetSubShapeIndex (Handle(GEOM_Object) theMainShape,
                                                      Handle(GEOM_Object) theSubShape);
+  
+  Standard_EXPORT Handle(TColStd_HSequenceOfInteger) GetSubShapesIndices (Handle(GEOM_Object) theMainShape,
+                                                                          std::list<Handle(GEOM_Object)> theSubShapes);
 
   Standard_EXPORT Standard_Integer GetTopologyIndex (Handle(GEOM_Object) theMainShape,
                                                      Handle(GEOM_Object) theSubShape);
