@@ -2246,7 +2246,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
       } else if (paramNameStr == GEOM::propertyName( GEOM::Transparency )) {
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Transparency ), val.toDouble() );
       } else if (paramNameStr == GEOM::propertyName( GEOM::TopLevel )) {
-	aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::TopLevel ), val.toInt() ? Standard_True : Standard_False );
+	aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::TopLevel ), val == "true" || val == "1");
       } else if (paramNameStr == GEOM::propertyName( GEOM::DisplayMode )) {
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::DisplayMode ), val.toInt());
       } else if (paramNameStr == GEOM::propertyName( GEOM::NbIsos )) {
@@ -2258,7 +2258,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
           aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Color ), c);
         }
       } else if (paramNameStr == GEOM::propertyName( GEOM::EdgesDirection )) {
-        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::EdgesDirection ), val.toInt());
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::EdgesDirection ), val == "true" || val == "1");
       } else if (paramNameStr == GEOM::propertyName( GEOM::Deflection )) {
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Deflection ), val.toDouble());
       } else if (paramNameStr == GEOM::propertyName( GEOM::PointMarker )) {
