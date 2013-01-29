@@ -3183,6 +3183,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation type="unfinished">Show predefined materials in popup menu</translation>
     </message>
     <message>
+        <source>PREF_EDITGROUP_COLOR</source>
+        <translation type="unfinished">Subshapes color for editing a group</translation>
+    </message>
+    <message>
         <source>PREF_EDGE_WIDTH</source>
         <translation>Epaisseur des arêtes</translation>
     </message>

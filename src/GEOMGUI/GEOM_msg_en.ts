@@ -3207,6 +3207,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show predefined materials in popup menu</translation>
     </message>
     <message>
+        <source>PREF_EDITGROUP_COLOR</source>
+        <translation>Subshapes color for editing a group</translation>
+    </message>
+    <message>
         <source>PREF_EDGE_WIDTH</source>
         <translation>Edges width</translation>
     </message>

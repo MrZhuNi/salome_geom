@@ -89,7 +89,7 @@ GEOM::GEOM_Gen_ptr GEOMBase_Helper::getGeomEngine()
 GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop )
   : myDesktop( desktop ), myViewWindow( 0 ), myDisplayer( 0 ), myCommand( 0 ), isPreview( false ),
     myIsApplyAndClose( false ), myIsOptimizedBrowsing( false ), myIsWaitCursorEnabled( true ),
-    myIsDisableBrowsing(false)
+    myIsDisableBrowsing(false), myIsDisplayResult(true)
 {
 }
 
@@ -876,7 +876,8 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
             }
             anEntryList << addInStudy( obj, aName.toLatin1().constData() );
             // updateView=false
-            display( obj, false );
+            if( isDisplayResult() )
+              display( obj, false );
 #ifdef WITHGENERICOBJ
             // obj has been published in study. Its refcount has been incremented.
             // It is safe to decrement its refcount
@@ -889,7 +890,8 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
             // was modified, and need to be re-cached in GEOM_Client before redisplay
             clearShapeBuffer( obj );
             // withChildren=true, updateView=false
-            redisplay( obj, true, false );
+            if( isDisplayResult() )
+              redisplay( obj, true, false );
           }
         }
 

@@ -1825,6 +1825,9 @@ void GeometryGUI::createPreferences()
                                       LightApp_Preferences::Selector,
                                       "Geometry", "material" );
 
+  addPreference( tr( "PREF_EDITGROUP_COLOR" ), genGroup,
+                 LightApp_Preferences::Color, "Geometry", "editgroup_color" );
+
   const int nb = 4;
   int wd[nb];
   int iter=0;

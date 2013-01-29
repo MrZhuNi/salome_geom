@@ -191,6 +191,8 @@ protected:
   virtual bool                isWaitCursorEnabled() const {return myIsWaitCursorEnabled ;}
   virtual void                setIsDisableBrowsing( const bool theFlag ) { myIsDisableBrowsing = theFlag; }
   virtual bool                isDisableBrowsing() const { return myIsDisableBrowsing; }
+  virtual void                setIsDisplayResult( const bool theFlag ) {myIsDisplayResult = theFlag; }
+  virtual bool                isDisplayResult() const { return myIsDisplayResult; }
 
 private:
   QString                     getEntry( GEOM::GEOM_Object_ptr ) const;
@@ -213,6 +215,7 @@ private:
   bool                        myIsWaitCursorEnabled;
   bool                        myIsDisableBrowsing;  //This flag enable/disable selection
                                                     //in the Object Browser newly created objects.
+  bool                        myIsDisplayResult;    //This flag display/hide newly created objects.
 };
 
 #endif // GEOMBASE_HELPER_H
