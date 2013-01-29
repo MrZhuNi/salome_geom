@@ -30,27 +30,21 @@
 
 #include "GEOM_GEOMGUI.hxx"
 
-// IDL Headers
-#include <SALOMEconfig.h>
-#include CORBA_SERVER_HEADER(GEOM_Gen)
-#include CORBA_SERVER_HEADER(SALOMEDS)
-#include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
-
 class GEOMGUI_EXPORT GEOM_Swig
 {
 public:
   GEOM_Swig();
   ~GEOM_Swig();
 
-  void createAndDisplayGO(const char* Entry, bool isUpdated = true);
+  void createAndDisplayGO(const char* Entry, bool theUpdateViewer = true);
   void eraseGO(const char* Entry, bool allWindows);
   void createAndDisplayFitAllGO(const char* Entry);
   void UpdateViewer();
-  void setDisplayMode(const char* Entry, int mode, bool isUpdated = true);
-  void setVectorsMode(const char* Entry, bool isSet, bool isUpdated = true);
-  void setColor(const char* Entry, int red, int green, int blue, bool isUpdated = true);
-  void setTransparency(const char* Entry, float transp, bool isUpdated = true);
-  void setIsos(const char* Entry, int nbU, int nbV, bool isUpdated =true);
+  void setDisplayMode(const char* Entry, int mode, bool theUpdateViewer = true);
+  void setVectorsMode(const char* Entry, bool isSet, bool theUpdateViewer = true);
+  void setColor(const char* Entry, int red, int green, int blue, bool theUpdateViewer = true);
+  void setTransparency(const char* Entry, float transp, bool theUpdateViewer = true);
+  void setIsos(const char* Entry, int nbU, int nbV, bool theUpdateViewer =true);
   void setDeflection(const char* Entry, float deflect);
 
   int  getIndexTopology(const char *SubEntry, const char *Entry);
