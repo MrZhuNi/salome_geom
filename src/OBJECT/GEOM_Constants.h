@@ -28,6 +28,8 @@
 
 #include <QString>
 
+#include "GEOM_OBJECT_defs.hxx"
+
 namespace GEOM
 {
   enum Property {
@@ -55,12 +57,12 @@ namespace GEOM
     LastProperty = OutlineColor,
   };
 
-  double minDeflection();
+  GEOM_OBJECT_EXPORT double minDeflection();
   
-  QString sectionSeparator();
-  QString subSectionSeparator();
+  GEOM_OBJECT_EXPORT QString sectionSeparator();
+  GEOM_OBJECT_EXPORT QString subSectionSeparator();
 
-  QString propertyName( Property );
+  GEOM_OBJECT_EXPORT QString propertyName( Property );
 }
 
   
