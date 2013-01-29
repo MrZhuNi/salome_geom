@@ -301,8 +301,8 @@ void GEOMToolsGUI::SetColor( const QString& entry, const QColor& color, bool upd
   SUIT_ViewWindow* window = app->desktop()->activeWindow();
   if ( !window ) return;
   
-  bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-  bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
+  bool isOCC = window->getViewManager()->getType() == OCCViewer_Viewer::Type();
+  bool isVTK = window->getViewManager()->getType() == SVTK_Viewer::Type();
 
   // get view id
   int mgrId = window->getViewManager()->getGlobalId();
@@ -357,7 +357,7 @@ void GEOMToolsGUI::OnColor()
   bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
 
   // get view id
-  int mgrId = window->getViewManager()->getGlobalId();
+  int mgrId = window ? window->getViewManager()->getGlobalId() : -1;
 
   if ( isVTK ) {
     SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
@@ -366,7 +366,7 @@ void GEOMToolsGUI::OnColor()
     // get initial color (use first object from selection)
     SVTK_View* aView = vtkVW->getView();
     QColor color = aView->GetColor( selected.First()  );
-    QVariant v = appStudy->getObjectProperty( mgrId, selected.First()->getEntry(), COLOR_PROP, color );
+    QVariant v = appStudy->getObjectProperty( mgrId, selected.First()->getEntry(), GEOM::propertyName( GEOM::Color ), color );
 
     // show Choose Color dialog box
     color = QColorDialog::getColor( v.value<QColor>(), app->desktop() );
@@ -390,7 +390,7 @@ void GEOMToolsGUI::OnColor()
     QColor color = QColor((int)( aColor.Red()   * 255.0 ),
 			  (int)( aColor.Green() * 255.0 ),
 			  (int)( aColor.Blue()  * 255.0 ));
-    QVariant v = appStudy->getObjectProperty( mgrId, selected.First()->getEntry(), COLOR_PROP, color );
+    QVariant v = appStudy->getObjectProperty( mgrId, selected.First()->getEntry(), GEOM::propertyName( GEOM::Color ), color );
 
     // show Choose Color dialog box
     color = QColorDialog::getColor( v.value<QColor>(), app->desktop() );
@@ -422,14 +422,14 @@ void GEOMToolsGUI::setVtkColor( SalomeApp_Study* study,                     // s
 {
   // get material property
   QString matProp;
-  matProp = study->getObjectProperty( mgrId, IO->getEntry(), MATERIAL_PROP, matProp ).toString();
+  matProp = study->getObjectProperty( mgrId, IO->getEntry(), GEOM::propertyName( GEOM::Material ), matProp ).toString();
   Material_Model material;
   material.fromProperties( matProp );
 
   // change color only for shapes with not physical type of material
   if ( !material.isPhysical() ) {
     view->SetColor( IO, color );
-    study->setObjectProperty( mgrId, IO->getEntry(), COLOR_PROP, color );
+    study->setObjectProperty( mgrId, IO->getEntry(), GEOM::propertyName( GEOM::Color ), color );
   }
 
   // store color to GEOM_Object
@@ -462,7 +462,7 @@ void GEOMToolsGUI::setOccColor( SalomeApp_Study* study,                     // s
 
   // get material property
   QString matProp;
-  matProp = study->getObjectProperty( mgrId, IO->getEntry(), MATERIAL_PROP, matProp ).toString();
+  matProp = study->getObjectProperty( mgrId, IO->getEntry(), GEOM::propertyName( GEOM::Material ), matProp ).toString();
   Material_Model material;
   material.fromProperties( matProp );
 
@@ -507,7 +507,7 @@ void GEOMToolsGUI::setOccColor( SalomeApp_Study* study,                     // s
 
     io->Redisplay( Standard_True );
 
-    study->setObjectProperty( mgrId, IO->getEntry(), COLOR_PROP, color );
+    study->setObjectProperty( mgrId, IO->getEntry(), GEOM::propertyName( GEOM::Color ), color );
   }    
 
   // store color to GEOM_Object
@@ -664,6 +664,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
 
     OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
     Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+    int aMgrId = window->getViewManager()->getGlobalId();
 
     ic->InitCurrent();
     if ( ic->MoreCurrent() ) {
@@ -705,12 +706,11 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
       }
 
       for(; ic->MoreCurrent(); ic->NextCurrent()) {
-        int aMgrId = window->getViewManager()->getGlobalId();
         CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
 
         Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
 
-	QVariant v = aStudy->getObjectProperty( aMgrId, CurObject->getIO()->getEntry(), EDGE_WIDTH_PROP , QVariant() );
+	QVariant v = aStudy->getObjectProperty( aMgrId, CurObject->getIO()->getEntry(), GEOM::propertyName( GEOM::LineWidth ) , QVariant() );
 
 	int width = v.isValid() ? v.toInt() : 1;
 
@@ -722,8 +722,8 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
         ic->SetLocalAttributes(CurObject, CurDrawer);
         ic->Redisplay(CurObject);
 
-        QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
-        aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), ISOS_PROP, anIsos);
+        QString anIsos = QString("%1%2%3").arg(newNbUIso).arg(GEOM::subSectionSeparator()).arg(newNbVIso);
+        aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), GEOM::propertyName( GEOM::NbIsos ), anIsos);
       }
     }
     GeometryGUI::Modified();
@@ -747,6 +747,8 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
     SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
     if ( !vtkVW )
       return;
+
+    int aMgrId = window->getViewManager()->getGlobalId();
 
     SALOME_View* view = GEOM_Displayer::GetActiveView();
 
@@ -817,9 +819,8 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
         anActor->SetNbIsos(aIsos);
 	anActor->StoreIsoNumbers();
 
-        QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
-        int aMgrId = window->getViewManager()->getGlobalId();
-        aStudy->setObjectProperty(aMgrId ,anActor->getIO()->getEntry(), ISOS_PROP, anIsos);
+        QString anIsos = QString("%1%2%3").arg(newNbUIso).arg(GEOM::subSectionSeparator()).arg(newNbVIso);
+        aStudy->setObjectProperty(aMgrId ,anActor->getIO()->getEntry(), GEOM::propertyName( GEOM::NbIsos ), anIsos);
       }
       anAct = aCollection->GetNextActor();
     }
@@ -836,7 +837,7 @@ void GEOMToolsGUI::OnDeflection()
 
   bool isOCC = (window && window->getViewManager()->getType() == OCCViewer_Viewer::Type());
   bool isVTK = (window && window->getViewManager()->getType() == SVTK_Viewer::Type());
-  int mgrId = window->getViewManager()->getGlobalId();
+  int mgrId = window ? window->getViewManager()->getGlobalId() : -1;
 
   if (isOCC) { // if is OCCViewer
     OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>(window->getViewManager()->getViewModel());
@@ -866,7 +867,7 @@ void GEOMToolsGUI::OnDeflection()
               CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
               ic->SetDeviationCoefficient(CurObject, aNewDC, Standard_True);
               ic->Redisplay(CurObject);
-              appStudy->setObjectProperty(mgrId,CurObject->getIO()->getEntry(), DEFLECTION_COEFF_PROP, aNewDC);
+              appStudy->setObjectProperty(mgrId,CurObject->getIO()->getEntry(), GEOM::propertyName( GEOM::Deflection ), aNewDC);
             }
           }
         }
@@ -935,7 +936,7 @@ void GEOMToolsGUI::OnDeflection()
         if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
           // There are no casting to needed actor.
           anActor->SetDeflection(aDC);
-          appStudy->setObjectProperty(mgrId, anActor->getIO()->getEntry(), DEFLECTION_COEFF_PROP, aDC);
+          appStudy->setObjectProperty(mgrId, anActor->getIO()->getEntry(), GEOM::propertyName( GEOM::Deflection ), aDC);
         }
         anAct = aCollection->GetNextActor();
       }
@@ -1103,7 +1104,7 @@ void GEOMToolsGUI::OnEdgeWidth()
 
   bool isOCC = (window && window->getViewManager()->getType() == OCCViewer_Viewer::Type());
   bool isVTK = (window && window->getViewManager()->getType() == SVTK_Viewer::Type());
-  int mgrId = window->getViewManager()->getGlobalId();
+  int mgrId = window ? window->getViewManager()->getGlobalId() : -1;
 
   if (isOCC) { // if is OCCViewer
     OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>(window->getViewManager()->getViewModel());
@@ -1136,7 +1137,7 @@ void GEOMToolsGUI::OnEdgeWidth()
 					ic->Redisplay(cur);
 				  }
 				}
-			appStudy->setObjectProperty(mgrId, CurObject->getIO()->getEntry(), EDGE_WIDTH_PROP, aNewWidth);
+			appStudy->setObjectProperty(mgrId, CurObject->getIO()->getEntry(), GEOM::propertyName( GEOM::LineWidth ), aNewWidth);
 		  }
 		}
 	  }
@@ -1205,7 +1206,7 @@ void GEOMToolsGUI::OnEdgeWidth()
         if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
           // There are no casting to needed actor.
           anActor->SetWidth(aWidth);
-          appStudy->setObjectProperty(mgrId, anActor->getIO()->getEntry(), EDGE_WIDTH_PROP, aWidth);
+          appStudy->setObjectProperty(mgrId, anActor->getIO()->getEntry(), GEOM::propertyName( GEOM::LineWidth ), aWidth);
         }
         anAct = aCollection->GetNextActor();
       }
@@ -1228,6 +1229,7 @@ void GEOMToolsGUI::OnIsosWidth() {
 
     OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
     Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+    int aMgrId = window->getViewManager()->getGlobalId();
 
     ic->InitCurrent();
     if ( ic->MoreCurrent() ) {
@@ -1256,7 +1258,6 @@ void GEOMToolsGUI::OnIsosWidth() {
 	return;
       
       for(; ic->MoreCurrent(); ic->NextCurrent()) {
-	int aMgrId = window->getViewManager()->getGlobalId();
 	CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
 	
 	Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
@@ -1266,7 +1267,7 @@ void GEOMToolsGUI::OnIsosWidth() {
 	
 	ic->Redisplay(CurObject);
 	
-	aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), ISOS_WIDTH_PROP, aWidth);
+	aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), GEOM::propertyName( GEOM::IsosWidth ), aWidth);
       }
       GeometryGUI::Modified();
     }
@@ -1290,6 +1291,8 @@ void GEOMToolsGUI::OnIsosWidth() {
     SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
     if ( !vtkVW )
       return;
+
+    int aMgrId = window->getViewManager()->getGlobalId();
 
     SALOME_View* view = GEOM_Displayer::GetActiveView();
 
@@ -1335,8 +1338,7 @@ void GEOMToolsGUI::OnIsosWidth() {
       if(GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
         // There are no casting to needed actor.
 	anActor->SetIsosWidth(aWidth);
-	int aMgrId = window->getViewManager()->getGlobalId();
-        aStudy->setObjectProperty(aMgrId ,anActor->getIO()->getEntry(), ISOS_WIDTH_PROP, aWidth);
+        aStudy->setObjectProperty(aMgrId ,anActor->getIO()->getEntry(), GEOM::propertyName( GEOM::IsosWidth ), aWidth);
       }
       anAct = aCollection->GetNextActor();
     }
@@ -1387,15 +1389,15 @@ void GEOMToolsGUI::OnBringToFront() {
   if ( isOCC ) {
     GEOMBase* gb = new GEOMBase();
     Handle(GEOM_AISShape) aisShape;
+    int aMgrId = window->getViewManager()->getGlobalId();
    
     Handle(AIS_InteractiveContext) ic = vm->getAISContext();
     SALOME_ListIO anIOlst;
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
       aisShape = gb->ConvertIOinGEOMAISShape( It.Value(), true );
       if ( !aisShape.IsNull() ) {
+	appStudy->setObjectProperty( aMgrId, aisShape->getIO()->getEntry(), GEOM::propertyName( GEOM::TopLevel ), checked );
 	aisShape->setTopLevel(checked);
-	int aMgrId = window->getViewManager()->getGlobalId();
-	appStudy->setObjectProperty( aMgrId, aisShape->getIO()->getEntry(), TOP_LEVEL_PROP, checked );
 	anIOlst.Append(aisShape->getIO());
       }
     } // for...
@@ -1432,6 +1434,7 @@ void GEOMToolsGUI::OnClsBringToFront() {
     
     OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
     Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+    int aMgrId = window->getViewManager()->getGlobalId();
     
     SALOME_ListIO anIOlst;
     AIS_ListOfInteractive aList;
@@ -1443,10 +1446,8 @@ void GEOMToolsGUI::OnClsBringToFront() {
       if(CurObject.IsNull())
 	continue;
       
+      appStudy->setObjectProperty( aMgrId, QString(CurObject->getIO()->getEntry()), GEOM::propertyName( GEOM::TopLevel ), Standard_False );
       CurObject->setTopLevel(Standard_False);
-      
-      int aMgrId = window->getViewManager()->getGlobalId();
-      appStudy->setObjectProperty( aMgrId, QString(CurObject->getIO()->getEntry()), TOP_LEVEL_PROP, Standard_False );
       anIOlst.Append(CurObject->getIO());
     }
     disp->Redisplay(anIOlst);
@@ -1476,7 +1477,7 @@ void GEOMToolsGUI::OnSetMaterial( const QVariant& theParam )
   if ( selected.IsEmpty() )
     return;
     SUIT_ViewWindow* window = app->desktop()->activeWindow();
-  int mgrId = window->getViewManager()->getGlobalId();
+    int mgrId = window ? window->getViewManager()->getGlobalId() : -1;
 
   // convert needed material properties to the string representation
   Material_Model aModel;
@@ -1501,7 +1502,7 @@ void GEOMToolsGUI::OnSetMaterial( const QVariant& theParam )
       // set material property to the presentation
       aView->SetMaterial( It.Value(), vtkPropF, vtkPropB );
       // store chosen material in the property map
-      study->setObjectProperty( mgrId, It.Value()->getEntry(), MATERIAL_PROP, prop );
+      study->setObjectProperty( mgrId, It.Value()->getEntry(), GEOM::propertyName( GEOM::Material ), prop );
       // set correct color for the non-physical material
     }
     aView->Repaint();
@@ -1533,7 +1534,7 @@ void GEOMToolsGUI::OnSetMaterial( const QVariant& theParam )
 	      // Return to the default facing mode
 	      aisShape->SetCurrentFacingModel(Aspect_TOFM_BOTH_SIDE);
         // store chosen material in the property map
-	      study->setObjectProperty( mgrId, It.Value()->getEntry(), MATERIAL_PROP, prop );
+	      study->setObjectProperty( mgrId, It.Value()->getEntry(), GEOM::propertyName( GEOM::Material ), prop );
 	      //if ( aisShape->DisplayMode() != AIS_Shaded)
 	      ic->Redisplay( aisShape, Standard_False );
       }

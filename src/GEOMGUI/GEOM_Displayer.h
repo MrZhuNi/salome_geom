@@ -145,7 +145,7 @@ public:
   int           SetDisplayMode( const int );
   int           GetDisplayMode() const;
   int           UnsetDisplayMode();
-
+  bool          HasDisplayMode() const;
 
   /* Sets name - for temporary objects only */
   void          SetName( const char* theName );
@@ -172,10 +172,6 @@ public:
   static SALOMEDS::Color getUniqueColor( const QList<SALOMEDS::Color>& );
   static SALOMEDS::Color getPredefinedUniqueColor();
 
-  static PropMap getDefaultPropertyMap(const QString& viewer_type);
-  
-  static bool MergePropertyMaps(PropMap& theOrigin, PropMap& theDefault);
-  
   /*Get color of the geom object*/
   static SALOMEDS::Color getColor(GEOM::GEOM_Object_var aGeomObject, bool& hasColor);
 
@@ -213,7 +209,13 @@ protected:
   Quantity_Color qColorFromResources( const QString&, const QColor& );
   QColor         colorFromResources( const QString&, const QColor& );
   bool           setPointMarker( const Handle(GEOM_AISShape)&, const QString&, const Quantity_Color );
-  void           updateShapeProperties( const Handle(GEOM_AISShape)& );
+  void           updateShapeProperties( const Handle(GEOM_AISShape)&, bool );
+
+  PropMap getObjectProperties( SalomeApp_Study*, const QString&, SALOME_View* = 0 );
+  PropMap getDefaultPropertyMap();
+  
+  static bool MergePropertyMaps(PropMap& theOrigin, PropMap& theDefault);
+  
 
 protected:
   Handle(SALOME_InteractiveObject) myIO;
@@ -230,6 +232,7 @@ protected:
   int                              myIsosWidth;
   bool                             myToActivate;
   int                              myDisplayMode;
+  bool                             myHasDisplayMode;
   Aspect_TypeOfMarker              myTypeOfMarker;
   double                           myScaleOfMarker;
 

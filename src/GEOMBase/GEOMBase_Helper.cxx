@@ -318,19 +318,16 @@ void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
                                       const int             displayMode,
                                       const int             color )
 {
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();    
+
   // Set color for preview shape
   getDisplayer()->SetColor( color == -1 ? Quantity_NOC_VIOLET : color );
 
   // set width of displayed shape
-  int lw = lineWidth;
-  if(lw == -1) {
-    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();    
-    lw = resMgr->integerValue("Geometry", "preview_edge_width", -1);
-  }
-  getDisplayer()->SetWidth( lw );
+  getDisplayer()->SetWidth( lineWidth == -1 ? resMgr->integerValue("Geometry", "preview_edge_width", -1) : lineWidth );
 
   // set display mode of displayed shape
-  int aPrevDispMode = getDisplayer()->SetDisplayMode( displayMode );
+  int aPrevDispMode = getDisplayer()->SetDisplayMode( displayMode == -1 ? resMgr->integerValue( "Geometry", "display_mode", 0 ) : displayMode );
 
   // Disable activation of selection
   getDisplayer()->SetToActivate( activate );

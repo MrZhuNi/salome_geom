@@ -329,10 +329,10 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
         if ( window ) {
           int mgrId = window->getViewManager()->getGlobalId();
           PropMap propMap = study->getObjectPropMap( mgrId, io->getEntry() );
-          QString matProp = propMap.value(MATERIAL_PROP).toString();	    
+          QString matProp = propMap.value(GEOM::propertyName( GEOM::Material )).toString();	    
           if ( !matProp.isEmpty() )
             myCurrentModel.fromProperties( matProp );
-          QColor c = propMap.value(COLOR_PROP).value<QColor>();
+          QColor c = propMap.value(GEOM::propertyName( GEOM::Color )).value<QColor>();
           if ( c.isValid() )
             myColor->setColor( c );
         }
@@ -500,11 +500,11 @@ void GEOMToolsGUI_MaterialPropertiesDlg::onApply()
       // set material property to the presentation
       aView->SetMaterial( It.Value(), vtkPropF, vtkPropB );
       // store chosen material in the property map
-      study->setObjectProperty( mgrId, It.Value()->getEntry(), MATERIAL_PROP, prop );
+      study->setObjectProperty( mgrId, It.Value()->getEntry(), GEOM::propertyName( GEOM::Material ), prop );
       // set correct color for the non-physical material
       if ( !myCurrentModel.isPhysical() ) {
         aView->SetColor( It.Value(), myColor->color() );
-        study->setObjectProperty( mgrId, It.Value()->getEntry(), COLOR_PROP, myColor->color() );
+        study->setObjectProperty( mgrId, It.Value()->getEntry(), GEOM::propertyName( GEOM::Color ), myColor->color() );
       }
     }
     aView->Repaint();
@@ -536,11 +536,11 @@ void GEOMToolsGUI_MaterialPropertiesDlg::onApply()
         // Return to the default facing mode
         aisShape->SetCurrentFacingModel(Aspect_TOFM_BOTH_SIDE);
         // store chosen material in the property map
-        study->setObjectProperty( mgrId, It.Value()->getEntry(), MATERIAL_PROP, prop );
+        study->setObjectProperty( mgrId, It.Value()->getEntry(), GEOM::propertyName( GEOM::Material ), prop );
         // set correct color for the non-physical material
         if ( !myCurrentModel.isPhysical() ) {
           aisShape->SetShadingColor( SalomeApp_Tools::color( myColor->color() ) );
-          study->setObjectProperty( mgrId, It.Value()->getEntry(), COLOR_PROP, myColor->color() );
+          study->setObjectProperty( mgrId, It.Value()->getEntry(), GEOM::propertyName( GEOM::Color ), myColor->color() );
           ic->RecomputePrsOnly( aisShape, Standard_False );
         }
         //if ( aisShape->DisplayMode() != AIS_Shaded/*aisShape->DisplayMode() == GEOM_AISShape::ShadingWithEdges*/)

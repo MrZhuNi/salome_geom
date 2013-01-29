@@ -217,7 +217,7 @@ bool GEOMGUI_Selection::isVisible( const int index ) const
 
 #ifdef USE_VISUAL_PROP_MAP
   bool found = false;
-  QVariant v = visibleProperty( entry( index ), VISIBILITY_PROP );
+  QVariant v = visibleProperty( entry( index ), GEOM::propertyName( GEOM::Visibility ) );
   if ( v.canConvert( QVariant::Bool ) ) {
     res = v.toBool();
     found = true;
@@ -289,7 +289,7 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
   QString res;
   QString viewType = activeViewType();
 #ifdef USE_VISUAL_PROP_MAP
-  QVariant v = visibleProperty( entry( index ), DISPLAY_MODE_PROP );
+  QVariant v = visibleProperty( entry( index ), GEOM::propertyName( GEOM::DisplayMode ) );
   if ( v.canConvert( QVariant::Int ) ) {
     int dm = v.toInt();
     if ( viewType == OCCViewer_Viewer::Type() ) {
@@ -361,7 +361,7 @@ bool GEOMGUI_Selection::isVectorsMode( const int index ) const
 
 #ifdef USE_VISUAL_PROP_MAP
   bool found = false;
-  QVariant v = visibleProperty( entry( index ), VECTOR_MODE_PROP );
+  QVariant v = visibleProperty( entry( index ), GEOM::propertyName( GEOM::EdgesDirection ) );
   if ( v.canConvert( QVariant::Bool ) ) {
     res = v.toBool();
     found = true;
@@ -553,7 +553,7 @@ bool GEOMGUI_Selection::topLevel( const int index ) const {
 
 #ifdef USE_VISUAL_PROP_MAP
   bool found = false;
-  QVariant v = visibleProperty( entry( index ), TOP_LEVEL_PROP );
+  QVariant v = visibleProperty( entry( index ), GEOM::propertyName( GEOM::TopLevel ) );
   if ( v.canConvert<bool>() ) {
     res = v.toBool();
     found = true;
@@ -590,7 +590,7 @@ bool GEOMGUI_Selection::isPhysicalMaterial( const int idx ) const{
 
 #ifdef USE_VISUAL_PROP_MAP
    bool found = false;
-   QVariant v = visibleProperty( entry( idx ), MATERIAL_PROP );
+   QVariant v = visibleProperty( entry( idx ), GEOM::propertyName( GEOM::Material ) );
    if ( v.canConvert<QString>() ) {
      Material_Model material;
      material.fromProperties( v.toString() );

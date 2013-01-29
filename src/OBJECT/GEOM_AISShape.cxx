@@ -166,8 +166,6 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
   	myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
   	myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(aMatAspect);
   }
-  myCurrentFrontMaterial = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();  
-  myCurrentBackMaterial = myDrawer->ShadingAspect()->Aspect()->BackMaterial();  
 }
 
 void GEOM_AISShape::setIO(const Handle(SALOME_InteractiveObject)& io){
@@ -207,7 +205,7 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   Handle(AIS_InteractiveContext) anIC = GetContext();
  
   //   StdSelect_DisplayMode d = (StdSelect_DisplayMode) aMode;
-  bool isTopLev = (isTopLevel() && topLevelDisplayMode() != TopShowAdditionalWActor);
+  bool isTopLev = isTopLevel() && switchTopLevel();
   switch (aMode) {
     case 0://StdSelect_DM_Wireframe: 
     {
@@ -317,26 +315,6 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   //  aPrs->ReCompute(); // for hidden line recomputation if necessary...
 }
 
-void GEOM_AISShape::SetTransparency(const Standard_Real aValue)
-{
-  if(aValue<0.0 || aValue>1.0) return;
-  
-  if(aValue<=0.05) 
-    {
-      UnsetTransparency();
-      return;
-    }
-
-  Graphic3d_MaterialAspect FMat = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();
-  Graphic3d_MaterialAspect BMat = myDrawer->ShadingAspect()->Aspect()->BackMaterial();
-  FMat.SetTransparency(aValue);
-  myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(FMat);
-  myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(BMat);
-  myCurrentFrontMaterial = FMat;
-  myCurrentBackMaterial = BMat;
-  myTransparency = aValue;
-}
-
 void GEOM_AISShape::SetShadingColor(const Quantity_Color &aCol)
 {
   myShadingColor = aCol;
@@ -390,17 +368,13 @@ void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPre
   myDrawer->ShadingAspect()->Aspect()->SetDistinguishOn();
 
   Graphic3d_MaterialAspect aMatAspect(Graphic3d_NOM_PLASTIC);
-  aMatAspect.SetTransparency(myTransparency);
-  myCurrentFrontMaterial = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();
-  myCurrentBackMaterial = myDrawer->ShadingAspect()->Aspect()->BackMaterial();
-  myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial( isTopLevel() ? aMatAspect : myCurrentFrontMaterial );
-  myDrawer->ShadingAspect()->Aspect()->SetBackMaterial( isTopLevel() ? aMatAspect : myCurrentBackMaterial );
+  aMatAspect.SetTransparency(Transparency());
+  Graphic3d_MaterialAspect currentFrontMaterial = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();
+  Graphic3d_MaterialAspect currentBackMaterial  = myDrawer->ShadingAspect()->Aspect()->BackMaterial();
+  myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial( isTopLevel() ? aMatAspect : currentFrontMaterial );
+  myDrawer->ShadingAspect()->Aspect()->SetBackMaterial ( isTopLevel() ? aMatAspect : currentBackMaterial  );
 
-      //Handle(Graphic3d_AspectFillArea3d) a4bis = myDrawer->ShadingAspect()->Aspect();
-      //       P->SetPrimitivesAspect(a4bis);
-      //        G->SetGroupPrimitivesAspect(a4bis);
-      //a4bis->SetInteriorColor(myShadingColor);
-  if( isTopLevel() && topLevelDisplayMode() != TopShowAdditionalWActor )
+  if( isTopLevel() && switchTopLevel() )
     myDrawer->ShadingAspect()->SetColor( topLevelColor() );
   else { 
     if(myDrawer->ShadingAspect()->Aspect()->FrontMaterial().MaterialType( Graphic3d_MATERIAL_ASPECT ))
