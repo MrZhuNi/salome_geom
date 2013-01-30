@@ -117,12 +117,12 @@ public:
   void ShallowCopy(vtkProp *prop);
 
   // Opacity
-  void SetOpacity(vtkFloatingPointType opa);
-  vtkFloatingPointType GetOpacity();
+  void SetOpacity(double opa);
+  double GetOpacity();
 
   // Color
-  void SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b);
-  void GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b);
+  void SetColor(double r,double g,double b);
+  void GetColor(double& r,double& g,double& b);
 
   // Material
   void SetMaterial(std::vector<vtkProperty*> theProps);
@@ -186,7 +186,7 @@ public:
   GetVectorMode();
   
   //! Edges in shading color management
-  void SetEdgesInShadingColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b);
+  void SetEdgesInShadingColor(double r,double g,double b);
 
   void
   StoreIsoNumbers();
@@ -252,8 +252,8 @@ private:
   GEOM_Actor(const GEOM_Actor&);
   void operator=(const GEOM_Actor&);
 
-  vtkFloatingPointType myEdgesInWireframeColor[3];
-  vtkFloatingPointType myEdgesInShadingColor[3];
+  double myEdgesInWireframeColor[3];
+  double myEdgesInShadingColor[3];
 };
 
 #endif //GEOM_ACTOR_H

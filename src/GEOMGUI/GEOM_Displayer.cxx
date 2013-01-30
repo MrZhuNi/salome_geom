@@ -1192,7 +1192,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
         aProps.push_back( material.getMaterialVTKProperty( false) );
         aGeomGActor->SetMaterial(aProps);
 
-        vtkFloatingPointType aColor[3] = {1.,0.,0.};
+        double aColor[3] = {1.,0.,0.};
         if ( useObjCol ) { //Get Color from geom object
           Handle( SALOME_InteractiveObject ) anIO = aGeomGActor->getIO();
           if ( !anIO.IsNull() ) {

@@ -578,10 +578,10 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *theMapper)
   /*  if(myShape.ShapeType() == TopAbs_VERTEX) {
     if(ren){
       //The parameter determine size of vertex actor relate to diagonal of RendererWindow
-      static vtkFloatingPointType delta = 0.01;
-      vtkFloatingPointType X1 = -1, Y1 = -1, Z1 = 0;
+      static double delta = 0.01;
+      double X1 = -1, Y1 = -1, Z1 = 0;
       ren->ViewToWorld(X1,Y1,Z1);
-      vtkFloatingPointType X2 = +1, Y2 = +1, Z2 = 0;
+      double X2 = +1, Y2 = +1, Z2 = 0;
       ren->ViewToWorld(X2,Y2,Z2);
       Z2 = sqrt((X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1) + (Z2-Z1)*(Z2-Z1));
       this->SetScale(Z2*delta);
@@ -673,7 +673,7 @@ void GEOM_Actor::highlight(bool highlight)
   SALOME_Actor::highlight(highlight);  
 }
 
-void GEOM_Actor::SetOpacity(vtkFloatingPointType opa)
+void GEOM_Actor::SetOpacity(double opa)
 {
   // enk:tested OK
   myShadingFaceProp->SetOpacity(opa);
@@ -683,13 +683,13 @@ void GEOM_Actor::SetOpacity(vtkFloatingPointType opa)
   myVertexActor->GetProperty()->SetOpacity(opa);
 }
 
-vtkFloatingPointType GEOM_Actor::GetOpacity()
+double GEOM_Actor::GetOpacity()
 {
   // enk:tested OK
   return myShadingFaceProp->GetOpacity(); 
 }
 
-void GEOM_Actor::SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b)
+void GEOM_Actor::SetColor(double r,double g,double b)
 {
   // enk:tested OK
   myShadingFaceProp->SetColor(r,g,b);                          // shading color (Shading)
@@ -704,10 +704,10 @@ void GEOM_Actor::SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloat
   StoreBoundaryColors();
 }
 
-void GEOM_Actor::GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b)
+void GEOM_Actor::GetColor(double& r,double& g,double& b)
 {
   // enk:tested OK
-  vtkFloatingPointType aRGB[3];
+  double aRGB[3];
   myShadingFaceProp->GetColor(aRGB);
   r = aRGB[0];
   g = aRGB[1];
@@ -995,7 +995,7 @@ void GEOM_Actor::GetMatrix(vtkCamera* theCam, vtkMatrix4x4 *result)
   this->Transform->Pop();  
 }  
 
-void GEOM_Actor::SetEdgesInShadingColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b)
+void GEOM_Actor::SetEdgesInShadingColor(double r,double g,double b)
 {
   myEdgesInShadingColor[0] = r;
   myEdgesInShadingColor[1] = g;
