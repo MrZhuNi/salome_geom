@@ -119,7 +119,7 @@ GEOM_Actor::GEOM_Actor():
   MESSAGE (this<< " GEOM_Actor::GEOM_Actor");
 #endif
 
-  myPolyDataMapper->SetInput(myAppendFilter->GetOutput()); 
+  myPolyDataMapper->SetInputConnection(myAppendFilter->GetOutputPort()); 
   vtkProperty* aProperty; 
 
   myHighlightProp->SetAmbient(0.5);
@@ -132,45 +132,45 @@ GEOM_Actor::GEOM_Actor():
   myHighlightProp->SetPointSize(SALOME_POINT_SIZE);
   myHighlightActor->SetProperty(myHighlightProp.GetPointer());
 
-  this->myHighlightActor->SetInput(myAppendFilter->GetOutput(),false);
+  this->myHighlightActor->SetInput(myAppendFilter->GetOutputPort(),false);
 
   myPreHighlightProp->SetColor(0,1,1);
   myPreHighlightProp->SetPointSize(SALOME_POINT_SIZE+2);
   myPreHighlightProp->SetLineWidth(SALOME_LINE_WIDTH+1);
   myPreHighlightProp->SetRepresentationToWireframe();
 
-  myAppendFilter->AddInput(myVertexSource->GetOutput()); 
-  myVertexActor->SetInput(myVertexSource->GetOutput(),false); 
+  myAppendFilter->AddInputConnection(myVertexSource->GetOutputPort()); 
+  myVertexActor->SetInput(myVertexSource->GetOutputPort(),false); 
   aProperty = myVertexActor->GetProperty(); 
   aProperty->SetRepresentation(VTK_POINTS); 
   aProperty->SetPointSize(3); 
   aProperty->SetColor(1, 1, 0);
  
-  myAppendFilter->AddInput(myIsolatedEdgeSource->GetOutput());
-  myIsolatedEdgeActor->SetInput(myIsolatedEdgeSource->GetOutput(),false); 
+  myAppendFilter->AddInputConnection(myIsolatedEdgeSource->GetOutputPort());
+  myIsolatedEdgeActor->SetInput(myIsolatedEdgeSource->GetOutputPort(),false); 
   aProperty = myIsolatedEdgeActor->GetProperty(); 
   aProperty->SetRepresentation(VTK_WIREFRAME); 
   aProperty->SetColor(1, 0, 0);
  
-  myAppendFilter->AddInput(myOneFaceEdgeSource->GetOutput());
-  myOneFaceEdgeActor->SetInput(myOneFaceEdgeSource->GetOutput(),false); 
+  myAppendFilter->AddInputConnection(myOneFaceEdgeSource->GetOutputPort());
+  myOneFaceEdgeActor->SetInput(myOneFaceEdgeSource->GetOutputPort(),false); 
   aProperty = myOneFaceEdgeActor->GetProperty(); 
   aProperty->SetRepresentation(VTK_WIREFRAME); 
   aProperty->SetColor(0, 1, 0);
  
-  myAppendFilter->AddInput(mySharedEdgeSource->GetOutput()); 
-  mySharedEdgeActor->SetInput(mySharedEdgeSource->GetOutput(),false); 
+  myAppendFilter->AddInputConnection(mySharedEdgeSource->GetOutputPort()); 
+  mySharedEdgeActor->SetInput(mySharedEdgeSource->GetOutputPort(),false); 
   aProperty = mySharedEdgeActor->GetProperty(); 
   aProperty->SetRepresentation(VTK_WIREFRAME); 
   aProperty->SetColor(1, 1, 0);
  
-  myAppendFilter->AddInput(myWireframeFaceSource->GetOutput()); 
-  myWireframeFaceActor->SetInput(myWireframeFaceSource->GetOutput(),false); 
+  myAppendFilter->AddInputConnection(myWireframeFaceSource->GetOutputPort()); 
+  myWireframeFaceActor->SetInput(myWireframeFaceSource->GetOutputPort(),false); 
   aProperty = myWireframeFaceActor->GetProperty(); 
   aProperty->SetRepresentation(VTK_WIREFRAME); 
   aProperty->SetColor(0.5, 0.5, 0.5);
 
-  myShadingFaceActor->SetInput(myShadingFaceSource->GetOutput(),true); 
+  myShadingFaceActor->SetInput(myShadingFaceSource->GetOutputPort(),true); 
 
   myShadingFaceProp->SetRepresentation(VTKViewer::Representation::Surface); 
   myShadingFaceProp->SetInterpolationToGouraud(); 
@@ -218,7 +218,7 @@ New()
 void Write(vtkPolyData* theDataSet, const char* theFileName){ 
   vtkPolyDataWriter* aWriter = vtkPolyDataWriter::New(); 
   MESSAGE ("Write - "<<theFileName<<"' : "<<theDataSet->GetNumberOfPoints()<<"; "<<theDataSet->GetNumberOfCells()); 
-  aWriter->SetInput(theDataSet); 
+  aWriter->SetInputData(theDataSet); 
   aWriter->SetFileName(theFileName); 
   //aWriter->Write(); 
   aWriter->Delete(); 

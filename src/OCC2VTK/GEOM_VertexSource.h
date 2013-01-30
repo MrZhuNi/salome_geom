@@ -28,12 +28,14 @@
 typedef NCollection_Set<TopoDS_Vertex> TVertexSet; 
  
 #include <vtkPoints.h> 
-#include <vtkPolyDataSource.h> 
+#include <vtkAlgorithm.h> 
 
-class OCC2VTK_EXPORT GEOM_VertexSource: public vtkPolyDataSource 
+class vtkPolyData;
+
+class OCC2VTK_EXPORT GEOM_VertexSource: public vtkAlgorithm
 { 
 public: 
-  vtkTypeMacro(GEOM_VertexSource,vtkPolyDataSource); 
+  vtkTypeMacro(GEOM_VertexSource,vtkAlgorithm); 
   static GEOM_VertexSource* New(); 
  
   void AddVertex(const TopoDS_Vertex& theVertex); 
@@ -47,7 +49,8 @@ public:
 protected: 
   TVertexSet myVertexSet; 
  
-  void Execute(); 
+  virtual int ProcessRequest(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
  
   GEOM_VertexSource(); 
   ~GEOM_VertexSource(); 

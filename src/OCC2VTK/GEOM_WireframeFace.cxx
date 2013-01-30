@@ -26,6 +26,8 @@
 
 #include <vtkPolyDataMapper.h>  
 #include <vtkPolyData.h>  
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
  
 #include <Precision.hxx>
 #include <BRepTools.hxx>
@@ -61,11 +63,14 @@ GEOM_WireframeFace::~GEOM_WireframeFace()
 { 
 } 
  
-void
-GEOM_WireframeFace:: 
-Execute()
+int GEOM_WireframeFace::RequestData(vtkInformation *vtkNotUsed(request),
+                                    vtkInformationVector **inputVector,
+                                    vtkInformationVector *outputVector)
 {
-  vtkPolyData* aPolyData = GetOutput();
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkPolyData *aPolyData = vtkPolyData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
   aPolyData->Allocate();
   vtkPoints* aPts = vtkPoints::New();
   aPolyData->SetPoints(aPts);
@@ -76,6 +81,7 @@ Execute()
     const TopoDS_Face& aFace = anIter.Value();
     OCC2VTK(aFace,aPolyData,aPts,NbIso,Discret);
   }
+  return 1;
 }
 
 void GEOM_WireframeFace::SetNbIso(const int theNb[2])

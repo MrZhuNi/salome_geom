@@ -25,6 +25,8 @@
 #include <vtkCellArray.h> 
 #include <vtkPolyData.h> 
 #include <vtkPolyDataMapper.h> 
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
  
 #include <gp_Pnt.hxx>
 #include <BRep_Tool.hxx>
@@ -46,11 +48,14 @@ AddVertex(const TopoDS_Vertex& theVertex)
   myVertexSet.Add(theVertex); 
 } 
  
-void
-GEOM_VertexSource:: 
-Execute()
+int GEOM_VertexSource::RequestData(vtkInformation *vtkNotUsed(request),
+                                   vtkInformationVector **inputVector,
+                                   vtkInformationVector *outputVector)
 {
-  vtkPolyData* aPolyData = GetOutput();
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkPolyData *aPolyData = vtkPolyData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
   aPolyData->Allocate();
   vtkPoints* aPts = vtkPoints::New();
   aPolyData->SetPoints(aPts);
@@ -61,6 +66,7 @@ Execute()
     const TopoDS_Vertex& aVertex = anIter.Value();
     OCC2VTK(aVertex,aPolyData,aPts);
   }
+  return 1;
 }
 
 void  

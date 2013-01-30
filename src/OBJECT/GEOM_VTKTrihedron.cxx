@@ -254,11 +254,11 @@ void GEOM_VTKTrihedron::SetSize( vtkFloatingPointType theSize )
   aSrcZ->SetPoint2( aEndZ.X(), aEndZ.Y(), aEndZ.Z() );
 
   vtkAppendPolyData* aRes = vtkAppendPolyData::New();
-  aRes->AddInput( aSrcX->GetOutput() );
-  aRes->AddInput( aSrcY->GetOutput() );
-  aRes->AddInput( aSrcZ->GetOutput() );
+  aRes->AddInputConnection( aSrcX->GetOutputPort() );
+  aRes->AddInputConnection( aSrcY->GetOutputPort() );
+  aRes->AddInputConnection( aSrcZ->GetOutputPort() );
   
-  myMapper->SetInput( aRes->GetOutput() );
+  myMapper->SetInputConnection( aRes->GetOutputPort() );
   SALOME_Actor::SetMapper( myMapper );
 
   aSrcX->Delete();
