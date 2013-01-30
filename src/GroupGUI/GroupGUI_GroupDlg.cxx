@@ -190,12 +190,12 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
 
 GroupGUI_GroupDlg::~GroupGUI_GroupDlg()
 {
+  GEOM_Displayer* aDisplayer = getDisplayer();
   if (myIsHiddenMain) {
-    GEOM_Displayer* aDisplayer = getDisplayer();
     aDisplayer->Display(myMainObj);
-    aDisplayer->Display(myGroup);
     myIsHiddenMain = false;
   }
+  aDisplayer->Display(myGroup);
   myDmMode = -1;
 }
 
