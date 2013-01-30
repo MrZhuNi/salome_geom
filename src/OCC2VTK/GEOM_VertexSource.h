@@ -49,7 +49,6 @@ public:
 protected: 
   TVertexSet myVertexSet; 
  
-  virtual int ProcessRequest(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
  
   GEOM_VertexSource(); 
