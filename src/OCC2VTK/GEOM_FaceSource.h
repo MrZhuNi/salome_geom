@@ -29,14 +29,14 @@
 typedef NCollection_Set<TopoDS_Face> TFaceSet; 
  
 #include <vtkPoints.h> 
-#include <vtkAlgorithm.h> 
+#include <vtkPolyDataAlgorithm.h> 
 
 class vtkPolyData;
 
-class OCC2VTK_EXPORT GEOM_FaceSource: public vtkAlgorithm 
+class OCC2VTK_EXPORT GEOM_FaceSource: public vtkPolyDataAlgorithm 
 { 
 public: 
-  vtkTypeMacro(GEOM_FaceSource,vtkAlgorithm); 
+  vtkTypeMacro(GEOM_FaceSource,vtkPolyDataAlgorithm); 
  
   void AddFace(const TopoDS_Face& theFace); 
   void Clear(){ myFaceSet.Clear();} 

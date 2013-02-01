@@ -37,6 +37,7 @@ vtkStandardNewMacro(GEOM_ShadingFace);
  
 GEOM_ShadingFace::GEOM_ShadingFace() 
 { 
+  this->SetNumberOfInputPorts(0);
 } 
  
 GEOM_ShadingFace::~GEOM_ShadingFace() 
@@ -44,7 +45,7 @@ GEOM_ShadingFace::~GEOM_ShadingFace()
 } 
  
 int GEOM_ShadingFace::RequestData(vtkInformation *vtkNotUsed(request),
-                                  vtkInformationVector **inputVector,
+                                  vtkInformationVector **vtkNotUsed(inputVector),
                                   vtkInformationVector *outputVector)
 {
   vtkInformation *outInfo = outputVector->GetInformationObject(0);

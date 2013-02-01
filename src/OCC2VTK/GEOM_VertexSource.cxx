@@ -35,6 +35,7 @@ vtkStandardNewMacro(GEOM_VertexSource);
  
 GEOM_VertexSource::GEOM_VertexSource() 
 { 
+  this->SetNumberOfInputPorts(0);
 } 
  
 GEOM_VertexSource::~GEOM_VertexSource() 
@@ -49,7 +50,7 @@ AddVertex(const TopoDS_Vertex& theVertex)
 } 
  
 int GEOM_VertexSource::RequestData(vtkInformation *vtkNotUsed(request),
-                                   vtkInformationVector **inputVector,
+                                   vtkInformationVector **vtkNotUsed(inputVector),
                                    vtkInformationVector *outputVector)
 {
   vtkInformation *outInfo = outputVector->GetInformationObject(0);

@@ -42,6 +42,7 @@ vtkStandardNewMacro(GEOM_EdgeSource);
 GEOM_EdgeSource::GEOM_EdgeSource() :
   myIsVector(false)
 { 
+  this->SetNumberOfInputPorts(0);
 } 
  
 GEOM_EdgeSource::~GEOM_EdgeSource() 
@@ -56,7 +57,7 @@ void GEOM_EdgeSource::AddEdge (const TopoDS_Edge& theEdge,
 }
 
 int GEOM_EdgeSource::RequestData(vtkInformation *vtkNotUsed(request),
-                                 vtkInformationVector **inputVector,
+                                 vtkInformationVector **vtkNotUsed(inputVector),
                                  vtkInformationVector *outputVector)
 {
   vtkInformation *outInfo = outputVector->GetInformationObject(0);

@@ -28,14 +28,14 @@
 typedef NCollection_Set<TopoDS_Vertex> TVertexSet; 
  
 #include <vtkPoints.h> 
-#include <vtkAlgorithm.h> 
+#include <vtkPolyDataAlgorithm.h> 
 
 class vtkPolyData;
 
-class OCC2VTK_EXPORT GEOM_VertexSource: public vtkAlgorithm
+class OCC2VTK_EXPORT GEOM_VertexSource: public vtkPolyDataAlgorithm
 { 
 public: 
-  vtkTypeMacro(GEOM_VertexSource,vtkAlgorithm); 
+  vtkTypeMacro(GEOM_VertexSource,vtkPolyDataAlgorithm); 
   static GEOM_VertexSource* New(); 
  
   void AddVertex(const TopoDS_Vertex& theVertex); 

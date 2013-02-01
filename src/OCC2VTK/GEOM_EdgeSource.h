@@ -28,14 +28,14 @@
 typedef NCollection_Set<TopoDS_Edge> TEdgeSet; 
  
 #include <vtkPoints.h> 
-#include <vtkAlgorithm.h> 
+#include <vtkPolyDataAlgorithm.h> 
 
 class vtkPolyData;
 
-class OCC2VTK_EXPORT GEOM_EdgeSource: public vtkAlgorithm 
+class OCC2VTK_EXPORT GEOM_EdgeSource: public vtkPolyDataAlgorithm 
 { 
 public: 
-  vtkTypeMacro(GEOM_EdgeSource,vtkAlgorithm); 
+  vtkTypeMacro(GEOM_EdgeSource,vtkPolyDataAlgorithm); 
   static GEOM_EdgeSource* New(); 
  
   void AddEdge (const TopoDS_Edge& theEdge,

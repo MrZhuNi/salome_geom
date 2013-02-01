@@ -57,6 +57,8 @@ GEOM_WireframeFace::GEOM_WireframeFace():
 { 
   NbIso[0] = 1;
   NbIso[1] = 1;
+
+  this->SetNumberOfInputPorts(0);
 } 
  
 GEOM_WireframeFace::~GEOM_WireframeFace() 
@@ -64,7 +66,7 @@ GEOM_WireframeFace::~GEOM_WireframeFace()
 } 
  
 int GEOM_WireframeFace::RequestData(vtkInformation *vtkNotUsed(request),
-                                    vtkInformationVector **inputVector,
+                                    vtkInformationVector **vtkNotUsed(inputVector),
                                     vtkInformationVector *outputVector)
 {
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
