@@ -150,19 +150,22 @@ GEOM_Actor::GEOM_Actor():
   myIsolatedEdgeActor->SetInput(myIsolatedEdgeSource->GetOutput(),false); 
   aProperty = myIsolatedEdgeActor->GetProperty(); 
   aProperty->SetRepresentation(VTK_WIREFRAME); 
-  aProperty->SetColor(1, 0, 0);
+  myIsolatedEdgeColor[0] = 1; myIsolatedEdgeColor[1] = 0; myIsolatedEdgeColor[2] = 0;
+  aProperty->SetColor(myIsolatedEdgeColor[0], myIsolatedEdgeColor[1], myIsolatedEdgeColor[2]);
  
   myAppendFilter->AddInput(myOneFaceEdgeSource->GetOutput());
   myOneFaceEdgeActor->SetInput(myOneFaceEdgeSource->GetOutput(),false); 
   aProperty = myOneFaceEdgeActor->GetProperty(); 
   aProperty->SetRepresentation(VTK_WIREFRAME); 
-  aProperty->SetColor(0, 1, 0);
+  myOneFaceEdgeColor[0] = 0; myOneFaceEdgeColor[1] = 1; myOneFaceEdgeColor[2] = 0;
+  aProperty->SetColor(myOneFaceEdgeColor[0], myOneFaceEdgeColor[1], myOneFaceEdgeColor[2]);
  
   myAppendFilter->AddInput(mySharedEdgeSource->GetOutput()); 
   mySharedEdgeActor->SetInput(mySharedEdgeSource->GetOutput(),false); 
   aProperty = mySharedEdgeActor->GetProperty(); 
   aProperty->SetRepresentation(VTK_WIREFRAME); 
-  aProperty->SetColor(1, 1, 0);
+  mySharedEdgeColor[0] = 1; mySharedEdgeColor[1] = 1; mySharedEdgeColor[2] = 0;
+  aProperty->SetColor(mySharedEdgeColor[0], mySharedEdgeColor[1], mySharedEdgeColor[2]);
  
   myAppendFilter->AddInput(myWireframeFaceSource->GetOutput()); 
   myWireframeFaceActor->SetInput(myWireframeFaceSource->GetOutput(),false); 
@@ -182,8 +185,6 @@ GEOM_Actor::GEOM_Actor():
   myShadingFaceProp->SetSpecularColor(0.992157, 0.941176, 0.807843);
 
   myShadingFaceActor->SetProperty(myShadingFaceProp.GetPointer());
-
-  StoreBoundaryColors();
 
   myNbIsos[0] = -1;
   myNbIsos[1] = -1;
@@ -296,40 +297,42 @@ setDisplayMode(int theMode)
   MESSAGE ( "GEOM_Actor::setDisplayMode = "<<theMode );
 #endif
   
-  if ( theMode == (int)eWireframe ) {
-    RestoreIsoNumbers();
-    // Restore wireframe edges colors
-    RestoreBoundaryColors();
-  }
-  else if ( theMode == (int)eShading || theMode == (int)eShadingWithEdges ) {
+  if ( theMode == (int)eShading || theMode == (int)eShadingWithEdges ) {
     // Temporary store number of iso lines in order to recover its later 
-    // when display mode is achnged to 'Wirefame' or 'Shading'.
-    // Iso lines are not displayed in 'Shading with edges' mode.
+    // when display mode is changed to 'Wirefame'
+    // Iso lines are not displayed in 'Shading' and 'Shading with edges' modes.
     StoreIsoNumbers();
 
     // Reset number of iso lines to 0
     ResetIsoNumbers();
+  }
 
-    if ( theMode == (int)eShadingWithEdges ) {
-      // Store wireframe edges colors
-      StoreBoundaryColors();
-
-      // Coloring edges
-      myIsolatedEdgeActor->GetProperty()->SetColor(myEdgesInShadingColor[0],
-						   myEdgesInShadingColor[1],
-						   myEdgesInShadingColor[2]);
-      myOneFaceEdgeActor->GetProperty()->SetColor(myEdgesInShadingColor[0],
-						  myEdgesInShadingColor[1],
-						  myEdgesInShadingColor[2]);
-      mySharedEdgeActor->GetProperty()->SetColor(myEdgesInShadingColor[0],
+  if ( theMode == (int)eShadingWithEdges ) {
+    // Coloring edges
+    myIsolatedEdgeActor->GetProperty()->SetColor(myEdgesInShadingColor[0],
 						 myEdgesInShadingColor[1],
 						 myEdgesInShadingColor[2]);
-      //SetModified();
-    } else {
-      myIsolatedEdgeActor->GetProperty()->SetColor(myEdgesInWireframeColor[0],
-						   myEdgesInWireframeColor[1],
-						   myEdgesInWireframeColor[2]);
-    }
+    myOneFaceEdgeActor->GetProperty()->SetColor(myEdgesInShadingColor[0],
+						myEdgesInShadingColor[1],
+						myEdgesInShadingColor[2]);
+    mySharedEdgeActor->GetProperty()->SetColor(myEdgesInShadingColor[0],
+					       myEdgesInShadingColor[1],
+					       myEdgesInShadingColor[2]);
+  }
+  else {
+    // Restore number of iso-lines
+    RestoreIsoNumbers();
+
+    // Coloring edges
+    myIsolatedEdgeActor->GetProperty()->SetColor(myIsolatedEdgeColor[0],
+						 myIsolatedEdgeColor[1],
+						 myIsolatedEdgeColor[2]);
+    mySharedEdgeActor->GetProperty()->SetColor(myIsolatedEdgeColor[0],
+					       myIsolatedEdgeColor[1],
+					       myIsolatedEdgeColor[2]);
+    myOneFaceEdgeActor->GetProperty()->SetColor(myOneFaceEdgeColor[0],
+					       myOneFaceEdgeColor[1],
+					       myOneFaceEdgeColor[2]);
   }
 
   VTKViewer_Actor::setDisplayMode(theMode);
@@ -500,6 +503,26 @@ void GEOM_Actor::SetWireframeProperty(vtkProperty* Prop)
 vtkProperty* GEOM_Actor::GetWireframeProperty()
 {
   return myWireframeFaceActor->GetProperty();
+}
+
+vtkProperty* GEOM_Actor::GetIsolatedEdgeProperty()
+{
+  return myIsolatedEdgeActor->GetProperty();
+}
+
+vtkProperty* GEOM_Actor::GetVertexProperty()
+{
+  return myVertexActor->GetProperty();
+}
+
+vtkProperty* GEOM_Actor::GetSharedEdgeProperty()
+{
+  return mySharedEdgeActor->GetProperty();
+}
+
+vtkProperty* GEOM_Actor::GetFaceEdgeProperty()
+{
+  return myOneFaceEdgeActor->GetProperty();
 }
 
 void GEOM_Actor::SetShadingProperty(vtkProperty* Prop)
@@ -691,27 +714,81 @@ vtkFloatingPointType GEOM_Actor::GetOpacity()
 
 void GEOM_Actor::SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b)
 {
-  // enk:tested OK
-  myShadingFaceProp->SetColor(r,g,b);                          // shading color (Shading)
-  myShadingBackFaceProp->SetColor(r,g,b);                      // back face shading color (Shading)
-  myVertexActor->GetProperty()->SetColor(r,g,b);               // vertex actor (Shading/Wireframe)
-  if ( myDisplayMode != (int)eShadingWithEdges ) {
-    myIsolatedEdgeActor->GetProperty()->SetColor(r,g,b);         // standalone edge color (Wireframe)
-    myOneFaceEdgeActor->GetProperty()->SetColor(r,g,b);          // standalone face edge color (Wireframe)
-    mySharedEdgeActor->GetProperty()->SetColor(r,g,b);           // share edge color (Wireframe)
-  }
-
-  StoreBoundaryColors();
+  // set the same color to all sub-actors:
+  // - points
+  // - standalone edges
+  // - shared edges
+  // - free edges
+  // - shading color (front and back faces)
+  SetPointColor(r, g, b);
+  SetIsolatedEdgeColor(r, g, b);
+  SetSharedEdgeColor(r, g, b);
+  SetFreeEdgeColor(r, g, b);
+  myShadingFaceProp->SetColor(r,g,b);     // shading color
+  myShadingBackFaceProp->SetColor(r,g,b); // back face shading color
 }
 
 void GEOM_Actor::GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b)
 {
-  // enk:tested OK
   vtkFloatingPointType aRGB[3];
   myShadingFaceProp->GetColor(aRGB);
   r = aRGB[0];
   g = aRGB[1];
   b = aRGB[2];
+}
+
+/*!
+  \brief Set color of points
+  Points actor is shown in Wireframe mode only, see SetVisibility()
+*/
+void GEOM_Actor::SetPointColor(vtkFloatingPointType r,  vtkFloatingPointType g,  vtkFloatingPointType b)
+{
+  myVertexActor->GetProperty()->SetColor(r, g, b);
+}
+
+/*!
+  \brief Set color of standalone edges, wires, vectors
+  This actor is shown in all display mode, see SetVisibility()
+  TODO: check - this color seems to be used not only for standalone edges
+*/
+void GEOM_Actor::SetIsolatedEdgeColor(vtkFloatingPointType r, vtkFloatingPointType g,  vtkFloatingPointType b)
+{
+  myIsolatedEdgeColor[0] = r; myIsolatedEdgeColor[1] = g; myIsolatedEdgeColor[2] = b;
+  if ( myDisplayMode != (int)eShadingWithEdges )
+    myIsolatedEdgeActor->GetProperty()->SetColor(r, g, b);
+}
+
+/*!
+  \brief Set color of shared edges
+  This actor is shown only in wireframe and shading+edges display modes, see SetVisibility()
+  TODO: check - this seems to be not working currently
+*/
+void GEOM_Actor::SetSharedEdgeColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b)
+{
+  mySharedEdgeColor[0] = r; mySharedEdgeColor[1] = g; mySharedEdgeColor[2] = b;
+  if ( myDisplayMode != (int)eShadingWithEdges )
+    mySharedEdgeActor->GetProperty()->SetColor(r, g, b);
+}
+
+/*!
+  \brief Set color of edges for standalone faces
+  This actor is shown only in wireframe and shading+edges display modes, see SetVisibility()
+  TODO: this color should be used not only for faces
+*/
+void GEOM_Actor::SetFreeEdgeColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b)
+{
+  myOneFaceEdgeColor[0] = r; myOneFaceEdgeColor[1] = g; myOneFaceEdgeColor[2] = b;
+  if ( myDisplayMode != (int)eShadingWithEdges )
+    myOneFaceEdgeActor->GetProperty()->SetColor(r, g, b);
+}
+
+/*!
+  \brief Set color of iso-lines
+  This actor is shown only in wireframe display mode, see SetVisibility()
+*/
+void GEOM_Actor::SetIsosColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b)
+{
+  myWireframeFaceActor->GetProperty()->SetColor(r, g, b);
 }
 
 void GEOM_Actor::SetMaterial(std::vector<vtkProperty*> theProps)
@@ -1039,23 +1116,4 @@ void GEOM_Actor::ResetIsoNumbers()
 {
   int aNb[2] = {0, 0};
   myWireframeFaceSource->SetNbIso(aNb);
-}
-
-void GEOM_Actor::StoreBoundaryColors()
-{
-  myShadingFaceProp->GetColor(myEdgesInWireframeColor);
-
-}
- 
-void GEOM_Actor::RestoreBoundaryColors()
-{
-  myIsolatedEdgeActor->GetProperty()->SetColor(myEdgesInWireframeColor[0],
-					       myEdgesInWireframeColor[1],
-					       myEdgesInWireframeColor[2]);
-  myOneFaceEdgeActor->GetProperty()->SetColor(myEdgesInWireframeColor[0],
-					      myEdgesInWireframeColor[1],
-					      myEdgesInWireframeColor[2]);
-  mySharedEdgeActor->GetProperty()->SetColor(myEdgesInWireframeColor[0],
-					     myEdgesInWireframeColor[1],
-					     myEdgesInWireframeColor[2]);
 }

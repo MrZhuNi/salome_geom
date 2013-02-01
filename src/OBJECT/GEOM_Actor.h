@@ -87,6 +87,10 @@ public:
 
   vtkProperty* GetWireframeProperty();
   vtkProperty* GetShadingProperty();
+  vtkProperty* GetIsolatedEdgeProperty();
+  vtkProperty* GetVertexProperty();
+  vtkProperty* GetSharedEdgeProperty();
+  vtkProperty* GetFaceEdgeProperty();
 
   void setDeflection(double adef);
   virtual void setDisplayMode(int thenewmode);
@@ -120,9 +124,22 @@ public:
   void SetOpacity(vtkFloatingPointType opa);
   vtkFloatingPointType GetOpacity();
 
-  // Color
-  void SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b);
-  void GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b);
+  // Color (same to all sub-actors/display modes)
+  void SetColor(vtkFloatingPointType r,  vtkFloatingPointType g,  vtkFloatingPointType b);
+  void GetColor(vtkFloatingPointType& r, vtkFloatingPointType& g, vtkFloatingPointType& b);
+  // Color of points
+  void SetPointColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b);
+  // Color of standalone edges, wires, vectors
+  void SetIsolatedEdgeColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b);
+  // Color of shared edges
+  void SetSharedEdgeColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b);
+  // Color of free edges
+  void SetFreeEdgeColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b);
+  // Color of edges in shading+edges display mode
+  void SetEdgesInShadingColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b);
+  // Color of iso-lines
+  void SetIsosColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b);
+
 
   // Material
   void SetMaterial(std::vector<vtkProperty*> theProps);
@@ -185,9 +202,6 @@ public:
   bool
   GetVectorMode();
   
-  //! Edges in shading color management
-  void SetEdgesInShadingColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b);
-
   void
   StoreIsoNumbers();
 
@@ -201,9 +215,6 @@ protected:
   void SetModified();
 
   void GetMatrix(vtkCamera* theCam, vtkMatrix4x4 *result);
-
-  void StoreBoundaryColors();
-  void RestoreBoundaryColors();
 
   GEOM_Actor();
   ~GEOM_Actor();
@@ -254,6 +265,9 @@ private:
 
   vtkFloatingPointType myEdgesInWireframeColor[3];
   vtkFloatingPointType myEdgesInShadingColor[3];
+  vtkFloatingPointType myIsolatedEdgeColor[3];
+  vtkFloatingPointType mySharedEdgeColor[3];
+  vtkFloatingPointType myOneFaceEdgeColor[3];
 };
 
 #endif //GEOM_ACTOR_H

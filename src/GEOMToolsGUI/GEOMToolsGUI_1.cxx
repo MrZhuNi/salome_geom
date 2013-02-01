@@ -1457,88 +1457,38 @@ void GEOMToolsGUI::OnClsBringToFront() {
   
 void GEOMToolsGUI::OnSetMaterial( const QVariant& theParam )
 {
-  QString theName;
-  if ( theParam.canConvert<QString>() ) theName = theParam.toString();
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( !app )
-    return;
-  SalomeApp_Module* mod = dynamic_cast<SalomeApp_Module*>(app->activeModule());
-  if(!mod)
-    return;
-  GEOM_Displayer* disp  = dynamic_cast<GEOM_Displayer*>(mod->displayer());
-  if(!disp)
-    return;
-  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  if ( !aSelMgr || !study )
-    return;
-  SALOME_ListIO selected;
-  aSelMgr->selectedObjects( selected );
-  if ( selected.IsEmpty() )
-    return;
-    SUIT_ViewWindow* window = app->desktop()->activeWindow();
-    int mgrId = window ? window->getViewManager()->getGlobalId() : -1;
+  if ( !theParam.canConvert<QString>() ) return;
+  
+  QString theName = theParam.toString();
 
-  // convert needed material properties to the string representation
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
+  if ( !app ) return;
+  
+  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( !study ) return;
+  
+  LightApp_SelectionMgr* selMgr = app->selectionMgr();
+
+  SALOME_ListIO selected;
+  selMgr->selectedObjects( selected );
+
+  if ( selected.IsEmpty() ) return;
+  
+  GEOM_Displayer displayer( study );
+
+  SALOME_View* window = displayer.GetActiveView();
+  if ( !window ) return;
+  
+  int mgrId = dynamic_cast<SUIT_ViewModel*>( window )->getViewManager()->getGlobalId();
+
   Material_Model aModel;
   aModel.fromResources( theName );
   QString prop = aModel.toProperties();
- 
-  if ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() ) {
-    // for VTK viewer
-    SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
-    if ( !vtkVW )
-      return;
 
-    SVTK_View* aView = vtkVW->getView();
-
-    // get VTK material properties from the current model
-    GEOM_VTKPropertyMaterial* vtkPropF = aModel.getMaterialVTKProperty();
-    GEOM_VTKPropertyMaterial* vtkPropB = aModel.getMaterialVTKProperty( false );
-
-    SUIT_OverrideCursor wc();
-
-    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-      // set material property to the presentation
-      aView->SetMaterial( It.Value(), vtkPropF, vtkPropB );
-      // store chosen material in the property map
-      study->setObjectProperty( mgrId, It.Value()->getEntry(), GEOM::propertyName( GEOM::Material ), prop );
-      // set correct color for the non-physical material
-    }
-    aView->Repaint();
-    GeometryGUI::Modified();
+  for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+    Handle(SALOME_InteractiveObject) io = It.Value();
+    study->setObjectProperty( mgrId, io->getEntry(), GEOM::propertyName( GEOM::Material ), prop );
+    if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
   }
-  else if ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {    
-    // for OCC viewer
-    OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
-    if ( !vm )
-      return;
-
-    Handle(AIS_InteractiveContext) ic = vm->getAISContext();
-
-    // get OCC material aspect from the current model
-    Graphic3d_MaterialAspect front_occAspect = aModel.getMaterialOCCAspect( true );
-    Graphic3d_MaterialAspect back_occAspect = aModel.getMaterialOCCAspect( false );
-
-    SUIT_OverrideCursor wc();
-
-    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-      Handle(GEOM_AISShape) aisShape = GEOMBase::ConvertIOinGEOMAISShape( It.Value(), true );
-      if ( !aisShape.IsNull() ) {
-        // Set front material for the selected shape
-	      aisShape->SetCurrentFacingModel(Aspect_TOFM_FRONT_SIDE);
-	      aisShape->SetMaterial(front_occAspect);
-	      // Set back material for the selected shape
-	      aisShape->SetCurrentFacingModel(Aspect_TOFM_BACK_SIDE);
-	      aisShape->SetMaterial(back_occAspect);
-	      // Return to the default facing mode
-	      aisShape->SetCurrentFacingModel(Aspect_TOFM_BOTH_SIDE);
-        // store chosen material in the property map
-	      study->setObjectProperty( mgrId, It.Value()->getEntry(), GEOM::propertyName( GEOM::Material ), prop );
-	      //if ( aisShape->DisplayMode() != AIS_Shaded)
-	      ic->Redisplay( aisShape, Standard_False );
-      }
-    }
-    ic->UpdateCurrentViewer();
-  }
+  displayer.UpdateViewer();
 }
