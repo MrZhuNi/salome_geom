@@ -31,6 +31,7 @@
 
 #include <SALOME_InteractiveObject.hxx>
 
+class GEOM_Actor;
 class SALOME_ListIO;
 class SALOME_View;
 class SALOME_Prs;
@@ -208,15 +209,12 @@ protected:
 
   Quantity_Color qColorFromResources( const QString&, const QColor& );
   QColor         colorFromResources( const QString&, const QColor& );
-  bool           setPointMarker( const Handle(GEOM_AISShape)&, const QString&, const Quantity_Color );
   void           updateShapeProperties( const Handle(GEOM_AISShape)&, bool );
+  void           updateActorProperties( GEOM_Actor*, bool );
 
   PropMap getObjectProperties( SalomeApp_Study*, const QString&, SALOME_View* = 0 );
   PropMap getDefaultPropertyMap();
   
-  static bool MergePropertyMaps(PropMap& theOrigin, PropMap& theDefault);
-  
-
 protected:
   Handle(SALOME_InteractiveObject) myIO;
   TopoDS_Shape                     myShape;

@@ -660,7 +660,8 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   // set display vectors flag
   AISShape->SetDisplayVectors( propMap.value( GEOM::propertyName( GEOM::EdgesDirection ) ).toBool() );
 
-  // set transparency ????????????????????????????????????????????????????
+  // set transparency
+  // VSR: ??? next line is commented: transparency property is set in the AfterDisplay() function
   //AISShape->SetTransparency( propMap.value( GEOM::propertyName( GEOM::Transparency ) ).toDouble() );
 
   // set iso properties
@@ -753,6 +754,151 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   // AISShape->SetName(???); ??? necessary to set name ???
 }
 
+void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
+{
+  // check that actor is not null
+  if ( !actor ) return;
+  
+  // check that study is active
+  SalomeApp_Study* study = getStudy();
+  if ( !study ) return;
+
+  // set interactive object
+
+  Handle( SALOME_InteractiveObject ) anIO;
+
+  if ( !myIO.IsNull() ) {
+    actor->setIO( myIO );
+    anIO = myIO;
+  }
+  else if ( !myName.empty() ) {
+    // workaround to allow selection of temporary objects
+    static int tempId = 0;
+    anIO = new SALOME_InteractiveObject( QString( "TEMP_VTK_%1" ).arg( tempId++ ).toLatin1().data(), "GEOM", myName.c_str() );
+    actor->setIO( anIO );
+  }
+
+  // presentation study entry (empty for temporary objects like preview)
+  QString entry = !anIO.IsNull() ? QString( anIO->getEntry() ) : QString();
+  // flag: temporary object
+  bool isTemporary = entry.isEmpty() || entry.startsWith( "TEMP_" );
+  // currently active view window's ID (-1 if no active view)
+  int aMgrId = !anIO.IsNull() ? getViewManagerId( myViewFrame ) : -1;
+
+  // get presentation properties
+  PropMap propMap = getObjectProperties( study, entry, myViewFrame );
+  QColor c;
+
+  /////////////////////////////////////////////////////////////////////////
+  // VSR: for VTK viewer currently deflection coefficient is hardcoded
+  //      due to performance problem
+  // actor->SetShape(myShape,aDefPropMap.value(GEOM::propertyName( GEOM::Deflection )).toDouble(),myType == GEOM_VECTOR);
+  /////////////////////////////////////////////////////////////////////////
+  if ( !actor->getTopo().IsSame( myShape ) )
+    actor->SetShape( myShape, VTK_MIN_DEFLECTION, myType == GEOM_VECTOR );
+
+  // set material
+  Material_Model material;
+  material.fromProperties( propMap.value( GEOM::propertyName( GEOM::Material ) ).toString() );
+  std::vector<vtkProperty*> mprops;
+  mprops.push_back( material.getMaterialVTKProperty( true ) );
+  mprops.push_back( material.getMaterialVTKProperty( false) );
+  actor->SetMaterial( mprops );
+
+  // set iso-lines properties
+
+  // - set number of iso-lines
+  int nbIsos[2]= { 1, 1 };
+  QStringList isos = propMap.value( GEOM::propertyName( GEOM::NbIsos ) ).toString().split( GEOM::subSectionSeparator() );
+  nbIsos[0] = isos[0].toInt();
+  nbIsos[1] = isos[1].toInt();
+  actor->SetNbIsos( nbIsos );
+
+  // - set iso-lines width
+  actor->SetIsosWidth( propMap.value( GEOM::propertyName( GEOM::IsosWidth ) ).toInt() );
+
+  // - set iso-lines color
+  c = propMap.value( GEOM::propertyName( GEOM::IsosColor ) ).value<QColor>();
+  actor->SetIsosColor( c.redF(), c.greenF(), c.blueF() );
+
+  // set colors
+
+  if ( HasColor()  ) {
+    // - same color for all sub-actors
+    Quantity_Color aColor( (Quantity_NameOfColor)GetColor() );
+    actor->SetColor( aColor.Red(), aColor.Green(), aColor.Blue() );
+  }
+  else {
+    // shading color (for non-physical materials)
+    if ( !material.isPhysical() ) {
+      c = propMap.value( GEOM::propertyName( GEOM::ShadingColor ) ).value<QColor>();
+      actor->GetFrontMaterial()->SetColor( c.redF(), c.greenF(), c.blueF() );
+      actor->GetBackMaterial()->SetColor( c.redF(), c.greenF(), c.blueF() );
+    }
+
+    // - standalone edge color
+    c = propMap.value( GEOM::propertyName( GEOM::WireframeColor ) ).value<QColor>();
+    actor->SetIsolatedEdgeColor( c.redF(), c.greenF(), c.blueF() );
+
+    c = propMap.value( GEOM::propertyName( GEOM::WireframeColor ) ).value<QColor>();
+    // - shared edges color ???
+    actor->SetSharedEdgeColor( c.redF(), c.greenF(), c.blueF() );
+
+    c = propMap.value( GEOM::propertyName( GEOM::FreeBndColor ) ).value<QColor>();
+    // - free edges color ???
+    actor->SetFreeEdgeColor( c.redF(), c.greenF(), c.blueF() );
+
+    // - point color
+    c = propMap.value( GEOM::propertyName( GEOM::PointColor ) ).value<QColor>();
+    actor->SetPointColor( c.redF(), c.greenF(), c.blueF() );
+  }
+
+  // - color for edges in shading+edges mode
+  c = propMap.value( GEOM::propertyName( GEOM::OutlineColor ) ).value<QColor>();
+  actor->SetEdgesInShadingColor( c.redF(), c.greenF(), c.blueF() );
+
+  // set opacity
+  actor->SetOpacity( 1.0 - propMap.value( GEOM::propertyName( GEOM::Transparency ) ).toDouble() );
+
+  // set line width
+  actor->SetWidth( HasWidth() ?
+		   // predefined line width, manually set to displayer via GEOM_Displayer::SetLineWidth() function 
+		   GetWidth() :
+		   // libe width from properties
+		   propMap.value( GEOM::propertyName( GEOM::LineWidth ) ).toInt() );
+  
+  // set display vectors flag
+  actor->SetVectorMode( propMap.value( GEOM::propertyName( GEOM::EdgesDirection ) ).toBool() );
+
+  // set display mode
+  int displayMode = HasDisplayMode() ? 
+    // predefined display mode, manually set to displayer via GEOM_Displayer::SetDisplayMode() function 
+    GetDisplayMode() :
+    // display mode from properties
+    propMap.value( GEOM::propertyName( GEOM::DisplayMode ) ).toInt();
+
+  // specific processing of 'shading with edges' mode, as VTK provides only the following standard display modes:
+  // Points - 0, Wireframe - 1, Surface - 2, Insideframe - 3, SurfaceWithEdges - 4
+  // GEOM actor allows alternative display modes (see VTKViewer::Representation enum) and enum in GEOM_Actor:
+  // eWireframe - 0, eShading - 1, eShadingWithEdges - 3
+
+  if ( displayMode == 2 )
+      // this is 'Shading with edges' mode => we have to do the correct mapping to EDisplayMode
+      // enum in GEOM_Actor (and further to VTKViewer::Representation enum)
+    displayMode++;
+  actor->setDisplayMode( displayMode );
+
+  if ( myToActivate )
+    actor->PickableOn();
+  else
+    actor->PickableOff();
+
+  if ( create && !isTemporary && aMgrId != -1 ) {
+    // set properties to the study
+    study->setObjectPropMap( aMgrId, entry, propMap );
+  }
+}
+
 //=================================================================
 /*!
  *  GEOM_Displayer::Erase
@@ -804,6 +950,10 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 
   if ( myType == GEOM_MARKER && myShape.ShapeType() == TopAbs_FACE )
   {
+    // 
+    // specific processing for local coordinate system presentation
+    // 
+
     TopoDS_Face aFace = TopoDS::Face( myShape );
     Handle(Geom_Plane) aPlane = Handle(Geom_Plane)::DownCast( BRep_Tool::Surface( aFace ) );
     if ( !aPlane.IsNull() )
@@ -815,43 +965,46 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 
       if ( occPrs->IsNull() )
       {
+	// new presentation is being created
         aTrh = new GEOM_AISTrihedron( aPlc );
-
+        occPrs->AddObject( aTrh );
+      }
+      else
+      {
+	// presentation is being updated
+        AIS_ListOfInteractive aList;
+        occPrs->GetObjects( aList );
+        AIS_ListIteratorOfListOfInteractive anIter( aList );
+        for ( ; anIter.More() && aTrh.IsNull(); anIter.Next() ) {
+          aTrh = Handle(GEOM_AISTrihedron)::DownCast( anIter.Value() );
+	}
+      }
+	
+      if ( !aTrh.IsNull() ) {
+	// predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
         if ( HasColor() )
-          aTrh->SetColor( (Quantity_NameOfColor)GetColor()  );
-
+          aTrh->SetColor( (Quantity_NameOfColor)GetColor() );
+	// predefined line width, manually set to displayer via GEOM_Displayer::SetLineWidth() function 
         if ( HasWidth() )
           aTrh->SetWidth( GetWidth() );
-
+	
         if ( !myIO.IsNull() )
         {
           aTrh->setIO( myIO );
           aTrh->SetOwner( myIO );
         }
-
-        occPrs->AddObject( aTrh );
+	aTrh->SetComponent( aPlc );
+	aTrh->SetToUpdate();
       }
-      else
-      {
-        AIS_ListOfInteractive aList;
-        occPrs->GetObjects( aList );
-        AIS_ListIteratorOfListOfInteractive anIter( aList );
-        for ( ; anIter.More(); anIter.Next() )
-        {
-          aTrh = Handle(GEOM_AISTrihedron)::DownCast( anIter.Value() );
-          if ( !aTrh.IsNull() )
-          {
-            aTrh->SetComponent( aPlc );
-            aTrh->SetToUpdate();
-          }
-        }
-      }
-
       occPrs->SetToActivate( ToActivate() );
     }
   }
   else
   {
+    // 
+    // processing for usual geometry presentation
+    // 
+
     // if presentation is empty we try to create new one
     if ( occPrs->IsNull() )
     {
@@ -860,6 +1013,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 	                                                         : new GEOM_AISShape ( myShape, "" );
       // update shape properties
       updateShapeProperties( AISShape, true );
+
       // add shape to the presentation
       occPrs->AddObject( AISShape );
 
@@ -877,6 +1031,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 	  aWirePrs->setIO( myIO );
 	  aWirePrs->SetOwner( myIO );
 	}
+
 	// add shape to the presentation
 	occPrs->AddObject( aWirePrs );
       }
@@ -892,17 +1047,14 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 	Handle(GEOM_AISShape) AISShape = Handle(GEOM_AISShape)::DownCast( Iter.Value() );
 	if ( AISShape.IsNull() )
 	  continue;
+
 	// re-set shape (it might be changed)
 	if ( AISShape->Shape() != myShape )
 	  AISShape->Set( myShape );
+
 	// update shape properties
 	updateShapeProperties( AISShape, false );
-	// re-set interactive object
-	if ( !myIO.IsNull() )
-        {
-	  AISShape->setIO( myIO );
-	  AISShape->SetOwner( myIO );
-	}
+
 	// force updating
 	AISShape->UpdateSelection();
 	AISShape->SetToUpdate();
@@ -920,236 +1072,99 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 //=================================================================
 void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 {
-  SalomeApp_Study* aStudy = getStudy();
-  int aMgrId = -1;
   SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
+  SalomeApp_Study* study = getStudy();
 
-  if ( !vtkPrs || myShape.IsNull() || !aStudy)
+  if ( !vtkPrs || myShape.IsNull() || !study )
     return;
 
-  bool useStudy = false;
-  bool useObjCol = false;
-  PropMap aPropMap;
-
-  vtkActorCollection* theActors = 0;
-
-  QString anEntry;
-  if(!myIO.IsNull()) {
-    anEntry = myIO->getEntry();
-  }
-
-  if ( myType == GEOM_MARKER && myShape.ShapeType() == TopAbs_FACE ) {
-    //myToActivate = false; // ouv: commented to make the trihedron pickable (see IPAL18657)
-    GEOM_VTKTrihedron* aTrh = GEOM_VTKTrihedron::New();
-
-    if ( HasColor() ) {
-      Quantity_Color aColor( (Quantity_NameOfColor)GetColor() );
-      aTrh->SetColor( aColor.Red(), aColor.Green(), aColor.Blue() );
-    }
-
-    Handle(Geom_Plane) aPlane =
-      Handle(Geom_Plane)::DownCast( BRep_Tool::Surface( TopoDS::Face( myShape ) ) );
-    if ( aPlane.IsNull() )
-      return;
-
-    gp_Ax2 anAx2 = aPlane->Pln().Position().Ax2();
-    aTrh->SetPlacement( new Geom_Axis2Placement( anAx2 ) );
-
-    //    if ( SVTK_Viewer* vf = dynamic_cast<SVTK_Viewer*>( GetActiveView() ) )
-    //      aTrh->SetSize( 0.5 * vf->GetTrihedronSize() );
-
-    vtkPrs->AddObject( aTrh );
-
-    theActors = vtkActorCollection::New();
-    theActors->AddItem( aTrh );
-  }
-  else {
-    PropMap aDefPropMap = getDefaultPropertyMap();
-
-    if(!myIO.IsNull()) {
-      aMgrId = getViewManagerId(myViewFrame);
-    }
-    useStudy = !anEntry.isEmpty() && aMgrId != -1;
-
-
-    theActors = vtkActorCollection::New();
-    GEOM_Actor* aGeomActor = GEOM_Actor::New();
-    /////////////////////////////////////////////////////////////////////////
-    // VSR: for VTK viewer currently deflection coefficient is hardcoded
-    //      due to performance problem
-    // aGeomActor->SetShape(myShape,aDefPropMap.value(GEOM::propertyName( GEOM::Deflection )).toDouble(),myType == GEOM_VECTOR);
-    /////////////////////////////////////////////////////////////////////////
-    aGeomActor->SetShape(myShape, VTK_MIN_DEFLECTION, myType == GEOM_VECTOR);
-    theActors->AddItem(aGeomActor);
-    aGeomActor->Delete();
-
-    if(useStudy) {
-      aPropMap = aStudy->getObjectPropMap(aMgrId,anEntry);
-      if(!aPropMap.contains(GEOM::propertyName( GEOM::Color )))
-        useObjCol = true;
-      MergePropertyMaps(aPropMap, aDefPropMap);
-    }
-  }
-
-  theActors->InitTraversal();
-
-  vtkActor* anActor = (vtkActor*)theActors->GetNextActor();
-
-  vtkProperty* aProp = 0;
-
-  if ( HasColor() || HasWidth() )
+  if ( myType == GEOM_MARKER && myShape.ShapeType() == TopAbs_FACE )
   {
-    aProp = vtkProperty::New();
-    aProp->SetRepresentationToWireframe();
-  }
+    // 
+    // specific processing for local coordinate system presentation
+    // 
 
-  if ( HasColor() )
-  {
-    Quantity_Color aColor( (Quantity_NameOfColor)GetColor() );
-    aProp->SetColor( aColor.Red(), aColor.Green(), aColor.Blue() );
-  }
+    TopoDS_Face aFace = TopoDS::Face( myShape );
+    Handle(Geom_Plane) aPlane = Handle(Geom_Plane)::DownCast( BRep_Tool::Surface( aFace ) );
+    if ( !aPlane.IsNull() ) {
+      gp_Ax3 aPos = aPlane->Pln().Position();
+      Handle(Geom_Axis2Placement) aPlc = new Geom_Axis2Placement( aPos.Ax2() );
 
-  while ( anActor != NULL )
-  {
-    SALOME_Actor* GActor = SALOME_Actor::SafeDownCast( anActor );
+      GEOM_VTKTrihedron* aTrh = 0;
 
-    GActor->setIO( myIO );
-
-    if ( aProp )
-    {
-      GActor->SetProperty( aProp );
-      GActor->SetPreviewProperty( aProp );
-    }
-
-    GEOM_Actor* aGeomGActor = GEOM_Actor::SafeDownCast( anActor );
-    if ( aGeomGActor != 0 )
-    {
-      if ( aProp ) {
-        aGeomGActor->SetShadingProperty( aProp );
-        aGeomGActor->SetWireframeProperty( aProp );
-      }
-
-      // Set color for edges in shading
-      SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
-      if(aResMgr) {
-        QColor c = aResMgr->colorValue( "Geometry", "edges_in_shading_color", QColor( 255, 255, 0 ) );
-        aGeomGActor->SetEdgesInShadingColor( c.red()/255., c.green()/255., c.blue()/255. );
-      }
-
-      int aIsos[2]= { 1, 1 };
-      if(useStudy) {
-        QString anIsos = aPropMap.value(GEOM::propertyName( GEOM::NbIsos )).toString();
-        QStringList uv =  anIsos.split( GEOM::subSectionSeparator() );
-        aIsos[0] = uv[0].toInt(); aIsos[1] = uv[1].toInt();
-        aGeomGActor->SetNbIsos(aIsos);
-        aGeomGActor->SetOpacity(1.0 - aPropMap.value(GEOM::propertyName( GEOM::Transparency )).toDouble());
-        SetWidth(aPropMap.value(GEOM::propertyName( GEOM::LineWidth )).toInt());
-        SetIsosWidth(aPropMap.value(GEOM::propertyName( GEOM::IsosWidth )).toInt());
-        aGeomGActor->SetVectorMode(aPropMap.value(GEOM::propertyName( GEOM::EdgesDirection )).toBool());
-        int aDispModeId = aPropMap.value(GEOM::propertyName( GEOM::DisplayMode )).toInt();
-        // Specially processing of 'Shading with edges' mode from preferences,
-        // because there is the following enum in VTK viewer:
-        // Points - 0, Wireframe - 1, Surface - 2, Insideframe - 3, SurfaceWithEdges - 4
-        // (see VTKViewer::Representation enum) and the following enum in GEOM_Actor:
-        // eWireframe - 0, eShading - 1, eShadingWithEdges - 3
-        if ( aDispModeId == 2 )
-          // this is 'Shading with edges' mode => do the correct mapping to EDisplayMode
-          // enum in GEOM_Actor (and further to VTKViewer::Representation enum)
-          aDispModeId++;
-        aGeomGActor->setDisplayMode(aDispModeId);
-	/////////////////////////////////////////////////////////////////////////
-	// VSR: for VTK viewer currently deflection coefficient is hardcoded
-	//      due to performance problem;
-	// aGeomGActor->SetDeflection(aPropMap.value(GEOM::propertyName( GEOM::Deflection )).toDouble());
-	/////////////////////////////////////////////////////////////////////////
-        aGeomGActor->SetDeflection(VTK_MIN_DEFLECTION);
-
-        // Create material model
-        Material_Model material;
-        material.fromProperties( aPropMap.value(GEOM::propertyName( GEOM::Material )).toString() );
-        // Set material properties for the object
-        aStudy->setObjectProperty( aMgrId, anEntry, GEOM::propertyName( GEOM::Material ), material.toProperties() );
-        // Set the same front and back materials for the selected shape
-        std::vector<vtkProperty*> aProps;
-        aProps.push_back( material.getMaterialVTKProperty( true ) );
-        aProps.push_back( material.getMaterialVTKProperty( false) );
-        aGeomGActor->SetMaterial(aProps);
-
-        vtkFloatingPointType aColor[3] = {1.,0.,0.};
-        if ( useObjCol ) { //Get Color from geom object
-          Handle( SALOME_InteractiveObject ) anIO = aGeomGActor->getIO();
-          if ( !anIO.IsNull() ) {
-            _PTR(SObject) SO ( aStudy->studyDS()->FindObjectID( anIO->getEntry() ) );
-            if ( SO ) {
-              // get CORBA reference to data object
-              CORBA::Object_var object = GeometryGUI::ClientSObjectToObject(SO);
-              if ( !CORBA::is_nil( object ) ) {
-                // downcast to GEOM object
-                GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( object );
-                bool hasColor = false;
-                SALOMEDS::Color aSColor = getColor(aGeomObject,hasColor);
-                if(hasColor) {
-                  aColor[0] = aSColor.R; aColor[1] = aSColor.G; aColor[2] = aSColor.B;
-                } else {
-                  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
-                  if(aResMgr) {
-                    QColor c = aResMgr->colorValue( "Geometry", "shading_color", QColor( 255, 0, 0 ) );
-                    aColor[0] = c.red()/255.; aColor[1] = c.green()/255.; aColor[2] = c.blue()/255.;
-                  }
-                }
-                aStudy->setObjectProperty( aMgrId, anIO->getEntry(), GEOM::propertyName( GEOM::Color ), QColor( aColor[0] *255, aColor[1] * 255, aColor[2]* 255) );
-              }
-            }
-          }
-        } else {
-          QColor c = aPropMap.value(GEOM::propertyName( GEOM::Color )).value<QColor>();
-          aColor[0] = c.red()/255.; aColor[1] = c.green()/255.; aColor[2] = c.blue()/255.;
-        }
-
-        if ( !material.isPhysical() )
-          aGeomGActor->SetColor(aColor[0],aColor[1],aColor[2]);
+      if ( vtkPrs->IsNull() ) {
+	// new presentation is being created
+	aTrh = GEOM_VTKTrihedron::New();
+	vtkPrs->AddObject( aTrh );
       }
       else {
-        SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
-        if ( aResMgr ) {
-	         // Create material model
-	         Material_Model material;
-	         // Get material name from resources
-	         QString mname = aResMgr->stringValue( "Geometry", "material", "Plastic" );
-	         material.fromResources( mname );
-	         // Set material properties for the object
-	         aStudy->setObjectProperty( aMgrId, anEntry, GEOM::propertyName( GEOM::Material ), material.toProperties() );
-	         // Set material for the selected shape
-	         std::vector<vtkProperty*> aProps;
-	         aProps.push_back( material.getMaterialVTKProperty( true ) );
-	         aProps.push_back( material.getMaterialVTKProperty( false ) );
-	         aGeomGActor->SetMaterial(aProps);
-        }
+	// presentation is being updated
+	vtkActorCollection* actors = vtkPrs->GetObjects();
+	if ( actors ) {
+	  actors->InitTraversal();
+	  vtkActor* a = actors->GetNextActor();
+	  while ( a && !aTrh ) {
+	    aTrh = GEOM_VTKTrihedron::SafeDownCast( a );
+	    a = actors->GetNextActor();
+	  }
+	}
+      }
+      
+      if ( aTrh ) {
+	// predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
+	if ( HasColor() ) {
+	  Quantity_Color aColor( (Quantity_NameOfColor)GetColor() );
+	  aTrh->SetColor( aColor.Red(), aColor.Green(), aColor.Blue() );
+	}
+#ifdef VTK_TRIHEDRON_WIDTH
+	// 
+	// VSR: currently isn't supported
+	//
+	// predefined line width, manually set to displayer via GEOM_Displayer::SetLineWidth() function 
+        if ( HasWidth() )
+          aTrh->SetWidth( GetWidth() );
+#endif
+
+        if ( !myIO.IsNull() )
+	  aTrh->setIO( myIO );
+
+	aTrh->SetPlacement( aPlc );
       }
     }
-    if ( aGeomGActor )
-    {
-      if ( HasWidth() )
-        aGeomGActor->SetWidth( GetWidth() );
-
-      if ( HasIsosWidth() )
-        aGeomGActor->SetIsosWidth( GetIsosWidth() );
-    }
-
-    if ( myToActivate )
-      GActor->PickableOn();
-    else
-      GActor->PickableOff();
-
-    vtkPrs->AddObject( GActor );
-
-    anActor = (vtkActor*)theActors->GetNextActor();
   }
+  else
+  {
+    // 
+    // processing for usual geometry presentation
+    // 
 
-  if ( aProp )
-    aProp->Delete();
-
-  theActors->Delete();
+    // if presentation is empty we try to create new one
+    if ( vtkPrs->IsNull() )
+    {
+      // create an actor
+      GEOM_Actor* actor = GEOM_Actor::New();
+      // update actor properties
+      updateActorProperties( actor, true );
+      // add actor to the presentation
+      vtkPrs->AddObject( actor );
+    }
+    else {
+      // presentation is being updated
+      vtkActorCollection* actors = vtkPrs->GetObjects();
+      if ( actors ) {
+	actors->InitTraversal();
+	vtkActor* a = actors->GetNextActor();
+	while ( a ) {
+	  GEOM_Actor* actor = GEOM_Actor::SafeDownCast( a );
+	  if ( actor ) {
+	    // update actor properties
+	    updateActorProperties( actor, false );
+	    a = actors->GetNextActor();
+	  }
+	}
+      }
+    }
+  }
 }
 
 //=================================================================
@@ -1971,69 +1986,6 @@ PropMap GEOM_Displayer::getDefaultPropertyMap()
 
   return propMap;
 }
-
-bool GEOM_Displayer::MergePropertyMaps(PropMap& theOrigin, PropMap& theDefault)
-{
-  int nbInserted = 0;
-
-  if(!theOrigin.contains(GEOM::propertyName( GEOM::Visibility ))) {
-    theOrigin.insert(GEOM::propertyName( GEOM::Visibility ), 0);
-    nbInserted++;
-  }
-
-  if(!theOrigin.contains(GEOM::propertyName( GEOM::Transparency ))) {
-    theOrigin.insert(GEOM::propertyName( GEOM::Transparency ), theDefault.value(GEOM::propertyName( GEOM::Transparency )));
-    nbInserted++;
-  }
-
-  if(!theOrigin.contains(GEOM::propertyName( GEOM::DisplayMode ))) {
-    theOrigin.insert(GEOM::propertyName( GEOM::DisplayMode ), theDefault.value(GEOM::propertyName( GEOM::DisplayMode )));
-    nbInserted++;
-  }
-
-  if(!theOrigin.contains(GEOM::propertyName( GEOM::NbIsos ))) {
-    theOrigin.insert(GEOM::propertyName( GEOM::NbIsos ), theDefault.value(GEOM::propertyName( GEOM::NbIsos )));
-    nbInserted++;
-  }
-
-  if(!theOrigin.contains(GEOM::propertyName( GEOM::EdgesDirection ))) {
-    theOrigin.insert(GEOM::propertyName( GEOM::EdgesDirection ), theDefault.value(GEOM::propertyName( GEOM::EdgesDirection )));
-    nbInserted++;
-  }
-
-  if(!theOrigin.contains(GEOM::propertyName( GEOM::Deflection ))) {
-    theOrigin.insert(GEOM::propertyName( GEOM::Deflection ), theDefault.value(GEOM::propertyName( GEOM::Deflection )));
-    nbInserted++;
-  }
-
-  if(!theOrigin.contains(GEOM::propertyName( GEOM::Material ))) {
-    theOrigin.insert(GEOM::propertyName( GEOM::Material ), theDefault.value(GEOM::propertyName( GEOM::Material )));
-    nbInserted++;
-  }
-
-  if(!theOrigin.contains(GEOM::propertyName( GEOM::LineWidth ))) {
-    theOrigin.insert(GEOM::propertyName( GEOM::LineWidth ), theDefault.value(GEOM::propertyName( GEOM::LineWidth )));
-    nbInserted++;
-  }
-
-  if(!theOrigin.contains(GEOM::propertyName( GEOM::IsosWidth ))) {
-    theOrigin.insert(GEOM::propertyName( GEOM::IsosWidth ), theDefault.value(GEOM::propertyName( GEOM::IsosWidth )));
-    nbInserted++;
-  }
-
-  if(!theOrigin.contains(GEOM::propertyName( GEOM::Color ))) {
-    theOrigin.insert(GEOM::propertyName( GEOM::Color ), theDefault.value(GEOM::propertyName( GEOM::Color )));
-    nbInserted++;
-  }
-
-  if(!theOrigin.contains(GEOM::propertyName( GEOM::TopLevel ))) {
-    theOrigin.insert(GEOM::propertyName( GEOM::TopLevel ), theDefault.value(GEOM::propertyName( GEOM::TopLevel )));
-    nbInserted++;
-  }
-
-  return (nbInserted > 0);
-}
-
 
 SALOMEDS::Color GEOM_Displayer::getColor(GEOM::GEOM_Object_var theGeomObject, bool& hasColor) {
   SALOMEDS::Color aSColor;
