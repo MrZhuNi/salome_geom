@@ -32,7 +32,7 @@
 
 #include <Graphic3d_MaterialAspect.hxx>
 
-class QtxResourceMgr;
+class Material_ResourceMgr;
 class GEOM_VTKPropertyMaterial;
 
 class MATERIAL_SALOME_EXPORT Material_Model
@@ -51,8 +51,8 @@ public:
 
   void                fromProperties( const QString& );
   QString             toProperties();
-  void                fromResources( const QString& = QString(), QtxResourceMgr* = 0 );
-  void                toResources( const QString&, QtxResourceMgr* );
+  void                fromResources( const QString& = QString(), Material_ResourceMgr* = 0 );
+  void                toResources( const QString&, Material_ResourceMgr* );
 
   bool                isPhysical() const;
   void                setPhysical( bool );
@@ -77,6 +77,7 @@ public:
 
 private:
   void                init();
+  void                read( const QString&, Material_ResourceMgr* );
 
 private:
   typedef struct {

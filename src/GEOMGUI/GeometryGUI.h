@@ -152,6 +152,7 @@ private slots:
   void                        onWindowActivated( SUIT_ViewWindow* );
   void                        onViewAboutToShow();
   void                        OnSetMaterial( const QString& );
+  void                        updateMaterials();
 
 signals :
   void                        SignalDeactivateActiveDialog();

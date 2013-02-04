@@ -25,6 +25,8 @@
 #include "GEOM_VTKPropertyMaterial.hxx"
 #include "Material_ResourceMgr.h"
 
+#include <QMutexLocker>
+
 /*!
   \brief Constructor
 
@@ -184,7 +186,7 @@ QString Material_Model::toProperties()
   \param resMgr resource manager (if not specified, new resources manager is created)
   \sa toResources()
 */
-void Material_Model::fromResources( const QString& material, QtxResourceMgr* resMgr )
+void Material_Model::fromResources( const QString& material, Material_ResourceMgr* resMgr )
 {
   static QString common = "[common]";
   
@@ -194,15 +196,22 @@ void Material_Model::fromResources( const QString& material, QtxResourceMgr* res
   // material name is not specified: use default values
   if ( material.isEmpty() ) return;
 
-  bool ownResourcesMgr = resMgr == 0;
-  
-  if ( ownResourcesMgr )
-    resMgr = new Material_ResourceMgr();
+  if ( !resMgr )
+    resMgr = Material_ResourceMgr::resourceMgr();
+
+  // lock resources manager
+  QMutexLocker lock( &resMgr->myMutex );
 
   // read common section
   if ( material != common && resMgr->hasSection( common ) )
-    fromResources( common, resMgr );
+    read( common, resMgr );
 
+  // read material section
+  read( material, resMgr );
+}
+
+void Material_Model::read( const QString& material, Material_ResourceMgr* resMgr )
+{
   // physical
   if ( resMgr->hasValue( material, "physical" ) ) {
     setPhysical( resMgr->booleanValue( material, "physical" ) );
@@ -276,9 +285,6 @@ void Material_Model::fromResources( const QString& material, QtxResourceMgr* res
   if ( resMgr->hasValue( material, "emissive" ) ) {
     setReflection( Emissive, resMgr->booleanValue( material, "emissive" ) );
   }
-
-  if ( ownResourcesMgr )
-    delete resMgr;
 }
 
 /*!
@@ -287,9 +293,12 @@ void Material_Model::fromResources( const QString& material, QtxResourceMgr* res
   \param resMgr resource manager
   \sa fromResources()
 */
-void Material_Model::toResources( const QString& material, QtxResourceMgr* resMgr )
+void Material_Model::toResources( const QString& material, Material_ResourceMgr* resMgr )
 {
   if ( resMgr && !material.isEmpty() ) {
+    // lock resources manager
+    QMutexLocker lock( &resMgr->myMutex );
+  
     // remove resources section (to clean-up all previous properties)
     resMgr->remove( material );
 

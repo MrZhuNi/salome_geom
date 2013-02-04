@@ -207,6 +207,8 @@ GeometryGUI::GeometryGUI() :
 
   myDisplayer = 0;
   myLocalSelectionMode = GEOM_ALLOBJECTS;
+
+  connect( Material_ResourceMgr::resourceMgr(), SIGNAL( changed() ), this, SLOT( updateMaterials() ) );
 }
 
 //=======================================================================
@@ -603,16 +605,6 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
       library->OnGUIEvent( id, desk );
     else
       library->OnGUIEvent( id, desk, theParam);
-    // Update a list of materials for "Preferences" dialog
-    if ( id == GEOMOp::OpMaterialProperties ) {
-      LightApp_Preferences* pref = preferences();
-      if ( pref ) {
-        Material_ResourceMgr aMatResMgr;
-        setPreferenceProperty( pref->rootItem()->findItem( tr( "PREF_MATERIAL" ), true )->id(),
-                               "strings",
-                               aMatResMgr.materials() );
-      }
-    }
   }
   else
     SUIT_MessageBox::critical( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_LIB_NOT_FOUND" ), tr( "GEOM_BUT_OK" ) );
@@ -1734,18 +1726,21 @@ void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString&
       QString curModel = "";
       if ( v.canConvert<QString>() ) curModel = v.toString();
       // get list of all predefined materials
-      Material_ResourceMgr aMatResMgr;
-      QStringList matNameList = aMatResMgr.materials();
-      foreach ( QString name, matNameList ) 
+      QStringList materials = Material_ResourceMgr::resourceMgr()->materials();
+      bool found = false;
+      foreach ( QString material, materials ) 
       {
-        QAction* menAct = matMenu->addAction( name );
+        QAction* menAct = matMenu->addAction( material );
         connect(menAct, SIGNAL( toggled( bool ) ), signalMapper, SLOT( map() ) );
-        signalMapper->setMapping( menAct, name );
+        signalMapper->setMapping( menAct, material );
         menAct->setCheckable( true );
         // Set checked if this material is current 
         Material_Model aModel;
-        aModel.fromResources( name );
-        menAct->setChecked( aModel.toProperties() == curModel );
+        aModel.fromResources( material );
+	if ( !found && aModel.toProperties() == curModel ) {
+	  menAct->setChecked( true );
+	  found = true;
+	}
       }
       matMenu->insertAction( matMenu->addSeparator(), action(  GEOMOp::OpPredefMaterCustom ) );
       matMenu->insertSeparator( action(  GEOMOp::OpPredefMaterCustom ) );
@@ -1818,12 +1813,12 @@ void GeometryGUI::createPreferences()
   int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
 
-  int predef_materials = addPreference( tr( "PREF_PREDEF_MATERIALS" ), genGroup,
-                 LightApp_Preferences::Bool, "Geometry", "predef_materials" );
+  addPreference( tr( "PREF_PREDEF_MATERIALS" ), genGroup,
+		 LightApp_Preferences::Bool, "Geometry", "predef_materials" );
 
   int material = addPreference( tr( "PREF_MATERIAL" ), genGroup,
-                                      LightApp_Preferences::Selector,
-                                      "Geometry", "material" );
+				LightApp_Preferences::Selector,
+				"Geometry", "material" );
 
   addPreference( tr( "PREF_EDITGROUP_COLOR" ), genGroup,
                  LightApp_Preferences::Color, "Geometry", "editgroup_color" );
@@ -1942,11 +1937,8 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( defl, "step", 1.0e-04 );
   setPreferenceProperty( defl, "precision", 6 );
 
-  // Set property for 'Show predefined materials'
-  setPreferenceProperty( predef_materials, "eval", true);
   // Set property for default material
-  Material_ResourceMgr aMatResMgr;
-  setPreferenceProperty( material, "strings", aMatResMgr.materials() );
+  setPreferenceProperty( material, "strings", Material_ResourceMgr::resourceMgr()->materials() );
   
   // Set property vertex marker type
   QList<QVariant> aMarkerTypeIndicesList;
@@ -2395,4 +2387,23 @@ bool GeometryGUI::renameObject( const QString& entry, const QString& name)
     }
   }
   return result;
+}
+
+void GeometryGUI::updateMaterials()
+{
+  LightApp_Preferences* pref = preferences();
+  if ( pref ) {
+    QStringList materials = Material_ResourceMgr::resourceMgr()->materials();
+    QString currentMaterial = SUIT_Session::session()->resourceMgr()->stringValue( "Geometry", "material" );
+    if ( !materials.contains( currentMaterial ) )
+      // user material set as default in the preferences, might be removed
+      SUIT_Session::session()->resourceMgr()->setValue( "Geometry", "material", QString( "Plastic" ) );
+
+    QtxPreferenceItem* prefItem = pref->rootItem()->findItem( tr( "PREF_MATERIAL" ), true );
+    if ( prefItem ) {
+      setPreferenceProperty( prefItem->id(),
+			     "strings", materials );
+      prefItem->retrieve();
+    }
+  }
 }
