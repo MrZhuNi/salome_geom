@@ -4005,6 +4005,26 @@ module GEOM
     /*@@ insert new functions before this line @@ do not remove this line @@*/
   };
 
+ // # GEOM_IImportExportOperations:
+  /*!
+   *  \brief Interface for advanced modeling functions.
+   */
+  interface GEOM_IImportExportOperations : GEOM_IOperations
+  {
+    /*!
+     *  Export a shape to XAO Format
+     *  \param theExportingShape Shape to export
+     *  \param theFileName The name of the exported file
+     *  \param thelGroups List of groups to export
+     *  \param thelFields List of fields to export
+     *  \return New GEOM_Object, containing the created shape.
+     */
+
+     boolean ExportXAO (in GEOM_Object theExportingShape, in string theFileName, in ListOfGO thelGroups, in ListOfGO thelFields);
+
+    /*@@ insert new functions before this line @@ do not remove this line @@*/
+  };
+
  // # GEOM_Gen:
   /*!
    *  \brief Interface to access other GEOM interfaces.
@@ -4141,6 +4161,7 @@ module GEOM
     GEOM_IBlocksOperations    GetIBlocksOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
     GEOM_IGroupOperations     GetIGroupOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
     GEOM_IAdvancedOperations  GetIAdvancedOperations (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_IImportExportOperations  GetIImportExportOperations (in long theStudyID) raises (SALOME::SALOME_Exception);
 
   //  # Objects Management
      

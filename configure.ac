@@ -495,6 +495,7 @@ AC_OUTPUT([ \
   doc/salome/tui/static/header.html \
   src/Makefile \
   src/AdvancedGUI/Makefile \
+  src/ImportExportGUI/Makefile \
   src/ARCHIMEDE/Makefile \
   src/BREPExport/Makefile \
   src/BREPImport/Makefile \
@@ -540,9 +541,6 @@ AC_OUTPUT([ \
   src/ShapeRecognition/Makefile \
   src/TransformationGUI/Makefile \
   src/VTKExport/Makefile \
-  src/XAO/Makefile \
-  src/XAOExport/Makefile \
-  src/XAOImport/Makefile \
   resources/Makefile \
   resources/GEOMCatalog.xml \
   resources/SalomeApp.xml \

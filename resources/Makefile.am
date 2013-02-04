@@ -182,10 +182,6 @@ tree_group_vertex.png		\
 tree_group_edge.png		\
 tree_group_face.png		\
 tree_group_solid.png		\
-tree_field_vertex.png		\
-tree_field_edge.png		\
-tree_field_face.png		\
-tree_field_solid.png		\
 tree_lcs.png			\
 vector.png			\
 vector_mode.png                 \
@@ -261,6 +257,7 @@ ADVANCED_RESOURCES += dlg_pipetshapefilletrf.png
 # ADVANCED_RESOURCES += divideddisk.png divideddisk_r_ratio.png tree_divideddisk.png
 ADVANCED_RESOURCES += dividedcylinder.png dividedcylinder_r_h.png
 # tree_dividedcylinder.png
+#IMPORTEXPORT_RESOURCES += exportxao.png exportxao_exportingshape_filename_lgroups_lfields.png tree_exportxao.png
 ##@@ insert new functions before this line @@ do not remove this line @@##
 
 dist_salomeres_DATA += $(ADVANCED_RESOURCES)

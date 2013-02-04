@@ -623,6 +623,11 @@ module GEOM
     GEOM_Object MakeDividedCylinder (in double theR, in double theH,
                                      in pattern thePattern);
 
+    //-----------------------------------------------------------//
+    // ImportExportOperations                                    //
+    //-----------------------------------------------------------//
+    boolean ExportXAO (in GEOM_Object theExportingShape, in string theFileName, in GEOM_List thelGroups, in GEOM_List thelFields);
+
     /*@@ insert new functions before this line @@ do not remove this line @@*/
  };
 };
