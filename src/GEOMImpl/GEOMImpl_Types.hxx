@@ -341,6 +341,7 @@
 #define GEOM_TSHAPE 201
 #define GEOM_DIVIDEDDISK 202
 #define GEOM_DIVIDEDCYLINDER 203
+#define GEOM_EXPORTXAO 204
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 // Advanced functions sub-operations codes
 #define TSHAPE_BASIC 1
@@ -349,4 +350,5 @@
 #define DIVIDEDDISK_R_RATIO 1
 #define DIVIDEDDISK_R_VECTOR_PNT 2
 #define DIVIDEDCYLINDER_R_H 1
+#define EXPORTXAO_EXPORTINGSHAPE_FILENAME_LGROUPS_LFIELDS 1
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/

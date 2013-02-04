@@ -40,6 +40,7 @@
 #include "GEOMImpl_IMeasureOperations.hxx"
 #include "GEOMImpl_IGroupOperations.hxx"
 #include "GEOMImpl_IAdvancedOperations.hxx"
+#include "GEOMImpl_IImportExportOperations.hxx"
 #include "GEOM_Engine.hxx"
 
 class GEOMIMPL_EXPORT GEOMImpl_Gen : public GEOM_Engine
@@ -74,6 +75,8 @@ class GEOMIMPL_EXPORT GEOMImpl_Gen : public GEOM_Engine
 
   GEOMImpl_IAdvancedOperations* GetIAdvancedOperations(int theDocID);
 
+  GEOMImpl_IImportExportOperations* GetIImportExportOperations(int theDocID);
+
  private:
 
   std::map <int, GEOMImpl_IBasicOperations*>     _mapOfBasicOperations;
@@ -89,6 +92,7 @@ class GEOMIMPL_EXPORT GEOMImpl_Gen : public GEOM_Engine
   std::map <int, GEOMImpl_IMeasureOperations*>   _mapOfMeasureOperations;
   std::map <int, GEOMImpl_IGroupOperations*>     _mapOfGroupOperations;
   std::map <int, GEOMImpl_IAdvancedOperations*>  _mapOfAdvancedOperations;
+  std::map <int, GEOMImpl_IImportExportOperations*>  _mapOfImportExportOperations;
 };
 
 #endif

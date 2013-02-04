@@ -579,6 +579,9 @@ void GeometryGUI::OnGUIEvent( int id )
     //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
     libName = "AdvancedGUI";
     break;
+  case GEOMOp::OpExportXAO:           // MENU NEW ENTITY - IMPORTEXPORT - EXPORTXAO
+    libName = "ImportExportGUI";
+    break;
   default:
     break;
   }
@@ -906,6 +909,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 //   createGeomAction( GEOMOp::OpPipeTShapeGroups, "PIPETSHAPEGROUPS" );
   createGeomAction( GEOMOp::OpDividedDisk, "DIVIDEDDISK" );
   createGeomAction( GEOMOp::OpDividedCylinder, "DIVIDEDCYLINDER" );
+  createGeomAction( GEOMOp::OpExportXAO, "EXPORTXAO" );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create menus --------------------------
@@ -955,8 +959,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpPipePath,   genId, -1 );
 #endif
 
-//   int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
+   int impexpId = createMenu( tr( "MEN_IMPORTEXPORT" ), newEntId, -1 );
 
+  createMenu( GEOMOp::OpExportXAO, impexpId, -1 );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   createMenu( separator(), newEntId, -1 );
@@ -1227,8 +1232,9 @@ void GeometryGUI::initialize( CAM_Application* app )
     createTool( GEOMOp::OpFeatureDetect,  picturesTbId );
   #endif
 
-//   int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
+   int impexpTbId = createTool( tr( "TOOL_IMPORTEXPORT" ) );
 
+  createTool( GEOMOp::OpExportXAO, impexpTbId );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create popup menus --------------------------

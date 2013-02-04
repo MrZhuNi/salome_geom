@@ -5733,4 +5733,50 @@ Do you want to create new material?</translation>
         <translation>P&amp;ublish And Close</translation>
     </message>
 </context>
+<context>
+    <name>ImportExportGUI_ExportXAODlg</name>
+    <message>
+        <source>GEOM_EXPORTXAO_TITLE</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO</source>
+        <translation>ExportXAO</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO_EXPORTINGSHAPE</source>
+        <translation>Exporting Shape</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO_FILENAME</source>
+        <translation>File Name</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO_LGROUPS</source>
+        <translation>List of groups</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO_LFIELDS</source>
+        <translation>List of fields</translation>
+    </message>
+</context>
+<context>
+    <name>@default</name>
+    <message>
+        <source>TOP_EXPORTXAO</source>
+        <translation>ExportXAO</translation>
+    </message>
+    <message>
+        <source>MEN_EXPORTXAO</source>
+        <translation>ExportXAO</translation>
+    </message>
+    <message>
+        <source>STB_EXPORTXAO</source>
+        <translation>ExportXAO</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTEXPORT_204</source>
+        <translation>ExportXAO</translation>
+    </message>
+</context>
 </TS>

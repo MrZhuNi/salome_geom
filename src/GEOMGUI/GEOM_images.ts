@@ -1336,6 +1336,18 @@
             <source>ICON_OBJBROWSER_ADVANCED_203</source>
             <translation>dividedcylinder.png</translation>
         </message>
+        <message>
+            <source>ICON_DLG_EXPORTXAO_EXPORTINGSHAPE_FILENAME_LGROUPS_LFIELDS</source>
+            <translation>exportxao_exportingshape_filename_lgroups_lfields.png</translation>
+        </message>
+        <message>
+            <source>ICO_EXPORTXAO</source>
+            <translation>exportxao.png</translation>
+        </message>
+        <message>
+            <source>ICON_OBJBROWSER_IMPORTEXPORT_200</source>
+            <translation>tree_exportxao.png</translation>
+        </message>
 	<!-- @@ insert new functions before this line @@ do not remove this line @@ -->
     </context>
 </TS>

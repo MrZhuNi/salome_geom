@@ -2303,6 +2303,26 @@ GEOM::GEOM_IAdvancedOperations_ptr GEOM_Gen_i::GetIAdvancedOperations(CORBA::Lon
   return operations._retn();
 }
 
+//============================================================================
+// function : GetIImportExportOperations
+// purpose  :
+//============================================================================
+GEOM::GEOM_IImportExportOperations_ptr GEOM_Gen_i::GetIImportExportOperations(CORBA::Long theStudyID)
+     throw ( SALOME::SALOME_Exception )
+{
+  Unexpect aCatch(SALOME_SalomeException);
+  MESSAGE( "GEOM_Gen_i::GetIAdvancedOperations" );
+
+  GEOM::GEOM_Gen_ptr engine = _this();
+
+  GEOM_IImportExportOperations_i* aServant =
+    new GEOM_IImportExportOperations_i(_poa, engine, _impl->GetIImportExportOperations(theStudyID));
+
+  // activate the CORBA servant
+  GEOM::GEOM_IImportExportOperations_var operations = aServant->_this();
+  return operations._retn();
+}
+
 //=============================================================================
 /*!
  *  AddSubShape

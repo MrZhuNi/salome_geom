@@ -43,6 +43,7 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_IMeasureOperations.hxx		\
 	GEOMImpl_IGroupOperations.hxx		\
 	GEOMImpl_IAdvancedOperations.hxx	\
+	GEOMImpl_IImportExportOperations.hxx	\
 	GEOMImpl_IGlue.hxx			\
 	GEOMImpl_PointDriver.hxx		\
 	GEOMImpl_IPoint.hxx			\
@@ -148,9 +149,12 @@ ADVANCED_INCLUDES  =
 ADVANCED_INCLUDES += GEOMImpl_IPipeTShape.hxx GEOMImpl_PipeTShapeDriver.hxx
 ADVANCED_INCLUDES += GEOMImpl_IDividedDisk.hxx GEOMImpl_DividedDiskDriver.hxx
 ##ADVANCED_INCLUDES += GEOMImpl_IDividedCylinder.hxx GEOMImpl_DividedCylinderDriver.hxx
+IMPORTEXPORT_INCLUDES  =
+IMPORTEXPORT_INCLUDES += GEOMImpl_IExportXAO.hxx GEOMImpl_ExportXAODriver.hxx
 ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@##
 
 salomeinclude_HEADERS += $(ADVANCED_INCLUDES)
+salomeinclude_HEADERS += $(IMPORTEXPORT_INCLUDES)
 
 dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_IBasicOperations.cxx		\
@@ -166,6 +170,7 @@ dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_IMeasureOperations.cxx		\
 	GEOMImpl_IGroupOperations.cxx		\
 	GEOMImpl_IAdvancedOperations.cxx	\
+	GEOMImpl_IImportExportOperations.cxx	\
 	GEOMImpl_Gen.cxx			\
 	GEOMImpl_PointDriver.cxx		\
 	GEOMImpl_VectorDriver.cxx		\
@@ -221,9 +226,12 @@ ADVANCED_SOURCES  =
 ADVANCED_SOURCES += GEOMImpl_PipeTShapeDriver.cxx
 ADVANCED_SOURCES += GEOMImpl_DividedDiskDriver.cxx
 ##ADVANCED_SOURCES += GEOMImpl_DividedCylinderDriver.cxx
+IMPORTEXPORT_SOURCES  =
+IMPORTEXPORT_SOURCES += GEOMImpl_ExportXAODriver.cxx
 ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@##
 
 dist_libGEOMimpl_la_SOURCES += $(ADVANCED_SOURCES)
+dist_libGEOMimpl_la_SOURCES += $(IMPORTEXPORT_SOURCES)
 
 # additional information to compile and link file
 

@@ -61,6 +61,7 @@ public:
   void getLocalOp();
   void getGroupOp();
   void getAdvancedOp();
+  void getImportExportOp();
 
   PortableServer::ServantBase_var GetServant(CORBA::Object_ptr       theObject,
                                              PortableServer::POA_ptr thePOA);
@@ -711,6 +712,10 @@ public:
   GEOM::GEOM_Object_ptr MakeDividedCylinder (CORBA::Double theR, 
                                              CORBA::Double theH,
                                              GEOM::pattern thePattern);
+  //-----------------------------------------------------------//
+  // ImportExport Operations                                   //
+  //-----------------------------------------------------------//
+  CORBA::Boolean ExportXAO (GEOM::GEOM_Object_ptr theExportingShape, const char* theFileName, GEOM::GEOM_List_ptr thelGroups, GEOM::GEOM_List_ptr thelFields);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 
 private:

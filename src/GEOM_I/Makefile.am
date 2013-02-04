@@ -46,6 +46,7 @@ salomeinclude_HEADERS =			\
 	GEOM_IMeasureOperations_i.hh	\
 	GEOM_IGroupOperations_i.hh	\
 	GEOM_IAdvancedOperations_i.hh	\
+	GEOM_IImportExportOperations_i.hh	\
 	GEOM_Gen_i.hh			\
 	GEOM_GEOM_I.hxx
 
@@ -65,6 +66,7 @@ dist_libGEOMEngine_la_SOURCES =		\
 	GEOM_IMeasureOperations_i.cc	\
 	GEOM_IGroupOperations_i.cc	\
 	GEOM_IAdvancedOperations_i.cc	\
+	GEOM_IImportExportOperations_i.cc	\
 	GEOM_Gen_i.cc			\
 	GEOM_DumpPython.cc
 

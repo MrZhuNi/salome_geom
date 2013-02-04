@@ -393,6 +393,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             self.BlocksOp = None
             self.GroupOp  = None
             self.AdvOp    = None
+            self.ImpExpOp    = None
             pass
 
         ## @addtogroup l1_geompy_auxiliary
@@ -425,6 +426,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             self.BlocksOp = self.GetIBlocksOperations   (self.myStudyId)
             self.GroupOp  = self.GetIGroupOperations    (self.myStudyId)
             self.AdvOp    = self.GetIAdvancedOperations (self.myStudyId)
+            self.ImpExpOp    = self.GetIImportExportOperations (self.myStudyId)
             pass
 
         ## Dump component to the Python script
@@ -9070,6 +9072,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeDividedCylinder", self.AdvOp)
             if Parameters: anObj.SetParameters(Parameters)
             return anObj
+
+        ## Export a shape to XAO Format
+        #  @param theExportingShape Shape to export
+        #  @param theFileName The name of the exported file
+        #  @param thelGroups List of groups to export
+        #  @param thelFields List of fields to export
+        #  @return New GEOM_Object, containing the created shape.
+        #
+        #  @ref tui_creation_exportxao "Example"
+        def ExportXAO(self, theExportingShape, theFileName, thelGroups, thelFields):
+            theExportingShape, theFileName, thelGroups, thelFields, Parameters = ParseParameters(theExportingShape, theFileName, thelGroups, thelFields)
+            isGood = self.ImpExpOp.ExportXAO(theExportingShape, theFileName, thelGroups, thelFields)
+            RaiseIfFailed("ExportXAO", self.ImpExpOp)
+            #if Parameters: anObj.SetParameters(Parameters)
+            return isGood
 
         #@@ insert new functions before this line @@ do not remove this line @@#
 

@@ -85,6 +85,7 @@
 #include <GEOMImpl_PipeTShapeDriver.hxx>
 #include <GEOMImpl_DividedDiskDriver.hxx>
 // #include <GEOMImpl_DividedCylinderDriver.hxx>
+#include <GEOMImpl_ExportXAODriver.hxx>
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
 //=============================================================================
@@ -171,6 +172,10 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PipeTShapeDriver::GetID(), new GEOMImpl_PipeTShapeDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_DividedDiskDriver::GetID(), new GEOMImpl_DividedDiskDriver());
 //    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_DividedCylinderDriver::GetID(), new GEOMImpl_DividedCylinderDriver());
+   /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
+
+   // ImportExport operations
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ExportXAODriver::GetID(), new GEOMImpl_ExportXAODriver());
    /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
    SetEngine(this);
@@ -415,5 +420,19 @@ GEOMImpl_IAdvancedOperations* GEOMImpl_Gen::GetIAdvancedOperations(int theDocID)
   }
 
   return _mapOfAdvancedOperations[theDocID];
+}
+
+//=============================================================================
+/*!
+ * GetIImportExportOperations
+ */
+//=============================================================================
+GEOMImpl_IImportExportOperations* GEOMImpl_Gen::GetIImportExportOperations(int theDocID)
+{
+  if(_mapOfImportExportOperations.find(theDocID) == _mapOfImportExportOperations.end()) {
+    _mapOfImportExportOperations[theDocID] = new GEOMImpl_IImportExportOperations(this, theDocID);
+  }
+
+  return _mapOfImportExportOperations[theDocID];
 }
 

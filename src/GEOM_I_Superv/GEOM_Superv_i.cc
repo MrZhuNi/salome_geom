@@ -403,6 +403,22 @@ void GEOM_Superv_i::getAdvancedOp()
 }
 
 //=============================================================================
+//  getImportExportOp:
+//=============================================================================
+void GEOM_Superv_i::getImportExportOp()
+{
+  if (CORBA::is_nil(myGeomEngine))
+    setGeomEngine();
+  // get GEOM_IImportExportOperations interface
+  if (CORBA::is_nil(myImportExportOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);    
+    myImportExportOp = myGeomEngine->GetIImportExportOperations(myStudyID);
+  }
+}
+
+//=============================================================================
 //  GetServant:
 //=============================================================================
 PortableServer::ServantBase_var GEOM_Superv_i::GetServant(CORBA::Object_ptr       theObject,
@@ -3432,6 +3448,28 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDividedCylinder (CORBA::Double theR,
   return anObj;
 }
 
+//=============================================================================
+//  ExportXAO
+//=============================================================================
+CORBA::Boolean GEOM_Superv_i::ExportXAO (GEOM::GEOM_Object_ptr theExportingShape, const char* theFileName, GEOM::GEOM_List_ptr thelGroups, GEOM::GEOM_List_ptr thelFields)
+{
+  beginService( " GEOM_Superv_i::ExportXAO" );
+  MESSAGE("GEOM_Superv_i::ExportXAO");
+  getImportExportOp();
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplG =
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thelGroups, myPOA).in()))
+  {
+    if (GEOM_List_i<GEOM::ListOfGO>* aListImplF =
+        dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thelFields, myPOA).in()))
+    {
+      CORBA::Boolean isGood = myImportExportOp->ExportXAO(theExportingShape, theFileName, aListImplG->GetList(), aListImplF->GetList());
+      endService( " GEOM_Superv_i::ExportXAO" );
+      return isGood;
+    }
+  }
+  endService( " GEOM_Superv_i::ExportXAO" );
+  return false;
+}
 /*@@ insert new functions before this line @@ do not remove this line @@*/
 
 //=====================================================================================
