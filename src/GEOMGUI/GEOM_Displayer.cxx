@@ -597,7 +597,9 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
 
   // set material
   Material_Model material;
-  material.fromProperties( propMap.value( GEOM::propertyName( GEOM::Material ) ).toString() );
+  // if predefined color isn't set in displayer(via GEOM_Displayer::SetColor() function)
+  if( !HasColor() )
+    material.fromProperties( propMap.value( GEOM::propertyName( GEOM::Material ) ).toString() );
   // - set front material properties
   AISShape->SetCurrentFacingModel( Aspect_TOFM_FRONT_SIDE );
   AISShape->SetMaterial( material.getMaterialOCCAspect( true ) );
