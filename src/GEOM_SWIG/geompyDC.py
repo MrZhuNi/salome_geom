@@ -8734,7 +8734,61 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             aTuple = self.MeasuOp.PointCoordinates(Point)
             RaiseIfFailed("PointCoordinates", self.MeasuOp)
-            return aTuple
+            return aTuple 
+        
+        ## Get vector coordinates
+        #  @return [x, y, z]
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def VectorCoordinates(self,Vector):
+            """
+            Get vector coordinates
+
+            Returns:
+                [x, y, z]
+            """
+
+            p1=self.GetFirstVertex(Vector)
+            p2=self.GetLastVertex(Vector)
+            
+            X1=self.PointCoordinates(p1)
+            X2=self.PointCoordinates(p2)
+
+            return (X2[0]-X1[0],X2[1]-X1[1],X2[2]-X1[2])
+
+
+        ## Compute cross product
+        #  @return vector w=u^v
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def CrossProduct(self, Vector1, Vector2):
+            """ 
+            Compute cross product
+            
+            Returns: vector w=u^v
+            """
+            u=self.VectorCoordinates(Vector1)
+            v=self.VectorCoordinates(Vector2)
+            w=self.MakeVectorDXDYDZ(u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0])
+            
+            return w
+        
+        ## Compute cross product
+        #  @return dot product  p=u.v
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def DotProduct(self, Vector1, Vector2):
+            """ 
+            Compute cross product
+            
+            Returns: dot product  p=u.v
+            """
+            u=self.VectorCoordinates(Vector1)
+            v=self.VectorCoordinates(Vector2)
+            p=u[0]*v[0]+u[1]*v[1]+u[2]*v[2]
+            
+            return p
+
 
         ## Get summarized length of all wires,
         #  area of surface and volume of the given shape.
