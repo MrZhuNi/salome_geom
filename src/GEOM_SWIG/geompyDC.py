@@ -17,18 +17,20 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#  File   : geompy.py
+
+#  GEOM GEOM_SWIG : binding of C++ implementation with Python
+#  File   : geompyDC.py
 #  Author : Paul RASCLE, EDF
 #  Module : GEOM
 
 """
-    \namespace geompy
-    \brief Module geompy
+    \namespace geompyDC
+    \brief Module geompyDC
 """
 
-## @defgroup l1_geompy_auxiliary Auxiliary data structures and methods
+## @defgroup l1_geompyDC_auxiliary Auxiliary data structures and methods
 
-## @defgroup l1_geompy_purpose   All package methods, grouped by their purpose
+## @defgroup l1_geompyDC_purpose   All package methods, grouped by their purpose
 ## @{
 ##   @defgroup l2_import_export Importing/exporting geometrical objects
 ##   @defgroup l2_creating      Creating geometrical objects
@@ -92,17 +94,17 @@ from gsketcher import Sketcher3D
 
 ## Enumeration ShapeType as a dictionary. \n
 ## Topological types of shapes (like Open Cascade types). See GEOM::shape_type for details.
-#  @ingroup l1_geompy_auxiliary
+#  @ingroup l1_geompyDC_auxiliary
 ShapeType = {"AUTO":-1, "COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
 
 ## Raise an Error, containing the Method_name, if Operation is Failed
-## @ingroup l1_geompy_auxiliary
+## @ingroup l1_geompyDC_auxiliary
 def RaiseIfFailed (Method_name, Operation):
     if Operation.IsDone() == 0 and Operation.GetErrorCode() != "NOT_FOUND_ANY":
         raise RuntimeError, Method_name + " : " + Operation.GetErrorCode()
 
 ## Return list of variables value from salome notebook
-## @ingroup l1_geompy_auxiliary
+## @ingroup l1_geompyDC_auxiliary
 def ParseParameters(*parameters):
     Result = []
     StringResult = []
@@ -134,7 +136,7 @@ def ParseParameters(*parameters):
     return Result
 
 ## Return list of variables value from salome notebook
-## @ingroup l1_geompy_auxiliary
+## @ingroup l1_geompyDC_auxiliary
 def ParseList(list):
     Result = []
     StringResult = ""
@@ -153,7 +155,7 @@ def ParseList(list):
     return Result, StringResult
 
 ## Return list of variables value from salome notebook
-## @ingroup l1_geompy_auxiliary
+## @ingroup l1_geompyDC_auxiliary
 def ParseSketcherCommand(command):
     Result = ""
     StringResult = ""
@@ -195,7 +197,7 @@ def ParseSketcherCommand(command):
 ## \endcode
 ## @param data unpacked data - a string containing '1' and '0' symbols
 ## @return data packed to the byte stream
-## @ingroup l1_geompy_auxiliary
+## @ingroup l1_geompyDC_auxiliary
 def PackData(data):
     """
     Helper function which can be used to pack the passed string to the byte data.
@@ -237,18 +239,18 @@ def PackData(data):
 ## texture bitmap itself.
 ##
 ## This function can be used to read the texture to the byte stream in order to pass it to
-## the AddTexture() function of geompy class.
+## the AddTexture() function of geompyDC class.
 ## For example,
 ## \code
-## import geompy
-## geompy.init_geom(salome.myStudy)
+## import geompyDC
+## geompy = geompyDC.geomInstance(salome.myStudy)
 ## texture = geompy.readtexture('mytexture.dat')
 ## texture = geompy.AddTexture(*texture)
 ## obj.SetMarkerTexture(texture)
 ## \endcode
 ## @param fname texture file name
 ## @return sequence of tree values: texture's width, height in pixels and its byte stream
-## @ingroup l1_geompy_auxiliary
+## @ingroup l1_geompyDC_auxiliary
 def ReadTexture(fname):
     """
     Read bitmap texture from the text file.
@@ -257,7 +259,7 @@ def ReadTexture(fname):
     The function returns width and height of the pixmap in pixels and byte stream representing
     texture bitmap itself.
     This function can be used to read the texture to the byte stream in order to pass it to
-    the AddTexture() function of geompy class.
+    the AddTexture() function of geompyDC class.
     
     Parameters:
         fname texture file name
@@ -266,8 +268,8 @@ def ReadTexture(fname):
         sequence of tree values: texture's width, height in pixels and its byte stream
     
     Example of usage:
-        import geompy
-        geompy.init_geom(salome.myStudy)
+        import geompyDC
+        geompy = geompyDC.geomInstance(salome.myStudy)
         texture = geompy.readtexture('mytexture.dat')
         texture = geompy.AddTexture(*texture)
         obj.SetMarkerTexture(texture)
@@ -307,11 +309,11 @@ def ReadTexture(fname):
 ## Returns a long value from enumeration type
 #  Can be used for CORBA enumerator types like GEOM.shape_type
 #  @param theItem enumeration type
-#  @ingroup l1_geompy_auxiliary
+#  @ingroup l1_geompyDC_auxiliary
 def EnumToLong(theItem):
     """
     Returns a long value from enumeration type
-    Can be used for CORBA enumerator types like geompy.ShapeType
+    Can be used for CORBA enumerator types like geompyDC.ShapeType
 
     Parameters:
         theItem enumeration type
@@ -359,11 +361,11 @@ def EnumToLong(theItem):
 #  - EDGE:                                                 [nb_vertices]
 #
 #  - VERTEX:       [x  y  z]
-#  @ingroup l1_geompy_auxiliary
+#  @ingroup l1_geompyDC_auxiliary
 kind = GEOM.GEOM_IKindOfShape
 
 ## Information about closed/unclosed state of shell or wire
-#  @ingroup l1_geompy_auxiliary
+#  @ingroup l1_geompyDC_auxiliary
 class info:
     """
     Information about closed/unclosed state of shell or wire
@@ -372,9 +374,55 @@ class info:
     CLOSED   = 1
     UNCLOSED = 2
 
-class geompyDC(GEOM._objref_GEOM_Gen):
+# Warning: geom is a singleton
+geom = None
+engine = None
+doLcc = False
+created = False
+
+class geompyDC(object, GEOM._objref_GEOM_Gen):
+
+        def __new__(cls):
+            global engine
+            global geom
+            global doLcc
+            global created
+            print "__new__ ", engine, geom, doLcc, created
+            if geom is None:
+                # geom engine is either retrieved from engine, or created
+                geom = engine
+                # Following test avoids a recursive loop
+                if doLcc:
+                    if geom is not None:
+                        # geom engine not created: existing engine found
+                        doLcc = False
+                    if doLcc and not created:
+                        doLcc = False
+                        created = True
+                        # FindOrLoadComponent called:
+                        # 1. CORBA resolution of server
+                        # 2. the __new__ method is called again
+                        print "FindOrLoadComponent ", engine, geom, doLcc, created
+                        geom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
+                else:
+                    # FindOrLoadComponent not called
+                    if geom is None:
+                        # geompyDC instance is created from lcc.FindOrLoadComponent
+                        created = True
+                        print "super ", engine, geom, doLcc, created
+                        geom = super(geompyDC,cls).__new__(cls)
+                    else:
+                        # geom engine not created: existing engine found
+                        print "existing ", engine, geom, doLcc, created
+                        pass
+
+                return geom
+
+            return geom
 
         def __init__(self):
+            #global created
+            #print "-------- geompyDC __init__ --- ", created, self
             GEOM._objref_GEOM_Gen.__init__(self)
             self.myBuilder = None
             self.myStudyId = 0
@@ -395,7 +443,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             self.AdvOp    = None
             pass
 
-        ## @addtogroup l1_geompy_auxiliary
+        ## @addtogroup l1_geompyDC_auxiliary
         ## @{
         def init_geom(self,theStudy):
             self.myStudy = theStudy
@@ -543,7 +591,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 drwAttribute.SetDrawable(False)
                 pass
 
-        # end of l1_geompy_auxiliary
+        # end of l1_geompyDC_auxiliary
         ## @}
 
         ## @addtogroup l3_restore_ss
@@ -4187,7 +4235,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 aShape Shape to be exploded.
-                aType Type of sub-shapes to be retrieved (see geompy.ShapeType) 
+                aType Type of sub-shapes to be retrieved (see geompy.ShapeType)
 
             Returns:
                 List of sub-shapes of type theShapeType, contained in theShape.
@@ -4208,7 +4256,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Explode a shape on sub-shapes of a given type.
 
             Parameters:
-                aShape Shape to be exploded (see geompy.ShapeType) 
+                aShape Shape to be exploded (see geompy.ShapeType)
                 aType Type of sub-shapes to be retrieved (see geompy.ShapeType)
 
             Returns:
@@ -6071,7 +6119,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the result shape.
 
             Example of usage: 
-               filletall = geompy.MakeFilletAll(prism, 10.) 
+               filletall = geompy.MakeFilletAll(prism, 10.)
             """
             # Example: see GEOM_TestOthers.py
             theR,Parameters = ParseParameters(theR)
@@ -9080,7 +9128,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @param theOriginal geometry object for copy
         #  @return unique object identifier
-        #  @ingroup l1_geompy_auxiliary
+        #  @ingroup l1_geompyDC_auxiliary
         #  @ref swig_MakeCopy "Example"
         def MakeCopy(self,theOriginal):
             """
@@ -9101,7 +9149,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Add Path to load python scripts from
         #  @param Path a path to load python scripts from
-        #  @ingroup l1_geompy_auxiliary
+        #  @ingroup l1_geompyDC_auxiliary
         def addPath(self,Path):
             """
             Add Path to load python scripts from
@@ -9117,7 +9165,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Load marker texture from the file
         #  @param Path a path to the texture file
         #  @return unique texture identifier
-        #  @ingroup l1_geompy_auxiliary
+        #  @ingroup l1_geompyDC_auxiliary
         def LoadTexture(self, Path):
             """
             Load marker texture from the file
@@ -9139,7 +9187,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  appropriate reason (e.g. for identification of geometry object).
         #  @param obj geometry object
         #  @return unique object identifier
-        #  @ingroup l1_geompy_auxiliary
+        #  @ingroup l1_geompyDC_auxiliary
         def getObjectID(self, obj):
             """
             Get internal name of the object based on its study entry.
@@ -9176,7 +9224,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param Texture texture data
         #  @param RowData if @c True, @a Texture data are packed in the byte stream
         #  @return unique texture identifier
-        #  @ingroup l1_geompy_auxiliary
+        #  @ingroup l1_geompyDC_auxiliary
         def AddTexture(self, Width, Height, Texture, RowData=False):
             """
             Add marker texture. Width and Height parameters
@@ -9201,5 +9249,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return ID
 
 import omniORB
-#Register the new proxy for GEOM_Gen
+# Register the new proxy for GEOM_Gen
 omniORB.registerObjref(GEOM._objref_GEOM_Gen._NP_RepositoryId, geompyDC)
+
+def geomInstance( study, instance=None):
+    print "geomInstance ", study, instance
+    global engine
+    global geom
+    global doLcc
+    engine = instance
+    if engine is None:
+      doLcc = True
+    geom = geompyDC()
+    assert isinstance(geom,geompyDC), "Geom engine class is %s but should be geompyDC.geompyDC. Import geompyDC before creating the instance."%geom.__class__
+    geom.init_geom(study)
+    return geom

@@ -34,10 +34,9 @@ from salome import *
 # retrieve GEOM engine in try/except block
 # to avoid problems in some cases, e.g. when generating documentation
 try:
-    # get GEOM engine
-    geom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
-    # initialize GEOM with current study
-    geom.init_geom( salome.myStudy )
+    # get GEOM engine and initialize GEOM with current study
+    engineGeom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
+    geom = geompyDC.geomInstance(salome.myStudy, engineGeom)
 
     # export the methods of geompyDC
     for k in dir( geom ):
@@ -50,3 +49,26 @@ try:
 except:
     geom = None
     pass
+
+print """
+===============================================================================
+WARNING:                                                                      |
+Usage of geompy.py is deprecated after SALOME V6.6!                              |
+geompy.py will be removed in a future version!                                |
+TODO:                                                                         |
+The following changes in your scripts are required to avoid this message:     |
+                                                                              |
+replace                                                                       |
+-------                                                                       |
+                                                                              |
+import geompy                                                                 |
+geompy.init_geom(theStudy)                                                    |
+                                                                              |
+with                                                                          |
+----                                                                          |
+                                                                              |
+import geompyDC                                                               |
+geompy = geompyDC.geomInstance(theStudy)                                      |
+                                                                              |
+===============================================================================
+"""
