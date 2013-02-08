@@ -22,7 +22,7 @@
 # Date : 30/11/2001
 # Modified by : Alexander BORODIN (OCN) - autotools usage
 #
-SUBDIRS = tui gui
+SUBDIRS = tui gui examples
 SUBDIRSTUI = tui
 SUBDIRSGUI = gui
 
