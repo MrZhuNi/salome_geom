@@ -2630,6 +2630,8 @@ Engines::ListOfData* GEOM_Gen_i::getModifiedData(CORBA::Long studyId)
   SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow( aSMObject );
   SALOMEDS::Study_var aStudy = aStudyManager->GetStudyByID( studyId );
   SALOMEDS::SComponent_var aComponent = aStudy->FindComponent("GEOM");
+  if (CORBA::is_nil(aComponent))
+    return aResult._retn();
   SALOMEDS::ChildIterator_var anIter = aStudy->NewChildIterator(aComponent); // check only published shapes
   TopoDS_Compound aResultComp;
   BRep_Builder aBB;
