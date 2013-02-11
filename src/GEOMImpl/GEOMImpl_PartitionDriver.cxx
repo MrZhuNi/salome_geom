@@ -383,7 +383,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
   aShape = PS.Shape();
   if (aShape.IsNull()) {
     // Mantis issue 22009
-    if (PS.ErrorStatus() == 10 && PS.Tools().Extent() == 0 && PS.Arguments().Extent() == 1)
+    if (PS.ErrorStatus() == 100 && PS.Tools().Extent() == 0 && PS.Arguments().Extent() == 1)
       aShape = PS.Arguments().First();
     else
       return 0;

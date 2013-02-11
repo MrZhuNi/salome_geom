@@ -271,6 +271,20 @@ void GEOMAlgo_Splitter::PostTreat()
     myShape=aC;
   }//if (myLimit!=TopAbs_SHAPE) {
   //
+  Standard_Integer aNbS;
+  TopoDS_Iterator aIt;
+  BOPCol_ListOfShape aLS;
+  //
+  aIt.Initialize(myShape);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Shape& aS=aIt.Value();
+    aLS.Append(aS);
+  }
+  aNbS=aLS.Extent();
+  if (aNbS==1) {
+    myShape=aLS.First();
+  }
+  //
   BOPAlgo_Builder::PostTreat();
 }
 //=======================================================================
