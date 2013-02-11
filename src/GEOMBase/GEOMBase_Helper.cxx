@@ -141,6 +141,7 @@ void GEOMBase_Helper::display( const ObjectList& objList, const bool updateView 
 //================================================================
 void GEOMBase_Helper::display( GEOM::GEOM_Object_ptr object, const bool updateView )
 {
+  return;
   // Unset color of shape ( this color may be set during preview displaying )
   // Default color will be used
 //   getDisplayer()->UnsetColor();
