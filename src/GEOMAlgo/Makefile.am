@@ -30,7 +30,6 @@ dist_libGEOMAlgo_la_SOURCES =			\
 	GEOMAlgo_Algo.cxx	\
 	GEOMAlgo_AlgoTools.cxx	\
 	GEOMAlgo_AlgoTools_1.cxx	\
-	GEOMAlgo_AlgoTools_2.cxx	\
 	GEOMAlgo_BndSphere.cxx	\
 	GEOMAlgo_BndSphereTree.cxx	\
 	GEOMAlgo_BoxBndTree.cxx	\
@@ -72,9 +71,7 @@ dist_libGEOMAlgo_la_SOURCES =			\
 	GEOMAlgo_StateCollector.cxx	\
 	GEOMAlgo_SurfaceTools.cxx	\
 	GEOMAlgo_VertexSolid.cxx	\
-	GEOMAlgo_WireSolid.cxx	\
-	GEOMAlgo_CheckerSI.cxx	\
-	GEOMAlgo_IteratorCheckerSI.cxx
+	GEOMAlgo_WireSolid.cxx	
 
 
 # header files
@@ -135,9 +132,7 @@ salomeinclude_HEADERS =					\
 	GEOMAlgo_StateCollector.hxx	\
 	GEOMAlgo_SurfaceTools.hxx	\
 	GEOMAlgo_VertexSolid.hxx	\
-	GEOMAlgo_WireSolid.hxx	\
-	GEOMAlgo_CheckerSI.hxx	\
-	GEOMAlgo_IteratorCheckerSI.hxx
+	GEOMAlgo_WireSolid.hxx	
 
 libGEOMAlgo_la_CPPFLAGS =	\
 	$(CAS_CPPFLAGS)		\

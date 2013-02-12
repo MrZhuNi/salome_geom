@@ -117,7 +117,7 @@
 #include <BOPDS_MapOfPassKey.hxx>
 #include <BOPDS_PassKey.hxx>
 #include <GEOMAlgo_AlgoTools.hxx>
-#include <GEOMAlgo_CheckerSI.hxx>
+#include <BOPAlgo_CheckerSI.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -1373,7 +1373,7 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
   BOPCol_ListOfShape aLCS;
   aLCS.Append(aScopy);
   //
-  GEOMAlgo_CheckerSI aCSI; // checker of self-interferences
+  BOPAlgo_CheckerSI aCSI; // checker of self-interferences
   aCSI.SetArguments(aLCS);
 
   // 1. Launch the checker

@@ -168,7 +168,7 @@ void GEOMAlgo_Gluer2::MakeFace(const TopoDS_Face& theF,
         }
         //modified by NIZNHY-PKV Fri Feb 03 11:18:20 2012t
         //
-        bIsToReverse=GEOMAlgo_AlgoTools::IsSplitToReverse1(aEx, aE, myContext);
+        bIsToReverse=GEOMAlgo_AlgoTools::IsSplitToReverse(aEx, aE, myContext);
         if (bIsToReverse) {
           aEx.Reverse();
         }

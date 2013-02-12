@@ -463,7 +463,7 @@ void GEOMAlgo_Gluer::MakeSubShapes (const TopoDS_Shape&  theShape,
           aER.Orientation(TopAbs_FORWARD);
           if (!BRep_Tool::Degenerated(aER)) {
             // orient image
-            Standard_Boolean bIsToReverse=GEOMAlgo_AlgoTools::IsSplitToReverse1(aER, aE, myContext);
+            Standard_Boolean bIsToReverse=GEOMAlgo_AlgoTools::IsSplitToReverse(aER, aE, myContext);
             if (bIsToReverse) {
               aER.Reverse();
             }
@@ -515,7 +515,7 @@ void GEOMAlgo_Gluer::MakeSolids()
   myResult=aCmp;
   //
   if (aMS.Extent()) {
-    GEOMAlgo_AlgoTools::CorrectCurveOnSurface(myResult);
+    BOPTools_AlgoTools::CorrectCurveOnSurface(myResult, 0.0001);
   }
 }
 //=======================================================================
@@ -977,7 +977,7 @@ void GEOMAlgo_Gluer::MakeFace(const TopoDS_Face& aF,
 	BOPTools_AlgoTools2D::BuildPCurveForEdgeOnFace(aER, aFFWD);
 
 	// orient image
-	bIsToReverse=GEOMAlgo_AlgoTools::IsSplitToReverse1(aER, aE, myContext);
+	bIsToReverse=GEOMAlgo_AlgoTools::IsSplitToReverse(aER, aE, myContext);
 	if (bIsToReverse) {
 	  aER.Reverse();
 	}

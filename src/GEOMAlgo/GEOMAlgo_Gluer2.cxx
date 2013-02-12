@@ -44,6 +44,8 @@
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
+#include <BOPTools_AlgoTools.hxx>
+
 #include <GEOMAlgo_GlueDetector.hxx>
 #include <GEOMAlgo_AlgoTools.hxx>
 
@@ -450,7 +452,7 @@ void GEOMAlgo_Gluer2::FillContainers(const TopAbs_ShapeEnum aType)
       if (myOrigins.IsBound(aE)) {
         aEnew=myOrigins.Find(aE);
         //
-        bToReverse=GEOMAlgo_AlgoTools::IsSplitToReverse(aEnew, aE, myContext);
+        bToReverse=BOPTools_AlgoTools::IsSplitToReverse(aEnew, aE, myContext);
         if (bToReverse) {
           aEnew.Reverse();
         }
