@@ -39,6 +39,7 @@
 #include <TDocStd_Document.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HSequenceOfAsciiString.hxx>
+#include <TColStd_MapOfInteger.hxx>
 #include <TDF_Label.hxx>
 
 #include <map>
@@ -178,6 +179,10 @@ class GEOM_Engine
 
   static const Standard_GUID& GetTextureGUID();
 
+  void DocumentModified(const int theDocId, const bool isModified);
+  
+  bool DocumentModified(const int theDocId);
+
  protected:
   Standard_EXPORT static void SetEngine(GEOM_Engine* theEngine);       
   
@@ -189,6 +194,8 @@ class GEOM_Engine
 #else
   Interface_DataMapOfIntegerTransient _mapIDDocument;
 #endif
+  TColStd_MapOfInteger _mapModifiedDocs; // keeps the identifiers of the modified document ids
+
   int _UndoLimit;
   GEOM_DataMapOfAsciiStringTransient _objects;
 
