@@ -26,14 +26,22 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 pyexamplesdir = $(docdir)/examples/GEOM
 
-BAD_TESTS = 
+BAD_TESTS = \
+	3dsketcher.py \
+	angle.py \
+	blocks_operations_ex03.py \
+	complex_objs_ex06.py \
+	free_boundaries.py \
+	import_export.py \
+	primitives_ex06.py \
+	repairing_operations_ex05.py \
+	repairing_operations_ex09.py \
+	viewing_geom_objs_ex04.py 
 
 GOOD_TESTS = \
-	3dsketcher.py \
 	advanced_geom_objs_ex01.py \
 	advanced_geom_objs_ex02.py \
 	advanced_geom_objs_ex03.py \
-	angle.py \
 	basic_geom_objs_ex01.py \
 	basic_geom_objs_ex02.py \
 	basic_geom_objs_ex03.py \
@@ -49,7 +57,6 @@ GOOD_TESTS = \
 	basic_properties.py \
 	blocks_operations_ex01.py \
 	blocks_operations_ex02.py \
-	blocks_operations_ex03.py \
 	boolean_operations_ex01.py \
 	boolean_operations_ex02.py \
 	boolean_operations_ex03.py \
@@ -66,15 +73,12 @@ GOOD_TESTS = \
 	complex_objs_ex03.py \
 	complex_objs_ex04.py \
 	complex_objs_ex05.py \
-	complex_objs_ex06.py \
 	complex_objs_ex07.py \
 	complex_objs_ex08.py \
 	complex_objs_ex09.py \
 	complex_objs_ex10.py \
-	free_boundaries.py \
 	free_faces.py \
 	get_non_blocks.py \
-	import_export.py \
 	inertia.py \
 	min_distance.py \
 	normal_face.py \
@@ -85,17 +89,14 @@ GOOD_TESTS = \
 	primitives_ex03.py \
 	primitives_ex04.py \
 	primitives_ex05.py \
-	primitives_ex06.py \
 	primitives_ex07.py \
 	repairing_operations_ex01.py \
 	repairing_operations_ex02.py \
 	repairing_operations_ex03.py \
 	repairing_operations_ex04.py \
-	repairing_operations_ex05.py \
 	repairing_operations_ex06.py \
 	repairing_operations_ex07.py \
 	repairing_operations_ex08.py \
-	repairing_operations_ex09.py \
 	repairing_operations_ex10.py \
 	repairing_operations_ex11.py \
 	sketcher.py \
@@ -122,7 +123,6 @@ GOOD_TESTS = \
 	viewing_geom_objs_ex01.py \
 	viewing_geom_objs_ex02.py \
 	viewing_geom_objs_ex03.py \
-	viewing_geom_objs_ex04.py \
 	whatis.py \
 	working_with_groups_ex01.py \
 	working_with_groups_ex02.py \
