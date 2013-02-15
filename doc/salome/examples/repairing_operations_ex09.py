@@ -1,6 +1,7 @@
 # Limit Tolerance
 
 import geompy
+import salome
 gg = salome.ImportComponentGUI("GEOM")
 
 # import initial topology

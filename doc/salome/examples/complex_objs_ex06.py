@@ -7,14 +7,19 @@ gg = salome.ImportComponentGUI("GEOM")
 # create path
 WirePath = geompy.MakeSketcher("Sketcher:F 0 0:TT 100 0:R 0:C 100 90:T 0 200", [0, 0, 0, 0, 0, 1, 1, 0, -0])
 
+# get sub-shapes
+edges = geompy.SubShapeAll(WirePath, geompy.ShapeType["EDGE"])
+vertices = geompy.SubShapeAll(WirePath, geompy.ShapeType["VERTEX"])
+
+
 #=======================================================
 #                 Create shell sections
 #=======================================================
-ps = [Vertex_1,Vertex_2,Vertex_3,Vertex_4]
-theLocations = [Vertex_1, Vertex_2, Vertex_3, Vertex_4]
+ps = [vertices[0],vertices[1],vertices[2],vertices[3]]
+theLocations = [vertices[0],vertices[1],vertices[2],vertices[3]]
 VC = geompy.MakeCompound(theLocations)
 geompy.addToStudy(VC,"VC")
-vs = [Edge_1,Edge_1,Edge_3,Edge_3]
+vs = [edges[0],edges[0],edges[2],edges[2]]
 hs = [20,40,30,20]
 shells = []
 subbases = []
@@ -50,7 +55,7 @@ faces = []
 w = geompy.MakeSketcher("Sketcher:F 20 20:TT 0 20:TT 0 0:TT 20 0",
                          [c1[0], c1[1], c1[2], nx, ny, nz, 0, 0, 1])
 [e1,e2,e3] = geompy.SubShapeAll(w, geompy.ShapeType["EDGE"])
-arc = MakeArc(w,3,-1)
+arc = geompy.MakeArc(w,3,-1)
 w = geompy.MakeWire([e1,e2,e3,arc])
 f1 = geompy.MakeFace(w,1)
 
