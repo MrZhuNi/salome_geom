@@ -2,6 +2,7 @@
 
 import geompy
 import salome
+import GEOM
 gg = salome.ImportComponentGUI("GEOM")
 
 # create a vertex and a vector
@@ -21,7 +22,6 @@ cone = geompy.MakeCone(p1, v, 70, 0, 80)
 cut = geompy.MakeCut(cone, cylinder)
 
 # get faces as sub-shapes
-faces = []
 faces = geompy.SubShapeAllSortedCentres(cut, geompy.ShapeType["FACE"])
 f_2 = geompy.GetSubShapeID(cut, faces[2])
 
@@ -29,9 +29,9 @@ f_2 = geompy.GetSubShapeID(cut, faces[2])
 cut_without_f_2 = geompy.SuppressFaces(cut, [f_2])
 
 # get edges as sub-shapes
-edges = []
-edges = geompy.SubShapeAllSortedCentres(cut_without_f_2, geompy.ShapeType["EDGE"])
-e_2 = geompy.GetSubShapeID(cut_without_f_2, edges[2])
+edges = geompy.SubShapeAllSortedCentres(faces[2], geompy.ShapeType["EDGE"])
+edge  = geompy.GetInPlace(cut_without_f_2, edges[0], True)
+e_2 = geompy.GetSubShapeID(cut_without_f_2, edge)
 
 # suppress a hole using the selected edge
 result = geompy.SuppressHoles(cut_without_f_2, [e_2])
