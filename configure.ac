@@ -33,7 +33,7 @@ AM_INIT_AUTOMAKE([tar-pax -Wno-portability])
 
 XVERSION=`echo $VERSION | awk -F. '{printf("0x%02x%02x%02x",$1,$2,$3)}'`
 AC_SUBST(XVERSION)
-VERSION_DEV=0
+VERSION_DEV=1
 AC_SUBST(VERSION_DEV)
 
 # set up MODULE_NAME variable for dynamic construction of directories (resources, etc.)
@@ -476,6 +476,7 @@ AC_OUTPUT([ \
   doc/docutils/Makefile \
   doc/docutils/conf.py \
   doc/salome/Makefile \
+  doc/salome/examples/Makefile \
   doc/salome/gui/Makefile \
   doc/salome/gui/GEOM/Makefile \
   doc/salome/gui/GEOM/doxyfile \
@@ -499,12 +500,14 @@ AC_OUTPUT([ \
   src/DlgRef/Makefile \
   src/EntityGUI/Makefile \
   src/GEOM/Makefile \
+  src/BlockFix/Makefile \
   src/GEOMAlgo/Makefile \
   src/GEOMBase/Makefile \
   src/GEOMClient/Makefile \
   src/GEOMFiltersSelection/Makefile \
   src/Material/Makefile \
   src/GEOMGUI/Makefile \
+  src/GEOMUtils/Makefile \
   src/GEOMImpl/Makefile \
   src/GEOMToolsGUI/Makefile \
   src/GEOM_I/Makefile \

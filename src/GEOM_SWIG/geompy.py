@@ -25,7 +25,6 @@
 #  File   : geompy.py
 #  Author : Paul RASCLE, EDF
 #  Module : GEOM
-#  $Header$
 #
 import salome
 import geompyDC
@@ -53,7 +52,7 @@ except:
 print """
 ===============================================================================
 WARNING:                                                                      |
-Usage of geompy.py is deprecated after SALOME V6.6!                              |
+Usage of geompy.py is deprecated after SALOME V7.2!                           |
 geompy.py will be removed in a future version!                                |
 TODO:                                                                         |
 The following changes in your scripts are required to avoid this message:     |
