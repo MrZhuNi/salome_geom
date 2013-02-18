@@ -1,8 +1,5 @@
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -20,63 +17,41 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        GEOMAlgo_ShapeSolid.cxx
-// Created:     Thu Jan 13 12:54:48 2005
-// Author:      Peter KURNEV
-//              <pkv@irinox>
+// File:	GEOMAlgo_BndSphere.cxx
+// Created:	
+// Author:	Peter KURNEV
+//		<pkv@irinox>
 //
-#include <GEOMAlgo_ShapeSolid.hxx>
-
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
+#include <GEOMAlgo_BndSphere.hxx>
 
 //=======================================================================
-//function : GEOMAlgo_ShapeSolid
-//purpose  :
+//function : 
+//purpose  : 
 //=======================================================================
-GEOMAlgo_ShapeSolid::GEOMAlgo_ShapeSolid()
-:
-  GEOMAlgo_Algo(),
-  myRank(0),
-  myDSFiller(NULL)
+  GEOMAlgo_BndSphere::GEOMAlgo_BndSphere()
 {
+  myCenter.SetCoord(0., 0., 0.);
+  myRadius=0.;
+  myGap=0.;
 }
 //=======================================================================
 //function : ~
-//purpose  :
+//purpose  : 
 //=======================================================================
-GEOMAlgo_ShapeSolid::~GEOMAlgo_ShapeSolid()
+  GEOMAlgo_BndSphere::~GEOMAlgo_BndSphere()
 {
 }
 //=======================================================================
-//function : SetFiller
-//purpose  :
+//function : IsOut
+//purpose  : 
 //=======================================================================
-void GEOMAlgo_ShapeSolid::SetFiller(const BOPAlgo_PaveFiller& aDSFiller)
+  Standard_Boolean GEOMAlgo_BndSphere::IsOut(const GEOMAlgo_BndSphere& theOther)const
 {
-  myDSFiller=(BOPAlgo_PaveFiller*) &aDSFiller;
-}
-//=======================================================================
-// function: Shapes
-// purpose:
-//=======================================================================
-const TopTools_ListOfShape& GEOMAlgo_ShapeSolid::Shapes(const TopAbs_State aState) const
-{
-  const TopTools_ListOfShape *pL;
+  Standard_Real aD2, aT2;
   //
-  switch (aState) {
-    case TopAbs_IN:
-      pL=&myLSIN;
-      break;
-    case TopAbs_OUT:
-      pL=&myLSOUT;
-      break;
-    case TopAbs_ON:
-      pL=&myLSON;
-      break;
-    default:
-      pL=&myLSON;
-      break;
-  }
-  return *pL;
+  aD2=myCenter.SquareDistance(theOther.myCenter);
+  aT2=myRadius+myGap+theOther.myRadius+theOther.myGap;
+  aT2=aT2*aT2;
+  //
+  return aD2>aT2;
 }

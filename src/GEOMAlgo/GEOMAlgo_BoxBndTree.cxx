@@ -20,71 +20,73 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        GEOMAlgo_Algo.cxx
-// Created:     Sat Dec 04 12:39:47 2004
+// File:        GEOMAlgo_BoxBndTree.cxx
+// Created:     Tue Oct 17 13:04:11 2006
 // Author:      Peter KURNEV
-//              <peter@PREFEX>
+//              <pkv@irinox>
 //
-#include <GEOMAlgo_Algo.hxx>
-
+#include <GEOMAlgo_BoxBndTree.hxx>
 //=======================================================================
-// function:
-// purpose:
+//function : 
+//purpose  : 
 //=======================================================================
-GEOMAlgo_Algo::GEOMAlgo_Algo()
-:
-  myErrorStatus(1),
-  myWarningStatus(0),
-  myComputeInternalShapes(Standard_True)
-{}
-//=======================================================================
-// function: ~
-// purpose:
-//=======================================================================
-GEOMAlgo_Algo::~GEOMAlgo_Algo()
+  GEOMAlgo_BoxBndTreeSelector::GEOMAlgo_BoxBndTreeSelector()
 {
 }
 //=======================================================================
-// function: CheckData
-// purpose:
+//function : ~
+//purpose  : 
 //=======================================================================
-void GEOMAlgo_Algo::CheckData()
+  GEOMAlgo_BoxBndTreeSelector::~GEOMAlgo_BoxBndTreeSelector()
 {
-  myErrorStatus=0;
 }
 //=======================================================================
-// function: CheckResult
-// purpose:
+//function : Reject
+//purpose  : 
 //=======================================================================
-void GEOMAlgo_Algo::CheckResult()
+  Standard_Boolean GEOMAlgo_BoxBndTreeSelector::Reject (const Bnd_Box& aBox) const
 {
-  myErrorStatus=0;
+  Standard_Boolean bRet;
+  //
+  bRet=myBox.IsOut(aBox);
+  return bRet;
 }
 //=======================================================================
-// function: ErrorStatus
-// purpose:
+//function : Accept
+//purpose  : 
 //=======================================================================
-Standard_Integer GEOMAlgo_Algo::ErrorStatus()const
+  Standard_Boolean GEOMAlgo_BoxBndTreeSelector::Accept (const Standard_Integer& aIndex)
 {
-  return myErrorStatus;
+  Standard_Boolean bRet=Standard_False;
+  //
+  if (myFence.Add(aIndex)) {
+    myIndices.Append(aIndex);
+    bRet=!bRet;
+  }
+  return bRet;
 }
 //=======================================================================
-// function: WarningStatus
-// purpose:
+//function : SetBox
+//purpose  : 
 //=======================================================================
-Standard_Integer GEOMAlgo_Algo::WarningStatus()const
+  void GEOMAlgo_BoxBndTreeSelector::SetBox(const Bnd_Box& aBox)
 {
-  return myWarningStatus;
+  myBox=aBox;
 }
-//  myErrorStatus
-//
-// 1 - object is just initialized
-
 //=======================================================================
-//function : ComputeInternalShapes
-//purpose  :
+//function : Clear
+//purpose  : 
 //=======================================================================
-void GEOMAlgo_Algo::ComputeInternalShapes(const Standard_Boolean theFlag)
+  void GEOMAlgo_BoxBndTreeSelector::Clear()
 {
-  myComputeInternalShapes = theFlag;
+  myFence.Clear();
+  myIndices.Clear();
+}
+//=======================================================================
+//function : Indices
+//purpose  : 
+//=======================================================================
+  const TColStd_ListOfInteger& GEOMAlgo_BoxBndTreeSelector::Indices() const
+{
+  return myIndices;
 }
