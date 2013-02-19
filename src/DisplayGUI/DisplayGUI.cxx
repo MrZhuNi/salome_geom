@@ -204,7 +204,7 @@ void DisplayGUI::EraseAll()
       SUIT_ViewManager* vman = vw->getViewManager();
       if ( vman->getType() == OCCViewer_Viewer::Type() || 
            vman->getType() == SVTK_Viewer::Type() ) {
-        GEOM_Displayer( appStudy ).EraseAll();
+        GEOM_Displayer( appStudy ).EraseAll(true);
       }
     }
   }
