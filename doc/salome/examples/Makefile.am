@@ -27,12 +27,12 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 pyexamplesdir = $(docdir)/examples/GEOM
 
 BAD_TESTS = \
-	3dsketcher.py \
 	angle.py \
 	complex_objs_ex06.py \
 	repairing_operations_ex09.py 
 
 GOOD_TESTS = \
+	3dsketcher.py \
 	advanced_geom_objs_ex01.py \
 	advanced_geom_objs_ex02.py \
 	advanced_geom_objs_ex03.py \
