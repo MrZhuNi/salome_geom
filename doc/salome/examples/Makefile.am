@@ -27,8 +27,6 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 pyexamplesdir = $(docdir)/examples/GEOM
 
 BAD_TESTS = \
-	angle.py \
-	complex_objs_ex06.py \
 	repairing_operations_ex09.py 
 
 GOOD_TESTS = \
@@ -36,6 +34,7 @@ GOOD_TESTS = \
 	advanced_geom_objs_ex01.py \
 	advanced_geom_objs_ex02.py \
 	advanced_geom_objs_ex03.py \
+	angle.py \
 	basic_geom_objs_ex01.py \
 	basic_geom_objs_ex02.py \
 	basic_geom_objs_ex03.py \
@@ -68,6 +67,7 @@ GOOD_TESTS = \
 	complex_objs_ex03.py \
 	complex_objs_ex04.py \
 	complex_objs_ex05.py \
+	complex_objs_ex06.py \
 	complex_objs_ex07.py \
 	complex_objs_ex08.py \
 	complex_objs_ex09.py \
