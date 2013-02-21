@@ -54,7 +54,11 @@ GEOM_DeviceActor::
 SetInput(vtkAlgorithmOutput* thePolyData, bool theUseStripper)
 { 
   if(theUseStripper)
+  {
     myPolyDataNormals->SetInputConnection(thePolyData); 
+    myStripper->SetInputConnection(myPolyDataNormals->GetOutputPort()); 
+    myPolyDataMapper->SetInputConnection(myStripper->GetOutputPort()); 
+  }
   else 
     myPolyDataMapper->SetInputConnection(thePolyData); 
 }

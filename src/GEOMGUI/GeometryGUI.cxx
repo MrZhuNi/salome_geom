@@ -1629,7 +1629,7 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
       if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
         if ( sr->viewer() == viewer )
         {
-          delete myOCCSelectors.takeAt( myOCCSelectors.indexOf( sr ) );
+          /*delete*/ myOCCSelectors.takeAt( myOCCSelectors.indexOf( sr ) );
           break;
         }
   }
@@ -1640,7 +1640,7 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
       if ( LightApp_VTKSelector* sr = itVTKSel.next() )
         if ( sr->viewer() == viewer )
         {
-          delete myVTKSelectors.takeAt( myVTKSelectors.indexOf( sr ) );
+          /*delete*/ myVTKSelectors.takeAt( myVTKSelectors.indexOf( sr ) );
           break;
         }
   }
