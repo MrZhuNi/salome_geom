@@ -27,7 +27,7 @@
 #  Module : GEOM
 #
 import salome
-import geompyDC
+from salome.geom import geomBuilder
 from salome import *
 
 # retrieve GEOM engine in try/except block
@@ -35,15 +35,15 @@ from salome import *
 try:
     # get GEOM engine and initialize GEOM with current study
     engineGeom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
-    geom = geompyDC.geomInstance(salome.myStudy, engineGeom)
+    geom = geomBuilder.geomInstance(salome.myStudy, engineGeom)
 
-    # export the methods of geompyDC
+    # export the methods of geomBuilder
     for k in dir( geom ):
 	if k[0] == '_': continue
 	globals()[k] = getattr( geom, k )
         pass
     del k
-    from geompyDC import ShapeType, GEOM, kind, info, PackData, ReadTexture, EnumToLong
+    from geomBuilder import ShapeType, GEOM, kind, info, PackData, ReadTexture, EnumToLong
     pass
 except:
     geom = None
@@ -66,8 +66,8 @@ geompy.init_geom(theStudy)                                                    |
 with                                                                          |
 ----                                                                          |
                                                                               |
-import geompyDC                                                               |
-geompy = geompyDC.geomInstance(theStudy)                                      |
+from salome.geom import geomBuilder                                           |
+geompy = geomBuilder.New(theStudy)                                            |
                                                                               |
 ===============================================================================
 """
