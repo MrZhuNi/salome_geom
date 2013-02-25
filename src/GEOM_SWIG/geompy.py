@@ -35,7 +35,7 @@ from salome import *
 try:
     # get GEOM engine and initialize GEOM with current study
     engineGeom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
-    geom = geomBuilder.geomInstance(salome.myStudy, engineGeom)
+    geom = geomBuilder.New(salome.myStudy, engineGeom)
 
     # export the methods of geomBuilder
     for k in dir( geom ):
