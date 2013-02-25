@@ -506,7 +506,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             global geom
             global doLcc
             global created
-            print "__new__ ", engine, geom, doLcc, created
+            #print "__new__ ", engine, geom, doLcc, created
             if geom is None:
                 # geom engine is either retrieved from engine, or created
                 geom = engine
@@ -521,18 +521,18 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         # FindOrLoadComponent called:
                         # 1. CORBA resolution of server
                         # 2. the __new__ method is called again
-                        print "FindOrLoadComponent ", engine, geom, doLcc, created
+                        #print "FindOrLoadComponent ", engine, geom, doLcc, created
                         geom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
                 else:
                     # FindOrLoadComponent not called
                     if geom is None:
                         # geomBuilder instance is created from lcc.FindOrLoadComponent
                         created = True
-                        print "super ", engine, geom, doLcc, created
+                        #print "super ", engine, geom, doLcc, created
                         geom = super(geomBuilder,cls).__new__(cls)
                     else:
                         # geom engine not created: existing engine found
-                        print "existing ", engine, geom, doLcc, created
+                        #print "existing ", engine, geom, doLcc, created
                         pass
 
                 return geom
@@ -11966,7 +11966,7 @@ import omniORB
 omniORB.registerObjref(GEOM._objref_GEOM_Gen._NP_RepositoryId, geomBuilder)
 
 def New( study, instance=None):
-    print "New geomBuilder ", study, instance
+    #print "New geomBuilder ", study, instance
     global engine
     global geom
     global doLcc
