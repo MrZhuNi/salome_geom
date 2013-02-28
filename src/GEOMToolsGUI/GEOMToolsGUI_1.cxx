@@ -267,9 +267,9 @@ void GEOMToolsGUI::OnColor()
     if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
   }
   displayer.UpdateViewer();
+  GeometryGUI::Modified();
 
   // update actions
-  appStudy->Modified();
   app->updateActions(); //SRN: To update a Save button in the toolbar
 }
 
@@ -304,9 +304,9 @@ void GEOMToolsGUI::OnTexture()
     }
   }
   displayer.UpdateViewer();
+  GeometryGUI::Modified();
 
   // update actions
-  appStudy->Modified();
   app->updateActions(); //SRN: To update a Save button in the toolbar
 }
 
@@ -358,6 +358,7 @@ void GEOMToolsGUI::OnChangeTransparency( bool increase )
     if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
   }
   displayer.UpdateViewer();
+  GeometryGUI::Modified();
 }
 
 void GEOMToolsGUI::OnNbIsos( ActionType actionType )
@@ -427,6 +428,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
     if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
   }
   displayer.UpdateViewer();
+  GeometryGUI::Modified();
 }
 
 void GEOMToolsGUI::OnDeflection()
@@ -467,6 +469,7 @@ void GEOMToolsGUI::OnDeflection()
     }
   }
   displayer.UpdateViewer();
+  GeometryGUI::Modified();
 }
 
 void GEOMToolsGUI::OnSelectOnly(int mode)
@@ -660,6 +663,7 @@ void GEOMToolsGUI::OnEdgeWidth()
     if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
     }
   displayer.UpdateViewer();
+  GeometryGUI::Modified();
 }
 
 
@@ -702,6 +706,7 @@ void GEOMToolsGUI::OnIsosWidth() {
     if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
   }
   displayer.UpdateViewer();
+  GeometryGUI::Modified();
 }
 
 void GEOMToolsGUI::OnBringToFront() {
@@ -734,6 +739,7 @@ void GEOMToolsGUI::OnBringToFront() {
     if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
   }
   displayer.UpdateViewer();
+  GeometryGUI::Modified();
 }
 
 void GEOMToolsGUI::OnClsBringToFront() {
@@ -760,6 +766,7 @@ void GEOMToolsGUI::OnClsBringToFront() {
   }
   displayer.Redisplay( anIOlst );
   displayer.UpdateViewer();
+  GeometryGUI::Modified();
 }
   
 void GEOMToolsGUI::OnSetMaterial( const QVariant& theParam )
