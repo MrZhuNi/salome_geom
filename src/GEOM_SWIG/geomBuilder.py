@@ -199,11 +199,6 @@ import os
 
 from salome.geom.gsketcher import Sketcher3D
 
-## Enumeration ShapeType as a dictionary. \n
-## Topological types of shapes (like Open Cascade types). See GEOM::shape_type for details.
-#  @ingroup l1_geomBuilder_auxiliary
-ShapeType = {"AUTO":-1, "COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
-
 # service function
 def _toListOfNames(_names, _size=-1):
     l = []
@@ -500,6 +495,11 @@ doLcc = False
 created = False
 
 class geomBuilder(object, GEOM._objref_GEOM_Gen):
+
+        ## Enumeration ShapeType as a dictionary. \n
+        ## Topological types of shapes (like Open Cascade types). See GEOM::shape_type for details.
+        #  @ingroup l1_geomBuilder_auxiliary
+        ShapeType = {"AUTO":-1, "COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
 
         def __new__(cls):
             global engine
@@ -4259,7 +4259,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 Quantity of solids.
             """
             # Example: see GEOM_TestOthers.py
-            nb_solids = self.ShapesOp.NumberOfSubShapes(theShape, ShapeType["SOLID"])
+            nb_solids = self.ShapesOp.NumberOfSubShapes(theShape, self.ShapeType["SOLID"])
             RaiseIfFailed("NumberOfSolids", self.ShapesOp)
             return nb_solids
 
@@ -6644,7 +6644,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the result shapes.
             """
             # Example: see GEOM_TestAll.py
-            if Limit == ShapeType["AUTO"]:
+            if Limit == self.ShapeType["AUTO"]:
                 # automatic detection of the most appropriate shape limit type
                 lim = GEOM.SHAPE
                 for s in ListShapes: lim = min( lim, s.GetMaxShapeType() )
@@ -6692,7 +6692,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Returns:   
                 New GEOM.GEOM_Object, containing the result shapes.
             """
-            if Limit == ShapeType["AUTO"]:
+            if Limit == self.ShapeType["AUTO"]:
                 # automatic detection of the most appropriate shape limit type
                 lim = GEOM.SHAPE
                 for s in ListShapes: lim = min( lim, s.GetMaxShapeType() )
@@ -8232,7 +8232,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             theR,Parameters = ParseParameters(theR)
             anObj = None
-            if theShapeType == ShapeType["EDGE"]:
+            if theShapeType == self.ShapeType["EDGE"]:
                 anObj = self.LocalOp.MakeFilletEdges(theShape, theR, theListShapes)
                 RaiseIfFailed("MakeFilletEdges", self.LocalOp)
             else:
@@ -8259,7 +8259,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             theR1,theR2,Parameters = ParseParameters(theR1,theR2)
             anObj = None
-            if theShapeType == ShapeType["EDGE"]:
+            if theShapeType == self.ShapeType["EDGE"]:
                 anObj = self.LocalOp.MakeFilletEdgesR1R2(theShape, theR1, theR2, theListShapes)
                 RaiseIfFailed("MakeFilletEdgesR1R2", self.LocalOp)
             else:
@@ -8636,7 +8636,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = None
             # note: auto-publishing is done in self.MakeChamferEdge() or self.MakeChamferFaces()
-            if aShapeType == ShapeType["EDGE"]:
+            if aShapeType == self.ShapeType["EDGE"]:
                 anObj = self.MakeChamferEdge(aShape,d1,d2,ListShape[0],ListShape[1],theName)
             else:
                 anObj = self.MakeChamferFaces(aShape,d1,d2,ListShape,theName)
@@ -9361,11 +9361,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestMeasures.py
             aDict = {}
-            for typeSh in ShapeType:
+            for typeSh in self.ShapeType:
                 if typeSh in ( "AUTO", "SHAPE" ): continue
-                listSh = self.SubShapeAllIDs(theShape, ShapeType[typeSh])
+                listSh = self.SubShapeAllIDs(theShape, self.ShapeType[typeSh])
                 Nb = len(listSh)
-                if EnumToLong(theShape.GetShapeType()) == ShapeType[typeSh]:
+                if EnumToLong(theShape.GetShapeType()) == self.ShapeType[typeSh]:
                     Nb = Nb + 1
                     pass
                 aDict[typeSh] = Nb
@@ -9481,7 +9481,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created vertex.
             """
             # Example: see GEOM_TestMeasures.py
-            nb_vert =  self.ShapesOp.NumberOfSubShapes(theShape, ShapeType["VERTEX"])
+            nb_vert =  self.ShapesOp.NumberOfSubShapes(theShape, self.ShapeType["VERTEX"])
             # note: auto-publishing is done in self.GetVertexByIndex()
             anObj = self.GetVertexByIndex(theShape, (nb_vert-1), theName)
             RaiseIfFailed("GetLastVertex", self.MeasuOp)
@@ -11426,7 +11426,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
              Returns:
                 a newly created GEOM group of edges.
             """
-            edges = self.SubShapeAll(theShape, ShapeType["EDGE"])
+            edges = self.SubShapeAll(theShape, self.ShapeType["EDGE"])
             edges_in_range = []
             for edge in edges:
                 Props = self.BasicProperties(edge)
@@ -11444,7 +11444,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 return None
 
             # note: auto-publishing is done in self.CreateGroup()
-            group_edges = self.CreateGroup(theShape, ShapeType["EDGE"], theName)
+            group_edges = self.CreateGroup(theShape, self.ShapeType["EDGE"], theName)
             self.UnionList(group_edges, edges_in_range)
 
             return group_edges
@@ -11965,7 +11965,36 @@ import omniORB
 # Register the new proxy for GEOM_Gen
 omniORB.registerObjref(GEOM._objref_GEOM_Gen._NP_RepositoryId, geomBuilder)
 
+## Create a new geomBuilder instance.The geomBuilder class provides the Python
+#  interface to GEOM operations.
+#
+#  Typical use is:
+#  \code
+#    import salome
+#    salome.salome_init()
+#    from salome.geom import geomBuilder
+#    geompy = geomBuilder.New(salome.myStudy)
+#  \endcode
+#  @param  study     SALOME study, generally obtained by salome.myStudy.
+#  @param  instance  CORBA proxy of GEOM Engine. If None, the default Engine is used.
+#  @return geomBuilder instance
 def New( study, instance=None):
+    """
+    Create a new geomBuilder instance.The geomBuilder class provides the Python
+    interface to GEOM operations.
+
+    Typical use is:
+        import salome
+        salome.salome_init()
+        from salome.geom import geomBuilder
+        geompy = geomBuilder.New(salome.myStudy)
+
+    Parameters:
+        study     SALOME study, generally obtained by salome.myStudy.
+        instance  CORBA proxy of GEOM Engine. If None, the default Engine is used.
+    Returns:
+        geomBuilder instance
+    """
     #print "New geomBuilder ", study, instance
     global engine
     global geom
