@@ -49,7 +49,7 @@ AdvancedGUI_PipeTShapeDlg::AdvancedGUI_PipeTShapeDlg (GeometryGUI* theGeometryGU
   : GEOMBase_Skeleton(theGeometryGUI, parent, false)
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
-  QPixmap imageOp  = aResMgr->loadPixmap("GEOM", tr("ICON_DLG_PIPETSHAPE"));
+  //QPixmap imageOp  = aResMgr->loadPixmap("GEOM", tr("ICON_DLG_PIPETSHAPE"));
   QPixmap imageSel = aResMgr->loadPixmap("GEOM", tr("ICON_SELECT"));
   QPixmap imageImp = aResMgr->loadPixmap("GEOM", tr("ICO_PIPETSHAPE_IMPORT"));
   imagePipeTShape  = aResMgr->loadPixmap("GEOM", tr("DLG_PIPETSHAPE"));
@@ -201,7 +201,8 @@ AdvancedGUI_PipeTShapeDlg::AdvancedGUI_PipeTShapeDlg (GeometryGUI* theGeometryGU
   layoutGroupPos->addWidget(JunctionPointsSel);
   layoutGroupPos->addStretch();
 
-  aTabWidget->addTab(GroupMain, imageOp, tr("GEOM_PIPETSHAPE_GROUPMAIN"));
+  //aTabWidget->addTab(GroupMain, imageOp, tr("GEOM_PIPETSHAPE_GROUPMAIN"));
+  aTabWidget->addTab(GroupMain, tr("GEOM_PIPETSHAPE_GROUPMAIN"));
   aTabWidget->addTab(GroupReduct, tr("GEOM_PIPETSHAPE_GROUPREDUCT"));
   aTabWidget->addTab(GroupPos, tr("GEOM_PIPETSHAPE_GROUPPOS"));
 
