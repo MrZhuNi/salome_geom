@@ -53,14 +53,6 @@ def getGeompy(studyId = None):
         studyId = getActiveStudyId()
     if not _geompys.has_key(studyId):
         from salome.geom import geomBuilder
-        _geompys[studyId] = salome.lcc.FindOrLoadComponent("FactoryServer",
-                                                           "GEOM")
-        _geompys[studyId].ShapeType = geomBuilder.ShapeType
-        _geompys[studyId].GEOM = geomBuilder.GEOM
-        _geompys[studyId].kind = geomBuilder.kind
-        _geompys[studyId].info = geomBuilder.info
-        _geompys[studyId].PackData = geomBuilder.PackData
-        _geompys[studyId].ReadTexture = geomBuilder.ReadTexture
         study = salome.myStudyManager.GetStudyByID(studyId)
         _geompys[studyId] = geomBuilder.New(study)
     return _geompys[studyId]
