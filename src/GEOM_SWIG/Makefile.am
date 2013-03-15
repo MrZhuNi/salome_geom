@@ -35,7 +35,6 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 dist_salomescript_DATA =		\
 	geompy.py			\
 	GEOM_Spanner.py			\
-	GEOM_box.py			\
 	GEOM_blocks.py			\
 	GEOM_example.py			\
 	GEOM_example2.py		\
@@ -71,10 +70,7 @@ dist_salomescript_DATA =		\
 mypkgpythondir = $(salomepythondir)/salome/geom
 mypkgpython_PYTHON = \
 	geomBuilder.py			\
-	gsketcher.py			
-#	geompyDC.py			
-#	batchmode_geompy.py		
-
+	gsketcher.py
 
 sharedpkgpython_PYTHON =		\
 	GEOM_shared_modules.py
