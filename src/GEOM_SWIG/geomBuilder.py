@@ -6659,7 +6659,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_partition "Example"
         def MakePartition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-                          Limit=self.ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
+                          Limit=ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
                           KeepNonlimitShapes=0, theName=None):
             """
             Perform partition operation.
@@ -6727,7 +6727,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @ref swig_todo "Example"
         def MakePartitionNonSelfIntersectedShape(self, ListShapes, ListTools=[],
                                                  ListKeepInside=[], ListRemoveInside=[],
-                                                 Limit=self.ShapeType["AUTO"], RemoveWebs=0,
+                                                 Limit=ShapeType["AUTO"], RemoveWebs=0,
                                                  ListMaterials=[], KeepNonlimitShapes=0,
                                                  theName=None):
             """
@@ -6765,7 +6765,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @ref tui_partition "Example 1"
         #  \n @ref swig_Partition "Example 2"
         def Partition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
-                      Limit=self.ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
+                      Limit=ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
                       KeepNonlimitShapes=0, theName=None):
             """
             See method geompy.MakePartition for more information.
