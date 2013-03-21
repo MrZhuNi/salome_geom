@@ -436,48 +436,6 @@ def EnumToLong(theItem):
     if hasattr(theItem, "_v"): ret = theItem._v
     return ret
 
-## Kinds of shape in terms of <VAR>GEOM.GEOM_IKindOfShape.shape_kind</VAR> enumeration
-#  and a list of parameters, describing the shape.
-#  List of parameters, describing the shape:
-#  - COMPOUND:            [nb_solids  nb_faces  nb_edges  nb_vertices]
-#  - COMPSOLID:           [nb_solids  nb_faces  nb_edges  nb_vertices]
-#
-#  - SHELL:       [info.CLOSED / info.UNCLOSED  nb_faces  nb_edges  nb_vertices]
-#
-#  - WIRE:        [info.CLOSED / info.UNCLOSED nb_edges  nb_vertices]
-#
-#  - SPHERE:       [xc yc zc            R]
-#  - CYLINDER:     [xb yb zb  dx dy dz  R         H]
-#  - BOX:          [xc yc zc                      ax ay az]
-#  - ROTATED_BOX:  [xc yc zc  zx zy zz  xx xy xz  ax ay az]
-#  - TORUS:        [xc yc zc  dx dy dz  R_1  R_2]
-#  - CONE:         [xb yb zb  dx dy dz  R_1  R_2  H]
-#  - POLYHEDRON:                       [nb_faces  nb_edges  nb_vertices]
-#  - SOLID:                            [nb_faces  nb_edges  nb_vertices]
-#
-#  - SPHERE2D:     [xc yc zc            R]
-#  - CYLINDER2D:   [xb yb zb  dx dy dz  R         H]
-#  - TORUS2D:      [xc yc zc  dx dy dz  R_1  R_2]
-#  - CONE2D:       [xc yc zc  dx dy dz  R_1  R_2  H]
-#  - DISK_CIRCLE:  [xc yc zc  dx dy dz  R]
-#  - DISK_ELLIPSE: [xc yc zc  dx dy dz  R_1  R_2]
-#  - POLYGON:      [xo yo zo  dx dy dz            nb_edges  nb_vertices]
-#  - PLANE:        [xo yo zo  dx dy dz]
-#  - PLANAR:       [xo yo zo  dx dy dz            nb_edges  nb_vertices]
-#  - FACE:                                       [nb_edges  nb_vertices]
-#
-#  - CIRCLE:       [xc yc zc  dx dy dz  R]
-#  - ARC_CIRCLE:   [xc yc zc  dx dy dz  R         x1 y1 z1  x2 y2 z2]
-#  - ELLIPSE:      [xc yc zc  dx dy dz  R_1  R_2]
-#  - ARC_ELLIPSE:  [xc yc zc  dx dy dz  R_1  R_2  x1 y1 z1  x2 y2 z2]
-#  - LINE:         [xo yo zo  dx dy dz]
-#  - SEGMENT:      [x1 y1 z1  x2 y2 z2]
-#  - EDGE:                                                 [nb_vertices]
-#
-#  - VERTEX:       [x  y  z]
-#  @ingroup l1_geomBuilder_auxiliary
-kind = GEOM.GEOM_IKindOfShape
-
 ## Information about closed/unclosed state of shell or wire
 #  @ingroup l1_geomBuilder_auxiliary
 class info:
@@ -500,6 +458,48 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Topological types of shapes (like Open Cascade types). See GEOM::shape_type for details.
         #  @ingroup l1_geomBuilder_auxiliary
         ShapeType = {"AUTO":-1, "COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
+
+        ## Kinds of shape in terms of <VAR>GEOM.GEOM_IKindOfShape.shape_kind</VAR> enumeration
+        #  and a list of parameters, describing the shape.
+        #  List of parameters, describing the shape:
+        #  - COMPOUND:            [nb_solids  nb_faces  nb_edges  nb_vertices]
+        #  - COMPSOLID:           [nb_solids  nb_faces  nb_edges  nb_vertices]
+        #
+        #  - SHELL:       [info.CLOSED / info.UNCLOSED  nb_faces  nb_edges  nb_vertices]
+        #
+        #  - WIRE:        [info.CLOSED / info.UNCLOSED nb_edges  nb_vertices]
+        #
+        #  - SPHERE:       [xc yc zc            R]
+        #  - CYLINDER:     [xb yb zb  dx dy dz  R         H]
+        #  - BOX:          [xc yc zc                      ax ay az]
+        #  - ROTATED_BOX:  [xc yc zc  zx zy zz  xx xy xz  ax ay az]
+        #  - TORUS:        [xc yc zc  dx dy dz  R_1  R_2]
+        #  - CONE:         [xb yb zb  dx dy dz  R_1  R_2  H]
+        #  - POLYHEDRON:                       [nb_faces  nb_edges  nb_vertices]
+        #  - SOLID:                            [nb_faces  nb_edges  nb_vertices]
+        #
+        #  - SPHERE2D:     [xc yc zc            R]
+        #  - CYLINDER2D:   [xb yb zb  dx dy dz  R         H]
+        #  - TORUS2D:      [xc yc zc  dx dy dz  R_1  R_2]
+        #  - CONE2D:       [xc yc zc  dx dy dz  R_1  R_2  H]
+        #  - DISK_CIRCLE:  [xc yc zc  dx dy dz  R]
+        #  - DISK_ELLIPSE: [xc yc zc  dx dy dz  R_1  R_2]
+        #  - POLYGON:      [xo yo zo  dx dy dz            nb_edges  nb_vertices]
+        #  - PLANE:        [xo yo zo  dx dy dz]
+        #  - PLANAR:       [xo yo zo  dx dy dz            nb_edges  nb_vertices]
+        #  - FACE:                                       [nb_edges  nb_vertices]
+        #
+        #  - CIRCLE:       [xc yc zc  dx dy dz  R]
+        #  - ARC_CIRCLE:   [xc yc zc  dx dy dz  R         x1 y1 z1  x2 y2 z2]
+        #  - ELLIPSE:      [xc yc zc  dx dy dz  R_1  R_2]
+        #  - ARC_ELLIPSE:  [xc yc zc  dx dy dz  R_1  R_2  x1 y1 z1  x2 y2 z2]
+        #  - LINE:         [xo yo zo  dx dy dz]
+        #  - SEGMENT:      [x1 y1 z1  x2 y2 z2]
+        #  - EDGE:                                                 [nb_vertices]
+        #
+        #  - VERTEX:       [x  y  z]
+        #  @ingroup l1_geomBuilder_auxiliary
+        kind = GEOM.GEOM_IKindOfShape
 
         def __new__(cls):
             global engine
