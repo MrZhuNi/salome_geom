@@ -5,7 +5,7 @@ salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
 geompy = geomBuilder.New(salome.myStudy)
-mport SALOMEDS
+import SALOMEDS
 
 # create a box and a cylinder
 box = geompy.MakeBoxDXDYDZ(200, 200, 200)
