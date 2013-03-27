@@ -163,13 +163,13 @@ void GEOMAlgo_Gluer2::MakeFace(const TopoDS_Face& theF,
           GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(aEx, aFF, aUMin, aUMax);
         }
         //
-        //modified by NIZNHY-PKV Fri Feb 03 11:18:17 2012f
-        iRet=GEOMAlgo_Tools::BuildPCurveForEdgeOnFace(aE, aEx, aFF, myContext);
+	//modified by NIZNHY-PKV Wed Mar 20 09:41:33 2013f
+        iRet=GEOMAlgo_Gluer2::BuildPCurveForEdgeOnFace(aE, aEx, aFF, myContext);
+        //iRet=GEOMAlgo_Tools::BuildPCurveForEdgeOnFace(aE, aEx, aFF, myContext);
+	//modified by NIZNHY-PKV Wed Mar 20 09:41:36 2013t
         if (iRet) {
           continue;
         }
-        //BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aEx, aFF);
-        //modified by NIZNHY-PKV Fri Feb 03 11:18:20 2012t
         //
         bIsToReverse=BOPTools_Tools3D::IsSplitToReverse1(aEx, aE, myContext);
         if (bIsToReverse) {

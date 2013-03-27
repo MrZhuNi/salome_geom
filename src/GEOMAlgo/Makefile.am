@@ -57,6 +57,7 @@ dist_libGEOMAlgo_la_SOURCES =			\
 	GEOMAlgo_Gluer2_1.cxx			\
 	GEOMAlgo_Gluer2_2.cxx			\
 	GEOMAlgo_Gluer2_3.cxx			\
+	GEOMAlgo_Gluer2_4.cxx			\
 	GEOMAlgo_Gluer2.cxx			\
 	GEOMAlgo_GluerAlgo.cxx			\
 	GEOMAlgo_Gluer.cxx			\

@@ -106,10 +106,9 @@ public:
     static void MapShapes(const TopoDS_Shape& theS,
                           TopTools_MapOfShape& theM) ;
 
-//modified by NIZNHY-PKV Tue Mar 13 12:23:20 2012f
   Standard_EXPORT
     const TopTools_IndexedDataMapOfShapeListOfShape& StickedShapes();
-//modified by NIZNHY-PKV Tue Mar 13 12:23:26 2012t
+
 //------------------------------------------------
 protected:
   Standard_EXPORT
@@ -173,6 +172,15 @@ protected:
     void TreatPair(const NMTTools_CoupleOfShape& theCS,
                    NMTTools_ListOfCoupleOfShape& theLCS) ;
 
+  //
+  //modified by NIZNHY-PKV Wed Mar 20 09:37:30 2013f
+  Standard_EXPORT static
+      Standard_Integer BuildPCurveForEdgeOnFace(const TopoDS_Edge& aEold,
+						const TopoDS_Edge& aEnew,
+						const TopoDS_Face& aF,
+						const Handle(IntTools_Context)& aCtx);
+  //modified by NIZNHY-PKV Wed Mar 20 09:37:33 2013t
+
 protected:
   TopTools_DataMapOfShapeListOfShape myShapesToGlue;
   TopTools_DataMapOfShapeListOfShape myImagesDetected;
@@ -180,9 +188,8 @@ protected:
   TopTools_DataMapOfShapeListOfShape myImagesToWork;
   TopTools_DataMapOfShapeShape myOriginsToWork;
   Standard_Boolean myKeepNonSolids;
-  //modified by NIZNHY-PKV Tue Mar 13 13:30:40 2012f
   GEOMAlgo_GlueDetector myDetector;
-  //modified by NIZNHY-PKV Tue Mar 13 13:30:43 2012t
+
 private:
 };
 #endif
