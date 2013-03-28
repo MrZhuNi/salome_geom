@@ -31,36 +31,35 @@ namespace XAO
   class Geometry
   {
   public:
-    static Geometry *New();
+    Geometry();
+    ~Geometry();
+
     void setName(const char *name) { _myName=name; }
     const char *getName() const { return _myName.c_str(); }
+
     void setFormat(const char *format) { _myFormat=format; }
     const char *getFormat() const { return _myFormat.c_str(); }
     
-    void setShape(TopoDS_Shape &Shape) { _myShape=Shape; }
+    void setShape(TopoDS_Shape Shape);
     TopoDS_Shape getShape() { return _myShape; }
     
-    void initShapeFromBREP(const char * brep );
-    const char * convertShapeToBREP();
+    void setShape(const char * brep );
+    const char * getBREP();
     
-    void setNbVertices(int nb) { _myNbVertices=nb; }
-    int getNbVertices() { return _myNbVertices; }
-    void setNameVerticesAt(int i, const char *myName);
-    void setNamesVertices(const char **myNames);
-    const char *  getNameVerticesAt(int i) { return _myNamesVertices[i].c_str(); } 
-    void initIdsVertices();
-    int * getIdsVertices();
+    int countVertices() { return _myNbVertices; }
+    int findVertex(int id);
+    void setVertexName(int index, const char *myName);
+    const char *  getVertexName(int index) { return _myNamesVertices[index].c_str(); } 
+    void changeVertexName(int id, const char *myName);
+    const char *  findVertexName(int id);
 
-    void setNbEdges(int nb) { _myNbEdges=nb; }
-    int getNbEdges() { return _myNbEdges; }
-    void setNbFaces(int nb) { _myNbFaces=nb; }
-    int getNbFaces() { return _myNbFaces; }
-    void setNbSolids(int nb) { _myNbSolids=nb; }
-    int getNbSolids() { return _myNbSolids; }
+    int countEdges() { return _myNbEdges; }
+    int countFaces() { return _myNbFaces; }
+    int countSolids() { return _myNbSolids; }
+    
 
   private:
-    Geometry();
-    ~Geometry();
+    void initListIds(const Standard_Integer theShapeType);
 
   private:
     TopoDS_Shape        _myShape;

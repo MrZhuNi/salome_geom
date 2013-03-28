@@ -22,9 +22,17 @@
 #define __XAO_XAO_HXX__
 
 #include <string>
+#include <list>
 
 namespace XAO
 {
+  enum Kind{
+    VERTEX,
+    EDGE,
+    FACE,
+    SOLID
+  };
+  
   class Geometry;
   class Group;
   class Field;
@@ -32,28 +40,36 @@ namespace XAO
   class Xao
   {
   public:
-    static Xao *New();
-    void setAuthor(const char *author) { _myAuthor=author; }
-    const char *getAuthor() const { return _myAuthor.c_str(); }
-    void setVersion(const char *version) { _myVersion=version; }
-    const char *getVersion() const { return _myVersion.c_str(); }
-    void setNbGroups(int nb) { _myNbGroups=nb; }
-    int getNbGroups() { return _myNbGroups; }
-    void setNbFields(int nb) { _myNbFields=nb; }
-    int getNbFields() { return _myNbFields; }
-
-  private:
     Xao();
+    Xao(const char *author, const char *version);
     ~Xao();
 
+    void setAuthor(const char *author) { _myAuthor=author; }
+    const char *getAuthor() const { return _myAuthor.c_str(); }
+    
+    void setVersion(const char *version) { _myVersion=version; }
+    const char *getVersion() const { return _myVersion.c_str(); }
+
+    void setGeometry(Geometry *myGeometry) { _myGeometry=myGeometry; }
+    const Geometry *getGeometry() const { return _myGeometry; }
+
+    int getNbGroups() { return _myGroups.size(); }
+    void addGroup(Group *myGroup) { _myGroups.push_back(myGroup); }
+    void removeGroup(Group *myGroup) { _myGroups.remove(myGroup); }
+
+    int getNbFields() { return _myNbFields; }
+    
+    bool Export(const char* fileName);
+
+
   private:
-    Geometry    *_myGeom;
-    int          _myNbGroups;
-    Group       *_myGroups;
-    int          _myNbFields;
-    Field       *_myFields;
-    std::string  _myAuthor;
-    std::string  _myVersion;
+    std::string                  _myAuthor;
+    std::string                  _myVersion;
+    Geometry                    *_myGeometry;
+    int                          _myNbGroups;
+    std::list<Group *>           _myGroups;
+    int                          _myNbFields;
+    //std::list<Field *>           _myFields;
   };
 }
 

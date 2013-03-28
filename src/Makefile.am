@@ -23,7 +23,7 @@
 
 SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo SKETCHER OCC2VTK GEOM	\
           BREPExport BREPImport IGESExport IGESImport STEPExport	\
-          STEPImport STLExport VTKExport ShHealOper GEOMImpl GEOM_I	\
+          STEPImport STLExport VTKExport ShHealOper XAO GEOMImpl GEOM_I	\
           GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
 
 if WITH_OPENCV
@@ -40,9 +40,9 @@ endif
 DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo \
                SKETCHER OCC2VTK GEOM BREPExport \
                BREPImport IGESExport IGESImport STEPExport STEPImport STLExport \
-               VTKExport ShHealOper GEOMImpl GEOM_I GEOMClient GEOM_I_Superv	\
+               VTKExport ShHealOper XAO GEOMImpl GEOM_I GEOMClient GEOM_I_Superv	\
                GEOM_SWIG OBJECT DlgRef GEOMFiltersSelection Material GEOMGUI GEOMBase	\
                GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI	\
                EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI	\
-               RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI 		\
+               RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI ImportExportGUI 		\
                GEOM_SWIG_WITHIHM GEOM_PY ShapeRecognition

@@ -25,13 +25,17 @@
 #include "GeometryGUI.h"
 #include "GeometryGUI_Operations.h"
 
+#include <GEOMBase.h>
 #include <SUIT_Desktop.h>
+#include <SUIT_Desktop.h>
+#include <SUIT_MessageBox.h>
 #include <SalomeApp_Application.h>
 
 #include "ImportExportGUI_ExportXAODlg.h"
 //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
 
-#include <QDialog>
+#include <QDialog> 
+#include <iostream>
 
 //=======================================================================
 // function : ImportExportGUI()
@@ -62,7 +66,9 @@ bool ImportExportGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 
   QDialog* aDlg = NULL;
 
-  switch ( theCommandID ) {  case GEOMOp::OpExportXAO:
+  switch ( theCommandID ) {  
+  case GEOMOp::OpExportXAO:
+    cout << "test" << endl;
     aDlg = new ImportExportGUI_ExportXAODlg( getGeometryGUI(), parent );
     break;
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//

@@ -37,7 +37,7 @@
 //=======================================================================
 const Standard_GUID& GEOMImpl_ExportXAODriver::GetID()
 {
-  static Standard_GUID aGUID("FF1BBB71-5D14-4df2-980B-3A668264EA16");
+  static Standard_GUID aGUID("1C3A0F3F-729D-4E83-8232-78E74FC5637C");
   return aGUID;
 }
 

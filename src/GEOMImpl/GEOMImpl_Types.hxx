@@ -80,6 +80,8 @@
 
 #define GEOM_GROUP 37
 
+#define GEOM_FIELD 370
+
 #define GEOM_BLOCK 38
 
 #define GEOM_MARKER 39

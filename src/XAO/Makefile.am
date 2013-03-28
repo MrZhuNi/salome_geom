@@ -44,15 +44,14 @@ dist_libXAO_la_SOURCES = \
 
 
 libXAO_la_CPPFLAGS = \
-	$(CORBA_CXXFLAGS) \
-	$(CORBA_INCLUDES) \
-	$(KERNEL_CXXFLAGS) \
-	$(GEOM_CXXFLAGS) \
-	$(CAS_CPPFLAGS) \
-	-I$(top_builddir) \
+	$(GEOM_CXXFLAGS)                        \
+	$(CAS_CPPFLAGS)                         \
+	$(LIBXML_INCLUDES)	                \
+	-I$(top_builddir)                       \
 	-I$(top_builddir)/idl
 
 libXAO_la_LDFLAGS = \
-	$(CAS_LDPATH) \
+	$(CAS_LDPATH)                           \
+	$(LIBXML_LIBS)				\
         $(GEOM_LDFLAGS)
 

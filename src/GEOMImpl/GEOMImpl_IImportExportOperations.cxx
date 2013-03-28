@@ -43,6 +43,10 @@
 #include "GEOM_Function.hxx"
 #include "GEOM_PythonDump.hxx"
 
+#include "Xao.hxx"
+#include "Geometry.hxx"
+#include "Group.hxx"
+
 #include <GEOMImpl_ExportXAODriver.hxx>
 #include <GEOMImpl_IExportXAO.hxx>
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
@@ -51,9 +55,13 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
+#include <TopAbs.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <TCollection_AsciiString.hxx>
+
+#include <TColStd_HSequenceOfTransient.hxx>
+#include <Standard_Transient.hxx>
 
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
@@ -78,14 +86,16 @@ GEOMImpl_IImportExportOperations::GEOMImpl_IImportExportOperations(GEOM_Engine* 
   GEOM_IOperations(theEngine, theDocID)
 {
   MESSAGE("GEOMImpl_IImportExportOperations::GEOMImpl_IImportExportOperations");
-  myBasicOperations     = new GEOMImpl_IBasicOperations(GetEngine(), GetDocID());
+  /*myBasicOperations     = new GEOMImpl_IBasicOperations(GetEngine(), GetDocID());
   myBooleanOperations   = new GEOMImpl_IBooleanOperations(GetEngine(), GetDocID());
   myShapesOperations    = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
   myTransformOperations = new GEOMImpl_ITransformOperations(GetEngine(), GetDocID());
   myBlocksOperations    = new GEOMImpl_IBlocksOperations(GetEngine(), GetDocID());
   my3DPrimOperations    = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
   myLocalOperations     = new GEOMImpl_ILocalOperations(GetEngine(), GetDocID());
-  myHealingOperations   = new GEOMImpl_IHealingOperations(GetEngine(), GetDocID());
+  myHealingOperations   = new GEOMImpl_IHealingOperations(GetEngine(), GetDocID());*/
+  myShapesOperations    = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
+  myGroupOperations     = new GEOMImpl_IGroupOperations(GetEngine(), GetDocID());
 }
 
 //=============================================================================
@@ -96,14 +106,16 @@ GEOMImpl_IImportExportOperations::GEOMImpl_IImportExportOperations(GEOM_Engine* 
 GEOMImpl_IImportExportOperations::~GEOMImpl_IImportExportOperations()
 {
   MESSAGE("GEOMImpl_IImportExportOperations::~GEOMImpl_IImportExportOperations");
-  delete myBasicOperations;
+  /*delete myBasicOperations;
   delete myBooleanOperations;
   delete myShapesOperations;
   delete myTransformOperations;
   delete myBlocksOperations;
   delete my3DPrimOperations;
   delete myLocalOperations;
-  delete myHealingOperations;
+  delete myHealingOperations;*/
+  delete myShapesOperations;
+  delete myGroupOperations;
 }
 
 //=============================================================================
@@ -120,6 +132,8 @@ bool GEOMImpl_IImportExportOperations::ExportXAO (Handle(GEOM_Object) theExporti
 {
   SetErrorCode(KO);
   bool isGood = false;
+  
+  //
 
   //Add a new shape function with parameters
   Handle(GEOM_Function) aRefFunction = theExportingShape->GetLastFunction();
@@ -135,13 +149,13 @@ bool GEOMImpl_IImportExportOperations::ExportXAO (Handle(GEOM_Object) theExporti
  //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ExportXAODriver::GetID()) return false;
 
-  GEOMImpl_IExportXAO aData (aRefFunction);
+  /*GEOMImpl_IExportXAO aData (aRefFunction);
 
   TCollection_AsciiString FileName = theFileName.c_str();
   aData.SetExportingShape(aRefFunction);
   aData.SetFileName(FileName);
-  /* A MODIFIER aData.SetlGroups(thelGroups);
-  aData.SetlFields(thelFields);*/
+  aData.SetlGroups(thelGroups);
+  aData.SetlFields(thelFields);
 
   //Compute the resulting value
   try {
@@ -157,14 +171,81 @@ bool GEOMImpl_IImportExportOperations::ExportXAO (Handle(GEOM_Object) theExporti
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return false;
+  }*/
+  TCollection_AsciiString FileName = theFileName.c_str();
+  XAO::Xao *myXao = new XAO::Xao();
+  XAO::Geometry *myGeometry = new XAO::Geometry();
+  myGeometry->setShape(theExportingShape->GetValue());
+  myGeometry->setName(theExportingShape->GetName());
+  Handle(TColStd_HSequenceOfTransient) subObjects = myShapesOperations->GetExistingSubObjects(theExportingShape, false);
+  int nbSubObjects = subObjects->Length();
+  for (int i = 1 ; i <= nbSubObjects ; i++) {
+    Handle(Standard_Transient) anTransientSubObject = subObjects->Value(i);
+    if (anTransientSubObject.IsNull())
+      continue;
+    Handle(GEOM_Object) asubObject = Handle(GEOM_Object)::DownCast(anTransientSubObject);
+    if (asubObject->GetType() != GEOM_GROUP)
+    {
+      int index = myShapesOperations->GetSubShapeIndex(theExportingShape,asubObject);
+      switch (asubObject->GetValue().ShapeType() )
+      {
+        case TopAbs_SOLID:
+          break;
+        case TopAbs_FACE:
+          break;
+        case TopAbs_EDGE:
+          break;
+        case TopAbs_VERTEX:
+          myGeometry->setVertexName(index,asubObject->GetName());
+          break;
+      }  
+    }    
   }
+  myXao->setGeometry(myGeometry);
+  
+  // Adding groups
+  std::list<Handle(GEOM_Object)>::iterator itG1 = thelGroups.begin();
+  while (itG1 != thelGroups.end()) {
+    Handle(GEOM_Object) itGroup = (*itG1++); 
+    XAO::Group *Group = new XAO::Group();
+    Group->setName(itGroup->GetName());
+    Handle(TColStd_HArray1OfInteger) groupIds = myGroupOperations->GetObjects(itGroup);
+    TopAbs_ShapeEnum shapeGroup = myGroupOperations->GetType(itGroup);
+    if (shapeGroup == TopAbs_VERTEX)
+    {
+      Group->setType(0);
+      for (int i = 1; i <= groupIds->Length(); i++)
+      {
+        int index = myGeometry->findVertex(groupIds->Value(i));
+        Group->addValue(index);
+      }
+    }
+    myXao->addGroup(Group);
+    /*{
+      case TopAbs_SOLID:
+        Group->setType(3);
+        break;
+      case TopAbs_FACE:
+        Group->setType(2);
+        break;
+      case TopAbs_EDGE:
+        Group->setType(1);
+        break;
+      case TopAbs_VERTEX:
+        Group->setType(0);
+        break;
+    }  */
+   
+
+  }
+  
 
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
   std::list<Handle(GEOM_Object)>::iterator itG = thelGroups.begin();
   std::list<Handle(GEOM_Object)>::iterator itF = thelFields.begin();
   pd << /*isGood <<*/ " = geompy.ExportXAO(" << theExportingShape << ", " << FileName.ToCString() << ", [";
-  //itG = thePoints.begin();
+
   pd << (*itG++);
   while (itG != thelGroups.end()) {
     pd << ", " << (*itG++);

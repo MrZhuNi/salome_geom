@@ -23,11 +23,13 @@
 #define IMPORTEXPORTGUI_EXPORTXAODLG_H
 
 #include <GEOMBase_Skeleton.h>
+#include "GEOM_GenericObjPtr.h"
 
-class QGroupBox;
 class QLineEdit;
 class QButtonGroup;
-class ImportExportGUI_1Sel1LineEdit2ListWidget;
+class QListWidget;
+
+//class ImportExportGUI_1Sel1LineEdit2ListWidget;
 
 //=================================================================================
 // class    : ImportExportGUI_ExportXAODlg
@@ -54,12 +56,20 @@ private:
 
 private:
   GEOM::GEOM_Object_var                       myMainObj;
-  ImportExportGUI_1Sel1LineEdit2ListWidget*   myGrp;
+  QList<GEOM::GeomObjPtr>                     myGroups;
+  QList<GEOM::GeomObjPtr>                     myFields;
+  //ImportExportGUI_1Sel1LineEdit2ListWidget*   myGrp;
+  QLineEdit                                  *myMainShape;
+  QLineEdit                                  *myMainFile;
+  QListWidget                                *myListGroups;
+  QListWidget                                *myListFields;
+  QPushButton                                *mySelBtn;
 
 private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
+  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   //void                               ValueChangedInSpinBox();

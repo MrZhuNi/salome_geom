@@ -20,7 +20,7 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
 #include "ImportExportGUI_ExportXAODlg.h"
-#include "ImportExportGUI_Widgets.h"
+//#include "ImportExportGUI_Widgets.h"
 
 #include <DlgRef.h>
 #include <GeometryGUI.h>
@@ -29,10 +29,13 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Study.h>
 #include <LightApp_SelectionMgr.h>
 
 #include <QLabel>
 #include <QLineEdit>
+#include <QButtonGroup>
+#include <QListWidget>
 #include <QMap>
 //#include <ui_ImportExportGUI_1Sel1LineEdit2ListWidget_QTD.h>
 
@@ -51,9 +54,11 @@
 ImportExportGUI_ExportXAODlg::ImportExportGUI_ExportXAODlg (GeometryGUI* theGeometryGUI, QWidget* parent)
   : GEOMBase_Skeleton(theGeometryGUI, parent, false)
 {
+  myMainObj = GEOM::GEOM_Object::_nil();
+  
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   QPixmap imageOp  (resMgr->loadPixmap("GEOM", tr("ICON_DLG_EXPORTXAO_EXPORTINGSHAPE_FILENAME_LGROUPS_LFIELDS")));
-  QPixmap imageSel (resMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap iconSelect (resMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
   setWindowTitle(tr("GEOM_EXPORTXAO_TITLE"));
 
@@ -65,13 +70,57 @@ ImportExportGUI_ExportXAODlg::ImportExportGUI_ExportXAODlg (GeometryGUI* theGeom
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
   
-  myGrp = new ImportExportGUI_1Sel1LineEdit2ListWidget( centralWidget() );
-  myGrp->GroupBox1->setTitle( tr( "GEOM_EXPORTXAO" ) );
-  myGrp->TextLabel1->setText( tr( "GEOM_EXPORTXAO_EXPORTINGSHAPE" ) );
-  myGrp->TextLabel2->setText( tr( "GEOM_EXPORTXAO_FILENAME" ) );
-  myGrp->TextLabel3->setText( tr( "GEOM_EXPORTXAO_LGROUPS" ) );
-  myGrp->TextLabel4->setText( tr( "GEOM_EXPORTXAO_LFIELDS" ) );
-  myGrp->PushButton1->setIcon( imageSel );
+ 
+  QGroupBox *GroupBoxExport = new QGroupBox(parent);
+  
+  QGridLayout *gridLayoutExport = new QGridLayout(GroupBoxExport);
+#ifndef Q_OS_MAC
+  gridLayoutExport->setSpacing(6);
+#endif
+#ifndef Q_OS_MAC
+  gridLayoutExport->setContentsMargins(9, 9, 9, 9);
+#endif
+  gridLayoutExport->setObjectName(QString::fromUtf8("gridLayoutExport"));
+
+  //****************************
+  QLabel *TextLabel1 = new QLabel(tr( "GEOM_EXPORTXAO_EXPORTINGSHAPE" ),GroupBoxExport);
+  gridLayoutExport->addWidget(TextLabel1, 0, 0, 1, 1);
+
+  mySelBtn = new QPushButton(GroupBoxExport);
+  mySelBtn->setIcon(iconSelect);
+  gridLayoutExport->addWidget(mySelBtn, 0, 1, 1, 1);
+
+  myMainShape = new QLineEdit(GroupBoxExport);
+  myMainShape->setMinimumSize(QSize(100, 0));
+  gridLayoutExport->addWidget(myMainShape, 0, 2, 1, 1);
+
+  //****************************
+  QLabel *TextLabel2 = new QLabel(tr( "GEOM_EXPORTXAO_FILENAME" ),GroupBoxExport);
+  gridLayoutExport->addWidget(TextLabel2, 1, 0, 1, 1);
+
+  myMainFile = new QLineEdit(GroupBoxExport);
+  gridLayoutExport->addWidget(myMainFile, 1, 1, 1, 2);
+
+  //****************************
+  QLabel *TextLabel3 = new QLabel(tr( "GEOM_EXPORTXAO_LGROUPS" ),GroupBoxExport);
+  gridLayoutExport->addWidget(TextLabel3, 2, 0, 1, 2);
+  
+  myListGroups = new QListWidget(GroupBoxExport);
+  gridLayoutExport->addWidget(myListGroups, 3, 0, 1, 2);
+
+  QLabel *TextLabel4 = new QLabel(tr( "GEOM_EXPORTXAO_LFIELDS" ),GroupBoxExport);
+  gridLayoutExport->addWidget(TextLabel4, 2, 2, 1, 1);
+
+  myListFields = new QListWidget(GroupBoxExport);
+  gridLayoutExport->addWidget(myListFields, 3, 2, 1, 1);
+
+
+  QVBoxLayout* layout = new QVBoxLayout(centralWidget());
+  layout->setMargin(0); layout->setSpacing(6);
+  layout->addWidget(GroupBoxExport);
+
+        //QWidget::setTabOrder(PushButton1, LineEdit1);
+        //QWidget::setTabOrder(LineEdit1, LineEdit2);
   
   setHelpFileName("create_exportxao_page.html");
 
@@ -93,12 +142,14 @@ ImportExportGUI_ExportXAODlg::~ImportExportGUI_ExportXAODlg()
 void ImportExportGUI_ExportXAODlg::Init()
 {
   // Get setting of step value from file configuration
+  myGroups.clear();
+  myFields.clear();
 
   // Signal/slot connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
-  connect( myGrp->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
+  connect( mySelBtn, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
@@ -113,14 +164,18 @@ void ImportExportGUI_ExportXAODlg::Init()
 void ImportExportGUI_ExportXAODlg::processObject()
 {
   if ( myMainObj->_is_nil() ) {
-    myGrp->LineEdit1->setText( "" );
-    myGrp->LineEdit2->setText( "" );
-    erasePreview();
+    myMainShape->setText( "" );
+    myMainFile->setText( "" );
   }
   else {   
-    myGrp->LineEdit1->setText( GEOMBase::GetName( myMainObj ) );
-
-    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+    myMainShape->setText( GEOMBase::GetName( myMainObj ) );
+    GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+    GEOM::ListOfGO_var Groups = aShOp->GetExistingSubObjects(myMainObj, true);
+    // Affichage des noms des groupes
+    for ( int i = 0, n = Groups->length(); i < n; i++ )
+    {
+      myListGroups->addItem( GEOMBase::GetName( Groups[i] ) );
+    }
   }
 }
 
@@ -154,7 +209,6 @@ bool ImportExportGUI_ExportXAODlg::ClickOnApply()
 //=================================================================================
 void ImportExportGUI_ExportXAODlg::SelectionIntoArgument()
 {
-  erasePreview();
   myMainObj = GEOM::GEOM_Object::_nil();
 
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -166,15 +220,15 @@ void ImportExportGUI_ExportXAODlg::SelectionIntoArgument()
     return;
   }
 
-  GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+  /*GEOM::GEOM_Object_var aSelectedObject*/myMainObj = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-  if ( aSelectedObject->_is_nil() ) {
+  /*if ( aSelectedObject->_is_nil() ) {
     processObject();
     return;
-  }
+  }*/
 
-  myMainObj = aSelectedObject;
+  //myMainObj = aSelectedObject;
+  
   processObject();
 }
 
@@ -184,8 +238,8 @@ void ImportExportGUI_ExportXAODlg::SelectionIntoArgument()
 //=================================================================================
 void ImportExportGUI_ExportXAODlg::SetEditCurrentArgument()
 {
-  myGrp->LineEdit1->setFocus();
-  myEditCurrentArgument = myGrp->LineEdit1;
+  myMainShape->setFocus();
+  myEditCurrentArgument = myMainShape;
   SelectionIntoArgument();
 }
 //=================================================================================
@@ -240,29 +294,20 @@ bool ImportExportGUI_ExportXAODlg::execute (ObjectList& objects)
   GEOM::GEOM_Object_var anObj;
 
   GEOM::GEOM_IImportExportOperations_var anOper = GEOM::GEOM_IImportExportOperations::_narrow(getOperation());
+  GEOM::GEOM_IShapesOperations_var anShapesOper = getGeomEngine()->GetIShapesOperations(getStudyId());
+  GEOM::ListOfGO_var mylGroups = anShapesOper->GetExistingSubObjects(myMainObj, true);
+  GEOM::ListOfGO_var mylFields = new GEOM::ListOfGO();
 
-  /*//@@ retrieve input values from the widgets here @@//
-  CORBA::Double theExportingShape = @@ init parameter value from dialog box @@;
-  CORBA::String_var theFileName = @@ init parameter value from dialog box @@;
-  CORBA::Boolean thelGroups = @@ init parameter value from dialog box @@;
-  CORBA::Boolean thelFields = @@ init parameter value from dialog box @@;
+  mylGroups->length( myGroups.count() );
+  for ( int i = 0; i < myGroups.count(); i++ )
+    mylGroups[i] = myGroups[i].copy();
+    
+  mylFields->length( myFields.count() );
+  for ( int i = 0; i < myFields.count(); i++ )
+    mylFields[i] = myFields[i].copy();
 
   // call engine function
-  anObj = anOper->ExportXAO(theExportingShape, theFileName, thelGroups, thelFields);
-  res = !anObj->_is_nil();
-  if (res && !IsPreview())
-  {
-    QStringList aParameters;
-    //@@ put stringified input parameters to the string list here to store in the data model for notebook @@//
-    aParameters << @@ stringified parameter value @@; // ExportingShape parameter
-    aParameters << @@ stringified parameter value @@; // FileName parameter
-    aParameters << @@ stringified parameter value @@; // lGroups parameter
-    aParameters << @@ stringified parameter value @@; // lFields parameter
-    if ( aParameters.count() > 0 ) anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-  }
-  
-  if (res)
-    objects.push_back(anObj._retn());*/
+  res = anOper->ExportXAO(myMainObj, myMainFile->text().toStdString().c_str(), mylGroups, mylFields);
 
   return res;
 }

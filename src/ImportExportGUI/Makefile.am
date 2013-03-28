@@ -22,33 +22,35 @@
 #
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-# header files 
-salomeinclude_HEADERS =			\
-	ImportExportGUI.h		\
-	ImportExportGUI_Widgets.h
-	
-IMPORTEXPORT_INCLUDES = 
-IMPORTEXPORT_INCLUDES += ImportExportGUI_ExportXAODlg.h
-##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@##
-
-salomeinclude_HEADERS += $(IMPORTEXPORT_INCLUDES)
-
 # Libraries targets
 lib_LTLIBRARIES = libImportExportGUI.la
 
-dist_libImportExportGUI_la_SOURCES =	\
-	ImportExportGUI.cxx		\
-	ImportExportGUI_Widgets.cxx
+# header files 
+salomeinclude_HEADERS =			\
+	ImportExportGUI.h \
+	ImportExportGUI_ExportXAODlg.h
 	
-IMPORTEXPORT_SOURCES = 
-IMPORTEXPORT_SOURCES += ImportExportGUI_ExportXAODlg.h ImportExportGUI_ExportXAODlg.cxx
+#IMPORTEXPORT_INCLUDES = 
+#IMPORTEXPORT_INCLUDES += ImportExportGUI_ExportXAODlg.h
 ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@##
 
-dist_libImportExportGUI_la_SOURCES += $(IMPORTEXPORT_SOURCES)
+#salomeinclude_HEADERS += $(IMPORTEXPORT_INCLUDES)
+
+dist_libImportExportGUI_la_SOURCES =	\
+	ImportExportGUI_ExportXAODlg.h		\
+	ImportExportGUI.h       \
+	ImportExportGUI_ExportXAODlg.cxx		\
+	ImportExportGUI.cxx
+	
+#IMPORTEXPORT_SOURCES = 
+#IMPORTEXPORT_SOURCES += ImportExportGUI_ExportXAODlg.h ImportExportGUI_ExportXAODlg.cxx
+##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@##
+
+#dist_libImportExportGUI_la_SOURCES += $(IMPORTEXPORT_SOURCES)
 
 MOC_FILES =
 
-IMPORTEXPORT_MOC_FILES = 
+IMPORTEXPORT_MOC_FILES = ImportExportGUI_moc.cxx		
 IMPORTEXPORT_MOC_FILES += ImportExportGUI_ExportXAODlg_moc.cxx
 ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@##
 
@@ -57,10 +59,6 @@ MOC_FILES += $(IMPORTEXPORT_MOC_FILES)
 nodist_libImportExportGUI_la_SOURCES =	\
 	$(MOC_FILES)
 
-UIC_FILES =						\
-	ui_ImportExportGUI_1Sel1LineEdit2ListWidget_QTD.h
-
-BUILT_SOURCES = $(UIC_FILES)
 # additional information to compile and link file
 
 libImportExportGUI_la_CPPFLAGS =			\

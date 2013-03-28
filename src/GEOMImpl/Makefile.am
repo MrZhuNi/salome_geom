@@ -249,6 +249,7 @@ libGEOMimpl_la_CPPFLAGS =		\
 	-I$(srcdir)/../GEOMAlgo		\
 	-I$(srcdir)/../SKETCHER		\
 	-I$(srcdir)/../ARCHIMEDE	\
+	-I$(srcdir)/../XAO       	\
 	-I$(top_builddir)/idl
 
 libGEOMimpl_la_LDFLAGS  =			\
@@ -257,6 +258,7 @@ libGEOMimpl_la_LDFLAGS  =			\
 	../ShHealOper/libShHealOper.la		\
 	../ARCHIMEDE/libGEOMArchimede.la	\
 	../SKETCHER/libGEOMSketcher.la		\
+	../XAO/libXAO.la		        \
 	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics	\
 	$(STDLIB)				\
 	$(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset -lTKFeat \

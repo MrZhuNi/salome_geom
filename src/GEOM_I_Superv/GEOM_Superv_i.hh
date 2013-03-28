@@ -736,6 +736,7 @@ private:
   GEOM::GEOM_ILocalOperations_var     myLocalOp;
   GEOM::GEOM_IGroupOperations_var     myGroupOp;
   GEOM::GEOM_IAdvancedOperations_var  myAdvancedOp;
+  GEOM::GEOM_IImportExportOperations_var  myImportExportOp;
 };
 
 #endif

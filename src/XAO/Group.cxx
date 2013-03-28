@@ -26,17 +26,10 @@ Group::Group()
 {
   _myType = 0;
   _myCount = 0;
-  _myValues = NULL;
 }
 
 Group::~Group()
 {
-  if (_myValues != NULL)
-    delete _myValues;
 }
 
-Group *Group::New()
-{
-  return new Group;
-}
 

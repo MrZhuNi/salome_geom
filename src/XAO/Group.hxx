@@ -22,29 +22,35 @@
 #define __XAO_GROUP_HXX__
 
 #include <string>
+#include <list>
 
 namespace XAO
 {
   class Group
   {
   public:
-    static Group *New();
-    void setName(const char *name) { _myName=name; }
-    const char *getName() const { return _myName.c_str(); }
-    void setType(int type) { _myType=type; }
-    int getType() { return _myType; }
-    void setCount(int nb) { _myCount=nb; }
-    int getCount() { return _myCount; }
-
-  private:
     Group();
     ~Group();
 
+    void setName(const char *name) { _myName=name; }
+    const char *getName() const { return _myName.c_str(); }
+
+    void setType(int type) { _myType=type; }
+    int getType() { return _myType; }
+
+    int getCount() { return _myValues.size(); }
+    
+    void addValue(int value) {_myValues.push_back(value);}
+    //int  getValue(int index) { return _myValues[index]; } 
+
   private:
-    std::string _myName;
-    int         _myType;
-    int         _myCount;
-    int        *_myValues;
+    void sort() {_myValues.sort();}
+
+  private:
+    std::string         _myName;
+    int                 _myType;
+    int                 _myCount;
+    std::list<int>      _myValues;
   };
 }
 

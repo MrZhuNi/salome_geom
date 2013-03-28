@@ -29,26 +29,30 @@
 
 #include <list>
 
-class GEOMImpl_IBasicOperations;
+/*class GEOMImpl_IBasicOperations;
 class GEOMImpl_IBooleanOperations;
 class GEOMImpl_IShapesOperations;
 class GEOMImpl_ITransformOperations;
 class GEOMImpl_IBlocksOperations;
 class GEOMImpl_I3DPrimOperations;
 class GEOMImpl_ILocalOperations;
-class GEOMImpl_IHealingOperations;
+class GEOMImpl_IHealingOperations;*/
+class GEOMImpl_IShapesOperations;
+class GEOMImpl_IGroupOperations;
 
 class GEOMImpl_IImportExportOperations: public GEOM_IOperations {
 
 private:
-  GEOMImpl_IBasicOperations*     myBasicOperations;
+  /*GEOMImpl_IBasicOperations*     myBasicOperations;
   GEOMImpl_IBooleanOperations*   myBooleanOperations;
   GEOMImpl_IShapesOperations*    myShapesOperations;
   GEOMImpl_ITransformOperations* myTransformOperations;
   GEOMImpl_IBlocksOperations*    myBlocksOperations;
   GEOMImpl_I3DPrimOperations*    my3DPrimOperations;
   GEOMImpl_ILocalOperations*     myLocalOperations;
-  GEOMImpl_IHealingOperations*   myHealingOperations;
+  GEOMImpl_IHealingOperations*   myHealingOperations;*/
+  GEOMImpl_IShapesOperations*    myShapesOperations;
+  GEOMImpl_IGroupOperations*     myGroupOperations;
   
 public:
   Standard_EXPORT GEOMImpl_IImportExportOperations(GEOM_Engine* theEngine, int theDocID);
