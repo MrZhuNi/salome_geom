@@ -1178,7 +1178,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetExistingSubO
   for (; anIt.More(); anIt.Next()) {
     TCollection_ExtendedString anEntry = anIt.Value();
     Standard_Integer aStrLen = anEntry.LengthOfCString();
-    char* anEntryStr = new char[aStrLen];
+    char* anEntryStr = new char[aStrLen+1];
     anEntry.ToUTF8CString(anEntryStr);
     Handle(GEOM_Object) anObj = GetEngine()->GetObject(GetDocID(), anEntryStr, false);
     if (!anObj.IsNull()) {
