@@ -99,7 +99,8 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     Handle(GEOM_Function) anAxis = RI.GetAxis();
     if (anAxis.IsNull()) return 0;
     TopoDS_Shape A = anAxis->GetValue();
-    gp_Vec aV = GEOMUtils::GetVector(A);
+    // do not take into account edge orientation (it is correct)
+    gp_Vec aV = GEOMUtils::GetVector(A, Standard_False);
     TopoDS_Edge anEdge = TopoDS::Edge(A);
     gp_Pnt aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge));
     gp_Dir aDir (aV);
@@ -161,7 +162,8 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     Handle(GEOM_Function) anAxis = RI.GetAxis();
     if (!anAxis.IsNull()) {
       TopoDS_Shape A = anAxis->GetValue();
-      gp_Vec aV = GEOMUtils::GetVector(A);
+      // do not take into account edge orientation (it is correct)
+      gp_Vec aV = GEOMUtils::GetVector(A, Standard_False);
       TopoDS_Edge anEdge = TopoDS::Edge(A);
       aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge));
       D = gp_Dir(aV);
@@ -207,7 +209,8 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     Handle(GEOM_Function) anAxis = RI.GetAxis();
     if (!anAxis.IsNull()) {
       TopoDS_Shape A = anAxis->GetValue();
-      gp_Vec aV = GEOMUtils::GetVector(A);
+      // do not take into account edge orientation (it is correct)
+      gp_Vec aV = GEOMUtils::GetVector(A, Standard_False);
       TopoDS_Edge anEdge = TopoDS::Edge(A);
       aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge));
       D = gp_Dir(aV);

@@ -56,8 +56,14 @@ class GEOMUtils {
 
   /*!
    * \brief Get vector, defined by the given edge.
+   * \param theShape The edge.
+   * \param doConsiderOrientation If True, take into account the edge orientation.
+   * \note It is recommended to use doConsiderOrientation=Standard_False, because
+   *       the same edge can have different orientation depending on the way it was
+   *       extracted from a shape.
    */
-  Standard_EXPORT static gp_Vec GetVector (const TopoDS_Shape& theShape);
+  Standard_EXPORT static gp_Vec GetVector (const TopoDS_Shape& theShape,
+                                           Standard_Boolean doConsiderOrientation);
 
   /*!
    * \brief Sort shapes in the list by their coordinates.

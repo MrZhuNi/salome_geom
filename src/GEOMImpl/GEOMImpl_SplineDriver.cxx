@@ -242,8 +242,9 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
         TopoDS_Shape aVec1Sh = aVec1Ref->GetValue();
         TopoDS_Shape aVec2Sh = aVec2Ref->GetValue();
 
-        gp_Vec aV1 = GEOMUtils::GetVector(aVec1Sh);
-        gp_Vec aV2 = GEOMUtils::GetVector(aVec2Sh);
+        // take orientation of edge into account to avoid regressions, as it was implemented so
+        gp_Vec aV1 = GEOMUtils::GetVector(aVec1Sh, Standard_True);
+        gp_Vec aV2 = GEOMUtils::GetVector(aVec2Sh, Standard_True);
 
         GBC.Load(aV1, aV2, /*Scale*/Standard_True);
       }

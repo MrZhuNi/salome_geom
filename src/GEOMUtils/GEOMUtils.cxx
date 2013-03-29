@@ -144,7 +144,8 @@ gp_Ax3 GEOMUtils::GetPosition (const TopoDS_Shape& theShape)
 //function : GetVector
 //purpose  :
 //=======================================================================
-gp_Vec GEOMUtils::GetVector (const TopoDS_Shape& theShape)
+gp_Vec GEOMUtils::GetVector (const TopoDS_Shape& theShape,
+                             Standard_Boolean doConsiderOrientation)
 {
   if (theShape.IsNull())
     Standard_NullObject::Raise("Null shape is given for a vector");
@@ -155,7 +156,7 @@ gp_Vec GEOMUtils::GetVector (const TopoDS_Shape& theShape)
   TopoDS_Edge anE = TopoDS::Edge(theShape);
 
   TopoDS_Vertex V1, V2;
-  TopExp::Vertices(anE, V1, V2, Standard_True);
+  TopExp::Vertices(anE, V1, V2, doConsiderOrientation);
 
   if (V1.IsNull() || V2.IsNull())
     Standard_NullObject::Raise("Invalid edge is given, it must have two points");

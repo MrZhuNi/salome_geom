@@ -98,7 +98,8 @@ Standard_Integer GEOMImpl_CircleDriver::Execute(TFunction_Logbook& log) const
     Handle(GEOM_Function) aRefVector = aCI.GetVector();
     if (!aRefVector.IsNull()) {
       TopoDS_Shape aShapeVec = aRefVector->GetValue();
-      aV = GEOMUtils::GetVector(aShapeVec);
+      // take orientation of edge into account to avoid regressions, as it was implemented so
+      aV = GEOMUtils::GetVector(aShapeVec, Standard_True);
     }
     // Axes
     gp_Ax2 anAxes (aP, aV);
