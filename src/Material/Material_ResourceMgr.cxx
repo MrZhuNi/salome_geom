@@ -140,6 +140,11 @@ QStringList Material_ResourceMgr::materials( MaterialType theType, bool theSort 
     qSort( slglobal );
     qSort( sluser );
   }
+  // special processing for default material (to make it first in the list)
+  if ( slglobal.contains( "[ Default ]" ) ) {
+    slglobal.removeAll( "[ Default ]" );
+    slglobal.prepend( "[ Default ]" );
+  }
 
   // combine the materials to obtain result list
   QStringList result;
