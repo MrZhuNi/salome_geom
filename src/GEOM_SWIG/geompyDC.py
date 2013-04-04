@@ -8952,7 +8952,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return aTuple
 
         ## Get if coords are included in the shape (ST_IN or ST_ON)
-        #  @param theShape Shape
+        #  @param theShape Shape (only Compound, Compsolid or Solid)
         #  @param coords list of points coordinates [x1, y1, z1, x2, y2, z2, ...]
         #  @param tolerance to be used (default is 1.0e-7)
         #  @return list_of_boolean = [res1, res2, ...]
@@ -8961,7 +8961,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Get if coords are included in the shape (ST_IN or ST_ON)
             
             Parameters: 
-                theShape Shape
+                theShape Shape (only Compound, Compsolid or Solid)
                 coords list of points coordinates [x1, y1, z1, x2, y2, z2, ...]
                 tolerance to be used (default is 1.0e-7)
 
