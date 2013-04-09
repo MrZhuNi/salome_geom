@@ -30,35 +30,39 @@
 #include <list>
 
 /*class GEOMImpl_IBasicOperations;
-class GEOMImpl_IBooleanOperations;
-class GEOMImpl_IShapesOperations;
-class GEOMImpl_ITransformOperations;
-class GEOMImpl_IBlocksOperations;
-class GEOMImpl_I3DPrimOperations;
-class GEOMImpl_ILocalOperations;
-class GEOMImpl_IHealingOperations;*/
+ class GEOMImpl_IBooleanOperations;
+ class GEOMImpl_IShapesOperations;
+ class GEOMImpl_ITransformOperations;
+ class GEOMImpl_IBlocksOperations;
+ class GEOMImpl_I3DPrimOperations;
+ class GEOMImpl_ILocalOperations;
+ class GEOMImpl_IHealingOperations;*/
 class GEOMImpl_IShapesOperations;
 class GEOMImpl_IGroupOperations;
 
-class GEOMImpl_IImportExportOperations: public GEOM_IOperations {
+class GEOMImpl_IImportExportOperations: public GEOM_IOperations
+{
 
 private:
-  /*GEOMImpl_IBasicOperations*     myBasicOperations;
-  GEOMImpl_IBooleanOperations*   myBooleanOperations;
-  GEOMImpl_IShapesOperations*    myShapesOperations;
-  GEOMImpl_ITransformOperations* myTransformOperations;
-  GEOMImpl_IBlocksOperations*    myBlocksOperations;
-  GEOMImpl_I3DPrimOperations*    my3DPrimOperations;
-  GEOMImpl_ILocalOperations*     myLocalOperations;
-  GEOMImpl_IHealingOperations*   myHealingOperations;*/
-  GEOMImpl_IShapesOperations*    myShapesOperations;
-  GEOMImpl_IGroupOperations*     myGroupOperations;
-  
+    /*GEOMImpl_IBasicOperations*     myBasicOperations;
+     GEOMImpl_IBooleanOperations*   myBooleanOperations;
+     GEOMImpl_IShapesOperations*    myShapesOperations;
+     GEOMImpl_ITransformOperations* myTransformOperations;
+     GEOMImpl_IBlocksOperations*    myBlocksOperations;
+     GEOMImpl_I3DPrimOperations*    my3DPrimOperations;
+     GEOMImpl_ILocalOperations*     myLocalOperations;
+     GEOMImpl_IHealingOperations*   myHealingOperations;*/
+    GEOMImpl_IShapesOperations* m_shapesOperations;
+    GEOMImpl_IGroupOperations* m_groupOperations;
+
 public:
-  Standard_EXPORT GEOMImpl_IImportExportOperations(GEOM_Engine* theEngine, int theDocID);
-  Standard_EXPORT ~GEOMImpl_IImportExportOperations();
-  
-  Standard_EXPORT bool ExportXAO (Handle(GEOM_Object) theExportingShape, const std::string theFileName, std::list<Handle(GEOM_Object)> thelGroups, std::list<Handle(GEOM_Object)> thelFields);
-  /*@@ insert new functions before this line @@ do not remove this line @@*/
+    Standard_EXPORT GEOMImpl_IImportExportOperations(GEOM_Engine* engine, int docID);
+    Standard_EXPORT ~GEOMImpl_IImportExportOperations();
+
+    Standard_EXPORT bool ExportXAO (Handle(GEOM_Object) shape,
+            const std::string fileName,
+            std::list<Handle(GEOM_Object)> groupList,
+            std::list<Handle(GEOM_Object)> fieldList);
+    /*@@ insert new functions before this line @@ do not remove this line @@*/
 };
 #endif

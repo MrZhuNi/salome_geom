@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+// Copyright (C) 2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,7 @@
 //
 // Author : Nathalie Gore (OpenCascade)
 
+#include "XaoUtils.hxx"
 #include "Geometry.hxx"
 #include <Standard_TypeMismatch.hxx>
 
@@ -29,7 +30,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <ostream>
+#include <iosfwd>
 #include <list>
 
 #include <TopTools_MapOfShape.hxx>
@@ -41,210 +42,157 @@
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
- 
-using namespace std;
 
 using namespace XAO;
 
 Geometry::Geometry()
 {
-  _myFormat = "BREP";
-   
-  _myNbVertices = 0;
-  _myNamesVertices = NULL;
-  _myIdsVertices = NULL;
-  
-  _myNbEdges = 0;
-  _myNamesEdges = NULL;
-  _myIdsEdges = NULL;
-  
-  _myNbFaces = 0;
-  _myNamesFaces = NULL;
-  _myIdsFaces = NULL;
-  
-  _myNbSolids = 0;
-  _myNamesSolids = NULL;
-  _myIdsSolids = NULL;
+    m_format = "BREP";
 }
 
 Geometry::~Geometry()
 {
-  if (_myNamesVertices != NULL)
-    delete _myNamesVertices;
-  if (_myIdsVertices != NULL)
-    delete _myIdsVertices;
-    
-  if (_myNamesEdges != NULL)
-    delete _myNamesEdges;
-  if (_myIdsEdges != NULL)
-    delete _myIdsEdges;
-    
-  if (_myNamesFaces != NULL)
-    delete _myNamesFaces;
-  if (_myIdsFaces != NULL)
-    delete _myIdsFaces;
-    
-  if (_myNamesSolids != NULL)
-    delete _myNamesSolids;
-  if (_myIdsSolids != NULL)
-    delete _myIdsSolids;
 }
 
-void Geometry::setShape(TopoDS_Shape Shape)
+void Geometry::setShape(TopoDS_Shape shape)
 {
-  _myShape = Shape;
-  
-  // intialization of Ids
-  initListIds(TopAbs_VERTEX);
-  initListIds(TopAbs_EDGE);
-  initListIds(TopAbs_FACE);
-  initListIds(TopAbs_SOLID);
+    m_shape = shape;
+
+    // intialization of Ids
+    initListIds(TopAbs_VERTEX);
+    initListIds(TopAbs_EDGE);
+    initListIds(TopAbs_FACE);
+    initListIds(TopAbs_SOLID);
 }
 
-void Geometry::setShape(const char * brep )
+void Geometry::setShape(const char* brep)
 {
-  istringstream streamBrep(brep);
-  BRep_Builder aBuilder;
-  BRepTools::Read(_myShape, streamBrep, aBuilder);
-  
-  // intialization of Ids
-  initListIds(TopAbs_VERTEX);
-  initListIds(TopAbs_EDGE);
-  initListIds(TopAbs_FACE);
-  initListIds(TopAbs_SOLID);
+    std::istringstream streamBrep(brep);
+    BRep_Builder builder;
+    BRepTools::Read(m_shape, streamBrep, builder);
+
+    // intialization of Ids
+    initListIds(TopAbs_VERTEX);
+    initListIds(TopAbs_EDGE);
+    initListIds(TopAbs_FACE);
+    initListIds(TopAbs_SOLID);
 }
 
-const char * Geometry::getBREP()
+const char* Geometry::getBREP()
 {
-  ostringstream streamShape;
-  BRepTools::Write(_myShape, streamShape);
-  return streamShape.str().c_str();
+    std::ostringstream streamShape;
+    BRepTools::Write(m_shape, streamShape);
+    return streamShape.str().c_str();
 }
 
-void Geometry::setVertexName(int index, const char *myName)
+/*
+void Geometry::changeVertexName(int id, const char* name)
 {
-  if (_myNbVertices == 0 || index > _myNbVertices)
-    Standard_TypeMismatch::Raise("Problem with number of vertices");
+    if (m_nbVertices == 0)
+        Standard_TypeMismatch::Raise("Problem with number of vertices");
 
-  if (_myNamesVertices == NULL)
-    _myNamesVertices = new std::string[_myNbVertices];
-    
-  _myNamesVertices[index] = myName;
+    if (m_verticesNames == NULL)
+        m_verticesNames = new std::string[m_nbVertices];
+
+    int index = findVertex(id);
+
+    if (index == -1)
+        Standard_TypeMismatch::Raise("Problem with the id of the vertex");
+
+    m_verticesNames[index] = name;
 }
 
-void Geometry::changeVertexName(int id, const char *myName)
+const char* Geometry::findVertexName(int id)
 {
-  if (_myNbVertices == 0)
-    Standard_TypeMismatch::Raise("Problem with number of vertices");
+    if (m_nbVertices == 0)
+    {
+        Standard_TypeMismatch::Raise("Problem with number of vertices");
+        return "";
+    }
 
-  if (_myNamesVertices == NULL)
-    _myNamesVertices = new std::string[_myNbVertices];
-    
-  int index = findVertex(id);
-  
-  if (index == -1)
-    Standard_TypeMismatch::Raise("Problem with the id of the vertex");
-    
-  _myNamesVertices[index] = myName;
-}
+    int index = findVertex(id);
 
-const char * Geometry::findVertexName(int id)
-{
-  if (_myNbVertices == 0) {
-    Standard_TypeMismatch::Raise("Problem with number of vertices");
-    return "";
-  }
+    if (index == -1)
+    {
+        Standard_TypeMismatch::Raise("Problem with the id of the vertex");
+        return "";
+    }
 
-  int index = findVertex(id);
-  
-  if (index == -1) {
-    Standard_TypeMismatch::Raise("Problem with the id of the vertex");
-    return "";
-  }
-    
-  return _myNamesVertices[index].c_str();
-}
-
+    return m_verticesNames[index].c_str();
+}*/
+/*
 int Geometry::findVertex(int id)
 {
-  int index = -1;
-  for (int i = 0, n = _myNbVertices; i < n; i++)
-  {
-    if (_myIdsVertices[i] == id)
-      return i;
-  }
-  return index;
-}
+    int index = -1;
+    for (int i = 0, n = m_nbVertices; i < n; i++)
+    {
+        if (m_verticesIds[i] == id)
+            return i;
+    }
+    return index;
+}*/
 
-void Geometry::initListIds(const Standard_Integer theShapeType)
+void Geometry::initListIds(const Standard_Integer shapeType)
 {
-  std::list<int> aList;
-  
-  TopTools_MapOfShape mapShape;
-  TopTools_ListOfShape listShape;
-  
-  TopExp_Explorer exp (_myShape, TopAbs_ShapeEnum(theShapeType));
-  for (; exp.More(); exp.Next())
-    if (mapShape.Add(exp.Current()))
-      listShape.Append(exp.Current());
+    TopTools_MapOfShape mapShape;
+    TopTools_ListOfShape listShape;
 
-  if (listShape.IsEmpty()) {
-    return ;
-  }
+    TopExp_Explorer exp(m_shape, TopAbs_ShapeEnum(shapeType));
+    for (; exp.More(); exp.Next())
+    {
+        if (mapShape.Add(exp.Current()))
+            listShape.Append(exp.Current());
+    }
 
-  TopTools_IndexedMapOfShape anIndices;
-  TopExp::MapShapes(_myShape, anIndices);
-  Handle(TColStd_HArray1OfInteger) anArray;
+    if (listShape.IsEmpty())
+    {
+        return;
+    }
 
-  TopTools_ListIteratorOfListOfShape itSub (listShape);
-  for (int index = 1; itSub.More(); itSub.Next(), ++index) {
-    TopoDS_Shape aValue = itSub.Value();
-    aList.push_back(anIndices.FindIndex(aValue));
-  }
-  
-  std::list<int>::iterator it = aList.begin();
-  switch ( theShapeType ) {
-    case TopAbs_VERTEX: /* Fill vertices ids */ 
+    TopTools_IndexedMapOfShape anIndices;
+    TopExp::MapShapes(m_shape, anIndices);
+    //Handle (TColStd_HArray1OfInteger) anArray;
+
+    std::list<int> aList;
+    TopTools_ListIteratorOfListOfShape itSub(listShape);
+    for (int index = 1; itSub.More(); itSub.Next(), ++index)
     {
-      _myNbVertices = aList.size();
-      if (_myIdsVertices != NULL)
-        delete _myIdsVertices;
-      _myIdsVertices = new int[_myNbVertices];
-      for (int i = 0; it != aList.end(); it++, i++)
-        _myIdsVertices[i] = (*it);
-      break;
+        TopoDS_Shape value = itSub.Value();
+        aList.push_back(anIndices.FindIndex(value));
     }
-    case TopAbs_EDGE: /* Fill edges ids */
+
+    std::list<int>::iterator it = aList.begin();
+    switch (shapeType)
     {
-      _myNbEdges = aList.size();
-      if (_myIdsEdges != NULL)
-        delete _myIdsEdges;
-      _myIdsEdges = new int[_myNbEdges];
-      for (int i = 0; it != aList.end(); it++, i++)
-        _myIdsEdges[i] = (*it);
-      break;
+        case TopAbs_VERTEX: /* Fill vertices ids */
+        {
+            m_vertices.setSize(aList.size());
+            for (int i = 0; it != aList.end(); it++, i++)
+                m_vertices.setReference(i, XaoUtils::intToString((*it)));
+            break;
+        }
+        case TopAbs_EDGE: /* Fill edges ids */
+        {
+            m_edges.setSize(aList.size());
+            for (int i = 0; it != aList.end(); it++, i++)
+                m_edges.setReference(i, XaoUtils::intToString((*it)));
+            break;
+        }
+        case TopAbs_FACE: /* Fill faces ids */
+        {
+            m_faces.setSize(aList.size());
+            for (int i = 0; it != aList.end(); it++, i++)
+                m_faces.setReference(i, XaoUtils::intToString((*it)));
+            break;
+        }
+        case TopAbs_SOLID: /* Fill solids ids */
+        {
+            m_solids.setSize(aList.size());
+            for (int i = 0; it != aList.end(); it++, i++)
+                m_solids.setReference(i, XaoUtils::intToString((*it)));
+            break;
+        }
     }
-    case TopAbs_FACE: /* Fill faces ids */
-    {
-      _myNbFaces = aList.size();
-      if (_myIdsFaces != NULL)
-        delete _myIdsFaces;
-      _myIdsFaces = new int[_myNbFaces];
-      for (int i = 0; it != aList.end(); it++, i++)
-        _myIdsFaces[i] = (*it);
-      break;
-    }
-    case TopAbs_SOLID: /* Fill solids ids */
-    {
-      _myNbSolids = aList.size();
-      if (_myIdsSolids != NULL)
-        delete _myIdsSolids;
-      _myIdsSolids = new int[_myNbSolids];
-      for (int i = 0; it != aList.end(); it++, i++)
-        _myIdsSolids[i] = (*it);
-      break;
-    }
-  }
-  
+
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+// Copyright (C) 2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -16,61 +16,84 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// Author : Nathalie Gore (OpenCascade)
+// Author : Nathalie Gore (OpenCascade), Frederic Pons (OpenCascade)
 
 #ifndef __XAO_XAO_HXX__
 #define __XAO_XAO_HXX__
 
 #include <string>
 #include <list>
+#include <libxml/parser.h>
 
 namespace XAO
 {
-  enum Kind{
+  enum Kind
+  {
     VERTEX,
     EDGE,
     FACE,
     SOLID
   };
-  
+
   class Geometry;
   class Group;
   class Field;
-  
+
   class Xao
   {
   public:
     Xao();
-    Xao(const char *author, const char *version);
+    Xao(const char* author, const char* version);
     ~Xao();
 
-    void setAuthor(const char *author) { _myAuthor=author; }
-    const char *getAuthor() const { return _myAuthor.c_str(); }
-    
-    void setVersion(const char *version) { _myVersion=version; }
-    const char *getVersion() const { return _myVersion.c_str(); }
+    void setAuthor(const char* author) { m_author = author; }
+    const char* getAuthor() { return m_author.c_str(); }
 
-    void setGeometry(Geometry *myGeometry) { _myGeometry=myGeometry; }
-    const Geometry *getGeometry() const { return _myGeometry; }
+    void setVersion(const char* version) { m_version = version; }
+    const char* getVersion() { return m_version.c_str(); }
 
-    int getNbGroups() { return _myGroups.size(); }
-    void addGroup(Group *myGroup) { _myGroups.push_back(myGroup); }
-    void removeGroup(Group *myGroup) { _myGroups.remove(myGroup); }
+    void setGeometry(Geometry* geometry) { m_geometry = geometry; }
+    Geometry* getGeometry() { return m_geometry; }
 
-    int getNbFields() { return _myNbFields; }
-    
-    bool Export(const char* fileName);
+    int countGroups() { return m_groups.size(); }
+    Group* getGroup(const int index);
+    void addGroup(Group* group) { m_groups.push_back(group); }
+    void removeGroup(Group* group) { m_groups.remove(group); }
+
+    bool exportToFile(const char* fileName);
+    const char* getXML();
+
+    bool importFromFile(const char* fileName);
+    bool setXML(const char* xml);
 
 
   private:
-    std::string                  _myAuthor;
-    std::string                  _myVersion;
-    Geometry                    *_myGeometry;
-    int                          _myNbGroups;
-    std::list<Group *>           _myGroups;
-    int                          _myNbFields;
-    //std::list<Field *>           _myFields;
+    std::string m_author;
+    std::string m_version;
+    Geometry* m_geometry;
+    int m_nbGroups;
+    std::list<Group*> m_groups;
+    //int m_nbFields;
+    //std::list<Field*> m_fields;
+
+    xmlDocPtr exportXMLDoc();
+    void exportGeometry(xmlDocPtr doc, xmlNodePtr xao);
+    void exportGroups(xmlNodePtr xao);
+
+    void parseXMLDoc(xmlDocPtr doc);
+    void parseXaoNode(xmlDocPtr doc, xmlNodePtr xaoNode);
+    void parseGeometryNode(xmlDocPtr doc, xmlNodePtr geometryNode);
+    void parseShapeNode(xmlDocPtr doc, xmlNodePtr shapeNode);
+    void parseTopologyNode(xmlNodePtr topologyNode);
+    void parseVerticesNode(xmlNodePtr verticesNode);
+    void parseEdgesNode(xmlNodePtr edgesNode);
+    void parseFacesNode(xmlNodePtr facesNode);
+    void parseSolidsNode(xmlNodePtr solidsNode);
+    void parseGroupsNode(xmlNodePtr groupsNode);
+    void parseGroupNode(xmlNodePtr groupNode);
+
   };
+
 }
 
 #endif

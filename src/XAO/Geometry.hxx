@@ -26,58 +26,96 @@
 #include <SALOMEconfig.h>
 #include <TopoDS_Shape.hxx>
 
+# include "GeometricElement.hxx"
+
 namespace XAO
-{ 
-  class Geometry
-  {
-  public:
-    Geometry();
-    ~Geometry();
+{
+    class Geometry
+    {
+    public:
+        Geometry();
+        ~Geometry();
 
-    void setName(const char *name) { _myName=name; }
-    const char *getName() const { return _myName.c_str(); }
+        const char* getName()
+        {
+            return m_name.c_str();
+        }
+        void setName(const char* name)
+        {
+            m_name = name;
+        }
 
-    void setFormat(const char *format) { _myFormat=format; }
-    const char *getFormat() const { return _myFormat.c_str(); }
-    
-    void setShape(TopoDS_Shape Shape);
-    TopoDS_Shape getShape() { return _myShape; }
-    
-    void setShape(const char * brep );
-    const char * getBREP();
-    
-    int countVertices() { return _myNbVertices; }
-    int findVertex(int id);
-    void setVertexName(int index, const char *myName);
-    const char *  getVertexName(int index) { return _myNamesVertices[index].c_str(); } 
-    void changeVertexName(int id, const char *myName);
-    const char *  findVertexName(int id);
+        const char* getFormat()
+        {
+            return m_format.c_str();
+        }
+        void setFormat(const char* format)
+        {
+            m_format = format;
+        }
 
-    int countEdges() { return _myNbEdges; }
-    int countFaces() { return _myNbFaces; }
-    int countSolids() { return _myNbSolids; }
-    
+        TopoDS_Shape getShape()
+        {
+            return m_shape;
+        }
+        void setShape(TopoDS_Shape shape);
 
-  private:
-    void initListIds(const Standard_Integer theShapeType);
+        const char* getBREP();
+        void setShape(const char* brep);
 
-  private:
-    TopoDS_Shape        _myShape;
-    std::string         _myName;
-    std::string         _myFormat;
-    int                 _myNbVertices;
-    std::string        *_myNamesVertices;
-    int                *_myIdsVertices;
-    int                 _myNbEdges;
-    std::string        *_myNamesEdges;
-    int                *_myIdsEdges;
-    int                 _myNbFaces;
-    std::string        *_myNamesFaces;
-    int                *_myIdsFaces;
-    int                 _myNbSolids;
-    std::string        *_myNamesSolids;
-    int                *_myIdsSolids;
-  };
+        int countVertices() { return m_vertices.getSize(); }
+        int countEdges() { return m_edges.getSize(); }
+        int countFaces() { return m_faces.getSize(); }
+        int countSolids() { return m_solids.getSize(); }
+
+        void setCountVertices(const int nb) { m_vertices.setSize(nb); }
+        void setCountEdges(const int nb) { m_edges.setSize(nb); }
+        void setCountFaces(const int nb) { m_faces.setSize(nb); }
+        void setCountSolids(const int nb) { m_solids.setSize(nb); }
+
+        void setVertex(const int index, const char* name, const char* reference) { m_vertices.setElement(index, name,reference); }
+        void setEdge(const int index, const char* name, const char* reference) { m_edges.setElement(index, name,reference); }
+        void setFace(const int index, const char* name, const char* reference) { m_faces.setElement(index, name,reference); }
+        void setSolid(const int index, const char* name, const char* reference) { m_solids.setElement(index, name,reference); }
+
+        const char* getVertexName(const int index) { return m_vertices.getName(index); }
+        const char* getEdgeName(const int index) { return m_edges.getName(index); }
+        const char* getFaceName(const int index) { return m_faces.getName(index); }
+        const char* getSolidName(const int index) { return m_solids.getName(index); }
+
+        void setVertexName(const int index, const char* name) { m_vertices.setName(index, name); }
+        void setEdgeName(const int index, const char* name) { m_edges.setName(index, name); }
+        void setFaceName(const int index, const char* name) { m_faces.setName(index, name); }
+        void setSolidName(const int index, const char* name) { m_solids.setName(index, name); }
+
+        const char* getVertexReference(const int index) { return m_vertices.getReference(index); }
+        const char* getEdgeReference(const int index) { return m_edges.getReference(index); }
+        const char* getFaceReference(const int index) { return m_faces.getReference(index); }
+        const char* getSolidReference(const int index) { return m_solids.getReference(index); }
+
+        void setVertexReference(const int index, const char* reference) { m_vertices.setReference(index, reference); }
+        void setEdgeReference(const int index, const char* reference) { m_edges.setReference(index, reference); }
+        void setFaceReference(const int index, const char* reference) { m_faces.setReference(index, reference); }
+        void setSolidReference(const int index, const char* reference) { m_solids.setReference(index, reference); }
+
+//        int findVertex(int id);
+//        void changeVertexName(const int id, const char* name);
+//        const char* findVertexName(int id);
+
+
+    private:
+        void initListIds(const Standard_Integer shapeType);
+
+    private:
+        TopoDS_Shape m_shape;
+        std::string m_name;
+        std::string m_format;
+        GeometricElementList m_vertices;
+        GeometricElementList m_edges;
+        GeometricElementList m_faces;
+        GeometricElementList m_solids;
+
+    };
 }
 
 #endif

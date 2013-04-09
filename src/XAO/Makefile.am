@@ -21,7 +21,9 @@
 #
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-
+if CPPUNIT_IS_OK
+  SUBDIRS = . tests
+endif
 
 # ===============================================================
 # Files to be installed
@@ -29,29 +31,32 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 #
 # header files  
 salomeinclude_HEADERS = \
-	Xao.hxx \
-	Geometry.hxx \
-	Group.hxx \
-	Field.hxx
+    XaoUtils.hxx \
+    GeometricElement.hxx \
+    Xao.hxx \
+    Geometry.hxx \
+    Group.hxx \
+    Field.hxx
 
 lib_LTLIBRARIES = libXAO.la
 dist_libXAO_la_SOURCES = \
-	Xao.cxx \
-	Geometry.cxx \
-	Group.cxx \
-	Field.cxx
-
+    XaoUtils.cxx \
+    GeometricElement.cxx \
+    Xao.cxx \
+    Geometry.cxx \
+    Group.cxx \
+    Field.cxx
 
 
 libXAO_la_CPPFLAGS = \
-	$(GEOM_CXXFLAGS)                        \
-	$(CAS_CPPFLAGS)                         \
-	$(LIBXML_INCLUDES)	                \
-	-I$(top_builddir)                       \
-	-I$(top_builddir)/idl
+    $(GEOM_CXXFLAGS)                    \
+    $(CAS_CPPFLAGS)                     \
+    $(LIBXML_INCLUDES)                  \
+    -I$(top_builddir)                   \
+    -I$(top_builddir)/idl
 
 libXAO_la_LDFLAGS = \
-	$(CAS_LDPATH)                           \
-	$(LIBXML_LIBS)				\
-        $(GEOM_LDFLAGS)
+    $(CAS_LDPATH)                       \
+    $(LIBXML_LIBS)                      \
+    $(GEOM_LDFLAGS)
 

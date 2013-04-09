@@ -1,7 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -23,7 +20,7 @@
 #define IMPORTEXPORTGUI_EXPORTXAODLG_H
 
 #include <GEOMBase_Skeleton.h>
-#include "GEOM_GenericObjPtr.h"
+#include <GEOM_GenericObjPtr.h>
 
 class QLineEdit;
 class QButtonGroup;
@@ -35,45 +32,45 @@ class QListWidget;
 // class    : ImportExportGUI_ExportXAODlg
 // purpose  :
 //=================================================================================
-class ImportExportGUI_ExportXAODlg : public GEOMBase_Skeleton
+class ImportExportGUI_ExportXAODlg: public GEOMBase_Skeleton
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  ImportExportGUI_ExportXAODlg( GeometryGUI*, QWidget* = 0 );
-  ~ImportExportGUI_ExportXAODlg();
+    ImportExportGUI_ExportXAODlg(GeometryGUI*, QWidget* = 0);
+    ~ImportExportGUI_ExportXAODlg();
 
 protected:
-  // redefined from GEOMBase_Helper
-  virtual GEOM::GEOM_IOperations_ptr createOperation();
-  virtual bool                       isValid( QString& );
-  virtual bool                       execute( ObjectList& );
+    // redefined from GEOMBase_Helper
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool isValid(QString&);
+    virtual bool execute(ObjectList&);
 
 private:
-  void                               Init();
-  void                               enterEvent( QEvent* );
-  void                               processObject();
+    void Init();
+    void enterEvent(QEvent*);
+    void processObject();
 
 private:
-  GEOM::GEOM_Object_var                       myMainObj;
-  QList<GEOM::GeomObjPtr>                     myGroups;
-  QList<GEOM::GeomObjPtr>                     myFields;
-  //ImportExportGUI_1Sel1LineEdit2ListWidget*   myGrp;
-  QLineEdit                                  *myMainShape;
-  QLineEdit                                  *myMainFile;
-  QListWidget                                *myListGroups;
-  QListWidget                                *myListFields;
-  QPushButton                                *mySelBtn;
+    GEOM::GEOM_Object_var m_mainObj;
+    QList<GEOM::GeomObjPtr> m_groups;
+    QList<GEOM::GeomObjPtr> m_fields;
+    //ImportExportGUI_1Sel1LineEdit2ListWidget*   myGrp;
+    QLineEdit* ledShape;
+    QLineEdit* ledFileName;
+    QListWidget* lstGroups;
+    QListWidget* lstFields;
+    QPushButton* btnSelect;
 
 private slots:
-  void                               ClickOnOk();
-  bool                               ClickOnApply();
-  void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
-  void                               SelectionIntoArgument();
-  void                               SetEditCurrentArgument();
-  //void                               ValueChangedInSpinBox();
-  //void                               SetDoubleSpinBoxStep( double );
+    void ClickOnOk();
+    bool ClickOnApply();
+    void ActivateThisDialog();
+    void LineEditReturnPressed();
+    void SelectionIntoArgument();
+    void SetEditCurrentArgument();
+    //void ValueChangedInSpinBox();
+    //void SetDoubleSpinBoxStep( double );
 };
 
 #endif // IMPORTEXPORTGUI_EXPORTXAODLG_H

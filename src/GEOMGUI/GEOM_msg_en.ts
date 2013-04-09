@@ -5763,20 +5763,24 @@ Do you want to create new material?</translation>
 <context>
     <name>@default</name>
     <message>
+        <source>MEN_IMPORTEXPORT</source>
+        <translation>Import / Export</translation>
+    </message>
+    <message>
         <source>TOP_EXPORTXAO</source>
-        <translation>ExportXAO</translation>
+        <translation>Export to XAO</translation>
     </message>
     <message>
         <source>MEN_EXPORTXAO</source>
-        <translation>ExportXAO</translation>
+        <translation>Export XAO</translation>
     </message>
     <message>
         <source>STB_EXPORTXAO</source>
-        <translation>ExportXAO</translation>
+        <translation>Export shape to XAO format</translation>
     </message>
     <message>
         <source>GEOM_IMPORTEXPORT_204</source>
-        <translation>ExportXAO</translation>
+        <translation>Export XAO</translation>
     </message>
 </context>
 </TS>

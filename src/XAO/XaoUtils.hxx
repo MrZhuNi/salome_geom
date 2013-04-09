@@ -16,19 +16,22 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// Author : Nathalie Gore (OpenCascade), Frederic Pons (OpenCascade)
+// Author : Frederic Pons (OpenCascade)
 
-#include "Group.hxx"
+#ifndef __XAO_UTILS_HXX__
+#define __XAO_UTILS_HXX__
 
-using namespace XAO;
-
-Group::Group()
+namespace XAO
 {
-    m_dimension = 0;
-    m_count = 0;
+    class XaoUtils
+    {
+    public:
+        static const char* intToString(const int value);
+        static const char* dimensionToString(const int dimension);
+        static const int stringToDimension(const char* dimension);
+    };
 }
 
-Group::~Group()
-{
-}
 
+
+#endif /* __XAO_UTILS_HXX__ */

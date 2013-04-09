@@ -237,11 +237,12 @@ dist_libGEOMimpl_la_SOURCES += $(IMPORTEXPORT_SOURCES)
 
 libGEOMimpl_la_CPPFLAGS =		\
 	$(CORBA_CXXFLAGS)		\
-        $(CORBA_INCLUDES)		\
+	$(CORBA_INCLUDES)		\
 	$(CAS_CPPFLAGS)			\
 	$(KERNEL_CXXFLAGS)		\
 	$(BOOST_CPPFLAGS)		\
-        $(PYTHON_INCLUDES)              \
+	$(PYTHON_INCLUDES)		\
+	$(LIBXML_INCLUDES)		\
 	-I$(srcdir)/../ShHealOper	\
 	-I$(srcdir)/../NMTDS		\
 	-I$(srcdir)/../NMTTools		\

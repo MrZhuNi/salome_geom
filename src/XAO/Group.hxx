@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+// Copyright (C) 2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -16,42 +16,61 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// Author : Nathalie Gore (OpenCascade)
+// Author : Nathalie Gore (OpenCascade), Frederic Pons (OpenCascade)
 
 #ifndef __XAO_GROUP_HXX__
 #define __XAO_GROUP_HXX__
 
 #include <string>
-#include <list>
+#include <vector>
 
 namespace XAO
 {
-  class Group
-  {
-  public:
-    Group();
-    ~Group();
+    class Group
+    {
+    public:
+        Group();
+        ~Group();
 
-    void setName(const char *name) { _myName=name; }
-    const char *getName() const { return _myName.c_str(); }
+        void setName(const char* name)
+        {
+            m_name = name;
+        }
+        const char *getName() const
+        {
+            return m_name.c_str();
+        }
 
-    void setType(int type) { _myType=type; }
-    int getType() { return _myType; }
+        void setDimension(int dimension)
+        {
+            m_dimension = dimension;
+        }
+        int getDimension()
+        {
+            return m_dimension;
+        }
 
-    int getCount() { return _myValues.size(); }
-    
-    void addValue(int value) {_myValues.push_back(value);}
-    //int  getValue(int index) { return _myValues[index]; } 
+        int getCount()
+        {
+            return m_elements.size();
+        }
 
-  private:
-    void sort() {_myValues.sort();}
+        void addElement(const char* value)
+        {
+            m_elements.push_back(value);
+        }
 
-  private:
-    std::string         _myName;
-    int                 _myType;
-    int                 _myCount;
-    std::list<int>      _myValues;
-  };
+        const char* getElement(const int index)
+        {
+            return m_elements[index].c_str();
+        }
+
+    private:
+        std::string m_name;
+        int m_dimension;
+        int m_count;
+        std::vector<std::string> m_elements;
+    };
 }
 
 #endif

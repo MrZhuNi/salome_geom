@@ -41,7 +41,8 @@
 // function : ImportExportGUI()
 // purpose  : Constructor
 //=======================================================================
-ImportExportGUI::ImportExportGUI( GeometryGUI* parent ) : GEOMGUI( parent )
+ImportExportGUI::ImportExportGUI(GeometryGUI* parent) :
+        GEOMGUI(parent)
 {
 }
 
@@ -57,30 +58,30 @@ ImportExportGUI::~ImportExportGUI()
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
-bool ImportExportGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
+bool ImportExportGUI::OnGUIEvent(int commandId, SUIT_Desktop* parent)
 {
-  SalomeApp_Application* app = getGeometryGUI()->getApp();
-  if ( !app ) return false;
+    SalomeApp_Application* app = getGeometryGUI()->getApp();
+    if (!app) return false;
 
-  getGeometryGUI()->EmitSignalDeactivateDialog();
+    getGeometryGUI()->EmitSignalDeactivateDialog();
 
-  QDialog* aDlg = NULL;
 
-  switch ( theCommandID ) {  
-  case GEOMOp::OpExportXAO:
-    cout << "test" << endl;
-    aDlg = new ImportExportGUI_ExportXAODlg( getGeometryGUI(), parent );
-    break;
-  //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
-  default:
-    app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
-    break;
-  }
+    QDialog* dialog = NULL;
+    switch (commandId)
+    {
+        case GEOMOp::OpExportXAO:
+            dialog = new ImportExportGUI_ExportXAODlg(getGeometryGUI(), parent);
+            break;
+            //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
+        default:
+            app->putInfo(tr("GEOM_PRP_COMMAND").arg(commandId));
+            break;
+    }
 
-  if ( aDlg != NULL )
-    aDlg->show();
+    if (dialog != NULL)
+        dialog->show();
 
-  return true;
+    return true;
 }
 
 //=====================================================================================
@@ -89,10 +90,10 @@ bool ImportExportGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 extern "C"
 {
 #ifdef WIN32
-  __declspec( dllexport )
+    __declspec( dllexport )
 #endif
-  GEOMGUI* GetLibGUI( GeometryGUI* parent )
-  {
-    return new ImportExportGUI( parent );
-  }
+    GEOMGUI* GetLibGUI(GeometryGUI* parent)
+    {
+        return new ImportExportGUI(parent);
+    }
 }
