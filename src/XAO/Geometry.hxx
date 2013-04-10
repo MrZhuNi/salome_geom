@@ -73,10 +73,10 @@ namespace XAO
         void setCountFaces(const int nb) { m_faces.setSize(nb); }
         void setCountSolids(const int nb) { m_solids.setSize(nb); }
 
-        void setVertex(const int index, const char* name, const char* reference) { m_vertices.setElement(index, name,reference); }
-        void setEdge(const int index, const char* name, const char* reference) { m_edges.setElement(index, name,reference); }
-        void setFace(const int index, const char* name, const char* reference) { m_faces.setElement(index, name,reference); }
-        void setSolid(const int index, const char* name, const char* reference) { m_solids.setElement(index, name,reference); }
+        void setVertex(const int index, const char* name, const char* reference) { m_vertices.setElement(index, name, reference); }
+        void setEdge(const int index, const char* name, const char* reference) { m_edges.setElement(index, name, reference); }
+        void setFace(const int index, const char* name, const char* reference) { m_faces.setElement(index, name, reference); }
+        void setSolid(const int index, const char* name, const char* reference) { m_solids.setElement(index, name, reference); }
 
         const char* getVertexName(const int index) { return m_vertices.getName(index); }
         const char* getEdgeName(const int index) { return m_edges.getName(index); }
@@ -98,10 +98,10 @@ namespace XAO
         void setFaceReference(const int index, const char* reference) { m_faces.setReference(index, reference); }
         void setSolidReference(const int index, const char* reference) { m_solids.setReference(index, reference); }
 
-//        int findVertex(int id);
-//        void changeVertexName(const int id, const char* name);
-//        const char* findVertexName(int id);
-
+        const int getVertexIndexByReference(const char* reference) { return m_vertices.getIndexByReference(reference); }
+        const int getEdgeIndexByReference(const char* reference) { return m_edges.getIndexByReference(reference); }
+        const int getFaceIndexByReference(const char* reference) { return m_faces.getIndexByReference(reference); }
+        const int getSolidIndexByReference(const char* reference) { return m_solids.getIndexByReference(reference); }
 
     private:
         void initListIds(const Standard_Integer shapeType);

@@ -37,6 +37,10 @@ if GEOM_ENABLE_GUI
              GroupGUI BlocksGUI AdvancedGUI ImportExportGUI GEOM_SWIG_WITHIHM
 endif
 
+if CPPUNIT_IS_OK
+  SUBDIRS += XAO/tests
+endif
+
 DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo \
                SKETCHER OCC2VTK GEOM BREPExport \
                BREPImport IGESExport IGESImport STEPExport STEPImport STLExport \

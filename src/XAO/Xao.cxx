@@ -109,6 +109,8 @@ Group* Xao::getGroup(const int index)
         if (i == index)
             return (*it);
     }
+
+    return NULL;
 }
 
 
@@ -229,7 +231,7 @@ void Xao::exportGroups(xmlNodePtr xao)
         for (int i = 0; i < grp->getCount(); ++i)
         {
             xmlNodePtr elt = xmlNewChild(group, 0, C_TAG_ELEMENT, 0);
-            xmlNewProp(elt, C_ATTR_ELEMENT_INDEX, BAD_CAST grp->getElement(i));
+            xmlNewProp(elt, C_ATTR_ELEMENT_INDEX, BAD_CAST XaoUtils::intToString(grp->getElement(i)));
         }
     }
 }
@@ -507,7 +509,7 @@ void Xao::parseGroupNode(xmlNodePtr groupNode)
             xmlChar* index = xmlGetProp(node, C_ATTR_ELEMENT_INDEX);
             if (index == NULL)
                 throw SALOME_Exception("Bad index for group element");
-            group->addElement((char*)index);
+            group->addElement(atoi((char*)index));
             xmlFree(index);
         }
     }

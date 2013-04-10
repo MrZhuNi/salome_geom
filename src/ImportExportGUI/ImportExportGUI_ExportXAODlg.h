@@ -55,7 +55,6 @@ private:
     GEOM::GEOM_Object_var m_mainObj;
     QList<GEOM::GeomObjPtr> m_groups;
     QList<GEOM::GeomObjPtr> m_fields;
-    //ImportExportGUI_1Sel1LineEdit2ListWidget*   myGrp;
     QLineEdit* ledShape;
     QLineEdit* ledFileName;
     QListWidget* lstGroups;
@@ -69,8 +68,6 @@ private slots:
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
-    //void ValueChangedInSpinBox();
-    //void SetDoubleSpinBoxStep( double );
 };
 
 #endif // IMPORTEXPORTGUI_EXPORTXAODLG_H

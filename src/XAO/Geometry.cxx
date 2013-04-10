@@ -85,53 +85,6 @@ const char* Geometry::getBREP()
     return streamShape.str().c_str();
 }
 
-/*
-void Geometry::changeVertexName(int id, const char* name)
-{
-    if (m_nbVertices == 0)
-        Standard_TypeMismatch::Raise("Problem with number of vertices");
-
-    if (m_verticesNames == NULL)
-        m_verticesNames = new std::string[m_nbVertices];
-
-    int index = findVertex(id);
-
-    if (index == -1)
-        Standard_TypeMismatch::Raise("Problem with the id of the vertex");
-
-    m_verticesNames[index] = name;
-}
-
-const char* Geometry::findVertexName(int id)
-{
-    if (m_nbVertices == 0)
-    {
-        Standard_TypeMismatch::Raise("Problem with number of vertices");
-        return "";
-    }
-
-    int index = findVertex(id);
-
-    if (index == -1)
-    {
-        Standard_TypeMismatch::Raise("Problem with the id of the vertex");
-        return "";
-    }
-
-    return m_verticesNames[index].c_str();
-}*/
-/*
-int Geometry::findVertex(int id)
-{
-    int index = -1;
-    for (int i = 0, n = m_nbVertices; i < n; i++)
-    {
-        if (m_verticesIds[i] == id)
-            return i;
-    }
-    return index;
-}*/
-
 void Geometry::initListIds(const Standard_Integer shapeType)
 {
     TopTools_MapOfShape mapShape;
@@ -145,50 +98,49 @@ void Geometry::initListIds(const Standard_Integer shapeType)
     }
 
     if (listShape.IsEmpty())
-    {
         return;
-    }
 
-    TopTools_IndexedMapOfShape anIndices;
-    TopExp::MapShapes(m_shape, anIndices);
+    TopTools_IndexedMapOfShape indices;
+    TopExp::MapShapes(m_shape, indices);
     //Handle (TColStd_HArray1OfInteger) anArray;
 
-    std::list<int> aList;
+    std::list<int> indexList;
     TopTools_ListIteratorOfListOfShape itSub(listShape);
     for (int index = 1; itSub.More(); itSub.Next(), ++index)
     {
         TopoDS_Shape value = itSub.Value();
-        aList.push_back(anIndices.FindIndex(value));
+        //std::cout << "index = " << indices.FindIndex(value) << std::endl;
+        indexList.push_back(indices.FindIndex(value));
     }
 
-    std::list<int>::iterator it = aList.begin();
+    std::list<int>::iterator it = indexList.begin();
     switch (shapeType)
     {
         case TopAbs_VERTEX: /* Fill vertices ids */
         {
-            m_vertices.setSize(aList.size());
-            for (int i = 0; it != aList.end(); it++, i++)
+            m_vertices.setSize(indexList.size());
+            for (int i = 0; it != indexList.end(); it++, i++)
                 m_vertices.setReference(i, XaoUtils::intToString((*it)));
             break;
         }
         case TopAbs_EDGE: /* Fill edges ids */
         {
-            m_edges.setSize(aList.size());
-            for (int i = 0; it != aList.end(); it++, i++)
+            m_edges.setSize(indexList.size());
+            for (int i = 0; it != indexList.end(); it++, i++)
                 m_edges.setReference(i, XaoUtils::intToString((*it)));
             break;
         }
         case TopAbs_FACE: /* Fill faces ids */
         {
-            m_faces.setSize(aList.size());
-            for (int i = 0; it != aList.end(); it++, i++)
+            m_faces.setSize(indexList.size());
+            for (int i = 0; it != indexList.end(); it++, i++)
                 m_faces.setReference(i, XaoUtils::intToString((*it)));
             break;
         }
         case TopAbs_SOLID: /* Fill solids ids */
         {
-            m_solids.setSize(aList.size());
-            for (int i = 0; it != aList.end(); it++, i++)
+            m_solids.setSize(indexList.size());
+            for (int i = 0; it != indexList.end(); it++, i++)
                 m_solids.setReference(i, XaoUtils::intToString((*it)));
             break;
         }

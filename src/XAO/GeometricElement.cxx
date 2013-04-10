@@ -18,6 +18,7 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
+#include <cstring>
 #include <Utils_SALOME_Exception.hxx>
 
 #include "GeometricElement.hxx"
@@ -71,7 +72,6 @@ void GeometricElementList::setElement(const int index, const char* name, const c
     m_elements[index].setReference(reference);
 }
 
-
 const char* GeometricElementList::getName(const int index)
 {
     if (m_count == 0 || index > m_count)
@@ -102,4 +102,20 @@ void GeometricElementList::setReference(const int index, const char* name)
         throw SALOME_Exception("Problem with number of elements");
 
     m_elements[index].setReference(name);
+}
+
+const int GeometricElementList::getIndexByReference(const char* ref)
+{
+    for (int index = 0; index < m_count; ++index)
+    {
+        if (strcmp(ref, m_elements[index].getReference()) == 0)
+        {
+            return index;
+        }
+    }
+
+    return 0;
+//    std::string msg = "Cannot find element with reference ";
+//    msg += name;
+//    throw SALOME_Exception(msg.c_str());
 }

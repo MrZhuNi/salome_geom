@@ -92,14 +92,6 @@ GEOMImpl_IImportExportOperations::GEOMImpl_IImportExportOperations(GEOM_Engine* 
         GEOM_IOperations(engine, docID)
 {
     MESSAGE("GEOMImpl_IImportExportOperations::GEOMImpl_IImportExportOperations");
-    /*myBasicOperations     = new GEOMImpl_IBasicOperations(GetEngine(), GetDocID());
-     myBooleanOperations   = new GEOMImpl_IBooleanOperations(GetEngine(), GetDocID());
-     myShapesOperations    = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
-     myTransformOperations = new GEOMImpl_ITransformOperations(GetEngine(), GetDocID());
-     myBlocksOperations    = new GEOMImpl_IBlocksOperations(GetEngine(), GetDocID());
-     my3DPrimOperations    = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
-     myLocalOperations     = new GEOMImpl_ILocalOperations(GetEngine(), GetDocID());
-     myHealingOperations   = new GEOMImpl_IHealingOperations(GetEngine(), GetDocID());*/
     m_shapesOperations = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
     m_groupOperations = new GEOMImpl_IGroupOperations(GetEngine(), GetDocID());
 }
@@ -112,14 +104,6 @@ GEOMImpl_IImportExportOperations::GEOMImpl_IImportExportOperations(GEOM_Engine* 
 GEOMImpl_IImportExportOperations::~GEOMImpl_IImportExportOperations()
 {
     MESSAGE("GEOMImpl_IImportExportOperations::~GEOMImpl_IImportExportOperations");
-    /*delete myBasicOperations;
-     delete myBooleanOperations;
-     delete myShapesOperations;
-     delete myTransformOperations;
-     delete myBlocksOperations;
-     delete my3DPrimOperations;
-     delete myLocalOperations;
-     delete myHealingOperations;*/
     delete m_shapesOperations;
     delete m_groupOperations;
 }
@@ -139,11 +123,7 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
         std::list<Handle(GEOM_Object)> groupList,
         std::list<Handle(GEOM_Object)> fieldList)
 {
-    std::cout << ">> ExportXAO" << std::endl;
     SetErrorCode(KO);
-    bool isGood = false;
-
-    //
 
     // add a new shape function with parameters
     Handle(GEOM_Function) lastFunction = shape->GetLastFunction();
@@ -163,42 +143,17 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
     if (exportFunction->GetDriverGUID() != GEOMImpl_ExportXAODriver::GetID())
         return false;
 
-    /*GEOMImpl_IExportXAO aData (aRefFunction);
-
-     TCollection_AsciiString FileName = theFileName.c_str();
-     aData.SetExportingShape(aRefFunction);
-     aData.SetFileName(FileName);
-     aData.SetlGroups(thelGroups);
-     aData.SetlFields(thelFields);
-
-     //Compute the resulting value
-     try {
-     #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
-     OCC_CATCH_SIGNALS;
-     #endif
-     if (!GetSolver()->ComputeFunction(aFunction)) {
-     SetErrorCode("ExportXAO driver failed : Not enough space on disk, or you haven't permissions to write this directory");
-     return false;
-     }
-     }
-     catch (Standard_Failure) {
-     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-     SetErrorCode(aFail->GetMessageString());
-     return false;
-     }*/
     XAO::Xao* xaoObject = new XAO::Xao();
 
     XAO::Geometry* geometry = new XAO::Geometry();
     TopoDS_Shape topoShape = shape->GetValue();
-    std::ostringstream dumpStream;
-    BRepTools::Dump(topoShape, dumpStream);
-    geometry->setShape(dumpStream.str().c_str());
+    geometry->setShape(topoShape);
     geometry->setName(shape->GetName());
 
     Handle(TColStd_HSequenceOfTransient) subObjects = m_shapesOperations->GetExistingSubObjects(shape, false);
     int nbSubObjects = subObjects->Length();
-    std::cout << "nb sub obj = " << nbSubObjects << std::endl;
-    int nbVertices = 0, nbEdges = 0, nbFaces = 0, nbSolids = 0, nbGroups = 0;
+
+    int tmpIndex;
     for (int i = 1; i <= nbSubObjects; i++)
     {
         Handle(Standard_Transient) transientSubObject = subObjects->Value(i);
@@ -206,109 +161,94 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
             continue;
 
         Handle(GEOM_Object) subObject = Handle(GEOM_Object)::DownCast(transientSubObject);
-        if (subObject->GetType() == GEOM_GROUP)
-        {
-            nbGroups++;
-        }
-        else
-        {
-            switch (subObject->GetValue().ShapeType())
-            {
-                case TopAbs_VERTEX: nbVertices++; break;
-                case TopAbs_EDGE: nbEdges++; break;
-                case TopAbs_FACE: nbFaces++; break;
-                case TopAbs_SOLID: nbSolids++; break;
-            }
-        }
-    }
-
-    std::cout << "Nb = " << nbVertices << ", " << nbEdges << ", " << nbFaces << ", " << nbSolids << ", " << nbGroups << std::endl;
-    if (nbVertices > 0) geometry->setCountVertices(nbVertices);
-    if (nbEdges > 0) geometry->setCountEdges(nbEdges);
-    if (nbFaces > 0) geometry->setCountFaces(nbFaces);
-    if (nbSolids > 0) geometry->setCountSolids(nbSolids);
-
-    int vInd = 0, eInd = 0, fInd = 0, sInd = 0;
-    for (int i = 1; i <= nbSubObjects; i++)
-    {
-        Handle(Standard_Transient) transientSubObject = subObjects->Value(i);
-        if (transientSubObject.IsNull())
-            continue;
-
-        Handle(GEOM_Object) subObject = Handle(GEOM_Object)::DownCast(transientSubObject);
-        std::cout << " sub[" << i << "] N=" << subObject->GetName()
-                //<< " E=" << subObject->GetEntry()
-                //<< " D=" << subObject->GetDocID()
-                << " T=" << subObject->GetType() << std::endl;
         if (subObject->GetType() != GEOM_GROUP)
         {
-            int index = m_shapesOperations->GetSubShapeIndex(shape, subObject);
-            const char* strIndex = XAO::XaoUtils::intToString(index);
-            std::cout << "    index= " << index << std::endl;
+            int subIndex = m_shapesOperations->GetSubShapeIndex(shape, subObject);
+            // convert index to a string
+            std::stringstream str;
+            str << subIndex;
+            std::string strIndex = str.str();
+
             switch (subObject->GetValue().ShapeType())
             {
                 case TopAbs_VERTEX:
-                    geometry->setVertex(vInd++, subObject->GetName(), strIndex);
+                    tmpIndex = geometry->getVertexIndexByReference(strIndex.c_str());
+                    geometry->setVertexName(tmpIndex, subObject->GetName());
                     break;
                 case TopAbs_EDGE:
-                    geometry->setEdge(eInd++, subObject->GetName(), strIndex);
+                    tmpIndex = geometry->getEdgeIndexByReference(strIndex.c_str());
+                    geometry->setEdgeName(tmpIndex, subObject->GetName());
                     break;
                 case TopAbs_FACE:
-                    geometry->setFace(fInd++, subObject->GetName(), strIndex);
+                    tmpIndex = geometry->getFaceIndexByReference(strIndex.c_str());
+                    geometry->setFaceName(tmpIndex, subObject->GetName());
                     break;
                 case TopAbs_SOLID:
-                    geometry->setSolid(sInd++, subObject->GetName(), strIndex);
+                    tmpIndex = geometry->getSolidIndexByReference(strIndex.c_str());
+                    geometry->setSolidName(tmpIndex, subObject->GetName());
                     break;
             }
         }
     }
     xaoObject->setGeometry(geometry);
 
-    xaoObject->exportToFile(fileName.c_str());
-
-    /*
     // adding groups
     std::list<Handle(GEOM_Object)>::iterator itG1 = groupList.begin();
-    int gInd = 0;
     while (itG1 != groupList.end())
     {
-        std::cout << "Group = " << gInd++ << std::endl;
         Handle(GEOM_Object) itGroup = (*itG1++);
-        XAO::Group* group = new XAO::Group();
-        group->setName(itGroup->GetName());
         Handle(TColStd_HArray1OfInteger) groupIds = m_groupOperations->GetObjects(itGroup);
         TopAbs_ShapeEnum shapeGroup = m_groupOperations->GetType(itGroup);
-        std::cout << "GroupShape = " << shapeGroup << std::endl;
-        if (shapeGroup == TopAbs_VERTEX)
+
+        XAO::Group* group = new XAO::Group();
+        group->setName(itGroup->GetName());
+        switch (shapeGroup)
         {
-            group->setDimension(0);
-            for (int i = 1; i <= groupIds->Length(); i++)
-            {
-                const char* index = geometry->getVertexReference(groupIds->Value(i));
-                group->addElement(index);
-            }
+            case TopAbs_VERTEX:
+                group->setDimension(0);
+                for (int i = 1; i <= groupIds->Length(); i++)
+                {
+                    const char* ref = XAO::XaoUtils::intToString(groupIds->Value(i));
+                    const int index = geometry->getVertexIndexByReference(ref);
+                    group->addElement(index);
+                }
+                break;
+            case TopAbs_EDGE:
+                group->setDimension(1);
+                for (int i = 1; i <= groupIds->Length(); i++)
+                {
+                    const char* ref = XAO::XaoUtils::intToString(groupIds->Value(i));
+                    const int index = geometry->getEdgeIndexByReference(ref);
+                    group->addElement(index);
+                }
+                break;
+            case TopAbs_FACE:
+                group->setDimension(2);
+                for (int i = 1; i <= groupIds->Length(); i++)
+                {
+                    const char* ref = XAO::XaoUtils::intToString((int)(groupIds->Value(i)));
+                    const int index = geometry->getFaceIndexByReference(ref);
+                    group->addElement(index);
+                }
+                break;
+            case TopAbs_SOLID:
+                group->setDimension(3);
+                for (int i = 1; i <= groupIds->Length(); i++)
+                {
+                    const char* ref = XAO::XaoUtils::intToString(groupIds->Value(i));
+                    const int index = geometry->getSolidIndexByReference(ref);
+                    group->addElement(index);
+                }
+                break;
         }
+
         xaoObject->addGroup(group);
-        /*{
-         case TopAbs_SOLID:
-         Group->setType(3);
-         break;
-         case TopAbs_FACE:
-         Group->setType(2);
-         break;
-         case TopAbs_EDGE:
-         Group->setType(1);
-         break;
-         case TopAbs_VERTEX:
-         Group->setType(0);
-         break;
-         }  *
+    }
 
-    }*/
+    xaoObject->exportToFile(fileName.c_str());
 
-    /*
     // make a Python command
-    TCollection_AsciiString fileNameStr = fileName.c_str();
+    /*TCollection_AsciiString fileNameStr = fileName.c_str();
     GEOM::TPythonDump pd(exportFunction);
     std::list<Handle(GEOM_Object)>::iterator itG = groupList.begin();
     std::list<Handle(GEOM_Object)>::iterator itF = fieldList.begin();
@@ -329,6 +269,6 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
 
     SetErrorCode(OK);
 
-    return isGood;
+    return true;
 }
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/

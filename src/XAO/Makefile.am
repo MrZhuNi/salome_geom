@@ -21,10 +21,6 @@
 #
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-if CPPUNIT_IS_OK
-  SUBDIRS = . tests
-endif
-
 # ===============================================================
 # Files to be installed
 # ===============================================================

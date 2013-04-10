@@ -167,12 +167,13 @@ void ImportExportGUI_ExportXAODlg::processObject()
     else
     {
         ledShape->setText(GEOMBase::GetName(m_mainObj));
-        GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-        GEOM::ListOfGO_var Groups = aShOp->GetExistingSubObjects(m_mainObj, true);
-        // Affichage des noms des groupes
-        for (int i = 0, n = Groups->length(); i < n; i++)
+        GEOM::GEOM_IShapesOperations_var shapeOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+        GEOM::ListOfGO_var groups = shapeOp->GetExistingSubObjects(m_mainObj, true);
+        // add groups names
+        for (int i = 0, n = groups->length(); i < n; i++)
         {
-            lstGroups->addItem(GEOMBase::GetName(Groups[i]));
+            lstGroups->addItem(GEOMBase::GetName(groups[i]));
+            m_groups.append(GEOM::GeomObjPtr(groups[i].in()));
         }
     }
 }
@@ -296,20 +297,16 @@ bool ImportExportGUI_ExportXAODlg::execute(ObjectList& objects)
     GEOM::ListOfGO_var groups = shapesOp->GetExistingSubObjects(m_mainObj, true);
     GEOM::ListOfGO_var fields = new GEOM::ListOfGO();
 
-    std::cout << " == Groups" << std::endl;
     groups->length(m_groups.count());
     for (int i = 0; i < m_groups.count(); i++)
         groups[i] = m_groups[i].copy();
 
-    std::cout << " == Fields" << std::endl;
     fields->length(m_fields.count());
     for (int i = 0; i < m_fields.count(); i++)
         fields[i] = m_fields[i].copy();
 
     // call engine function
-    std::cout << " >> ExportXAO" << std::endl;
     res = ieOp->ExportXAO(m_mainObj, ledFileName->text().toStdString().c_str(), groups, fields);
-    std::cout << " << ExportXAO" << std::endl;
 
     return res;
 }

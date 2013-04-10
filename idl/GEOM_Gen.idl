@@ -4013,14 +4013,14 @@ module GEOM
   {
     /*!
      *  Export a shape to XAO Format
-     *  \param theExportingShape Shape to export
-     *  \param theFileName The name of the exported file
-     *  \param thelGroups List of groups to export
-     *  \param thelFields List of fields to export
-     *  \return New GEOM_Object, containing the created shape.
+     *  \param exportingShape Shape to export
+     *  \param fileName The name of the exported file
+     *  \param groups List of groups to export
+     *  \param fields List of fields to export
+     *  \return boolean indicating if export was succeful.
      */
 
-     boolean ExportXAO (in GEOM_Object theExportingShape, in string theFileName, in ListOfGO thelGroups, in ListOfGO thelFields);
+     boolean ExportXAO(in GEOM_Object shape, in string fileName, in ListOfGO groups, in ListOfGO fields);
 
     /*@@ insert new functions before this line @@ do not remove this line @@*/
   };

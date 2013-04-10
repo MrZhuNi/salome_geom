@@ -83,15 +83,15 @@ void ImportExportTest::testExportGeometry()
     xao.addGroup(group);
     group->setName("boite1");
     group->setDimension(3);
-    group->addElement("1");
+    group->addElement(1);
 
     group = new Group();
     xao.addGroup(group);
     group->setName("faces");
     group->setDimension(2);
-    group->addElement("5");
-    group->addElement("8");
-    group->addElement("9");
+    group->addElement(5);
+    group->addElement(8);
+    group->addElement(9);
 
     bool res = xao.exportToFile("mygeom.xao");
     CPPUNIT_ASSERT(res);
@@ -113,7 +113,7 @@ void ImportExportTest::testGeometryError()
 
 void ImportExportTest::testImportXao()
 {
-    std::cout << std::endl;
+    //std::cout << std::endl;
     Xao xao;
     xao.importFromFile(getTestFile("test.xao").c_str());
     CPPUNIT_ASSERT(strcmp(xao.getAuthor(), "me") == 0);
@@ -156,12 +156,12 @@ void ImportExportTest::testImportXao()
     CPPUNIT_ASSERT(group->getCount() == 1);
     CPPUNIT_ASSERT(strcmp(group->getName(), "boite_1") == 0);
     CPPUNIT_ASSERT(group->getDimension() == 3);
-    CPPUNIT_ASSERT(strcmp(group->getElement(0), "1") == 0);
+    CPPUNIT_ASSERT(group->getElement(0) == 1);
     group = xao.getGroup(1);
     CPPUNIT_ASSERT(group->getCount() == 3);
     CPPUNIT_ASSERT(strcmp(group->getName(), "") == 0);
     CPPUNIT_ASSERT(group->getDimension() == 2);
-    CPPUNIT_ASSERT(strcmp(group->getElement(0), "5") == 0);
-    CPPUNIT_ASSERT(strcmp(group->getElement(1), "8") == 0);
-    CPPUNIT_ASSERT(strcmp(group->getElement(2), "9") == 0);
+    CPPUNIT_ASSERT(group->getElement(0) == 5);
+    CPPUNIT_ASSERT(group->getElement(1) == 8);
+    CPPUNIT_ASSERT(group->getElement(2) == 9);
 }

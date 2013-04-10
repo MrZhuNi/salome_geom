@@ -21,6 +21,7 @@
 #ifndef __XAO_GROUP_HXX__
 #define __XAO_GROUP_HXX__
 
+# include <iostream>
 #include <string>
 #include <vector>
 
@@ -55,21 +56,21 @@ namespace XAO
             return m_elements.size();
         }
 
-        void addElement(const char* value)
+        void addElement(const int value)
         {
             m_elements.push_back(value);
         }
 
-        const char* getElement(const int index)
+        const int getElement(const int index)
         {
-            return m_elements[index].c_str();
+            return m_elements[index];
         }
 
     private:
         std::string m_name;
         int m_dimension;
         int m_count;
-        std::vector<std::string> m_elements;
+        std::vector<int> m_elements;
     };
 }
 

@@ -75,6 +75,7 @@ namespace XAO
         void setName(const int index, const char* name);
         const char* getReference(const int index);
         void setReference(const int index, const char* reference);
+        const int getIndexByReference(const char* reference);
 
     private:
         int m_count;

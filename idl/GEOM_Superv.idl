@@ -626,7 +626,7 @@ module GEOM
     //-----------------------------------------------------------//
     // ImportExportOperations                                    //
     //-----------------------------------------------------------//
-    boolean ExportXAO (in GEOM_Object theExportingShape, in string theFileName, in GEOM_List thelGroups, in GEOM_List thelFields);
+    boolean ExportXAO(in GEOM_Object exportingShape, in string fileName, in GEOM_List groups, in GEOM_List fields);
 
     /*@@ insert new functions before this line @@ do not remove this line @@*/
  };
