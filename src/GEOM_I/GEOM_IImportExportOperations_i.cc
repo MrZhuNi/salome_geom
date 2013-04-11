@@ -36,10 +36,12 @@
  *   constructor:
  */
 //=============================================================================
-GEOM_IImportExportOperations_i::GEOM_IImportExportOperations_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, ::GEOMImpl_IImportExportOperations* theImpl)
-:GEOM_IOperations_i(thePOA, theEngine, theImpl)
+GEOM_IImportExportOperations_i::GEOM_IImportExportOperations_i(PortableServer::POA_ptr thePOA,
+        GEOM::GEOM_Gen_ptr theEngine, ::GEOMImpl_IImportExportOperations* theImpl)
+:
+        GEOM_IOperations_i(thePOA, theEngine, theImpl)
 {
-  MESSAGE("GEOM_IImportExportOperations_i::GEOM_IImportExportOperations_i");
+    MESSAGE("GEOM_IImportExportOperations_i::GEOM_IImportExportOperations_i");
 }
 
 //=============================================================================
@@ -49,55 +51,74 @@ GEOM_IImportExportOperations_i::GEOM_IImportExportOperations_i(PortableServer::P
 //=============================================================================
 GEOM_IImportExportOperations_i::~GEOM_IImportExportOperations_i()
 {
-  MESSAGE("GEOM_IImportExportOperations_i::~GEOM_IImportExportOperations_i");
+    MESSAGE("GEOM_IImportExportOperations_i::~GEOM_IImportExportOperations_i");
 }
 
 //=============================================================================
 /*!
  *  Export a shape to XAO Format
- *  \param theExportingShape Shape to export
- *  \param theFileName The name of the exported file
- *  \param thelGroups List of groups to export
- *  \param thelFields List of fields to export
- *  \return New GEOM_Object, containing the created shape.
+ *  \param fileName The name of the exported file
+ *  \param shape The shape to export
+ *  \param groups The list of groups to export
+ *  \param fields The list of fields to export
+ *  \return boolean indicating if export was succeful.
  */
 //=============================================================================
-CORBA::Boolean GEOM_IImportExportOperations_i::ExportXAO (GEOM::GEOM_Object_ptr theExportingShape, const char* theFileName, const GEOM::ListOfGO& thelGroups, const GEOM::ListOfGO& thelFields)
+CORBA::Boolean GEOM_IImportExportOperations_i::ExportXAO(const char* fileName,
+        GEOM::GEOM_Object_ptr shape, const GEOM::ListOfGO& groups, const GEOM::ListOfGO& fields)
 {
-  bool isGood = false;
-  //Set a not done flag
-  GetOperations()->SetNotDone();
-  
-  // Get the reference shape
-  Handle(GEOM_Object) aReference = GetObjectImpl(theExportingShape);
-  
-  //Get the reference groups
-  int ind = 0;
-  int aLenGroup = thelGroups.length();
-  std::list<Handle(GEOM_Object)> aGroups;
-  for (; ind < aLenGroup; ind++) {
-    Handle(GEOM_Object) aGroup = GetObjectImpl(thelGroups[ind]);
-    if (aGroup.IsNull()) return false;
-    aGroups.push_back(aGroup);
-  }
-  
-  //Get the reference point
-  ind = 0;
-  int aLenField = thelFields.length();
-  std::list<Handle(GEOM_Object)> aFields;
-  for (; ind < aLenField; ind++) {
-    Handle(GEOM_Object) aField = GetObjectImpl(thelFields[ind]);
-    if (aField.IsNull()) return false;
-    aFields.push_back(aField);
-  }
-  
-  if (!aReference.IsNull())
-  {
-    // Export XAO
-    isGood = GetOperations()->ExportXAO(aReference, theFileName, aGroups, aFields);
-  }
+    bool isGood = false;
+    //Set a not done flag
+    GetOperations()->SetNotDone();
 
-  return isGood;
+    // Get the reference shape
+    Handle(GEOM_Object) reference = GetObjectImpl(shape);
+
+    //Get the reference groups
+    int ind = 0;
+    std::list<Handle(GEOM_Object)> groupsObj;
+    for (; ind < groups.length(); ind++)
+    {
+        Handle(GEOM_Object) gobj = GetObjectImpl(groups[ind]);
+        if (gobj.IsNull()) return false;
+        groupsObj.push_back(gobj);
+    }
+
+    //Get the reference point
+    ind = 0;
+    std::list<Handle(GEOM_Object)> fieldsObj;
+    for (; ind < fields.length(); ind++)
+    {
+        Handle(GEOM_Object) fobj = GetObjectImpl(fields[ind]);
+        if (fobj.IsNull()) return false;
+        fieldsObj.push_back(fobj);
+    }
+
+    if (!reference.IsNull())
+    {
+        // Export XAO
+        isGood = GetOperations()->ExportXAO(fileName, reference, groupsObj, fieldsObj);
+    }
+
+    return isGood;
 }
+
+//=============================================================================
+/*!
+ *  Import a shape from XAO Format
+ *  \param fileName The name of the imported file
+ *  \param shape The imported shape
+ *  \param groups The list of imported groups
+ *  \param fields The list of imported fields
+ *  \return boolean indicating if import was succeful.
+ */
+//=============================================================================
+//bool GEOMImpl_IImportExportOperations::ImportXAO(const std::string fileName,
+//        Handle(GEOM_Object),
+//        std::list<Handle_GEOM_Object, std::allocator<Handle_GEOM_Object> > groups,
+//        std::list<Handle_GEOM_Object, std::allocator<Handle_GEOM_Object> > fields)
+//{
+//    return true;
+//}
 
 /*@@ insert new functions before this line @@ do not remove this line @@*/

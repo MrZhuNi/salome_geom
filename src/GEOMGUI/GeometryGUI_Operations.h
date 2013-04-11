@@ -194,6 +194,7 @@ namespace GEOMOp {
     OpDividedCylinder     = 10004,  // MENU NEW ENTITY - ADVANCED - DIVIDEDCYLINDER
     // ImportExport ----------------//--------------------------------
     OpExportXAO           = 10005,  // MENU NEW ENTITY - IMPORTEXPORT - EXPORTXAO
+    OpImportXAO           = 10006,  // MENU NEW ENTITY - IMPORTEXPORT - IMPORTXAO
     //@@ insert new functions before this line @@ do not remove this line @@//
   };
 }

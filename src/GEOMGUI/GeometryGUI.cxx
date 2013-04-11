@@ -580,6 +580,7 @@ void GeometryGUI::OnGUIEvent( int id )
     libName = "AdvancedGUI";
     break;
   case GEOMOp::OpExportXAO:           // MENU NEW ENTITY - IMPORTEXPORT - EXPORTXAO
+  case GEOMOp::OpImportXAO:           // MENU NEW ENTITY - IMPORTEXPORT - IMPORTXAO
     libName = "ImportExportGUI";
     break;
   default:
@@ -910,6 +911,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpDividedDisk, "DIVIDEDDISK" );
   createGeomAction( GEOMOp::OpDividedCylinder, "DIVIDEDCYLINDER" );
   createGeomAction( GEOMOp::OpExportXAO, "EXPORTXAO" );
+  createGeomAction( GEOMOp::OpImportXAO, "IMPORTXAO" );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create menus --------------------------
@@ -961,7 +963,8 @@ void GeometryGUI::initialize( CAM_Application* app )
 
    int impexpId = createMenu( tr( "MEN_IMPORTEXPORT" ), newEntId, -1 );
 
-  createMenu( GEOMOp::OpExportXAO, impexpId, -1 );
+   createMenu( GEOMOp::OpExportXAO, impexpId, -1 );
+   createMenu( GEOMOp::OpImportXAO, impexpId, -1 );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   createMenu( separator(), newEntId, -1 );
@@ -1234,7 +1237,8 @@ void GeometryGUI::initialize( CAM_Application* app )
 
    int impexpTbId = createTool( tr( "TOOL_IMPORTEXPORT" ) );
 
-  createTool( GEOMOp::OpExportXAO, impexpTbId );
+   createTool( GEOMOp::OpExportXAO, impexpTbId );
+   createTool( GEOMOp::OpImportXAO, impexpTbId );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create popup menus --------------------------

@@ -30,6 +30,7 @@
 #include <QLineEdit>
 #include <QButtonGroup>
 #include <QListWidget>
+#include <QFileDialog>
 #include <QMap>
 //#include <ui_ImportExportGUI_1Sel1LineEdit2ListWidget_QTD.h>
 
@@ -54,7 +55,7 @@ ImportExportGUI_ExportXAODlg::ImportExportGUI_ExportXAODlg(GeometryGUI* geometry
     m_mainObj = GEOM::GEOM_Object::_nil();
 
     SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-    QPixmap imageOp(resMgr->loadPixmap("GEOM", tr("ICON_DLG_EXPORTXAO_EXPORTINGSHAPE_FILENAME_LGROUPS_LFIELDS")));
+    QPixmap imageOp(resMgr->loadPixmap("GEOM", tr("ICON_DLG_EXPORTXAO")));
     QPixmap iconSelect(resMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
     setWindowTitle(tr("GEOM_EXPORTXAO_TITLE"));
@@ -67,57 +68,76 @@ ImportExportGUI_ExportXAODlg::ImportExportGUI_ExportXAODlg(GeometryGUI* geometry
     mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
     mainFrame()->RadioButton3->close();
 
+    // hide name
+    mainFrame()->GroupBoxName->hide();
+
+    //****************************
+    // Selection Group box
     QGroupBox* gbxExport = new QGroupBox(parent);
 
-    QGridLayout *gridLayoutExport = new QGridLayout(gbxExport);
+    QGridLayout* gridLayoutExport = new QGridLayout(gbxExport);
 #ifndef Q_OS_MAC
     gridLayoutExport->setSpacing(6);
-#endif
-#ifndef Q_OS_MAC
     gridLayoutExport->setContentsMargins(9, 9, 9, 9);
 #endif
     gridLayoutExport->setObjectName(QString::fromUtf8("gridLayoutExport"));
 
-    //****************************
-    QLabel* txtLabel1 = new QLabel(tr("GEOM_EXPORTXAO_EXPORTINGSHAPE"), gbxExport);
-    gridLayoutExport->addWidget(txtLabel1, 0, 0, 1, 1);
-
-    btnSelect = new QPushButton(gbxExport);
-    btnSelect->setIcon(iconSelect);
-    gridLayoutExport->addWidget(btnSelect, 0, 1, 1, 1);
-
+    // Line 0
+    QLabel* lblShape = new QLabel(tr("GEOM_EXPORTXAO_EXPORTINGSHAPE"), gbxExport);
+    btnShapeSelect = new QPushButton(gbxExport);
+    btnShapeSelect->setIcon(iconSelect);
     ledShape = new QLineEdit(gbxExport);
     ledShape->setMinimumSize(QSize(100, 0));
+
+    gridLayoutExport->addWidget(lblShape, 0, 0, 1, 1);
+    gridLayoutExport->addWidget(btnShapeSelect, 0, 1, 1, 1);
     gridLayoutExport->addWidget(ledShape, 0, 2, 1, 1);
 
-    //****************************
-    QLabel* txtLabel2 = new QLabel(tr("GEOM_EXPORTXAO_FILENAME"), gbxExport);
-    gridLayoutExport->addWidget(txtLabel2, 1, 0, 1, 1);
-
+    // Line 1
+    QLabel* lblFileName = new QLabel(tr("GEOM_EXPORTXAO_FILENAME"), gbxExport);
+    btnFileSelect = new QPushButton(gbxExport);
     ledFileName = new QLineEdit(gbxExport);
-    gridLayoutExport->addWidget(ledFileName, 1, 1, 1, 2);
+    btnFileSelect->setText("...");
+
+    gridLayoutExport->addWidget(lblFileName, 1, 0, 1, 1);
+    gridLayoutExport->addWidget(btnFileSelect, 1, 1, 1, 1);
+    gridLayoutExport->addWidget(ledFileName, 1, 2, 1, 1);
 
     //****************************
-    QLabel* txtLabel3 = new QLabel(tr("GEOM_EXPORTXAO_LGROUPS"), gbxExport);
-    gridLayoutExport->addWidget(txtLabel3, 2, 0, 1, 2);
+    // Filter Group box
+    QGroupBox* gbxFilter = new QGroupBox(parent);
 
-    lstGroups = new QListWidget(gbxExport);
-    gridLayoutExport->addWidget(lstGroups, 3, 0, 1, 2);
+    QGridLayout* gridLayoutFilter = new QGridLayout(gbxFilter);
+#ifndef Q_OS_MAC
+    gridLayoutFilter->setSpacing(6);
+    gridLayoutFilter->setContentsMargins(9, 9, 9, 9);
+#endif
+    gridLayoutFilter->setObjectName(QString::fromUtf8("gbxFilter"));
 
-    QLabel* txtLabel4 = new QLabel(tr("GEOM_EXPORTXAO_LFIELDS"), gbxExport);
-    gridLayoutExport->addWidget(txtLabel4, 2, 2, 1, 1);
+    // Line 0
+    QLabel* lblGroups = new QLabel(tr("GEOM_EXPORTXAO_LGROUPS"), gbxFilter);
+    QLabel* lblFields = new QLabel(tr("GEOM_EXPORTXAO_LFIELDS"), gbxFilter);
 
-    lstFields = new QListWidget(gbxExport);
-    gridLayoutExport->addWidget(lstFields, 3, 2, 1, 1);
+    gridLayoutFilter->addWidget(lblGroups, 0, 0, 1, 1);
+    gridLayoutFilter->addWidget(lblFields, 0, 1, 1, 1);
 
+    // Line 1
+    lstGroups = new QListWidget(gbxFilter);
+    lstGroups->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    lstFields = new QListWidget(gbxFilter);
+    lstFields   ->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+    gridLayoutFilter->addWidget(lstGroups, 1, 0, 1, 1);
+    gridLayoutFilter->addWidget(lstFields, 1, 1, 1, 1);
+
+    //****************************
     QVBoxLayout* layout = new QVBoxLayout(centralWidget());
     layout->setMargin(0);
     layout->setSpacing(6);
     layout->addWidget(gbxExport);
+    layout->addWidget(gbxFilter);
 
-    //QWidget::setTabOrder(PushButton1, LineEdit1);
-    //QWidget::setTabOrder(LineEdit1, LineEdit2);
-
+    // set help
     setHelpFileName("create_exportxao_page.html");
 
     Init();
@@ -145,9 +165,12 @@ void ImportExportGUI_ExportXAODlg::Init()
     connect(buttonOk(), SIGNAL(clicked()), this, SLOT(ClickOnOk()));
     connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
-    connect(btnSelect, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+    connect(btnShapeSelect, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
     connect(((SalomeApp_Application*) (SUIT_Session::session()->activeApplication()))->selectionMgr(),
             SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+
+    connect(btnFileSelect, SIGNAL(clicked()), this, SLOT(btnFileSelectClicked()));
+
 
     initName(tr("GEOM_EXPORTXAO"));
     SelectionIntoArgument();
@@ -159,22 +182,33 @@ void ImportExportGUI_ExportXAODlg::Init()
 //=================================================================================
 void ImportExportGUI_ExportXAODlg::processObject()
 {
+    lstGroups->clear();
+    lstFields->clear();
+    m_groups.clear();
+    m_fields.clear();
+
     if (m_mainObj->_is_nil())
     {
         ledShape->setText("");
-        ledFileName->setText("");
     }
     else
     {
         ledShape->setText(GEOMBase::GetName(m_mainObj));
         GEOM::GEOM_IShapesOperations_var shapeOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-        GEOM::ListOfGO_var groups = shapeOp->GetExistingSubObjects(m_mainObj, true);
+
         // add groups names
+        GEOM::ListOfGO_var groups = shapeOp->GetExistingSubObjects(m_mainObj, true);
         for (int i = 0, n = groups->length(); i < n; i++)
         {
-            lstGroups->addItem(GEOMBase::GetName(groups[i]));
+            QListWidgetItem* item = new QListWidgetItem();
+            item->setData(Qt::UserRole, QVariant(i));
+            item->setText(GEOMBase::GetName(groups[i]));
+            lstGroups->addItem(item);
             m_groups.append(GEOM::GeomObjPtr(groups[i].in()));
         }
+        lstGroups->sortItems(Qt::AscendingOrder);
+
+        // TODO: add fields
     }
 }
 
@@ -214,20 +248,11 @@ void ImportExportGUI_ExportXAODlg::SelectionIntoArgument()
     SALOME_ListIO selList;
     selMgr->selectedObjects(selList);
 
-    if (selList.Extent() != 1)
+    if (selList.Extent() == 1)
     {
-        processObject();
-        return;
+        m_mainObj = GEOMBase::ConvertIOinGEOMObject(selList.First());
     }
 
-    /*GEOM::GEOM_Object_var aSelectedObject*/m_mainObj = GEOMBase::ConvertIOinGEOMObject(selList.First());
-
-    /*if ( aSelectedObject->_is_nil() ) {
-     processObject();
-     return;
-     }*/
-
-    //myMainObj = aSelectedObject;
     processObject();
 }
 
@@ -241,6 +266,20 @@ void ImportExportGUI_ExportXAODlg::SetEditCurrentArgument()
     myEditCurrentArgument = ledShape;
     SelectionIntoArgument();
 }
+
+//=================================================================================
+// function : btnFileSelectClicked()
+// purpose  :
+//=================================================================================
+void ImportExportGUI_ExportXAODlg::btnFileSelectClicked()
+{
+    QString selFile = QFileDialog::getSaveFileName(this, tr("GEOM_SELECT_XAO"), QString(), tr("XAO_FILES"));
+    if (!selFile.isEmpty())
+    {
+        ledFileName->setText(selFile);
+    }
+}
+
 //=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
@@ -275,11 +314,15 @@ GEOM::GEOM_IOperations_ptr ImportExportGUI_ExportXAODlg::createOperation()
 //=================================================================================
 bool ImportExportGUI_ExportXAODlg::isValid(QString& msg)
 {
-    bool ok = true;
+    // check shape
+    if (ledShape->text().isEmpty())
+        return false;
 
-    //@@ add custom validation actions here @@//
+    // check file name
+    if (ledFileName->text().isEmpty())
+        return false;
 
-    return ok;
+    return true;
 }
 
 //=================================================================================
@@ -290,23 +333,33 @@ bool ImportExportGUI_ExportXAODlg::execute(ObjectList& objects)
 {
     bool res = false;
 
-    GEOM::GEOM_Object_var obj;
+    // get selected groups
+    QList<QListWidgetItem*> selGroups = lstGroups->selectedItems();
+    GEOM::ListOfGO_var groups = new GEOM::ListOfGO();
+    groups->length(selGroups.count());
+    int i = 0;
+     for (QList<QListWidgetItem*>::iterator it = selGroups.begin(); it != selGroups.end(); ++it)
+     {
+         QListWidgetItem* item = (*it);
+         int index = item->data(Qt::UserRole).toInt();
+         groups[i++] = m_groups[index].copy();
+     }
 
-    GEOM::GEOM_IImportExportOperations_var ieOp = GEOM::GEOM_IImportExportOperations::_narrow(getOperation());
-    GEOM::GEOM_IShapesOperations_var shapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-    GEOM::ListOfGO_var groups = shapesOp->GetExistingSubObjects(m_mainObj, true);
+     // get selected fields
+     QList<QListWidgetItem*> selFields = lstFields->selectedItems();
     GEOM::ListOfGO_var fields = new GEOM::ListOfGO();
-
-    groups->length(m_groups.count());
-    for (int i = 0; i < m_groups.count(); i++)
-        groups[i] = m_groups[i].copy();
-
     fields->length(m_fields.count());
-    for (int i = 0; i < m_fields.count(); i++)
-        fields[i] = m_fields[i].copy();
+    for (QList<QListWidgetItem*>::iterator it = selFields.begin(); it != selFields.end(); ++it)
+    {
+        QListWidgetItem* item = (*it);
+        int index = item->data(Qt::UserRole).toInt();
+        fields[i++] = m_fields[index].copy();
+    }
 
     // call engine function
-    res = ieOp->ExportXAO(m_mainObj, ledFileName->text().toStdString().c_str(), groups, fields);
+    GEOM::GEOM_IImportExportOperations_var ieOp = GEOM::GEOM_IImportExportOperations::_narrow(getOperation());
+    res = ieOp->ExportXAO(ledFileName->text().toStdString().c_str(),
+            m_mainObj, groups, fields);
 
     return res;
 }

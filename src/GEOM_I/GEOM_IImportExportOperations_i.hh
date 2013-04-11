@@ -34,19 +34,25 @@
 #include "GEOMImpl_IImportExportOperations.hxx"
 
 class GEOM_I_EXPORT GEOM_IImportExportOperations_i :
-    public virtual POA_GEOM::GEOM_IImportExportOperations,
-    public virtual GEOM_IOperations_i
+public virtual POA_GEOM::GEOM_IImportExportOperations,
+public virtual GEOM_IOperations_i
 {
- public:
-  GEOM_IImportExportOperations_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine,
-			    ::GEOMImpl_IImportExportOperations* theImpl);
-  ~GEOM_IImportExportOperations_i();
+public:
+    GEOM_IImportExportOperations_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine,
+            ::GEOMImpl_IImportExportOperations* theImpl);
+    ~GEOM_IImportExportOperations_i();
 
-  CORBA::Boolean ExportXAO (GEOM::GEOM_Object_ptr theExportingShape, const char* theFileName, const GEOM::ListOfGO& thelGroups, const GEOM::ListOfGO& thelFields);
-  /*@@ insert new functions before this line @@ do not remove this line @@*/
+    CORBA::Boolean ExportXAO (const char* fileName,
+            GEOM::GEOM_Object_ptr shape,
+            const GEOM::ListOfGO& groups,
+            const GEOM::ListOfGO& fields);
+    CORBA::Boolean ImportXAO (const char* fileName, GEOM::GEOM_Object_out shape,
+            GEOM::ListOfGO_out groups,
+            GEOM::ListOfGO_out fields);
+    /*@@ insert new functions before this line @@ do not remove this line @@*/
 
-  ::GEOMImpl_IImportExportOperations* GetOperations()
-  { return (::GEOMImpl_IImportExportOperations*)GetImpl(); }
+    ::GEOMImpl_IImportExportOperations* GetOperations()
+    {   return (::GEOMImpl_IImportExportOperations*)GetImpl();}
 };
 
 #endif

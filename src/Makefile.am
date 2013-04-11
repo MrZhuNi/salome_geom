@@ -35,10 +35,11 @@ if GEOM_ENABLE_GUI
              DisplayGUI BasicGUI PrimitiveGUI GenerationGUI EntityGUI BuildGUI	\
              BooleanGUI TransformationGUI OperationGUI RepairGUI MeasureGUI	\
              GroupGUI BlocksGUI AdvancedGUI ImportExportGUI GEOM_SWIG_WITHIHM
-endif
 
 if CPPUNIT_IS_OK
   SUBDIRS += XAO/tests
+endif
+
 endif
 
 DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo \

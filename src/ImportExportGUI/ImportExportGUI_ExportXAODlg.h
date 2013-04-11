@@ -59,7 +59,8 @@ private:
     QLineEdit* ledFileName;
     QListWidget* lstGroups;
     QListWidget* lstFields;
-    QPushButton* btnSelect;
+    QPushButton* btnShapeSelect;
+    QPushButton* btnFileSelect;
 
 private slots:
     void ClickOnOk();
@@ -68,6 +69,7 @@ private slots:
     void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
+    void btnFileSelectClicked();
 };
 
 #endif // IMPORTEXPORTGUI_EXPORTXAODLG_H

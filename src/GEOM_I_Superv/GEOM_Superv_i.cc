@@ -3451,18 +3451,19 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDividedCylinder (CORBA::Double theR,
 //=============================================================================
 //  ExportXAO
 //=============================================================================
-CORBA::Boolean GEOM_Superv_i::ExportXAO (GEOM::GEOM_Object_ptr theExportingShape, const char* theFileName, GEOM::GEOM_List_ptr thelGroups, GEOM::GEOM_List_ptr thelFields)
+CORBA::Boolean GEOM_Superv_i::ExportXAO (const char* fileName, GEOM::GEOM_Object_ptr shape,
+        GEOM::GEOM_List_ptr groups, GEOM::GEOM_List_ptr fields)
 {
   beginService( " GEOM_Superv_i::ExportXAO" );
   MESSAGE("GEOM_Superv_i::ExportXAO");
   getImportExportOp();
-  if (GEOM_List_i<GEOM::ListOfGO>* aListImplG =
-      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thelGroups, myPOA).in()))
+  if (GEOM_List_i<GEOM::ListOfGO>* groupList =
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(groups, myPOA).in()))
   {
-    if (GEOM_List_i<GEOM::ListOfGO>* aListImplF =
-        dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thelFields, myPOA).in()))
+    if (GEOM_List_i<GEOM::ListOfGO>* fieldList =
+        dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(fields, myPOA).in()))
     {
-      CORBA::Boolean isGood = myImportExportOp->ExportXAO(theExportingShape, theFileName, aListImplG->GetList(), aListImplF->GetList());
+      CORBA::Boolean isGood = myImportExportOp->ExportXAO(fileName, shape, groupList->GetList(), fieldList->GetList());
       endService( " GEOM_Superv_i::ExportXAO" );
       return isGood;
     }
@@ -3470,6 +3471,15 @@ CORBA::Boolean GEOM_Superv_i::ExportXAO (GEOM::GEOM_Object_ptr theExportingShape
   endService( " GEOM_Superv_i::ExportXAO" );
   return false;
 }
+
+//=============================================================================
+//  ImportXAO
+//=============================================================================
+//CORBA::Boolean GEOM_Superv_i::ImportXAO (const char* fileName, GEOM::GEOM_Object_out shape,
+//        GEOM::GEOM_List_out groups, GEOM::GEOM_List_out fields)
+//{
+//  return false;
+//}
 /*@@ insert new functions before this line @@ do not remove this line @@*/
 
 //=====================================================================================

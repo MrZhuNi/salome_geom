@@ -5313,14 +5313,14 @@
                         <service-by-default>0</service-by-default>
                         <inParameter-list>
                             <inParameter>
-                                <inParameter-name>theExportingShape</inParameter-name>
-                                <inParameter-type>GEOM_Object</inParameter-type>
-                                <inParameter-comment>Shape to export</inParameter-comment>
-                            </inParameter>
-                            <inParameter>
                                 <inParameter-name>theFileName</inParameter-name>
                                 <inParameter-type>string</inParameter-type>
                                 <inParameter-comment>The name of the exported file</inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-name>theExportingShape</inParameter-name>
+                                <inParameter-type>GEOM_Object</inParameter-type>
+                                <inParameter-comment>Shape to export</inParameter-comment>
                             </inParameter>
                             <inParameter>
                                 <inParameter-name>thelGroups</inParameter-name>

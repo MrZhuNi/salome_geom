@@ -1227,7 +1227,7 @@
             <source>DLG_PIPETSHAPE_W2</source>
             <translation>dlg_pipetshapew2.png</translation>
         </message>
-        
+
         <message>
             <source>DLG_PIPETSHAPE_FILLET</source>
             <translation>dlg_pipetshapefillet.png</translation>
@@ -1260,7 +1260,7 @@
             <source>DLG_PIPETSHAPE_FILLET_RF</source>
             <translation>dlg_pipetshapefilletrf.png</translation>
         </message>
-        
+
         <message>
             <source>DLG_PIPETSHAPE_CHAMFER</source>
             <translation>dlg_pipetshapechamfer.png</translation>
@@ -1297,7 +1297,7 @@
             <source>DLG_PIPETSHAPE_CHAMFER_W</source>
             <translation>dlg_pipetshapechamferw.png</translation>
         </message>
-        
+
         <message>
             <source>ICON_OBJBROWSER_ADVANCED_201</source>
             <translation>tree_pipetshape.png</translation>
@@ -1337,15 +1337,23 @@
             <translation>dividedcylinder.png</translation>
         </message>
         <message>
-            <source>ICON_DLG_EXPORTXAO_EXPORTINGSHAPE_FILENAME_LGROUPS_LFIELDS</source>
-            <translation>exportxao_exportingshape_filename_lgroups_lfields.png</translation>
+            <source>ICON_DLG_EXPORTXAO</source>
+            <translation>exportxao.png</translation>
         </message>
         <message>
             <source>ICO_EXPORTXAO</source>
             <translation>exportxao.png</translation>
         </message>
         <message>
-            <source>ICON_OBJBROWSER_IMPORTEXPORT_200</source>
+            <source>ICON_DLG_IMPORTXAO</source>
+            <translation>importxao.png</translation>
+        </message>
+        <message>
+            <source>ICO_IMPORTXAO</source>
+            <translation>importxao.png</translation>
+        </message>
+        <message>
+            <source>ICON_OBJBROWSER_IMPORTEXPORT_204</source>
             <translation>tree_exportxao.png</translation>
         </message>
 	<!-- @@ insert new functions before this line @@ do not remove this line @@ -->

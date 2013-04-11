@@ -111,15 +111,15 @@ GEOMImpl_IImportExportOperations::~GEOMImpl_IImportExportOperations()
 //=============================================================================
 /*!
  *  Export a shape to XAO Format
- *  \param shape The shape to export
  *  \param fileName The name of the exported file
- *  \param groupList The list of groups to export
- *  \param fieldList The list of fields to export
- *  \return New GEOM_Object, containing the created shape.
+ *  \param shape The shape to export
+ *  \param groups The list of groups to export
+ *  \param fields The list of fields to export
+ *  \return boolean indicating if export was succeful.
  */
 //=============================================================================
-bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
-        const std::string fileName,
+bool GEOMImpl_IImportExportOperations::ExportXAO(const std::string fileName,
+        Handle(GEOM_Object) shape,
         std::list<Handle(GEOM_Object)> groupList,
         std::list<Handle(GEOM_Object)> fieldList)
 {
@@ -271,4 +271,25 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
 
     return true;
 }
+
+//=============================================================================
+/*!
+ *  Import a shape from XAO Format
+ *  \param fileName The name of the imported file
+ *  \param shape The imported shape
+ *  \param groups The list of imported groups
+ *  \param fields The list of imported fields
+ *  \return boolean indicating if import was succeful.
+ */
+//=============================================================================
+//bool GEOMImpl_IImportExportOperations::ImportXAO(const std::string fileName,
+//        Handle(GEOM_Object) shape,
+//        std::list<Handle(GEOM_Object)> groupList,
+//        std::list<Handle(GEOM_Object)> fieldList)
+//{
+//    SetErrorCode(KO);
+//    return true;
+//}
+
+
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/

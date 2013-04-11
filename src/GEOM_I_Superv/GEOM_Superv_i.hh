@@ -715,7 +715,10 @@ public:
   //-----------------------------------------------------------//
   // ImportExport Operations                                   //
   //-----------------------------------------------------------//
-  CORBA::Boolean ExportXAO (GEOM::GEOM_Object_ptr theExportingShape, const char* theFileName, GEOM::GEOM_List_ptr thelGroups, GEOM::GEOM_List_ptr thelFields);
+  CORBA::Boolean ExportXAO(const char* fileName,
+          GEOM::GEOM_Object_ptr shape, GEOM::GEOM_List_ptr groups, GEOM::GEOM_List_ptr fields);
+//  CORBA::Boolean ImportXAO(const char* fileName, GEOM::GEOM_Object_out shape,
+//          GEOM::GEOM_List_out groups, GEOM::GEOM_List_out fields);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 
 private:

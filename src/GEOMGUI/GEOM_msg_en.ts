@@ -4856,6 +4856,42 @@ be specified in meters).</translation>
         <source>GEOM_SELECT_IMAGE</source>
         <translation>Select image...</translation>
     </message>
+    <message>
+        <source>MEN_IMPORTEXPORT</source>
+        <translation>Import / Export</translation>
+    </message>
+    <message>
+        <source>TOP_EXPORTXAO</source>
+        <translation>Export to XAO</translation>
+    </message>
+    <message>
+        <source>MEN_EXPORTXAO</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>STB_EXPORTXAO</source>
+        <translation>Export shape to XAO format</translation>
+    </message>
+    <message>
+        <source>TOP_IMPORTXAO</source>
+        <translation>Import from XAO</translation>
+    </message>
+    <message>
+        <source>MEN_IMPORTXAO</source>
+        <translation>Import XAO</translation>
+    </message>
+    <message>
+        <source>STB_IMPORTXAO</source>
+        <translation>Import shape from XAO format</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTEXPORT_204</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>XAO_FILES</source>
+        <translation>XAO files (*.xao)</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
@@ -5745,7 +5781,7 @@ Do you want to create new material?</translation>
     </message>
     <message>
         <source>GEOM_EXPORTXAO_EXPORTINGSHAPE</source>
-        <translation>Exporting Shape</translation>
+        <translation>Shape</translation>
     </message>
     <message>
         <source>GEOM_EXPORTXAO_FILENAME</source>
@@ -5758,29 +5794,6 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_EXPORTXAO_LFIELDS</source>
         <translation>List of fields</translation>
-    </message>
-</context>
-<context>
-    <name>@default</name>
-    <message>
-        <source>MEN_IMPORTEXPORT</source>
-        <translation>Import / Export</translation>
-    </message>
-    <message>
-        <source>TOP_EXPORTXAO</source>
-        <translation>Export to XAO</translation>
-    </message>
-    <message>
-        <source>MEN_EXPORTXAO</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>STB_EXPORTXAO</source>
-        <translation>Export shape to XAO format</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTEXPORT_204</source>
-        <translation>Export XAO</translation>
     </message>
 </context>
 </TS>

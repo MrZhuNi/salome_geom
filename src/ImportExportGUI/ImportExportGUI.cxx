@@ -71,6 +71,8 @@ bool ImportExportGUI::OnGUIEvent(int commandId, SUIT_Desktop* parent)
         case GEOMOp::OpExportXAO:
             dialog = new ImportExportGUI_ExportXAODlg(getGeometryGUI(), parent);
             break;
+        case GEOMOp::OpImportXAO:
+            break;
             //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
         default:
             app->putInfo(tr("GEOM_PRP_COMMAND").arg(commandId));

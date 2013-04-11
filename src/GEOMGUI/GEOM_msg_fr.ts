@@ -4855,6 +4855,42 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>GEOM_SELECT_IMAGE</source>
         <translation>Sélectionner une image...</translation>
     </message>
+    <message>
+        <source>MEN_IMPORTEXPORT</source>
+        <translation>Import / Export</translation>
+    </message>
+    <message>
+        <source>TOP_EXPORTXAO</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>MEN_EXPORTXAO</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>STB_EXPORTXAO</source>
+        <translation>Exporter une forme au format XAO</translation>
+    </message>
+    <message>
+        <source>TOP_IMPORTXAO</source>
+        <translation>Import XAO</translation>
+    </message>
+    <message>
+        <source>MEN_IMPORTXAO</source>
+        <translation>Import XAO</translation>
+    </message>
+    <message>
+        <source>STB_IMPORTXAO</source>
+        <translation>Importer une forme au format XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTEXPORT_204</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>XAO_FILES</source>
+        <translation>Fichiers XAO (*.xao)</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>

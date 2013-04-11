@@ -4013,15 +4013,26 @@ module GEOM
   {
     /*!
      *  Export a shape to XAO Format
-     *  \param exportingShape Shape to export
      *  \param fileName The name of the exported file
-     *  \param groups List of groups to export
-     *  \param fields List of fields to export
+     *  \param shape The shape to export
+     *  \param groups The list of groups to export
+     *  \param fields The list of fields to export
      *  \return boolean indicating if export was succeful.
      */
 
-     boolean ExportXAO(in GEOM_Object shape, in string fileName, in ListOfGO groups, in ListOfGO fields);
+     boolean ExportXAO(in string fileName, in GEOM_Object shape, in ListOfGO groups, in ListOfGO fields);
 
+     /*!
+      *  Import a shape from XAO Format
+      *  \param fileName The name of the imported file
+      *  \param shape The imported shape
+      *  \param groups The list of imported groups
+      *  \param fields The list of imported fields
+      *  \return boolean indicating if import was succeful.
+      */
+
+      //boolean ImportXAO(in string fileName, out GEOM_Object shape, out ListOfGO groups, out ListOfGO fields);
+     
     /*@@ insert new functions before this line @@ do not remove this line @@*/
   };
 

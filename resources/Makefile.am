@@ -256,8 +256,8 @@ ADVANCED_RESOURCES += dlg_pipetshapefilletl2.png dlg_pipetshapefilletr2.png dlg_
 ADVANCED_RESOURCES += dlg_pipetshapefilletrf.png
 # ADVANCED_RESOURCES += divideddisk.png divideddisk_r_ratio.png tree_divideddisk.png
 ADVANCED_RESOURCES += dividedcylinder.png dividedcylinder_r_h.png
+ADVANCED_RESOURCES += exportxao.png importxao.png
 # tree_dividedcylinder.png
-#IMPORTEXPORT_RESOURCES += exportxao.png exportxao_exportingshape_filename_lgroups_lfields.png tree_exportxao.png
 ##@@ insert new functions before this line @@ do not remove this line @@##
 
 dist_salomeres_DATA += $(ADVANCED_RESOURCES)

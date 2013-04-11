@@ -9074,16 +9074,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Export a shape to XAO Format
-        #  @param theExportingShape Shape to export
-        #  @param theFileName The name of the exported file
-        #  @param thelGroups List of groups to export
-        #  @param thelFields List of fields to export
-        #  @return New GEOM_Object, containing the created shape.
+        #  @param shape Shape to export
+        #  @param fileName The name of the exported file
+        #  @param groups List of groups to export
+        #  @param fields List of fields to export
+        #  @return boolean
         #
         #  @ref tui_creation_exportxao "Example"
-        def ExportXAO(self, theExportingShape, theFileName, thelGroups, thelFields):
-            theExportingShape, theFileName, thelGroups, thelFields, Parameters = ParseParameters(theExportingShape, theFileName, thelGroups, thelFields)
-            isGood = self.ImpExpOp.ExportXAO(theExportingShape, theFileName, thelGroups, thelFields)
+        def ExportXAO(self, fileName, shape, groups, fields):
+            fileName, shape, groups, fields, Parameters = ParseParameters(fileName, shape, groups, fields)
+            isGood = self.ImpExpOp.ExportXAO(fileName, shape, groups, fields)
             RaiseIfFailed("ExportXAO", self.ImpExpOp)
             #if Parameters: anObj.SetParameters(Parameters)
             return isGood
