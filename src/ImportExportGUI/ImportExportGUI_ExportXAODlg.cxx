@@ -273,7 +273,8 @@ void ImportExportGUI_ExportXAODlg::SetEditCurrentArgument()
 //=================================================================================
 void ImportExportGUI_ExportXAODlg::btnFileSelectClicked()
 {
-    QString selFile = QFileDialog::getSaveFileName(this, tr("GEOM_SELECT_XAO"), QString(), tr("XAO_FILES"));
+    QString selFile = QFileDialog::getSaveFileName(this, tr("GEOM_SELECT_EXPORT_XAO"),
+            QString(), tr("XAO_FILES"));
     if (!selFile.isEmpty())
     {
         ledFileName->setText(selFile);
@@ -338,15 +339,15 @@ bool ImportExportGUI_ExportXAODlg::execute(ObjectList& objects)
     GEOM::ListOfGO_var groups = new GEOM::ListOfGO();
     groups->length(selGroups.count());
     int i = 0;
-     for (QList<QListWidgetItem*>::iterator it = selGroups.begin(); it != selGroups.end(); ++it)
-     {
-         QListWidgetItem* item = (*it);
-         int index = item->data(Qt::UserRole).toInt();
-         groups[i++] = m_groups[index].copy();
-     }
+    for (QList<QListWidgetItem*>::iterator it = selGroups.begin(); it != selGroups.end(); ++it)
+    {
+        QListWidgetItem* item = (*it);
+        int index = item->data(Qt::UserRole).toInt();
+        groups[i++] = m_groups[index].copy();
+    }
 
-     // get selected fields
-     QList<QListWidgetItem*> selFields = lstFields->selectedItems();
+    // get selected fields
+    QList<QListWidgetItem*> selFields = lstFields->selectedItems();
     GEOM::ListOfGO_var fields = new GEOM::ListOfGO();
     fields->length(m_fields.count());
     for (QList<QListWidgetItem*>::iterator it = selFields.begin(); it != selFields.end(); ++it)
@@ -358,8 +359,15 @@ bool ImportExportGUI_ExportXAODlg::execute(ObjectList& objects)
 
     // call engine function
     GEOM::GEOM_IImportExportOperations_var ieOp = GEOM::GEOM_IImportExportOperations::_narrow(getOperation());
-    res = ieOp->ExportXAO(ledFileName->text().toStdString().c_str(),
-            m_mainObj, groups, fields);
+    char* xao;
+    res = ieOp->ExportXAO(m_mainObj, groups, fields, xao);
+
+    // dump xao to file
+    ofstream exportFile;
+    exportFile.open(ledFileName->text().toStdString().c_str());
+    exportFile << xao;
+    exportFile.close();
+    delete xao;
 
     return res;
 }

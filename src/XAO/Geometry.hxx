@@ -58,7 +58,7 @@ namespace XAO
         {
             return m_shape;
         }
-        void setShape(TopoDS_Shape shape);
+        void setShape(const TopoDS_Shape& shape);
 
         const char* getBREP();
         void setShape(const char* brep);

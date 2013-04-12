@@ -111,17 +111,17 @@ GEOMImpl_IImportExportOperations::~GEOMImpl_IImportExportOperations()
 //=============================================================================
 /*!
  *  Export a shape to XAO Format
- *  \param fileName The name of the exported file
  *  \param shape The shape to export
  *  \param groups The list of groups to export
  *  \param fields The list of fields to export
+ *  \param xao The exported XAO.
  *  \return boolean indicating if export was succeful.
  */
 //=============================================================================
-bool GEOMImpl_IImportExportOperations::ExportXAO(const std::string fileName,
-        Handle(GEOM_Object) shape,
+bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
         std::list<Handle(GEOM_Object)> groupList,
-        std::list<Handle(GEOM_Object)> fieldList)
+        std::list<Handle(GEOM_Object)> fieldList,
+        char*& xao)
 {
     SetErrorCode(KO);
 
@@ -245,27 +245,32 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(const std::string fileName,
         xaoObject->addGroup(group);
     }
 
-    xaoObject->exportToFile(fileName.c_str());
+    const char* data = xaoObject->getXML();
+    xao = new char[strlen(data)];
+    strcpy(xao, data);
+    delete data;
 
     // make a Python command
-    /*TCollection_AsciiString fileNameStr = fileName.c_str();
     GEOM::TPythonDump pd(exportFunction);
-    std::list<Handle(GEOM_Object)>::iterator itG = groupList.begin();
-    std::list<Handle(GEOM_Object)>::iterator itF = fieldList.begin();
-    //pd << /*isGood <<**" = geompy.ExportXAO(" << shape << ", " << fileNameStr.ToCString() << ", [";
+    pd << "exported = geompy.ExportXAO(";
 
-    pd << (*itG++);
-    while (itG != groupList.end())
-    {
-        pd << ", " << (*itG++);
-    }
-    pd << "], [";
-    pd << (*itF++);
-    while (itF != fieldList.end())
-    {
-        pd << ", " << (*itF++);
-    }
-    pd << "])";*/
+    pd << shape << "shpae, [], [], xao";
+    pd << ")";
+
+//    std::list<Handle(GEOM_Object)>::iterator itG = groupList.begin();
+//    pd << (*itG++);
+//    while (itG != groupList.end())
+//    {
+//        pd << ", " << (*itG++);
+//    }
+//    pd << "], [";
+//    std::list<Handle(GEOM_Object)>::iterator itF = fieldList.begin();
+//    pd << (*itF++);
+//    while (itF != fieldList.end())
+//    {
+//        pd << ", " << (*itF++);
+//    }
+//    pd << "])";
 
     SetErrorCode(OK);
 

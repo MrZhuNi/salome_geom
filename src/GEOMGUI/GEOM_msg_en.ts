@@ -4889,8 +4889,16 @@ be specified in meters).</translation>
         <translation>Export XAO</translation>
     </message>
     <message>
+        <source>GEOM_SELECT_EXPORT_XAO</source>
+        <translation>Export to XAO</translation>
+    </message>
+    <message>
         <source>XAO_FILES</source>
         <translation>XAO files (*.xao)</translation>
+    </message>
+    <message>
+        <source>TOOLS_IMPORTEXPORT</source>
+        <translation>Import / Export</translation>
     </message>
 </context>
 <context>

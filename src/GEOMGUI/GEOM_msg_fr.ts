@@ -4888,10 +4888,17 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <translation>Export XAO</translation>
     </message>
     <message>
+        <source>GEOM_SELECT_EXPORT_XAO</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
         <source>XAO_FILES</source>
         <translation>Fichiers XAO (*.xao)</translation>
     </message>
-</context>
+    <message>
+        <source>TOOLS_IMPORTEXPORT</source>
+        <translation>Import / Export</translation>
+    </message></context>
 <context>
     <name>BasicGUI_CurveDlg</name>
     <message>

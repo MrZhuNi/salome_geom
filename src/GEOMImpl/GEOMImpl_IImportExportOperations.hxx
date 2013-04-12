@@ -44,10 +44,10 @@ public:
     Standard_EXPORT GEOMImpl_IImportExportOperations(GEOM_Engine* engine, int docID);
     Standard_EXPORT ~GEOMImpl_IImportExportOperations();
 
-    Standard_EXPORT bool ExportXAO (const std::string fileName,
-            Handle(GEOM_Object) shape,
+    Standard_EXPORT bool ExportXAO(Handle(GEOM_Object) shape,
             std::list<Handle(GEOM_Object)> groupList,
-            std::list<Handle(GEOM_Object)> fieldList);
+            std::list<Handle(GEOM_Object)> fieldList,
+            char*& xao);
 //    Standard_EXPORT bool ImportXAO (const std::string fileName,
 //            Handle(GEOM_Object) shape,
 //            std::list<Handle(GEOM_Object)> groupList,

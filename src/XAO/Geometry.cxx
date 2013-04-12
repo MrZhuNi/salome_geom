@@ -54,7 +54,7 @@ Geometry::~Geometry()
 {
 }
 
-void Geometry::setShape(TopoDS_Shape shape)
+void Geometry::setShape(const TopoDS_Shape& shape)
 {
     m_shape = shape;
 
@@ -82,7 +82,10 @@ const char* Geometry::getBREP()
 {
     std::ostringstream streamShape;
     BRepTools::Write(m_shape, streamShape);
-    return streamShape.str().c_str();
+    std::string data = streamShape.str();
+    char* res = new char[data.size()];
+    strcpy(res, data.c_str());
+    return res;
 }
 
 void Geometry::initListIds(const Standard_Integer shapeType)

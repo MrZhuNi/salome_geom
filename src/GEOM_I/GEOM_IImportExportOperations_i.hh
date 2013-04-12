@@ -42,11 +42,11 @@ public:
             ::GEOMImpl_IImportExportOperations* theImpl);
     ~GEOM_IImportExportOperations_i();
 
-    CORBA::Boolean ExportXAO (const char* fileName,
-            GEOM::GEOM_Object_ptr shape,
+    CORBA::Boolean ExportXAO (GEOM::GEOM_Object_ptr shape,
             const GEOM::ListOfGO& groups,
-            const GEOM::ListOfGO& fields);
-    CORBA::Boolean ImportXAO (const char* fileName, GEOM::GEOM_Object_out shape,
+            const GEOM::ListOfGO& fields,
+            CORBA::String_out xao);
+    CORBA::Boolean ImportXAO (const char* xao, GEOM::GEOM_Object_out shape,
             GEOM::ListOfGO_out groups,
             GEOM::ListOfGO_out fields);
     /*@@ insert new functions before this line @@ do not remove this line @@*/
