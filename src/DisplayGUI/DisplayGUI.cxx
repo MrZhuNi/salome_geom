@@ -613,7 +613,7 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
 	            else if ( mode == 2 )
 	              ic->SetDisplayMode( interIter.Value(), GEOM_AISShape::ShadingWithEdges, false );
 	            else if ( mode == 3 )
-                ic->SetDisplayMode( interIter.Value(), AIS_ExactHLR, false );
+                ic->SetDisplayMode( interIter.Value(), GEOM_AISShape::TexturedShape, false );
             } else {
               aSh->setPrevDisplayMode(mode);
             }
