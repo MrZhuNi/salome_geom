@@ -16,8 +16,8 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
-#ifndef IMPORTEXPORTGUI_EXPORTXAODLG_H
-#define IMPORTEXPORTGUI_EXPORTXAODLG_H
+#ifndef IMPORTEXPORTGUI_IMPORTXAODLG_H
+#define IMPORTEXPORTGUI_IMPORTXAODLG_H
 
 #include <GEOMBase_Skeleton.h>
 #include <GEOM_GenericObjPtr.h>
@@ -26,41 +26,32 @@ class QLineEdit;
 class QButtonGroup;
 class QListWidget;
 
-//class ImportExportGUI_1Sel1LineEdit2ListWidget;
-
 //=================================================================================
-// class    : ImportExportGUI_ExportXAODlg
+// class    : ImportExportGUI_ImportXAODlg
 // purpose  :
 //=================================================================================
-class ImportExportGUI_ExportXAODlg: public GEOMBase_Skeleton
+class ImportExportGUI_ImportXAODlg: public GEOMBase_Skeleton
 {
     Q_OBJECT
 
 public:
-    ImportExportGUI_ExportXAODlg(GeometryGUI*, QWidget* = 0);
-    ~ImportExportGUI_ExportXAODlg();
+    ImportExportGUI_ImportXAODlg(GeometryGUI*, QWidget* = 0);
+    ~ImportExportGUI_ImportXAODlg();
 
 protected:
     // redefined from GEOMBase_Helper
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid(QString&);
     virtual bool execute(ObjectList&);
+    virtual GEOM::GEOM_Object_ptr getFather(GEOM::GEOM_Object_ptr object);
+    virtual QString getObjectName(GEOM::GEOM_Object_ptr object) const;
 
 private:
     void Init();
     void enterEvent(QEvent*);
-    void processObject();
 
 private:
-    GEOM::GEOM_Object_var m_mainObj;
-    QList<GEOM::GeomObjPtr> m_groups;
-    QList<GEOM::GeomObjPtr> m_fields;
-    QLineEdit* ledShape;
     QLineEdit* ledFileName;
-    QLineEdit* ledAuthor;
-    QListWidget* lstGroups;
-    QListWidget* lstFields;
-    QPushButton* btnShapeSelect;
     QPushButton* btnFileSelect;
 
 private slots:
@@ -68,8 +59,6 @@ private slots:
     bool ClickOnApply();
     void ActivateThisDialog();
     void LineEditReturnPressed();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
     void btnFileSelectClicked();
 };
 

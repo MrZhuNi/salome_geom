@@ -89,9 +89,10 @@ ImportExportGUI_ExportXAODlg::ImportExportGUI_ExportXAODlg(GeometryGUI* geometry
     ledShape = new QLineEdit(gbxExport);
     ledShape->setMinimumSize(QSize(100, 0));
 
-    gridLayoutExport->addWidget(lblShape, 0, 0, 1, 1);
-    gridLayoutExport->addWidget(btnShapeSelect, 0, 1, 1, 1);
-    gridLayoutExport->addWidget(ledShape, 0, 2, 1, 1);
+    int line = 0, col = 0;
+    gridLayoutExport->addWidget(lblShape, line, col++, 1, 1);
+    gridLayoutExport->addWidget(btnShapeSelect, line, col++, 1, 1);
+    gridLayoutExport->addWidget(ledShape, line, col++, 1, 1);
 
     // Line 1
     QLabel* lblFileName = new QLabel(tr("GEOM_EXPORTXAO_FILENAME"), gbxExport);
@@ -99,9 +100,19 @@ ImportExportGUI_ExportXAODlg::ImportExportGUI_ExportXAODlg(GeometryGUI* geometry
     ledFileName = new QLineEdit(gbxExport);
     btnFileSelect->setText("...");
 
-    gridLayoutExport->addWidget(lblFileName, 1, 0, 1, 1);
-    gridLayoutExport->addWidget(btnFileSelect, 1, 1, 1, 1);
-    gridLayoutExport->addWidget(ledFileName, 1, 2, 1, 1);
+    line++; col = 0;
+    gridLayoutExport->addWidget(lblFileName, line, col++, 1, 1);
+    gridLayoutExport->addWidget(btnFileSelect, line, col++, 1, 1);
+    gridLayoutExport->addWidget(ledFileName, line, col++, 1, 1);
+
+    // Line 2
+    QLabel* lblAuthor = new QLabel(tr("GEOM_EXPORTXAO_AUTHOR"), gbxExport);
+    ledAuthor = new QLineEdit(gbxExport);
+
+    line++; col = 0;
+    gridLayoutExport->addWidget(lblAuthor, line, col++, 2, 1);
+    col++; // span
+    gridLayoutExport->addWidget(ledAuthor, line, col++, 1, 1);
 
     //****************************
     // Filter Group box
@@ -118,8 +129,9 @@ ImportExportGUI_ExportXAODlg::ImportExportGUI_ExportXAODlg(GeometryGUI* geometry
     QLabel* lblGroups = new QLabel(tr("GEOM_EXPORTXAO_LGROUPS"), gbxFilter);
     QLabel* lblFields = new QLabel(tr("GEOM_EXPORTXAO_LFIELDS"), gbxFilter);
 
-    gridLayoutFilter->addWidget(lblGroups, 0, 0, 1, 1);
-    gridLayoutFilter->addWidget(lblFields, 0, 1, 1, 1);
+    line = 0, col = 0;
+    gridLayoutFilter->addWidget(lblGroups, line, col++, 1, 1);
+    gridLayoutFilter->addWidget(lblFields, line, col++, 1, 1);
 
     // Line 1
     lstGroups = new QListWidget(gbxFilter);
@@ -127,8 +139,9 @@ ImportExportGUI_ExportXAODlg::ImportExportGUI_ExportXAODlg(GeometryGUI* geometry
     lstFields = new QListWidget(gbxFilter);
     lstFields   ->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-    gridLayoutFilter->addWidget(lstGroups, 1, 0, 1, 1);
-    gridLayoutFilter->addWidget(lstFields, 1, 1, 1, 1);
+    line++; col = 0;
+    gridLayoutFilter->addWidget(lstGroups, line, col++, 1, 1);
+    gridLayoutFilter->addWidget(lstFields, line, col++, 1, 1);
 
     //****************************
     QVBoxLayout* layout = new QVBoxLayout(centralWidget());
@@ -334,6 +347,9 @@ bool ImportExportGUI_ExportXAODlg::execute(ObjectList& objects)
 {
     bool res = false;
 
+    QString author = ledAuthor->text();
+    QString fileName = ledFileName->text();
+
     // get selected groups
     QList<QListWidgetItem*> selGroups = lstGroups->selectedItems();
     GEOM::ListOfGO_var groups = new GEOM::ListOfGO();
@@ -359,15 +375,9 @@ bool ImportExportGUI_ExportXAODlg::execute(ObjectList& objects)
 
     // call engine function
     GEOM::GEOM_IImportExportOperations_var ieOp = GEOM::GEOM_IImportExportOperations::_narrow(getOperation());
-    char* xao;
-    res = ieOp->ExportXAO(m_mainObj, groups, fields, xao);
-
-    // dump xao to file
-    ofstream exportFile;
-    exportFile.open(ledFileName->text().toStdString().c_str());
-    exportFile << xao;
-    exportFile.close();
-    delete xao;
+    res = ieOp->ExportXAO(m_mainObj, groups, fields,
+            author.toStdString().c_str(),
+            fileName.toStdString().c_str());
 
     return res;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -15,11 +15,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-//  File   : GEOM_IImportExportOperations.hh
-//  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
 #ifndef _GEOM_IImportExportOperations_i_HeaderFile
 #define _GEOM_IImportExportOperations_i_HeaderFile
 
@@ -45,8 +41,10 @@ public:
     CORBA::Boolean ExportXAO (GEOM::GEOM_Object_ptr shape,
             const GEOM::ListOfGO& groups,
             const GEOM::ListOfGO& fields,
-            CORBA::String_out xao);
-    CORBA::Boolean ImportXAO (const char* xao, GEOM::GEOM_Object_out shape,
+            const char* author,
+            const char* fileName);
+    CORBA::Boolean ImportXAO (const char* fileName,
+            GEOM::GEOM_Object_out shape,
             GEOM::ListOfGO_out groups,
             GEOM::ListOfGO_out fields);
     /*@@ insert new functions before this line @@ do not remove this line @@*/

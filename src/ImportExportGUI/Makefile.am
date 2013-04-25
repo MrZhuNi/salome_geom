@@ -27,31 +27,31 @@ lib_LTLIBRARIES = libImportExportGUI.la
 
 # header files 
 salomeinclude_HEADERS =			\
-	ImportExportGUI.h \
-	ImportExportGUI_ExportXAODlg.h
+	ImportExportGUI.h
 	
-#IMPORTEXPORT_INCLUDES = 
-#IMPORTEXPORT_INCLUDES += ImportExportGUI_ExportXAODlg.h
+libImportExportGUI_la_INCLUDES = 
+libImportExportGUI_la_INCLUDES += ImportExportGUI_ExportXAODlg.h
+libImportExportGUI_la_INCLUDES += ImportExportGUI_ImportXAODlg.h
 ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@##
 
 #salomeinclude_HEADERS += $(IMPORTEXPORT_INCLUDES)
 
 dist_libImportExportGUI_la_SOURCES =	\
-	ImportExportGUI_ExportXAODlg.h		\
 	ImportExportGUI.h       \
-	ImportExportGUI_ExportXAODlg.cxx		\
 	ImportExportGUI.cxx
 	
-#IMPORTEXPORT_SOURCES = 
-#IMPORTEXPORT_SOURCES += ImportExportGUI_ExportXAODlg.h ImportExportGUI_ExportXAODlg.cxx
+libImportExportGUI_la_SOURCES = 
+libImportExportGUI_la_SOURCES += ImportExportGUI_ExportXAODlg.h ImportExportGUI_ExportXAODlg.cxx
+libImportExportGUI_la_SOURCES += ImportExportGUI_ImportXAODlg.h ImportExportGUI_ImportXAODlg.cxx
 ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@##
 
 #dist_libImportExportGUI_la_SOURCES += $(IMPORTEXPORT_SOURCES)
 
 MOC_FILES =
 
-IMPORTEXPORT_MOC_FILES = ImportExportGUI_moc.cxx		
-IMPORTEXPORT_MOC_FILES += ImportExportGUI_ExportXAODlg_moc.cxx
+MOC_FILES = ImportExportGUI_moc.cxx	
+MOC_FILES += ImportExportGUI_ExportXAODlg_moc.cxx
+MOC_FILES += ImportExportGUI_ImportXAODlg_moc.cxx
 ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@##
 
 MOC_FILES += $(IMPORTEXPORT_MOC_FILES)

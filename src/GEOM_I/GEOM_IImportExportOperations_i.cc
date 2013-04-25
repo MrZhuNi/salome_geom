@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -15,11 +15,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-//  File   : GEOM_IImportExportOperations.cc
-//  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
 #include <Standard_Stream.hxx>
 
 #include "GEOM_IImportExportOperations_i.hh"
@@ -56,16 +52,18 @@ GEOM_IImportExportOperations_i::~GEOM_IImportExportOperations_i()
 
 //=============================================================================
 /*!
- *  Export a shape to XAO Format
- *  \param fileName The name of the exported file
+ *  Export a shape to XAO format
  *  \param shape The shape to export
  *  \param groups The list of groups to export
  *  \param fields The list of fields to export
+ *  \param author The author of the export
+ *  \param fileName The name of the exported file
  *  \return boolean indicating if export was succeful.
  */
 //=============================================================================
 CORBA::Boolean GEOM_IImportExportOperations_i::ExportXAO(GEOM::GEOM_Object_ptr shape,
-        const GEOM::ListOfGO& groups, const GEOM::ListOfGO& fields, CORBA::String_out xao)
+        const GEOM::ListOfGO& groups, const GEOM::ListOfGO& fields,
+        const char* author, const char* fileName)
 {
     bool isGood = false;
     // Set a not done flag
@@ -97,10 +95,7 @@ CORBA::Boolean GEOM_IImportExportOperations_i::ExportXAO(GEOM::GEOM_Object_ptr s
     if (!reference.IsNull())
     {
         // Export XAO
-        char* data;
-        isGood = GetOperations()->ExportXAO(reference, groupsObj, fieldsObj, data);
-        xao = CORBA::string_dup(data);
-        delete data;
+        isGood = GetOperations()->ExportXAO(reference, groupsObj, fieldsObj, author, fileName);
     }
 
     return isGood;
@@ -108,20 +103,55 @@ CORBA::Boolean GEOM_IImportExportOperations_i::ExportXAO(GEOM::GEOM_Object_ptr s
 
 //=============================================================================
 /*!
- *  Import a shape from XAO Format
- *  \param xao The XAO data to import
+ *  Import a shape from XAO format
+ *  \param fileName The name of the file to import
  *  \param shape The imported shape
  *  \param groups The list of imported groups
  *  \param fields The list of imported fields
  *  \return boolean indicating if import was succeful.
  */
 //=============================================================================
-//bool GEOMImpl_IImportExportOperations::ImportXAO(const std::xao fileName,
-//        Handle(GEOM_Object),
-//        std::list<Handle_GEOM_Object, std::allocator<Handle_GEOM_Object> > groups,
-//        std::list<Handle_GEOM_Object, std::allocator<Handle_GEOM_Object> > fields)
-//{
-//    return true;
-//}
+CORBA::Boolean GEOM_IImportExportOperations_i::ImportXAO(const char* fileName,
+        GEOM::GEOM_Object_out shape,
+        GEOM::ListOfGO_out groups,
+        GEOM::ListOfGO_out fields)
+{
+    GEOM::GEOM_Object_var vshape;
+    shape = vshape._retn();
+
+    groups = new GEOM::ListOfGO;
+    fields = new GEOM::ListOfGO;
+
+    // Set a not done flag
+    GetOperations()->SetNotDone();
+
+    Handle(TColStd_HSequenceOfTransient) importedGroups = new TColStd_HSequenceOfTransient();
+    Handle(TColStd_HSequenceOfTransient) importedFields = new TColStd_HSequenceOfTransient();
+    Handle(GEOM_Object) hshape;
+    bool res = GetOperations()->ImportXAO(fileName, hshape, importedGroups, importedFields);
+
+    if (!GetOperations()->IsDone() || !res)
+        return false;
+
+    // parse groups
+    int n = importedGroups->Length();
+    groups->length(n);
+    for (int i = 1; i <= n; i++)
+    {
+        (*groups)[i - 1] = GetObject(Handle(GEOM_Object)::DownCast(importedGroups->Value(i)));
+    }
+
+    // parse fields
+    n = importedFields->Length();
+    fields->length(n);
+    for (int i = 1; i <= n; i++)
+    {
+        (*fields)[i - 1] = GetObject(Handle(GEOM_Object)::DownCast(importedFields->Value(i)));
+    }
+
+    shape = GetObject(hshape);
+
+    return res;
+}
 
 /*@@ insert new functions before this line @@ do not remove this line @@*/

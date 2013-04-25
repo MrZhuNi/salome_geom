@@ -150,7 +150,7 @@ ADVANCED_INCLUDES += GEOMImpl_IPipeTShape.hxx GEOMImpl_PipeTShapeDriver.hxx
 ADVANCED_INCLUDES += GEOMImpl_IDividedDisk.hxx GEOMImpl_DividedDiskDriver.hxx
 ##ADVANCED_INCLUDES += GEOMImpl_IDividedCylinder.hxx GEOMImpl_DividedCylinderDriver.hxx
 IMPORTEXPORT_INCLUDES  =
-IMPORTEXPORT_INCLUDES += GEOMImpl_IExportXAO.hxx GEOMImpl_ExportXAODriver.hxx
+IMPORTEXPORT_INCLUDES += GEOMImpl_IImportExportXAO.hxx GEOMImpl_XAODriver.hxx
 ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@##
 
 salomeinclude_HEADERS += $(ADVANCED_INCLUDES)
@@ -227,7 +227,7 @@ ADVANCED_SOURCES += GEOMImpl_PipeTShapeDriver.cxx
 ADVANCED_SOURCES += GEOMImpl_DividedDiskDriver.cxx
 ##ADVANCED_SOURCES += GEOMImpl_DividedCylinderDriver.cxx
 IMPORTEXPORT_SOURCES  =
-IMPORTEXPORT_SOURCES += GEOMImpl_ExportXAODriver.cxx
+IMPORTEXPORT_SOURCES += GEOMImpl_XAODriver.cxx
 ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@##
 
 dist_libGEOMimpl_la_SOURCES += $(ADVANCED_SOURCES)

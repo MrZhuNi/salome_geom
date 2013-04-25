@@ -352,5 +352,7 @@
 #define DIVIDEDDISK_R_RATIO 1
 #define DIVIDEDDISK_R_VECTOR_PNT 2
 #define DIVIDEDCYLINDER_R_H 1
-#define EXPORTXAO_EXPORTINGSHAPE_FILENAME_LGROUPS_LFIELDS 1
+
+#define IMPORTEXPORT_EXPORTXAO 1
+#define IMPORTEXPORT_IMPORTXAO 2
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/

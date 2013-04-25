@@ -2311,7 +2311,7 @@ GEOM::GEOM_IImportExportOperations_ptr GEOM_Gen_i::GetIImportExportOperations(CO
      throw ( SALOME::SALOME_Exception )
 {
   Unexpect aCatch(SALOME_SalomeException);
-  MESSAGE( "GEOM_Gen_i::GetIAdvancedOperations" );
+  MESSAGE( "GEOM_Gen_i::GetIImportExportOperations" );
 
   GEOM::GEOM_Gen_ptr engine = _this();
 

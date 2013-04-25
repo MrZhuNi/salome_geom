@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -15,9 +15,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-//  File   : GEOMImpl_IImportExportOperations.cxx
-//  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 
 #include <cmath>
 #include <iostream>
@@ -52,13 +49,14 @@
 #include "Group.hxx"
 #include "XaoUtils.hxx"
 
-#include <GEOMImpl_ExportXAODriver.hxx>
-#include <GEOMImpl_IExportXAO.hxx>
+#include <GEOMImpl_XAODriver.hxx>
+#include <GEOMImpl_IImportExportXAO.hxx>
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopAbs.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -80,6 +78,7 @@
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
 #include <TFunction_Logbook.hxx>
+#include <TDataStd_Integer.hxx>
 #include <TDF_Tool.hxx>
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -108,51 +107,66 @@ GEOMImpl_IImportExportOperations::~GEOMImpl_IImportExportOperations()
     delete m_groupOperations;
 }
 
+TopAbs_ShapeEnum getGroupDimension(XAO::Group* group)
+{
+    XAO::Dimension dim = group->getDimension();
+    if (dim == XAO::VERTEX)
+        return TopAbs_VERTEX;
+    if (dim == XAO::EDGE)
+        return TopAbs_EDGE;
+    if (dim == XAO::FACE)
+        return TopAbs_FACE;
+    if (dim == XAO::SOLID)
+        return TopAbs_SOLID;
+    return TopAbs_COMPOUND;
+}
+
 //=============================================================================
 /*!
- *  Export a shape to XAO Format
+ *  Export a shape to XAO format
  *  \param shape The shape to export
  *  \param groups The list of groups to export
  *  \param fields The list of fields to export
- *  \param xao The exported XAO.
+ *  \param fileName The name of the file to exported
  *  \return boolean indicating if export was succeful.
  */
 //=============================================================================
 bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
         std::list<Handle(GEOM_Object)> groupList,
         std::list<Handle(GEOM_Object)> fieldList,
-        char*& xao)
+        const char* author,
+        const char* fileName)
 {
     SetErrorCode(KO);
 
+    if (shape.IsNull()) return false;
+
     // add a new shape function with parameters
     Handle(GEOM_Function) lastFunction = shape->GetLastFunction();
-    if (lastFunction.IsNull())
-        return false;
+    if (lastFunction.IsNull()) return false;
 
     // add a new result object
     Handle(GEOM_Object) result = GetEngine()->AddObject(GetDocID(), GEOM_IMPORT);
 
     // add an Export function
-    Handle(GEOM_Function) exportFunction = result->AddFunction(GEOMImpl_ExportXAODriver::GetID(),
-            EXPORTXAO_EXPORTINGSHAPE_FILENAME_LGROUPS_LFIELDS);
-    if (exportFunction.IsNull())
-        return false;
+    Handle(GEOM_Function) exportFunction = result->AddFunction(GEOMImpl_XAODriver::GetID(), IMPORTEXPORT_EXPORTXAO);
+    if (exportFunction.IsNull()) return false;
+    if (exportFunction->GetDriverGUID() != GEOMImpl_XAODriver::GetID()) return false;
 
-    // check if the function is set correctly
-    if (exportFunction->GetDriverGUID() != GEOMImpl_ExportXAODriver::GetID())
-        return false;
-
+    // Build the XAO
     XAO::Xao* xaoObject = new XAO::Xao();
+    xaoObject->setAuthor(author);
 
     XAO::Geometry* geometry = new XAO::Geometry();
     TopoDS_Shape topoShape = shape->GetValue();
+    exportFunction->SetValue(topoShape);
     geometry->setShape(topoShape);
     geometry->setName(shape->GetName());
 
     Handle(TColStd_HSequenceOfTransient) subObjects = m_shapesOperations->GetExistingSubObjects(shape, false);
     int nbSubObjects = subObjects->Length();
 
+    // set the names of the sub shapes
     int tmpIndex;
     for (int i = 1; i <= nbSubObjects; i++)
     {
@@ -192,20 +206,20 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
     }
     xaoObject->setGeometry(geometry);
 
-    // adding groups
-    std::list<Handle(GEOM_Object)>::iterator itG1 = groupList.begin();
-    while (itG1 != groupList.end())
+    // add the groups
+    std::list<Handle(GEOM_Object)>::iterator groupIterator = groupList.begin();
+    while (groupIterator != groupList.end())
     {
-        Handle(GEOM_Object) itGroup = (*itG1++);
-        Handle(TColStd_HArray1OfInteger) groupIds = m_groupOperations->GetObjects(itGroup);
-        TopAbs_ShapeEnum shapeGroup = m_groupOperations->GetType(itGroup);
-
+        Handle(GEOM_Object) currGroup = (*groupIterator++);
+        Handle(TColStd_HArray1OfInteger) groupIds = m_groupOperations->GetObjects(currGroup);
         XAO::Group* group = new XAO::Group();
-        group->setName(itGroup->GetName());
+        group->setName(currGroup->GetName());
+
+        TopAbs_ShapeEnum shapeGroup = m_groupOperations->GetType(currGroup);
         switch (shapeGroup)
         {
             case TopAbs_VERTEX:
-                group->setDimension(0);
+                group->setDimension(XAO::VERTEX);
                 for (int i = 1; i <= groupIds->Length(); i++)
                 {
                     const char* ref = XAO::XaoUtils::intToString(groupIds->Value(i));
@@ -214,7 +228,7 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
                 }
                 break;
             case TopAbs_EDGE:
-                group->setDimension(1);
+                group->setDimension(XAO::EDGE);
                 for (int i = 1; i <= groupIds->Length(); i++)
                 {
                     const char* ref = XAO::XaoUtils::intToString(groupIds->Value(i));
@@ -223,16 +237,16 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
                 }
                 break;
             case TopAbs_FACE:
-                group->setDimension(2);
+                group->setDimension(XAO::FACE);
                 for (int i = 1; i <= groupIds->Length(); i++)
                 {
-                    const char* ref = XAO::XaoUtils::intToString((int)(groupIds->Value(i)));
+                    const char* ref = XAO::XaoUtils::intToString(groupIds->Value(i));
                     const int index = geometry->getFaceIndexByReference(ref);
                     group->addElement(index);
                 }
                 break;
             case TopAbs_SOLID:
-                group->setDimension(3);
+                group->setDimension(XAO::SOLID);
                 for (int i = 1; i <= groupIds->Length(); i++)
                 {
                     const char* ref = XAO::XaoUtils::intToString(groupIds->Value(i));
@@ -245,32 +259,40 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
         xaoObject->addGroup(group);
     }
 
-    const char* data = xaoObject->getXML();
-    xao = new char[strlen(data)];
-    strcpy(xao, data);
-    delete data;
+    // TODO: add the fields
+
+    // export the XAO to the file
+    xaoObject->exportXAO(fileName);
+    delete xaoObject;
 
     // make a Python command
     GEOM::TPythonDump pd(exportFunction);
     pd << "exported = geompy.ExportXAO(";
 
-    pd << shape << "shpae, [], [], xao";
-    pd << ")";
+    pd << shape;
+    pd << ", [";
 
-//    std::list<Handle(GEOM_Object)>::iterator itG = groupList.begin();
-//    pd << (*itG++);
-//    while (itG != groupList.end())
-//    {
-//        pd << ", " << (*itG++);
-//    }
-//    pd << "], [";
-//    std::list<Handle(GEOM_Object)>::iterator itF = fieldList.begin();
-//    pd << (*itF++);
-//    while (itF != fieldList.end())
-//    {
-//        pd << ", " << (*itF++);
-//    }
-//    pd << "])";
+    if (groupList.size() > 0)
+    {
+        std::list<Handle(GEOM_Object)>::iterator itG = groupList.begin();
+        pd << (*itG++);
+        while (itG != groupList.end())
+        {
+            pd << ", " << (*itG++);
+        }
+    }
+    pd << "], [";
+    if (fieldList.size() > 0)
+    {
+        std::list<Handle(GEOM_Object)>::iterator itF = fieldList.begin();
+        pd << (*itF++);
+        while (itF != fieldList.end())
+        {
+            pd << ", " << (*itF++);
+        }
+    }
+    pd << "], ";
+    pd << author << ", \"" << fileName << "\")";
 
     SetErrorCode(OK);
 
@@ -279,22 +301,98 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
 
 //=============================================================================
 /*!
- *  Import a shape from XAO Format
- *  \param fileName The name of the imported file
+ *  Import a shape from XAO format
+ *  \param fileName The name of the file to import
  *  \param shape The imported shape
  *  \param groups The list of imported groups
  *  \param fields The list of imported fields
  *  \return boolean indicating if import was succeful.
  */
 //=============================================================================
-//bool GEOMImpl_IImportExportOperations::ImportXAO(const std::string fileName,
-//        Handle(GEOM_Object) shape,
-//        std::list<Handle(GEOM_Object)> groupList,
-//        std::list<Handle(GEOM_Object)> fieldList)
-//{
-//    SetErrorCode(KO);
-//    return true;
-//}
+bool GEOMImpl_IImportExportOperations::ImportXAO(const char* fileName,
+        Handle(GEOM_Object)& shape,
+        Handle(TColStd_HSequenceOfTransient)& groupList,
+        Handle(TColStd_HSequenceOfTransient)& fieldList)
+{
+    SetErrorCode(KO);
+
+    if (fileName == NULL || groupList.IsNull() || fieldList.IsNull())
+        return false;
+
+    // Read the XAO
+    XAO::Xao* xaoObject = new XAO::Xao();
+    xaoObject->importXAO(fileName);
+
+    XAO::Geometry* xaoGeometry = xaoObject->getGeometry();
+    if (xaoGeometry == NULL)
+        return false;
+
+    // create the shape
+    shape = GetEngine()->AddObject(GetDocID(), GEOM_IMPORT);
+    Handle(GEOM_Function) function = shape->AddFunction(GEOMImpl_XAODriver::GetID(), IMPORTEXPORT_EXPORTXAO);
+    if (function.IsNull()) return false;
+    if (function->GetDriverGUID() != GEOMImpl_XAODriver::GetID()) return false;
+
+    // set the geometry
+    TopoDS_Shape geomShape = xaoGeometry->getShape();
+    function->SetValue(geomShape);
+    shape->SetName(xaoGeometry->getName());
+
+    // TODO: create sub shapes with names
+
+    // create groups
+    int nbGroups = xaoObject->countGroups();
+    for (int i = 0; i < nbGroups; ++i)
+    {
+        XAO::Group* xaoGroup = xaoObject->getGroup(i);
+
+        // build an array with the indexes of the sub shapes
+        int nbElt = xaoGroup->getCount();
+        Handle(TColStd_HArray1OfInteger) array = new TColStd_HArray1OfInteger(1, nbElt);
+        for (int j = 0; j < nbElt; j++)
+        {
+            int index = xaoGroup->getElement(j);
+            const char* ref = xaoGeometry->getElementReference(xaoGroup->getDimension(), index);
+            array->SetValue(j + 1, atoi(ref));
+        }
+
+        // create the group with the array of sub shapes indexes
+        Handle(GEOM_Object) group = GetEngine()->AddSubShape(shape, array);
+        group->SetType(GEOM_GROUP);
+        group->SetName(xaoGroup->getName());
+
+        // Set a sub-shape type
+        TDF_Label freeLabel = group->GetFreeLabel();
+        TDataStd_Integer::Set(freeLabel, (Standard_Integer) getGroupDimension(xaoGroup));
+        groupList->Append(group);
+
+        function = group->GetLastFunction();
+    }
+
+    // TODO: create the fields
+
+    // make a Python command
+    GEOM::TPythonDump pd(function);
+    pd << "(imported, " << shape << ", ";
+
+    pd << "[";
+    if (nbGroups > 0)
+    {
+        for (int i = 1; i <= nbGroups; i++)
+        {
+            Handle(GEOM_Object) obj = Handle(GEOM_Object)::DownCast(groupList->Value(i));
+            pd << obj << ((i < nbGroups) ? ", " : "");
+        }
+    }
+    pd << "], []";
+
+    pd << ") = geompy.ImportXAO(\"" << fileName << "\")";
+
+    delete xaoObject;
+    SetErrorCode(OK);
+
+    return true;
+}
 
 
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/

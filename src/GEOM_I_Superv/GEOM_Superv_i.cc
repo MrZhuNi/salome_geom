@@ -3452,7 +3452,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDividedCylinder (CORBA::Double theR,
 //  ExportXAO
 //=============================================================================
 CORBA::Boolean GEOM_Superv_i::ExportXAO (GEOM::GEOM_Object_ptr shape,
-        GEOM::GEOM_List_ptr groups, GEOM::GEOM_List_ptr fields, CORBA::String_out xao)
+        GEOM::GEOM_List_ptr groups, GEOM::GEOM_List_ptr fields,
+        const char* author, const char* fileName)
 {
   beginService( " GEOM_Superv_i::ExportXAO" );
   MESSAGE("GEOM_Superv_i::ExportXAO");
@@ -3463,7 +3464,8 @@ CORBA::Boolean GEOM_Superv_i::ExportXAO (GEOM::GEOM_Object_ptr shape,
     if (GEOM_List_i<GEOM::ListOfGO>* fieldList =
         dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(fields, myPOA).in()))
     {
-      CORBA::Boolean isGood = myImportExportOp->ExportXAO(shape, groupList->GetList(), fieldList->GetList(), xao);
+      CORBA::Boolean isGood = myImportExportOp->ExportXAO(shape,
+              groupList->GetList(), fieldList->GetList(), author, fileName);
       endService( " GEOM_Superv_i::ExportXAO" );
       return isGood;
     }
@@ -3475,11 +3477,11 @@ CORBA::Boolean GEOM_Superv_i::ExportXAO (GEOM::GEOM_Object_ptr shape,
 //=============================================================================
 //  ImportXAO
 //=============================================================================
-//CORBA::Boolean GEOM_Superv_i::ImportXAO (const char* fileName, GEOM::GEOM_Object_out shape,
-//        GEOM::GEOM_List_out groups, GEOM::GEOM_List_out fields)
-//{
-//  return false;
-//}
+CORBA::Boolean GEOM_Superv_i::ImportXAO (const char* fileName, GEOM::GEOM_Object_out shape,
+        GEOM::GEOM_List_out groups, GEOM::GEOM_List_out fields)
+{
+  return false;
+}
 /*@@ insert new functions before this line @@ do not remove this line @@*/
 
 //=====================================================================================

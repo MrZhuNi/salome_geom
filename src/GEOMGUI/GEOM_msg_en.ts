@@ -5785,7 +5785,7 @@ Do you want to create new material?</translation>
     </message>
     <message>
         <source>GEOM_EXPORTXAO</source>
-        <translation>ExportXAO</translation>
+        <translation>Export XAO</translation>
     </message>
     <message>
         <source>GEOM_EXPORTXAO_EXPORTINGSHAPE</source>
@@ -5796,12 +5796,43 @@ Do you want to create new material?</translation>
         <translation>File Name</translation>
     </message>
     <message>
+        <source>GEOM_EXPORTXAO_AUTHOR</source>
+        <translation>Author</translation>
+    </message>
+    <message>
         <source>GEOM_EXPORTXAO_LGROUPS</source>
-        <translation>List of groups</translation>
+        <translation>Groups</translation>
     </message>
     <message>
         <source>GEOM_EXPORTXAO_LFIELDS</source>
-        <translation>List of fields</translation>
+        <translation>Fields</translation>
+    </message>
+</context>
+<context>
+    <name>ImportExportGUI_ImportXAODlg</name>
+    <message>
+        <source>GEOM_IMPORTXAO_TITLE</source>
+        <translation>Import XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO</source>
+        <translation>Import XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO_IMPORTINGSHAPE</source>
+        <translation>Shape</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO_FILENAME</source>
+        <translation>File Name</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO_LGROUPS</source>
+        <translation>Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO_LFIELDS</source>
+        <translation>Fields</translation>
     </message>
 </context>
 </TS>

@@ -626,10 +626,11 @@ module GEOM
     //-----------------------------------------------------------//
     // ImportExportOperations                                    //
     //-----------------------------------------------------------//
-    boolean ExportXAO(in GEOM_Object exportingShape,
-            in GEOM_List groups, in GEOM_List fields, out string xao);
-//    boolean ImportXAO(in string fileName, out GEOM_Object exportingShape,
-//            out GEOM_List groups, out GEOM_List fields);
+    boolean ExportXAO(in GEOM_Object shape,
+                      in GEOM_List groups, in GEOM_List fields,
+                      in string author, in string fileName);
+    boolean ImportXAO(in string fileName, out GEOM_Object shape,
+                      out GEOM_List groups, out GEOM_List fields);
 
     /*@@ insert new functions before this line @@ do not remove this line @@*/
  };

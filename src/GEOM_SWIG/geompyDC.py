@@ -207,7 +207,7 @@ def PackData(data):
 
     Returns:
         data packed to the byte stream
-        
+
     Example of usage:
         val = PackData("10001110") # val = 0xAE
         val = PackData("1")        # val = 0x80
@@ -258,13 +258,13 @@ def ReadTexture(fname):
     texture bitmap itself.
     This function can be used to read the texture to the byte stream in order to pass it to
     the AddTexture() function of geompy class.
-    
+
     Parameters:
         fname texture file name
 
     Returns:
         sequence of tree values: texture's width, height in pixels and its byte stream
-    
+
     Example of usage:
         import geompy
         geompy.init_geom(salome.myStudy)
@@ -647,7 +647,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theAddPrefix add prefix "from_" to names of restored sub-shapes,
                              and prefix "from_subshapes_of_" to names of partially restored sub-shapes.
 
-            Returns: 
+            Returns:
                 list of published sub-shapes
             """
             # Example: see GEOM_TestAll.py
@@ -675,8 +675,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theX The X coordinate of the point.
                 theY The Y coordinate of the point.
                 theZ The Z coordinate of the point.
-                
-            Returns: 
+
+            Returns:
                 New GEOM.GEOM_Object, containing the created point.
             """
             # Example: see GEOM_TestAll.py
@@ -754,7 +754,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakeVertexOnCurveByCoord(self,theRefCurve, theX, theY, theZ):
             """
             Create a point by projection give coordinates on the given curve
-            
+
             Parameters:
                 theRefCurve The referenced curve.
                 theX X-coordinate in 3D space
@@ -957,7 +957,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theParameterU horisontal value of the center point (0.0 - 1.0).
                 theTrimSize the size of plane.
 
-           Returns: 
+           Returns:
                 New GEOM.GEOM_Object, containing the created tangent.
 
            Example of usage:
@@ -983,7 +983,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theDY Y component of the vector.
                 theDZ Z component of the vector.
 
-            Returns:     
+            Returns:
                 New GEOM.GEOM_Object, containing the created vector.
             """
             # Example: see GEOM_TestAll.py
@@ -1007,7 +1007,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 thePnt1 Start point for the vector.
                 thePnt2 End point for the vector.
 
-            Returns:        
+            Returns:
                 New GEOM.GEOM_Object, containing the created vector.
             """
             # Example: see GEOM_TestAll.py
@@ -1101,7 +1101,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theVec Vector, defining the plane normal direction.
                 theTrimSize Half size of a side of quadrangle face, representing the plane.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the created plane.
             """
             # Example: see GEOM_TestAll.py
@@ -1181,7 +1181,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theVec2 Vector, defining the plane normal direction.
                 theTrimSize Half size of a side of quadrangle face, representing the plane.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created plane.
             """
             # Example: see GEOM_TestAll.py
@@ -1202,12 +1202,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Create a plane, based on a Local coordinate system.
 
-           Parameters: 
+           Parameters:
                 theLCS  coordinate system, defining plane.
                 theTrimSize Half size of a side of quadrangle face, representing the plane.
                 theOrientation OXY, OYZ or OZX orientation - (1, 2 or 3)
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created plane.
             """
             # Example: see GEOM_TestAll.py
@@ -1228,12 +1228,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Create a local coordinate system.
 
-            Parameters: 
+            Parameters:
                 OX,OY,OZ Three coordinates of coordinate system origin.
                 XDX,XDY,XDZ Three components of OX direction
                 YDX,YDY,YDZ Three components of OY direction
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created coordinate system.
             """
             # Example: see GEOM_TestAll.py
@@ -1254,8 +1254,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theShape The initial shape to detect the coordinate system.
-                
-            Returns: 
+
+            Returns:
                 New GEOM.GEOM_Object, containing the created coordinate system.
             """
             anObj = self.BasicOp.MakeMarkerFromShape(theShape)
@@ -1278,7 +1278,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theXVec Vector of X direction
                 theYVec Vector of Y direction
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created coordinate system.
 
             """
@@ -1308,7 +1308,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 thePnt2 Middle point of the arc.
                 thePnt3 End point of the arc.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created arc.
             """
             # Example: see GEOM_TestAll.py
@@ -1477,7 +1477,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theRMinor Minor ellipse radius.
                 theVecMaj Vector, direction of the ellipse's main axis.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the created ellipse.
             """
             # Example: see GEOM_TestAll.py
@@ -1576,7 +1576,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theDoReordering If True, the algo does not follow the order of
                                 thePoints but searches for the closest vertex.
 
-            Returns:                     
+            Returns:
                 New GEOM.GEOM_Object, containing the created B-Spline curve.
             """
             # Example: see GEOM_TestAll.py
@@ -1620,11 +1620,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if theNewMethod:
               anObj = self.CurvesOp.MakeCurveParametricNew(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)
             else:
-              anObj = self.CurvesOp.MakeCurveParametric(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)   
+              anObj = self.CurvesOp.MakeCurveParametric(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)
             RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
             anObj.SetParameters(Parameters)
             return anObj
-            
+
 
 
         # end of l4_curves
@@ -1696,7 +1696,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             - CMD is one of
                - "R angle" : Set the direction by angle
                - "D dx dy" : Set the direction by DX & DY
-               
+
                - "TT x y" : Create segment by point at X & Y
                - "T dx dy" : Create segment by point with DX & DY
                - "L length" : Create segment by direction & Length
@@ -1713,11 +1713,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
                - "WW" : Close Wire (to finish)
                - "WF" : Close Wire and build face (to finish)
-            
+
             - Flag1 (= reverse) is 0 or 2 ...
                - if 0 the drawn arc is the one of lower angle (< Pi)
                - if 2 the drawn arc ius the one of greater angle (> Pi)
-        
+
             - Flag2 (= control tolerance) is 0 or 1 ...
                - if 0 the specified end point can be at a distance of the arc greater than the tolerance (10^-7)
                - if 1 the wire is built only if the end point is on the arc
@@ -1829,11 +1829,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakeBox (self, x1,y1,z1, x2,y2,z2):
             """
             Create a box by coordinates of two opposite vertices.
-            
+
             Parameters:
                 x1,y1,z1 double values, defining first point.
                 x2,y2,z2 double values, defining second point.
-                
+
             Returns:
                 New GEOM.GEOM_Object, containing the created box.
             """
@@ -1862,7 +1862,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theDY Length of Box edges, parallel to OY axis.
                 theDZ Length of Box edges, parallel to OZ axis.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the created box.
             """
             # Example: see GEOM_TestAll.py
@@ -1968,7 +1968,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theVec Vector, normal to the plane of the disk.
                 theR Disk radius.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the created disk.
             """
             # Example: see GEOM_TestAll.py
@@ -1990,7 +1990,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 thePnt1,thePnt2,thePnt3 Points, defining the disk.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the created disk.
             """
             # Example: see GEOM_TestAll.py
@@ -2012,7 +2012,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theR Radius of Face.
                 theOrientation set the orientation belong axis OXY or OYZ or OZX
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created disk.
 
             Example of usage:
@@ -2043,7 +2043,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theR Cylinder radius.
                 theH Cylinder height.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created cylinder.
             """
             # Example: see GEOM_TestAll.py
@@ -2071,7 +2071,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theR Cylinder radius.
                 theH Cylinder height.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the created cylinder.
             """
             # Example: see GEOM_TestAll.py
@@ -2095,8 +2095,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 thePnt Sphere center.
                 theR Sphere radius.
 
-            Returns:    
-                New GEOM.GEOM_Object, containing the created sphere.            
+            Returns:
+                New GEOM.GEOM_Object, containing the created sphere.
             """
             # Example: see GEOM_TestAll.py
             theR,Parameters = ParseParameters(theR)
@@ -2115,7 +2115,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Create a sphere with given center and radius.
 
-            Parameters: 
+            Parameters:
                 x,y,z Coordinates of sphere center.
                 theR Sphere radius.
 
@@ -2136,11 +2136,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Create a sphere with given radius at the origin of coordinate system.
 
-            Parameters: 
+            Parameters:
                 theR Sphere radius.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created sphere.            
+                New GEOM.GEOM_Object, containing the created sphere.
             """
             # Example: see GEOM_TestAll.py
             theR,Parameters = ParseParameters(theR)
@@ -2164,7 +2164,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Create a cone with given base point, axis, height and radiuses.
 
-            Parameters: 
+            Parameters:
                 thePnt Central point of the first cone base.
                 theAxis Cone axis.
                 theR1 Radius of the first cone base.
@@ -2202,7 +2202,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             the origin of coordinate system. Axis of the cone will
             be collinear to the OZ axis of the coordinate system.
 
-            Parameters: 
+            Parameters:
                 theR1 Radius of the first cone base.
                 theR2 Radius of the second cone base.
                 theH Cone height.
@@ -2233,7 +2233,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Create a torus with given center, normal vector and radiuses.
 
-            Parameters: 
+            Parameters:
                 thePnt Torus central point.
                 theVec Torus axis of symmetry.
                 theRMajor Torus major radius.
@@ -2259,12 +2259,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
            Create a torus with given radiuses at the origin of coordinate system.
 
-           Parameters: 
+           Parameters:
                 theRMajor Torus major radius.
                 theRMinor Torus minor radius.
 
            Returns:
-                New GEOM.GEOM_Object, containing the created torus.            
+                New GEOM.GEOM_Object, containing the created torus.
             """
             # Example: see GEOM_TestAll.py
             theRMajor,theRMinor,Parameters = ParseParameters(theRMajor,theRMinor)
@@ -2292,7 +2292,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Create a shape by extrusion of the base shape along a vector, defined by two points.
 
-            Parameters: 
+            Parameters:
                 theBase Base shape to be extruded.
                 thePoint1 First end of extrusion vector.
                 thePoint2 Second end of extrusion vector.
@@ -2327,7 +2327,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Create a shape by extrusion of the base shape along a
             vector, defined by two points, in 2 Ways (forward/backward).
 
-            Parameters: 
+            Parameters:
                 theBase Base shape to be extruded.
                 thePoint1 First end of extrusion vector.
                 thePoint2 Second end of extrusion vector.
@@ -2357,7 +2357,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             i.e. all the space, transfixed by the base shape during its translation
             along the vector on the given distance.
 
-            Parameters: 
+            Parameters:
                 theBase Base shape to be extruded.
                 theVec Direction of extrusion.
                 theH Prism dimension along theVec.
@@ -2428,7 +2428,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theScaleFactor Use it to make prism with scaled second base.
                                Nagative value means not scaled second base.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created prism.
             """
             # Example: see GEOM_TestAll.py
@@ -2492,7 +2492,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theAxis Rotation axis.
                 theAngle Rotation angle in radians.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created revolution.
             """
             # Example: see GEOM_TestAll.py
@@ -2524,7 +2524,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theAxis Rotation axis.
                 theAngle Rotation angle in radians.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created revolution.
             """
             theAngle,Parameters = ParseParameters(theAngle)
@@ -2568,7 +2568,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                          Approximation makes the algorithm work slower, but allows
                          building the surface for rather complex cases
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created filling surface.
 
             Example of usage:
@@ -2604,7 +2604,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theMaxDeg a maximal degree of BSpline surface to create
                 theTol3D a 3d tolerance to be reached
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created filling surface.
 
             Example of usage:
@@ -2763,7 +2763,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theWithCorrection - defining that the section is rotated to be
                                     orthogonal to the spine tangent in the correspondent point (0/1)
 
-            Returns:                           
+            Returns:
                 New GEOM.GEOM_Object, containing the created solids.
             """
             anObj = self.PrimOp.MakePipeWithShellSections(theSeqBases, theSeqSubBases,
@@ -2861,7 +2861,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                        same angle beetween the direction and the sections
                        along the sweep surface.
 
-            Returns:              
+            Returns:
                 New GEOM.GEOM_Object, containing the created pipe.
             """
             # Example: see GEOM_TestAll.py
@@ -2959,7 +2959,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 thePnt1 Point for the first end of edge.
                 thePnt2 Point for the second end of edge.
 
-            Returns:           
+            Returns:
                 New GEOM.GEOM_Object, containing the created edge.
             """
             # Example: see GEOM_TestAll.py
@@ -2987,7 +2987,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                               at the end of theRefCurve, close to the selected point.
                               If None, start from the first point of theRefCurve.
 
-            Returns:              
+            Returns:
                 New GEOM.GEOM_Object, containing the created edge.
             """
             # Example: see GEOM_TestAll.py
@@ -3037,7 +3037,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theTolerance Maximum distance between vertices, that will be merged.
                              Values less than 1e-07 are equivalent to 1e-07 (Precision::Confusion()).
 
-            Returns:                    
+            Returns:
                 New GEOM.GEOM_Object, containing the created wire.
             """
             # Example: see GEOM_TestAll.py
@@ -3100,7 +3100,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                algorithm tries to build any suitable face on the given
                                wire and prints a warning message.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created face.
             """
             # Example: see GEOM_TestAll.py
@@ -3207,7 +3207,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theShape Shape to count faces of.
 
-            Returns:    
+            Returns:
                 Quantity of faces.
             """
             # Example: see GEOM_TestOthers.py
@@ -3227,7 +3227,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theShape Shape to count edges of.
 
-            Returns:    
+            Returns:
                 Quantity of edges.
             """
             # Example: see GEOM_TestOthers.py
@@ -3295,7 +3295,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theShape Shape to be reversed.
 
-            Returns:   
+            Returns:
                 The reversed copy of theShape.
             """
             # Example: see GEOM_TestAll.py
@@ -3380,7 +3380,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShapes Shapes to find common sub-shapes of.
                 theShapeType Type of sub-shapes to be retrieved (see geompy.ShapeType)
 
-            Returns:    
+            Returns:
                 List of GEOM.GEOM_Object, that are sub-shapes of all given shapes.
             """
             # Example: see GEOM_TestOthers.py
@@ -3645,7 +3645,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theState The state of the sub-shapes to find (see GEOM::shape_state)
 
             Returns:
-                List of all found sub-shapes indices.            
+                List of all found sub-shapes indices.
             """
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnCylinderWithLocationIDs(theShape, theShapeType, theAxis, thePnt, theRadius, theState)
@@ -3850,7 +3850,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  certain way, defined through \a theState parameter.
         #  @param theCheckShape Shape for relative comparing. It must be a solid.
         #  @param theShape Shape to find sub-shapes of.
-        #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType()) 
+        #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType())
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
         #  @return List of all found sub-shapes.
         #
@@ -3967,7 +3967,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Returns:
                 Group of all found sub-shapes or a single found sub-shape.
 
-                
+
             Note:
                 This function has a restriction on argument shapes.
                 If theShapeWhere has curved parts with significantly
@@ -4048,7 +4048,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  equal to \a theShapeWhat.
         #  @param theShapeWhere Shape to find sub-shape of.
         #  @param theShapeWhat Shape, specifying what to find.
-        #  @return List of all found sub-shapes indices. 
+        #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetSame "Example"
         def GetSameIDs(self,theShapeWhere, theShapeWhat):
@@ -4178,7 +4178,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Explode a shape on sub-shapes of a given type.
         #  If the shape itself matches the type, it is also returned.
         #  @param aShape Shape to be exploded.
-        #  @param aType Type of sub-shapes to be retrieved (see ShapeType()) 
+        #  @param aType Type of sub-shapes to be retrieved (see ShapeType())
         #  @return List of sub-shapes of type theShapeType, contained in theShape.
         #
         #  @ref swig_all_decompose "Example"
@@ -4189,7 +4189,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 aShape Shape to be exploded.
-                aType Type of sub-shapes to be retrieved (see geompy.ShapeType) 
+                aType Type of sub-shapes to be retrieved (see geompy.ShapeType)
 
             Returns:
                 List of sub-shapes of type theShapeType, contained in theShape.
@@ -4210,7 +4210,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Explode a shape on sub-shapes of a given type.
 
             Parameters:
-                aShape Shape to be exploded (see geompy.ShapeType) 
+                aShape Shape to be exploded (see geompy.ShapeType)
                 aType Type of sub-shapes to be retrieved (see geompy.ShapeType)
 
             Returns:
@@ -4234,7 +4234,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Obtain a compound of sub-shapes of aShape,
             selected by they indices in list of all sub-shapes of type aType.
             Each index is in range [1, Nb_Sub-Shapes_Of_Given_Type]
-            
+
             Parameters:
                 aShape Shape to get sub-shape of.
                 ListOfID List of sub-shapes indices.
@@ -4265,11 +4265,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Sub-shapes will be sorted by coordinates of their gravity centers.
             If the shape itself matches the type, it is also returned.
 
-            Parameters: 
+            Parameters:
                 aShape Shape to be exploded.
                 aType Type of sub-shapes to be retrieved (see geompy.ShapeType)
 
-            Returns: 
+            Returns:
                 List of sub-shapes of type theShapeType, contained in theShape.
             """
             # Example: see GEOM_TestAll.py
@@ -4289,11 +4289,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Explode a shape on sub-shapes of a given type.
             Sub-shapes will be sorted by coordinates of their gravity centers.
 
-            Parameters: 
+            Parameters:
                 aShape Shape to be exploded.
                 aType Type of sub-shapes to be retrieved (see geompy.ShapeType)
 
-            Returns: 
+            Returns:
                 List of IDs of sub-shapes.
             """
             ListIDs = self.ShapesOp.GetAllSubShapesIDs(aShape, EnumToLong( aType ), True)
@@ -4347,7 +4347,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 aType  The shape type (see geompy.ShapeType)
                 isSorted Boolean flag to switch sorting on/off.
 
-            Returns:     
+            Returns:
                 List of sub-shapes of type aType, contained in aShape.
             """
             # Example: see GEOM_TestAll.py
@@ -4369,7 +4369,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 aShape Main shape.
                 anIDs List of unique IDs of sub-shapes inside theMainShape.
 
-            Returns:      
+            Returns:
                 List of GEOM.GEOM_Object, corresponding to found sub-shapes.
             """
             # Example: see GEOM_TestAll.py
@@ -4471,7 +4471,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #   are coincidental. The curves or surfaces may still meet at an angle, giving rise to a sharp corner or edge).\n
         #   \b C1 (Tangential Continuity): first derivatives are equal (the end vectors of curves or surfaces are parallel,
         #    ruling out sharp edges).\n
-        #   \b C2 (Curvature Continuity): first and second derivatives are equal (the end vectors of curves or surfaces 
+        #   \b C2 (Curvature Continuity): first and second derivatives are equal (the end vectors of curves or surfaces
         #       are of the same magnitude).\n
         #   \b CN N-th derivatives are equal (both the direction and the magnitude of the Nth derivatives of curves
         #    or surfaces (d/du C(u)) are the same at junction. \n
@@ -4543,7 +4543,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                      * SplitContinuity.SurfaceContinuity - required continuity for surfaces.
                      * SplitContinuity.CurveContinuity - required continuity for curves.
                        This and the previous parameters can take the following values:
-                       
+
                        Parametric Continuity:
                        C0 (Positional Continuity): curves are joined (the end positions of curves or surfaces are
                                                    coincidental. The curves or surfaces may still meet at an angle,
@@ -4554,7 +4554,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                   or surfaces are of the same magnitude).
                        CN N-th derivatives are equal (both the direction and the magnitude of the Nth derivatives of
                           curves or surfaces (d/du C(u)) are the same at junction.
-                          
+
                        Geometric Continuity:
                        G1: first derivatives are proportional at junction.
                            The curve tangents thus have the same direction, but not necessarily the same magnitude.
@@ -4686,7 +4686,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theWires Indices of wires to be removed, if EMPTY then the method
                          removes ALL internal wires of the given object.
 
-            Returns:                
+            Returns:
                 New GEOM.GEOM_Object, containing processed shape.
             """
             # Example: see GEOM_TestHealing.py
@@ -4710,7 +4710,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theWires Indices of wires to be removed, if EMPTY then the method
                          removes ALL internal holes of the given object
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing processed shape.
             """
             # Example: see GEOM_TestHealing.py
@@ -4731,15 +4731,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Close an open wire.
 
-            Parameters: 
+            Parameters:
                 theObject Shape to be processed.
                 theWires Indexes of edge(s) and wire(s) to be closed within theObject's shape,
                          if [ ], then theObject itself is a wire.
                 isCommonVertex If True  : closure by creation of a common vertex,
                                If False : closure by creation of an edge between ends.
 
-            Returns:                      
-                New GEOM.GEOM_Object, containing processed shape. 
+            Returns:
+                New GEOM.GEOM_Object, containing processed shape.
             """
             # Example: see GEOM_TestHealing.py
             anObj = self.HealOp.CloseContour(theObject, theWires, isCommonVertex)
@@ -4761,7 +4761,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Addition of a point to a given edge object.
 
-            Parameters: 
+            Parameters:
                 theObject Shape to be processed.
                 theEdgeIndex Index of edge to be divided within theObject's shape,
                              if -1, then theObject itself is the edge.
@@ -4770,7 +4770,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 isByParameter If TRUE :  theValue is treated as a curve parameter [0..1],
                               if FALSE : theValue is treated as a length parameter [0..1]
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing processed shape.
             """
             # Example: see GEOM_TestHealing.py
@@ -4791,12 +4791,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Suppress the vertices in the wire in case if adjacent edges are C1 continuous.
 
-            Parameters: 
+            Parameters:
                 theWire Wire to minimize the number of C1 continuous edges in.
                 theVertices A list of vertices to suppress. If the list
                             is empty, all vertices in a wire will be assumed.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object with modified wire.
             """
             anObj = self.HealOp.FuseCollinearEdgesWithinWire(theWire, theVertices)
@@ -4812,10 +4812,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Change orientation of the given object. Updates given shape.
 
-            Parameters: 
+            Parameters:
                 theObject Shape to be processed.
 
-            Returns:  
+            Returns:
                 Updated theObject
             """
             theObject = self.HealOp.ChangeOrientation(theObject)
@@ -4834,7 +4834,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theObject Shape to be processed.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing processed shape.
             """
             anObj = self.HealOp.ChangeOrientationCopy(theObject)
@@ -4855,7 +4855,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theObject Shape to be processed.
                 theTolerance Required tolerance value.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing processed shape.
             """
             anObj = self.HealOp.LimitTolerance(theObject, theTolerance)
@@ -4879,7 +4879,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theObject Shape to get free boundary of.
 
-            Returns: 
+            Returns:
                 [status, theClosedWires, theOpenWires]
                  status: FALSE, if an error(s) occured during the method execution.
                  theClosedWires: Closed wires on the free boundary of the given shape.
@@ -4935,7 +4935,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theTolerance Maximum distance between faces,
                              which can be considered as coincident.
 
-            Returns:                    
+            Returns:
                 GEOM.ListOfGO
             """
             anObj = self.ShapesOp.GetGlueFaces(theShape, theTolerance)
@@ -4998,7 +4998,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape Initial shape.
                 theTolerance Maximum distance between edges, which can be considered as coincident.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing a copy of theShape without coincident edges.
             """
             theTolerance,Parameters = ParseParameters(theTolerance)
@@ -5024,7 +5024,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theTolerance Maximum distance between edges,
                              which can be considered as coincident.
 
-            Returns:                         
+            Returns:
                 GEOM.ListOfGO
             """
             anObj = self.ShapesOp.GetGlueEdges(theShape, theTolerance)
@@ -5052,7 +5052,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                              which can be considered as coincident.
                 theEdges List of edges for gluing.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing a copy of theShape
                 without some edges.
             """
@@ -5083,13 +5083,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Perform one of boolean operations on two given shapes.
 
-            Parameters: 
+            Parameters:
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
                 theOperation Indicates the operation to be done:
                              1 - Common, 2 - Cut, 3 - Fuse, 4 - Section.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
             """
             # Example: see GEOM_TestAll.py
@@ -5108,11 +5108,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Perform Common boolean operation on two given shapes.
 
-            Parameters: 
+            Parameters:
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
- 
-            Returns:   
+
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
             """
             # Example: see GEOM_TestOthers.py
@@ -5129,13 +5129,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Perform Cut boolean operation on two given shapes.
 
-            Parameters: 
+            Parameters:
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
- 
-            Returns:   
+
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
-            
+
             """
             # Example: see GEOM_TestOthers.py
             return self.MakeBoolean(theShape1, theShape2, 2)
@@ -5151,13 +5151,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Perform Fuse boolean operation on two given shapes.
 
-            Parameters: 
+            Parameters:
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
- 
-            Returns:   
+
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
-            
+
             """
             # Example: see GEOM_TestOthers.py
             return self.MakeBoolean(theShape1, theShape2, 3)
@@ -5173,13 +5173,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Perform Section boolean operation on two given shapes.
 
-            Parameters: 
+            Parameters:
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
- 
-            Returns:   
+
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
-            
+
             """
             # Example: see GEOM_TestOthers.py
             return self.MakeBoolean(theShape1, theShape2, 4)
@@ -5223,7 +5223,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Perform partition operation.
 
-            Parameters: 
+            Parameters:
                 ListShapes Shapes to be intersected.
                 ListTools Shapes to intersect theShapes.
                 Limit Type of resulting shapes (see geompy.ShapeType)
@@ -5237,11 +5237,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                     Each compound from ListShapes and ListTools will be exploded
                     in order to avoid possible intersection between shapes from
                     this compound.
-                    
+
             After implementation new version of PartitionAlgo (October 2006) other
             parameters are ignored by current functionality. They are kept in this
             function only for support old versions.
-            
+
             Ignored parameters:
                 ListKeepInside Shapes, outside which the results will be deleted.
                                Each shape from theKeepInside must belong to theShapes also.
@@ -5250,7 +5250,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 RemoveWebs If TRUE, perform Glue 3D algorithm.
                 ListMaterials Material indices for each shape. Make sence, only if theRemoveWebs is TRUE.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the result shapes.
             """
             # Example: see GEOM_TestAll.py
@@ -5290,14 +5290,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             compound contains nonintersected shapes. Performance will be better
             since intersection between shapes from compound is not performed.
 
-            Parameters: 
+            Parameters:
                 Description of all parameters as in method geompy.MakePartition
-        
+
             NOTE:
                 Passed compounds (via ListShapes or via ListTools)
                 have to consist of nonintersecting shapes.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the result shapes.
             """
             if Limit == ShapeType["AUTO"]:
@@ -5340,11 +5340,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Perform partition of the Shape with the Plane
 
-            Parameters: 
+            Parameters:
                 theShape Shape to be intersected.
                 thePlane Tool shape, to intersect theShape.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
             """
             # Example: see GEOM_TestAll.py
@@ -5372,12 +5372,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Translate the given object along the vector, specified
             by its end points, creating its copy before the translation.
 
-            Parameters: 
+            Parameters:
                 theObject The object to be translated.
                 thePoint1 Start point of translation vector.
                 thePoint2 End point of translation vector.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the translated object.
             """
             # Example: see GEOM_TestAll.py
@@ -5395,11 +5395,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Translate the given object along the vector, specified by its components.
 
-            Parameters: 
+            Parameters:
                 theObject The object to be translated.
                 theDX,theDY,theDZ Components of translation vector.
 
-            Returns: 
+            Returns:
                 Translated GEOM.GEOM_Object.
             """
             # Example: see GEOM_TestAll.py
@@ -5421,11 +5421,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Translate the given object along the vector, specified
             by its components, creating its copy before the translation.
 
-            Parameters: 
+            Parameters:
                 theObject The object to be translated.
                 theDX,theDY,theDZ Components of translation vector.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the translated object.
             """
             # Example: see GEOM_TestAll.py
@@ -5447,11 +5447,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Translate the given object along the given vector,
             creating its copy before the translation.
 
-            Parameters: 
+            Parameters:
                 theObject The object to be translated.
                 theVector The translation vector.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the translated object.
             """
             # Example: see GEOM_TestAll.py
@@ -5471,13 +5471,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Translate the given object along the given vector on given distance.
 
-            Parameters: 
+            Parameters:
                 theObject The object to be translated.
                 theVector The translation vector.
                 theDistance The translation distance.
                 theCopy Flag used to translate object itself or create a copy.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the translated object.
             """
             # Example: see GEOM_TestAll.py
@@ -5505,7 +5505,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theVector The translation vector.
                 theDistance The translation distance.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the translated object.
             """
             # Example: see GEOM_TestAll.py
@@ -5531,7 +5531,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theAxis Rotation axis.
                 theAngle Rotation angle in radians.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the rotated object.
             """
             # Example: see GEOM_TestAll.py
@@ -5625,7 +5625,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                          Passing None for it means scaling relatively the origin of global CS.
                 theFactor Scaling factor value.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the scaled shape.
             """
             # Example: see GEOM_TestAll.py
@@ -5704,7 +5704,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theObject The object to be mirrored.
                 theAxis Axis of symmetry.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the mirrored shape.
             """
             # Example: see GEOM_TestAll.py
@@ -5728,7 +5728,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theObject The object to be mirrored.
                 thePoint Point of symmetry.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the mirrored shape.
             """
             # Example: see GEOM_TestAll.py
@@ -5761,7 +5761,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                             its location will be changed to theEndLCS.
                 theEndLCS Coordinate system to perform displacement to it.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the displaced shape.
 
             Example of usage:
@@ -5796,7 +5796,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                  theCopy is to create a copy objects if true.
                  theReverse  0 - for usual direction, 1 - to reverse path direction.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the displaced shape.
 
             Example of usage:
@@ -5821,7 +5821,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theObject The base object for the offset.
                 theOffset Offset value.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the offset object.
 
             Example of usage:
@@ -5850,7 +5850,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theSource The source object for the projection. It can be a point, edge or wire.
                 theTarget The target object. It can be planar or cylindrical face.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the projection.
             """
             # Example: see GEOM_TestAll.py
@@ -5881,7 +5881,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theStep Distance to translate on.
                 theNbTimes Quantity of translations to be done.
 
-            Returns:     
+            Returns:
                 New GEOM.GEOM_Object, containing compound of all
                 the shapes, obtained after each translation.
 
@@ -5955,7 +5955,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theAxis The rotation axis.
                 theNbTimes Quantity of rotations to be done.
 
-            Returns:     
+            Returns:
                 New GEOM.GEOM_Object, containing compound of all the
                 shapes, obtained after each rotation.
 
@@ -6000,7 +6000,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theStep Translation distance.
                 theNbTimes2 Quantity of translations to be done.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing compound of all the
                 shapes, obtained after each transformation.
 
@@ -6037,7 +6037,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakeMultiRotation2D(self,aShape,aDir,aPoint,anAngle,nbtimes1,aStep,nbtimes2):
             """
             The same, as MultiRotate2D(), but axis is given by direction and point
-            
+
             Example of usage:
                 pz = geompy.MakeVertex(0, 0, 100)
                 vy = geompy.MakeVectorDXDYDZ(0, 100, 0)
@@ -6069,11 +6069,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape Shape, to perform fillet on.
                 theR Fillet radius.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
-            Example of usage: 
-               filletall = geompy.MakeFilletAll(prism, 10.) 
+            Example of usage:
+               filletall = geompy.MakeFilletAll(prism, 10.)
             """
             # Example: see GEOM_TestOthers.py
             theR,Parameters = ParseParameters(theR)
@@ -6104,7 +6104,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Note:
                 Global index of sub-shape can be obtained, using method geompy.GetSubShapeID
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
             Example of usage:
@@ -6190,10 +6190,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
                 The list of vertices could be empty,in this case fillet will done done at all vertices in wire
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
-            Example of usage:  
+            Example of usage:
                 # create wire
                 Wire_1 = geompy.MakeWire([Edge_12, Edge_7, Edge_11, Edge_6, Edge_1,Edge_4])
                 # make fillet at given wire vertices with giver radius
@@ -6225,7 +6225,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Note:
                 Global index of sub-shape can be obtained, using method geompy.GetSubShapeID
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
             Example of usage:
@@ -6254,7 +6254,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape Shape, to perform chamfer on.
                 theD Chamfer size along each face.
 
-            Returns:     
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
             Example of usage:
@@ -6291,7 +6291,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Note:
                 Global index of sub-shape can be obtained, using method geompy.GetSubShapeID
 
-            Returns:      
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
             Example of usage:
@@ -6327,7 +6327,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Note:
                 Global index of sub-shape can be obtained, using method geompy.GetSubShapeID
 
-            Returns:      
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
             Example of usage:
@@ -6373,10 +6373,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theD2 Chamfer size along another of two faces, connected to the edge.
                 theFaces Sequence of global indices of faces of theShape.
 
-                
+
             Note: Global index of sub-shape can be obtained, using method geompy.GetSubShapeID().
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
             """
             # Example: see GEOM_TestAll.py
@@ -6418,7 +6418,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Perform a chamfer on edges,
             with distance D1 on the first specified face (if several for one edge)
-            
+
             Parameters:
                 theShape Shape, to perform chamfer on.
                 theD1,theD2 Chamfer size
@@ -6465,14 +6465,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             else:
                 anObj = self.MakeChamferFaces(aShape,d1,d2,ListShape)
             return anObj
-            
+
         ## Remove material from a solid by extrusion of the base shape on the given distance.
-        #  @param theInit Shape to remove material from. It must be a solid or 
+        #  @param theInit Shape to remove material from. It must be a solid or
         #  a compound made of a single solid.
         #  @param theBase Closed edge or wire defining the base shape to be extruded.
         #  @param theH Prism dimension along the normal to theBase
         #  @param theAngle Draft angle in degrees.
-        #  @return New GEOM.GEOM_Object, containing the initial shape with removed material 
+        #  @return New GEOM.GEOM_Object, containing the initial shape with removed material
         #
         #  @ref tui_creation_prism "Example"
         def MakeExtrudedCut(self, theInit, theBase, theH, theAngle):
@@ -6493,15 +6493,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeDraftPrism(theInit, theBase, theH, theAngle, False)
             RaiseIfFailed("MakeExtrudedBoss", self.PrimOp)
             #anObj.SetParameters(Parameters)
-            return anObj   
-            
+            return anObj
+
         ## Add material to a solid by extrusion of the base shape on the given distance.
-        #  @param theInit Shape to add material to. It must be a solid or 
+        #  @param theInit Shape to add material to. It must be a solid or
         #  a compound made of a single solid.
         #  @param theBase Closed edge or wire defining the base shape to be extruded.
         #  @param theH Prism dimension along the normal to theBase
         #  @param theAngle Draft angle in degrees.
-        #  @return New GEOM.GEOM_Object, containing the initial shape with added material 
+        #  @return New GEOM.GEOM_Object, containing the initial shape with added material
         #
         #  @ref tui_creation_prism "Example"
         def MakeExtrudedBoss(self, theInit, theBase, theH, theAngle):
@@ -6522,7 +6522,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeDraftPrism(theInit, theBase, theH, theAngle, True)
             RaiseIfFailed("MakeExtrudedBoss", self.PrimOp)
             #anObj.SetParameters(Parameters)
-            return anObj   
+            return anObj
 
         # end of l3_local
         ## @}
@@ -6545,13 +6545,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Perform an Archimde operation on the given shape with given parameters.
             The object presenting the resulting face is returned.
 
-            Parameters: 
+            Parameters:
                 theShape Shape to be put in water.
                 theWeight Weight og the shape.
                 theWaterDensity Density of the water.
                 theMeshDeflection Deflection of the mesh, using to compute the section.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing a section of theShape
                 by a plane, corresponding to water level.
             """
@@ -6599,7 +6599,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Get summarized length of all wires,
             area of surface and volume of the given shape.
 
-            Parameters: 
+            Parameters:
                 theShape Shape to define properties of.
 
             Returns:
@@ -6625,7 +6625,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Get parameters of bounding box of the given shape
 
-            Parameters: 
+            Parameters:
                 theShape Shape to obtain bounding box of.
 
             Returns:
@@ -6650,7 +6650,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Get inertia matrix and moments of inertia of theShape.
 
-            Parameters: 
+            Parameters:
                 theShape Shape to calculate inertia of.
 
             Returns:
@@ -6671,8 +6671,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def AreCoordsInside(self, theShape, coords, tolerance=1.e-7):
             """
             Get if coords are included in the shape (ST_IN or ST_ON)
-            
-            Parameters: 
+
+            Parameters:
                 theShape Shape
                 coords list of points coordinates [x1, y1, z1, x2, y2, z2, ...]
                 tolerance to be used (default is 1.0e-7)
@@ -6690,11 +6690,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MinDistance(self, theShape1, theShape2):
             """
             Get minimal distance between the given shapes.
-            
-            Parameters: 
+
+            Parameters:
                 theShape1,theShape2 Shapes to find minimal distance between.
 
-            Returns:    
+            Returns:
                 Value of the minimal distance between the given shapes.
             """
             # Example: see GEOM_TestMeasures.py
@@ -6711,10 +6711,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Get minimal distance between the given shapes.
 
-            Parameters: 
+            Parameters:
                 theShape1,theShape2 Shapes to find minimal distance between.
 
-            Returns:  
+            Returns:
                 Value of the minimal distance between the given shapes.
             """
             # Example: see GEOM_TestMeasures.py
@@ -6734,14 +6734,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Get angle between the given shapes in degrees.
 
-            Parameters: 
+            Parameters:
                 theShape1,theShape2 Lines or linear edges to find angle between.
 
             Note:
                 If both arguments are vectors, the angle is computed in accordance
                 with their orientations, otherwise the minimum angle is computed.
 
-            Returns:  
+            Returns:
                 Value of the angle between the given shapes in degrees.
             """
             # Example: see GEOM_TestMeasures.py
@@ -6760,15 +6760,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Get angle between the given shapes in radians.
 
-            Parameters: 
+            Parameters:
                 theShape1,theShape2 Lines or linear edges to find angle between.
 
-                
+
             Note:
                 If both arguments are vectors, the angle is computed in accordance
                 with their orientations, otherwise the minimum angle is computed.
 
-            Returns:  
+            Returns:
                 Value of the angle between the given shapes in radians.
             """
             # Example: see GEOM_TestMeasures.py
@@ -6787,12 +6787,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Get angle between the given vectors in degrees.
 
-            Parameters: 
+            Parameters:
                 theShape1,theShape2 Vectors to find angle between.
                 theFlag If True, the normal vector is defined by the two vectors cross,
                         if False, the opposite vector to the normal vector is used.
 
-            Returns:  
+            Returns:
                 Value of the angle between the given vectors in degrees.
             """
             anAngle = self.MeasuOp.GetAngleBtwVectors(theShape1, theShape2)
@@ -6806,12 +6806,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Get angle between the given vectors in radians.
 
-            Parameters: 
+            Parameters:
                 theShape1,theShape2 Vectors to find angle between.
                 theFlag If True, the normal vector is defined by the two vectors cross,
                         if False, the opposite vector to the normal vector is used.
 
-            Returns:  
+            Returns:
                 Value of the angle between the given vectors in radians.
             """
             anAngle = self.GetAngleVectors(theShape1, theShape2, theFlag)*math.pi/180.
@@ -6832,11 +6832,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Measure curvature of a curve at a point, set by parameter.
 
-            Parameters: 
+            Parameters:
                 theCurve a curve.
                 theParam parameter.
 
-            Returns: 
+            Returns:
                 radius of curvature of theCurve.
             """
             # Example: see GEOM_TestMeasures.py
@@ -6854,12 +6854,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Measure curvature of a curve at a point.
 
-            Parameters: 
+            Parameters:
                 theCurve a curve.
                 thePoint given point.
 
-            Returns: 
-                radius of curvature of theCurve.           
+            Returns:
+                radius of curvature of theCurve.
             """
             aCurv = self.MeasuOp.CurveCurvatureByPoint(theCurve,thePoint)
             RaiseIfFailed("CurveCurvatureByPoint", self.MeasuOp)
@@ -6882,12 +6882,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Measure max radius of curvature of surface.
 
-            Parameters: 
+            Parameters:
                 theSurf the given surface.
                 theUParam Value of U-parameter on the referenced surface.
                 theVParam Value of V-parameter on the referenced surface.
-                
-            Returns:     
+
+            Returns:
                 max radius of curvature of theSurf.
             """
             # Example: see GEOM_TestMeasures.py
@@ -6905,12 +6905,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Measure max radius of curvature of surface in the given point.
 
-            Parameters: 
+            Parameters:
                 theSurf the given surface.
                 thePoint given point.
-                
-            Returns:     
-                max radius of curvature of theSurf.          
+
+            Returns:
+                max radius of curvature of theSurf.
             """
             aSurf = self.MeasuOp.MaxSurfaceCurvatureByPoint(theSurf,thePoint)
             RaiseIfFailed("MaxSurfaceCurvatureByPoint", self.MeasuOp)
@@ -6921,18 +6921,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theUParam Value of U-parameter on the referenced surface.
         #  @param theVParam Value of V-parameter on the referenced surface.
         #  @return min radius of curvature of theSurf.
-        #   
+        #
         ## @ref swig_todo "Example"
         def MinSurfaceCurvatureByParam(self, theSurf, theUParam, theVParam):
             """
             Measure min radius of curvature of surface.
 
-            Parameters: 
+            Parameters:
                 theSurf the given surface.
                 theUParam Value of U-parameter on the referenced surface.
                 theVParam Value of V-parameter on the referenced surface.
-                
-            Returns:     
+
+            Returns:
                 Min radius of curvature of theSurf.
             """
             aSurf = self.MeasuOp.MinSurfaceCurvatureByParam(theSurf,theUParam,theVParam)
@@ -6949,12 +6949,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Measure min radius of curvature of surface in the given point.
 
-            Parameters: 
+            Parameters:
                 theSurf the given surface.
                 thePoint given point.
-                
-            Returns:     
-                Min radius of curvature of theSurf.          
+
+            Returns:
+                Min radius of curvature of theSurf.
             """
             aSurf = self.MeasuOp.MinSurfaceCurvatureByPoint(theSurf,thePoint)
             RaiseIfFailed("MinSurfaceCurvatureByPoint", self.MeasuOp)
@@ -6973,10 +6973,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Get min and max tolerances of sub-shapes of theShape
 
-            Parameters: 
+            Parameters:
                 theShape Shape, to get tolerances of.
 
-            Returns:    
+            Returns:
                 [FaceMin,FaceMax, EdgeMin,EdgeMax, VertMin,VertMax]
                  FaceMin,FaceMax: Min and max tolerances of the faces.
                  EdgeMin,EdgeMax: Min and max tolerances of the edges.
@@ -7120,7 +7120,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theShape Shape to find first vertex.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the created vertex.
             """
             # Example: see GEOM_TestMeasures.py
@@ -7137,10 +7137,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Get the last vertex of wire/edge depended orientation.
 
-            Parameters: 
+            Parameters:
                 theShape Shape to find last vertex.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the created vertex.
             """
             # Example: see GEOM_TestMeasures.py
@@ -7160,12 +7160,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Get a normale to the given face. If the point is not given,
             the normale is calculated at the center of mass.
-            
-            Parameters: 
+
+            Parameters:
                 theFace Face to define normale of.
                 theOptionalPoint Point to compute the normale at.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the created vector.
             """
             # Example: see GEOM_TestMeasures.py
@@ -7179,7 +7179,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                        if TRUE, the shape's geometry will be checked also.
         #  @param theReturnStatus If FALSE and if theShape is invalid, a description \n
         #                        of problem is printed.
-        #                        if TRUE and if theShape is invalid, the description 
+        #                        if TRUE and if theShape is invalid, the description
         #                        of problem is also returned.
         #  @return TRUE, if the shape "seems to be valid".
         #
@@ -7188,16 +7188,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Check a topology of the given shape.
 
-            Parameters: 
+            Parameters:
                 theShape Shape to check validity of.
                 theIsCheckGeom If FALSE, only the shape's topology will be checked,
                                if TRUE, the shape's geometry will be checked also.
                 theReturnStatus If FALSE and if theShape is invalid, a description
                                 of problem is printed.
-                                if TRUE and if theShape is invalid, the description 
+                                if TRUE and if theShape is invalid, the description
                                 of problem is returned.
 
-            Returns:   
+            Returns:
                 TRUE, if the shape "seems to be valid".
                 If theShape is invalid, prints a description of problem.
                 This description can also be returned.
@@ -7225,10 +7225,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Detect self-intersections in the given shape.
 
-            Parameters: 
+            Parameters:
                 theShape Shape to check.
 
-            Returns:   
+            Returns:
                 TRUE, if the shape contains no self-intersections.
             """
             # Example: see GEOM_TestMeasures.py
@@ -7256,10 +7256,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Axes of the LCS are obtained from shape's location or,
             if the shape is a planar face, from position of its plane.
 
-            Parameters: 
+            Parameters:
                 theShape Shape to calculate position of.
 
-            Returns:  
+            Returns:
                 [Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz].
                  Ox,Oy,Oz: Coordinates of shape's LCS origin.
                  Zx,Zy,Zz: Coordinates of shape's LCS normal(main) direction.
@@ -7282,8 +7282,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def KindOfShape(self,theShape):
             """
             Get kind of theShape.
-         
-            Parameters: 
+
+            Parameters:
                 theShape Shape to get a kind of.
 
             Returns:
@@ -7334,7 +7334,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Import a shape from the BREP or IGES or STEP file
             (depends on given format) with given name.
 
-            Parameters: 
+            Parameters:
                 theFileName The file, containing the shape.
                 theFormatName Specify format for the file reading.
                     Available formats can be obtained with geompy.InsertOp.ImportTranslators() method.
@@ -7371,7 +7371,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             geompy.ImportFile(...) function for BREP format
             Import a shape from the BREP file with given name.
 
-            Parameters: 
+            Parameters:
                 theFileName The file, containing the shape.
 
             Returns:
@@ -7486,7 +7486,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Note:
                 shape.GetShapeStream() method can be used to obtain the shape's BRep stream.
 
-            Parameters: 
+            Parameters:
                 theStream The BRep binary stream.
 
             Returns:
@@ -7508,7 +7508,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Export the given shape into a file with given name.
 
-            Parameters: 
+            Parameters:
                 theObject Shape to be stored in the file.
                 theFileName Name of the file to store the given shape in.
                 theFormatName Specify format for the shape storage.
@@ -7568,13 +7568,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Create a quadrangle face from four edges. Order of Edges is not
             important. It is  not necessary that edges share the same vertex.
 
-            Parameters: 
+            Parameters:
                 E1,E2,E3,E4 Edges for the face bound.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created face.
 
-            Example of usage:               
+            Example of usage:
                 qface1 = geompy.MakeQuad(edge1, edge2, edge3, edge4)
             """
             # Example: see GEOM_Spanner.py
@@ -7593,12 +7593,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Create a quadrangle face on two edges.
             The missing edges will be built by creating the shortest ones.
 
-            Parameters: 
+            Parameters:
                 E1,E2 Two opposite edges for the face.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created face.
-            
+
             Example of usage:
                 # create vertices
                 p1 = geompy.MakeVertex(  0.,   0.,   0.)
@@ -7628,10 +7628,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Create a quadrangle face with specified corners.
             The missing edges will be built by creating the shortest ones.
 
-            Parameters: 
+            Parameters:
                 V1,V2,V3,V4 Corner vertices for the face.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created face.
 
             Example of usage:
@@ -7660,10 +7660,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Create a hexahedral solid, bounded by the six given faces. Order of
             faces is not important. It is  not necessary that Faces share the same edge.
 
-            Parameters: 
+            Parameters:
                 F1,F2,F3,F4,F5,F6 Faces for the hexahedral solid.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the created solid.
 
             Example of usage:
@@ -7686,7 +7686,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Create a hexahedral solid between two given faces.
             The missing faces will be built by creating the smallest ones.
 
-            Parameters: 
+            Parameters:
                 F1,F2 Two opposite faces for the hexahedral solid.
 
             Returns:
@@ -7718,13 +7718,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Get a vertex, found in the given shape by its coordinates.
 
-            Parameters: 
+            Parameters:
                 theShape Block or a compound of blocks.
                 theX,theY,theZ Coordinates of the sought vertex.
                 theEpsilon Maximum allowed distance between the resulting
                            vertex and point with the given coordinates.
 
-            Returns:                  
+            Returns:
                 New GEOM.GEOM_Object, containing the found vertex.
 
             Example of usage:
@@ -7745,7 +7745,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Find a vertex of the given shape, which has minimal distance to the given point.
 
-            Parameters: 
+            Parameters:
                 theShape Any shape.
                 thePoint Point, close to the desired vertex.
 
@@ -7771,7 +7771,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Get an edge, found in the given shape by two given vertices.
 
-            Parameters: 
+            Parameters:
                 theShape Block or a compound of blocks.
                 thePoint1,thePoint2 Points, close to the ends of the desired edge.
 
@@ -7793,7 +7793,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Find an edge of the given shape, which has minimal distance to the given point.
 
-            Parameters: 
+            Parameters:
                 theShape Block or a compound of blocks.
                 thePoint Point, close to the desired edge.
 
@@ -7863,7 +7863,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theBlock Must be a hexahedral solid.
                 theFace Face of theBlock, opposite to the desired face.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the found face.
             """
             # Example: see GEOM_Spanner.py
@@ -7981,7 +7981,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Returns:
                 TRUE, if the given shape is a compound of blocks.
-                If theCompound is not valid, prints all discovered errors.            
+                If theCompound is not valid, prints all discovered errors.
             """
             # Example: see GEOM_Spanner.py
             (IsValid, BCErrors) = self.BlocksOp.CheckCompoundOfBlocks(theCompound)
@@ -8041,7 +8041,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 doUnionFaces If True, then unite faces. If False (the default value),
                              do not unite faces.
 
-            Returns: 
+            Returns:
                 Improved shape.
             """
             # Example: see GEOM_TestOthers.py
@@ -8069,7 +8069,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theShape The compound to check and improve.
 
-            Returns: 
+            Returns:
                 Improved compound.
             """
             # Example: see GEOM_TestOthers.py
@@ -8104,7 +8104,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Note:
                 If theMaxNbFaces = 0, the maximum number of faces is not restricted.
 
-            Returns:  
+            Returns:
                 List of GEOM.GEOM_Object, containing the retrieved blocks.
             """
             # Example: see GEOM_TestOthers.py
@@ -8154,7 +8154,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theCompound Compound, to find block in.
                 theParts List of faces and/or edges and/or vertices to be parts of the found block.
 
-            Returns: 
+            Returns:
                 New GEOM_Object, containing the found block.
             """
             # Example: see GEOM_TestOthers.py
@@ -8302,7 +8302,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Example of usage:
                 group = geompy.CreateGroup(Box, geompy.ShapeType["FACE"])
-                
+
             """
             # Example: see GEOM_TestOthers.py
             anObj = self.GroupOp.CreateGroup(theMainShape, theShapeType)
@@ -8324,7 +8324,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theSubShapeID  is a sub-shape ID in the main object.
 
             Note:
-                Use method GetSubShapeID() to get an unique ID of the sub-shape 
+                Use method GetSubShapeID() to get an unique ID of the sub-shape
             """
             # Example: see GEOM_TestOthers.py
             self.GroupOp.AddObject(theGroup, theSubShapeID)
@@ -8421,7 +8421,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters:
                 theGroup is a GEOM group from which the sub-shapes are removed.
                 theSubShapes is a list of indices of sub-shapes to be removed.
-            """            
+            """
             # Example: see GEOM_TestOthers.py
             self.GroupOp.DifferenceIDs(theGroup, theSubShapes)
             RaiseIfFailed("DifferenceIDs", self.GroupOp)
@@ -8525,7 +8525,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Cut of lists of groups.
         #  New group is created. It will contain only entities
-        #  which are present in groups listed in theGList1 but 
+        #  which are present in groups listed in theGList1 but
         #  are not present in groups from theGList2.
         #  @param theGList1 is a list of GEOM groups to include elements of.
         #  @param theGList2 is a list of GEOM groups to exclude elements of.
@@ -8535,7 +8535,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Cut of lists of groups.
             New group is created. It will contain only entities
-            which are present in groups listed in theGList1 but 
+            which are present in groups listed in theGList1 but
             are not present in groups from theGList2.
 
             Parameters:
@@ -8552,7 +8552,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Cut of lists of groups.
         #  New group is created. It will contain only entities
-        #  which are present in groups listed in theGList1 but 
+        #  which are present in groups listed in theGList1 but
         #  are not present in groups from theGList2.
         #  @param theGList1 is a list of GEOM groups to include elements of.
         #  @param theGList2 is a list of GEOM groups to exclude elements of.
@@ -8562,7 +8562,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Cut of lists of groups.
             New group is created. It will contain only entities
-            which are present in groups listed in theGList1 but 
+            which are present in groups listed in theGList1 but
             are not present in groups from theGList2.
 
             Parameters:
@@ -8619,7 +8619,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theId is a GEOM obect type id.
-                
+
             Returns:
                 type of geom object (POINT, VECTOR, PLANE, LINE, TORUS, ... )
             """
@@ -8891,7 +8891,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 # create PipeTShape object with position
                 pipetshape_position = geompy.MakePipeTShape(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, True, P1, P2, P3)
             """
-            theR1, theW1, theL1, theR2, theW2, theL2, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2)        
+            theR1, theW1, theL1, theR2, theW2, theL2, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2)
             if (theP1 and theP2 and theP3):
                 anObj = self.AdvOp.MakePipeTShapeWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh, theP1, theP2, theP3)
             else:
@@ -9007,16 +9007,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theP1 1st junction point of main pipe
                 theP2 2nd junction point of main pipe
                 theP3 Junction point of incident pipe
-                
+
             Returns:
                 List of GEOM_Object, containing the created shape and propagation groups.
-                
+
             Example of usage:
                 # create PipeTShape with fillet object
                 pipetshapefillet = geompy.MakePipeTShapeFillet(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 5.0)
                 # create PipeTShape with fillet object with position
                 pipetshapefillet_position = geompy.MakePipeTShapeFillet(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 5.0, True, P1, P2, P3)
-        
+
             """
             theR1, theW1, theL1, theR2, theW2, theL2, theRF, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theRF)
             if (theP1 and theP2 and theP3):
@@ -9042,7 +9042,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeDividedDisk", self.AdvOp)
             if Parameters: anObj.SetParameters(Parameters)
             return anObj
-            
+
         ## This function allows creating a disk already divided into blocks. It
         #  can be used to create divided pipes for later meshing in hexaedra.
         #  @param theCenter Center of the disk
@@ -9073,20 +9073,36 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if Parameters: anObj.SetParameters(Parameters)
             return anObj
 
-        ## Export a shape to XAO Format
-        #  @param shape Shape to export
-        #  @param fileName The name of the exported file
-        #  @param groups List of groups to export
-        #  @param fields List of fields to export
+        ## Export a shape to XAO format
+        #  @param shape The shape to export
+        #  @param groups The list of groups to export
+        #  @param fields The list of fields to export
+        #  @param author The author of the export
+        #  @param fileName The name of the file to export
         #  @return boolean
         #
-        #  @ref tui_creation_exportxao "Example"
-        def ExportXAO(self, fileName, shape, groups, fields):
-            fileName, shape, groups, fields, Parameters = ParseParameters(fileName, shape, groups, fields)
-            isGood = self.ImpExpOp.ExportXAO(fileName, shape, groups, fields)
+        #  @ref tui_exportxao "Example"
+        def ExportXAO(self, shape, groups, fields, author, fileName):
+            res = self.ImpExpOp.ExportXAO(shape, groups, fields, author, fileName)
             RaiseIfFailed("ExportXAO", self.ImpExpOp)
             #if Parameters: anObj.SetParameters(Parameters)
-            return isGood
+            return res
+
+        ## Import a shape from XAO format
+        #  @param shape Shape to export
+        #  @param fileName The name of the file to import
+        #  @return tuple (res, shape, groups, fields)
+        #       res Flag indicating if the import was succeful
+        #       shape The imported shape
+        #       groups The list of imported groups
+        #       fields The list of imported fields
+        #
+        #  @ref tui_importxao "Example"
+        def ImportXAO(self, fileName):
+            res = self.ImpExpOp.ImportXAO(fileName)
+            RaiseIfFailed("ImportXAO", self.ImpExpOp)
+            #if Parameters: anObj.SetParameters(Parameters)
+            return res
 
         #@@ insert new functions before this line @@ do not remove this line @@#
 
@@ -9138,10 +9154,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def LoadTexture(self, Path):
             """
             Load marker texture from the file
-            
+
             Parameters:
                 Path a path to the texture file
-                
+
             Returns:
                 unique texture identifier
             """
@@ -9152,7 +9168,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Get internal name of the object based on its study entry
         #  @note This method does not provide an unique identifier of the geometry object.
-        #  @note This is internal function of GEOM component, though it can be used outside it for 
+        #  @note This is internal function of GEOM component, though it can be used outside it for
         #  appropriate reason (e.g. for identification of geometry object).
         #  @param obj geometry object
         #  @return unique object identifier
@@ -9161,7 +9177,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Get internal name of the object based on its study entry.
             Note: this method does not provide an unique identifier of the geometry object.
-            It is an internal function of GEOM component, though it can be used outside GEOM for 
+            It is an internal function of GEOM component, though it can be used outside GEOM for
             appropriate reason (e.g. for identification of geometry object).
 
             Parameters:
@@ -9175,11 +9191,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if entry is not None:
                 lst = entry.split(":")
                 if len(lst) > 0:
-                    ID = lst[-1] # -1 means last item in the list            
+                    ID = lst[-1] # -1 means last item in the list
                     return "GEOM_" + ID
             return ID
-                
-            
+
+
 
         ## Add marker texture. @a Width and @a Height parameters
         #  specify width and height of the texture in pixels.

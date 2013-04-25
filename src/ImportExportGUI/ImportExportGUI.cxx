@@ -15,12 +15,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-//  File   : ImportExportGUI.cxx
-//  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
-#include "ImportExportGUI.h"
+#include <iostream>
+#include <QDialog>
 
 #include "GeometryGUI.h"
 #include "GeometryGUI_Operations.h"
@@ -32,10 +29,10 @@
 #include <SalomeApp_Application.h>
 
 #include "ImportExportGUI_ExportXAODlg.h"
+#include "ImportExportGUI_ImportXAODlg.h"
+#include "ImportExportGUI.h"
 //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
 
-#include <QDialog> 
-#include <iostream>
 
 //=======================================================================
 // function : ImportExportGUI()
@@ -72,6 +69,7 @@ bool ImportExportGUI::OnGUIEvent(int commandId, SUIT_Desktop* parent)
             dialog = new ImportExportGUI_ExportXAODlg(getGeometryGUI(), parent);
             break;
         case GEOMOp::OpImportXAO:
+            dialog = new ImportExportGUI_ImportXAODlg(getGeometryGUI(), parent);
             break;
             //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
         default:
