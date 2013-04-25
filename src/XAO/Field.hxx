@@ -18,62 +18,112 @@
 //
 // Author : Nathalie Gore (OpenCascade)
 
-#ifndef __XAO_XAO_HXX__
-#define __XAO_XAO_HXX__
+#ifndef __XAO_FIELD_HXX__
+#define __XAO_FIELD_HXX__
 
 #include <string>
+#include <vector>
+#include <map>
+
+#include "Xao.hxx"
 
 namespace XAO
 {
-  typedef enum
-  {
-    VERTEX = 0,
-    EDGE = 1,
-    FACE = 2,
-    SOLID = 3
-  } FieldDimension;
+    enum FieldType
+    {
+        FIELD_BOOLEAN = 0,
+        FIELD_INTEGER = 1,
+        FIELD_DOUBLE = 2,
+        FIELD_STRING = 3
+    };
 
-  typedef enum
-  {
-    BOOLEAN = 0,
-    INTEGER = 1,
-    DOUBLE = 2,
-    STRING = 3
-  } FieldType;
+    enum FieldDimension
+    {
+        FIELD_VERTEX = 0,
+        FIELD_EDGE = 1,
+        FIELD_FACE = 2,
+        FIELD_SOLID = 3,
+        FIELD_WHOLE = -1
+    };
 
-  class Field
-  {
-  public:
-    static Field *New();
-    void setName(const char *name) { _myName=name; }
-    const char *getName() const { return _myName.c_str(); }
-    void setDimension(int nb) { _myDimension=nb; }
-    int getDimension() { return _myDimension; }
-    void setType(int type) { _myType=type; }
-    int getType() { return _myType; }
-    void setValuesCount(int nb) { _myValuesCount=nb; }
-    int getValuesCount() { return _myValuesCount; }
-    void setComponentCount(int nb) { _myComponentCount=nb; }
-    int getComponentCount() { return _myComponentCount; }
-    void setStepCount(int nb) { _myStepCount=nb; }
-    int getStepCount() { return _myStepCount; }
+    template <typename T>
+    class Step
+    {
+    public:
+    private:
+        int m_number;
+        int m_stamp;
+        std::map<int, T> m_values;
 
-  private:
-    Field();
-    ~Field();
+    };
 
-  private:
-    std::string   _myName;
-    int           _myDimension;
-    int           _myType;
-    int           _myValuesCount;
-    int           _myComponentCount;
-    std::string  *_myComponentNames;
-    int           _myStepCount;
-    int          *_mySteps;
-    double       *_myStamps;
-    std::string **_myValues;
-  };
+    class IField
+    {
+    public:
+        virtual const char* getName() const = 0;
+        virtual void setName(const char* name) = 0;
+        virtual const FieldType getType() = 0;
+        virtual const FieldDimension getDimension() = 0;
+        virtual void setComponentName(const int index, const char* name) = 0;
+        virtual const int countComponents() = 0;
+        virtual const int getStepCount() = 0;
+    };
+
+    template <typename T>
+    class Field : IField
+    {
+    public:
+        Field(const FieldDimension dim, const int nbComponents);
+        Field(const char* name, const FieldDimension dim, const int nbComponents);
+        virtual ~Field();
+
+        const char* getName() const
+        {
+            return m_name.c_str();
+        }
+        void setName(const char* name)
+        {
+            m_name = name;
+        }
+
+        virtual const FieldType getType();
+
+        const FieldDimension getDimension()
+        {
+            return m_dimension;
+        }
+
+        void setComponentName(const int index, const char* name);
+        const int countComponents()
+        {
+            return m_components.size();
+        }
+
+        const int getStepCount()
+        {
+            return m_steps.size();
+        }
+
+    private:
+        std::string m_name;
+        FieldDimension m_dimension;
+        FieldType m_type;
+
+        std::vector<std::string> m_components;
+        std::list< Step<T>* > m_steps;
+    };
+
+    class BooleanField : Field<bool>
+    {
+    public:
+        BooleanField(const FieldDimension dim, const int nbComponents);
+        BooleanField(const char* name, const FieldDimension dim, const int nbComponents);
+
+        virtual const FieldType getType()
+        {
+            return FIELD_BOOLEAN;
+        }
+    };
 }
 
 #endif

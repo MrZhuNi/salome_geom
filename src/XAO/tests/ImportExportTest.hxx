@@ -14,6 +14,7 @@ namespace XAO
         CPPUNIT_TEST(testExportGeometry);
         CPPUNIT_TEST(testGeometryError);
         CPPUNIT_TEST(testImportXao);
+        CPPUNIT_TEST(testImportXaoFromText);
         CPPUNIT_TEST_SUITE_END();
 
     public:
@@ -25,6 +26,9 @@ namespace XAO
         void testExportGeometry();
         void testGeometryError();
         void testImportXao();
+        void testImportXaoFromText();
+
+        void checkImport(Xao& xao);
     };
 }
 

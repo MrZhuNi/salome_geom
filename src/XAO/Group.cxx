@@ -19,12 +19,13 @@
 // Author : Nathalie Gore (OpenCascade), Frederic Pons (OpenCascade)
 
 #include "Group.hxx"
+#include <Utils_SALOME_Exception.hxx>
 
 using namespace XAO;
 
 Group::Group()
 {
-    m_dimension = 0;
+    m_dimension = VERTEX;
     m_count = 0;
 }
 
@@ -32,3 +33,12 @@ Group::~Group()
 {
 }
 
+const Dimension Group::getDimension()
+{
+    return m_dimension;
+}
+
+void Group::setDimension(const Dimension dimension)
+{
+    m_dimension = dimension;
+}

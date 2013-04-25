@@ -76,7 +76,6 @@ Xao::Xao()
     m_author = "";
     m_version = (char*)C_XAO_VERSION;
     m_geometry = NULL;
-    m_nbGroups = 0;
 }
 
 Xao::Xao(const char* author, const char* version)
@@ -84,7 +83,6 @@ Xao::Xao(const char* author, const char* version)
     m_author = author;
     m_version = version;
     m_geometry = NULL;
-    m_nbGroups = 0;
 }
 
 Xao::~Xao()
@@ -101,6 +99,11 @@ Xao::~Xao()
 //    }
 }
 
+int Xao::countGroups()
+{
+    return m_groups.size();
+}
+
 Group* Xao::getGroup(const int index)
 {
     int i = 0;
@@ -113,8 +116,46 @@ Group* Xao::getGroup(const int index)
     return NULL;
 }
 
+void Xao::addGroup(Group* group)
+{
+    m_groups.push_back(group);
+}
 
-bool Xao::exportToFile(const char* fileName)
+void Xao::removeGroup(Group* group)
+{
+    m_groups.remove(group);
+}
+
+int Xao::countFields()
+{
+    return m_fields.size();
+}
+
+IField* Xao::getField(const int index)
+{
+    int i = 0;
+    for (std::list<IField*>::iterator it = m_fields.begin(); it != m_fields.end(); ++it, ++i)
+    {
+        if (i == index)
+            return (*it);
+    }
+
+    return NULL;
+}
+
+void Xao::addField(IField* field)
+{
+    m_fields.push_back(field);
+}
+
+void Xao::removeField(IField* field)
+{
+    m_fields.remove(field);
+}
+
+
+
+bool Xao::exportXAO(const char* fileName)
 {
     xmlDocPtr doc = exportXMLDoc();
     xmlSaveFormatFileEnc(fileName, doc, "UTF-8", 2);
@@ -236,14 +277,27 @@ void Xao::exportGroups(xmlNodePtr xao)
     }
 }
 
-bool Xao::importFromFile(const char* fileName)
+bool Xao::importXAO(const char* fileName)
 {
     // parse the file and get the DOM
-    int options = 16384; // merge cdata as text node
+    int options = XML_PARSE_HUGE || XML_PARSE_NOCDATA;
     xmlDocPtr doc = xmlReadFile(fileName, NULL, options);
     if (doc == NULL)
     {
         throw SALOME_Exception("Cannot read XAO file");
+    }
+
+    parseXMLDoc(doc);
+    return true;
+}
+
+bool Xao::setXML(const char* xml)
+{
+    int options = XML_PARSE_HUGE || XML_PARSE_NOCDATA;
+    xmlDocPtr doc = xmlReadDoc(BAD_CAST xml, "", NULL, options);
+    if (doc == NULL)
+    {
+        throw SALOME_Exception("Cannot read XAO stream");
     }
 
     parseXMLDoc(doc);

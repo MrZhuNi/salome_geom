@@ -40,7 +40,6 @@ GeometricElement::GeometricElement(const char* name, const char* reference)
 
 GeometricElement::~GeometricElement()
 {
-
 }
 
 GeometricElementList::GeometricElementList()
@@ -83,7 +82,9 @@ const char* GeometricElementList::getName(const int index)
 void GeometricElementList::setName(const int index, const char* name)
 {
     if (m_count == 0 || index > m_count)
+    {
         throw SALOME_Exception("Problem with number of elements");
+    }
 
     m_elements[index].setName(name);
 }
@@ -113,9 +114,5 @@ const int GeometricElementList::getIndexByReference(const char* ref)
             return index;
         }
     }
-
-    return 0;
-//    std::string msg = "Cannot find element with reference ";
-//    msg += name;
-//    throw SALOME_Exception(msg.c_str());
+    return -1;
 }

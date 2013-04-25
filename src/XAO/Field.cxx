@@ -18,31 +18,32 @@
 //
 // Author : Nathalie Gore (OpenCascade)
 
+#include "Xao.hxx"
 #include "Field.hxx"
 
 using namespace XAO;
 
-Field::Field()
+template<typename T>
+Field<T>::Field(const FieldDimension dim, const int nbComponents)
+    : m_name(""), m_dimension(dim)
 {
-  _myName = "";
-  _myDimension = -1;
-  _myType = -1;
-  _myValuesCount = 0;
-  _myComponentCount = 0;
-  _myComponentNames = NULL;
-  _myStepCount = 0;
-  _mySteps = NULL;
-  _myStamps = NULL;
-  _myValues = NULL;
+    m_components.reserve(nbComponents);
 }
 
-Field::~Field()
+template<typename T>
+Field<T>::Field(const char* name, const FieldDimension dim, const int nbComponents)
+    : m_name(name), m_dimension(dim)
 {
+    m_components.reserve(nbComponents);
 }
 
-Field *Field::New()
+template<typename T>
+void Field<T>::setComponentName(const int index, const char* name)
 {
-  return new Field;
+    if (index < m_components.size())
+    {
+        m_components[index] = name;
+    }
+
+    // TODO: throw
 }
-
-

@@ -43,6 +43,8 @@
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 
+#include <Utils_SALOME_Exception.hxx>
+
 using namespace XAO;
 
 Geometry::Geometry()
@@ -105,42 +107,40 @@ void Geometry::initListIds(const Standard_Integer shapeType)
 
     TopTools_IndexedMapOfShape indices;
     TopExp::MapShapes(m_shape, indices);
-    //Handle (TColStd_HArray1OfInteger) anArray;
 
     std::list<int> indexList;
     TopTools_ListIteratorOfListOfShape itSub(listShape);
     for (int index = 1; itSub.More(); itSub.Next(), ++index)
     {
         TopoDS_Shape value = itSub.Value();
-        //std::cout << "index = " << indices.FindIndex(value) << std::endl;
         indexList.push_back(indices.FindIndex(value));
     }
 
     std::list<int>::iterator it = indexList.begin();
     switch (shapeType)
     {
-        case TopAbs_VERTEX: /* Fill vertices ids */
+        case TopAbs_VERTEX:
         {
             m_vertices.setSize(indexList.size());
             for (int i = 0; it != indexList.end(); it++, i++)
                 m_vertices.setReference(i, XaoUtils::intToString((*it)));
             break;
         }
-        case TopAbs_EDGE: /* Fill edges ids */
+        case TopAbs_EDGE:
         {
             m_edges.setSize(indexList.size());
             for (int i = 0; it != indexList.end(); it++, i++)
                 m_edges.setReference(i, XaoUtils::intToString((*it)));
             break;
         }
-        case TopAbs_FACE: /* Fill faces ids */
+        case TopAbs_FACE:
         {
             m_faces.setSize(indexList.size());
             for (int i = 0; it != indexList.end(); it++, i++)
                 m_faces.setReference(i, XaoUtils::intToString((*it)));
             break;
         }
-        case TopAbs_SOLID: /* Fill solids ids */
+        case TopAbs_SOLID:
         {
             m_solids.setSize(indexList.size());
             for (int i = 0; it != indexList.end(); it++, i++)
@@ -148,6 +148,34 @@ void Geometry::initListIds(const Standard_Integer shapeType)
             break;
         }
     }
+}
+const char* Geometry::getElementReference(const Dimension dim, const int index)
+{
+    if (dim == VERTEX)
+        return getVertexReference(index);
+    if (dim == EDGE)
+        return getEdgeReference(index);
+    if (dim == FACE)
+        return getFaceReference(index);
+    if (dim == SOLID)
+        return getSolidReference(index);
 
+    std::cout << "getElementReference: unknown dimension" << std::endl;
+    throw SALOME_Exception("Unknown dimension");
+}
+
+const int Geometry::getElementIndexByReference(const Dimension dim, const char* reference)
+{
+    if (dim == VERTEX)
+        return getVertexIndexByReference(reference);
+    if (dim == EDGE)
+        return getEdgeIndexByReference(reference);
+    if (dim == FACE)
+        return getFaceIndexByReference(reference);
+    if (dim == SOLID)
+        return getSolidIndexByReference(reference);
+
+    std::cout << "getElementIndexByReference: unknown dimension" << std::endl;
+    throw SALOME_Exception("Unknown dimension");
 }
 

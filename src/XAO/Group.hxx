@@ -25,6 +25,8 @@
 #include <string>
 #include <vector>
 
+#include "Xao.hxx"
+
 namespace XAO
 {
     class Group
@@ -42,14 +44,8 @@ namespace XAO
             return m_name.c_str();
         }
 
-        void setDimension(int dimension)
-        {
-            m_dimension = dimension;
-        }
-        int getDimension()
-        {
-            return m_dimension;
-        }
+        const Dimension getDimension();
+        void setDimension(const Dimension dim);
 
         int getCount()
         {
@@ -68,7 +64,7 @@ namespace XAO
 
     private:
         std::string m_name;
-        int m_dimension;
+        Dimension m_dimension;
         int m_count;
         std::vector<int> m_elements;
     };

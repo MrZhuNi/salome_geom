@@ -27,72 +27,113 @@
 
 namespace XAO
 {
-  enum Kind
-  {
-    VERTEX,
-    EDGE,
-    FACE,
-    SOLID
-  };
+    /**
+     * @enum Dimension
+     */
+    enum Dimension
+    {
+        VERTEX = 0,//!< VERTEX
+        EDGE = 1,  //!< EDGE
+        FACE = 2,  //!< FACE
+        SOLID = 3  //!< SOLID
+    };
 
-  class Geometry;
-  class Group;
-  class Field;
+    class Geometry;
+    class Group;
+    class IField;
 
-  class Xao
-  {
-  public:
-    Xao();
-    Xao(const char* author, const char* version);
-    ~Xao();
+    /**
+     * @class Xao
+     * The Xao class describes the XAO format.
+     */
+    class Xao
+    {
+    public:
+        Xao();
+        Xao(const char* author, const char* version);
+        ~Xao();
 
-    void setAuthor(const char* author) { m_author = author; }
-    const char* getAuthor() { return m_author.c_str(); }
+        const char* getAuthor()
+        {
+            return m_author.c_str();
+        }
+        void setAuthor(const char* author)
+        {
+            m_author = author;
+        }
 
-    void setVersion(const char* version) { m_version = version; }
-    const char* getVersion() { return m_version.c_str(); }
+        const char* getVersion()
+        {
+            return m_version.c_str();
+        }
+        void setVersion(const char* version)
+        {
+            m_version = version;
+        }
 
-    void setGeometry(Geometry* geometry) { m_geometry = geometry; }
-    Geometry* getGeometry() { return m_geometry; }
+        //
+        // Geometry
+        //
 
-    int countGroups() { return m_groups.size(); }
-    Group* getGroup(const int index);
-    void addGroup(Group* group) { m_groups.push_back(group); }
-    void removeGroup(Group* group) { m_groups.remove(group); }
+        Geometry* getGeometry()
+        {
+            return m_geometry;
+        }
+        void setGeometry(Geometry* geometry)
+        {
+            m_geometry = geometry;
+        }
 
-    bool exportToFile(const char* fileName);
-    const char* getXML();
+        //
+        // Groups
+        //
 
-    bool importFromFile(const char* fileName);
-    bool setXML(const char* xml);
+        int countGroups();
+        Group* getGroup(const int index);
+        void addGroup(Group* group);
+        void removeGroup(Group* group);
 
+        //
+        // Fields
+        //
 
-  private:
-    std::string m_author;
-    std::string m_version;
-    Geometry* m_geometry;
-    int m_nbGroups;
-    std::list<Group*> m_groups;
-    //int m_nbFields;
-    //std::list<Field*> m_fields;
+        int countFields();
+        IField* getField(const int index);
+        void addField(IField* field);
+        void removeField(IField* field);
 
-    xmlDocPtr exportXMLDoc();
-    void exportGeometry(xmlDocPtr doc, xmlNodePtr xao);
-    void exportGroups(xmlNodePtr xao);
+        //
+        // Import / Export
+        //
+        bool exportXAO(const char* fileName);
+        const char* getXML();
 
-    void parseXMLDoc(xmlDocPtr doc);
-    void parseXaoNode(xmlDocPtr doc, xmlNodePtr xaoNode);
-    void parseGeometryNode(xmlDocPtr doc, xmlNodePtr geometryNode);
-    void parseShapeNode(xmlDocPtr doc, xmlNodePtr shapeNode);
-    void parseTopologyNode(xmlNodePtr topologyNode);
-    void parseVerticesNode(xmlNodePtr verticesNode);
-    void parseEdgesNode(xmlNodePtr edgesNode);
-    void parseFacesNode(xmlNodePtr facesNode);
-    void parseSolidsNode(xmlNodePtr solidsNode);
-    void parseGroupsNode(xmlNodePtr groupsNode);
-    void parseGroupNode(xmlNodePtr groupNode);
+        bool importXAO(const char* fileName);
+        bool setXML(const char* xml);
 
-  };
+    private:
+        std::string m_author;
+        std::string m_version;
+        Geometry* m_geometry;
+        std::list<Group*> m_groups;
+        std::list<IField*> m_fields;
+
+        xmlDocPtr exportXMLDoc();
+        void exportGeometry(xmlDocPtr doc, xmlNodePtr xao);
+        void exportGroups(xmlNodePtr xao);
+
+        void parseXMLDoc(xmlDocPtr doc);
+        void parseXaoNode(xmlDocPtr doc, xmlNodePtr xaoNode);
+        void parseGeometryNode(xmlDocPtr doc, xmlNodePtr geometryNode);
+        void parseShapeNode(xmlDocPtr doc, xmlNodePtr shapeNode);
+        void parseTopologyNode(xmlNodePtr topologyNode);
+        void parseVerticesNode(xmlNodePtr verticesNode);
+        void parseEdgesNode(xmlNodePtr edgesNode);
+        void parseFacesNode(xmlNodePtr facesNode);
+        void parseSolidsNode(xmlNodePtr solidsNode);
+        void parseGroupsNode(xmlNodePtr groupsNode);
+        void parseGroupNode(xmlNodePtr groupNode);
+    };
 
 }
 

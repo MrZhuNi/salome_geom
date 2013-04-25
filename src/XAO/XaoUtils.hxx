@@ -21,14 +21,39 @@
 #ifndef __XAO_UTILS_HXX__
 #define __XAO_UTILS_HXX__
 
+#include "Xao.hxx"
+
 namespace XAO
 {
+    /**
+     * \class XaoUtils
+     * Utilities class to convert types.
+     */
     class XaoUtils
     {
     public:
+        /**
+         * Converts an integer into a string.
+         * \param value the integer to convert.
+         * \return the string.
+         */
         static const char* intToString(const int value);
-        static const char* dimensionToString(const int dimension);
-        static const int stringToDimension(const char* dimension);
+
+        /**
+         * Converts a Dimension to string.
+         * \param dimension the Dimension to convert.
+         * \return the dimension as a string.
+         * \throw SALOME_Exception
+         */
+        static const char* dimensionToString(const Dimension dimension);
+
+        /**
+         * Converts a string into a Dimension.
+         * \param dimension the dimension as a string.
+         * \return the converted Dimension.
+         * \throw SALOME_Exception if
+         */
+        static const Dimension stringToDimension(const char* dimension);
     };
 }
 

@@ -22,6 +22,8 @@
 #include <sstream>
 #include <iosfwd>
 #include <Utils_SALOME_Exception.hxx>
+
+#include "Xao.hxx"
 #include "XaoUtils.hxx"
 
 
@@ -34,28 +36,28 @@ const char* XaoUtils::intToString(const int value)
     return str.str().c_str();
 }
 
-const char* XaoUtils::dimensionToString(const int dimension)
+const char* XaoUtils::dimensionToString(const Dimension dimension)
 {
-    if (dimension == 0)
+    if (dimension == VERTEX)
         return "vertex";
-    if (dimension == 1)
+    if (dimension == EDGE)
         return "edge";
-    if (dimension == 2)
+    if (dimension == FACE)
         return "face";
-    if (dimension == 3)
+    if (dimension == SOLID)
         return "solid";
     throw SALOME_Exception("Bad dimension");
 }
 
-const int XaoUtils::stringToDimension(const char* dimension)
+const Dimension XaoUtils::stringToDimension(const char* dimension)
 {
     if (strcmp(dimension, "vertex") == 0)
-        return 0;
+        return VERTEX;
     if (strcmp(dimension, "edge") == 0)
-        return 1;
+        return EDGE;
     if (strcmp(dimension, "face") == 0)
-        return 2;
+        return FACE;
     if (strcmp(dimension, "solid") == 0)
-        return 3;
+        return SOLID;
     throw SALOME_Exception("Bad dimension");
 }

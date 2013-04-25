@@ -50,7 +50,7 @@ void ImportExportTest::testExportNoGeometry()
 {
     Xao xao("me", "1.0");
 
-    bool res = xao.exportToFile("empty.xao");
+    bool res = xao.exportXAO("empty.xao");
     CPPUNIT_ASSERT(res);
 }
 
@@ -82,18 +82,18 @@ void ImportExportTest::testExportGeometry()
     Group* group = new Group();
     xao.addGroup(group);
     group->setName("boite1");
-    group->setDimension(3);
+    group->setDimension(XAO::SOLID);
     group->addElement(1);
 
     group = new Group();
     xao.addGroup(group);
     group->setName("faces");
-    group->setDimension(2);
+    group->setDimension(XAO::FACE);
     group->addElement(5);
     group->addElement(8);
     group->addElement(9);
 
-    bool res = xao.exportToFile("mygeom.xao");
+    bool res = xao.exportXAO("mygeom.xao");
     CPPUNIT_ASSERT(res);
 
     const char* xml = xao.getXML();
@@ -115,7 +115,12 @@ void ImportExportTest::testImportXao()
 {
     //std::cout << std::endl;
     Xao xao;
-    xao.importFromFile(getTestFile("test.xao").c_str());
+    xao.importXAO(getTestFile("test.xao").c_str());
+    checkImport(xao);
+}
+
+void ImportExportTest::checkImport(Xao& xao)
+{
     CPPUNIT_ASSERT(strcmp(xao.getAuthor(), "me") == 0);
     CPPUNIT_ASSERT(strcmp(xao.getVersion(), "1.0") == 0);
 
@@ -155,13 +160,30 @@ void ImportExportTest::testImportXao()
     Group* group = xao.getGroup(0);
     CPPUNIT_ASSERT(group->getCount() == 1);
     CPPUNIT_ASSERT(strcmp(group->getName(), "boite_1") == 0);
-    CPPUNIT_ASSERT(group->getDimension() == 3);
+    CPPUNIT_ASSERT(group->getDimension() == XAO::SOLID);
     CPPUNIT_ASSERT(group->getElement(0) == 1);
     group = xao.getGroup(1);
     CPPUNIT_ASSERT(group->getCount() == 3);
     CPPUNIT_ASSERT(strcmp(group->getName(), "") == 0);
-    CPPUNIT_ASSERT(group->getDimension() == 2);
+    CPPUNIT_ASSERT(group->getDimension() == XAO::FACE);
     CPPUNIT_ASSERT(group->getElement(0) == 5);
     CPPUNIT_ASSERT(group->getElement(1) == 8);
     CPPUNIT_ASSERT(group->getElement(2) == 9);
+}
+
+void ImportExportTest::testImportXaoFromText()
+{
+    std::ifstream rstr;
+    int length;
+    rstr.open(getTestFile("test.xao").c_str());
+    rstr.seekg(0, rstr.end);        // go to the end
+    length = rstr.tellg();          // report location (this is the length)
+    rstr.seekg(0, rstr.beg);        // go back to the beginning
+    char* txt = new char[length];   // allocate memory for a buffer of appropriate dimension
+    rstr.read(txt, length);         // read the whole file into the buffer
+    rstr.close();
+
+    Xao xao;
+    xao.setXML(txt);
+    checkImport(xao);
 }

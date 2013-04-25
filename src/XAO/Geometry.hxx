@@ -26,7 +26,8 @@
 #include <SALOMEconfig.h>
 #include <TopoDS_Shape.hxx>
 
-# include "GeometricElement.hxx"
+#include "Xao.hxx"
+#include "GeometricElement.hxx"
 
 namespace XAO
 {
@@ -92,6 +93,7 @@ namespace XAO
         const char* getEdgeReference(const int index) { return m_edges.getReference(index); }
         const char* getFaceReference(const int index) { return m_faces.getReference(index); }
         const char* getSolidReference(const int index) { return m_solids.getReference(index); }
+        const char* getElementReference(const Dimension dim, const int index);
 
         void setVertexReference(const int index, const char* reference) { m_vertices.setReference(index, reference); }
         void setEdgeReference(const int index, const char* reference) { m_edges.setReference(index, reference); }
@@ -102,6 +104,7 @@ namespace XAO
         const int getEdgeIndexByReference(const char* reference) { return m_edges.getIndexByReference(reference); }
         const int getFaceIndexByReference(const char* reference) { return m_faces.getIndexByReference(reference); }
         const int getSolidIndexByReference(const char* reference) { return m_solids.getIndexByReference(reference); }
+        const int getElementIndexByReference(const Dimension dim, const char* reference);
 
     private:
         void initListIds(const Standard_Integer shapeType);
