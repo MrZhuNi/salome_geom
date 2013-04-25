@@ -163,7 +163,8 @@ protected:
   // for <theObj> or a nil reference if <theObj> should be published
   // as a top-level object.
 
-  virtual QString getNewObjectName() const; 
+  virtual QString getNewObjectName() const;
+  virtual QString getObjectName(GEOM::GEOM_Object_ptr object) const;
   virtual bool extractPrefix() const;
   virtual void addSubshapesToStudy();
 
