@@ -44,17 +44,14 @@ Example::
 
 Additionnal examples can be found as unit tests in the source code.
 """
-
+from salome.kernel.deprecation import is_called_by_sphinx
 geompyEnable = True
-try:
+if not is_called_by_sphinx():
     import salome
     salome.salome_init()
     import GEOM
     from salome.geom import geomBuilder
     geompy = geomBuilder.New(salome.myStudy)
-except:
-    geompyEnable = False
-    
 
 class Sketcher:
 

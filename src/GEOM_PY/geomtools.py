@@ -22,7 +22,6 @@
 This module provides tools to facilitate the use of geom engine and geom
 objects in Salome.
 """
-
 import salome
 GEOM = None    # GEOM module is loaded only when needed
 
@@ -32,10 +31,9 @@ logger = Logger("salome.geom.geomtools", color = termcolor.RED)
 
 from salome.kernel.studyedit import getActiveStudyId, getStudyEditor
 from salome.kernel.services import IDToObject, IDToSObject
-try:
+from salome.kernel.deprecation import is_called_by_sphinx
+if not is_called_by_sphinx():
     from salome.gui import helper as guihelper
-except:
-    pass
 
 _geompys = {}
 
