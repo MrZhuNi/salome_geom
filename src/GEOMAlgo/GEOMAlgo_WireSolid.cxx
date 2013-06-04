@@ -43,6 +43,8 @@
 #include <BRep_Tool.hxx>
 #include <BOPTools_AlgoTools.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 //=======================================================================
 //function : GEOMAlgo_WireSolid
 //purpose  :
@@ -174,7 +176,11 @@ void GEOMAlgo_WireSolid::BuildResult()
     }
     else if (aNbPB==1) {
       const Handle(BOPDS_PaveBlock)& aPB=aLPB.First();
+#if OCC_VERSION_LARGE > 0x06050500      
+      if (pDS->IsCommonBlock(aPB)) {
+#else
       if (aPB->IsCommonBlock()) {
+#endif
 	aState=TopAbs_ON;
       }
       else{
