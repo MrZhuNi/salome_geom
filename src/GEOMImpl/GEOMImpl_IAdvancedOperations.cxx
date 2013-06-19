@@ -1901,9 +1901,9 @@ TopoDS_Shape GEOMImpl_IAdvancedOperations::MakeThicknessReduction (gp_Ax2 theAxe
     TopoDS_Shape aTool2 = BRepBuilderAPI_MakeFace(aPln2, -aSize, +aSize, -aSize, +aSize).Shape();
 
     GEOMAlgo_Splitter PS;
-    PS.AddShape(aReduction);
+    PS.AddArgument(aReduction);
     if (isThinPart)
-      PS.AddShape(aThinPart);
+      PS.AddArgument(aThinPart);
     PS.AddTool(aTool1);
     PS.AddTool(aTool2);
     PS.SetLimit(TopAbs_SOLID);
