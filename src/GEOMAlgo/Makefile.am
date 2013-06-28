@@ -61,6 +61,7 @@ dist_libGEOMAlgo_la_SOURCES =			\
 	GEOMAlgo_PassKeyMapHasher.cxx	\
 	GEOMAlgo_PassKeyShape.cxx	\
 	GEOMAlgo_PassKeyShapeMapHasher.cxx	\
+	GEOMAlgo_RemoverWebs.cxx	\
 	GEOMAlgo_ShapeAlgo.cxx	\
 	GEOMAlgo_ShapeInfo.cxx	\
 	GEOMAlgo_ShapeInfoFiller.cxx	\
@@ -121,6 +122,7 @@ salomeinclude_HEADERS =					\
 	GEOMAlgo_PassKeyMapHasher.hxx	\
 	GEOMAlgo_PassKeyShape.hxx	\
 	GEOMAlgo_PassKeyShapeMapHasher.hxx	\
+	GEOMAlgo_RemoverWebs.hxx	\
 	GEOMAlgo_ShapeAlgo.hxx	\
 	GEOMAlgo_ShapeInfo.hxx	\
 	GEOMAlgo_ShapeInfoFiller.hxx	\

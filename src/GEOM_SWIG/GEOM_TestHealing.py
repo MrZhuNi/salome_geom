@@ -397,4 +397,4 @@ def TestHealingOperations (geompy, math):
   TestSuppressFaces(geompy)
   TestProcessShape(geompy)
   TestFuseEdges(geompy)
-  #TestRemoveWebs(geompy)
+  TestRemoveWebs(geompy)

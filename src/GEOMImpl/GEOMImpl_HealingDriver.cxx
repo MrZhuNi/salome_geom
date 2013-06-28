@@ -31,7 +31,7 @@
 #include <GEOMImpl_ShapeDriver.hxx>
 
 #include <GEOMUtils.hxx>
-//#include <GEOMAlgo_RemoverWebs.hxx>
+#include <GEOMAlgo_RemoverWebs.hxx>
 
 #include <ShHealOper_ShapeProcess.hxx>
 #include <ShHealOper_RemoveFace.hxx>
@@ -454,7 +454,7 @@ Standard_Boolean GEOMImpl_HealingDriver::Sew (GEOMImpl_IHealing* theHI,
 Standard_Boolean GEOMImpl_HealingDriver::RemoveInternalFaces (const TopoDS_Shape& theOriginalShape,
                                                               TopoDS_Shape& theOutShape) const
 {
-  /*  GEOMAlgo_RemoverWebs aTool;
+  GEOMAlgo_RemoverWebs aTool;
   aTool.SetShape(theOriginalShape);
   aTool.Perform();
 
@@ -472,8 +472,6 @@ Standard_Boolean GEOMImpl_HealingDriver::RemoveInternalFaces (const TopoDS_Shape
   }
 
   return Standard_True;
-  */
-  return Standard_False;
 }
 
 //=======================================================================
