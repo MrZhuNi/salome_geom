@@ -41,6 +41,7 @@
 
 #include <BOPTools.hxx>
 #include <BOPTools_AlgoTools.hxx>
+#include <BOPCol_MapOfShape.hxx>
 
 //=======================================================================
 //function : 
@@ -113,20 +114,52 @@ void GEOMAlgo_RemoverWebs::Perform()
 //=======================================================================
 void GEOMAlgo_RemoverWebs::BuildSolid()
 {
-  Standard_Integer i, aNbF, aNbSx, iErr, aNbSI, aNbF2;  
+  Standard_Integer i, aNbF, aNbSx, iErr, aNbSI, aNbF2, aNbS, aNbR;  
   TopAbs_Orientation aOr;
   TopoDS_Iterator aIt1, aIt2;
+  TopoDS_Shape aShape;
   BRep_Builder aBB;
+  BOPCol_MapOfShape aMFence;
   BOPCol_IndexedMapOfShape aMSI;
   BOPCol_IndexedDataMapOfShapeListOfShape aMFS;
   BOPCol_ListOfShape aSFS;
   BOPCol_ListIteratorOfListOfShape aItLS;
   BOPAlgo_BuilderSolid aSB;
   //
+  //modified by NIZNHY-PKV Thu Jul 11 06:54:51 2013f
+  //
+  // 0. 
+  // The compound myShape may contain equal solids 
+  // (itz.brep for e.g.). The block is to refine 
+  // such data if it is necessary. The shape to treat 
+  // will be aShape (not myShape).
+  //
+  aShape=myShape;
+  //
+  aIt1.Initialize(myShape);
+  for (aNbS=0; aIt1.More(); aIt1.Next(), ++aNbS) {
+    const TopoDS_Shape& aS=aIt1.Value();
+    aMFence.Add(aS);
+  }
+  //
+  aNbR=aMFence.Extent();
+  if (aNbS!=aNbR) {
+    BOPCol_MapIteratorOfMapOfShape aItMS;
+    //
+    BOPTools_AlgoTools::MakeContainer(TopAbs_COMPOUND, aShape);  
+    //
+    aItMS.Initialize(aMFence);
+    for (; aItMS.More(); aItMS.Next()) {
+      const TopoDS_Shape& aS=aItMS.Key();
+      aBB.Add(aShape, aS);
+    }
+  }
+  //modified by NIZNHY-PKV Thu Jul 11 06:54:54 2013t
+  //
   aNbF2=0;
   //
   // 1. aSFS: Faces 
-  BOPTools::MapShapesAndAncestors(myShape, TopAbs_FACE, TopAbs_SOLID, aMFS);
+  BOPTools::MapShapesAndAncestors(aShape, TopAbs_FACE, TopAbs_SOLID, aMFS);
   //
   aNbF=aMFS.Extent();
   for (i=1; i<=aNbF; ++i) {
@@ -154,12 +187,12 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
   }
   //
   if (!aNbF2) { // nothing to do here
-    myResult=myShape;
+    myResult=aShape;
     return;
   }
   //
   // 2 Internal shapes: edges, vertices
-  aIt1.Initialize(myShape);
+  aIt1.Initialize(aShape);
   for (; aIt1.More(); aIt1.Next()) {
     const TopoDS_Shape& aSD=aIt1.Value(); 
     //
