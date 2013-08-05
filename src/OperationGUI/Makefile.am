@@ -86,11 +86,13 @@ libOperationGUI_la_CPPFLAGS =		\
 	-I$(srcdir)/../GEOMAlgo		\
 	-I$(srcdir)/../GEOM             \
 	-I$(top_builddir)/src/DlgRef	\
-	-I$(top_builddir)/idl
+	-I$(top_builddir)/idl           \
+	-I$(srcdir)/../CurveCreator
 
 
 libOperationGUI_la_LDFLAGS =		\
 	../GEOMBase/libGEOMBase.la	\
+	../CurveCreator/libCurveCreator.la	\
 	$(CAS_LDPATH) -lTKFillet	\
 	$(OPENCV_LIBS)
 ###############################

@@ -145,6 +145,9 @@ namespace GEOMOp {
     OpSharedShapes        = 3708,   // MENU OPERATION - GET SHARED SHAPES
     OpExtrudedBoss        = 3709,   // MENU OPERATION - ETRUDED BOSS
     OpExtrudedCut         = 3710,   // MENU OPERATION - ETRUDED CUT
+#ifdef USE_CURVE_CREATOR
+    OpCurveCreator        = 3711,   // MENU OPERATION - CURVE CREATOR
+#endif
     // RepairGUI -------------------//--------------------------------
     OpSewing              = 4000,   // MENU REPAIR - SEWING
     OpSuppressFaces       = 4001,   // MENU REPAIR - SUPPRESS FACES

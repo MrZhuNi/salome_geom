@@ -24,7 +24,7 @@
 SUBDIRS = ARCHIMEDE NMTDS NMTTools BlockFix GEOMAlgo SKETCHER OCC2VTK GEOM	\
           BREPExport BREPImport IGESExport IGESImport STEPExport STEPImport	\
           STLExport VTKExport ShHealOper GEOMUtils GEOMImpl GEOM_I		\
-          GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
+          GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY CurveCreator
 
 if WITH_OPENCV
   SUBDIRS += ShapeRecognition
@@ -45,4 +45,4 @@ DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools BlockFix GEOMAlgo SKETCHER		\
                GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI	\
                EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI	\
                RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI		\
-               GEOM_SWIG_WITHIHM GEOM_PY ShapeRecognition
+               GEOM_SWIG_WITHIHM GEOM_PY ShapeRecognition CurveCreator

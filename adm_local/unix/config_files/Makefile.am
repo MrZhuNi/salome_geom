@@ -22,4 +22,5 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 dist_admlocalm4_DATA =	\
 check_GEOM.m4 \
 check_GUI.m4 \
-check_OpenCV.m4
+check_OpenCV.m4 \
+check_CurveCreator.m4

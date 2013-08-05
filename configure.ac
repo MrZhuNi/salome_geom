@@ -439,6 +439,10 @@ else
    AC_SUBST(SETX) SETX="set -x"
 fi
 
+if test "${SalomeGUI_need}" != "no"; then
+   USE_CURVECREATOR
+fi
+
 echo
 echo ---------------------------------------------
 echo generating Makefiles and configure files
@@ -516,6 +520,7 @@ AC_OUTPUT([ \
   src/GEOM_SWIG_WITHIHM/Makefile \
   src/GEOM_PY/Makefile \
   src/GEOM_PY/structelem/Makefile \
+  src/CurveCreator/Makefile \
   src/GenerationGUI/Makefile \
   src/GroupGUI/Makefile \
   src/IGESExport/Makefile \

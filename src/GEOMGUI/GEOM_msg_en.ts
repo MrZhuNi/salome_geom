@@ -4931,6 +4931,14 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <source>GEOM_SELECT_IMAGE</source>
         <translation>Select image...</translation>
     </message>
+    <message>
+      <source>CC_PNT_ITEM_X_Y</source>
+      <translation>X=%1, Y=%2</translation>
+    </message>
+    <message>
+      <source>CC_PNT_ITEM_X_Y_Z</source>
+      <translation>X=%1, Y=%2, Z=%3</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
@@ -5889,6 +5897,269 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_PUBLISH_CLOSE_BTN</source>
         <translation>P&amp;ublish And Close</translation>
+    </message>
+</context>
+<context>
+    <name>CurveCreator_Widget</name>
+    <message>
+      <source>CC_TITLE</source>
+      <translation>Curve Creator</translation>
+    </message>
+    <message>
+      <source>CC_UNDO_REDO_TITLE</source>
+      <translation>Undo/Redo operations</translation>
+    </message>
+    <message>
+      <source>CC_UNDO</source>
+      <translation>Undo</translation>
+    </message>
+    <message>
+      <source>CC_REDO</source>
+      <translation>Redo</translation>
+    </message>
+    <message>
+      <source>CC_UNDO_REDO_ENABLED</source>
+      <translation>Status: Enabled</translation>
+    </message>
+    <message>
+      <source>CC_UNDO_REDO_DISABLED</source>
+      <translation>Status: Disabled</translation>
+    </message>
+    <message>
+      <source>CC_UNDO_REDO_BUFFER_SIZE</source>
+      <translation>Undo buffer size: %1</translation>
+    </message>
+    <message>
+      <source>CC_UNDO_REDO_UNLIMITED</source>
+      <translation>Unlimited</translation>
+    </message>
+    <message>
+      <source>CC_UNDO_REDO_OPTIONS</source>
+      <translation>Undo/Redo options</translation>
+    </message>
+    <message>
+      <source>CC_UNDO_REDO_MODIFY</source>
+      <translation>Modify</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_ADD_TITLE</source>
+      <translation>Add section</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_MODIFICATION_TITLE</source>
+      <translation>Section modification</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_TYPE</source>
+      <translation>Type</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_CLOSED</source>
+      <translation>Closed</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_NEW</source>
+      <translation>New</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_MODIFY</source>
+      <translation>Modify</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_POINTS_ADD_LBL</source>
+      <translation>Add points</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_TITLE</source>
+      <translation>Sections</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_MODIFY_TITLE</source>
+      <translation>Modify section</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_REMOVE</source>
+      <translation>Remove</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_JOIN</source>
+      <translation>Join</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_JOIN_ALL</source>
+      <translation>Join all</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_CLEAR</source>
+      <translation>Clear</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_UP</source>
+      <translation>Up</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_DOWN</source>
+      <translation>Down</translation>
+    </message>
+    <message>
+      <source>CC_POINTS_ADD_TITLE</source>
+      <translation>Add points</translation>
+    </message>
+    <message>
+      <source>CC_POINTS_MODIFICATION_TITLE</source>
+      <translation>Points modification</translation>
+    </message>
+    <message>
+      <source>CC_POINTS_ADD_LBL</source>
+      <translation>Add points</translation>
+    </message>
+    <message>
+      <source>CC_POINTS_ADD</source>
+      <translation>Add</translation>
+    </message>
+    <message>
+      <source>CC_POINTS_INSERT</source>
+      <translation>Insert</translation>
+    </message>
+    <message>
+      <source>CC_POINTS_TITLE</source>
+      <translation>Points</translation>
+    </message>
+    <message>
+      <source>CC_POINTS_REMOVE</source>
+      <translation>Remove</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_ITEM</source>
+      <translation>%1</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_ITEM_CLOSED</source>
+      <translation>%1, closed</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_ITEM_POLYLINE</source>
+      <translation>Polyline</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_ITEM_BSPLINE</source>
+      <translation>B-spline</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_TYPE_POLYLINE</source>
+      <translation>Polyline</translation>
+    </message>
+    <message>
+      <source>CC_SECTION_TYPE_BSPLINE</source>
+      <translation>B-spline</translation>
+    </message>
+</context>
+<context>
+    <name>CurveCreator_EditPntsWidget</name>
+    <message>
+      <source>CC_SECTION_POINTS_EDIT</source>
+      <translation>Edit section points</translation>
+    </message>
+    <message>
+      <source>CC_POINTS_EDIT</source>
+      <translation>Edit points</translation>
+    </message>
+    <message>
+      <source>CC_POINTS_NUMBER</source>
+      <translation>%1 points</translation>
+    </message>
+</context>
+<context>
+    <name>CurveCreator_EditPntsDlg</name>
+    <message>
+      <source>CC_EDIT_POINTS_TITLE</source>
+      <translation>Edit points</translation>
+    </message>
+    <message>
+      <source>CC_EDIT_POINTS_ADD_MODIFY</source>
+      <translation>Add or modify points</translation>
+    </message>
+    <message>
+      <source>CC_EDIT_POINTS_X</source>
+      <translation>X :</translation>
+    </message>
+    <message>
+      <source>CC_EDIT_POINTS_Y</source>
+      <translation>Y :</translation>
+    </message>
+    <message>
+      <source>CC_EDIT_POINTS_Z</source>
+      <translation>Z :</translation>
+    </message>
+    <message>
+      <source>CC_EDIT_POINTS_ADD</source>
+      <translation>Add</translation>
+    </message>
+    <message>
+      <source>CC_EDIT_POINTS_MODIFY</source>
+      <translation>Modify</translation>
+    </message>
+    <message>
+      <source>CC_EDIT_POINTS_REMOVE</source>
+      <translation>Remove</translation>
+    </message>
+    <message>
+      <source>CC_EDIT_POINTS_CLEAR</source>
+      <translation>Clear</translation>
+    </message>
+    <message>
+      <source>CC_EDIT_POINTS_UP</source>
+      <translation>Up</translation>
+    </message>
+    <message>
+      <source>CC_EDIT_POINTS_DOWN</source>
+      <translation>Down</translation>
+    </message>
+</context>
+<context>
+    <name>CurveCreator_EditPntDlg</name>
+    <message>
+      <source>CC_EDIT_POINT_TITLE</source>
+      <translation>Edit point</translation>
+    </message>
+    <message>
+      <source>CC_EDIT_POINT_MODIFY</source>
+      <translation>Modify point</translation>
+    </message>
+    <message>
+      <source>CC_EDIT_POINT_X</source>
+      <translation>X :</translation>
+    </message>
+    <message>
+      <source>CC_EDIT_POINT_Y</source>
+      <translation>Y :</translation>
+    </message>
+    <message>
+      <source>CC_EDIT_POINT_Z</source>
+      <translation>Z :</translation>
+    </message>
+</context>
+<context>
+    <name>CurveCreator_UndoOptsDlg</name>
+    <message>
+      <source>CC_UNDO_OPTIONS_TITLE</source>
+      <translation>Undo/Redo options</translation>
+    </message>
+    <message>
+      <source>CC_UNDO_OPTIONS_MODIFY</source>
+      <translation>Modify</translation>
+    </message>
+    <message>
+      <source>CC_UNDO_OPTIONS_DISABLED</source>
+      <translation>Undo/Redo operations disabled</translation>
+    </message>
+    <message>
+      <source>CC_UNDO_OPTIONS_FIXED_SIZE</source>
+      <translation>Fixed Undo/Redo buffer size</translation>
+    </message>
+    <message>
+      <source>CC_UNDO_OPTIONS_UNLIMITED</source>
+      <translation>Unlimited Undo/Redo buffer size</translation>
     </message>
 </context>
 </TS>
