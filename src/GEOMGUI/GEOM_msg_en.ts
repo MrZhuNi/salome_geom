@@ -5181,6 +5181,246 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
     </message>
 </context>
 <context>
+    <name>CurveCreator_NewPointDlg</name>
+    <message>
+        <source>ADD_NEW_POINT</source>
+        <translation>Add new points</translation>
+    </message>
+    <message>
+        <source>X_COORD</source>
+        <translation>X</translation>
+    </message>
+    <message>
+        <source>Y_COORD</source>
+        <translation>Y</translation>
+    </message>
+    <message>
+        <source>Z_COORD</source>
+        <translation>Z</translation>
+    </message>
+    <message>
+        <source>ADD_BTN</source>
+        <translation>Add</translation>
+    </message>
+    <message>
+        <source>ADD_CONTINUE_BTN</source>
+        <translation>Add and continue</translation>
+    </message>
+    <message>
+        <source>ADD_NEW_POINT_TO_%1</source>
+        <translation>Add new point to %1</translation>
+    </message>
+    <message>
+        <source>SET_POINT_COORDINATES</source>
+        <translation>Set point coordinates</translation>
+    </message>
+</context>
+<context>
+    <name>CurveCreator_NewSectionDlg</name>
+    <message>
+        <source>NAME</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <source>LINE_TYPE</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source>POLYLINE_TYPE</source>
+        <translation>Polyline</translation>
+    </message>
+    <message>
+        <source>SPLINE_TYPE</source>
+        <translation>Spline</translation>
+    </message>
+    <message>
+        <source>LINE_CLOSED</source>
+        <translation>Closed</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>Ok</translation>
+    </message>
+    <message>
+        <source>ADD_BTN</source>
+        <translation>Add</translation>
+    </message>
+    <message>
+        <source>ADD_CONTINUE_BTN</source>
+        <translation>Add and continue</translation>
+    </message>
+    <message>
+        <source>ADD_NEW_SECTION</source>
+        <translation>Add new section</translation>
+    </message>
+    <message>
+        <source>SET_SECTION_PARAMETERS</source>
+        <translation>Set section parameters</translation>
+    </message>
+</context>
+<context>
+    <name>CurveCreator_TreeViewModel</name>
+    <message>
+        <source>X=%1, Y=%2</source>
+        <translation>X=%1, Y=%2</translation>
+    </message>
+    <message>
+        <source>X=%1, Y=%2, Z=%3</source>
+        <translation>X=%1, Y=%2, Z=%3</translation>
+    </message>
+</context>
+<context>
+    <name>CurveCreator_Widget</name>
+    <message>
+        <source>CURVE_NAME_TLT</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <source>SECTION_GROUP_TLT</source>
+        <translation>Sections</translation>
+    </message>
+    <message>
+        <source>UNDO</source>
+        <translation>Undo</translation>
+    </message>
+    <message>
+        <source>UNDO_TLT</source>
+        <translation>Undo</translation>
+    </message>
+    <message>
+        <source>REDO</source>
+        <translation>Redo</translation>
+    </message>
+    <message>
+        <source>REDO_TLT</source>
+        <translation>Redo</translation>
+    </message>
+    <message>
+        <source>NEW_SECTION</source>
+        <translation>New section</translation>
+    </message>
+    <message>
+        <source>NEW_SECTION_TLT</source>
+        <translation>Insert new section</translation>
+    </message>
+    <message>
+        <source>INSERT_SECTION_BEFORE</source>
+        <translation>Insert section before</translation>
+    </message>
+    <message>
+        <source>INSERT_SECTION_BEFORE_TLT</source>
+        <translation>Insert section before</translation>
+    </message>
+    <message>
+        <source>INSERT_SECTION_AFTER</source>
+        <translation>Insert section after</translation>
+    </message>
+    <message>
+        <source>INSERT_SECTION_AFTER_TLT</source>
+        <translation>Insert section after</translation>
+    </message>
+    <message>
+        <source>NEW_POINT</source>
+        <translation>New point</translation>
+    </message>
+    <message>
+        <source>NEW_POINT_TLT</source>
+        <translation>New point</translation>
+    </message>
+    <message>
+        <source>INSERT_POINT_BEFORE</source>
+        <translation>Insert point before</translation>
+    </message>
+    <message>
+        <source>INSERT_POINT_BEFORE_TLT</source>
+        <translation>Insert point before</translation>
+    </message>
+    <message>
+        <source>INSERT_POINT_AFTER</source>
+        <translation>Insert point after</translation>
+    </message>
+    <message>
+        <source>CLOSE_SECTIONS</source>
+        <translation>Set closed</translation>
+    </message>
+    <message>
+        <source>CLOSE_SECTIONS_TLT</source>
+        <translation>Set selected sections closed</translation>
+    </message>
+    <message>
+        <source>UNCLOSE_SECTIONS</source>
+        <translation>Set open</translation>
+    </message>
+    <message>
+        <source>UNCLOSE_SECTIONS_TLT</source>
+        <translation>Set selected sections open</translation>
+    </message>
+    <message>
+        <source>SET_SECTIONS_POLYLINE</source>
+        <translation>Set polyline</translation>
+    </message>
+    <message>
+        <source>SET_SECTIONS_POLYLINE_TLT</source>
+        <translation>Set selected section type to polyline</translation>
+    </message>
+    <message>
+        <source>SET_SECTIONS_SPLINE</source>
+        <translation>Set spline</translation>
+    </message>
+    <message>
+        <source>SET_SECTIONS_SPLINE_TLT</source>
+        <translation>Set selected section type to spline</translation>
+    </message>
+    <message>
+        <source>REMOVE</source>
+        <translation>Remove</translation>
+    </message>
+    <message>
+        <source>REMOVE_TLT</source>
+        <translation>Remove</translation>
+    </message>
+    <message>
+        <source>JOIN</source>
+        <translation>Join</translation>
+    </message>
+    <message>
+        <source>JOIN_TLT</source>
+        <translation>Join selected sections</translation>
+    </message>
+    <message>
+        <source>STEP_UP</source>
+        <translation>Move up</translation>
+    </message>
+    <message>
+        <source>STEP_UP_TLT</source>
+        <translation>Move selected objects up</translation>
+    </message>
+    <message>
+        <source>STEP_DOWN</source>
+        <translation>Move down</translation>
+    </message>
+    <message>
+        <source>STEP_DOWN_TLT</source>
+        <translation>Move selected objects down</translation>
+    </message>
+    <message>
+        <source>CLEAR_ALL</source>
+        <translation>Clear all</translation>
+    </message>
+    <message>
+        <source>CLEAR_ALL_TLT</source>
+        <translation>Remove all objects</translation>
+    </message>
+    <message>
+        <source>JOIN_ALL</source>
+        <translation>Join all sections</translation>
+    </message>
+    <message>
+        <source>JOIN_ALL_TLT</source>
+        <translation>Join all sections</translation>
+    </message>
+</context>
+<context>
     <name>EntityGUI_SketcherDlg</name>
     <message>
         <source>CANNOT_CLOSE</source>
@@ -5897,269 +6137,6 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_PUBLISH_CLOSE_BTN</source>
         <translation>P&amp;ublish And Close</translation>
-    </message>
-</context>
-<context>
-    <name>CurveCreator_Widget</name>
-    <message>
-      <source>CC_TITLE</source>
-      <translation>Curve Creator</translation>
-    </message>
-    <message>
-      <source>CC_UNDO_REDO_TITLE</source>
-      <translation>Undo/Redo operations</translation>
-    </message>
-    <message>
-      <source>CC_UNDO</source>
-      <translation>Undo</translation>
-    </message>
-    <message>
-      <source>CC_REDO</source>
-      <translation>Redo</translation>
-    </message>
-    <message>
-      <source>CC_UNDO_REDO_ENABLED</source>
-      <translation>Status: Enabled</translation>
-    </message>
-    <message>
-      <source>CC_UNDO_REDO_DISABLED</source>
-      <translation>Status: Disabled</translation>
-    </message>
-    <message>
-      <source>CC_UNDO_REDO_BUFFER_SIZE</source>
-      <translation>Undo buffer size: %1</translation>
-    </message>
-    <message>
-      <source>CC_UNDO_REDO_UNLIMITED</source>
-      <translation>Unlimited</translation>
-    </message>
-    <message>
-      <source>CC_UNDO_REDO_OPTIONS</source>
-      <translation>Undo/Redo options</translation>
-    </message>
-    <message>
-      <source>CC_UNDO_REDO_MODIFY</source>
-      <translation>Modify</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_ADD_TITLE</source>
-      <translation>Add section</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_MODIFICATION_TITLE</source>
-      <translation>Section modification</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_TYPE</source>
-      <translation>Type</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_CLOSED</source>
-      <translation>Closed</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_NEW</source>
-      <translation>New</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_MODIFY</source>
-      <translation>Modify</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_POINTS_ADD_LBL</source>
-      <translation>Add points</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_TITLE</source>
-      <translation>Sections</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_MODIFY_TITLE</source>
-      <translation>Modify section</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_REMOVE</source>
-      <translation>Remove</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_JOIN</source>
-      <translation>Join</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_JOIN_ALL</source>
-      <translation>Join all</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_CLEAR</source>
-      <translation>Clear</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_UP</source>
-      <translation>Up</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_DOWN</source>
-      <translation>Down</translation>
-    </message>
-    <message>
-      <source>CC_POINTS_ADD_TITLE</source>
-      <translation>Add points</translation>
-    </message>
-    <message>
-      <source>CC_POINTS_MODIFICATION_TITLE</source>
-      <translation>Points modification</translation>
-    </message>
-    <message>
-      <source>CC_POINTS_ADD_LBL</source>
-      <translation>Add points</translation>
-    </message>
-    <message>
-      <source>CC_POINTS_ADD</source>
-      <translation>Add</translation>
-    </message>
-    <message>
-      <source>CC_POINTS_INSERT</source>
-      <translation>Insert</translation>
-    </message>
-    <message>
-      <source>CC_POINTS_TITLE</source>
-      <translation>Points</translation>
-    </message>
-    <message>
-      <source>CC_POINTS_REMOVE</source>
-      <translation>Remove</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_ITEM</source>
-      <translation>%1</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_ITEM_CLOSED</source>
-      <translation>%1, closed</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_ITEM_POLYLINE</source>
-      <translation>Polyline</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_ITEM_BSPLINE</source>
-      <translation>B-spline</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_TYPE_POLYLINE</source>
-      <translation>Polyline</translation>
-    </message>
-    <message>
-      <source>CC_SECTION_TYPE_BSPLINE</source>
-      <translation>B-spline</translation>
-    </message>
-</context>
-<context>
-    <name>CurveCreator_EditPntsWidget</name>
-    <message>
-      <source>CC_SECTION_POINTS_EDIT</source>
-      <translation>Edit section points</translation>
-    </message>
-    <message>
-      <source>CC_POINTS_EDIT</source>
-      <translation>Edit points</translation>
-    </message>
-    <message>
-      <source>CC_POINTS_NUMBER</source>
-      <translation>%1 points</translation>
-    </message>
-</context>
-<context>
-    <name>CurveCreator_EditPntsDlg</name>
-    <message>
-      <source>CC_EDIT_POINTS_TITLE</source>
-      <translation>Edit points</translation>
-    </message>
-    <message>
-      <source>CC_EDIT_POINTS_ADD_MODIFY</source>
-      <translation>Add or modify points</translation>
-    </message>
-    <message>
-      <source>CC_EDIT_POINTS_X</source>
-      <translation>X :</translation>
-    </message>
-    <message>
-      <source>CC_EDIT_POINTS_Y</source>
-      <translation>Y :</translation>
-    </message>
-    <message>
-      <source>CC_EDIT_POINTS_Z</source>
-      <translation>Z :</translation>
-    </message>
-    <message>
-      <source>CC_EDIT_POINTS_ADD</source>
-      <translation>Add</translation>
-    </message>
-    <message>
-      <source>CC_EDIT_POINTS_MODIFY</source>
-      <translation>Modify</translation>
-    </message>
-    <message>
-      <source>CC_EDIT_POINTS_REMOVE</source>
-      <translation>Remove</translation>
-    </message>
-    <message>
-      <source>CC_EDIT_POINTS_CLEAR</source>
-      <translation>Clear</translation>
-    </message>
-    <message>
-      <source>CC_EDIT_POINTS_UP</source>
-      <translation>Up</translation>
-    </message>
-    <message>
-      <source>CC_EDIT_POINTS_DOWN</source>
-      <translation>Down</translation>
-    </message>
-</context>
-<context>
-    <name>CurveCreator_EditPntDlg</name>
-    <message>
-      <source>CC_EDIT_POINT_TITLE</source>
-      <translation>Edit point</translation>
-    </message>
-    <message>
-      <source>CC_EDIT_POINT_MODIFY</source>
-      <translation>Modify point</translation>
-    </message>
-    <message>
-      <source>CC_EDIT_POINT_X</source>
-      <translation>X :</translation>
-    </message>
-    <message>
-      <source>CC_EDIT_POINT_Y</source>
-      <translation>Y :</translation>
-    </message>
-    <message>
-      <source>CC_EDIT_POINT_Z</source>
-      <translation>Z :</translation>
-    </message>
-</context>
-<context>
-    <name>CurveCreator_UndoOptsDlg</name>
-    <message>
-      <source>CC_UNDO_OPTIONS_TITLE</source>
-      <translation>Undo/Redo options</translation>
-    </message>
-    <message>
-      <source>CC_UNDO_OPTIONS_MODIFY</source>
-      <translation>Modify</translation>
-    </message>
-    <message>
-      <source>CC_UNDO_OPTIONS_DISABLED</source>
-      <translation>Undo/Redo operations disabled</translation>
-    </message>
-    <message>
-      <source>CC_UNDO_OPTIONS_FIXED_SIZE</source>
-      <translation>Fixed Undo/Redo buffer size</translation>
-    </message>
-    <message>
-      <source>CC_UNDO_OPTIONS_UNLIMITED</source>
-      <translation>Unlimited Undo/Redo buffer size</translation>
     </message>
 </context>
 </TS>
