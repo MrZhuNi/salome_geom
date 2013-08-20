@@ -34,6 +34,8 @@ ShHealing			\
 3dsketch.png			\
 angle.png			\
 arc.png				\
+arrow_up.png                    \
+arrow_down.png                  \
 arccenter.png			\
 arcofellipse.png		\
 archimede.png			\
@@ -64,6 +66,8 @@ circle.png			\
 circlepointvector.png		\
 circle3points.png		\
 circlecenter2pnts.png		\
+closedpolyline.png              \
+closedspline.png                \
 common.png			\
 cone.png			\
 conedxyz.png			\
@@ -101,6 +105,7 @@ fuse.png			\
 fuse_collinear_edges.png	\
 geometry.png			\
 import_picture.png		\
+join2.png                       \
 limit_tolerance.png		\
 line.png			\
 line2points.png			\
@@ -116,6 +121,8 @@ multirotationsimple.png		\
 multitranslation.png		\
 multitranslationdouble.png	\
 multitranslationsimple.png	\
+new_point.png                   \
+new_section.png                 \
 normale.png			\
 offset.png			\
 projection.png			\
