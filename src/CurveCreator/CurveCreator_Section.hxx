@@ -31,14 +31,16 @@
 
 #include <CurveCreator.hxx>
 
+#include <string>
 
 //! Structure to store sections representing the CurveCreator_Curve object
 struct CurveCreator_Section
 {
   //! Constructor. Initializes object with default values.
-  CurveCreator_Section() : myType(CurveCreator::Polyline), myIsClosed(false)
+  CurveCreator_Section() : myName("Section"),myType(CurveCreator::Polyline), myIsClosed(false)
   { }
 
+  std::string               myName; //!< section name
   CurveCreator::Coordinates myPoints;   //!< points coordinates
   CurveCreator::Type        myType;     //!< type of the section
   bool                      myIsClosed; //!< closed or not

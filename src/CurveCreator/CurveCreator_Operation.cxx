@@ -28,6 +28,7 @@
 
 #include <CurveCreator_Operation.hxx>
 #include <CurveCreator_Curve.hxx>
+#include <string>
 #include <stdlib.h>
 
 
@@ -273,7 +274,7 @@ void CurveCreator_Operation::apply(CurveCreator_Curve *theCurve)
           CurveCreator::Coordinates aCoords;
 
           getCoords(&pInt[2], aCoords);
-          theCurve->addSection(aType, (pInt[1] != 0), aCoords);
+          theCurve->addSection(std::string(""), aType, (pInt[1] != 0), aCoords);
         }
         break;
       case CurveCreator_Operation::RemoveSection:

@@ -1,14 +1,11 @@
-#include "CurveCreator_NewPointDlg.h"
-#include "CurveCreator_NewSectionDlg.h"
-#include "CurveCreator_TreeView.h"
 #include "CurveCreator_Widget.h"
-
-#include "CurveCreator.hxx"
+#include "CurveCreator_TreeView.h"
+#include "QVBoxLayout"
 #include "CurveCreator_Curve.hxx"
 #include "CurveCreator_CurveEditor.hxx"
-
-#include <SUIT_Session.h>
-#include <SUIT_ResourceMgr.h>
+#include "CurveCreator.hxx"
+#include "CurveCreator_NewPointDlg.h"
+#include "CurveCreator_NewSectionDlg.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -19,27 +16,54 @@
 #include <QToolBar>
 #include <QAction>
 #include <QMenu>
-#include <QPixmap>
 
-CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
-                      CurveCreator_Curve *theCurve,
-                      Qt::WindowFlags fl ) :
+CurveCreator_Widget::CurveCreator_Widget(QWidget *parent) :
     QWidget(parent), myNewPointEditor(NULL)
 {
-    myCurve = theCurve;	
+//TODO remove it for debug only
+    myCurve = new CurveCreator_Curve(CurveCreator::Dim2d);
     myEdit = new CurveCreator_CurveEditor( myCurve );
+    CurveCreator::Coordinates aCoords;
 
+    aCoords.push_back(10);
+    aCoords.push_back(20);
+    aCoords.push_back(1);
+    aCoords.push_back(2);
+
+    myEdit->addSection("",CurveCreator::BSpline, true, aCoords );
+
+    aCoords.clear();
+    aCoords.push_back(11);
+    aCoords.push_back(21);
+    aCoords.push_back(111);
+    aCoords.push_back(211);
+    aCoords.push_back(101);
+    aCoords.push_back(201);
+    aCoords.push_back(13);
+    aCoords.push_back(25);
+    myEdit->addSection("",CurveCreator::Polyline, false, aCoords );
+
+    aCoords.clear();
+    for( int i = 0 ; i < 1000000 ; i++ ){
+        double anX = ((double)i)/10000.;
+        double anY = ((double)i)/10000. + 3.4;
+        aCoords.push_back(anX);
+        aCoords.push_back(anY);
+    }
+    myEdit->addSection("",CurveCreator::Polyline, true, aCoords );
+
+//TODO end debug
     myNewPointEditor = new CurveCreator_NewPointDlg(myCurve->getDimension(), this);
     connect( myNewPointEditor, SIGNAL(addPoint()), this, SLOT(onAddNewPoint()));
 
     myNewSectionEditor = new CurveCreator_NewSectionDlg(this);
     connect( myNewSectionEditor, SIGNAL(addSection()), this, SLOT(onAddNewSection()));
 
-/*    QHBoxLayout* aNameLayout = new QHBoxLayout();
+    QHBoxLayout* aNameLayout = new QHBoxLayout();
     QLabel* aNameLabel = new QLabel(tr("CURVE_NAME_TLT"), this);
     aNameLayout->addWidget(aNameLabel);
     QLineEdit* aNameEdit = new QLineEdit(this);
-    aNameLayout->addWidget(aNameEdit); */
+    aNameLayout->addWidget(aNameEdit);
 
     QGroupBox* aSectionGroup = new QGroupBox(tr("SECTION_GROUP_TLT"),this);
 
@@ -50,90 +74,81 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
     connect( mySectionView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(onContextMenu(QPoint)) );
     QToolBar* aTB = new QToolBar(tr("TOOL_BAR_TLT"), aSectionGroup);
 //    QToolButton* anUndoBtn = new QToolButton(aTB);
-
-    QPixmap anUndoImage(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_CC_UNDO")));
-    QAction* anAct = createAction( UNDO_ID, tr("UNDO"), anUndoImage, tr("UNDO_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_Z) );
+    QAction* anAct = createAction( UNDO_ID, tr("UNDO"), tr(":images/ICON_UNDO"), tr("UNDO_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_Z) );
     aTB->addAction(anAct);
 
-    QPixmap aRedoImage(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_CC_REDO")));
-    anAct = createAction( REDO_ID, tr("REDO"), aRedoImage, tr("REDO_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_Y) );
+    anAct = createAction( REDO_ID, tr("REDO"), tr(":images/ICON_REDO"), tr("REDO_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_Y) );
     aTB->addAction(anAct);
 
     aTB->addSeparator();
 
-    QPixmap aNewSectImage(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_CC_NEW_SECTION")));
-    anAct = createAction( NEW_SECTION_ID, tr("NEW_SECTION"), aNewSectImage, tr("NEW_SECTION_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_N) );
+    anAct = createAction( NEW_SECTION_ID, tr("ICON_NEW_SECTION"), tr(":images/ICON_NEW_SECTION"), tr("NEW_SECTION_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_N) );
     connect(anAct, SIGNAL(triggered()), this, SLOT(onNewSection()) );
     aTB->addAction(anAct);
 
-    anAct = createAction( INSERT_SECTION_BEFORE_ID, tr("INSERT_SECTION_BEFORE"), QPixmap(), tr("INSERT_SECTION_BEFORE_TLT"),
+    anAct = createAction( INSERT_SECTION_BEFORE_ID, tr("INSERT_SECTION_BEFORE"), tr(":images/ICON_INSERT_SECTION_BEFORE"), tr("INSERT_SECTION_BEFORE_TLT"),
                           QKeySequence(Qt::ControlModifier | Qt::Key_Insert ) );
     connect(anAct, SIGNAL(triggered()), this, SLOT(onInsertSectionBefore()) );
 
-    anAct = createAction( INSERT_SECTION_AFTER_ID, tr("INSERT_SECTION_AFTER"), QPixmap(), tr("INSERT_SECTION_AFTER_TLT"),
+    anAct = createAction( INSERT_SECTION_AFTER_ID, tr("INSERT_SECTION_AFTER"), tr(":images/ICON_INSERT_SECTION_AFTER"), tr("INSERT_SECTION_AFTER_TLT"),
                           QKeySequence(Qt::ControlModifier | Qt::ShiftModifier | Qt::Key_Insert ) );
     connect(anAct, SIGNAL(triggered()), this, SLOT(onInsertSectionAfter()) );
 
-    QPixmap aNewPointImage(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_CC_NEW_POINT")));
-    anAct = createAction( NEW_POINT_ID, tr("NEW_POINT"), aNewPointImage, tr("NEW_POINT_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_P) );
+    anAct = createAction( NEW_POINT_ID, tr("ICON_NEW_POINT"), tr(":images/ICON_NEW_POINT"), tr("NEW_POINT_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_P) );
     connect(anAct, SIGNAL(triggered()), this, SLOT(onNewPoint()) );
     aTB->addAction(anAct);
     aTB->addSeparator();
 
-    anAct = createAction( INSERT_POINT_BEFORE_ID, tr("INSERT_POINT_BEFORE"), QPixmap(), tr("INSERT_POINT_BEFORE_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_B) );
+    anAct = createAction( INSERT_POINT_BEFORE_ID, tr("INSERT_POINT_BEFORE"), tr(":images/ICON_POINT_BEFORE"), tr("INSERT_POINT_BEFORE_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_B) );
     connect(anAct, SIGNAL(triggered()), this, SLOT(onInsertPointBefore()) );
 
-    anAct = createAction( INSERT_POINT_AFTER_ID, tr("INSERT_POINT_AFTER"), QPixmap(), tr("INSERT_POINT_AFTER_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_M) );
+    anAct = createAction( INSERT_POINT_AFTER_ID, tr("INSERT_POINT_AFTER"), tr(":images/ICON_POINT_AFTER"), tr("INSERT_POINT_AFTER_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_M) );
     connect(anAct, SIGNAL(triggered()), this, SLOT(onInsertPointAfter()) );
 
-    anAct = createAction( CLOSE_SECTIONS_ID, tr("CLOSE_SECTIONS"), QPixmap(), tr("CLOSE_SECTIONS_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_W) );
+    anAct = createAction( CLOSE_SECTIONS_ID, tr("CLOSE_SECTIONS"), tr(":images/ICON_CLOSE_SECTIONS"), tr("CLOSE_SECTIONS_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_W) );
     connect(anAct, SIGNAL(triggered()), this, SLOT(onCloseSections()) );
 
-    anAct = createAction( UNCLOSE_SECTIONS_ID, tr("UNCLOSE_SECTIONS"), QPixmap(), tr("UNCLOSE_SECTIONS_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_S) );
+    anAct = createAction( UNCLOSE_SECTIONS_ID, tr("UNCLOSE_SECTIONS"), tr(":images/ICON_UNCLOSE_SECTIONS"), tr("UNCLOSE_SECTIONS_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_S) );
     connect(anAct, SIGNAL(triggered()), this, SLOT(onUncloseSections()) );
 
-    QPixmap aPolylineImage(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_CC_POLYLINE")));
-    anAct = createAction( SET_SECTIONS_POLYLINE_ID, tr("SET_SECTIONS_POLYLINE"), aPolylineImage, tr("SET_POLYLINE_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_E) );
+    anAct = createAction( SET_SECTIONS_POLYLINE_ID, tr("SET_SECTIONS_POLYLINE"), tr(":images/ICON_POLYLINE"), tr("SET_POLYLINE_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_E) );
     connect(anAct, SIGNAL(triggered()), this, SLOT(onSetPolyline()) );
 
-    QPixmap aSplineImage(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_CC_SPLINE")));
-    anAct = createAction( SET_SECTIONS_SPLINE_ID, tr("SET_SECTIONS_SPLINE"), aSplineImage, tr("SET_SPLINE_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_R) );
+    anAct = createAction( SET_SECTIONS_SPLINE_ID, tr("SET_SECTIONS_SPLINE"), tr(":images/ICON_SPLINE"), tr("SET_SPLINE_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_R) );
     connect(anAct, SIGNAL(triggered()), this, SLOT(onSetSpline()) );
 
-    QPixmap aRemoveImage(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_CC_DELETE")));
-    anAct = createAction( REMOVE_ID, tr("REMOVE"), aRemoveImage, tr("REMOVE_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_Delete ) );
+    anAct = createAction( REMOVE_ID, tr("ICON_REMOVE"), tr(":images/ICON_REMOVE"), tr("REMOVE_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_Delete ) );
     connect(anAct, SIGNAL(triggered()), this, SLOT(onRemove()) );
     aTB->addAction(anAct);
     aTB->addSeparator();
 
-    QPixmap aJoinImage(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_CC_JOIN")));
-    anAct = createAction( JOIN_ID, tr("JOIN"), aJoinImage, tr("JOIN_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_Plus ) );
+    anAct = createAction( JOIN_ID, tr("ICON_JOIN"), tr(":images/ICON_JOIN"), tr("JOIN_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_Plus ) );
     connect( anAct, SIGNAL(triggered()), this, SLOT(onJoin()) );
     aTB->addAction(anAct);
     aTB->addSeparator();
 
-    QPixmap aStepUpImage(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_CC_ARROW_UP")));
-    anAct = createAction( UP_ID, tr("STEP_UP"), aStepUpImage, tr("STEP_UP_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_Up ) );
+    anAct = createAction( UP_ID, tr("ICON_STEP_UP"), tr(":images/ICON_STEP_UP"), tr("STEP_UP_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_Up ) );
     connect( anAct, SIGNAL(triggered()), this, SLOT(onMoveUp()) );
     aTB->addAction(anAct);
 
-    QPixmap aStepDownImage(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_CC_ARROW_DOWN")));
-    anAct = createAction( DOWN_ID, tr("STEP_DOWN"), aStepDownImage, tr("STEP_DOWN_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_Down ) );
+    anAct = createAction( DOWN_ID, tr("ICON_STEP_DOWN"), tr(":images/ICON_STEP_DOWN"), tr("STEP_DOWN"), QKeySequence(Qt::ControlModifier|Qt::Key_Down ) );
     connect( anAct, SIGNAL(triggered()), this, SLOT(onMoveDown()) );
     aTB->addAction(anAct);
 
-    anAct = createAction( CLEAR_ALL_ID, tr("CLEAR_ALL"), QPixmap(), tr("CLEAR_ALL_TLT"), QKeySequence(Qt::ControlModifier | Qt::ShiftModifier | Qt::Key_Delete ) );
+    anAct = createAction( CLEAR_ALL_ID, tr("CLEAR_ALL"), tr(":images/ICON_CLEAR_ALL"), tr("CLEAR_ALL_TLT"), QKeySequence(Qt::ControlModifier | Qt::ShiftModifier | Qt::Key_Delete ) );
     connect( anAct, SIGNAL(triggered()), this, SLOT( onClearAll()) );
+    aTB->addAction(anAct);
 
-    anAct = createAction( JOIN_ALL_ID, tr("JOIN_ALL"), QPixmap(), tr("JOIN_ALL_TLT"), QKeySequence(Qt::ControlModifier | Qt::ShiftModifier | Qt::Key_Plus ) );
+    anAct = createAction( JOIN_ALL_ID, tr("JOIN_ALL"), tr(":images/ICON_JOIN_ALL"), tr("JOIN_ALL_TLT"), QKeySequence(Qt::ControlModifier | Qt::ShiftModifier | Qt::Key_Plus ) );
     connect( anAct, SIGNAL(triggered()), this, SLOT(onJoinAll()) );
+    aTB->addAction(anAct);
 
     QVBoxLayout* aSectLayout = new QVBoxLayout();
     aSectLayout->addWidget(aTB);
     aSectLayout->addWidget(mySectionView);
     aSectionGroup->setLayout(aSectLayout);
     QVBoxLayout* aLay = new QVBoxLayout();
-//    aLay->addLayout(aNameLayout);
+    aLay->addLayout(aNameLayout);
     aLay->addWidget(aSectionGroup);
     setLayout(aLay);
     onSelectionChanged();
@@ -271,13 +286,13 @@ void CurveCreator_Widget::onAddNewSection()
     mySection++;
 }
 
-QAction* CurveCreator_Widget::createAction( ActionId theId, const QString& theName, 
-                                            const QPixmap& theImage, const QString& theToolTip, 
-                                            const QKeySequence& theShortcut )
+QAction* CurveCreator_Widget::createAction( ActionId theId, const QString& theName, const QString& theImageName,
+                                            const QString& theToolTip, const QKeySequence& theShortcut )
 {
     QAction* anAct = new QAction(theName,this);
-    if( !theImage.isNull() ){
-        anAct->setIcon(theImage);
+    QIcon anIcon(theImageName);
+    if( !anIcon.isNull() ){
+        anAct->setIcon(anIcon);
     }
     anAct->setShortcut(theShortcut);
     anAct->setToolTip(theToolTip);

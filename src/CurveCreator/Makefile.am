@@ -54,32 +54,25 @@ salomeinclude_HEADERS =	\
 # Compilation options for GUI mode
 if GEOM_ENABLE_GUI
   dist_libCurveCreator_la_SOURCES +=  \
-        CurveCreator_PointItem.h \
-        CurveCreator_UndoOptsDlg.h \
-        CurveCreator_EditPntDlg.h \
-        CurveCreator_EditPntsDlg.h \
-        CurveCreator_EditPntsWidget.h \
-        CurveCreator_Widget.h        \
-        CurveCreator_PointItem.cxx \
-        CurveCreator_UndoOptsDlg.cxx \
-        CurveCreator_EditPntDlg.cxx \
-        CurveCreator_EditPntsDlg.cxx \
-        CurveCreator_EditPntsWidget.cxx \
+        CurveCreator_NewPointDlg.h \
+        CurveCreator_NewSection.h \
+        CurveCreator_TreeView.h \
+        CurveCreator_Widget.h     \
+        CurveCreator_NewPointDlg.cxx \
+        CurveCreator_NewSectionDlg.cxx \
+        CurveCreator_TreeView.cxx \
         CurveCreator_Widget.cxx
 
   salomeinclude_HEADERS += \
-        CurveCreator_PointItem.h \
-        CurveCreator_UndoOptsDlg.h \
-        CurveCreator_EditPntDlg.h \
-        CurveCreator_EditPntsDlg.h \
-        CurveCreator_EditPntsWidget.h \
+        CurveCreator_NewPointDlg.h \
+        CurveCreator_NewSectionDlg.h \
+        CurveCreator_TreeView.h \
         CurveCreator_Widget.h
 
   MOC_FILES = \
-        CurveCreator_UndoOptsDlg_moc.cxx \
-        CurveCreator_EditPntDlg_moc.cxx \
-        CurveCreator_EditPntsDlg_moc.cxx \
-        CurveCreator_EditPntsWidget_moc.cxx \
+        CurveCreator_NewPointDlg_moc.cxx \
+        CurveCreator_NewSectionDlg_moc.cxx \
+        CurveCreator_TreeView_moc.cxx \
         CurveCreator_Widget_moc.cxx
 
   nodist_libCurveCreator_la_SOURCES = $(MOC_FILES)
@@ -90,7 +83,8 @@ endif
 libCurveCreator_la_CPPFLAGS =	\
 	$(QT_INCLUDES)				\
 	$(CAS_CPPFLAGS)		\
-	$(KERNEL_CXXFLAGS)
+	$(KERNEL_CXXFLAGS) 	\
+	$(GUI_CXXFLAGS)
 
 libCurveCreator_la_LDFLAGS  =			\
 	$(KERNEL_LDFLAGS)	\

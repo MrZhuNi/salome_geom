@@ -59,7 +59,8 @@ public:
     MoveSection,    //!< Method CurveCreator_Curve::moveSection
     Join,           //!< Method CurveCreator_Curve::join
     AddSection,     //!< Method CurveCreator_Curve::addSection
-    RemoveSection   //!< Method CurveCreator_Curve::removeSection
+    RemoveSection,   //!< Method CurveCreator_Curve::removeSection
+    RenameCurve     //!< Method CurveCreator_Curve::renameCurve
   };
 
   /**

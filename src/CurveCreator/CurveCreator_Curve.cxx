@@ -143,6 +143,11 @@ bool CurveCreator_Curve::isClosed(const int theISection) const
   return mySections.at(theISection)->myIsClosed;
 }
 
+std::string CurveCreator_Curve::getSectionName(const int theISection) const
+{
+    return mySections.at(theISection)->myName;
+}
+
 //=======================================================================
 // function: setType
 // purpose:
@@ -181,12 +186,18 @@ void CurveCreator_Curve::addPoints
 // purpose:
 //=======================================================================
 void CurveCreator_Curve::addSection
-                  (const CurveCreator::Type theType,
+                  (const std::string& theName,
+                   const CurveCreator::Type theType,
                    const bool theIsClosed,
                    const CurveCreator::Coordinates &thePoints)
 {
   CurveCreator_Section *aSection = new CurveCreator_Section;
 
+  std::string aName = theName;
+  if( aName.empty() ){
+      aName = getUnicSectionName();
+  }
+  aSection->myName     = aName;
   aSection->myType     = theType;
   aSection->myIsClosed = theIsClosed;
   aSection->myPoints   = thePoints;
@@ -229,6 +240,16 @@ void CurveCreator_Curve::insertPoints
     aSection->myPoints.insert(aSection->myPoints.begin() + toICoord(theIPnt),
                              thePoints.begin(), thePoints.end());
   }
+}
+
+void CurveCreator_Curve::movePoint(const int theISection, const int theIPointFrom, const int theNewIndex)
+{
+    CurveCreator::Coordinates aCoords = getCoordinates(theISection, theIPointFrom );
+    insertPoints(aCoords, theISection, theNewIndex+1);
+    int aRemPntIndx = theIPointFrom;
+    if( theNewIndex < theIPointFrom )
+        aRemPntIndx++;
+    removePoints(theISection, aRemPntIndx, 1 );
 }
 
 //=======================================================================
@@ -304,6 +325,15 @@ void CurveCreator_Curve::setClosed(const bool theIsClosed,
   }
 }
 
+/** Set name of the specified section.
+ */
+void CurveCreator_Curve::setName( const std::string& theName, const int theISection )
+{
+    if( ( theISection >= 0 ) && ( theISection < mySections.size() )){
+        mySections.at(theISection)->myName = theName;
+    }
+}
+
 //=======================================================================
 // function: moveSection
 // purpose:
@@ -375,4 +405,25 @@ void CurveCreator_Curve::join()
 int CurveCreator_Curve::toICoord(const int theIPnt) const
 {
   return theIPnt*myDimension;
+}
+
+//=======================================================================
+// function: getUnicSectionName
+// purpose: return unic section name
+//=======================================================================
+std::string CurveCreator_Curve::getUnicSectionName()
+{
+    for( int i = 0 ; i < 1000000 ; i++ ){
+        char aBuffer[255];
+        sprintf( aBuffer, "Section_%d", i+1 );
+        std::string aName(aBuffer);
+        int j;
+        for( j = 0 ; j < mySections.size() ; j++ ){
+            if( mySections[j]->myName == aName )
+              break;
+        }
+        if( j == mySections.size() )
+            return aName;
+    }
+    return "";
 }

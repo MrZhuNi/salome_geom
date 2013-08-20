@@ -229,7 +229,7 @@ void CurveCreator_CurveEditor::addPoints
 // purpose:
 //=======================================================================
 void CurveCreator_CurveEditor::addSection
-        (const CurveCreator::Type theType,
+        (const std::string& theName, const CurveCreator::Type theType,
          const bool theIsClosed,
          const CurveCreator::Coordinates &thePoints)
 {
@@ -241,7 +241,7 @@ void CurveCreator_CurveEditor::addSection
     }
 
     // Update the curve.
-    myPCurve->addSection(theType, theIsClosed, thePoints);
+    myPCurve->addSection(theName, theType, theIsClosed, thePoints);
   }
 }
 
@@ -282,6 +282,17 @@ void CurveCreator_CurveEditor::insertPoints
     // Update the curve.
     myPCurve->insertPoints(thePoints, theISection, theIPnt);
   }
+}
+
+//=======================================================================
+// function: movePoints
+// purpose:
+//=======================================================================
+void CurveCreator_CurveEditor::movePoint(const int theISection,
+                const int theOrigIPnt,
+                const int theNewIPnt )
+{
+    myPCurve->movePoint(theISection, theOrigIPnt, theNewIPnt);
 }
 
 //=======================================================================
@@ -360,6 +371,16 @@ void CurveCreator_CurveEditor::setClosed(const bool theIsClosed,
     // Update the curve.
     myPCurve->setClosed(theIsClosed, theISection);
   }
+}
+
+//=======================================================================
+// function: setName
+// purpose:
+//=======================================================================
+void CurveCreator_CurveEditor::setName(const std::string& theName,
+                                         const int theISection)
+{
+    myPCurve->setName( theName, theISection );
 }
 
 //=======================================================================

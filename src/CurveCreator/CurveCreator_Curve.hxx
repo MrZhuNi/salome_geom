@@ -86,6 +86,13 @@ public:
   //! Get “closed” flag of the specified section
   bool isClosed(const int theISection) const;
 
+  //! Returns specifyed section name
+  std::string   getSectionName(const int theISection) const;
+
+  /**
+   * Return unic section name
+   */
+  std::string getUnicSectionName();
 protected:
 
   /** Set type of the specified section (or all sections
@@ -100,7 +107,7 @@ protected:
     (const CurveCreator::Coordinates &thePoints, const int theISection = -1);
 
   //! Add a new section.
-  void addSection (const CurveCreator::Type theType,
+  void addSection (const std::string &theName, const CurveCreator::Type theType,
                    const bool theIsClosed,
                    const CurveCreator::Coordinates &thePoints);
 
@@ -123,6 +130,12 @@ protected:
                     const int theIPnt,
                     const int theNbPoints = -1);
 
+  /** Move specified  point within section to new position
+   */
+  void movePoint(const int theISection,
+                 const int theIPointFrom,
+                 const int theNewIndex);
+
   //! Remove all sections.
   void clear();
 
@@ -135,6 +148,10 @@ protected:
    *  \a theISection is -1).
    */
   void setClosed(const bool theIsClosed, const int theISection = -1);
+
+  /** Set name of the specified section.
+   */
+  void setName( const std::string& theName, const int theISection );
 
   /** Move specified \a theISection to the specified position
    *  in the sections list.

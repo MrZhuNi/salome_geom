@@ -1,160 +1,73 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-//
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+#ifndef CURVECREATOR_WIDGET_H
+#define CURVECREATOR_WIDGET_H
 
-// File:        CurveCreator_Widget.h
-// Created:     Mon Jul  01 12:49:21 2013
-// Author:      Sergey KHROMOV
-//
-
-#ifndef _CurveCreator_Widget_HeaderFile
-#define _CurveCreator_Widget_HeaderFile
-
+#include "CurveCreator_Curve.hxx"
 
 #include <QWidget>
-#include <CurveCreator_CurveEditor.hxx>
 
-class CurveCreator_Curve;
-class QGroupBox;
-class QButtonGroup;
-class QComboBox;
-class QCheckBox;
-class QPushButton;
-class QLabel;
-class QListWidget;
-class QListWidgetItem;
-class CurveCreator_EditPntsWidget;
-class CurveCreator_EditPntDlg;
-class CurveCreator_UndoOptsDlg;
+#include <QMap>
 
+class QAction;
+class QPixmap;
+class CurveCreator_CurveEditor;
+class CurveCreator_TreeView;
+class CurveCreator_NewPointDlg;
+class CurveCreator_NewSectionDlg;
 
 class CurveCreator_Widget : public QWidget
 {
-  Q_OBJECT
-
+    Q_OBJECT
 public:
-
-  CurveCreator_Widget(QWidget* parent,
+    explicit CurveCreator_Widget( QWidget* parent,
                       CurveCreator_Curve *theCurve,
-                      Qt::WindowFlags fl = 0);
-
-private:
-
-  void init();
-
-  void initSections();
-
-  void addSectionItem(const CurveCreator::Type theType, const bool isClosed);
-
-  void updateSectionItem(const int theRow, const CurveCreator::Type theType,
-                         const bool isClosed);
-
-  void sectionMove(const int theShift);
-
-  void initPoints(const int theSectionIndex);
-
-  int getCurrentSectionIndex();
-
-  void updateUndoRedo();
-
-  void updateUndoRedoButtons();
-
-  void setTabOrder();
-
-private slots:
-
-  void undoOptionsChanged();
-
-  void sectionAddOrModify();
-
-  void addModifChanged(int theId);
-
-  void changeSecSelection();
-
-  void sectionRemove();
-
-  void sectionJoin();
-
-  void sectionJoinAll();
-
-  void sectionClear();
-
-  void sectionUp();
-
-  void sectionDown();
-
-  void onNumberOfItemsChanged(QListWidget *theListWidget);
-
-  void changePntsSelection();
-
-  void editPnt(QListWidgetItem *theItem);
-
-  void pntsAdd();
-
-  void pntsInsert();
-
-  void pntsRemove();
-
-  void undo();
-
-  void redo();
-
+                      Qt::WindowFlags fl=0 );
+    
 signals:
+    
+public slots:
 
-  void numberOfItemsChanged(QListWidget *theListWidget);
-
+protected slots:
+    void     onNewPoint();
+    void     onNewSection();
+    void     onSelectionChanged();
+    void     onAddNewPoint();
+    void     onAddNewSection();
+    void     onEditSection( int theSection );
+    void     onEditPoint( int theSection, int thePoint );
+    void     onJoin();
+    void     onRemove();
+    void     onMoveUp();
+    void     onMoveDown();
+    void     onClearAll();
+    void     onJoinAll();
+    void     onInsertSectionBefore();
+    void     onInsertSectionAfter();
+    void     onSetSpline();
+    void     onSetPolyline();
+    void     onCloseSections();
+    void     onUncloseSections();
+    void     onInsertPointBefore();
+    void     onInsertPointAfter();
+    void     onUndoSettings();
+    void     onContextMenu(QPoint thePoint);
 protected:
-
-  CurveCreator_CurveEditor     myEditor;
-  CurveCreator::Dimension      myDimension;
-  // Undo/redo widgets
-  QLabel                      *myEnabledUndoLbl;
-  QLabel                      *myBufSizeUndoLbl;
-  QPushButton                 *myUndoBtn;
-  QPushButton                 *myRedoBtn;
-  QPushButton                 *myUndoOptsBtn;
-  CurveCreator_UndoOptsDlg    *myUndoOptsDlg;
-  // Sections widgets
-  QGroupBox                   *myAddSecGrp;
-  QButtonGroup                *mySecBtnGrp;
-  QComboBox                   *mySecTypeCmbBox;
-  QCheckBox                   *mySecCloseChkBox;
-  QPushButton                 *mySecAddModifBtn;
-  QPushButton                 *mySecRmBtn;
-  QPushButton                 *mySecJoinBtn;
-  QPushButton                 *mySecJoinAllBtn;
-  QPushButton                 *mySecClearBtn;
-  QPushButton                 *mySecUpBtn;
-  QPushButton                 *mySecDownBtn;
-  QListWidget                 *mySecList;
-  CurveCreator_EditPntsWidget *myEditSecPnts;
-  // Points widgets
-  QGroupBox                   *myPntsGrp;
-  QListWidget                 *myPntsList;
-  CurveCreator_EditPntDlg     *myPntEditDlg;
-  CurveCreator_EditPntsWidget *myEditPnts;
-  QPushButton                 *myAddPntsBtn;
-  QPushButton                 *myInsertPntsBtn;
-  QPushButton                 *myRmPntsBtn;
-
+    enum ActionId{ UNDO_ID, REDO_ID, NEW_SECTION_ID, NEW_POINT_ID, REMOVE_ID, REMOVE_ALL_ID, JOIN_ID,
+                   JOIN_ALL_ID, UP_ID, DOWN_ID, INSERT_SECTION_BEFORE_ID, INSERT_SECTION_AFTER_ID,
+                   INSERT_POINT_BEFORE_ID, INSERT_POINT_AFTER_ID, CLOSE_SECTIONS_ID, UNCLOSE_SECTIONS_ID,
+                   SET_SECTIONS_POLYLINE_ID, SET_SECTIONS_SPLINE_ID, CLEAR_ALL_ID, SEPARATOR_ID };
+private:
+    QAction* createAction( ActionId theId, const QString& theName, const QPixmap& theImage,
+                           const QString& theToolTip, const QKeySequence& theShortcut );
+    QAction* getAction(ActionId theId);
+private:
+    QMap<ActionId, QAction*>    myActionMap;
+    CurveCreator_Curve*         myCurve;
+    CurveCreator_CurveEditor*   myEdit;
+    CurveCreator_TreeView*      mySectionView;
+    CurveCreator_NewPointDlg*   myNewPointEditor;
+    CurveCreator_NewSectionDlg* myNewSectionEditor;
+    int                         mySection;
+    int                         myPointNum;
 };
 
-#endif
+#endif // CURVECREATOR_WIDGET_H

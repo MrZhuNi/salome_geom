@@ -81,6 +81,15 @@ public:
    */
   void setType(const CurveCreator::Type theType, const int theISection = -1);
 
+  /** Set section closed (or all sections
+   *  if \a theISection is -1).
+   */
+  void setClosed(const bool theIsClosed, const int theISection);
+
+  /** Set section name (if theISection is invalid it is ignored).
+   */
+  void setName(const std::string& theName, const int theISection);
+
   /** Add points to the specified section (or last section
    *  if \a theISection is -1).
    */
@@ -88,7 +97,7 @@ public:
                  const int theISection = -1);
 
   //! Add a new section.
-  void addSection(const CurveCreator::Type theType,
+  void addSection(const std::string &theName, const CurveCreator::Type theType,
                   const bool theIsClosed,
                   const CurveCreator::Coordinates &thePoints);
 
@@ -111,6 +120,13 @@ public:
                     const int theIPnt,
                     const int theNbPoints = -1);
 
+  /** Mobe point in \a theISection from given position \a theOrigIPnt
+   *  to new position \a theNewIPnt.
+   */
+  void movePoint(const int theISection,
+                  const int theOrigIPnt,
+                  const int theNewIPnt );
+
   //! Remove all sections.
   void clear();
 
@@ -118,11 +134,6 @@ public:
   void setCoordinates(const CurveCreator::Coordinates &theCoords,
                       const int theISection,
                       const int theIPnt);
-
-  /** Set “closed” flag of the specified section (all sections if
-   *  \a theISection is -1).
-   */
-  void setClosed(const bool theIsClosed, const int theISection = -1);
 
   /** Move specified \a theISection to the specified position
    *  in the sections list.
