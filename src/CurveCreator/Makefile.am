@@ -55,7 +55,7 @@ salomeinclude_HEADERS =	\
 if GEOM_ENABLE_GUI
   dist_libCurveCreator_la_SOURCES +=  \
         CurveCreator_NewPointDlg.h \
-        CurveCreator_NewSection.h \
+        CurveCreator_NewSectionDlg.h \
         CurveCreator_TreeView.h \
         CurveCreator_Widget.h     \
         CurveCreator_NewPointDlg.cxx \
@@ -87,5 +87,7 @@ libCurveCreator_la_CPPFLAGS =	\
 	$(GUI_CXXFLAGS)
 
 libCurveCreator_la_LDFLAGS  =			\
-	$(KERNEL_LDFLAGS)	\
-	$(CAS_KERNEL)
+	$(QT_MT_LIBS) \
+	$(CAS_KERNEL) \
+	$(KERNEL_LDFLAGS) \
+	$(GUI_LDFLAGS) -lqtx -lsuit

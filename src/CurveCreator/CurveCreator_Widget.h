@@ -14,7 +14,7 @@ class CurveCreator_TreeView;
 class CurveCreator_NewPointDlg;
 class CurveCreator_NewSectionDlg;
 
-class CurveCreator_Widget : public QWidget
+class CURVECREATOR_EXPORT CurveCreator_Widget : public QWidget
 {
     Q_OBJECT
 public:
