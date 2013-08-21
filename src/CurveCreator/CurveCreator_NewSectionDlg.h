@@ -16,34 +16,34 @@ class QDialogButtonBox;
 
 class CurveCreator_NewSectionDlg : public QDialog
 {
-    Q_OBJECT
+  Q_OBJECT
 public:
-    explicit CurveCreator_NewSectionDlg(QWidget *parent = 0);
+  explicit CurveCreator_NewSectionDlg(QWidget *parent = 0);
 
-    QString getName() const;
-    bool    isClosed() const;
-    CurveCreator::Type getSectionType() const;
+  QString getName() const;
+  bool    isClosed() const;
+  CurveCreator::Type getSectionType() const;
 
-    void    setSectionParameters( const QString& theName, bool isClosed, CurveCreator::Type theType );
-    void    setSectionName(const QString& theName );
-    void    clear();
-    void    setEditMode( bool isEdit );
+  void    setSectionParameters( const QString& theName, bool isClosed, CurveCreator::Type theType );
+  void    setSectionName(const QString& theName );
+  void    clear();
+  void    setEditMode( bool isEdit );
 
 signals:
-    void    addSection();
+  void    addSection();
 public slots:
 protected slots:
-    void onBtnClicked(QAbstractButton* theBtn );
+  void onBtnClicked(QAbstractButton* theBtn );
 protected:
-    void    updateTitle();
+  void    updateTitle();
 private:
-    QLineEdit*          myName;
-    QComboBox*          myLineType;
-    QCheckBox*          myIsClosed;
-    bool                myIsEdit;
-    QPushButton*        myContBtn;
-    QPushButton*        myAddBtn;
-    QDialogButtonBox*   myBtnBox;
+  QLineEdit*          myName;
+  QComboBox*          myLineType;
+  QCheckBox*          myIsClosed;
+  bool                myIsEdit;
+  QPushButton*        myContBtn;
+  QPushButton*        myAddBtn;
+  QDialogButtonBox*   myBtnBox;
 };
 
 #endif // CURVECREATOR_NEWSECTION_H

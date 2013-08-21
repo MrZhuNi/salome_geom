@@ -60,7 +60,7 @@ public:
   //! Undo previous operation
   void undo();
 
-  //! Redo last previously “undoed” operation
+  //! Redo last previously ï¿½undoedï¿½ operation
   void redo();
 
   //! Get number of available undo operations

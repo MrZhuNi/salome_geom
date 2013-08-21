@@ -21,7 +21,9 @@ public:
     explicit CurveCreator_Widget( QWidget* parent,
                       CurveCreator_Curve *theCurve,
                       Qt::WindowFlags fl=0 );
-    
+
+    void setCurve( CurveCreator_Curve* theCurve );
+
 signals:
     
 public slots:

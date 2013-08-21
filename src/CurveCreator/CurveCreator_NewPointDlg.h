@@ -9,35 +9,38 @@ class QDoubleSpinBox;
 class QDialogButtonBox;
 class QAbstractButton;
 class QPushButton;
+class QLabel;
 
 class CurveCreator_NewPointDlg : public QDialog
 {
-    Q_OBJECT
+  Q_OBJECT
 public:
-    explicit CurveCreator_NewPointDlg(CurveCreator::Dimension theDim, QWidget *parent = 0);
-    CurveCreator::Coordinates getCoordinates() const;
-    void clear();
-    void setSectionName( const QString& theName );
-    void setEditMode( bool isEdit );
-    void setCoordinates( const CurveCreator::Coordinates& theCoords );
+  explicit CurveCreator_NewPointDlg(CurveCreator::Dimension theDim, QWidget *parent = 0);
+  CurveCreator::Coordinates getCoordinates() const;
+  void clear();
+  void setSectionName( const QString& theName );
+  void setEditMode( bool isEdit );
+  void setCoordinates( const CurveCreator::Coordinates& theCoords );
+  void setDimension(CurveCreator::Dimension theDim);
 signals:
-    void addPoint();
+  void addPoint();
 public slots:
 protected slots:
-    void onBtnClicked(QAbstractButton* theBtn );
+  void onBtnClicked(QAbstractButton* theBtn );
 protected:
-    void updateTitle();
-    void initSpinBox(QDoubleSpinBox *theSpinBox);
+  void updateTitle();
+  void initSpinBox(QDoubleSpinBox *theSpinBox);
 private:
-    QDialogButtonBox*       myBtnBox;
-    CurveCreator::Dimension myDim;
-    QDoubleSpinBox*         myX;
-    QDoubleSpinBox*         myY;
-    QDoubleSpinBox*         myZ;
-    QPushButton*            myContBtn;
-    QPushButton*            myAddBtn;
-    bool                    myIsEdit;
-    QString                 mySectionName;
+  QDialogButtonBox*       myBtnBox;
+  CurveCreator::Dimension myDim;
+  QDoubleSpinBox*         myX;
+  QDoubleSpinBox*         myY;
+  QDoubleSpinBox*         myZ;
+  QLabel*                 myZLabel;
+  QPushButton*            myContBtn;
+  QPushButton*            myAddBtn;
+  bool                    myIsEdit;
+  QString                 mySectionName;
 };
 
 #endif // CURVECREATOR_NEWPOINTDLG_H

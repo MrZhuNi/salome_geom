@@ -33,6 +33,8 @@
 #include <CurveCreator_Macro.hxx>
 #include <CurveCreator_Operation.hxx>
 
+#include <QString>
+
 class CurveCreator_Section;
 
 
@@ -40,7 +42,7 @@ class CurveCreator_Section;
  *  The CurveCreator_Curve object is represented as one or more sets of
  *  connected points; thus CurveCreator_Curve object can contain several
  *  not connected curves (polylines or b-splines), each such curve has two
- *  only ends – start and end points – in other words non-manifold curves
+ *  only ends ï¿½ start and end points ï¿½ in other words non-manifold curves
  *  are not supported.
  */
 class CURVECREATOR_EXPORT CurveCreator_Curve
@@ -83,7 +85,7 @@ public:
   //! Get type of the specified section
   CurveCreator::Type getType(const int theISection) const;
 
-  //! Get “closed” flag of the specified section
+  //! Get ï¿½closedï¿½ flag of the specified section
   bool isClosed(const int theISection) const;
 
   //! Returns specifyed section name
@@ -144,7 +146,7 @@ protected:
                       const int theISection,
                       const int theIPnt);
 
-  /** Set “closed” flag of the specified section (all sections if
+  /** Set ï¿½closedï¿½ flag of the specified section (all sections if
    *  \a theISection is -1).
    */
   void setClosed(const bool theIsClosed, const int theISection = -1);
