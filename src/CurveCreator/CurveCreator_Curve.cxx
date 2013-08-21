@@ -29,6 +29,7 @@
 #include <CurveCreator_Curve.hxx>
 #include <CurveCreator_Section.hxx>
 
+#include <stdio.h>
 
 //=======================================================================
 // function: Constructor
