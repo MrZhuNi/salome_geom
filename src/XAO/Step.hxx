@@ -29,7 +29,7 @@ namespace XAO
     class Step
     {
     protected:
-        Step();
+        Step() {}
 
     public:
         static Step* createStep(const XAO::Type& type, const int& nbElements, const int& nbComponents);
@@ -66,7 +66,7 @@ namespace XAO
 
         const int countElements() { return m_nbElements; }
 
-        virtual const int countValues();
+        const int countValues() { return m_nbElements * m_nbComponents; }
 
     protected:
         void checkElement(const int& element);
@@ -77,7 +77,6 @@ namespace XAO
         int m_stamp;
         int m_nbComponents;
         int m_nbElements;
-
     };
 }
 

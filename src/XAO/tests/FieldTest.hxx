@@ -1,0 +1,45 @@
+#ifndef __XAO_FIELD_TEST_HXX__
+#define __XAO_FIELD_TEST_HXX__
+
+#include <cppunit/extensions/HelperMacros.h>
+
+#include "../Xao.hxx"
+
+namespace XAO
+{
+    class FieldTest: public CppUnit::TestFixture
+    {
+        CPPUNIT_TEST_SUITE(FieldTest);
+        CPPUNIT_TEST(testBooleanField);
+        CPPUNIT_TEST(testDoubleField);
+        CPPUNIT_TEST(testIntegerField);
+        CPPUNIT_TEST(testStringField);
+        CPPUNIT_TEST(testBooleanStep);
+        CPPUNIT_TEST(testIntegerStep);
+        CPPUNIT_TEST(testDoubleStep);
+        CPPUNIT_TEST(testStringStep);
+        CPPUNIT_TEST(testIntegerStepValues);
+        CPPUNIT_TEST_SUITE_END();
+
+    public:
+        void setUp();
+        void tearDown();
+        void cleanUp();
+
+        void testField(XAO::Type type);
+        void testBooleanField();
+        void testIntegerField();
+        void testDoubleField();
+        void testStringField();
+
+        void testStep(XAO::Type type);
+        void testBooleanStep();
+        void testIntegerStep();
+        void testDoubleStep();
+        void testStringStep();
+
+        void testIntegerStepValues();
+    };
+}
+
+#endif // __XAO_FIELD_TEST_HXX__

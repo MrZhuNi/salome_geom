@@ -18,40 +18,40 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-#include "BooleanField.hxx"
-#include "BooleanStep.hxx"
+#include "DoubleField.hxx"
+#include "DoubleStep.hxx"
 
 #include <Utils_SALOME_Exception.hxx>
 
 using namespace XAO;
 
-BooleanField::BooleanField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents)
+DoubleField::DoubleField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents)
     : Field("", dimension, nbElements, nbComponents)
 {
 }
 
-BooleanField::BooleanField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents)
+DoubleField::DoubleField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents)
     : Field(name, dimension, nbElements, nbComponents)
 {
 }
 
-BooleanStep* BooleanField::addStep(const int& step)
+DoubleStep* DoubleField::addStep(const int& step)
 {
-    BooleanStep* bstep = new BooleanStep(step, m_nbElements, m_nbComponents);
+    DoubleStep* bstep = new DoubleStep(step, m_nbElements, m_nbComponents);
     m_steps.push_back(bstep);
     return bstep;
 }
 
-BooleanStep* BooleanField::addStep(const int& step, const int& stamp)
+DoubleStep* DoubleField::addStep(const int& step, const int& stamp)
 {
-    BooleanStep* bstep = new BooleanStep(step, stamp, m_nbElements, m_nbComponents);
+    DoubleStep* bstep = new DoubleStep(step, stamp, m_nbElements, m_nbComponents);
     m_steps.push_back(bstep);
     return bstep;
 }
 
-BooleanStep* BooleanField::getStep(const int& index)
+DoubleStep* DoubleField::getStep(const int& index)
 {
     if (index < m_steps.size())
-        return (BooleanStep*)m_steps[index];
+        return (DoubleStep*)m_steps[index];
    throw SALOME_Exception("IndexOutOfRange");
 }

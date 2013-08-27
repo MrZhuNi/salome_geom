@@ -26,28 +26,35 @@
 #include <vector>
 
 #include "Xao.hxx"
+#include "Step.hxx"
 
 namespace XAO
 {
     class StringStep : public Step
     {
     public:
-        StringStep(const int nbElements, const int nbComponents);
-        StringStep(const int step, const int nbElements, const int nbComponents);
-        StringStep(const int step, const int stamp, const int nbElements, const int nbComponents);
+        StringStep(const int& nbElements, const int& nbComponents);
+        StringStep(const int& step, const int& nbElements, const int& nbComponents);
+        StringStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::STRING; }
 
         std::vector<std::string> getValues();
-        std::vector<std::string> getElement(const int i);
-        std::vector<std::string> getComponent(const int j);
+        std::vector<std::string> getElement(const int& element);
+        std::vector<std::string> getComponent(const int& component);
 
-        const std::string getValue(const int i, const int j);
+        const std::string getValue(const int& element, const int& component);
 
-        void setValues(std::vector<std::string> values);
-        void setElements(const int i, std::vector<std::string> elements);
-        void setComponents(const int j, std::vector<std::string> components);
-        void setValue(const int i, const int j, const std::string value);
+        void setValues(const std::vector<std::string>& values);
+        void setElements(const int& element, const std::vector<std::string>& elements);
+        void setComponents(const int& component, const std::vector<std::string>& components);
+        void setValue(const int& element, const int& component, const std::string& value);
+
+    private:
+        void Init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
+
+    private:
+        std::vector< std::vector<std::string> > m_values;
     };
 }
 

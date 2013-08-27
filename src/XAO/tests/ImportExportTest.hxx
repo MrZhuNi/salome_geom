@@ -1,5 +1,5 @@
-#ifndef __BUILDING_IMPORT_TEST_HXX__
-#define __BUILDING_IMPORT_TEST_HXX__
+#ifndef __XAO_IMPORT_TEST_HXX__
+#define __XAO_IMPORT_TEST_HXX__
 
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -32,4 +32,4 @@ namespace XAO
     };
 }
 
-#endif
+#endif // __XAO_IMPORT_TEST_HXX__

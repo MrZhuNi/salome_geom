@@ -39,6 +39,7 @@ TestXAO_LDFLAGS = \
     ../libXAO.la
 
 dist_TestXAO_SOURCES = \
+    FieldTest.cxx \
     ImportExportTest.cxx \
     XAOTests.cxx
 

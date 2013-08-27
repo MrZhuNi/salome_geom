@@ -25,28 +25,35 @@
 #include <vector>
 
 #include "Xao.hxx"
+#include "Step.hxx"
 
 namespace XAO
 {
     class DoubleStep : public Step
     {
     public:
-        DoubleStep(const int nbElements, const int nbComponents);
-        DoubleStep(const int step, const int nbElements, const int nbComponents);
-        DoubleStep(const int step, const int stamp, const int nbElements, const int nbComponents);
+        DoubleStep(const int& nbElements, const int& nbComponents);
+        DoubleStep(const int& step, const int& nbElements, const int& nbComponents);
+        DoubleStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::DOUBLE; }
 
         std::vector<double> getValues();
-        std::vector<double> getElement(const int i);
-        std::vector<double> getComponent(const int j);
+        std::vector<double> getElement(const int& element);
+        std::vector<double> getComponent(const int& component);
 
-        const double getValue(const int i, const int j);
+        const double getValue(const int& element, const int& component);
 
-        void setValues(std::vector<double> values);
-        void setElements(const int i, std::vector<double> elements);
-        void setComponents(const int j, std::vector<double> components);
-        void setValue(const int i, const int j, const double value);
+        void setValues(const std::vector<double>& values);
+        void setElements(const int& element, const std::vector<double>& elements);
+        void setComponents(const int& component, const std::vector<double>& components);
+        void setValue(const int& element, const int& component, const double& value);
+
+    private:
+        void Init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
+
+    private:
+        std::vector< std::vector<double> > m_values;
     };
 }
 

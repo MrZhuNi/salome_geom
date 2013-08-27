@@ -33,39 +33,67 @@ using namespace XAO;
 
 // -------------------------------------------------------
 
-Field* Field::createField(const XAO::Type type, const XAO::Dimension dimension, const int nbComponents)
+Field::Field(const std::string& name, const XAO::Dimension& dimension,
+        const int& nbElements, const int& nbComponents)
+    : m_name(name), m_dimension(dimension), m_nbElements(nbElements), m_nbComponents(nbComponents)
 {
-    return createField(type, "", dimension, nbComponents);
+    m_components.reserve(nbComponents);
+    for (int i = 0; i < nbComponents; ++i)
+        m_components.push_back("");
 }
 
-Field* Field::createField(const XAO::Type type, const std::string name, const XAO::Dimension dimension, const int nbComponents)
+Field* Field::createField(const XAO::Type& type, const XAO::Dimension& dimension,
+        const int& nbElements, const int& nbComponents)
+{
+    return createField(type, "", dimension, nbElements, nbComponents);
+}
+
+Field* Field::createField(const XAO::Type& type, const std::string& name, const XAO::Dimension& dimension,
+        const int& nbElements, const int& nbComponents)
 {
     if (type == XAO::BOOLEAN)
-        return new BooleanField(name, dimension, nbComponents);
+        return new BooleanField(name, dimension, nbElements, nbComponents);
     if (type == XAO::INTEGER)
-        return new IntegerField(name, dimension, nbComponents);
+        return new IntegerField(name, dimension, nbElements, nbComponents);
     if (type == XAO::DOUBLE)
-        return new DoubleField(name, dimension, nbComponents);
+        return new DoubleField(name, dimension, nbElements, nbComponents);
     if (type == XAO::STRING)
-        return new StringField(name, dimension, nbComponents);
+        return new StringField(name, dimension, nbElements, nbComponents);
 
     throw SALOME_Exception("Bad Type");
 }
 
-const std::string Field::getComponentName(const int index)
+const std::string Field::getComponentName(const int& index)
 {
     if (index < m_components.size())
         return m_components[index];
 
-    // TODO: throw
-    return "";
+    throw SALOME_Exception("IndexOutOfRange component");
 }
 
-void Field::setComponentName(const int index, const std::string name)
+void Field::setComponentName(const int& index, const std::string& name)
 {
     if (index < m_components.size())
     {
         m_components[index] = name;
+        return;
     }
-    // TODO: throw
+
+    throw SALOME_Exception("IndexOutOfRange component");
+}
+
+bool Field::removeStep(Step* step)
+{
+    std::vector<Step*>::iterator it = m_steps.begin();
+    for (; it != m_steps.end(); ++it)
+    {
+        Step* current = *it;
+        if (step == current)
+        {
+            m_steps.erase(it);
+            return true;
+        }
+    }
+
+    return false;
 }

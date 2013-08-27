@@ -18,27 +18,27 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-#include "BooleanStep.hxx"
+#include "IntegerStep.hxx"
 #include <Utils_SALOME_Exception.hxx>
 
 using namespace XAO;
 
-BooleanStep::BooleanStep(const int& nbElements, const int& nbComponents)
+IntegerStep::IntegerStep(const int& nbElements, const int& nbComponents)
 {
     Init(0, 0, nbElements, nbComponents);
 }
 
-BooleanStep::BooleanStep(const int& step, const int& nbElements, const int& nbComponents)
+IntegerStep::IntegerStep(const int& step, const int& nbElements, const int& nbComponents)
 {
     Init(step, 0, nbElements, nbComponents);
 }
 
-BooleanStep::BooleanStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
+IntegerStep::IntegerStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
 {
     Init(step, stamp, nbElements, nbComponents);
 }
 
-void BooleanStep::Init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
+void IntegerStep::Init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
 {
     m_nbElements = nbElements;
     m_nbComponents = nbComponents;
@@ -48,55 +48,55 @@ void BooleanStep::Init(const int& step, const int& stamp, const int& nbElements,
     m_values.reserve(m_nbElements);
     for (int i = 0; i < m_nbElements; ++i)
     {
-        std::vector<bool> row;
+        std::vector<int> row;
         row.reserve(m_nbComponents);
         for (int j = 0; j < m_nbComponents; ++j)
-            row.push_back(false);
+            row.push_back(0);
         m_values.push_back(row);
     }
 }
 
-std::vector<bool> BooleanStep::getValues()
+std::vector<int> IntegerStep::getValues()
 {
-    std::vector<bool> result;
+    std::vector<int> result;
     result.reserve(m_nbElements * m_nbComponents);
 
-    std::vector< std::vector<bool>  >::iterator it;
+    std::vector< std::vector<int>  >::iterator it;
     for (it = m_values.begin(); it != m_values.end(); ++it)
     {
-        std::vector<bool> eltValues = *it;
+        std::vector<int> eltValues = *it;
         result.insert(result.end(), eltValues.begin(), eltValues.end());
     }
 
     return result;
 }
 
-std::vector<bool> BooleanStep::getElement(const int& element)
+std::vector<int> IntegerStep::getElement(const int& element)
 {
     checkElement(element);
 
-    std::vector<bool> result(m_values[element]);
+    std::vector<int> result(m_values[element]);
     return result;
 }
 
-std::vector<bool> BooleanStep::getComponent(const int& component)
+std::vector<int> IntegerStep::getComponent(const int& component)
 {
     checkComponent(component);
 
-    std::vector<bool> result;
+    std::vector<int> result;
     result.reserve(m_nbElements);
 
-    std::vector< std::vector<bool>  >::iterator it;
+    std::vector< std::vector<int>  >::iterator it;
     for (it = m_values.begin(); it != m_values.end(); ++it)
     {
-        std::vector<bool> eltValues = *it;
+        std::vector<int> eltValues = *it;
         result.push_back(eltValues[component]);
     }
 
     return result;
 }
 
-const bool BooleanStep::getValue(const int& element, const int& component)
+const int IntegerStep::getValue(const int& element, const int& component)
 {
     checkElement(element);
     checkComponent(component);
@@ -104,7 +104,7 @@ const bool BooleanStep::getValue(const int& element, const int& component)
     return m_values[element][component];
 }
 
-void BooleanStep::setValues(const std::vector<bool>& values)
+void IntegerStep::setValues(const std::vector<int>& values)
 {
     if (values.size() != m_nbComponents * m_nbElements)
         throw SALOME_Exception("bad size"); // TODO
@@ -118,7 +118,7 @@ void BooleanStep::setValues(const std::vector<bool>& values)
     }
 }
 
-void BooleanStep::setElements(const int& element, const std::vector<bool>& elements)
+void IntegerStep::setElements(const int& element, const std::vector<int>& elements)
 {
     checkElement(element);
     if (elements.size() != m_nbComponents)
@@ -128,7 +128,7 @@ void BooleanStep::setElements(const int& element, const std::vector<bool>& eleme
         m_values[element][i] = elements[i];
 }
 
-void BooleanStep::setComponents(const int& component, const std::vector<bool>& components)
+void IntegerStep::setComponents(const int& component, const std::vector<int>& components)
 {
     checkElement(component);
     if (components.size() != m_nbElements)
@@ -138,7 +138,7 @@ void BooleanStep::setComponents(const int& component, const std::vector<bool>& c
         m_values[i][component] = components[i];
 }
 
-void BooleanStep::setValue(const int& element, const int& component, const bool& value)
+void IntegerStep::setValue(const int& element, const int& component, const int& value)
 {
     checkElement(element);
     checkComponent(component);

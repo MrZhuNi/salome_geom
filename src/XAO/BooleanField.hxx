@@ -34,17 +34,17 @@ namespace XAO
     class BooleanField : public Field
     {
     public:
-        BooleanField(const XAO::Dimension dimension, const int nbComponents);
-        BooleanField(const std::string name, const XAO::Dimension dimension, const int nbComponents);
+        BooleanField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
+        BooleanField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::BOOLEAN; }
 
-        BooleanStep* addStep(const int step);
-        BooleanStep* addStep(const int step, const int stamp);
-        BooleanStep* getStep(const int index);
+        BooleanStep* addStep(const int& step);
+        BooleanStep* addStep(const int& step, const int& stamp);
+        BooleanStep* getStep(const int& index);
 
-    private:
-        std::vector<BooleanStep*> m_steps;
+//    private:
+//        std::vector<BooleanStep*> m_steps;
     };
 }
 

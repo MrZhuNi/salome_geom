@@ -35,14 +35,17 @@ namespace XAO
     class DoubleField : public Field
     {
     public:
-        DoubleField(const XAO::Dimension dimension, const int nbComponents);
-        DoubleField(const std::string name, const XAO::Dimension dimension, const int nbComponents);
+        DoubleField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
+        DoubleField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::DOUBLE; }
 
-        DoubleStep* addStep(const int step);
-        DoubleStep* addStep(const int step, const int stamp);
-        DoubleStep* getStep(const int index);
+        DoubleStep* addStep(const int& step);
+        DoubleStep* addStep(const int& step, const int& stamp);
+        DoubleStep* getStep(const int& index);
+
+//    private:
+//        std::vector<DoubleStep*> m_steps;
     };
 }
 

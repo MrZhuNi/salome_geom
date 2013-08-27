@@ -53,8 +53,14 @@ dist_libXAO_la_SOURCES = \
     Group.cxx \
     Field.cxx \
     BooleanField.cxx \
+    IntegerField.cxx \
+    DoubleField.cxx \
+    StringField.cxx \
     Step.cxx \
     BooleanStep.cxx \
+    IntegerStep.cxx \
+    DoubleStep.cxx \
+    StringStep.cxx \
     XaoExporter.cxx
 
 

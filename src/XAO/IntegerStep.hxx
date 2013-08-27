@@ -25,28 +25,35 @@
 #include <vector>
 
 #include "Xao.hxx"
+#include "Step.hxx"
 
 namespace XAO
 {
     class IntegerStep : public Step
     {
     public:
-        IntegerStep(const int nbElements, const int nbComponents);
-        IntegerStep(const int step, const int nbElements, const int nbComponents);
-        IntegerStep(const int step, const int stamp, const int nbElements, const int nbComponents);
+        IntegerStep(const int& nbElements, const int& nbComponents);
+        IntegerStep(const int& step, const int& nbElements, const int& nbComponents);
+        IntegerStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::INTEGER; }
 
         std::vector<int> getValues();
-        std::vector<int> getElement(const int i);
-        std::vector<int> getComponent(const int j);
+        std::vector<int> getElement(const int& element);
+        std::vector<int> getComponent(const int& component);
 
-        const int getValue(const int i, const int j);
+        const int getValue(const int& element, const int& component);
 
-        void setValues(std::vector<int> values);
-        void setElements(const int i, std::vector<int> elements);
-        void setComponents(const int j, std::vector<int> components);
-        void setValue(const int i, const int j, const int value);
+        void setValues(const std::vector<int>& values);
+        void setElements(const int& element, const std::vector<int>& elements);
+        void setComponents(const int& element, const std::vector<int>& components);
+        void setValue(const int& element, const int& component, const int& value);
+
+    private:
+        void Init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
+
+    private:
+        std::vector< std::vector<int> > m_values;
     };
 }
 

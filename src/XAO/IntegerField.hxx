@@ -35,14 +35,17 @@ namespace XAO
     class IntegerField : public Field
     {
     public:
-        IntegerField(const XAO::Dimension dimension, const int nbComponents);
-        IntegerField(const std::string name, const XAO::Dimension dimension, const int nbComponents);
+        IntegerField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
+        IntegerField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::INTEGER; }
 
-        IntegerStep* addStep(const int step);
-        IntegerStep* addStep(const int step, const int stamp);
-        IntegerStep* getStep(const int index);
+        IntegerStep* addStep(const int& step);
+        IntegerStep* addStep(const int& step, const int& stamp);
+        IntegerStep* getStep(const int& index);
+
+//    private:
+//        std::vector<IntegerStep*> m_steps;
     };
 }
 

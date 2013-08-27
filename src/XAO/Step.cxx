@@ -29,7 +29,7 @@
 
 using namespace XAO;
 
-Step* Step::createStep(const XAO::Type& type, const int& nbElements, const int &nbComponents)
+Step* Step::createStep(const XAO::Type& type, const int& nbElements, const int& nbComponents)
 {
     return createStep(type, 0, 0, nbElements, nbComponents);
 }

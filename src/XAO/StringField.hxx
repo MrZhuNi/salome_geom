@@ -35,14 +35,17 @@ namespace XAO
     class StringField : public Field
     {
     public:
-        StringField(const XAO::Dimension dimension, const int nbComponents);
-        StringField(const std::string name, const XAO::Dimension dimension, const int nbComponents);
+        StringField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
+        StringField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::STRING; }
 
-        StringStep* addStep(const int step);
-        StringStep* addStep(const int step, const int stamp);
-        StringStep* getStep(const int index);
+        StringStep* addStep(const int& step);
+        StringStep* addStep(const int& step, const int& stamp);
+        StringStep* getStep(const int& index);
+
+//    private:
+//        std::vector<StringStep*> m_steps;
     };
 }
 

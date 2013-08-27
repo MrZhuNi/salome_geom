@@ -38,13 +38,16 @@ namespace XAO
     class Field
     {
     protected:
-        Field();
+        Field(const std::string& name, const XAO::Dimension& dimension,
+              const int& nbElements, const int& nbComponents);
 
     public:
-        static Field* createField(const XAO::Type type, const XAO::Dimension dimension, const int nbComponents);
-        static Field* createField(const XAO::Type type, const std::string name, const XAO::Dimension dimension, const int nbComponents);
+        static Field* createField(const XAO::Type& type, const XAO::Dimension& dimension,
+                                  const int& nbElements, const int& nbComponents);
+        static Field* createField(const XAO::Type& type, const std::string& name, const XAO::Dimension& dimension,
+                                  const int& nbElements, const int& nbComponents);
 
-        virtual ~Field();
+        virtual ~Field() {};
 
         /**
          * Gets the Type of the field.
@@ -65,7 +68,7 @@ namespace XAO
          * Sets the name of the Field.
          * @param name the name to set.
          */
-        void setName(std::string name)
+        void setName(const std::string& name)
         {
             m_name = name;
         }
@@ -79,7 +82,14 @@ namespace XAO
             return m_dimension;
         }
 
-        int countElements();
+        /**
+         * Gets the number of elements of each step.
+         * @return the number of elements of each step.
+         */
+        const int countElements()
+        {
+            return m_nbElements;
+        }
 
         /**
          * Gets the number of components.
@@ -87,40 +97,47 @@ namespace XAO
          */
         const int countComponents()
         {
-            return m_components.size();
+            return m_nbComponents;
         }
 
-        const int countValues();
+        /**
+         * Gets the number of values for each step.
+         * @return the number of values for each step.
+         */
+        const int countValues()
+        {
+            return m_nbElements * m_nbComponents;
+        }
 
         /**
          * Gets the number of the steps.
          * @return the number of steps.
          */
-        const int countSteps()
-        {
-            return m_steps.size();
-        }
+        const int countSteps() { return m_steps.size(); }
 
         /**
          * Gets the name of a component.
          * @param index the index of the component to get.
          * @return the name of the component for the given index.
          */
-        const std::string getComponentName(const int index);
+        const std::string getComponentName(const int& index);
 
         /**
          * Sets the name of a component.
          * @param componentIndex the index of the component to set.
          * @param name the name to set.
          */
-        void setComponentName(const int componentIndex, const std::string name);
+        void setComponentName(const int& componentIndex, const std::string& name);
 
         /**
          * Remove a step.
          * @param step the step to remove.
-         * @return
+         * @return true if the step has been removed.
          */
         bool removeStep(Step* step);
+
+    private:
+        void checkComponent(const int& component);
 
     protected:
         /** The name of the Field. */
@@ -132,10 +149,11 @@ namespace XAO
         int m_nbComponents;
         /** The components of the field. */
         std::vector<std::string> m_components;
-        /** The steps. */
-        std::map<int, Step* > m_steps;
-
+        /** The number of elements. */
         int m_nbElements;
+
+        /** The list of steps. */
+        std::vector<Step*> m_steps;
     };
 }
 
