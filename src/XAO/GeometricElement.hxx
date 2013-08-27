@@ -66,6 +66,12 @@ namespace XAO
         }
 
         /**
+         * Checks if the element has a name.
+         * @return true if the element has a name, false otherwise.
+         */
+        bool hasName();
+
+        /**
          * Gets the reference of the element.
          * \return the reference.
          */
@@ -144,6 +150,13 @@ namespace XAO
         void setName(const int index, const char* name);
 
         /**
+         * Checks if an element has a name.
+         * @param index the index of the element.
+         * @return true if the element has a name, false otherwise.
+         */
+        bool hasName(const int index);
+
+        /**
          * Gets the reference of an element.
          * \param index the index of the element.
          * \return the reference of the element.
@@ -164,6 +177,14 @@ namespace XAO
          * \return the index of the element or -1 if no element found.
          */
         const int getIndexByReference(const char* reference);
+
+        /**
+         * Iterator on the element of the list.
+         */
+        typedef std::map<int, GeometricElement>::iterator iterator;
+
+        iterator begin() { return m_elements.begin(); }
+        iterator end() { return m_elements.end(); }
 
     private:
         int m_count;

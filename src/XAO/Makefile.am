@@ -32,7 +32,17 @@ salomeinclude_HEADERS = \
     Xao.hxx \
     Geometry.hxx \
     Group.hxx \
-    Field.hxx
+    Field.hxx \
+    BooleanField.hxx \
+    IntegerField.hxx \
+    DoubleField.hxx \
+    StringField.hxx \
+    Step.hxx \
+    BooleanStep.hxx \
+    IntegerStep.hxx \
+    DoubleStep.hxx \
+    StringStep.hxx \
+    XaoExporter.hxx
 
 lib_LTLIBRARIES = libXAO.la
 dist_libXAO_la_SOURCES = \
@@ -41,7 +51,11 @@ dist_libXAO_la_SOURCES = \
     Xao.cxx \
     Geometry.cxx \
     Group.cxx \
-    Field.cxx
+    Field.cxx \
+    BooleanField.cxx \
+    Step.cxx \
+    BooleanStep.cxx \
+    XaoExporter.cxx
 
 
 libXAO_la_CPPFLAGS = \

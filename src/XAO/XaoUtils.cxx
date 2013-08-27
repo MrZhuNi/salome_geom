@@ -24,19 +24,42 @@
 #include <Utils_SALOME_Exception.hxx>
 
 #include "Xao.hxx"
+#include "Field.hxx"
 #include "XaoUtils.hxx"
 
 
 using namespace XAO;
 
-const char* XaoUtils::intToString(const int value)
+/*const char* XaoUtils::intToString(const int value)
 {
-    std::stringstream str;
+    std::ostringstream str;
     str << value;
     return str.str().c_str();
+}*/
+const std::string XaoUtils::intToString(const int value)
+{
+    std::ostringstream str;
+    str << value;
+    return str.str();
 }
 
-const char* XaoUtils::dimensionToString(const Dimension dimension)
+const int XaoUtils::stringToInt(const std::string value)
+{
+    int res;
+    std::istringstream convert(value);
+    if ( !(convert >> res) )
+        res = 0;
+    return res;
+}
+
+const std::string XaoUtils::doubleToString(const double value)
+{
+    std::ostringstream str;
+    str << value;
+    return str.str();
+}
+
+const char* XaoUtils::dimensionToString(const XAO::Dimension dimension)
 {
     if (dimension == VERTEX)
         return "vertex";
@@ -46,10 +69,12 @@ const char* XaoUtils::dimensionToString(const Dimension dimension)
         return "face";
     if (dimension == SOLID)
         return "solid";
+    if (dimension == WHOLE)
+        return "whole";
     throw SALOME_Exception("Bad dimension");
 }
 
-const Dimension XaoUtils::stringToDimension(const char* dimension)
+const XAO::Dimension XaoUtils::stringToDimension(const char* dimension)
 {
     if (strcmp(dimension, "vertex") == 0)
         return VERTEX;
@@ -59,5 +84,33 @@ const Dimension XaoUtils::stringToDimension(const char* dimension)
         return FACE;
     if (strcmp(dimension, "solid") == 0)
         return SOLID;
+    if (strcmp(dimension, "whole") == 0)
+        return WHOLE;
     throw SALOME_Exception("Bad dimension");
+}
+
+const char* XaoUtils::fieldTypeToString(const XAO::Type type)
+{
+    if (type == BOOLEAN)
+        return "boolean";
+    if (type == INTEGER)
+        return "integer";
+    if (type == DOUBLE)
+        return "double";
+    if (type == STRING)
+        return "string";
+    throw SALOME_Exception("Bad type");
+}
+
+const XAO::Type XaoUtils::stringToFieldType(const char* type)
+{
+    if (strcmp(type, "boolean") == 0)
+        return BOOLEAN;
+    if (strcmp(type, "integer") == 0)
+        return INTEGER;
+    if (strcmp(type, "double") == 0)
+        return DOUBLE;
+    if (strcmp(type, "string") == 0)
+        return STRING;
+    throw SALOME_Exception("Bad type");
 }

@@ -42,6 +42,11 @@ GeometricElement::~GeometricElement()
 {
 }
 
+bool GeometricElement::hasName()
+{
+    return !m_name.empty();
+}
+
 GeometricElementList::GeometricElementList()
 {
     setSize(0);
@@ -87,6 +92,16 @@ void GeometricElementList::setName(const int index, const char* name)
     }
 
     m_elements[index].setName(name);
+}
+
+bool GeometricElementList::hasName(const int index)
+{
+    if (m_count == 0 || index > m_count)
+    {
+        throw SALOME_Exception("Problem with number of elements");
+    }
+
+    return m_elements[index].hasName();
 }
 
 const char* GeometricElementList::getReference(const int index)

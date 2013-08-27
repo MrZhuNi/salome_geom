@@ -22,6 +22,7 @@
 #define __XAO_UTILS_HXX__
 
 #include "Xao.hxx"
+#include "Field.hxx"
 
 namespace XAO
 {
@@ -37,7 +38,11 @@ namespace XAO
          * \param value the integer to convert.
          * \return the string.
          */
-        static const char* intToString(const int value);
+        //static const char* intToString(const int value);
+        static const std::string intToString(const int value);
+        static const int stringToInt(const std::string value);
+
+        static const std::string doubleToString(const double value);
 
         /**
          * Converts a Dimension to string.
@@ -45,15 +50,31 @@ namespace XAO
          * \return the dimension as a string.
          * \throw SALOME_Exception
          */
-        static const char* dimensionToString(const Dimension dimension);
+        static const char* dimensionToString(const XAO::Dimension dimension);
 
         /**
          * Converts a string into a Dimension.
          * \param dimension the dimension as a string.
          * \return the converted Dimension.
-         * \throw SALOME_Exception if
+         * \throw SALOME_Exception
          */
-        static const Dimension stringToDimension(const char* dimension);
+        static const XAO::Dimension stringToDimension(const char* dimension);
+
+        /**
+         * Converts a Type to string.
+         * \param type the Type to convert.
+         * \return the Type as a string.
+         * \throw SALOME_Exception
+         */
+        static const char* fieldTypeToString(const XAO::Type type);
+
+        /**
+         * Converts a string into a Type.
+         * \param type the Type as a string.
+         * \return the converted Type.
+         * \throw SALOME_Exception
+         */
+        static const XAO::Type stringToFieldType(const char* type);
     };
 }
 

@@ -89,6 +89,11 @@ namespace XAO
         void setFaceName(const int index, const char* name) { m_faces.setName(index, name); }
         void setSolidName(const int index, const char* name) { m_solids.setName(index, name); }
 
+        bool hasVertexName(const int index) { return m_vertices.hasName(index); }
+        bool hasEdgeName(const int index) { return m_edges.hasName(index); }
+        bool hasFaceName(const int index) { return m_faces.hasName(index); }
+        bool hasSolidName(const int index) { return m_solids.hasName(index); }
+
         const char* getVertexReference(const int index) { return m_vertices.getReference(index); }
         const char* getEdgeReference(const int index) { return m_edges.getReference(index); }
         const char* getFaceReference(const int index) { return m_faces.getReference(index); }
@@ -105,6 +110,9 @@ namespace XAO
         const int getFaceIndexByReference(const char* reference) { return m_faces.getIndexByReference(reference); }
         const int getSolidIndexByReference(const char* reference) { return m_solids.getIndexByReference(reference); }
         const int getElementIndexByReference(const Dimension dim, const char* reference);
+
+        GeometricElementList::iterator begin(const Dimension dim);
+        GeometricElementList::iterator end(const Dimension dim);
 
     private:
         void initListIds(const Standard_Integer shapeType);

@@ -16,113 +16,126 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// Author : Nathalie Gore (OpenCascade)
+// Author : Frederic Pons (OpenCascade)
 
 #ifndef __XAO_FIELD_HXX__
 #define __XAO_FIELD_HXX__
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include <map>
 
 #include "Xao.hxx"
+#include "Step.hxx"
 
 namespace XAO
 {
-    enum FieldType
+    /**
+     * @class Field
+     * A geometrical Field.
+     */
+    class Field
     {
-        FIELD_BOOLEAN = 0,
-        FIELD_INTEGER = 1,
-        FIELD_DOUBLE = 2,
-        FIELD_STRING = 3
-    };
+    protected:
+        Field();
 
-    enum FieldDimension
-    {
-        FIELD_VERTEX = 0,
-        FIELD_EDGE = 1,
-        FIELD_FACE = 2,
-        FIELD_SOLID = 3,
-        FIELD_WHOLE = -1
-    };
-
-    template <typename T>
-    class Step
-    {
     public:
-    private:
-        int m_number;
-        int m_stamp;
-        std::map<int, T> m_values;
+        static Field* createField(const XAO::Type type, const XAO::Dimension dimension, const int nbComponents);
+        static Field* createField(const XAO::Type type, const std::string name, const XAO::Dimension dimension, const int nbComponents);
 
-    };
-
-    class IField
-    {
-    public:
-        virtual const char* getName() const = 0;
-        virtual void setName(const char* name) = 0;
-        virtual const FieldType getType() = 0;
-        virtual const FieldDimension getDimension() = 0;
-        virtual void setComponentName(const int index, const char* name) = 0;
-        virtual const int countComponents() = 0;
-        virtual const int getStepCount() = 0;
-    };
-
-    template <typename T>
-    class Field : IField
-    {
-    public:
-        Field(const FieldDimension dim, const int nbComponents);
-        Field(const char* name, const FieldDimension dim, const int nbComponents);
         virtual ~Field();
 
-        const char* getName() const
+        /**
+         * Gets the Type of the field.
+         * @return the Type of the field.
+         */
+        virtual const XAO::Type getType() = 0;
+
+        /**
+         * Gets the name of the Field.
+         * @return the name of the Field.
+         */
+        const std::string getName()
         {
-            return m_name.c_str();
+            return m_name;
         }
-        void setName(const char* name)
+
+        /**
+         * Sets the name of the Field.
+         * @param name the name to set.
+         */
+        void setName(std::string name)
         {
             m_name = name;
         }
 
-        virtual const FieldType getType();
-
-        const FieldDimension getDimension()
+        /**
+         * Gets the Dimension of the Field.
+         * @return the Dimension of the Field.
+         */
+        const XAO::Dimension getDimension()
         {
             return m_dimension;
         }
 
-        void setComponentName(const int index, const char* name);
+        int countElements();
+
+        /**
+         * Gets the number of components.
+         * @return the number of components.
+         */
         const int countComponents()
         {
             return m_components.size();
         }
 
-        const int getStepCount()
+        const int countValues();
+
+        /**
+         * Gets the number of the steps.
+         * @return the number of steps.
+         */
+        const int countSteps()
         {
             return m_steps.size();
         }
 
-    private:
+        /**
+         * Gets the name of a component.
+         * @param index the index of the component to get.
+         * @return the name of the component for the given index.
+         */
+        const std::string getComponentName(const int index);
+
+        /**
+         * Sets the name of a component.
+         * @param componentIndex the index of the component to set.
+         * @param name the name to set.
+         */
+        void setComponentName(const int componentIndex, const std::string name);
+
+        /**
+         * Remove a step.
+         * @param step the step to remove.
+         * @return
+         */
+        bool removeStep(Step* step);
+
+    protected:
+        /** The name of the Field. */
         std::string m_name;
-        FieldDimension m_dimension;
-        FieldType m_type;
+        /** The dimension of the Field. */
+        XAO::Dimension m_dimension;
 
+        /** The number of components. */
+        int m_nbComponents;
+        /** The components of the field. */
         std::vector<std::string> m_components;
-        std::list< Step<T>* > m_steps;
-    };
+        /** The steps. */
+        std::map<int, Step* > m_steps;
 
-    class BooleanField : Field<bool>
-    {
-    public:
-        BooleanField(const FieldDimension dim, const int nbComponents);
-        BooleanField(const char* name, const FieldDimension dim, const int nbComponents);
-
-        virtual const FieldType getType()
-        {
-            return FIELD_BOOLEAN;
-        }
+        int m_nbElements;
     };
 }
 

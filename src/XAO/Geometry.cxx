@@ -123,32 +123,33 @@ void Geometry::initListIds(const Standard_Integer shapeType)
         {
             m_vertices.setSize(indexList.size());
             for (int i = 0; it != indexList.end(); it++, i++)
-                m_vertices.setReference(i, XaoUtils::intToString((*it)));
+                m_vertices.setReference(i, XaoUtils::intToString((*it)).c_str());
             break;
         }
         case TopAbs_EDGE:
         {
             m_edges.setSize(indexList.size());
             for (int i = 0; it != indexList.end(); it++, i++)
-                m_edges.setReference(i, XaoUtils::intToString((*it)));
+                m_edges.setReference(i, XaoUtils::intToString((*it)).c_str());
             break;
         }
         case TopAbs_FACE:
         {
             m_faces.setSize(indexList.size());
             for (int i = 0; it != indexList.end(); it++, i++)
-                m_faces.setReference(i, XaoUtils::intToString((*it)));
+                m_faces.setReference(i, XaoUtils::intToString((*it)).c_str());
             break;
         }
         case TopAbs_SOLID:
         {
             m_solids.setSize(indexList.size());
             for (int i = 0; it != indexList.end(); it++, i++)
-                m_solids.setReference(i, XaoUtils::intToString((*it)));
+                m_solids.setReference(i, XaoUtils::intToString((*it)).c_str());
             break;
         }
     }
 }
+
 const char* Geometry::getElementReference(const Dimension dim, const int index)
 {
     if (dim == VERTEX)
@@ -179,3 +180,32 @@ const int Geometry::getElementIndexByReference(const Dimension dim, const char* 
     throw SALOME_Exception("Unknown dimension");
 }
 
+GeometricElementList::iterator Geometry::begin(const Dimension dim)
+{
+    if (dim == VERTEX)
+        return m_vertices.begin();
+    if (dim == EDGE)
+        return m_edges.begin();
+    if (dim == FACE)
+        return m_faces.begin();
+    if (dim == SOLID)
+        return m_solids.begin();
+
+    std::cout << "begin: unknown dimension" << std::endl;
+    throw SALOME_Exception("Unknown dimension");
+}
+
+GeometricElementList::iterator Geometry::end(const Dimension dim)
+{
+    if (dim == VERTEX)
+        return m_vertices.end();
+    if (dim == EDGE)
+        return m_edges.end();
+    if (dim == FACE)
+        return m_faces.end();
+    if (dim == SOLID)
+        return m_solids.end();
+
+    std::cout << "begin: unknown dimension" << std::endl;
+    throw SALOME_Exception("Unknown dimension");
+}
