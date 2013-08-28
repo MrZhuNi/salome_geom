@@ -32,10 +32,10 @@ lib_LTLIBRARIES = libGEOMEngine.la
 # header files 
 salomeinclude_HEADERS =			\
 	GEOM_Object_i.hh		\
-        GEOM_IOperations_i.hh		\
-        GEOM_IBasicOperations_i.hh	\
+	GEOM_IOperations_i.hh		\
+	GEOM_IBasicOperations_i.hh	\
 	GEOM_IHealingOperations_i.hh	\
-        GEOM_I3DPrimOperations_i.hh	\
+	GEOM_I3DPrimOperations_i.hh	\
 	GEOM_IShapesOperations_i.hh	\
 	GEOM_IBlocksOperations_i.hh	\
 	GEOM_IBooleanOperations_i.hh	\
@@ -54,7 +54,7 @@ dist_libGEOMEngine_la_SOURCES =		\
 	GEOM_Object_i.cc		\
 	GEOM_IOperations_i.cc		\
 	GEOM_IBasicOperations_i.cc	\
-        GEOM_IHealingOperations_i.cc	\
+	GEOM_IHealingOperations_i.cc	\
 	GEOM_I3DPrimOperations_i.cc	\
 	GEOM_IShapesOperations_i.cc	\
 	GEOM_IBlocksOperations_i.cc	\
@@ -78,11 +78,13 @@ libGEOMEngine_la_CPPFLAGS =		\
 	$(CAS_CPPFLAGS)			\
 	$(BOOST_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)		\
+	$(LIBXML_INCLUDES)		\
 	-I$(srcdir)/../SKETCHER		\
 	-I$(srcdir)/../ARCHIMEDE	\
 	-I$(srcdir)/../GEOMImpl		\
 	-I$(srcdir)/../GEOMAlgo		\
 	-I$(srcdir)/../GEOM		\
+	-I$(srcdir)/../XAO		\
 	-I$(top_builddir)/idl		\
 	-I$(top_builddir)
 
