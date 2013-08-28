@@ -53,6 +53,7 @@ private:
 private:
     QLineEdit* ledFileName;
     QPushButton* btnFileSelect;
+    GEOM::GEOM_Object_var m_mainShape;
 
 private slots:
     void ClickOnOk();

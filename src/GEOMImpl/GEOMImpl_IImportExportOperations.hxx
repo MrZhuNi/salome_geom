@@ -19,24 +19,20 @@
 #ifndef _GEOMImpl_IImportExportOperations_HXX_
 #define _GEOMImpl_IImportExportOperations_HXX_
 
+#include <list>
+
 #include <Utils_SALOME_Exception.hxx>
 #include "GEOM_IOperations.hxx"
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
-#include <list>
+#include "Geometry.hxx"
 
 class GEOMImpl_IShapesOperations;
 class GEOMImpl_IGroupOperations;
 
 class GEOMImpl_IImportExportOperations: public GEOM_IOperations
 {
-
-private:
-
-    GEOMImpl_IShapesOperations* m_shapesOperations;
-    GEOMImpl_IGroupOperations* m_groupOperations;
-
 public:
     Standard_EXPORT GEOMImpl_IImportExportOperations(GEOM_Engine* engine, int docID);
     Standard_EXPORT ~GEOMImpl_IImportExportOperations();
@@ -51,5 +47,14 @@ public:
             Handle(TColStd_HSequenceOfTransient)& groupList,
             Handle(TColStd_HSequenceOfTransient)& fieldList);
     /*@@ insert new functions before this line @@ do not remove this line @@*/
+
+private:
+    GEOMImpl_IShapesOperations* m_shapesOperations;
+    GEOMImpl_IGroupOperations* m_groupOperations;
+
+    bool importSubShapes(XAO::Geometry* xaoGeometry,
+            Handle(GEOM_Function) function,
+            Handle(TColStd_HSequenceOfTransient)& fieldList, int shapeType, XAO::Dimension dim);
+
 };
 #endif

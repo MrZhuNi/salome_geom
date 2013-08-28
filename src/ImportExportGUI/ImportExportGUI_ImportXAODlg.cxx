@@ -221,12 +221,21 @@ bool ImportExportGUI_ImportXAODlg::execute(ObjectList& objects)
 
     if (!shape->_is_nil())
     {
+        m_mainShape = shape;
         objects.push_back(shape._retn());
+    }
+    else
+    {
+        m_mainShape = NULL;
     }
 
     for (int i = 0; i < groups->length(); i++)
     {
         objects.push_back(GEOM::GEOM_Object::_duplicate(groups[i]));
+    }
+    for (int i = 0; i < fields->length(); i++)
+    {
+        objects.push_back(GEOM::GEOM_Object::_duplicate(fields[i]));
     }
 
     return res;
@@ -235,10 +244,11 @@ bool ImportExportGUI_ImportXAODlg::execute(ObjectList& objects)
 GEOM::GEOM_Object_ptr ImportExportGUI_ImportXAODlg::getFather(GEOM::GEOM_Object_ptr object)
 {
     GEOM::GEOM_Object_var fatherObj;
-    if (object->GetType() == GEOM_GROUP)
+    if (object->GetType() != GEOM_IMPORT && m_mainShape != NULL)
     {
-        GEOM::GEOM_IGroupOperations_var groupOper = getGeomEngine()->GetIGroupOperations(getStudyId());
-        fatherObj = groupOper->GetMainShape(object);
+        //GEOM::GEOM_IGroupOperations_var groupOper = getGeomEngine()->GetIGroupOperations(getStudyId());
+        //fatherObj = groupOper->GetMainShape(object);
+        fatherObj = m_mainShape;
     }
     return fatherObj._retn();
 }
@@ -249,3 +259,4 @@ QString ImportExportGUI_ImportXAODlg::getObjectName(GEOM::GEOM_Object_ptr object
         return QString::null;
     return object->GetName();
 }
+
