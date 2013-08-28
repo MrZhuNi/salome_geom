@@ -39,10 +39,11 @@ namespace XAO
          * \return the string.
          */
         //static const char* intToString(const int value);
-        static const std::string intToString(const int value);
-        static const int stringToInt(const std::string value);
+        static const std::string intToString(const int& value);
+        static const int stringToInt(const std::string& value);
 
-        static const std::string doubleToString(const double value);
+        static const std::string doubleToString(const double& value);
+        static const double stringToDouble(const std::string& value);
 
         /**
          * Converts a Dimension to string.
@@ -50,7 +51,7 @@ namespace XAO
          * \return the dimension as a string.
          * \throw SALOME_Exception
          */
-        static const char* dimensionToString(const XAO::Dimension dimension);
+        static const std::string dimensionToString(const XAO::Dimension& dimension);
 
         /**
          * Converts a string into a Dimension.
@@ -58,7 +59,7 @@ namespace XAO
          * \return the converted Dimension.
          * \throw SALOME_Exception
          */
-        static const XAO::Dimension stringToDimension(const char* dimension);
+        static const XAO::Dimension stringToDimension(const std::string& dimension);
 
         /**
          * Converts a Type to string.
@@ -66,7 +67,7 @@ namespace XAO
          * \return the Type as a string.
          * \throw SALOME_Exception
          */
-        static const char* fieldTypeToString(const XAO::Type type);
+        static const std::string fieldTypeToString(const XAO::Type& type);
 
         /**
          * Converts a string into a Type.
@@ -74,7 +75,7 @@ namespace XAO
          * \return the converted Type.
          * \throw SALOME_Exception
          */
-        static const XAO::Type stringToFieldType(const char* type);
+        static const XAO::Type stringToFieldType(const std::string& type);
     };
 }
 

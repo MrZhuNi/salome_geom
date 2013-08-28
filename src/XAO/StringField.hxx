@@ -43,9 +43,6 @@ namespace XAO
         StringStep* addStep(const int& step);
         StringStep* addStep(const int& step, const int& stamp);
         StringStep* getStep(const int& index);
-
-//    private:
-//        std::vector<StringStep*> m_steps;
     };
 }
 

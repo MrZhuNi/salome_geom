@@ -67,7 +67,7 @@ namespace XAO
          * \param author the author of the file.
          * \param version the version of the XAO format.
          */
-        Xao(const char* author, const char* version);
+        Xao(const std::string& author, const std::string& version);
         /**
          * Destructor.
          */
@@ -77,15 +77,15 @@ namespace XAO
          * Gets the author of the file.
          * \return the author of the file.
          */
-        const char* getAuthor()
+        const std::string getAuthor()
         {
-            return m_author.c_str();
+            return m_author;
         }
         /**
          * Sets the author of the file.
          * \param author the author to set.
          */
-        void setAuthor(const char* author)
+        void setAuthor(const std::string& author)
         {
             m_author = author;
         }
@@ -94,15 +94,15 @@ namespace XAO
          * Gets the version of the file.
          * \return the version of the file.
          */
-        const char* getVersion()
+        const std::string getVersion()
         {
-            return m_version.c_str();
+            return m_version;
         }
         /**
          * Sets the version of the file.
          * \param version the version to set.
          */
-        void setVersion(const char* version)
+        void setVersion(const std::string& version)
         {
             m_version = version;
         }
@@ -136,18 +136,26 @@ namespace XAO
          * Gets the number of groups.
          * \return the number of groups.
          */
-        int countGroups();
+        const int countGroups();
         /**
          * Gets a group.
          * \param index the index of the wanted group.
          * \return the group or NULL if index is bigger than the number of groups.
          */
-        Group* getGroup(const int index);
+        Group* getGroup(const int& index);
         /**
          * Adds a group.
-         * \param group the group to add.
+         * \param dim the dimension of the group.
+         * \return the created group.
          */
-        void addGroup(Group* group);
+        Group* addGroup(const XAO::Dimension& dim);
+        /**
+         * Adds a group.
+         * \param name the name of the group.
+         * \param dim the dimension of the group.
+         * \return the created group.
+         */
+        Group* addGroup(const std::string& name, const XAO::Dimension& dim);
         /**
          * Removes a group.
          * \param group the group to remove.
@@ -162,18 +170,30 @@ namespace XAO
          * Gets the number of fields.
          * \return the number of fields.
          */
-        int countFields();
+        const int countFields();
         /**
          * Gets a field.
          * \param index the index of the wanted field.
          * \return the field or NULL if the index is bigger than the number of fields.
          */
-        Field* getField(const int index);
+        Field* getField(const int& index);
         /**
          * Adds a field.
-         * \param field the field to add.
+         * \param type the type of the field.
+         * \param dim the dimension of the field.
+         * \param nbComponents the number of components in the field.
+         * \return the created field.
          */
-        void addField(Field* field);
+        Field* addField(const XAO::Type& type, const XAO::Dimension& dim, const int& nbComponents);
+        /**
+         * Adds a field.
+         * \param type the type of the field.
+         * \param the name of the field.
+         * \param dim the dimension of the field.
+         * \param nbComponents the number of components in the field.
+         * \return the created field.
+         */
+        Field* addField(const XAO::Type& type, const std::string& name, const XAO::Dimension& dim, const int& nbComponents);
         /**
          * Removes a field.
          * \param field the field to remove.
@@ -188,25 +208,28 @@ namespace XAO
          * \param fileName the name of the file to create.
          * \return true is the export is successful.
          */
-        bool exportXAO(const char* fileName);
+        const bool exportXAO(const std::string& fileName);
         /**
          * Gets the XML corresponding to this XAO.
          * \return the XML as a string.
          */
-        const char* getXML();
+        const std::string getXML();
 
         /**
          * Imports an XAO file into this object.
          * \param fileName the name of the file to import.
          * \return true if the import is successful.
          */
-        bool importXAO(const char* fileName);
+        const bool importXAO(const std::string& fileName);
         /**
          * Sets an XML describing an XAO format to this object.
          * \param xml the XML to set.
          * \return true if the import is successful.
          */
-        bool setXML(const char* xml);
+        const bool setXML(const std::string& xml);
+
+    private:
+        void checkGeometry();
 
     private:
         /** The author of the file. */

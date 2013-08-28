@@ -13,17 +13,18 @@ namespace XAO
 {
     class XaoExporter
     {
-public:
-        static bool saveToFile(Xao* xaoObject, const char* fileName);
-        static const char* saveToXml(Xao* xaoObject);
+    public:
+        static const bool saveToFile(Xao* xaoObject, const std::string& fileName);
+        static const std::string saveToXml(Xao* xaoObject);
 
-        static bool readFromFile(const char* fileName, Xao* xaoObject);
-        static bool setXML(const char* xml, Xao* xaoObject);
-private:
+        static const bool readFromFile(const std::string& fileName, Xao* xaoObject);
+        static const bool setXML(const std::string& xml, Xao* xaoObject);
+
+    private:
         static xmlDocPtr exportXMLDoc(Xao* xaoObject);
         static void exportGeometry(Geometry* xaoGeometry, xmlDocPtr doc, xmlNodePtr xao);
         static void exportGeometricElements(Geometry* xaoGeometry, xmlNodePtr topology,
-                Dimension dim, const xmlChar* colTag, const xmlChar* eltTag);
+                XAO::Dimension dim, const xmlChar* colTag, const xmlChar* eltTag);
         static void exportGroups(Xao* xaoObject, xmlNodePtr xao);
         static void exportFields(Xao* xaoObject, xmlNodePtr xao);
         static void exportStep(Step* step, Field* field, xmlNodePtr nodeSteps);

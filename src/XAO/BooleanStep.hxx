@@ -72,8 +72,11 @@ namespace XAO
         void setComponents(const int& component, const std::vector<bool>& components);
         void setValue(const int& element, const int& component, const bool& value);
 
+        virtual const std::string getStringValue(const int& element, const int& component);
+        virtual void setStringValue(const int& element, const int& component, const std::string& value);
+
     private:
-        void Init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
+        void init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
 
     private:
         std::vector< std::vector<bool> > m_values;

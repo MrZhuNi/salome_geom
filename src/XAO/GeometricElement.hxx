@@ -42,7 +42,7 @@ namespace XAO
          * \param name the name of the element.
          * \param reference the reference of the element.
          */
-        GeometricElement(const char* name, const char* reference);
+        GeometricElement(const std::string& name, const std::string& reference);
         /**
          * Destructor.
          */
@@ -52,15 +52,15 @@ namespace XAO
          * Gets the name of the element.
          * \return the name.
          */
-        const char* getName()
+        const std::string getName()
         {
-            return m_name.c_str();
+            return m_name;
         }
         /**
          * Sets the name of the element
          * \param name the name to set.
          */
-        void setName(const char* name)
+        void setName(const std::string& name)
         {
             m_name = name;
         }
@@ -75,15 +75,15 @@ namespace XAO
          * Gets the reference of the element.
          * \return the reference.
          */
-        const char* getReference()
+        const std::string getReference()
         {
-            return m_reference.c_str();
+            return m_reference;
         }
         /**
          * Sets the reference of the element.
          * \param reference the reference to set.
          */
-        void setReference(const char* reference)
+        void setReference(const std::string& reference)
         {
             m_reference = reference;
         }
@@ -108,7 +108,7 @@ namespace XAO
          * Constructor with size.
          * \param nb the size to set.
          */
-        GeometricElementList(const int nb);
+        GeometricElementList(const int& nb);
         /**
          * Destructor.
          */
@@ -118,13 +118,13 @@ namespace XAO
          * Gets the size of the list.
          * \return the size of the list.
          */
-        int getSize() { return m_count; }
+        const int getSize() { return m_count; }
         /**
          * Sets the size of the list.
          * \param nb the size to set.
          * \warning the list will be cleared.
          */
-        void setSize(const int nb);
+        void setSize(const int& nb);
 
         /**
          * Sets the name and the reference of an element.
@@ -133,28 +133,28 @@ namespace XAO
          * \param reference the reference to set.
          * \throw SALOME_Exception if index is bigger than the size of the list.
          */
-        void setElement(const int index, const char* name, const char* reference);
+        void setElement(const int& index, const std::string& name, const std::string& reference);
         /**
          * Gets the name of an element.
          * \param index the index of the element to set.
          * \return the name of the element with the given index.
          * \throw SALOME_Exception if index is bigger than the size of the list.
          */
-        const char* getName(const int index);
+        const std::string getName(const int& index);
         /**
          * Sets the name of an element.
          * \param index the index of the element.
          * \param name the name to set.
          * \throw SALOME_Exception if index is bigger than the size of the list.
          */
-        void setName(const int index, const char* name);
+        void setName(const int& index, const std::string& name);
 
         /**
          * Checks if an element has a name.
          * @param index the index of the element.
          * @return true if the element has a name, false otherwise.
          */
-        bool hasName(const int index);
+        const bool hasName(const int& index);
 
         /**
          * Gets the reference of an element.
@@ -162,21 +162,21 @@ namespace XAO
          * \return the reference of the element.
          * \throw SALOME_Exception if index is bigger than the size of the list.
          */
-        const char* getReference(const int index);
+        const std::string getReference(const int& index);
         /**
          * Sets the reference of an element.
          * \param index the index of the element to set.
          * \param reference the reference to set.
          * \throw SALOME_Exception if index is bigger than the size of the list.
          */
-        void setReference(const int index, const char* reference);
+        void setReference(const int& index, const std::string& reference);
 
         /**
          * Gets the index of an element using its reference.
          * \param reference the searched reference.
          * \return the index of the element or -1 if no element found.
          */
-        const int getIndexByReference(const char* reference);
+        const int getIndexByReference(const std::string& reference);
 
         /**
          * Iterator on the element of the list.

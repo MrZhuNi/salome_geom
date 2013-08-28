@@ -37,20 +37,20 @@ namespace XAO
         Geometry();
         ~Geometry();
 
-        const char* getName()
+        const std::string getName()
         {
-            return m_name.c_str();
+            return m_name;
         }
-        void setName(const char* name)
+        void setName(const std::string& name)
         {
             m_name = name;
         }
 
-        const char* getFormat()
+        const std::string getFormat()
         {
-            return m_format.c_str();
+            return m_format;
         }
-        void setFormat(const char* format)
+        void setFormat(const std::string& format)
         {
             m_format = format;
         }
@@ -64,55 +64,56 @@ namespace XAO
         const char* getBREP();
         void setShape(const char* brep);
 
-        int countVertices() { return m_vertices.getSize(); }
-        int countEdges() { return m_edges.getSize(); }
-        int countFaces() { return m_faces.getSize(); }
-        int countSolids() { return m_solids.getSize(); }
+        const int countElements(const XAO::Dimension& dim);
+        const int countVertices() { return m_vertices.getSize(); }
+        const int countEdges() { return m_edges.getSize(); }
+        const int countFaces() { return m_faces.getSize(); }
+        const int countSolids() { return m_solids.getSize(); }
 
-        void setCountVertices(const int nb) { m_vertices.setSize(nb); }
-        void setCountEdges(const int nb) { m_edges.setSize(nb); }
-        void setCountFaces(const int nb) { m_faces.setSize(nb); }
-        void setCountSolids(const int nb) { m_solids.setSize(nb); }
+        void setCountVertices(const int& nb) { m_vertices.setSize(nb); }
+        void setCountEdges(const int& nb) { m_edges.setSize(nb); }
+        void setCountFaces(const int& nb) { m_faces.setSize(nb); }
+        void setCountSolids(const int& nb) { m_solids.setSize(nb); }
 
-        void setVertex(const int index, const char* name, const char* reference) { m_vertices.setElement(index, name, reference); }
-        void setEdge(const int index, const char* name, const char* reference) { m_edges.setElement(index, name, reference); }
-        void setFace(const int index, const char* name, const char* reference) { m_faces.setElement(index, name, reference); }
-        void setSolid(const int index, const char* name, const char* reference) { m_solids.setElement(index, name, reference); }
+        void setVertex(const int& index, const std::string& name, const std::string& reference) { m_vertices.setElement(index, name, reference); }
+        void setEdge(const int& index, const std::string& name, const std::string& reference) { m_edges.setElement(index, name, reference); }
+        void setFace(const int& index, const std::string& name, const std::string& reference) { m_faces.setElement(index, name, reference); }
+        void setSolid(const int& index, const std::string& name, const std::string& reference) { m_solids.setElement(index, name, reference); }
 
-        const char* getVertexName(const int index) { return m_vertices.getName(index); }
-        const char* getEdgeName(const int index) { return m_edges.getName(index); }
-        const char* getFaceName(const int index) { return m_faces.getName(index); }
-        const char* getSolidName(const int index) { return m_solids.getName(index); }
+        const std::string getVertexName(const int& index) { return m_vertices.getName(index); }
+        const std::string getEdgeName(const int& index) { return m_edges.getName(index); }
+        const std::string getFaceName(const int& index) { return m_faces.getName(index); }
+        const std::string getSolidName(const int& index) { return m_solids.getName(index); }
 
-        void setVertexName(const int index, const char* name) { m_vertices.setName(index, name); }
-        void setEdgeName(const int index, const char* name) { m_edges.setName(index, name); }
-        void setFaceName(const int index, const char* name) { m_faces.setName(index, name); }
-        void setSolidName(const int index, const char* name) { m_solids.setName(index, name); }
+        void setVertexName(const int& index, const std::string& name) { m_vertices.setName(index, name); }
+        void setEdgeName(const int& index, const std::string& name) { m_edges.setName(index, name); }
+        void setFaceName(const int& index, const std::string& name) { m_faces.setName(index, name); }
+        void setSolidName(const int& index, const std::string& name) { m_solids.setName(index, name); }
 
-        bool hasVertexName(const int index) { return m_vertices.hasName(index); }
-        bool hasEdgeName(const int index) { return m_edges.hasName(index); }
-        bool hasFaceName(const int index) { return m_faces.hasName(index); }
-        bool hasSolidName(const int index) { return m_solids.hasName(index); }
+        const bool hasVertexName(const int& index) { return m_vertices.hasName(index); }
+        const bool hasEdgeName(const int& index) { return m_edges.hasName(index); }
+        const bool hasFaceName(const int& index) { return m_faces.hasName(index); }
+        const bool hasSolidName(const int& index) { return m_solids.hasName(index); }
 
-        const char* getVertexReference(const int index) { return m_vertices.getReference(index); }
-        const char* getEdgeReference(const int index) { return m_edges.getReference(index); }
-        const char* getFaceReference(const int index) { return m_faces.getReference(index); }
-        const char* getSolidReference(const int index) { return m_solids.getReference(index); }
-        const char* getElementReference(const Dimension dim, const int index);
+        const std::string getVertexReference(const int& index) { return m_vertices.getReference(index); }
+        const std::string getEdgeReference(const int& index) { return m_edges.getReference(index); }
+        const std::string getFaceReference(const int& index) { return m_faces.getReference(index); }
+        const std::string getSolidReference(const int& index) { return m_solids.getReference(index); }
+        const std::string getElementReference(const XAO::Dimension& dim, const int& index);
 
-        void setVertexReference(const int index, const char* reference) { m_vertices.setReference(index, reference); }
-        void setEdgeReference(const int index, const char* reference) { m_edges.setReference(index, reference); }
-        void setFaceReference(const int index, const char* reference) { m_faces.setReference(index, reference); }
-        void setSolidReference(const int index, const char* reference) { m_solids.setReference(index, reference); }
+        void setVertexReference(const int& index, const std::string& reference) { m_vertices.setReference(index, reference); }
+        void setEdgeReference(const int& index, const std::string& reference) { m_edges.setReference(index, reference); }
+        void setFaceReference(const int& index, const std::string& reference) { m_faces.setReference(index, reference); }
+        void setSolidReference(const int& index, const std::string& reference) { m_solids.setReference(index, reference); }
 
-        const int getVertexIndexByReference(const char* reference) { return m_vertices.getIndexByReference(reference); }
-        const int getEdgeIndexByReference(const char* reference) { return m_edges.getIndexByReference(reference); }
-        const int getFaceIndexByReference(const char* reference) { return m_faces.getIndexByReference(reference); }
-        const int getSolidIndexByReference(const char* reference) { return m_solids.getIndexByReference(reference); }
-        const int getElementIndexByReference(const Dimension dim, const char* reference);
+        const int getVertexIndexByReference(const std::string& reference) { return m_vertices.getIndexByReference(reference); }
+        const int getEdgeIndexByReference(const std::string& reference) { return m_edges.getIndexByReference(reference); }
+        const int getFaceIndexByReference(const std::string& reference) { return m_faces.getIndexByReference(reference); }
+        const int getSolidIndexByReference(const std::string& reference) { return m_solids.getIndexByReference(reference); }
+        const int getElementIndexByReference(const XAO::Dimension& dim, const std::string& reference);
 
-        GeometricElementList::iterator begin(const Dimension dim);
-        GeometricElementList::iterator end(const Dimension dim);
+        GeometricElementList::iterator begin(const XAO::Dimension& dim);
+        GeometricElementList::iterator end(const XAO::Dimension& dim);
 
     private:
         void initListIds(const Standard_Integer shapeType);

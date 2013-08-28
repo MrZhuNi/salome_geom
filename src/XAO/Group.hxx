@@ -39,7 +39,8 @@ namespace XAO
         /**
          * Default constructor.
          */
-        Group();
+        Group(const XAO::Dimension& dim, const int& nbElements);
+        Group(const std::string& name, const XAO::Dimension& dim, const int& nbelements);
 
         /**
          * Destructor.
@@ -50,7 +51,7 @@ namespace XAO
          * Sets the name of the group.
          * \param name the name to set.
          */
-        void setName(const char* name)
+        void setName(const std::string& name)
         {
             m_name = name;
         }
@@ -58,22 +59,19 @@ namespace XAO
          * Gets the name of the group.
          * \return the name of the group.
          */
-        const char *getName() const
+        const std::string getName() const
         {
-            return m_name.c_str();
+            return m_name;
         }
 
         /**
          * Gets the dimension of the group.
          * \return the dimension of the group.
          */
-        const Dimension getDimension();
-
-        /**
-         * Sets the dimension of the group.
-         * \param dim the dimension to set.
-         */
-        void setDimension(const Dimension dim);
+        const XAO::Dimension getDimension()
+        {
+            return m_dimension;
+        }
 
         /**
          * Gets the number of elements in the group.
@@ -88,8 +86,9 @@ namespace XAO
          * Adds an element to the group.
          * \param value the index of the element to add in the geometric element list (vertex, face...).
          */
-        void addElement(const int value)
+        void addElement(const int& value)
         {
+            checkElement(value);
             m_elements.push_back(value);
         }
 
@@ -98,16 +97,23 @@ namespace XAO
          * \param index the index of the element.
          * \return the reference of the element.
          */
-        const int getElement(const int index)
+        const int getElement(const int& index)
         {
+            checkElement(index);
             return m_elements[index];
         }
 
     private:
+        void initGroup(const std::string& name, const XAO::Dimension& dim, const int& nbElements);
+        void checkElement(const int& element);
+
+    private:
         /** The name of the group. */
         std::string m_name;
+        /** The number of elements in the associated geometry. */
+        int m_nbElements;
         /** The dimension of the group. */
-        Dimension m_dimension;
+        XAO::Dimension m_dimension;
         /** The number of elements in the group. */
         int m_count;
         /** The elements of the group. */

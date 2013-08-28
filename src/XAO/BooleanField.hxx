@@ -42,9 +42,6 @@ namespace XAO
         BooleanStep* addStep(const int& step);
         BooleanStep* addStep(const int& step, const int& stamp);
         BooleanStep* getStep(const int& index);
-
-//    private:
-//        std::vector<BooleanStep*> m_steps;
     };
 }
 

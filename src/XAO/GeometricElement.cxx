@@ -18,7 +18,6 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-#include <cstring>
 #include <Utils_SALOME_Exception.hxx>
 
 #include "GeometricElement.hxx"
@@ -32,7 +31,7 @@ GeometricElement::GeometricElement()
     m_reference = "";
 }
 
-GeometricElement::GeometricElement(const char* name, const char* reference)
+GeometricElement::GeometricElement(const std::string& name, const std::string& reference)
 {
     m_name = name;
     m_reference = reference;
@@ -52,12 +51,12 @@ GeometricElementList::GeometricElementList()
     setSize(0);
 }
 
-GeometricElementList::GeometricElementList(const int count)
+GeometricElementList::GeometricElementList(const int& count)
 {
     setSize(m_count);
 }
 
-void GeometricElementList::setSize(const int nb)
+void GeometricElementList::setSize(const int& nb)
 {
     m_count = nb;
     m_elements.clear();
@@ -67,7 +66,7 @@ void GeometricElementList::setSize(const int nb)
     }
 }
 
-void GeometricElementList::setElement(const int index, const char* name, const char* reference)
+void GeometricElementList::setElement(const int& index, const std::string& name, const std::string& reference)
 {
     if (m_count == 0 || index > m_count)
         throw SALOME_Exception("Problem with number of elements");
@@ -76,7 +75,7 @@ void GeometricElementList::setElement(const int index, const char* name, const c
     m_elements[index].setReference(reference);
 }
 
-const char* GeometricElementList::getName(const int index)
+const std::string GeometricElementList::getName(const int& index)
 {
     if (m_count == 0 || index > m_count)
         throw SALOME_Exception("Problem with number of elements");
@@ -84,7 +83,7 @@ const char* GeometricElementList::getName(const int index)
     return m_elements[index].getName();
 }
 
-void GeometricElementList::setName(const int index, const char* name)
+void GeometricElementList::setName(const int& index, const std::string& name)
 {
     if (m_count == 0 || index > m_count)
     {
@@ -94,7 +93,7 @@ void GeometricElementList::setName(const int index, const char* name)
     m_elements[index].setName(name);
 }
 
-bool GeometricElementList::hasName(const int index)
+const bool GeometricElementList::hasName(const int& index)
 {
     if (m_count == 0 || index > m_count)
     {
@@ -104,7 +103,7 @@ bool GeometricElementList::hasName(const int index)
     return m_elements[index].hasName();
 }
 
-const char* GeometricElementList::getReference(const int index)
+const std::string GeometricElementList::getReference(const int& index)
 {
     if (m_count == 0 || index > m_count)
         throw SALOME_Exception("Problem with number of elements");
@@ -112,7 +111,7 @@ const char* GeometricElementList::getReference(const int index)
     return m_elements[index].getReference();
 }
 
-void GeometricElementList::setReference(const int index, const char* name)
+void GeometricElementList::setReference(const int& index, const std::string& name)
 {
     if (m_count == 0 || index > m_count)
         throw SALOME_Exception("Problem with number of elements");
@@ -120,11 +119,11 @@ void GeometricElementList::setReference(const int index, const char* name)
     m_elements[index].setReference(name);
 }
 
-const int GeometricElementList::getIndexByReference(const char* ref)
+const int GeometricElementList::getIndexByReference(const std::string& ref)
 {
     for (int index = 0; index < m_count; ++index)
     {
-        if (strcmp(ref, m_elements[index].getReference()) == 0)
+        if (ref == m_elements[index].getReference())
         {
             return index;
         }

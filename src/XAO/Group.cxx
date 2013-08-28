@@ -18,27 +18,41 @@
 //
 // Author : Nathalie Gore (OpenCascade), Frederic Pons (OpenCascade)
 
+#include <sstream>
 #include "Group.hxx"
 #include <Utils_SALOME_Exception.hxx>
 
 using namespace XAO;
 
-Group::Group()
+
+Group::Group(const XAO::Dimension& dim, const int& nbElements)
 {
-    m_dimension = VERTEX;
+    initGroup("", dim, nbElements);
+}
+
+Group::Group(const std::string& name, const XAO::Dimension& dim, const int& nbElements)
+{
+    initGroup(name, dim, nbElements);
+}
+
+void Group::initGroup(const std::string& name, const XAO::Dimension& dim, const int& nbElements)
+{
+    m_name = name;
+    m_dimension = dim;
     m_count = 0;
+    m_nbElements = nbElements;
 }
 
 Group::~Group()
 {
 }
 
-const Dimension Group::getDimension()
+void Group::checkElement(const int& element)
 {
-    return m_dimension;
-}
-
-void Group::setDimension(const Dimension dimension)
-{
-    m_dimension = dimension;
+    if (element >= m_nbElements)
+    {
+        std::ostringstream str;
+        str << "IndexOutOfRange element: " << element << " >= " << m_nbElements;
+        throw SALOME_Exception(str.str().c_str()); // TODO
+    }
 }

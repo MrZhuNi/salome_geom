@@ -31,6 +31,8 @@
 
 namespace XAO
 {
+    typedef std::vector<Step*>::iterator stepIterator;
+
     /**
      * @class Field
      * A geometrical Field.
@@ -135,6 +137,9 @@ namespace XAO
          * @return true if the step has been removed.
          */
         bool removeStep(Step* step);
+
+        stepIterator begin() { return m_steps.begin(); }
+        stepIterator end() { return m_steps.end(); }
 
     private:
         void checkComponent(const int& component);

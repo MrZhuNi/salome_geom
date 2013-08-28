@@ -150,7 +150,21 @@ void Geometry::initListIds(const Standard_Integer shapeType)
     }
 }
 
-const char* Geometry::getElementReference(const Dimension dim, const int index)
+const int Geometry::countElements(const XAO::Dimension& dim)
+{
+    if (dim == VERTEX)
+        return countVertices();
+    if (dim == EDGE)
+        return countEdges();
+    if (dim == FACE)
+        return countFaces();
+    if (dim == SOLID)
+        return countSolids();
+
+    throw SALOME_Exception("Unknown dimension");
+}
+
+const std::string Geometry::getElementReference(const XAO::Dimension& dim, const int& index)
 {
     if (dim == VERTEX)
         return getVertexReference(index);
@@ -165,7 +179,7 @@ const char* Geometry::getElementReference(const Dimension dim, const int index)
     throw SALOME_Exception("Unknown dimension");
 }
 
-const int Geometry::getElementIndexByReference(const Dimension dim, const char* reference)
+const int Geometry::getElementIndexByReference(const XAO::Dimension& dim, const std::string& reference)
 {
     if (dim == VERTEX)
         return getVertexIndexByReference(reference);
@@ -180,7 +194,7 @@ const int Geometry::getElementIndexByReference(const Dimension dim, const char* 
     throw SALOME_Exception("Unknown dimension");
 }
 
-GeometricElementList::iterator Geometry::begin(const Dimension dim)
+GeometricElementList::iterator Geometry::begin(const XAO::Dimension& dim)
 {
     if (dim == VERTEX)
         return m_vertices.begin();
@@ -195,7 +209,7 @@ GeometricElementList::iterator Geometry::begin(const Dimension dim)
     throw SALOME_Exception("Unknown dimension");
 }
 
-GeometricElementList::iterator Geometry::end(const Dimension dim)
+GeometricElementList::iterator Geometry::end(const XAO::Dimension& dim)
 {
     if (dim == VERTEX)
         return m_vertices.end();

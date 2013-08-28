@@ -39,7 +39,7 @@ Xao::Xao()
     m_geometry = NULL;
 }
 
-Xao::Xao(const char* author, const char* version)
+Xao::Xao(const std::string& author, const std::string& version)
 {
     m_author = author;
     m_version = version;
@@ -65,12 +65,12 @@ Xao::~Xao()
     }
 }
 
-int Xao::countGroups()
+const int Xao::countGroups()
 {
     return m_groups.size();
 }
 
-Group* Xao::getGroup(const int index)
+Group* Xao::getGroup(const int& index)
 {
     int i = 0;
     for (std::list<Group*>::iterator it = m_groups.begin(); it != m_groups.end(); ++it, ++i)
@@ -82,9 +82,17 @@ Group* Xao::getGroup(const int index)
     return NULL;
 }
 
-void Xao::addGroup(Group* group)
+Group* Xao::addGroup(const XAO::Dimension& dim)
 {
+    return addGroup("", dim);
+}
+
+Group* Xao::addGroup(const std::string& name, const XAO::Dimension& dim)
+{
+    checkGeometry();
+    Group* group = new Group(name, dim, m_geometry->countElements(dim));
     m_groups.push_back(group);
+    return group;
 }
 
 void Xao::removeGroup(Group* group)
@@ -92,12 +100,12 @@ void Xao::removeGroup(Group* group)
     m_groups.remove(group);
 }
 
-int Xao::countFields()
+const int Xao::countFields()
 {
     return m_fields.size();
 }
 
-Field* Xao::getField(const int index)
+Field* Xao::getField(const int& index)
 {
     int i = 0;
     for (std::list<Field*>::iterator it = m_fields.begin(); it != m_fields.end(); ++it, ++i)
@@ -109,9 +117,18 @@ Field* Xao::getField(const int index)
     return NULL;
 }
 
-void Xao::addField(Field* field)
+Field* Xao::addField(const XAO::Type& type, const XAO::Dimension& dim, const int& nbComponents)
 {
+    return addField(type, "", dim, nbComponents);
+}
+
+Field* Xao::addField(const XAO::Type& type, const std::string& name, const XAO::Dimension& dim, const int& nbComponents)
+{
+    checkGeometry();
+    int nbElts = m_geometry->countElements(dim);
+    Field* field = Field::createField(type, name, dim, nbElts, nbComponents);
     m_fields.push_back(field);
+    return field;
 }
 
 void Xao::removeField(Field* field)
@@ -119,7 +136,7 @@ void Xao::removeField(Field* field)
     m_fields.remove(field);
 }
 
-bool Xao::exportXAO(const char* fileName)
+const bool Xao::exportXAO(const std::string& fileName)
 {
 //    xmlDocPtr doc = exportXMLDoc();
 //    xmlSaveFormatFileEnc(fileName, doc, "UTF-8", 2);
@@ -129,7 +146,7 @@ bool Xao::exportXAO(const char* fileName)
     return XaoExporter::saveToFile(this, fileName);
 }
 
-const char* Xao::getXML()
+const std::string Xao::getXML()
 {
 //    xmlDocPtr doc = exportXMLDoc();
 //
@@ -143,12 +160,18 @@ const char* Xao::getXML()
     return XaoExporter::saveToXml(this);
 }
 
-bool Xao::importXAO(const char* fileName)
+const bool Xao::importXAO(const std::string& fileName)
 {
     return XaoExporter::readFromFile(fileName, this);
 }
 
-bool Xao::setXML(const char* xml)
+const bool Xao::setXML(const std::string& xml)
 {
     return XaoExporter::setXML(xml, this);
+}
+
+void Xao::checkGeometry()
+{
+    if (m_geometry == NULL)
+        throw SALOME_Exception("Geometry is null"); // TODO
 }

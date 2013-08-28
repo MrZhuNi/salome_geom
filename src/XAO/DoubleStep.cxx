@@ -20,25 +20,26 @@
 
 #include "DoubleStep.hxx"
 #include <Utils_SALOME_Exception.hxx>
+#include "XaoUtils.hxx"
 
 using namespace XAO;
 
 DoubleStep::DoubleStep(const int& nbElements, const int& nbComponents)
 {
-    Init(0, 0, nbElements, nbComponents);
+    init(0, 0, nbElements, nbComponents);
 }
 
 DoubleStep::DoubleStep(const int& step, const int& nbElements, const int& nbComponents)
 {
-    Init(step, 0, nbElements, nbComponents);
+    init(step, 0, nbElements, nbComponents);
 }
 
 DoubleStep::DoubleStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
 {
-    Init(step, stamp, nbElements, nbComponents);
+    init(step, stamp, nbElements, nbComponents);
 }
 
-void DoubleStep::Init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
+void DoubleStep::init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
 {
     m_nbElements = nbElements;
     m_nbComponents = nbComponents;
@@ -104,6 +105,11 @@ const double DoubleStep::getValue(const int& element, const int& component)
     return m_values[element][component];
 }
 
+const std::string DoubleStep::getStringValue(const int& element, const int& component)
+{
+    return XaoUtils::doubleToString(getValue(element, component));
+}
+
 void DoubleStep::setValues(const std::vector<double>& values)
 {
     if (values.size() != m_nbComponents * m_nbElements)
@@ -144,4 +150,9 @@ void DoubleStep::setValue(const int& element, const int& component, const double
     checkComponent(component);
 
     m_values[element][component] = value;
+}
+
+void DoubleStep::setStringValue(const int& element, const int& component, const std::string& value)
+{
+    setValue(element, component, XaoUtils::stringToDouble(value));
 }

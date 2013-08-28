@@ -30,20 +30,15 @@
 
 using namespace XAO;
 
-/*const char* XaoUtils::intToString(const int value)
-{
-    std::ostringstream str;
-    str << value;
-    return str.str().c_str();
-}*/
-const std::string XaoUtils::intToString(const int value)
+
+const std::string XaoUtils::intToString(const int& value)
 {
     std::ostringstream str;
     str << value;
     return str.str();
 }
 
-const int XaoUtils::stringToInt(const std::string value)
+const int XaoUtils::stringToInt(const std::string& value)
 {
     int res;
     std::istringstream convert(value);
@@ -52,14 +47,23 @@ const int XaoUtils::stringToInt(const std::string value)
     return res;
 }
 
-const std::string XaoUtils::doubleToString(const double value)
+const std::string XaoUtils::doubleToString(const double& value)
 {
     std::ostringstream str;
     str << value;
     return str.str();
 }
 
-const char* XaoUtils::dimensionToString(const XAO::Dimension dimension)
+const double XaoUtils::stringToDouble(const std::string& value)
+{
+    double res;
+    std::istringstream convert(value);
+    if ( !(convert >> res) )
+        res = 0;
+    return res;
+}
+
+const std::string XaoUtils::dimensionToString(const XAO::Dimension& dimension)
 {
     if (dimension == VERTEX)
         return "vertex";
@@ -74,22 +78,22 @@ const char* XaoUtils::dimensionToString(const XAO::Dimension dimension)
     throw SALOME_Exception("Bad dimension");
 }
 
-const XAO::Dimension XaoUtils::stringToDimension(const char* dimension)
+const XAO::Dimension XaoUtils::stringToDimension(const std::string& dimension)
 {
-    if (strcmp(dimension, "vertex") == 0)
+    if (dimension == "vertex")
         return VERTEX;
-    if (strcmp(dimension, "edge") == 0)
+    if (dimension == "edge")
         return EDGE;
-    if (strcmp(dimension, "face") == 0)
+    if (dimension == "face")
         return FACE;
-    if (strcmp(dimension, "solid") == 0)
+    if (dimension == "solid")
         return SOLID;
-    if (strcmp(dimension, "whole") == 0)
+    if (dimension == "whole")
         return WHOLE;
     throw SALOME_Exception("Bad dimension");
 }
 
-const char* XaoUtils::fieldTypeToString(const XAO::Type type)
+const std::string XaoUtils::fieldTypeToString(const XAO::Type& type)
 {
     if (type == BOOLEAN)
         return "boolean";
@@ -102,15 +106,15 @@ const char* XaoUtils::fieldTypeToString(const XAO::Type type)
     throw SALOME_Exception("Bad type");
 }
 
-const XAO::Type XaoUtils::stringToFieldType(const char* type)
+const XAO::Type XaoUtils::stringToFieldType(const std::string& type)
 {
-    if (strcmp(type, "boolean") == 0)
+    if (type == "boolean")
         return BOOLEAN;
-    if (strcmp(type, "integer") == 0)
+    if (type == "integer")
         return INTEGER;
-    if (strcmp(type, "double") == 0)
+    if (type == "double")
         return DOUBLE;
-    if (strcmp(type, "string") == 0)
+    if (type == "string")
         return STRING;
     throw SALOME_Exception("Bad type");
 }

@@ -310,12 +310,11 @@ So
   </geometry>
   <groups>
     <group name="boite_1" dimension="solid" count="1">
-      <element index="1" />
+      <element index="0" />
     </group>
     <group name="" dimension="face" count="3">
-      <element index="5" />
-      <element index="8" />
-      <element index="9" />
+      <element index="0" />
+      <element index="1" />
     </group>
   </groups>
 </XAO>

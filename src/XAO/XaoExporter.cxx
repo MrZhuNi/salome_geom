@@ -7,6 +7,11 @@
 #include "Geometry.hxx"
 #include "Group.hxx"
 #include "Field.hxx"
+#include "Step.hxx"
+#include "BooleanStep.hxx"
+#include "IntegerStep.hxx"
+#include "DoubleStep.hxx"
+#include "StringStep.hxx"
 #include "XaoUtils.hxx"
 
 namespace XAO
@@ -63,16 +68,16 @@ namespace XAO
 
 using namespace XAO;
 
-bool XaoExporter::saveToFile(Xao* xaoObject, const char* fileName)
+const bool XaoExporter::saveToFile(Xao* xaoObject, const std::string& fileName)
 {
     xmlDocPtr doc = exportXMLDoc(xaoObject);
-    xmlSaveFormatFileEnc(fileName, doc, "UTF-8", 2);
+    xmlSaveFormatFileEnc(fileName.c_str(), doc, "UTF-8", 2);
     xmlFreeDoc(doc);
 
     return true;
 }
 
-const char* XaoExporter::saveToXml(Xao* xaoObject)
+const std::string XaoExporter::saveToXml(Xao* xaoObject)
 {
     xmlDocPtr doc = exportXMLDoc(xaoObject);
 
@@ -92,8 +97,8 @@ xmlDocPtr XaoExporter::exportXMLDoc(Xao* xaoObject)
     xmlNodePtr xao = xmlNewNode(0, C_TAG_XAO);
     xmlDocSetRootElement(masterDocument, xao);
 
-    xmlNewProp(xao, C_ATTR_XAO_VERSION, BAD_CAST xaoObject->getVersion());
-    xmlNewProp(xao, C_ATTR_XAO_AUTHOR, BAD_CAST xaoObject->getAuthor());
+    xmlNewProp(xao, C_ATTR_XAO_VERSION, BAD_CAST xaoObject->getVersion().c_str());
+    xmlNewProp(xao, C_ATTR_XAO_AUTHOR, BAD_CAST xaoObject->getAuthor().c_str());
 
     if (xaoObject->getGeometry() != NULL)
     {
@@ -107,7 +112,7 @@ xmlDocPtr XaoExporter::exportXMLDoc(Xao* xaoObject)
 }
 
 void XaoExporter::exportGeometricElements(Geometry* xaoGeometry,
-        xmlNodePtr topology, Dimension dim, const xmlChar* colTag, const xmlChar* eltTag)
+        xmlNodePtr topology, XAO::Dimension dim, const xmlChar* colTag, const xmlChar* eltTag)
 {
     xmlNodePtr vertices = xmlNewChild(topology, 0, colTag, 0);
     xmlNewProp(vertices, C_ATTR_COUNT, BAD_CAST XaoUtils::intToString(xaoGeometry->countVertices()).c_str());
@@ -120,8 +125,8 @@ void XaoExporter::exportGeometricElements(Geometry* xaoGeometry,
         xmlNewProp(vertex, C_ATTR_ELT_INDEX, BAD_CAST XaoUtils::intToString(index).c_str());
         //xmlNewProp(vertex, C_ATTR_ELT_NAME, BAD_CAST xaoGeometry->getVertexName(i));
         //xmlNewProp(vertex, C_ATTR_ELT_REFERENCE, BAD_CAST xaoGeometry->getVertexReference(i));
-        xmlNewProp(vertex, C_ATTR_ELT_NAME, BAD_CAST elt.getName());
-        xmlNewProp(vertex, C_ATTR_ELT_REFERENCE, BAD_CAST elt.getReference());
+        xmlNewProp(vertex, C_ATTR_ELT_NAME, BAD_CAST elt.getName().c_str());
+        xmlNewProp(vertex, C_ATTR_ELT_REFERENCE, BAD_CAST elt.getReference().c_str());
     }
 }
 
@@ -129,20 +134,20 @@ void XaoExporter::exportGeometry(Geometry* xaoGeometry, xmlDocPtr doc, xmlNodePt
 {
     // Geometric part
     xmlNodePtr geometry = xmlNewChild(xao, 0, C_TAG_GEOMETRY, 0);
-    xmlNewProp(geometry, C_ATTR_GEOMETRY_NAME, BAD_CAST xaoGeometry->getName());
+    xmlNewProp(geometry, C_ATTR_GEOMETRY_NAME, BAD_CAST xaoGeometry->getName().c_str());
 
     xmlNodePtr shape = xmlNewChild(geometry, 0, C_TAG_SHAPE, 0);
-    xmlNewProp(shape, C_ATTR_SHAPE_FORMAT, BAD_CAST xaoGeometry->getFormat());
+    xmlNewProp(shape, C_ATTR_SHAPE_FORMAT, BAD_CAST xaoGeometry->getFormat().c_str());
     const char* brep = xaoGeometry->getBREP();
     xmlNodePtr cdata = xmlNewCDataBlock(doc, BAD_CAST brep, strlen(brep));
     xmlAddChild(shape, cdata);
 
     xmlNodePtr topology = xmlNewChild(geometry, 0, C_TAG_TOPOLOGY, 0);
 
-    exportGeometricElements(xaoGeometry, topology, VERTEX, C_TAG_VERTICES, C_TAG_VERTEX);
-    exportGeometricElements(xaoGeometry, topology, EDGE, C_TAG_EDGES, C_TAG_EDGE);
-    exportGeometricElements(xaoGeometry, topology, FACE, C_TAG_FACES, C_TAG_FACE);
-    exportGeometricElements(xaoGeometry, topology, SOLID, C_TAG_SOLIDS, C_TAG_SOLID);
+    exportGeometricElements(xaoGeometry, topology, XAO::VERTEX, C_TAG_VERTICES, C_TAG_VERTEX);
+    exportGeometricElements(xaoGeometry, topology, XAO::EDGE, C_TAG_EDGES, C_TAG_EDGE);
+    exportGeometricElements(xaoGeometry, topology, XAO::FACE, C_TAG_FACES, C_TAG_FACE);
+    exportGeometricElements(xaoGeometry, topology, XAO::SOLID, C_TAG_SOLIDS, C_TAG_SOLID);
 }
 
 void XaoExporter::exportGroups(Xao* xaoObject, xmlNodePtr xao)
@@ -156,8 +161,8 @@ void XaoExporter::exportGroups(Xao* xaoObject, xmlNodePtr xao)
         //Group* grp = (*it);
         Group* grp = xaoObject->getGroup(i);
         xmlNodePtr group = xmlNewChild(groups, 0, C_TAG_GROUP, 0);
-        xmlNewProp(group, C_ATTR_GROUP_NAME, BAD_CAST grp->getName());
-        xmlNewProp(group, C_ATTR_GROUP_DIM, BAD_CAST XaoUtils::dimensionToString(grp->getDimension()));
+        xmlNewProp(group, C_ATTR_GROUP_NAME, BAD_CAST grp->getName().c_str());
+        xmlNewProp(group, C_ATTR_GROUP_DIM, BAD_CAST XaoUtils::dimensionToString(grp->getDimension()).c_str());
         xmlNewProp(group, C_ATTR_COUNT, BAD_CAST XaoUtils::intToString(grp->getCount()).c_str());
 
         for (int j = 0; j < grp->getCount(); j++)
@@ -178,8 +183,8 @@ void XaoExporter::exportFields(Xao* xaoObject, xmlNodePtr xao)
         Field* field = xaoObject->getField(i);
         xmlNodePtr nodeField = xmlNewChild(fields, 0, C_TAG_FIELD, 0);
         xmlNewProp(nodeField, C_ATTR_FIELD_NAME, BAD_CAST field->getName().c_str());
-        xmlNewProp(nodeField, C_ATTR_FIELD_TYPE, BAD_CAST XaoUtils::fieldTypeToString(field->getType()));
-        xmlNewProp(nodeField, C_ATTR_FIELD_DIMENSION, BAD_CAST XaoUtils::dimensionToString(field->getDimension()));
+        xmlNewProp(nodeField, C_ATTR_FIELD_TYPE, BAD_CAST XaoUtils::fieldTypeToString(field->getType()).c_str());
+        xmlNewProp(nodeField, C_ATTR_FIELD_DIMENSION, BAD_CAST XaoUtils::dimensionToString(field->getDimension()).c_str());
 
         int nbComponents = field->countComponents();
         xmlNodePtr components = xmlNewChild(nodeField, 0, C_TAG_COMPONENTS, 0);
@@ -196,11 +201,11 @@ void XaoExporter::exportFields(Xao* xaoObject, xmlNodePtr xao)
         xmlNodePtr nodeSteps = xmlNewChild(nodeField, 0, C_TAG_STEPS, 0);
         xmlNewProp(nodeSteps, C_ATTR_COUNT, BAD_CAST XaoUtils::intToString(nbSteps).c_str());
         //for (int j = 0; j < nbSteps; j++)
-//        for (stepIterator itStep = field->begin(); itStep != field->end(); itStep++)
-//        {
-//            Step* step = (*itStep).second;
-//            exportStep(step, field, nodeSteps);
-//        }
+        for (stepIterator itStep = field->begin(); itStep != field->end(); itStep++)
+        {
+            Step* step = *itStep;
+            exportStep(step, field, nodeSteps);
+        }
     }
 }
 
@@ -213,56 +218,25 @@ void XaoExporter::exportStep(Step* step, Field* field, xmlNodePtr nodeSteps)
         xmlNewProp(nodeStep, C_ATTR_STEP_STAMP, BAD_CAST XaoUtils::intToString(step->getStamp()).c_str());
     }
 
-    /*
-    for(stepElementIterator itElt = step->begin(); itElt != step->end(); itElt++)
+    for(int i = 0; i < step->countElements(); ++i)
     {
-        StepElement* elt = (*itElt);
         xmlNodePtr nodeElt = xmlNewChild(nodeStep, 0, C_TAG_ELEMENT, 0);
-        xmlNewProp(nodeElt, C_ATTR_ELEMENT_INDEX, BAD_CAST XaoUtils::intToString(elt->getElement()).c_str());
+        xmlNewProp(nodeElt, C_ATTR_ELEMENT_INDEX, BAD_CAST XaoUtils::intToString(i).c_str());
 
-        for (int i = 0; i < elt->getNbComponents(); i++)
+        for (int j = 0; j < step->countComponents(); ++j)
         {
-            // TODO: do other type
-            std::string content;
-            switch (field->getType())
-            {
-                case FIELD_BOOLEAN:
-                {
-                    BooleanStepElement* boolElt = (BooleanStepElement*)elt;
-                    content = (boolElt->getValue(i) ? "true" : "false");
-                    break;
-                }
-                case FIELD_STRING:
-                {
-                    StringStepElement* strElt = (StringStepElement*)elt;
-                    content = strElt->getValue(i);
-                    break;
-                }
-                case FIELD_INTEGER:
-                {
-                    IntegerStepElement* intElt = (IntegerStepElement*)elt;
-                    content = XaoUtils::intToString(intElt->getValue(i));
-                    break;
-                }
-                case FIELD_DOUBLE:
-                {
-                    DoubleStepElement* dElt = (DoubleStepElement*)elt;
-                    content = XaoUtils::doubleToString(dElt->getValue(i));
-                    break;
-                }
-            }
-
+            std::string content = step->getStringValue(i, j);
             xmlNodePtr nodeValue= xmlNewTextChild(nodeElt, 0, C_TAG_VALUE, BAD_CAST content.c_str());
-            xmlNewProp(nodeValue, C_ATTR_VALUE_COMPONENT, BAD_CAST XaoUtils::intToString(i).c_str());
+            xmlNewProp(nodeValue, C_ATTR_VALUE_COMPONENT, BAD_CAST XaoUtils::intToString(j).c_str());
         }
-    }*/
+    }
 }
 
-bool XaoExporter::readFromFile(const char* fileName, Xao* xaoObject)
+const bool XaoExporter::readFromFile(const std::string& fileName, Xao* xaoObject)
 {
     // parse the file and get the DOM
     int options = XML_PARSE_HUGE || XML_PARSE_NOCDATA;
-    xmlDocPtr doc = xmlReadFile(fileName, NULL, options);
+    xmlDocPtr doc = xmlReadFile(fileName.c_str(), NULL, options);
     if (doc == NULL)
     {
         throw SALOME_Exception("Cannot read XAO file");
@@ -272,10 +246,10 @@ bool XaoExporter::readFromFile(const char* fileName, Xao* xaoObject)
     return true;
 }
 
-bool XaoExporter::setXML(const char* xml, Xao* xaoObject)
+const bool XaoExporter::setXML(const std::string& xml, Xao* xaoObject)
 {
     int options = XML_PARSE_HUGE || XML_PARSE_NOCDATA;
-    xmlDocPtr doc = xmlReadDoc(BAD_CAST xml, "", NULL, options);
+    xmlDocPtr doc = xmlReadDoc(BAD_CAST xml.c_str(), "", NULL, options);
     if (doc == NULL)
     {
         throw SALOME_Exception("Cannot read XAO stream");
@@ -514,17 +488,14 @@ void XaoExporter::parseGroupNode(xmlNodePtr groupNode, Xao* xaoObject)
     if (dimension == NULL)
         throw SALOME_Exception("Bad dimension for group");
 
-    Group* group = new Group();
+    XAO::Dimension dim = XaoUtils::stringToDimension((char*)dimension);
+    Group* group = xaoObject->addGroup(dim);
+    xmlFree(dimension);
 
     xmlChar* name = xmlGetProp(groupNode, C_ATTR_GROUP_NAME);
     if (name == NULL) name = (xmlChar*)"";
     group->setName((char*)name);
     xmlFree(name);
-
-    group->setDimension(XaoUtils::stringToDimension((char*)dimension));
-    xmlFree(dimension);
-
-    xaoObject->addGroup(group);
 
     for (xmlNodePtr node = groupNode->children; node; node = node->next)
     {

@@ -61,6 +61,7 @@ void ImportExportTest::testExportGeometry()
     geom->setName("mygeom");
     xao.setGeometry(geom);
 
+    // add elements
     geom->setCountVertices(4);
     geom->setVertex(0, "v1", "1");
     geom->setVertex(1, "", "2");
@@ -79,24 +80,20 @@ void ImportExportTest::testExportGeometry()
     geom->setCountSolids(1);
     geom->setSolid(0, "s1", "10");
 
-    Group* group = new Group();
-    xao.addGroup(group);
+    // groups
+    Group* group = xao.addGroup(XAO::SOLID);
     group->setName("boite1");
-    group->setDimension(XAO::SOLID);
-    group->addElement(1);
+    group->addElement(0);
 
-    group = new Group();
-    xao.addGroup(group);
+    group = xao.addGroup(XAO::FACE);
     group->setName("faces");
-    group->setDimension(XAO::FACE);
-    group->addElement(5);
-    group->addElement(8);
-    group->addElement(9);
+    group->addElement(0);
+    group->addElement(1);
 
     bool res = xao.exportXAO("mygeom.xao");
     CPPUNIT_ASSERT(res);
 
-    const char* xml = xao.getXML();
+    std::string xml = xao.getXML();
     //CPPUNIT_ASSERT(strlen(xml) == 1007);
 }
 
@@ -121,54 +118,61 @@ void ImportExportTest::testImportXao()
 
 void ImportExportTest::checkImport(Xao& xao)
 {
-    CPPUNIT_ASSERT(strcmp(xao.getAuthor(), "me") == 0);
-    CPPUNIT_ASSERT(strcmp(xao.getVersion(), "1.0") == 0);
+//    std::string zz = "toto";
+//    std::cout << "?? " << (zz == "toto" ? "yes" : "no" ) << std::endl;
+//
+//    std::cout << std::endl << "Author = " << xao.getAuthor()
+//              << " : " << (xao.getAuthor() == "me" ? "yes" : "no")  << std::endl;
+//    std::cout << " : " << ("me" == xao.getAuthor() ? "yes" : "no")  << std::endl;
+//    std::cout << " : " << (xao.getAuthor().compare("me") ? "yes" : "no")  << std::endl;
+
+    CPPUNIT_ASSERT(xao.getAuthor() == "me");
+    CPPUNIT_ASSERT(xao.getVersion() == "1.0");
 
     Geometry* geom = xao.getGeometry();
     CPPUNIT_ASSERT(geom != NULL);
-    CPPUNIT_ASSERT(strcmp(geom->getName(), "mygeom") == 0);
+    CPPUNIT_ASSERT(geom->getName() == "mygeom");
 
     CPPUNIT_ASSERT(geom->countVertices() == 4);
-    CPPUNIT_ASSERT(strcmp(geom->getVertexName(0), "v1") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getVertexReference(0), "1") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getVertexName(1), "") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getVertexReference(1), "2") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getVertexName(2), "v3") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getVertexReference(2), "3") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getVertexName(3), "") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getVertexReference(3), "4") == 0);
+    CPPUNIT_ASSERT(geom->getVertexName(0) == "v1");
+    CPPUNIT_ASSERT(geom->getVertexReference(0) == "1");
+    CPPUNIT_ASSERT(geom->getVertexName(1) == "");
+    CPPUNIT_ASSERT(geom->getVertexReference(1) == "2");
+    CPPUNIT_ASSERT(geom->getVertexName(2) == "v3");
+    CPPUNIT_ASSERT(geom->getVertexReference(2) == "3");
+    CPPUNIT_ASSERT(geom->getVertexName(3) == "");
+    CPPUNIT_ASSERT(geom->getVertexReference(3) == "4");
 
     CPPUNIT_ASSERT(geom->countEdges() == 3);
-    CPPUNIT_ASSERT(strcmp(geom->getEdgeName(0), "e1") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getEdgeReference(0), "5") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getEdgeName(1), "") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getEdgeReference(1), "6") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getEdgeName(2), "e3") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getEdgeReference(2), "7") == 0);
+    CPPUNIT_ASSERT(geom->getEdgeName(0) == "e1");
+    CPPUNIT_ASSERT(geom->getEdgeReference(0) == "5");
+    CPPUNIT_ASSERT(geom->getEdgeName(1) == "");
+    CPPUNIT_ASSERT(geom->getEdgeReference(1) == "6");
+    CPPUNIT_ASSERT(geom->getEdgeName(2) == "e3");
+    CPPUNIT_ASSERT(geom->getEdgeReference(2) == "7");
 
     CPPUNIT_ASSERT(geom->countFaces() == 2);
-    CPPUNIT_ASSERT(strcmp(geom->getFaceName(0), "f1") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getFaceReference(0), "8") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getFaceName(1), "") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getFaceReference(1), "9") == 0);
+    CPPUNIT_ASSERT(geom->getFaceName(0) == "f1");
+    CPPUNIT_ASSERT(geom->getFaceReference(0) == "8");
+    CPPUNIT_ASSERT(geom->getFaceName(1) == "");
+    CPPUNIT_ASSERT(geom->getFaceReference(1) == "9");
 
     CPPUNIT_ASSERT(geom->countSolids() == 1);
-    CPPUNIT_ASSERT(strcmp(geom->getSolidName(0), "s1") == 0);
-    CPPUNIT_ASSERT(strcmp(geom->getSolidReference(0), "10") == 0);
+    CPPUNIT_ASSERT(geom->getSolidName(0) == "s1");
+    CPPUNIT_ASSERT(geom->getSolidReference(0) == "10");
 
     CPPUNIT_ASSERT(xao.countGroups() == 2);
     Group* group = xao.getGroup(0);
     CPPUNIT_ASSERT(group->getCount() == 1);
-    CPPUNIT_ASSERT(strcmp(group->getName(), "boite_1") == 0);
+    CPPUNIT_ASSERT(group->getName() == "boite_1");
     CPPUNIT_ASSERT(group->getDimension() == XAO::SOLID);
-    CPPUNIT_ASSERT(group->getElement(0) == 1);
+    CPPUNIT_ASSERT(group->getElement(0) == 0);
     group = xao.getGroup(1);
-    CPPUNIT_ASSERT(group->getCount() == 3);
-    CPPUNIT_ASSERT(strcmp(group->getName(), "") == 0);
+    CPPUNIT_ASSERT(group->getCount() == 2);
+    CPPUNIT_ASSERT(group->getName() == "");
     CPPUNIT_ASSERT(group->getDimension() == XAO::FACE);
-    CPPUNIT_ASSERT(group->getElement(0) == 5);
-    CPPUNIT_ASSERT(group->getElement(1) == 8);
-    CPPUNIT_ASSERT(group->getElement(2) == 9);
+    CPPUNIT_ASSERT(group->getElement(0) == 0);
+    CPPUNIT_ASSERT(group->getElement(1) == 1);
 }
 
 void ImportExportTest::testImportXaoFromText()

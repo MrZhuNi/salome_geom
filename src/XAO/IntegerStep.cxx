@@ -20,25 +20,26 @@
 
 #include "IntegerStep.hxx"
 #include <Utils_SALOME_Exception.hxx>
+#include "XaoUtils.hxx"
 
 using namespace XAO;
 
 IntegerStep::IntegerStep(const int& nbElements, const int& nbComponents)
 {
-    Init(0, 0, nbElements, nbComponents);
+    init(0, 0, nbElements, nbComponents);
 }
 
 IntegerStep::IntegerStep(const int& step, const int& nbElements, const int& nbComponents)
 {
-    Init(step, 0, nbElements, nbComponents);
+    init(step, 0, nbElements, nbComponents);
 }
 
 IntegerStep::IntegerStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
 {
-    Init(step, stamp, nbElements, nbComponents);
+    init(step, stamp, nbElements, nbComponents);
 }
 
-void IntegerStep::Init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
+void IntegerStep::init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
 {
     m_nbElements = nbElements;
     m_nbComponents = nbComponents;
@@ -104,6 +105,11 @@ const int IntegerStep::getValue(const int& element, const int& component)
     return m_values[element][component];
 }
 
+const std::string IntegerStep::getStringValue(const int& element, const int& component)
+{
+    return XaoUtils::intToString(getValue(element, component));
+}
+
 void IntegerStep::setValues(const std::vector<int>& values)
 {
     if (values.size() != m_nbComponents * m_nbElements)
@@ -144,4 +150,9 @@ void IntegerStep::setValue(const int& element, const int& component, const int& 
     checkComponent(component);
 
     m_values[element][component] = value;
+}
+
+void IntegerStep::setStringValue(const int& element, const int& component, const std::string& value)
+{
+    setValue(element, component, XaoUtils::stringToInt(value));
 }

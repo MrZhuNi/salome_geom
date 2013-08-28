@@ -68,6 +68,9 @@ namespace XAO
 
         const int countValues() { return m_nbElements * m_nbComponents; }
 
+        virtual const std::string getStringValue(const int& element, const int& component) = 0;
+        virtual void setStringValue(const int& element, const int& component, const std::string& value) = 0;
+
     protected:
         void checkElement(const int& element);
         void checkComponent(const int& component);
