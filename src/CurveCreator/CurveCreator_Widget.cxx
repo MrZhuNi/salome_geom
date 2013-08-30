@@ -72,10 +72,12 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
 
     QAction* anAct = createAction( UNDO_ID, tr("UNDO"), anUndoPixmap, tr("UNDO_TLT"), 
                                    QKeySequence(Qt::ControlModifier|Qt::Key_Z) );
+    connect(anAct, SIGNAL(triggered()), this, SLOT(onUndo()) );
     aTB->addAction(anAct);
 
     anAct = createAction( REDO_ID, tr("REDO"), aRedoPixmap, tr("REDO_TLT"), 
                           QKeySequence(Qt::ControlModifier|Qt::Key_Y) );
+    connect(anAct, SIGNAL(triggered()), this, SLOT(onRedo()) );
     aTB->addAction(anAct);
 
     aTB->addSeparator();
@@ -179,6 +181,7 @@ void CurveCreator_Widget::setCurve( CurveCreator_Curve* theCurve )
     myEdit = new CurveCreator_CurveEditor(myCurve);
   }
   onSelectionChanged();
+  updateUndoRedo();
 }
 
 void CurveCreator_Widget::onSelectionChanged()
@@ -251,6 +254,7 @@ void CurveCreator_Widget::onSelectionChanged()
       }
     }
   }
+  emit selectionChanged();
 }
 
 void CurveCreator_Widget::onNewPoint()
@@ -297,6 +301,7 @@ void CurveCreator_Widget::onAddNewPoint()
   myNewPointEditor->clear();
   myPointNum++;
   onSelectionChanged();
+  updateUndoRedo();
 }
 
 void CurveCreator_Widget::onNewSection()
@@ -324,6 +329,7 @@ void CurveCreator_Widget::onAddNewSection()
   myNewSectionEditor->setSectionName(aNewName);
   mySection++;
   onSelectionChanged();
+  updateUndoRedo();
 }
 
 QAction* CurveCreator_Widget::createAction( ActionId theId, const QString& theName, const QPixmap& theImage,
@@ -360,10 +366,13 @@ void CurveCreator_Widget::onEditSection( int theSection )
     QString aName = myNewSectionEditor->getName();
     bool    isClosed = myNewSectionEditor->isClosed();
     CurveCreator::Type aSectType = myNewSectionEditor->getSectionType();
+    myEdit->startOperation();
     myEdit->setClosed( isClosed, mySection );
     myEdit->setName( aName.toStdString(), mySection );
     myEdit->setType( aSectType, mySection );
+    myEdit->finishOperation();
     mySectionView->sectionChanged(mySection);
+    updateUndoRedo();
   }
 }
 
@@ -383,6 +392,7 @@ void CurveCreator_Widget::onEditPoint( int theSection, int thePoint )
     aCoords = myNewPointEditor->getCoordinates();
     myEdit->setCoordinates(aCoords, theSection, thePoint);
     mySectionView->pointDataChanged(theSection, thePoint );
+    updateUndoRedo();
   }
 }
 
@@ -396,14 +406,17 @@ void CurveCreator_Widget::onJoin()
   }
   int aMainSect = aSections[0];
   int aMainSectSize = myCurve->getNbPoints(aMainSect);
+  myEdit->startOperation();
   for( int i = 1 ; i < aSections.size() ; i++ ){
     int aSectNum = aSections[i] - (i-1);
     myEdit->join( aMainSect, aSectNum );
     mySectionView->sectionsRemoved( aSectNum );
   }
+  myEdit->finishOperation();
   int aNewSectSize = myCurve->getNbPoints(aMainSect);
   if( aNewSectSize != aMainSectSize )
     mySectionView->pointsAdded( aMainSect, aMainSectSize, aNewSectSize-aMainSectSize );
+  updateUndoRedo();
 }
 
 void CurveCreator_Widget::onRemove()
@@ -413,6 +426,7 @@ void CurveCreator_Widget::onRemove()
   QList< QPair<int,int> > aSelPoints = mySectionView->getSelectedPoints();
   int aCurrSect=-1;
   int aRemoveCnt = 0;
+  myEdit->startOperation();
   for( int i = 0 ; i < aSelPoints.size() ; i++ ){
     if( aCurrSect != aSelPoints[i].first ){
       aRemoveCnt = 0;
@@ -429,7 +443,9 @@ void CurveCreator_Widget::onRemove()
     myEdit->removeSection( aSectNum );
     mySectionView->sectionsRemoved( aSectNum );
   }
+  myEdit->finishOperation();
   mySectionView->clearSelection();
+  updateUndoRedo();
 }
 
 void CurveCreator_Widget::onMoveUp()
@@ -455,6 +471,7 @@ void CurveCreator_Widget::onMoveUp()
       mySectionView->pointsSwapped( aSection, aPoint, -1 );
     }
   }
+  updateUndoRedo();
 }
 
 void CurveCreator_Widget::onMoveDown()
@@ -480,6 +497,7 @@ void CurveCreator_Widget::onMoveDown()
       mySectionView->pointsSwapped( aSection, aPoint, 1 );
     }
   }
+  updateUndoRedo();
 }
 
 void CurveCreator_Widget::onClearAll()
@@ -489,6 +507,7 @@ void CurveCreator_Widget::onClearAll()
   myEdit->clear();
   mySectionView->reset();
   onSelectionChanged();
+  updateUndoRedo();
 }
 
 void CurveCreator_Widget::onJoinAll()
@@ -498,6 +517,7 @@ void CurveCreator_Widget::onJoinAll()
   myEdit->join();
   mySectionView->reset();
   onSelectionChanged();
+  updateUndoRedo();
 }
 
 void CurveCreator_Widget::onInsertSectionBefore()
@@ -530,53 +550,103 @@ void CurveCreator_Widget::onSetSpline()
   if( !myEdit )
     return;
   QList<int> aSelSections = mySectionView->getSelectedSections();
+  myEdit->startOperation();
   for( int i = 0 ; i < aSelSections.size() ; i++ ){
     myEdit->setType(CurveCreator::BSpline, aSelSections[i]);
     mySectionView->sectionChanged(aSelSections[i]);
   }
+  myEdit->finishOperation();
+  updateUndoRedo();
 }
 
 void CurveCreator_Widget::onSetPolyline()
 {
   if( !myEdit )
     return;
+  myEdit->startOperation();
   QList<int> aSelSections = mySectionView->getSelectedSections();
   for( int i = 0 ; i < aSelSections.size() ; i++ ){
     myEdit->setType(CurveCreator::Polyline, aSelSections[i]);
     mySectionView->sectionChanged(aSelSections[i]);
   }
+  myEdit->finishOperation();
+  updateUndoRedo();
 }
 
 void CurveCreator_Widget::onCloseSections()
 {
   if( !myEdit )
     return;
+  myEdit->startOperation();
   QList<int> aSelSections = mySectionView->getSelectedSections();
   for( int i = 0 ; i < aSelSections.size() ; i++ ){
     myEdit->setClosed(true, aSelSections[i]);
     mySectionView->sectionChanged(aSelSections[i]);
   }
+  myEdit->finishOperation();
+  updateUndoRedo();
 }
 
 void CurveCreator_Widget::onUncloseSections()
 {
   if( !myEdit )
     return;
+  myEdit->startOperation();
   QList<int> aSelSections = mySectionView->getSelectedSections();
   for( int i = 0 ; i < aSelSections.size() ; i++ ){
     myEdit->setClosed(false, aSelSections[i]);
     mySectionView->sectionChanged(aSelSections[i]);
   }
+  myEdit->finishOperation();
+  updateUndoRedo();
+}
+
+void CurveCreator_Widget::onUndo()
+{
+    if( !myEdit )
+      return;
+    myEdit->undo();
+    mySectionView->reset();
+    updateUndoRedo();
+}
+
+void CurveCreator_Widget::onRedo()
+{
+    if( !myEdit )
+      return;
+    myEdit->redo();
+    mySectionView->reset();
+    updateUndoRedo();
+}
+
+void CurveCreator_Widget::updateUndoRedo()
+{
+    QAction* anAct = myActionMap[UNDO_ID];
+    if( anAct != 0 ){
+        if( myEdit->getNbUndo() != 0 ){
+            anAct->setEnabled(true);
+        }
+        else{
+            anAct->setDisabled(true);
+        }
+    }
+    anAct = myActionMap[REDO_ID];
+    if( anAct != 0 ){
+        if( myEdit->getNbRedo() != 0 ){
+            anAct->setEnabled(true);
+        }
+        else{
+            anAct->setDisabled(true);
+        }
+    }
 }
 
 void CurveCreator_Widget::onContextMenu( QPoint thePoint )
 {
   QList<ActionId> aContextActions;
   aContextActions << CLEAR_ALL_ID << JOIN_ALL_ID << SEPARATOR_ID <<
-                     INSERT_SECTION_BEFORE_ID << INSERT_SECTION_AFTER_ID << SEPARATOR_ID <<
                      CLOSE_SECTIONS_ID << UNCLOSE_SECTIONS_ID << SET_SECTIONS_POLYLINE_ID <<
-                     SET_SECTIONS_SPLINE_ID << SEPARATOR_ID <<
-                     INSERT_POINT_BEFORE_ID << INSERT_POINT_AFTER_ID;
+                     SET_SECTIONS_SPLINE_ID;
   QPoint aGlPoint = mySectionView->mapToGlobal(thePoint);
   bool isVis = false;
   QList<ActionId> aResAct;
@@ -608,4 +678,14 @@ void CurveCreator_Widget::onContextMenu( QPoint thePoint )
     }
   }
   aMenu->exec(aGlPoint);
+}
+
+QList<int> CurveCreator_Widget::getSelectedSections()
+{
+  return mySectionView->getSelectedSections();
+}
+
+QList< QPair< int, int > > CurveCreator_Widget::getSelectedPoints()
+{
+  return mySectionView->getSelectedPoints();
 }

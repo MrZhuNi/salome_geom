@@ -315,6 +315,40 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
 //=======================================================================
 bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
                              const CurveCreator_Operation::Type theType,
+                             const std::string& theName,
+                             const CurveCreator::Coordinates &theCoords,
+                             const int theIntParam1,
+                             const int theIntParam2)
+{
+    bool isOK = false;
+
+    if (theCurve != NULL) {
+      clear();
+
+      // Set redo.
+      myPRedo = new CurveCreator_Operation;
+
+      if (myPRedo->init(theType, theName, theCoords, theIntParam1, theIntParam2)) {
+        // Construct undo for different commands.
+        switch (theType) {
+          case CurveCreator_Operation::AddSection:
+            setNbUndos(1);
+            isOK = myPUndo[0].init(CurveCreator_Operation::RemoveSection, -1);
+            break;
+        }
+      }
+    }
+    if( !isOK )
+        clear();
+    return isOK;
+}
+
+//=======================================================================
+// function: init
+// purpose:
+//=======================================================================
+bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
+                             const CurveCreator_Operation::Type theType,
                              const CurveCreator::Coordinates &theCoords,
                              const int theIntParam1,
                              const int theIntParam2)
@@ -330,10 +364,6 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
     if (myPRedo->init(theType, theCoords, theIntParam1, theIntParam2)) {
       // Construct undo for different commands.
       switch (theType) {
-        case CurveCreator_Operation::AddSection:
-          setNbUndos(1);
-          isOK = myPUndo[0].init(CurveCreator_Operation::RemoveSection, -1);
-          break;
         case CurveCreator_Operation::InsertPoints:
           {
             const CurveCreator::Dimension aDim = theCurve->getDimension();
@@ -372,6 +402,30 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
     }
   }
 
+  return isOK;
+}
+
+bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
+                             const CurveCreator_Operation::Type theType,
+                             const std::string &theName,
+                             const int theIntParam1 )
+{
+  bool isOK = false;
+  myPRedo = new CurveCreator_Operation;
+
+  if (myPRedo->init(theType, theName, theIntParam1 )) {
+    // Construct undo for different commands.
+    switch (theType) {
+      case CurveCreator_Operation::RenameSection:
+        setNbUndos(1);
+        isOK = myPUndo[0].init(CurveCreator_Operation::RenameSection,
+                               theCurve->getSectionName(theIntParam1), theIntParam1);
+        break;
+    }
+  }
+  if( !isOK ){
+    clear();
+  }
   return isOK;
 }
 

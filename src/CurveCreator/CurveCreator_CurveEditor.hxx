@@ -146,6 +146,8 @@ public:
   //! Join all sections to the single curve
   void join();
 
+  void startOperation();
+  void finishOperation();
 private:
 
   /** This method updates all undo/redo information required to be updated
@@ -162,7 +164,7 @@ private:
   ListDiff myListDiffs;
   CurveCreator_Curve* myPCurve;
   int myUndoDepth;
-
+  int myOpLevel;
 };
 
 #endif

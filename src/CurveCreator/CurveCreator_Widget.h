@@ -24,8 +24,12 @@ public:
 
     void setCurve( CurveCreator_Curve* theCurve );
 
+    QList<int> getSelectedSections();
+    QList< QPair< int, int > > getSelectedPoints();
+
 signals:
-    
+    void selectionChanged();
+
 public slots:
 
 protected slots:
@@ -50,6 +54,8 @@ protected slots:
     void     onUncloseSections();
     void     onInsertPointBefore();
     void     onInsertPointAfter();
+    void     onUndo();
+    void     onRedo();
     void     onUndoSettings();
     void     onContextMenu(QPoint thePoint);
 protected:
@@ -61,6 +67,7 @@ private:
     QAction* createAction( ActionId theId, const QString& theName, const QPixmap& theImage,
                            const QString& theToolTip, const QKeySequence& theShortcut );
     QAction* getAction(ActionId theId);
+    void     updateUndoRedo();
 private:
     QMap<ActionId, QAction*>    myActionMap;
     CurveCreator_Curve*         myCurve;

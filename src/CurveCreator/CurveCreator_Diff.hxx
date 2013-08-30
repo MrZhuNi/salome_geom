@@ -125,7 +125,6 @@ public:
    * CurveCreator::Coordinates parameter and two integer parameters.
    * It is applicable to the following operations:
    * <UL>
-   *   <LI>AddSection</LI>
    *   <LI>InsertPoints</LI>
    *   <LI>SetCoordinates</LI>
    * </UL>
@@ -135,6 +134,34 @@ public:
             const CurveCreator::Coordinates &theCoords,
             const int theIntParam1,
             const int theIntParam2);
+
+  /**
+   * This method initializes the difference with an operation with one
+   * Name, one CurveCreator::Coordinates parameter and two integer parameters.
+   * It is applicable to the following operations:
+   * <UL>
+   *   <LI>AddSection</LI>
+   * </UL>
+   */
+  bool init(const CurveCreator_Curve *theCurve,
+            const CurveCreator_Operation::Type theType,
+            const std::string& theName,
+            const CurveCreator::Coordinates &theCoords,
+            const int theIntParam1,
+            const int theIntParam2);
+
+  /**
+   * This method initializes the difference with an operation with one
+   * string and one integer parameters.
+   * It is applicable to the following operations:
+   * <UL>
+   *   <LI>RenameSection</LI>
+   * </UL>
+   */
+  bool init(const CurveCreator_Curve *theCurve,
+            const CurveCreator_Operation::Type theType,
+            const std::string &theName,
+            const int theIntParam1 );
 
   /**
    * This method applies undo operation to theCurve.

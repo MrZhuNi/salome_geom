@@ -37,7 +37,8 @@ CurveCreator_CurveEditor::CurveCreator_CurveEditor
  : myNbUndos   (0),
    myNbRedos   (0),
    myPCurve    (thePCurve),
-   myUndoDepth (-1)
+   myUndoDepth (-1),
+   myOpLevel(0)
 {
   if (myPCurve != NULL) {
     if (myPCurve->isLocked()) {
@@ -193,6 +194,7 @@ void CurveCreator_CurveEditor::setType(const CurveCreator::Type theType,
                                        const int theISection)
 {
   if (myPCurve != NULL) {
+    startOperation();
     // Set the difference.
     if (addEmptyDiff()) {
       myListDiffs.back().init(myPCurve, CurveCreator_Operation::SetType,
@@ -201,6 +203,7 @@ void CurveCreator_CurveEditor::setType(const CurveCreator::Type theType,
 
     // Update the curve.
     myPCurve->setType(theType, theISection);
+    finishOperation();
   }
 }
 
@@ -214,6 +217,7 @@ void CurveCreator_CurveEditor::addPoints
 {
   if (myPCurve != NULL) {
     // Set the difference.
+    startOperation();
     if (addEmptyDiff()) {
       myListDiffs.back().init(myPCurve, CurveCreator_Operation::AddPoints,
                               thePoints, theISection);
@@ -221,6 +225,7 @@ void CurveCreator_CurveEditor::addPoints
 
     // Update the curve.
     myPCurve->addPoints(thePoints, theISection);
+    finishOperation();
   }
 }
 
@@ -235,13 +240,15 @@ void CurveCreator_CurveEditor::addSection
 {
   if (myPCurve != NULL) {
     // Set the difference.
+    startOperation();
     if (addEmptyDiff()) {
       myListDiffs.back().init(myPCurve, CurveCreator_Operation::AddSection,
-                              thePoints, theType, theIsClosed);
+                              theName, thePoints, theType, theIsClosed);
     }
 
     // Update the curve.
     myPCurve->addSection(theName, theType, theIsClosed, thePoints);
+    finishOperation();
   }
 }
 
@@ -253,6 +260,7 @@ void CurveCreator_CurveEditor::removeSection(const int theISection)
 {
   if (myPCurve != NULL) {
     // Set the difference.
+    startOperation();
     if (addEmptyDiff()) {
       myListDiffs.back().init(myPCurve, CurveCreator_Operation::RemoveSection,
                               theISection);
@@ -260,6 +268,7 @@ void CurveCreator_CurveEditor::removeSection(const int theISection)
 
     // Update the curve.
     myPCurve->removeSection(theISection);
+    finishOperation();
   }
 }
 
@@ -274,6 +283,7 @@ void CurveCreator_CurveEditor::insertPoints
 {
   if (myPCurve != NULL) {
     // Set the difference.
+    startOperation();
     if (addEmptyDiff()) {
       myListDiffs.back().init(myPCurve, CurveCreator_Operation::InsertPoints,
                               thePoints, theISection, theIPnt);
@@ -281,6 +291,7 @@ void CurveCreator_CurveEditor::insertPoints
 
     // Update the curve.
     myPCurve->insertPoints(thePoints, theISection, theIPnt);
+    finishOperation();
   }
 }
 
@@ -292,7 +303,9 @@ void CurveCreator_CurveEditor::movePoint(const int theISection,
                 const int theOrigIPnt,
                 const int theNewIPnt )
 {
+    startOperation();
     myPCurve->movePoint(theISection, theOrigIPnt, theNewIPnt);
+    finishOperation();
 }
 
 //=======================================================================
@@ -306,6 +319,7 @@ void CurveCreator_CurveEditor::removePoints
 {
   if (myPCurve != NULL) {
     // Set the difference.
+    startOperation();
     if (addEmptyDiff()) {
       myListDiffs.back().init(myPCurve, CurveCreator_Operation::RemovePoints,
                               theISection, theIPnt, theNbPoints);
@@ -313,6 +327,7 @@ void CurveCreator_CurveEditor::removePoints
 
     // Update the curve.
     myPCurve->removePoints(theISection, theIPnt, theNbPoints);
+    finishOperation();
   }
 }
 
@@ -323,6 +338,7 @@ void CurveCreator_CurveEditor::removePoints
 void CurveCreator_CurveEditor::clear()
 {
   if (myPCurve != NULL) {
+    startOperation();
     // Set the difference.
     if (addEmptyDiff()) {
       myListDiffs.back().init(myPCurve, CurveCreator_Operation::Clear);
@@ -330,6 +346,7 @@ void CurveCreator_CurveEditor::clear()
 
     // Update the curve.
     myPCurve->clear();
+    finishOperation();
   }
 }
 
@@ -344,6 +361,7 @@ void CurveCreator_CurveEditor::setCoordinates
 {
   if (myPCurve != NULL) {
     // Set the difference.
+    startOperation();
     if (addEmptyDiff()) {
       myListDiffs.back().init(myPCurve, CurveCreator_Operation::SetCoordinates,
                               theCoords, theISection, theIPnt);
@@ -351,6 +369,7 @@ void CurveCreator_CurveEditor::setCoordinates
 
     // Update the curve.
     myPCurve->setCoordinates(theCoords, theISection, theIPnt);
+    finishOperation();
   }
 }
 
@@ -363,6 +382,7 @@ void CurveCreator_CurveEditor::setClosed(const bool theIsClosed,
 {
   if (myPCurve != NULL) {
     // Set the difference.
+    startOperation();
     if (addEmptyDiff()) {
       myListDiffs.back().init(myPCurve, CurveCreator_Operation::SetClosed,
                               theIsClosed, theISection);
@@ -370,6 +390,7 @@ void CurveCreator_CurveEditor::setClosed(const bool theIsClosed,
 
     // Update the curve.
     myPCurve->setClosed(theIsClosed, theISection);
+    finishOperation();
   }
 }
 
@@ -380,7 +401,16 @@ void CurveCreator_CurveEditor::setClosed(const bool theIsClosed,
 void CurveCreator_CurveEditor::setName(const std::string& theName,
                                          const int theISection)
 {
-    myPCurve->setName( theName, theISection );
+    if (myPCurve != NULL) {
+      // Set the difference.
+      startOperation();
+      if (addEmptyDiff()) {
+        myListDiffs.back().init(myPCurve, CurveCreator_Operation::RenameSection,
+                                theName, theISection);
+      }
+      myPCurve->setName( theName, theISection );
+      finishOperation();
+    }
 }
 
 //=======================================================================
@@ -392,6 +422,7 @@ void CurveCreator_CurveEditor::moveSection(const int theISection,
 {
   if (myPCurve != NULL) {
     // Set the difference.
+    startOperation();
     if (addEmptyDiff()) {
       myListDiffs.back().init(myPCurve, CurveCreator_Operation::MoveSection,
                               theISection, theNewIndex);
@@ -399,6 +430,7 @@ void CurveCreator_CurveEditor::moveSection(const int theISection,
 
     // Update the curve.
     myPCurve->moveSection(theISection, theNewIndex);
+    finishOperation();
   }
 }
 
@@ -411,6 +443,7 @@ void CurveCreator_CurveEditor::join(const int theISectionTo,
 {
   if (myPCurve != NULL) {
     // Set the difference.
+    startOperation();
     if (addEmptyDiff()) {
       myListDiffs.back().init(myPCurve, CurveCreator_Operation::Join,
                               theISectionTo, theISectionFrom);
@@ -418,6 +451,7 @@ void CurveCreator_CurveEditor::join(const int theISectionTo,
 
     // Update the curve.
     myPCurve->join(theISectionTo, theISectionFrom);
+    finishOperation();
   }
 }
 
@@ -429,12 +463,14 @@ void CurveCreator_CurveEditor::join()
 {
   if (myPCurve != NULL) {
     // Set the difference.
+    startOperation();
     if (addEmptyDiff()) {
       myListDiffs.back().init(myPCurve, CurveCreator_Operation::Join);
     }
 
     // Update the curve.
     myPCurve->join();
+    finishOperation();
   }
 }
 
@@ -468,4 +504,14 @@ bool CurveCreator_CurveEditor::addEmptyDiff()
   }
 
   return isEnabled;
+}
+
+void CurveCreator_CurveEditor::startOperation()
+{
+    myOpLevel++;
+}
+
+void CurveCreator_CurveEditor::finishOperation()
+{
+   myOpLevel--;
 }

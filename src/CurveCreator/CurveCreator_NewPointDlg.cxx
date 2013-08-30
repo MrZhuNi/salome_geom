@@ -11,7 +11,7 @@
 #include <QLocale>
 
 CurveCreator_NewPointDlg::CurveCreator_NewPointDlg(CurveCreator::Dimension theDim, QWidget *parent) :
-  QDialog(parent), myX(NULL), myY(NULL), myZ(NULL), myIsEdit(false)
+  QDialog(parent), myX(NULL), myY(NULL), myZ(NULL), myIsEdit(false), myDim(theDim)
 {
   QGridLayout* aCoordLay = new QGridLayout();
 
@@ -98,7 +98,7 @@ CurveCreator::Coordinates CurveCreator_NewPointDlg::getCoordinates() const
   aCoords.push_back(anX);
   double anY = myY->value();
   aCoords.push_back(anY);
-  if( myZ->isVisible() ){
+  if( myDim == CurveCreator::Dim3d ){
     double aZ = myZ->value();
     aCoords.push_back(aZ);
   }

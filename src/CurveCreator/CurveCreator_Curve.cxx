@@ -28,6 +28,7 @@
 
 #include <CurveCreator_Curve.hxx>
 #include <CurveCreator_Section.hxx>
+#include <CurveCreator_Listener.hxx>
 
 #include <stdio.h>
 
@@ -38,7 +39,8 @@
 CurveCreator_Curve::CurveCreator_Curve
                 (const CurveCreator::Dimension theDimension)
 : myIsLocked  (false),
-  myDimension (theDimension)
+  myDimension (theDimension),
+  myListener(NULL)
 {
 }
 
@@ -163,8 +165,14 @@ void CurveCreator_Curve::setType
     for (; i < aNbSections; i++) {
       mySections[i]->myType = theType;
     }
+    if( myListener )
+      myListener->curveChanged();
   } else {
-    mySections.at(theISection)->myType = theType;
+    if( mySections.at(theISection)->myType != theType ){
+      mySections.at(theISection)->myType = theType;
+      if( myListener )
+        myListener->sectionTypeChanged(theISection);
+    }
   }
 }
 
@@ -180,6 +188,8 @@ void CurveCreator_Curve::addPoints
 
   aSection->myPoints.insert(aSection->myPoints.end(),
                             thePoints.begin(), thePoints.end());
+  if( myListener )
+    myListener->pointInserted( theISection, -1 );
 }
 
 //=======================================================================
@@ -203,6 +213,8 @@ void CurveCreator_Curve::addSection
   aSection->myIsClosed = theIsClosed;
   aSection->myPoints   = thePoints;
   mySections.push_back(aSection);
+  if( myListener )
+    myListener->sectionAdded( -1 );
 }
 
 //=======================================================================
@@ -220,6 +232,7 @@ void CurveCreator_Curve::removeSection(const int theISection)
     delete *anIterRm;
     mySections.erase(anIterRm);
   }
+   myListener->sectionRemoved(theISection);
 }
 
 //=======================================================================
@@ -240,6 +253,8 @@ void CurveCreator_Curve::insertPoints
 
     aSection->myPoints.insert(aSection->myPoints.begin() + toICoord(theIPnt),
                              thePoints.begin(), thePoints.end());
+    if( myListener )
+      myListener->pointInserted( theISection, theIPnt );
   }
 }
 
@@ -269,6 +284,7 @@ void CurveCreator_Curve::removePoints(const int theISection,
     aSection->myPoints.end() : anIterBegin + toICoord(theNbPoints));
 
   aSection->myPoints.erase(anIterBegin, anIterEnd);
+  myListener->pointRemoved(theISection, theIPnt, theNbPoints );
 }
 
 //=======================================================================
@@ -286,6 +302,8 @@ void CurveCreator_Curve::clear()
   }
 
   mySections.clear();
+  if( myListener )
+    myListener->curveChanged();
 }
 
 //=======================================================================
@@ -304,6 +322,9 @@ void CurveCreator_Curve::setCoordinates
     for (i = 0; i < myDimension; i++) {
       aSection->myPoints.at(toICoord(theIPnt) + i) = theCoords[i];
     }
+
+    if( myListener )
+      myListener->pointChanged( theISection, theIPnt );
   }
 }
 
@@ -320,9 +341,15 @@ void CurveCreator_Curve::setClosed(const bool theIsClosed,
 
     for (i = 0; i < aSize; i++) {
       mySections[i]->myIsClosed = theIsClosed;
+      if( myListener ){
+        myListener->sectionClosed( theISection, theIsClosed );
+      }
     }
   } else {
     mySections.at(theISection)->myIsClosed = theIsClosed;
+    if( myListener ){
+      myListener->sectionClosed( theISection, theIsClosed );
+    }
   }
 }
 
@@ -368,9 +395,11 @@ void CurveCreator_Curve::join(const int theISectionTo,
     CurveCreator_Section *aSection2 = mySections.at(theISectionFrom);
 
     aSection1->myPoints.insert(aSection1->myPoints.end(),
-      aSection2->myPoints.begin(), aSection2->myPoints.end());
+    aSection2->myPoints.begin(), aSection2->myPoints.end());
 
     removeSection(theISectionFrom);
+    if( myListener )
+      myListener->curveChanged();
   }
 }
 
@@ -396,6 +425,8 @@ void CurveCreator_Curve::join()
 
     // Just erace section pointers as they were deleted before.
     mySections.erase(mySections.begin() + 1, mySections.end());
+    if( myListener )
+      myListener->curveChanged();
   }
 }
 
@@ -427,4 +458,22 @@ std::string CurveCreator_Curve::getUnicSectionName()
             return aName;
     }
     return "";
+}
+
+//=======================================================================
+// function: setListener
+// purpose: set curve changes listener
+//=======================================================================
+void CurveCreator_Curve::setListener( CurveCreator_Listener*   theListener )
+{
+  myListener = theListener;
+}
+
+//=======================================================================
+// function: setListener
+// purpose: set curve changes listener
+//=======================================================================
+void CurveCreator_Curve::removeListener()
+{
+  myListener = NULL;
 }

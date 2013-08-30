@@ -30,6 +30,7 @@
 
 
 #include <CurveCreator.hxx>
+#include <string>
 
 class CurveCreator_Curve;
 
@@ -60,7 +61,7 @@ public:
     Join,           //!< Method CurveCreator_Curve::join
     AddSection,     //!< Method CurveCreator_Curve::addSection
     RemoveSection,   //!< Method CurveCreator_Curve::removeSection
-    RenameCurve     //!< Method CurveCreator_Curve::renameCurve
+    RenameSection   //!< Method CurveCreator_Curve::renameSection
   };
 
   /**
@@ -144,6 +145,37 @@ public:
    */
   bool init(const Type theType, const CurveCreator::Coordinates &theCoords,
             const int theIntParam1, const int theIntParam2);
+
+  /**
+   * This method initializes the object with an operation with one
+   * string, one CurveCreator::Coordinates parameter and two integer parameters.
+   * It is applicable to the following operations:
+   * <UL>
+   *   <LI>AddSection</LI>
+   *   <LI>InsertPoints</LI>
+   *   <LI>SetCoordinates</LI>
+   * </UL>
+   * @return true in case of success; false otherwise.
+   */
+  bool init(const CurveCreator_Operation::Type theType,
+            const std::string& theName,
+            const CurveCreator::Coordinates &theCoords,
+            const int theIntParam1,
+            const int theIntParam2);
+
+
+  /**
+   * This method initializes the object with an operation with one
+   * string parameter and one integer.
+   * It is applicable to the following operations:
+   * <UL>
+   *   <LI>RenameSection</LI>
+   * </UL>
+   * @return true in case of success; false otherwise.
+   */
+  bool init(const CurveCreator_Operation::Type theType,
+                                    const std::string &theName,
+                                    const int theIntParam1 );
 
   /**
    * This method applies the current operation to theCurve.

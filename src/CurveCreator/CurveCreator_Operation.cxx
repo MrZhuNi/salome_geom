@@ -209,6 +209,72 @@ bool CurveCreator_Operation::init(const CurveCreator_Operation::Type theType,
 }
 
 //=======================================================================
+// function: Constructor
+// purpose:
+//=======================================================================
+bool CurveCreator_Operation::init(const CurveCreator_Operation::Type theType,
+                                  const std::string& theName,
+                                  const CurveCreator::Coordinates &theCoords,
+                                  const int theIntParam1,
+                                  const int theIntParam2)
+{
+  bool isOK = false;
+  if (theType == CurveCreator_Operation::AddSection ) {
+    const int aNbCoords = theCoords.size();
+    const size_t aSize =
+      3*sizeof(theIntParam1) + aNbCoords*sizeof(CurveCreator::TypeCoord) + theName.length() + 1;
+    int *pIntData = (int *)allocate(aSize);
+
+    *pIntData++ = theIntParam1;
+    *pIntData++ = theIntParam2;
+    char* aStrPtr = (char*)pIntData;
+    if( !theName.empty() ){
+        strcpy( aStrPtr, theName.c_str() );
+        aStrPtr += theName.length();
+    }
+    else{
+        *aStrPtr = 0;
+    }
+    aStrPtr++;
+    pIntData = (int*)aStrPtr;
+    *pIntData++ = aNbCoords;
+
+    CurveCreator::TypeCoord *pRealData = (CurveCreator::TypeCoord *)aStrPtr;
+    int i = 0;
+
+    for (; i < aNbCoords; i++) {
+      *pRealData++ = theCoords[i];
+    }
+
+    myType = theType;
+    isOK   = true;
+  }
+
+  return isOK;
+}
+
+bool CurveCreator_Operation::init(const CurveCreator_Operation::Type theType,
+                                  const std::string &theName,
+                                  const int theIntParam1 )
+{
+    if (theType == CurveCreator_Operation::RenameSection ) {
+        size_t aSize = sizeof(theIntParam1) + theName.length() + 1;
+        int *pIntData = (int *)allocate(aSize);
+        *pIntData = theIntParam1;
+        pIntData++;
+        if( !theName.empty() ){
+            strcpy( (char*)pIntData, theName.c_str() );
+        }
+        else{
+            *((char*)pIntData) = 0;
+        }
+        myType = theType;
+        return true;
+    }
+    return false;
+}
+
+//=======================================================================
 // function: apply
 // purpose:
 //=======================================================================
@@ -271,14 +337,25 @@ void CurveCreator_Operation::apply(CurveCreator_Curve *theCurve)
       case CurveCreator_Operation::AddSection:
         {
           const CurveCreator::Type aType = (CurveCreator::Type) pInt[0];
+
+          std::string aName = std::string((char*)&pInt[2]);
+
           CurveCreator::Coordinates aCoords;
 
-          getCoords(&pInt[2], aCoords);
-          theCurve->addSection(std::string(""), aType, (pInt[1] != 0), aCoords);
+          char* aPtr =  ((char*)&pInt[2]);
+          aPtr += (aName.length()) + 1;
+          getCoords((int*)aPtr, aCoords);
+          theCurve->addSection(aName, aType, (pInt[1] != 0), aCoords);
         }
         break;
       case CurveCreator_Operation::RemoveSection:
         theCurve->removeSection(pInt[0]);
+        break;
+      case CurveCreator_Operation::RenameSection:
+        {
+            std::string aName = std::string((char*)&pInt[1]);
+            theCurve->setName(aName, pInt[0]);
+        }
         break;
       default:
         break;

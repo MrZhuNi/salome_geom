@@ -49,7 +49,8 @@ salomeinclude_HEADERS =	\
 	CurveCreator_Diff.hxx \
 	CurveCreator_Section.hxx \
 	CurveCreator_Curve.hxx \
-	CurveCreator_CurveEditor.hxx
+	CurveCreator_CurveEditor.hxx \
+        CurveCreator_Listener.hxx
 
 # Compilation options for GUI mode
 if GEOM_ENABLE_GUI

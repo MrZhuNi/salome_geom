@@ -36,7 +36,7 @@
 #include <QString>
 
 class CurveCreator_Section;
-
+class CurveCreator_Listener;
 
 /**
  *  The CurveCreator_Curve object is represented as one or more sets of
@@ -95,6 +95,17 @@ public:
    * Return unic section name
    */
   std::string getUnicSectionName();
+
+  /**
+   * Set curve creator listener object
+   */
+  void setListener( CurveCreator_Listener*   myWatcher );
+
+  /**
+   * Remove curve creator listener object
+   */
+  void removeListener();
+
 protected:
 
   /** Set type of the specified section (or all sections
@@ -177,6 +188,7 @@ protected:
   bool                    myIsLocked;
   Sections                mySections;   //!< curve data
   CurveCreator::Dimension myDimension;  //!< curve dimension
+  CurveCreator_Listener*  myListener;   //!< listener
 
   friend class CurveCreator_CurveEditor;
   friend class CurveCreator_Operation;
