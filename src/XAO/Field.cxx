@@ -19,6 +19,7 @@
 // Author : Frederic Pons (OpenCascade)
 
 #include <string>
+#include <sstream>
 #include <iostream>
 #include "Xao.hxx"
 #include "Field.hxx"
@@ -40,6 +41,12 @@ Field::Field(const std::string& name, const XAO::Dimension& dimension,
     m_components.reserve(nbComponents);
     for (int i = 0; i < nbComponents; ++i)
         m_components.push_back("");
+}
+
+Field::~Field()
+{
+    for (int i = 0; i < m_steps.size(); ++i)
+        delete m_steps[i];
 }
 
 Field* Field::createField(const XAO::Type& type, const XAO::Dimension& dimension,
@@ -96,4 +103,14 @@ bool Field::removeStep(Step* step)
     }
 
     return false;
+}
+
+void Field::checkStep(const int& step)
+{
+    if (step >= m_steps.size() || step < 0)
+    {
+        std::ostringstream str;
+        str << "Step index is out of range [0, " << m_steps.size() << "] : " << step;
+        throw SALOME_Exception(str.str().c_str());
+    }
 }

@@ -35,6 +35,11 @@ BooleanField::BooleanField(const std::string& name, const XAO::Dimension& dimens
 {
 }
 
+Step* BooleanField::addNewStep(const int& step)
+{
+    return addStep(step);
+}
+
 BooleanStep* BooleanField::addStep(const int& step)
 {
     BooleanStep* bstep = new BooleanStep(step, m_nbElements, m_nbComponents);

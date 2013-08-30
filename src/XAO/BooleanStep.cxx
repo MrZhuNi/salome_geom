@@ -135,7 +135,7 @@ void BooleanStep::setElements(const int& element, const std::vector<bool>& eleme
 
 void BooleanStep::setComponents(const int& component, const std::vector<bool>& components)
 {
-    checkElement(component);
+    checkComponent(component);
     if (components.size() != m_nbElements)
         throw SALOME_Exception("bad size"); // TODO
 

@@ -40,6 +40,13 @@ namespace XAO
     class Field
     {
     protected:
+        /**
+         * Constructor.
+         * @param name the name of the field.
+         * @param dimension the dimension ot the field.
+         * @param nbElements the number of elements.
+         * @param nbComponents the number of components.
+         */
         Field(const std::string& name, const XAO::Dimension& dimension,
               const int& nbElements, const int& nbComponents);
 
@@ -49,7 +56,7 @@ namespace XAO
         static Field* createField(const XAO::Type& type, const std::string& name, const XAO::Dimension& dimension,
                                   const int& nbElements, const int& nbComponents);
 
-        virtual ~Field() {};
+        virtual ~Field();
 
         /**
          * Gets the Type of the field.
@@ -132,17 +139,35 @@ namespace XAO
         void setComponentName(const int& componentIndex, const std::string& name);
 
         /**
+         * Adds a new step of the same type than the field.
+         * @param step the index of the step.
+         * @return the new create step.
+         */
+        virtual Step* addNewStep(const int& step) = 0;
+
+        /**
          * Remove a step.
          * @param step the step to remove.
          * @return true if the step has been removed.
          */
         bool removeStep(Step* step);
 
+        /**
+         * Returns the first step.
+         * @return an iterator on the first step.
+         */
         stepIterator begin() { return m_steps.begin(); }
+
+        /**
+         * Returns the last step.
+         * @return an iterator on the last step.
+         */
         stepIterator end() { return m_steps.end(); }
 
     private:
+        /** Ensures that component is valid (< m_nbComponents). */
         void checkComponent(const int& component);
+        void checkStep(const int& step);
 
     protected:
         /** The name of the Field. */

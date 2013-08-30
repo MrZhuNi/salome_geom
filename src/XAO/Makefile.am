@@ -31,6 +31,7 @@ salomeinclude_HEADERS = \
     GeometricElement.hxx \
     Xao.hxx \
     Geometry.hxx \
+    BrepGeometry.hxx \
     Group.hxx \
     Field.hxx \
     BooleanField.hxx \
@@ -50,6 +51,7 @@ dist_libXAO_la_SOURCES = \
     GeometricElement.cxx \
     Xao.cxx \
     Geometry.cxx \
+    BrepGeometry.cxx \
     Group.cxx \
     Field.cxx \
     BooleanField.cxx \

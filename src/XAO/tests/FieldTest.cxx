@@ -67,7 +67,7 @@ void FieldTest::testStringField()
 
 void FieldTest::testStep(XAO::Type type)
 {
-    Step* step = Step::createStep(type, 5, 3);
+    Step* step = Step::createStep(type, 0, 0, 5, 3);
     CPPUNIT_ASSERT(step->getType() == type);
 
     CPPUNIT_ASSERT(step->getStep() == 0);
@@ -105,7 +105,7 @@ void FieldTest::testIntegerStepValues()
     int nbComponents = 3;
     int nbElements = 5;
 
-    IntegerStep* istep = (IntegerStep*)Step::createStep(XAO::INTEGER, nbElements, nbComponents);
+    IntegerStep* istep = (IntegerStep*)Step::createStep(XAO::INTEGER, 0, 0, nbElements, nbComponents);
     for (int i = 0; i < istep->countElements(); ++i)
     {
         for (int j = 0; j < istep->countComponents(); ++j)

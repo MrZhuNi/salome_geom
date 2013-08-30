@@ -176,7 +176,7 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
     XAO::Xao* xaoObject = new XAO::Xao();
     xaoObject->setAuthor(author);
 
-    XAO::Geometry* geometry = new XAO::Geometry();
+    XAO::Geometry* geometry = XAO::Geometry::createGeometry(XAO::BREP);
     TopoDS_Shape topoShape = shape->GetValue();
     exportFunction->SetValue(topoShape);
     geometry->setShape(topoShape);

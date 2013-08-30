@@ -18,8 +18,6 @@
 //
 // Author : Nathalie Gore (OpenCascade)
 
-#include "XaoUtils.hxx"
-#include "Geometry.hxx"
 #include <Standard_TypeMismatch.hxx>
 
 #include <BRepTools.hxx>
@@ -45,11 +43,27 @@
 
 #include <Utils_SALOME_Exception.hxx>
 
+#include "XaoUtils.hxx"
+#include "Geometry.hxx"
+#include "BrepGeometry.hxx"
+
 using namespace XAO;
 
-Geometry::Geometry()
+Geometry::Geometry(const std::string& name)
+    : m_name(name)
 {
-    m_format = "BREP";
+}
+
+Geometry* Geometry::createGeometry(const XAO::Format& format)
+{
+    return createGeometry(format,"");
+}
+
+Geometry* Geometry::createGeometry(const XAO::Format& format, const std::string& name)
+{
+    if (format == XAO::BREP)
+        return new BrepGeometry(name);
+    throw SALOME_Exception("Geometry format not supported.");
 }
 
 Geometry::~Geometry()
@@ -67,7 +81,7 @@ void Geometry::setShape(const TopoDS_Shape& shape)
     initListIds(TopAbs_SOLID);
 }
 
-void Geometry::setShape(const char* brep)
+void Geometry::setBREP(const char* brep)
 {
     std::istringstream streamBrep(brep);
     BRep_Builder builder;
@@ -123,28 +137,28 @@ void Geometry::initListIds(const Standard_Integer shapeType)
         {
             m_vertices.setSize(indexList.size());
             for (int i = 0; it != indexList.end(); it++, i++)
-                m_vertices.setReference(i, XaoUtils::intToString((*it)).c_str());
+                m_vertices.setReference(i, XaoUtils::intToString((*it)));
             break;
         }
         case TopAbs_EDGE:
         {
             m_edges.setSize(indexList.size());
             for (int i = 0; it != indexList.end(); it++, i++)
-                m_edges.setReference(i, XaoUtils::intToString((*it)).c_str());
+                m_edges.setReference(i, XaoUtils::intToString((*it)));
             break;
         }
         case TopAbs_FACE:
         {
             m_faces.setSize(indexList.size());
             for (int i = 0; it != indexList.end(); it++, i++)
-                m_faces.setReference(i, XaoUtils::intToString((*it)).c_str());
+                m_faces.setReference(i, XaoUtils::intToString((*it)));
             break;
         }
         case TopAbs_SOLID:
         {
             m_solids.setSize(indexList.size());
             for (int i = 0; it != indexList.end(); it++, i++)
-                m_solids.setReference(i, XaoUtils::intToString((*it)).c_str());
+                m_solids.setReference(i, XaoUtils::intToString((*it)));
             break;
         }
     }
@@ -152,74 +166,70 @@ void Geometry::initListIds(const Standard_Integer shapeType)
 
 const int Geometry::countElements(const XAO::Dimension& dim)
 {
-    if (dim == VERTEX)
+    if (dim == XAO::VERTEX)
         return countVertices();
-    if (dim == EDGE)
+    if (dim == XAO::EDGE)
         return countEdges();
-    if (dim == FACE)
+    if (dim == XAO::FACE)
         return countFaces();
-    if (dim == SOLID)
+    if (dim == XAO::SOLID)
         return countSolids();
 
-    throw SALOME_Exception("Unknown dimension");
+    throw SALOME_Exception("Unknown dimension"); // TODO
 }
 
 const std::string Geometry::getElementReference(const XAO::Dimension& dim, const int& index)
 {
-    if (dim == VERTEX)
+    if (dim == XAO::VERTEX)
         return getVertexReference(index);
-    if (dim == EDGE)
+    if (dim == XAO::EDGE)
         return getEdgeReference(index);
-    if (dim == FACE)
+    if (dim == XAO::FACE)
         return getFaceReference(index);
-    if (dim == SOLID)
+    if (dim == XAO::SOLID)
         return getSolidReference(index);
 
-    std::cout << "getElementReference: unknown dimension" << std::endl;
-    throw SALOME_Exception("Unknown dimension");
+    throw SALOME_Exception("Unknown dimension"); // TODO
 }
 
 const int Geometry::getElementIndexByReference(const XAO::Dimension& dim, const std::string& reference)
 {
-    if (dim == VERTEX)
+    if (dim == XAO::VERTEX)
         return getVertexIndexByReference(reference);
-    if (dim == EDGE)
+    if (dim == XAO::EDGE)
         return getEdgeIndexByReference(reference);
-    if (dim == FACE)
+    if (dim == XAO::FACE)
         return getFaceIndexByReference(reference);
-    if (dim == SOLID)
+    if (dim == XAO::SOLID)
         return getSolidIndexByReference(reference);
 
-    std::cout << "getElementIndexByReference: unknown dimension" << std::endl;
-    throw SALOME_Exception("Unknown dimension");
+    throw SALOME_Exception("Unknown dimension"); // TODO
 }
 
 GeometricElementList::iterator Geometry::begin(const XAO::Dimension& dim)
 {
-    if (dim == VERTEX)
+    if (dim == XAO::VERTEX)
         return m_vertices.begin();
-    if (dim == EDGE)
+    if (dim == XAO::EDGE)
         return m_edges.begin();
-    if (dim == FACE)
+    if (dim == XAO::FACE)
         return m_faces.begin();
-    if (dim == SOLID)
+    if (dim == XAO::SOLID)
         return m_solids.begin();
 
-    std::cout << "begin: unknown dimension" << std::endl;
-    throw SALOME_Exception("Unknown dimension");
+    throw SALOME_Exception("Unknown dimension"); // TODO
 }
 
 GeometricElementList::iterator Geometry::end(const XAO::Dimension& dim)
 {
-    if (dim == VERTEX)
+    if (dim == XAO::VERTEX)
         return m_vertices.end();
-    if (dim == EDGE)
+    if (dim == XAO::EDGE)
         return m_edges.end();
-    if (dim == FACE)
+    if (dim == XAO::FACE)
         return m_faces.end();
-    if (dim == SOLID)
+    if (dim == XAO::SOLID)
         return m_solids.end();
 
-    std::cout << "begin: unknown dimension" << std::endl;
-    throw SALOME_Exception("Unknown dimension");
+    throw SALOME_Exception("Unknown dimension"); // TODO
 }

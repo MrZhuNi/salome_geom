@@ -65,15 +65,15 @@ const double XaoUtils::stringToDouble(const std::string& value)
 
 const std::string XaoUtils::dimensionToString(const XAO::Dimension& dimension)
 {
-    if (dimension == VERTEX)
+    if (dimension == XAO::VERTEX)
         return "vertex";
-    if (dimension == EDGE)
+    if (dimension == XAO::EDGE)
         return "edge";
-    if (dimension == FACE)
+    if (dimension == XAO::FACE)
         return "face";
-    if (dimension == SOLID)
+    if (dimension == XAO::SOLID)
         return "solid";
-    if (dimension == WHOLE)
+    if (dimension == XAO::WHOLE)
         return "whole";
     throw SALOME_Exception("Bad dimension");
 }
@@ -81,27 +81,27 @@ const std::string XaoUtils::dimensionToString(const XAO::Dimension& dimension)
 const XAO::Dimension XaoUtils::stringToDimension(const std::string& dimension)
 {
     if (dimension == "vertex")
-        return VERTEX;
+        return XAO::VERTEX;
     if (dimension == "edge")
-        return EDGE;
+        return XAO::EDGE;
     if (dimension == "face")
-        return FACE;
+        return XAO::FACE;
     if (dimension == "solid")
-        return SOLID;
+        return XAO::SOLID;
     if (dimension == "whole")
-        return WHOLE;
+        return XAO::WHOLE;
     throw SALOME_Exception("Bad dimension");
 }
 
 const std::string XaoUtils::fieldTypeToString(const XAO::Type& type)
 {
-    if (type == BOOLEAN)
+    if (type ==XAO:: BOOLEAN)
         return "boolean";
-    if (type == INTEGER)
+    if (type == XAO::INTEGER)
         return "integer";
-    if (type == DOUBLE)
+    if (type == XAO::DOUBLE)
         return "double";
-    if (type == STRING)
+    if (type == XAO::STRING)
         return "string";
     throw SALOME_Exception("Bad type");
 }
@@ -109,12 +109,30 @@ const std::string XaoUtils::fieldTypeToString(const XAO::Type& type)
 const XAO::Type XaoUtils::stringToFieldType(const std::string& type)
 {
     if (type == "boolean")
-        return BOOLEAN;
+        return XAO::BOOLEAN;
     if (type == "integer")
-        return INTEGER;
+        return XAO::INTEGER;
     if (type == "double")
-        return DOUBLE;
+        return XAO::DOUBLE;
     if (type == "string")
-        return STRING;
+        return XAO::STRING;
     throw SALOME_Exception("Bad type");
+}
+
+const std::string XaoUtils::shapeFormatToString(const XAO::Format& format)
+{
+    if (format == XAO::BREP)
+        return "BREP";
+    if (format == XAO::STEP)
+        return "STEP";
+    throw SALOME_Exception("Bad format");
+}
+
+const XAO::Format XaoUtils::stringToShapeFormat(const std::string& format)
+{
+    if (format == "BREP")
+        return XAO::BREP;
+    if (format == "STEP")
+        return XAO::STEP;
+    throw SALOME_Exception("Bad format");
 }

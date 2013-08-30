@@ -1,4 +1,5 @@
 
+#include <sstream>
 #include <libxml/parser.h>
 #include <Utils_SALOME_Exception.hxx>
 
@@ -68,6 +69,57 @@ namespace XAO
 
 using namespace XAO;
 
+std::string XaoExporter::readStringProp(xmlNodePtr node, const xmlChar* attribute,
+        const bool& required, const std::string& defaultValue,
+        const std::string& exception /*= std::string() */)
+{
+    xmlChar* strAttr = xmlGetProp(node, attribute);
+    if (strAttr == NULL)
+    {
+        if (required)
+        {
+            if (exception.size() > 0)
+                throw SALOME_Exception(exception.c_str());
+
+            std::ostringstream str;
+            str << "Line " << node->line << ": ";
+            str << "Property " << (char*)attribute << " is required.";
+            throw SALOME_Exception(str.str().c_str());
+        }
+
+        return defaultValue;
+    }
+
+    std::string res = (char*)strAttr;
+    xmlFree(strAttr);
+    return res;
+}
+
+int XaoExporter::readIntegerProp(xmlNodePtr node, const xmlChar* attribute,
+        const bool& required, const int& defaultValue,
+        const std::string& exception /*= std::string() */)
+{
+    xmlChar* strAttr = xmlGetProp(node, attribute);
+    if (strAttr == NULL)
+    {
+        if (required)
+        {
+            if (exception.size() > 0)
+                throw SALOME_Exception(exception.c_str());
+
+            std::ostringstream str;
+            str << "Property " << (char*)attribute << " is required.";
+            throw SALOME_Exception(str.str().c_str());
+        }
+
+        return defaultValue;
+    }
+
+    int res = XaoUtils::stringToInt((char*)strAttr);
+    xmlFree(strAttr);
+    return res;
+}
+
 const bool XaoExporter::saveToFile(Xao* xaoObject, const std::string& fileName)
 {
     xmlDocPtr doc = exportXMLDoc(xaoObject);
@@ -123,8 +175,6 @@ void XaoExporter::exportGeometricElements(Geometry* xaoGeometry,
         GeometricElement elt = it->second;
         xmlNodePtr vertex = xmlNewChild(vertices, 0, eltTag, 0);
         xmlNewProp(vertex, C_ATTR_ELT_INDEX, BAD_CAST XaoUtils::intToString(index).c_str());
-        //xmlNewProp(vertex, C_ATTR_ELT_NAME, BAD_CAST xaoGeometry->getVertexName(i));
-        //xmlNewProp(vertex, C_ATTR_ELT_REFERENCE, BAD_CAST xaoGeometry->getVertexReference(i));
         xmlNewProp(vertex, C_ATTR_ELT_NAME, BAD_CAST elt.getName().c_str());
         xmlNewProp(vertex, C_ATTR_ELT_REFERENCE, BAD_CAST elt.getReference().c_str());
     }
@@ -137,7 +187,7 @@ void XaoExporter::exportGeometry(Geometry* xaoGeometry, xmlDocPtr doc, xmlNodePt
     xmlNewProp(geometry, C_ATTR_GEOMETRY_NAME, BAD_CAST xaoGeometry->getName().c_str());
 
     xmlNodePtr shape = xmlNewChild(geometry, 0, C_TAG_SHAPE, 0);
-    xmlNewProp(shape, C_ATTR_SHAPE_FORMAT, BAD_CAST xaoGeometry->getFormat().c_str());
+    xmlNewProp(shape, C_ATTR_SHAPE_FORMAT, BAD_CAST XaoUtils::shapeFormatToString(xaoGeometry->getFormat()).c_str());
     const char* brep = xaoGeometry->getBREP();
     xmlNodePtr cdata = xmlNewCDataBlock(doc, BAD_CAST brep, strlen(brep));
     xmlAddChild(shape, cdata);
@@ -200,7 +250,6 @@ void XaoExporter::exportFields(Xao* xaoObject, xmlNodePtr xao)
         int nbSteps = field->countSteps();
         xmlNodePtr nodeSteps = xmlNewChild(nodeField, 0, C_TAG_STEPS, 0);
         xmlNewProp(nodeSteps, C_ATTR_COUNT, BAD_CAST XaoUtils::intToString(nbSteps).c_str());
-        //for (int j = 0; j < nbSteps; j++)
         for (stepIterator itStep = field->begin(); itStep != field->end(); itStep++)
         {
             Step* step = *itStep;
@@ -274,19 +323,12 @@ void XaoExporter::parseXMLDoc(xmlDocPtr doc, Xao* xaoObject)
 
 void XaoExporter::parseXaoNode(xmlDocPtr doc, xmlNodePtr xaoNode, Xao* xaoObject)
 {
-    xmlChar* version = xmlGetProp(xaoNode, C_ATTR_XAO_VERSION);
-    if (version != NULL)
-    {
-        xaoObject->setVersion((char*)version);
-        xmlFree(version);
-    }
+    std::string version = readStringProp(xaoNode, C_ATTR_XAO_VERSION, false, "");
+    if (version != "")
+        xaoObject->setAuthor(version);
 
-    xmlChar* author = xmlGetProp(xaoNode, C_ATTR_XAO_AUTHOR);
-    if (author != NULL)
-    {
-        xaoObject->setAuthor((char*)author);
-        xmlFree(author);
-    }
+    std::string author = readStringProp(xaoNode, C_ATTR_XAO_AUTHOR, false, "");
+    xaoObject->setAuthor(author);
 
     for (xmlNodePtr node = xaoNode->children; node; node = node->next)
     {
@@ -294,45 +336,50 @@ void XaoExporter::parseXaoNode(xmlDocPtr doc, xmlNodePtr xaoNode, Xao* xaoObject
             parseGeometryNode(doc, node, xaoObject);
         else if (xmlStrcmp(node->name, C_TAG_GROUPS) == 0)
             parseGroupsNode(node, xaoObject);
+        else if (xmlStrcmp(node->name, C_TAG_FIELDS) == 0)
+            parseFieldsNode(node, xaoObject);
     }
 }
 
 void XaoExporter::parseGeometryNode(xmlDocPtr doc, xmlNodePtr geometryNode, Xao* xaoObject)
 {
-    Geometry* geometry = new Geometry();
-
-    xmlChar* name = xmlGetProp(geometryNode, C_ATTR_GEOMETRY_NAME);
-    if (name != NULL)
-    {
-        geometry->setName((char*)name);
-        xmlFree(name);
-    }
-
+    // get the shape and topo nodes
+    xmlNodePtr shapeNode = NULL;
+    xmlNodePtr topoNode = NULL;
     for (xmlNodePtr node = geometryNode->children; node; node = node->next)
     {
         if (xmlStrcmp(node->name, C_TAG_SHAPE) == 0)
-            parseShapeNode(doc, node, geometry);
+            shapeNode = node;
         else if (xmlStrcmp(node->name, C_TAG_TOPOLOGY) == 0)
-            parseTopologyNode(node, geometry);
+            topoNode = node;
     }
+
+    std::string name = readStringProp(geometryNode, C_ATTR_GEOMETRY_NAME, false, "");
+    std::string strFormat = readStringProp(shapeNode, C_ATTR_SHAPE_FORMAT, true, "");
+    XAO::Format shapeFormat = XaoUtils::stringToShapeFormat(strFormat);
+    Geometry* geometry = Geometry::createGeometry(shapeFormat, name);
+
+    parseShapeNode(doc, shapeNode, geometry);
+    parseTopologyNode(topoNode, geometry);
 
     xaoObject->setGeometry(geometry);
 }
 
 void XaoExporter::parseShapeNode(xmlDocPtr doc, xmlNodePtr shapeNode, Geometry* geometry)
 {
-    xmlChar* shapeType = xmlGetProp(shapeNode, C_ATTR_SHAPE_FORMAT);
-    if (xmlStrcmp(shapeType, (xmlChar*)"BREP") == 0)
+    if (geometry->getFormat() == XAO::BREP)
     {
         xmlChar* data = xmlNodeGetContent(shapeNode->children);
         if (data == NULL)
             throw SALOME_Exception("Missing BREP");
-        geometry->setShape((char*)data);
+        geometry->setBREP((char*)data);
         xmlFree(data);
     }
     else
     {
-        throw SALOME_Exception("Shape format not supported");
+        std::ostringstream str;
+        str << "Shape format not supported: " << XaoUtils::shapeFormatToString(geometry->getFormat());
+        throw SALOME_Exception(str.str().c_str());
     }
 }
 
@@ -353,120 +400,72 @@ void XaoExporter::parseTopologyNode(xmlNodePtr topologyNode, Geometry* geometry)
 
 void XaoExporter::parseVerticesNode(xmlNodePtr verticesNode, Geometry* geometry)
 {
-    xmlChar* count = xmlGetProp(verticesNode, C_ATTR_COUNT);
-    if (count == NULL)
-        throw SALOME_Exception("No count attribute for vertices");
-
-    geometry->setCountVertices(atoi((char*)count));
-    xmlFree(count);
+    int count = readIntegerProp(verticesNode, C_ATTR_COUNT, true, -1);
+    geometry->setCountVertices(count);
 
     for (xmlNodePtr node = verticesNode->children; node; node = node->next)
     {
         if (xmlStrcmp(node->name, C_TAG_VERTEX) == 0)
         {
-            xmlChar* index = xmlGetProp(node, C_ATTR_ELT_INDEX);
-            if (index == NULL)
-                throw SALOME_Exception("Bad index for vertex");
+            int index = readIntegerProp(node, C_ATTR_ELT_INDEX, true, -1);
+            std::string name = readStringProp(node, C_ATTR_ELT_NAME, false, "");
+            std::string reference = readStringProp(node, C_ATTR_ELT_REFERENCE, true, "");
 
-            xmlChar* name = xmlGetProp(node, C_ATTR_ELT_NAME);
-            if (name == NULL)
-                name = (xmlChar*)"";
-
-            xmlChar* reference = xmlGetProp(node, C_ATTR_ELT_REFERENCE);
-            if (reference == NULL)
-                throw SALOME_Exception("Bad reference for vertex");
-
-            geometry->setVertex(atoi((char*)index), (char*)name, (char*)reference);
+            geometry->setVertex(index, name, reference);
         }
     }
 }
 
 void XaoExporter::parseEdgesNode(xmlNodePtr edgesNode, Geometry* geometry)
 {
-    xmlChar* count = xmlGetProp(edgesNode, C_ATTR_COUNT);
-    if (count == NULL)
-        throw SALOME_Exception("No count attribute for edges");
-
-    geometry->setCountEdges(atoi((char*)count));
-    xmlFree(count);
+    int count = readIntegerProp(edgesNode, C_ATTR_COUNT, true, -1);
+    geometry->setCountEdges(count);
 
     for (xmlNodePtr node = edgesNode->children; node; node = node->next)
     {
         if (xmlStrcmp(node->name, C_TAG_EDGE) == 0)
         {
-            xmlChar* index = xmlGetProp(node, C_ATTR_ELT_INDEX);
-            if (index == NULL)
-                throw SALOME_Exception("Bad index for edge");
+            int index = readIntegerProp(node, C_ATTR_ELT_INDEX, true, -1);
+            std::string name = readStringProp(node, C_ATTR_ELT_NAME, false, "");
+            std::string reference = readStringProp(node, C_ATTR_ELT_REFERENCE, true, "");
 
-            xmlChar* name = xmlGetProp(node, C_ATTR_ELT_NAME);
-            if (name == NULL)
-                name = (xmlChar*)"";
-
-            xmlChar* reference = xmlGetProp(node, C_ATTR_ELT_REFERENCE);
-            if (reference == NULL)
-                throw SALOME_Exception("Bad reference for edge");
-
-            geometry->setEdge(atoi((char*)index), (char*)name, (char*)reference);
+            geometry->setEdge(index, name, reference);
         }
     }
 }
 
 void XaoExporter::parseFacesNode(xmlNodePtr facesNode, Geometry* geometry)
 {
-    xmlChar* count = xmlGetProp(facesNode, C_ATTR_COUNT);
-    if (count == NULL)
-        throw SALOME_Exception("No count attribute for faces");
-
-    geometry->setCountFaces(atoi((char*)count));
-    xmlFree(count);
+    int count = readIntegerProp(facesNode, C_ATTR_COUNT, true, -1);
+    geometry->setCountFaces(count);
 
     for (xmlNodePtr node = facesNode->children; node; node = node->next)
     {
         if (xmlStrcmp(node->name, C_TAG_FACE) == 0)
         {
-            xmlChar* index = xmlGetProp(node, C_ATTR_ELT_INDEX);
-            if (index == NULL)
-                throw SALOME_Exception("Bad index for face");
+            int index = readIntegerProp(node, C_ATTR_ELT_INDEX, true, -1);
+            std::string name = readStringProp(node, C_ATTR_ELT_NAME, false, "");
+            std::string reference = readStringProp(node, C_ATTR_ELT_REFERENCE, true, "");
 
-            xmlChar* name = xmlGetProp(node, C_ATTR_ELT_NAME);
-            if (name == NULL)
-                name = (xmlChar*)"";
-
-            xmlChar* reference = xmlGetProp(node, C_ATTR_ELT_REFERENCE);
-            if (reference == NULL)
-                throw SALOME_Exception("Bad reference for face");
-
-            geometry->setFace(atoi((char*)index), (char*)name, (char*)reference);
+            geometry->setFace(index, name, reference);
         }
     }
 }
 
 void XaoExporter::parseSolidsNode(xmlNodePtr solidsNode, Geometry* geometry)
 {
-    xmlChar* count = xmlGetProp(solidsNode, C_ATTR_COUNT);
-    if (count == NULL)
-        throw SALOME_Exception("No count attribute for solids");
-
-    geometry->setCountSolids(atoi((char*)count));
-    xmlFree(count);
+    int count = readIntegerProp(solidsNode, C_ATTR_COUNT, true, -1);
+    geometry->setCountSolids(count);
 
     for (xmlNodePtr node = solidsNode->children; node; node = node->next)
     {
         if (xmlStrcmp(node->name, C_TAG_SOLID) == 0)
         {
-            xmlChar* index = xmlGetProp(node, C_ATTR_ELT_INDEX);
-            if (index == NULL)
-                throw SALOME_Exception("Bad index for solid");
+            int index = readIntegerProp(node, C_ATTR_ELT_INDEX, true, -1);
+            std::string name = readStringProp(node, C_ATTR_ELT_NAME, false, "");
+            std::string reference = readStringProp(node, C_ATTR_ELT_REFERENCE, true, "");
 
-            xmlChar* name = xmlGetProp(node, C_ATTR_ELT_NAME);
-            if (name == NULL)
-                name = (xmlChar*)"";
-
-            xmlChar* reference = xmlGetProp(node, C_ATTR_ELT_REFERENCE);
-            if (reference == NULL)
-                throw SALOME_Exception("Bad reference for solid");
-
-            geometry->setSolid(atoi((char*)index), (char*)name, (char*)reference);
+            geometry->setSolid(index, name, reference);
         }
     }
 }
@@ -484,28 +483,130 @@ void XaoExporter::parseGroupsNode(xmlNodePtr groupsNode, Xao* xaoObject)
 
 void XaoExporter::parseGroupNode(xmlNodePtr groupNode, Xao* xaoObject)
 {
-    xmlChar* dimension = xmlGetProp(groupNode, C_ATTR_GROUP_DIM);
-    if (dimension == NULL)
-        throw SALOME_Exception("Bad dimension for group");
-
-    XAO::Dimension dim = XaoUtils::stringToDimension((char*)dimension);
+    std::string strDimension = readStringProp(groupNode, C_ATTR_GROUP_DIM, true, "");
+    XAO::Dimension dim = XaoUtils::stringToDimension(strDimension);
     Group* group = xaoObject->addGroup(dim);
-    xmlFree(dimension);
 
-    xmlChar* name = xmlGetProp(groupNode, C_ATTR_GROUP_NAME);
-    if (name == NULL) name = (xmlChar*)"";
-    group->setName((char*)name);
-    xmlFree(name);
+    std::string name = readStringProp(groupNode, C_ATTR_GROUP_NAME, false, "");
+    group->setName(name);
 
     for (xmlNodePtr node = groupNode->children; node; node = node->next)
     {
         if (xmlStrcmp(node->name, C_TAG_ELEMENT) == 0)
         {
-            xmlChar* index = xmlGetProp(node, C_ATTR_ELEMENT_INDEX);
-            if (index == NULL)
-                throw SALOME_Exception("Bad index for group element");
-            group->addElement(atoi((char*)index));
-            xmlFree(index);
+            int index = readIntegerProp(node, C_ATTR_ELEMENT_INDEX, true, -1);
+            group->addElement(index);
+        }
+    }
+}
+
+void XaoExporter::parseFieldsNode(xmlNodePtr fieldsNode, Xao* xaoObject)
+{
+    for (xmlNodePtr node = fieldsNode->children; node; node = node->next)
+    {
+        if (xmlStrcmp(node->name, C_TAG_FIELD) == 0)
+        {
+            parseFieldNode(node, xaoObject);
+        }
+    }
+}
+
+void XaoExporter::parseFieldNode(xmlNodePtr fieldNode, Xao* xaoObject)
+{
+    std::string strDimension = readStringProp(fieldNode, C_ATTR_FIELD_DIMENSION, true, "");
+    XAO::Dimension dim = XaoUtils::stringToDimension(strDimension);
+
+    std::string strType = readStringProp(fieldNode, C_ATTR_FIELD_TYPE, true, "");
+    XAO::Type type = XaoUtils::stringToFieldType(strType);
+
+    // we need to get the number of components first to create the field
+    xmlNodePtr componentsNode = NULL;
+    xmlNodePtr stepsNode = NULL;
+
+    for (xmlNodePtr node = fieldNode->children; node; node = node->next)
+    {
+        if (xmlStrcmp(node->name, C_TAG_COMPONENTS) == 0)
+            componentsNode = node;
+        else if (xmlStrcmp(node->name, C_TAG_STEPS) == 0)
+            stepsNode = node;
+    }
+
+    // ensure that the components node is defined
+    if (componentsNode == NULL)
+        throw SALOME_Exception("No components defined for field"); // TODO
+
+    // create the field
+    int nbComponents = readIntegerProp(componentsNode, C_ATTR_COUNT, true, -1);
+    Field* field = xaoObject->addField(type, dim, nbComponents);
+
+    // parse the components
+    for (xmlNodePtr compNode = componentsNode->children; compNode; compNode = compNode->next)
+    {
+        std::string compName= readStringProp(compNode, C_ATTR_COMPONENT_NAME, false, "");
+        if (compName.size() > 0)
+        {
+            int col = readIntegerProp(compNode, C_ATTR_COMPONENT_COLUMN, true, -1);
+            field->setComponentName(col, compName);
+        }
+    }
+
+    // set the name
+    std::string name = readStringProp(fieldNode, C_ATTR_FIELD_NAME, false, "");
+    if (name.size() > 0) field->setName(name);
+
+    // read the steps
+    if (stepsNode != 0)
+    {
+        for (xmlNodePtr stepNode = stepsNode->children; stepNode; stepNode = stepNode->next)
+        {
+            if (xmlStrcmp(stepNode->name, C_TAG_STEP) == 0)
+            {
+                parseStepNode(stepNode, field);
+            }
+        }
+    }
+}
+
+void XaoExporter::parseStepNode(xmlNodePtr stepNode, Field* field)
+{
+    int stepNumber = readIntegerProp(stepNode, C_ATTR_STEP_NUMBER, true, -1);
+    Step* step = field->addNewStep(stepNumber);
+
+    int stepStamp = readIntegerProp(stepNode, C_ATTR_STEP_STAMP, false, -1);
+    if (stepStamp != -1)
+    {
+        step->setStamp(stepStamp);
+    }
+
+    for (xmlNodePtr eltNode = stepNode->children; eltNode; eltNode = eltNode->next)
+    {
+        if (xmlStrcmp(eltNode->name, C_TAG_ELEMENT) == 0)
+        {
+            parseStepElementNode(eltNode, step);
+        }
+    }
+}
+
+void XaoExporter::parseStepElementNode(xmlNodePtr eltNode, Step* step)
+{
+    int index = readIntegerProp(eltNode, C_ATTR_ELT_INDEX, true, -1);
+
+    for (xmlNodePtr valNode = eltNode->children; valNode; valNode = valNode->next)
+    {
+        if (xmlStrcmp(valNode->name, C_TAG_VALUE) == 0)
+        {
+            int component = readIntegerProp(valNode, C_ATTR_VALUE_COMPONENT, true, -1);
+            xmlChar* data = xmlNodeGetContent(valNode->children);
+
+            if (data == NULL)
+            {
+                std::ostringstream str;
+                str << "Line " << valNode->line << ": no content for value.";
+                throw SALOME_Exception(str.str().c_str());
+            }
+
+            std::string value = (char*)data;
+            step->setStringValue(index, component, value);
         }
     }
 }

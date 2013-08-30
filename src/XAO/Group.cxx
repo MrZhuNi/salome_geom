@@ -49,10 +49,10 @@ Group::~Group()
 
 void Group::checkElement(const int& element)
 {
-    if (element >= m_nbElements)
+    if (element >= m_nbElements || element < 0)
     {
         std::ostringstream str;
-        str << "IndexOutOfRange element: " << element << " >= " << m_nbElements;
-        throw SALOME_Exception(str.str().c_str()); // TODO
+        str << "IndexOutOfRange element: " << element << " >= " << m_nbElements; // TODO
+        throw SALOME_Exception(str.str().c_str());
     }
 }

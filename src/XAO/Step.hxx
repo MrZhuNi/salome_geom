@@ -29,13 +29,30 @@ namespace XAO
     class Step
     {
     protected:
+        /** Default constructor. */
         Step() {}
 
     public:
-        static Step* createStep(const XAO::Type& type, const int& nbElements, const int& nbComponents);
-        static Step* createStep(const XAO::Type& type, const int& step, const int& nbElements, const int& nbComponents);
+        /**
+         * Creates a step.
+         * @param type the type of the values for the step.
+         * @param step the index of the step.
+         * @param stamp the stamp of the step.
+         * @param nbElements the number of elements in the step.
+         * @param nbComponents the number of components in the step.
+         * @return
+         */
         static Step* createStep(const XAO::Type& type, const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
 
+        /**
+         * Destructor.
+         */
+        virtual ~Step() {}
+
+        /**
+         * Gets the type of the step.
+         * @return
+         */
         virtual const XAO::Type getType() = 0;
 
         /**
@@ -62,13 +79,39 @@ namespace XAO
          */
         void setStamp(const int& stamp) { m_stamp = stamp; }
 
+        /**
+         * Gets the number of components of the step.
+         * @return the number of components.
+         */
         const int countComponents() { return m_nbComponents; }
 
+        /**
+         * Gets the number of elements for the step.
+         * @return the number of elements.
+         */
         const int countElements() { return m_nbElements; }
 
+        /**
+         * Gets the number of values for the step.
+         * @return the number of values.
+         */
         const int countValues() { return m_nbElements * m_nbComponents; }
 
+        /**
+         * Gets a value as a string.
+         * @param element the index of the element.
+         * @param component the index of the component.
+         * @return the value as a string.
+         */
         virtual const std::string getStringValue(const int& element, const int& component) = 0;
+
+        /**
+         * Sets a value as a string
+         * @param element the index of the element.
+         * @param component the index of the component.
+         * @param value the string value.
+         * @throw SALOME_Exception if the value is not valid.
+         */
         virtual void setStringValue(const int& element, const int& component, const std::string& value) = 0;
 
     protected:
@@ -76,9 +119,13 @@ namespace XAO
         void checkComponent(const int& component);
 
     protected:
+        /** the index of the step. */
         int m_step;
+        /** The stamp of the step. */
         int m_stamp;
+        /** The number of components. */
         int m_nbComponents;
+        /** The number of elements. */
         int m_nbElements;
     };
 }

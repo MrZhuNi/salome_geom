@@ -33,36 +33,67 @@ namespace XAO
 {
     class Geometry
     {
+    protected:
+        Geometry(const std::string& name);
+
     public:
-        Geometry();
+        /**
+         * Creates a geometry.
+         * @param format the format of the geometry.
+         * @return the created geometry.
+         */
+        static Geometry* createGeometry(const XAO::Format& format);
+
+        /**
+         * Constructor.
+         * Creates a geometry.
+         * @name name the name of the geometry.
+         * @return the created geometry.
+         */
+        static Geometry* createGeometry(const XAO::Format& format, const std::string& name);
+
+        /** Destructor. */
         ~Geometry();
 
+        /**
+         * Gets the name of the geometry.
+         * @return the name of the geometry.
+         */
         const std::string getName()
         {
             return m_name;
         }
+        /**
+         * Sets the name of the geometry.
+         * @param name the name to set.
+         */
         void setName(const std::string& name)
         {
             m_name = name;
         }
 
-        const std::string getFormat()
-        {
-            return m_format;
-        }
-        void setFormat(const std::string& format)
-        {
-            m_format = format;
-        }
+        /**
+         * Gets the format of the geometry.
+         * @return the format of the geometry.
+         */
+        virtual const XAO::Format getFormat() = 0;
 
+        /**
+         * Gets the shape of the geometry.
+         * @return the shape of the geometry.
+         */
         TopoDS_Shape getShape()
         {
             return m_shape;
         }
+        /**
+         * Sets the shape of the geometry.
+         * @param shape the shape to set.
+         */
         void setShape(const TopoDS_Shape& shape);
 
         const char* getBREP();
-        void setShape(const char* brep);
+        void setBREP(const char* brep);
 
         const int countElements(const XAO::Dimension& dim);
         const int countVertices() { return m_vertices.getSize(); }
@@ -74,11 +105,6 @@ namespace XAO
         void setCountEdges(const int& nb) { m_edges.setSize(nb); }
         void setCountFaces(const int& nb) { m_faces.setSize(nb); }
         void setCountSolids(const int& nb) { m_solids.setSize(nb); }
-
-        void setVertex(const int& index, const std::string& name, const std::string& reference) { m_vertices.setElement(index, name, reference); }
-        void setEdge(const int& index, const std::string& name, const std::string& reference) { m_edges.setElement(index, name, reference); }
-        void setFace(const int& index, const std::string& name, const std::string& reference) { m_faces.setElement(index, name, reference); }
-        void setSolid(const int& index, const std::string& name, const std::string& reference) { m_solids.setElement(index, name, reference); }
 
         const std::string getVertexName(const int& index) { return m_vertices.getName(index); }
         const std::string getEdgeName(const int& index) { return m_edges.getName(index); }
@@ -106,6 +132,11 @@ namespace XAO
         void setFaceReference(const int& index, const std::string& reference) { m_faces.setReference(index, reference); }
         void setSolidReference(const int& index, const std::string& reference) { m_solids.setReference(index, reference); }
 
+        void setVertex(const int& index, const std::string& name, const std::string& reference) { m_vertices.setElement(index, name, reference); }
+        void setEdge(const int& index, const std::string& name, const std::string& reference) { m_edges.setElement(index, name, reference); }
+        void setFace(const int& index, const std::string& name, const std::string& reference) { m_faces.setElement(index, name, reference); }
+        void setSolid(const int& index, const std::string& name, const std::string& reference) { m_solids.setElement(index, name, reference); }
+
         const int getVertexIndexByReference(const std::string& reference) { return m_vertices.getIndexByReference(reference); }
         const int getEdgeIndexByReference(const std::string& reference) { return m_edges.getIndexByReference(reference); }
         const int getFaceIndexByReference(const std::string& reference) { return m_faces.getIndexByReference(reference); }
@@ -118,10 +149,10 @@ namespace XAO
     private:
         void initListIds(const Standard_Integer shapeType);
 
-    private:
-        TopoDS_Shape m_shape;
+
+    protected:
         std::string m_name;
-        std::string m_format;
+        TopoDS_Shape m_shape;
         GeometricElementList m_vertices;
         GeometricElementList m_edges;
         GeometricElementList m_faces;

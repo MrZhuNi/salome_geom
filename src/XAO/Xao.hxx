@@ -28,6 +28,15 @@
 namespace XAO
 {
     /**
+     * @enum CAD
+     */
+    enum Format
+    {
+        BREP,
+        STEP
+    };
+
+    /**
      * @enum Dimension
      */
     enum Dimension
@@ -39,12 +48,15 @@ namespace XAO
         WHOLE = -1 //!< WHOLE
     };
 
+    /**
+     * @enum Type
+     */
     enum Type
     {
-        BOOLEAN = 0,
-        INTEGER = 1,
-        DOUBLE = 2,
-        STRING = 3
+        BOOLEAN = 0,//!< BOOLEAN
+        INTEGER = 1,//!< INTEGER
+        DOUBLE = 2, //!< DOUBLE
+        STRING = 3  //!< STRING
     };
 
     class Geometry;

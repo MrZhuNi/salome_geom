@@ -41,6 +41,7 @@ TestXAO_LDFLAGS = \
 dist_TestXAO_SOURCES = \
     FieldTest.cxx \
     ImportExportTest.cxx \
+    BrepGeometryTest.cxx \
     XAOTests.cxx
 
 UNIT_TEST_PROG = TestXAO

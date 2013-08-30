@@ -35,6 +35,11 @@ DoubleField::DoubleField(const std::string& name, const XAO::Dimension& dimensio
 {
 }
 
+Step* DoubleField::addNewStep(const int& step)
+{
+    return addStep(step);
+}
+
 DoubleStep* DoubleField::addStep(const int& step)
 {
     DoubleStep* bstep = new DoubleStep(step, m_nbElements, m_nbComponents);

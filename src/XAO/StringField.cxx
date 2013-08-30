@@ -35,6 +35,11 @@ StringField::StringField(const std::string& name, const XAO::Dimension& dimensio
 {
 }
 
+Step* StringField::addNewStep(const int& step)
+{
+    return addStep(step);
+}
+
 StringStep* StringField::addStep(const int& step)
 {
     StringStep* bstep = new StringStep(step, m_nbElements, m_nbComponents);

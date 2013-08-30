@@ -40,6 +40,16 @@ namespace XAO
         static void parseSolidsNode(xmlNodePtr solidsNode, Geometry* geometry);
         static void parseGroupsNode(xmlNodePtr groupsNode, Xao* xaoObject);
         static void parseGroupNode(xmlNodePtr groupNode, Xao* xaoObject);
+
+        static void parseFieldsNode(xmlNodePtr fieldsNode, Xao* xaoObject);
+        static void parseFieldNode(xmlNodePtr fieldNode, Xao* xaoObject);
+        static void parseStepNode(xmlNodePtr stepNode, Field* field);
+        static void parseStepElementNode(xmlNodePtr eltNode, Step* step);
+
+        static std::string readStringProp(xmlNodePtr node, const xmlChar* attribute,
+                const bool& required, const std::string& defaultValue, const std::string& exception = std::string(""));
+        static int readIntegerProp(xmlNodePtr node, const xmlChar* attribute,
+                const bool& required, const int& defaultValue, const std::string& exception = std::string(""));
     };
 }
 

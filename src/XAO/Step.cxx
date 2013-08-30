@@ -18,6 +18,9 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
+#include <sstream>
+#include <Utils_SALOME_Exception.hxx>
+
 #include "Xao.hxx"
 #include "Step.hxx"
 #include "BooleanStep.hxx"
@@ -25,19 +28,8 @@
 #include "DoubleStep.hxx"
 #include "StringStep.hxx"
 
-#include <Utils_SALOME_Exception.hxx>
 
 using namespace XAO;
-
-Step* Step::createStep(const XAO::Type& type, const int& nbElements, const int& nbComponents)
-{
-    return createStep(type, 0, 0, nbElements, nbComponents);
-}
-
-Step* Step::createStep(const XAO::Type& type, const int& step, const int& nbElements, const int& nbComponents)
-{
-    return createStep(type, step, 0, nbElements, nbComponents);
-}
 
 Step* Step::createStep(const XAO::Type& type, const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
 {
@@ -55,12 +47,20 @@ Step* Step::createStep(const XAO::Type& type, const int& step, const int& stamp,
 
 void Step::checkElement(const int& element)
 {
-    if (element >= m_nbElements)
-        throw SALOME_Exception("IndexOutOfRange element"); // TODO
+    if (element >= m_nbElements || element < 0)
+    {
+        std::ostringstream str;
+        str << "Element index is out of range [0, " << m_nbElements-1 << "] : " << element;
+        throw SALOME_Exception(str.str().c_str());
+    }
 }
 
 void Step::checkComponent(const int& component)
 {
-    if (component >= m_nbComponents)
-        throw SALOME_Exception("IndexOutOfRange component"); // TODO
+    if (component >= m_nbComponents || component < 0)
+    {
+        std::ostringstream str;
+        str << "Component index is out of range [0, " << m_nbComponents-1 << "] : " << component;
+        throw SALOME_Exception(str.str().c_str());
+    }
 }

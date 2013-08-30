@@ -35,6 +35,11 @@ IntegerField::IntegerField(const std::string& name, const XAO::Dimension& dimens
 {
 }
 
+Step* IntegerField::addNewStep(const int& step)
+{
+    return addStep(step);
+}
+
 IntegerStep* IntegerField::addStep(const int& step)
 {
     IntegerStep* bstep = new IntegerStep(step, m_nbElements, m_nbComponents);

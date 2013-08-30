@@ -38,7 +38,6 @@ namespace XAO
          * \param value the integer to convert.
          * \return the string.
          */
-        //static const char* intToString(const int value);
         static const std::string intToString(const int& value);
         static const int stringToInt(const std::string& value);
 
@@ -76,7 +75,23 @@ namespace XAO
          * \throw SALOME_Exception
          */
         static const XAO::Type stringToFieldType(const std::string& type);
-    };
+
+        /**
+         * Converts a Format to string.
+         * \param format the Format to convert.
+         * \return the Format as a string.
+         * \throw SALOME_Exception
+         */
+        static const std::string shapeFormatToString(const XAO::Format& format);
+
+        /**
+         * Converts a string into a Format.
+         * \param format the Format as a string.
+         * \return the converted Format.
+         * \throw SALOME_Exception
+         */
+        static const XAO::Format stringToShapeFormat(const std::string& format);
+};
 }
 
 

@@ -18,21 +18,18 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-#include <stdio.h>
 #include <Utils_SALOME_Exception.hxx>
 
+#include "TestUtils.hxx";
 #include "ImportExportTest.hxx"
 #include "../Geometry.hxx"
 #include "../Group.hxx"
+#include "../Field.hxx"
+#include "../IntegerField.hxx"
+#include "../IntegerStep.hxx"
 
 using namespace XAO;
 
-std::string getTestFile(std::string fileName)
-{
-    std::string dataDir = getenv("GEOM_SRC_DIR");
-    dataDir += "/src/XAO/tests/data/" + fileName;
-    return dataDir;
-}
 
 void ImportExportTest::setUp()
 {
@@ -57,7 +54,7 @@ void ImportExportTest::testExportNoGeometry()
 void ImportExportTest::testExportGeometry()
 {
     Xao xao("me", "1.0");
-    Geometry* geom = new Geometry();
+    Geometry* geom = Geometry::createGeometry(XAO::BREP);
     geom->setName("mygeom");
     xao.setGeometry(geom);
 
@@ -90,6 +87,20 @@ void ImportExportTest::testExportGeometry()
     group->addElement(0);
     group->addElement(1);
 
+    // fields
+    IntegerField* field = (IntegerField*)xao.addField(XAO::INTEGER, "color", XAO::FACE, 2);
+    for (int stepIndex = 0; stepIndex < 10; ++stepIndex)
+    {
+        IntegerStep* istep = field->addStep(stepIndex, 100*stepIndex);
+        for (int eltIndex = 0; eltIndex < istep->countElements(); ++eltIndex)
+        {
+            for (int compIndex = 0; compIndex < istep->countComponents(); ++compIndex)
+            {
+                istep->setValue(eltIndex, compIndex, istep->getStamp() + eltIndex*10 + compIndex);
+            }
+        }
+    }
+
     bool res = xao.exportXAO("mygeom.xao");
     CPPUNIT_ASSERT(res);
 
@@ -100,7 +111,7 @@ void ImportExportTest::testExportGeometry()
 void ImportExportTest::testGeometryError()
 {
     Xao xao("me", "1.0");
-    Geometry* geom = new Geometry();
+    Geometry* geom = Geometry::createGeometry(XAO::BREP);
     geom->setName("mygeom");
     xao.setGeometry(geom);
 
@@ -110,22 +121,13 @@ void ImportExportTest::testGeometryError()
 
 void ImportExportTest::testImportXao()
 {
-    //std::cout << std::endl;
     Xao xao;
-    xao.importXAO(getTestFile("test.xao").c_str());
+    xao.importXAO(TestUtils::getTestFilePath("test.xao"));
     checkImport(xao);
 }
 
 void ImportExportTest::checkImport(Xao& xao)
 {
-//    std::string zz = "toto";
-//    std::cout << "?? " << (zz == "toto" ? "yes" : "no" ) << std::endl;
-//
-//    std::cout << std::endl << "Author = " << xao.getAuthor()
-//              << " : " << (xao.getAuthor() == "me" ? "yes" : "no")  << std::endl;
-//    std::cout << " : " << ("me" == xao.getAuthor() ? "yes" : "no")  << std::endl;
-//    std::cout << " : " << (xao.getAuthor().compare("me") ? "yes" : "no")  << std::endl;
-
     CPPUNIT_ASSERT(xao.getAuthor() == "me");
     CPPUNIT_ASSERT(xao.getVersion() == "1.0");
 
@@ -177,15 +179,16 @@ void ImportExportTest::checkImport(Xao& xao)
 
 void ImportExportTest::testImportXaoFromText()
 {
-    std::ifstream rstr;
-    int length;
-    rstr.open(getTestFile("test.xao").c_str());
-    rstr.seekg(0, rstr.end);        // go to the end
-    length = rstr.tellg();          // report location (this is the length)
-    rstr.seekg(0, rstr.beg);        // go back to the beginning
-    char* txt = new char[length];   // allocate memory for a buffer of appropriate dimension
-    rstr.read(txt, length);         // read the whole file into the buffer
-    rstr.close();
+//    std::ifstream rstr;
+//    int length;
+//    rstr.open(TestUtils::getTestFilePath("test.xao").c_str());
+//    rstr.seekg(0, rstr.end);        // go to the end
+//    length = rstr.tellg();          // report location (this is the length)
+//    rstr.seekg(0, rstr.beg);        // go back to the beginning
+//    char* txt = new char[length];   // allocate memory for a buffer of appropriate dimension
+//    rstr.read(txt, length);         // read the whole file into the buffer
+//    rstr.close();
+    char* txt = TestUtils::readTextFile(TestUtils::getTestFilePath("test.xao"));
 
     Xao xao;
     xao.setXML(txt);

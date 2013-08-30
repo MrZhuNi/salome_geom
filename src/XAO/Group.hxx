@@ -105,6 +105,11 @@ namespace XAO
 
     private:
         void initGroup(const std::string& name, const XAO::Dimension& dim, const int& nbElements);
+        /**
+         * Ensures that the given element is valid.
+         * @param element
+         * @throw SALOME_Exception if element is bigger than the number of elements.
+         */
         void checkElement(const int& element);
 
     private:

@@ -39,6 +39,7 @@ namespace XAO
 
         virtual const XAO::Type getType() { return XAO::BOOLEAN; }
 
+        virtual Step* addNewStep(const int& step);
         BooleanStep* addStep(const int& step);
         BooleanStep* addStep(const int& step, const int& stamp);
         BooleanStep* getStep(const int& index);

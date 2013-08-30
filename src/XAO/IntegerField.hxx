@@ -40,9 +40,10 @@ namespace XAO
 
         virtual const XAO::Type getType() { return XAO::INTEGER; }
 
+        virtual Step* addNewStep(const int& step);
         IntegerStep* addStep(const int& step);
         IntegerStep* addStep(const int& step, const int& stamp);
-        IntegerStep* getStep(const int& index);
+        IntegerStep* getStep(const int& step);
     };
 }
 
