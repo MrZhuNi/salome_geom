@@ -27,6 +27,11 @@
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
+#include <GProp_GProps.hxx>
+#include <BRepGProp.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <BRep_Tool.hxx>
 
 #include <Utils_SALOME_Exception.hxx>
 
@@ -43,101 +48,153 @@ BrepGeometry::BrepGeometry(const std::string& name) : Geometry(name)
 {
 }
 
-void BrepGeometry::getEdgeVertices(const int& edge, int& vertexA, int& vertexB)
+TopoDS_Shape BrepGeometry::getGeometricalElement(TopAbs_ShapeEnum shapeType, const int& shapeIndex)
 {
-    throw SALOME_Exception("Not impolemented");
-}
-
-const int BrepGeometry::countFacesWires(const int& face)
-{
-    throw SALOME_Exception("Not impolemented");
-}
-
-std::vector<int> BrepGeometry::getFacesWires(const int& face)
-{
-    throw SALOME_Exception("Not impolemented");
-}
-
-const int BrepGeometry::countSolidShells(const int& solid)
-{
-    throw SALOME_Exception("Not impolemented");
-}
-
-std::vector<int> BrepGeometry::getSolidShells(const int& solid)
-{
-    throw SALOME_Exception("Not impolemented");
-}
-
-void BrepGeometry::getVertexXYZ(const int& vertex, int& xCoord, int& yCoord, int& zCoord)
-{
-    // TODO
     TopTools_MapOfShape mapShape;
     TopTools_ListOfShape listShape;
 
-    TopExp_Explorer exp(m_shape, TopAbs_ShapeEnum(TopAbs_VERTEX));
+    TopExp_Explorer exp(m_shape, shapeType);
     for (; exp.More(); exp.Next())
     {
         if (mapShape.Add(exp.Current()))
             listShape.Append(exp.Current());
     }
 
-    if (listShape.IsEmpty())
-        return;
-
-    TopTools_IndexedMapOfShape indices;
-    TopExp::MapShapes(m_shape, indices);
-
-    std::list<int> indexList;
-    TopTools_ListIteratorOfListOfShape itSub(listShape);
-    for (int index = 1; itSub.More(); itSub.Next(), ++index)
+    if (!listShape.IsEmpty())
     {
-        TopoDS_Shape value = itSub.Value();
-        indexList.push_back(indices.FindIndex(value));
+        TopTools_IndexedMapOfShape indices;
+        TopExp::MapShapes(m_shape, indices);
+
+        TopTools_ListIteratorOfListOfShape itSub(listShape);
+        for (int index = 1; itSub.More(); itSub.Next(), ++index)
+        {
+            TopoDS_Shape value = itSub.Value();
+            if (shapeIndex == (int)indices.FindIndex(value))
+                return value;
+        }
     }
 
-    std::list<int>::iterator it = indexList.begin();
-//    switch (shapeType)
-//    {
-//        case TopAbs_VERTEX:
-//        {
-//        }
-//        case TopAbs_EDGE:
-//        {
-//            m_edges.setSize(indexList.size());
-//            for (int i = 0; it != indexList.end(); it++, i++)
-//                m_edges.setReference(i, XaoUtils::intToString((*it)));
-//            break;
-//        }
-//        case TopAbs_FACE:
-//        {
-//            m_faces.setSize(indexList.size());
-//            for (int i = 0; it != indexList.end(); it++, i++)
-//                m_faces.setReference(i, XaoUtils::intToString((*it)));
-//            break;
-//        }
-//        case TopAbs_SOLID:
-//        {
-//            m_solids.setSize(indexList.size());
-//            for (int i = 0; it != indexList.end(); it++, i++)
-//                m_solids.setReference(i, XaoUtils::intToString((*it)));
-//            break;
-//        }
-//    }
+    throw SALOME_Exception("Shape not found"); // TODO
 }
 
-const double BrepGeometry::getEdgleLength(const int& edge)
+const int BrepGeometry::countGeometricalElements(TopoDS_Shape shape, TopAbs_ShapeEnum shapeType)
 {
-    throw SALOME_Exception("Not impolemented");
+    int res = 0;
+    TopTools_MapOfShape mapShape;
+    TopExp_Explorer exp(shape, shapeType);
+    for (; exp.More(); exp.Next())
+    {
+//        if (mapShape.Add(exp.Current()))
+            res++;
+    }
+
+    return res;
+}
+
+std::vector<int> BrepGeometry::getGeometricalElements(TopoDS_Shape shape, TopAbs_ShapeEnum shapeType)
+{
+    std::vector<int> indexList;
+
+    TopTools_MapOfShape mapShape;
+    TopTools_ListOfShape listShape;
+
+    TopExp_Explorer exp(shape, shapeType);
+    for (; exp.More(); exp.Next())
+    {
+        if (mapShape.Add(exp.Current()))
+            listShape.Append(exp.Current());
+    }
+
+    if (!listShape.IsEmpty())
+    {
+        TopTools_IndexedMapOfShape indices;
+        TopExp::MapShapes(shape, indices);
+
+        TopTools_ListIteratorOfListOfShape itSub(listShape);
+        for (int index = 1; itSub.More(); itSub.Next(), ++index)
+        {
+            TopoDS_Shape value = itSub.Value();
+            indexList.push_back(indices.FindIndex(value));
+        }
+    }
+
+    return indexList;
+}
+
+
+void BrepGeometry::getEdgeVertices(const int& edge, int& vertexA, int& vertexB)
+{
+    throw SALOME_Exception("Not implemented");
+}
+
+const int BrepGeometry::countFaceWires(const int& face)
+{
+    TopoDS_Shape shape = getGeometricalElement(TopAbs_FACE, face);
+    return countGeometricalElements(shape, TopAbs_WIRE);
+}
+
+std::vector<int> BrepGeometry::getFaceWires(const int& face)
+{
+    TopoDS_Shape shape = getGeometricalElement(TopAbs_FACE, face);
+    return getGeometricalElements(shape, TopAbs_WIRE);
+}
+
+const int BrepGeometry::countSolidShells(const int& solid)
+{
+    TopoDS_Shape shape = getGeometricalElement(TopAbs_SOLID, solid);
+    return countGeometricalElements(shape, TopAbs_SHELL);
+}
+
+std::vector<int> BrepGeometry::getSolidShells(const int& solid)
+{
+    TopoDS_Shape shape = getGeometricalElement(TopAbs_SOLID, solid);
+    return getGeometricalElements(shape, TopAbs_SHELL);
+}
+
+void BrepGeometry::getVertexXYZ(const int& vertex, double& xCoord, double& yCoord, double& zCoord)
+{
+    TopoDS_Shape shape = getGeometricalElement(TopAbs_VERTEX, vertex);
+
+    xCoord = 0.;
+    yCoord = 0.;
+    zCoord = 0.;
+    if ( shape.ShapeType() != TopAbs_VERTEX )
+    {
+        throw SALOME_Exception("not a point"); // TODO
+    }
+
+    TopoDS_Vertex aPoint = TopoDS::Vertex( shape );
+    if ( !aPoint.IsNull() )
+    {
+      gp_Pnt aPnt = BRep_Tool::Pnt( aPoint );
+      xCoord = aPnt.X();
+      yCoord = aPnt.Y();
+      zCoord = aPnt.Z();
+    }
+}
+
+const double BrepGeometry::getEdgeLength(const int& edge)
+{
+    TopoDS_Shape shape = getGeometricalElement(TopAbs_EDGE, edge);
+    GProp_GProps system;
+    BRepGProp::LinearProperties(shape, system);
+    return system.Mass();
 }
 
 const double BrepGeometry::getFaceArea(const int& face)
 {
-    throw SALOME_Exception("Not impolemented");
+    TopoDS_Shape shape = getGeometricalElement(TopAbs_FACE, face);
+    GProp_GProps system;
+    BRepGProp::SurfaceProperties(shape, system);
+    return system.Mass();
 }
 
 const double BrepGeometry::getSolidVolume(const int& solid)
 {
-    throw SALOME_Exception("Not impolemented");
+    TopoDS_Shape shape = getGeometricalElement(TopAbs_SOLID, solid);
+    GProp_GProps system;
+    BRepGProp::VolumeProperties(shape, system);
+    return system.Mass();
 }
 
 const int BrepGeometry::getVertexID(const int& vertex)
@@ -162,22 +219,22 @@ const int BrepGeometry::getSolidID(const int& solid)
 
 void BrepGeometry::setVertexID(const int& vertex, const int& id)
 {
-    throw SALOME_Exception("Not impolemented");
+    setVertexReference(vertex, XaoUtils::intToString(id));
 }
 
 void BrepGeometry::setEdgeID(const int& edge, const int& id)
 {
-    throw SALOME_Exception("Not impolemented");
+    setEdgeReference(edge, XaoUtils::intToString(id));
 }
 
 void BrepGeometry::setFaceID(const int& face, const int& id)
 {
-    throw SALOME_Exception("Not impolemented");
+    setEdgeReference(face, XaoUtils::intToString(id));
 }
 
 void BrepGeometry::setSolidID(const int& solid, const int& id)
 {
-    throw SALOME_Exception("Not impolemented");
+    setEdgeReference(solid, XaoUtils::intToString(id));
 }
 
 const int BrepGeometry::findVertex(const int& id)

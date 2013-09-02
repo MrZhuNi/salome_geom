@@ -23,7 +23,7 @@
 
 # include <iostream>
 #include <string>
-#include <vector>
+#include <set>
 
 #include "Xao.hxx"
 
@@ -37,9 +37,18 @@ namespace XAO
     {
     public:
         /**
-         * Default constructor.
+         * Constructor.
+         * @param dim the dimension of the group.
+         * @param nbElements the number of geometrical elements for the dimension in the geometry.
          */
         Group(const XAO::Dimension& dim, const int& nbElements);
+
+        /**
+         * Constructor.
+         * @name the name of the group.
+         * @param dim the dimension of the group.
+         * @param nbElements the number of geometrical elements for the dimension in the geometry.
+         */
         Group(const std::string& name, const XAO::Dimension& dim, const int& nbelements);
 
         /**
@@ -48,20 +57,20 @@ namespace XAO
         virtual ~Group();
 
         /**
+        * Gets the name of the group.
+        * \return the name of the group.
+        */
+       const std::string getName() const
+       {
+           return m_name;
+       }
+        /**
          * Sets the name of the group.
          * \param name the name to set.
          */
         void setName(const std::string& name)
         {
             m_name = name;
-        }
-        /**
-         * Gets the name of the group.
-         * \return the name of the group.
-         */
-        const std::string getName() const
-        {
-            return m_name;
         }
 
         /**
@@ -74,43 +83,76 @@ namespace XAO
         }
 
         /**
-         * Gets the number of elements in the group.
-         * \return the number of elements.
+         * Gets the numbers of elements in the geometry of the same type than the group.
+         * \return the number of elements in the associated geometry.
          */
-        int getCount()
+        const int getNbElements()
         {
-            return m_elements.size();
+            return m_nbElements;
         }
 
         /**
-         * Adds an element to the group.
-         * \param value the index of the element to add in the geometric element list (vertex, face...).
+         * Gets the number of elements in the group.
+         * \return the number of elements.
          */
-        void addElement(const int& value)
+        const int count()
         {
-            checkElement(value);
-            m_elements.push_back(value);
+            return m_elements.size();
         }
 
         /**
          * Gets the reference of an element.
          * \param index the index of the element.
          * \return the reference of the element.
+         * \note use begin() and end() if you need to iterate.
          */
-        const int getElement(const int& index)
+        const int get(const int& index)
         {
-            checkElement(index);
-            return m_elements[index];
+            checkIndex(index);
+            std::set<int>::iterator it = m_elements.begin();
+            std::advance(it, index);
+            return (*it);
         }
 
+        /**
+         * Adds an element to the group.
+         * \param value the index of the element to add.
+         */
+        void add(const int& value);
+
+        /**
+         * Removes an element from the group.
+         * \param value the index of the element to remove.
+         */
+        void remove(const int& value);
+
+        /**
+         * Gets an iterator on the first element in the group.
+         * @return an iterator on the first element.
+         */
+        std::set<int>::iterator begin() { return m_elements.begin(); }
+
+        /**
+         * Gets an iterator on the last element in the group.
+         * @return an iterator on the last element.
+         */
+        std::set<int>::iterator end() { return m_elements.end(); }
+
     private:
+        /**
+         * Initialize the groups.
+         * @param name the name of the group.
+         * @param dim the dimension of the group.
+         * @param nbElements the number of elements in the geometry for the dimension.
+         */
         void initGroup(const std::string& name, const XAO::Dimension& dim, const int& nbElements);
+
         /**
          * Ensures that the given element is valid.
          * @param element
          * @throw SALOME_Exception if element is bigger than the number of elements.
          */
-        void checkElement(const int& element);
+        void checkIndex(const int& element);
 
     private:
         /** The name of the group. */
@@ -122,7 +164,7 @@ namespace XAO
         /** The number of elements in the group. */
         int m_count;
         /** The elements of the group. */
-        std::vector<int> m_elements;
+        std::set<int> m_elements;
     };
 }
 

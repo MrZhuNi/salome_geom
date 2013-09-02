@@ -47,12 +47,22 @@ Group::~Group()
 {
 }
 
-void Group::checkElement(const int& element)
+void Group::checkIndex(const int& element)
 {
-    if (element >= m_nbElements || element < 0)
+    if (element >= m_elements.size() || element < 0)
     {
         std::ostringstream str;
-        str << "IndexOutOfRange element: " << element << " >= " << m_nbElements; // TODO
+        str << "Index of element is out of range [0, " << m_elements.size()-1 << "]: " << element;
         throw SALOME_Exception(str.str().c_str());
     }
+}
+
+void Group::add(const int& value)
+{
+    m_elements.insert(value);
+}
+
+void Group::remove(const int& value)
+{
+    m_elements.erase(value);
 }

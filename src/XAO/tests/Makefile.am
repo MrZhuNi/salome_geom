@@ -39,6 +39,7 @@ TestXAO_LDFLAGS = \
     ../libXAO.la
 
 dist_TestXAO_SOURCES = \
+    GroupTest.cxx \
     FieldTest.cxx \
     ImportExportTest.cxx \
     BrepGeometryTest.cxx \

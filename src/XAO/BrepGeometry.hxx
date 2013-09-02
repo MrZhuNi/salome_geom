@@ -48,20 +48,90 @@ namespace XAO
          */
         void getEdgeVertices(const int& edge, int& vertexA, int& vertexB);
 
-        const int countFacesWires(const int& face);
-        std::vector<int> getFacesWires(const int& face);
+        /**
+         * Gets the number of wires of a face (including holes).
+         * @param face the index of the face.
+         * @return the number of wires.
+         */
+        const int countFaceWires(const int& face);
 
+        /**
+         * Gets the indices of the wires of the face.
+         * @param face the index of the face.
+         * @return the list of wires for the given face.
+         */
+        std::vector<int> getFaceWires(const int& face);
+
+        /**
+         * Gets the number of shells of a solid (including cavities).
+         * @param solid the index of the solid.
+         * @return the number of shells.
+         */
         const int countSolidShells(const int& solid);
+
+        /**
+         * Gets the indices of the shells of the solids.
+         * @param solid the index of the solid.
+         * @return the list of shells for the given solid.
+         */
         std::vector<int> getSolidShells(const int& solid);
 
-        void getVertexXYZ(const int& vertex, int& xCoord, int& yCoord, int& zCoord);
-        const double getEdgleLength(const int& edge);
+        /**
+         * Gets the coordinates of a vertex.
+         * @param vertex the index of the vertex.
+         * @param xCoord the X coordinate.
+         * @param yCoord the Y coordinate.
+         * @param zCoord the Z coordinate.
+         */
+        void getVertexXYZ(const int& vertex, double& xCoord, double& yCoord, double& zCoord);
+
+        /**
+         * Gets the length of an edge.
+         * @param edge the index of the edge.
+         * @return the length of the edge.
+         */
+        const double getEdgeLength(const int& edge);
+
+        /**
+         * Gets the are of a face.
+         * @param face the index of a face.
+         * @return the area of the face.
+         */
         const double getFaceArea(const int& face);
+
+        /**
+         * Gets the volume of a solid.
+         * @param solid the index of the solid.
+         * @return the volume of the solid.
+         */
         const double getSolidVolume(const int& solid);
 
+        /**
+         * Gets the ID of a vertex.
+         * @param vertex the index of the vertex.
+         * @return the ID of the vertex.
+         */
         const int getVertexID(const int& vertex);
+
+        /**
+         * Gets the ID of an edge.
+         * @param edge the index of the edge.
+         * @return the ID of the edge.
+         */
         const int getEdgeID(const int& edge);
+
+        /**
+         * Gets the ID of a face.
+         * @param face the index of the face.
+         * @return the ID of the face.
+         */
         const int getFaceID(const int& face);
+
+        /**
+         * Gets the ID of a solid.
+         * @param solid the index of the solid.
+         * @return the ID of the solid.
+         */
         const int getSolidID(const int& solid);
 
         void setVertexID(const int& vertex, const int& id);
@@ -69,20 +139,95 @@ namespace XAO
         void setFaceID(const int& face, const int& id);
         void setSolidID(const int& solid, const int& id);
 
+        /**
+         * Finds a vertex with its ID.
+         * @param id the ID of the vertex.
+         * @return the index of the vertex.
+         */
         const int findVertex(const int& id);
+
+        /**
+         * Finds an edge with its ID.
+         * @param id the ID of the edge.
+         * @return the index of the edge.
+         */
         const int findEdge(const int& id);
+
+        /**
+         * Finds a face with its ID.
+         * @param id the ID of the face.
+         * @return the index of the face.
+         */
         const int findFace(const int& id);
+
+        /**
+         * Finds a solid with its ID.
+         * @param id the ID of the solid.
+         * @return th index of the solid.
+         */
         const int findSolid(const int& id);
 
+        /**
+         * Finds the name of a vertex with its ID.
+         * @param id the ID of the vertex.
+         * @return the name of the vertex.
+         */
         const std::string findVertexName(const int& id);
+
+        /**
+         * Finds the name of an edge with its ID.
+         * @param id the ID of the edge.
+         * @return the name of the edge.
+         */
         const std::string findEdgeName(const int& id);
+
+        /**
+         * Finds the name of a face with its ID.
+         * @param id the ID of the face.
+         * @return the name of the face.
+         */
         const std::string findFaceName(const int& id);
+
+        /**
+         * Finds the name of a solid with its ID.
+         * @param id the ID of the solid.
+         * @return the name of the solid.
+         */
         const std::string findSolidName(const int& id);
 
+        /**
+         * Changes the name of a vertex.
+         * @param id the ID of the vertex.
+         * @param name the name to set.
+         */
         void changeVertexName(const int& id, const std::string& name);
+
+        /**
+         * Changes the name of an edge.
+         * @param id the ID of the edge
+         * @param name the name to set.
+         */
         void changeEdgeName(const int& id, const std::string& name);
+
+        /**
+         * Changes the name of a face.
+         * @param id the ID of the face.
+         * @param name the name to set.
+         */
         void changeFaceName(const int& id, const std::string& name);
+
+        /**
+         * Changes the name of a solid.
+         * @param id the ID of the solid.
+         * @param name the name to set.
+         */
         void changeSolidName(const int& id, const std::string& name);
+
+    private:
+        TopoDS_Shape getGeometricalElement(TopAbs_ShapeEnum shapeType, const int& shapeIndex);
+        const int countGeometricalElements(TopoDS_Shape shape, TopAbs_ShapeEnum shapeType);
+        std::vector<int> getGeometricalElements(TopoDS_Shape shape, TopAbs_ShapeEnum shapeType);
+
     };
 }
 

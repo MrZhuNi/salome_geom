@@ -26,24 +26,24 @@ void FieldTest::testField(XAO::Type type)
 {
     Field* f = Field::createField(type, XAO::FACE, 10, 3);
 
-    CPPUNIT_ASSERT(f->getName().size() == 0);
-    CPPUNIT_ASSERT(f->getType() == type);
-    CPPUNIT_ASSERT(f->getDimension() == XAO::FACE);
-    CPPUNIT_ASSERT(f->countComponents() == 3);
-    CPPUNIT_ASSERT(f->countElements() == 10);
-    CPPUNIT_ASSERT(f->countValues() == 30);
+    CPPUNIT_ASSERT_EQUAL(0, (int)f->getName().size());
+    CPPUNIT_ASSERT_EQUAL(type, f->getType());
+    CPPUNIT_ASSERT_EQUAL(XAO::FACE, f->getDimension());
+    CPPUNIT_ASSERT_EQUAL(3, f->countComponents());
+    CPPUNIT_ASSERT_EQUAL(10, f->countElements());
+    CPPUNIT_ASSERT_EQUAL(30, f->countValues());
 
     f->setName("field1");
-    CPPUNIT_ASSERT(f->getName() == "field1");
+    CPPUNIT_ASSERT_EQUAL(std::string("field1"), f->getName());
 
-    CPPUNIT_ASSERT(f->getComponentName(0).size() == 0);
+    CPPUNIT_ASSERT_EQUAL(0, (int)f->getComponentName(0).size());
     f->setComponentName(0, "x");
     f->setComponentName(1, "y");
     f->setComponentName(2, "z");
-    CPPUNIT_ASSERT(f->countComponents() == 3);
-    CPPUNIT_ASSERT(f->getComponentName(0) == "x");
-    CPPUNIT_ASSERT(f->getComponentName(1) == "y");
-    CPPUNIT_ASSERT(f->getComponentName(2) == "z");
+    CPPUNIT_ASSERT_EQUAL(3, f->countComponents());
+    CPPUNIT_ASSERT_EQUAL(std::string("x"), f->getComponentName(0));
+    CPPUNIT_ASSERT_EQUAL(std::string("y"), f->getComponentName(1));
+    CPPUNIT_ASSERT_EQUAL(std::string("z"), f->getComponentName(2));
     CPPUNIT_ASSERT_THROW(f->setComponentName(3, "a"), SALOME_Exception);
     CPPUNIT_ASSERT_THROW(f->getComponentName(3), SALOME_Exception);
 }
@@ -68,19 +68,19 @@ void FieldTest::testStringField()
 void FieldTest::testStep(XAO::Type type)
 {
     Step* step = Step::createStep(type, 0, 0, 5, 3);
-    CPPUNIT_ASSERT(step->getType() == type);
+    CPPUNIT_ASSERT_EQUAL(type, step->getType());
 
-    CPPUNIT_ASSERT(step->getStep() == 0);
+    CPPUNIT_ASSERT_EQUAL(0, step->getStep());
     step->setStep(10);
-    CPPUNIT_ASSERT(step->getStep() == 10);
+    CPPUNIT_ASSERT_EQUAL(10, step->getStep());
 
-    CPPUNIT_ASSERT(step->getStamp() == 0);
+    CPPUNIT_ASSERT_EQUAL(0, step->getStamp());
     step->setStamp(100);
-    CPPUNIT_ASSERT(step->getStamp() == 100);
+    CPPUNIT_ASSERT_EQUAL(100, step->getStamp());
 
-    CPPUNIT_ASSERT(step->countElements() == 5);
-    CPPUNIT_ASSERT(step->countComponents() == 3);
-    CPPUNIT_ASSERT(step->countValues() == 15);
+    CPPUNIT_ASSERT_EQUAL(5, step->countElements());
+    CPPUNIT_ASSERT_EQUAL(3, step->countComponents());
+    CPPUNIT_ASSERT_EQUAL(15, step->countValues());
 }
 
 void FieldTest::testBooleanStep()
@@ -112,33 +112,33 @@ void FieldTest::testIntegerStepValues()
             istep->setValue(i, j, i*10 + j);
     }
 
-    CPPUNIT_ASSERT(istep->getValue(1, 2) == 12);
+    CPPUNIT_ASSERT_EQUAL(12, istep->getValue(1, 2));
     CPPUNIT_ASSERT_THROW(istep->getValue(nbElements, 2), SALOME_Exception);
     CPPUNIT_ASSERT_THROW(istep->getValue(1, nbComponents), SALOME_Exception);
 
     // get all values
     std::vector<int> values;
     values = istep->getValues();
-    CPPUNIT_ASSERT(values.size() == nbElements * nbComponents);
+    CPPUNIT_ASSERT_EQUAL(nbElements*nbComponents, (int)values.size());
     for (int i = 0; i < nbElements; ++i)
     {
         for (int j = 0; j < nbComponents; ++j)
-            CPPUNIT_ASSERT(values[i*nbComponents+j] == 10*i+j);
+            CPPUNIT_ASSERT_EQUAL(10*i+j, values[i*nbComponents+j]);
     }
 
     // get one element
     values = istep->getElement(2);
     CPPUNIT_ASSERT_THROW(istep->getElement(nbElements), SALOME_Exception);
-    CPPUNIT_ASSERT(values.size() == nbComponents);
+    CPPUNIT_ASSERT_EQUAL(nbComponents, (int)values.size());
     for (int i = 0; i < nbComponents; ++i)
-        CPPUNIT_ASSERT(values[i] == 20+i);
+        CPPUNIT_ASSERT_EQUAL(20+i, values[i]);
 
     // get one component
     values = istep->getComponent(1);
     CPPUNIT_ASSERT_THROW(istep->getComponent(nbComponents), SALOME_Exception);
-    CPPUNIT_ASSERT(values.size() == nbElements);
+    CPPUNIT_ASSERT_EQUAL(nbElements, (int)values.size());
     for (int i = 0; i < nbElements; ++i)
-        CPPUNIT_ASSERT(values[i] == 10*i+1);
+        CPPUNIT_ASSERT_EQUAL(10*i+1, values[i]);
 
     // set one element
     std::vector<int> newEltValues;

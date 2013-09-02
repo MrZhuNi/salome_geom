@@ -1,10 +1,3 @@
-/*
- * TestUtils.hxx
- *
- *  Created on: 30 août 2013
- *      Author: salome
- */
-
 #ifndef __XAO_TESTUTILS_HXX__
 #define __XAO_TESTUTILS_HXX__
 

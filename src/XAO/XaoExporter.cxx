@@ -213,12 +213,14 @@ void XaoExporter::exportGroups(Xao* xaoObject, xmlNodePtr xao)
         xmlNodePtr group = xmlNewChild(groups, 0, C_TAG_GROUP, 0);
         xmlNewProp(group, C_ATTR_GROUP_NAME, BAD_CAST grp->getName().c_str());
         xmlNewProp(group, C_ATTR_GROUP_DIM, BAD_CAST XaoUtils::dimensionToString(grp->getDimension()).c_str());
-        xmlNewProp(group, C_ATTR_COUNT, BAD_CAST XaoUtils::intToString(grp->getCount()).c_str());
+        xmlNewProp(group, C_ATTR_COUNT, BAD_CAST XaoUtils::intToString(grp->count()).c_str());
 
-        for (int j = 0; j < grp->getCount(); j++)
+        //for (int j = 0; j < grp->count(); j++)
+        for (std::set<int>::iterator it = grp->begin(); it != grp->end(); ++it)
         {
+            int grpElt = (*it);
             xmlNodePtr elt = xmlNewChild(group, 0, C_TAG_ELEMENT, 0);
-            xmlNewProp(elt, C_ATTR_ELEMENT_INDEX, BAD_CAST XaoUtils::intToString(grp->getElement(j)).c_str());
+            xmlNewProp(elt, C_ATTR_ELEMENT_INDEX, BAD_CAST XaoUtils::intToString(grpElt).c_str());
         }
     }
 }
@@ -495,7 +497,7 @@ void XaoExporter::parseGroupNode(xmlNodePtr groupNode, Xao* xaoObject)
         if (xmlStrcmp(node->name, C_TAG_ELEMENT) == 0)
         {
             int index = readIntegerProp(node, C_ATTR_ELEMENT_INDEX, true, -1);
-            group->addElement(index);
+            group->add(index);
         }
     }
 }

@@ -51,11 +51,33 @@ namespace XAO
               const int& nbElements, const int& nbComponents);
 
     public:
+        /**
+         * Creates a Field of the given type.
+         * @param type the type of the field to create.
+         * @param dimension the dimension.
+         * @param nbElements the number of geometrical elements.
+         * @param nbComponents the number of components.
+         * @return the created field.
+         */
         static Field* createField(const XAO::Type& type, const XAO::Dimension& dimension,
                                   const int& nbElements, const int& nbComponents);
+
+        /**
+        /**
+         * Creates a Field of the given type.
+         * @param type the type of the field to create.
+         * @name the name of the field.
+         * @param dimension the dimension.
+         * @param nbElements the number of geometrical elements.
+         * @param nbComponents the number of components.
+         * @return the created field.
+         */
         static Field* createField(const XAO::Type& type, const std::string& name, const XAO::Dimension& dimension,
                                   const int& nbElements, const int& nbComponents);
 
+        /**
+         * Destructor.
+         */
         virtual ~Field();
 
         /**

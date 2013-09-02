@@ -89,7 +89,9 @@ namespace XAO
         }
 
     private:
+        /** The name of the element. */
         std::string m_name;
+        /** The reference of the element. */
         std::string m_reference;
     };
 
@@ -104,11 +106,13 @@ namespace XAO
          * Default constructor.
          */
         GeometricElementList();
+
         /**
          * Constructor with size.
          * \param nb the size to set.
          */
         GeometricElementList(const int& nb);
+
         /**
          * Destructor.
          */
@@ -119,6 +123,7 @@ namespace XAO
          * \return the size of the list.
          */
         const int getSize() { return m_count; }
+
         /**
          * Sets the size of the list.
          * \param nb the size to set.
@@ -183,7 +188,16 @@ namespace XAO
          */
         typedef std::map<int, GeometricElement>::iterator iterator;
 
+        /**
+         * Gets an iterator on the first element.
+         * @return an iterator on the first element.
+         */
         iterator begin() { return m_elements.begin(); }
+
+        /**
+         * Gets an iterator on the last element.
+         * @return an iterator on the last element.
+         */
         iterator end() { return m_elements.end(); }
 
     private:

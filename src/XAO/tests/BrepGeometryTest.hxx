@@ -11,6 +11,11 @@ namespace XAO
     {
         CPPUNIT_TEST_SUITE(BrepGeometryTest);
         CPPUNIT_TEST(testGetIDs);
+        CPPUNIT_TEST(testGeometricalElements);
+        CPPUNIT_TEST(testGetVertex);
+        CPPUNIT_TEST(testGetEdgeLength);
+        CPPUNIT_TEST(testGetFaceArea);
+        CPPUNIT_TEST(testGetSolidVolume);
         CPPUNIT_TEST_SUITE_END();
 
     public:
@@ -19,6 +24,12 @@ namespace XAO
         void cleanUp();
 
         void testGetIDs();
+        void testGeometricalElements();
+
+        void testGetVertex();
+        void testGetEdgeLength();
+        void testGetFaceArea();
+        void testGetSolidVolume();
     };
 }
 
