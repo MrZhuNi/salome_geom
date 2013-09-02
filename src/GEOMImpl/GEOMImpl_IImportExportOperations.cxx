@@ -244,7 +244,7 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
                 {
                     const char* ref = XAO::XaoUtils::intToString(groupIds->Value(i)).c_str();
                     const int index = geometry->getVertexIndexByReference(ref);
-                    group->addElement(index);
+                    group->add(index);
                 }
                 break;
             case TopAbs_EDGE:
@@ -252,7 +252,7 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
                 {
                     const char* ref = XAO::XaoUtils::intToString(groupIds->Value(i)).c_str();
                     const int index = geometry->getEdgeIndexByReference(ref);
-                    group->addElement(index);
+                    group->add(index);
                 }
                 break;
             case TopAbs_FACE:
@@ -260,7 +260,7 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
                 {
                     const char* ref = XAO::XaoUtils::intToString(groupIds->Value(i)).c_str();
                     const int index = geometry->getFaceIndexByReference(ref);
-                    group->addElement(index);
+                    group->add(index);
                 }
                 break;
             case TopAbs_SOLID:
@@ -268,7 +268,7 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
                 {
                     const char* ref = XAO::XaoUtils::intToString(groupIds->Value(i)).c_str();
                     const int index = geometry->getSolidIndexByReference(ref);
-                    group->addElement(index);
+                    group->add(index);
                 }
                 break;
         }
@@ -439,13 +439,15 @@ bool GEOMImpl_IImportExportOperations::ImportXAO(const char* fileName,
         XAO::Group* xaoGroup = xaoObject->getGroup(i);
 
         // build an array with the indexes of the sub shapes
-        int nbElt = xaoGroup->getCount();
+        int nbElt = xaoGroup->count();
         Handle(TColStd_HArray1OfInteger) array = new TColStd_HArray1OfInteger(1, nbElt);
-        for (int j = 0; j < nbElt; j++)
+        //for (int j = 0; j < nbElt; j++)
+        int j = 0;
+        for (std::set<int>::iterator it = xaoGroup->begin(); it != xaoGroup->end(); ++it)
         {
-            int index = xaoGroup->getElement(j);
+            int index = (*it);
             std::string ref = xaoGeometry->getElementReference(xaoGroup->getDimension(), index);
-            array->SetValue(j + 1, atoi(ref.c_str()));
+            array->SetValue(++j, atoi(ref.c_str()));
         }
 
         // create the group with the array of sub shapes indexes
