@@ -69,7 +69,7 @@ namespace XAO
          * Checks if the element has a name.
          * @return true if the element has a name, false otherwise.
          */
-        bool hasName();
+        const bool hasName();
 
         /**
          * Gets the reference of the element.
@@ -122,7 +122,7 @@ namespace XAO
          * Gets the size of the list.
          * \return the size of the list.
          */
-        const int getSize() { return m_count; }
+        const int getSize() const { return m_count; }
 
         /**
          * Sets the size of the list.

@@ -74,7 +74,7 @@ std::vector<int> IntegerStep::getValues()
 
 std::vector<int> IntegerStep::getElement(const int& element)
 {
-    checkElement(element);
+    checkElementIndex(element);
 
     std::vector<int> result(m_values[element]);
     return result;
@@ -82,7 +82,7 @@ std::vector<int> IntegerStep::getElement(const int& element)
 
 std::vector<int> IntegerStep::getComponent(const int& component)
 {
-    checkComponent(component);
+    checkComponentIndex(component);
 
     std::vector<int> result;
     result.reserve(m_nbElements);
@@ -99,8 +99,8 @@ std::vector<int> IntegerStep::getComponent(const int& component)
 
 const int IntegerStep::getValue(const int& element, const int& component)
 {
-    checkElement(element);
-    checkComponent(component);
+    checkElementIndex(element);
+    checkComponentIndex(component);
 
     return m_values[element][component];
 }
@@ -112,8 +112,7 @@ const std::string IntegerStep::getStringValue(const int& element, const int& com
 
 void IntegerStep::setValues(const std::vector<int>& values)
 {
-    if (values.size() != m_nbComponents * m_nbElements)
-        throw SALOME_Exception("bad size"); // TODO
+    checkNbValues(values.size());
 
     for (int i = 0; i < m_nbElements; ++i)
     {
@@ -126,9 +125,8 @@ void IntegerStep::setValues(const std::vector<int>& values)
 
 void IntegerStep::setElements(const int& element, const std::vector<int>& elements)
 {
-    checkElement(element);
-    if (elements.size() != m_nbComponents)
-        throw SALOME_Exception("bad size"); // TODO
+    checkElementIndex(element);
+    checkNbComponents(elements.size());
 
     for (int i = 0; i < m_nbComponents; ++i)
         m_values[element][i] = elements[i];
@@ -136,9 +134,8 @@ void IntegerStep::setElements(const int& element, const std::vector<int>& elemen
 
 void IntegerStep::setComponents(const int& component, const std::vector<int>& components)
 {
-    checkElement(component);
-    if (components.size() != m_nbElements)
-        throw SALOME_Exception("bad size"); // TODO
+    checkElementIndex(component);
+    checkNbElements(components.size());
 
     for (int i = 0; i < m_nbElements; ++i)
         m_values[i][component] = components[i];
@@ -146,8 +143,8 @@ void IntegerStep::setComponents(const int& component, const std::vector<int>& co
 
 void IntegerStep::setValue(const int& element, const int& component, const int& value)
 {
-    checkElement(element);
-    checkComponent(component);
+    checkElementIndex(element);
+    checkComponentIndex(component);
 
     m_values[element][component] = value;
 }

@@ -11,6 +11,7 @@ namespace XAO
     {
         CPPUNIT_TEST_SUITE(GroupTest);
         CPPUNIT_TEST(testGroup);
+        CPPUNIT_TEST(testGroupErrors);
         CPPUNIT_TEST_SUITE_END();
 
     public:
@@ -19,6 +20,7 @@ namespace XAO
         void cleanUp();
 
         void testGroup();
+        void testGroupErrors();
     };
 }
 

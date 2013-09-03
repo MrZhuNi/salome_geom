@@ -24,9 +24,7 @@
 #include <Utils_SALOME_Exception.hxx>
 
 #include "Xao.hxx"
-#include "Field.hxx"
 #include "XaoUtils.hxx"
-
 
 using namespace XAO;
 
@@ -75,7 +73,8 @@ const std::string XaoUtils::dimensionToString(const XAO::Dimension& dimension)
         return "solid";
     if (dimension == XAO::WHOLE)
         return "whole";
-    throw SALOME_Exception("Bad dimension");
+
+    throw SALOME_Exception(MsgBuilder() << "Bad dimension: " << dimension);
 }
 
 const XAO::Dimension XaoUtils::stringToDimension(const std::string& dimension)
@@ -90,7 +89,8 @@ const XAO::Dimension XaoUtils::stringToDimension(const std::string& dimension)
         return XAO::SOLID;
     if (dimension == "whole")
         return XAO::WHOLE;
-    throw SALOME_Exception("Bad dimension");
+
+    throw SALOME_Exception(MsgBuilder() << "Bad dimension: " << dimension);
 }
 
 const std::string XaoUtils::fieldTypeToString(const XAO::Type& type)
@@ -103,7 +103,8 @@ const std::string XaoUtils::fieldTypeToString(const XAO::Type& type)
         return "double";
     if (type == XAO::STRING)
         return "string";
-    throw SALOME_Exception("Bad type");
+
+    throw SALOME_Exception(MsgBuilder() << "Bad type: " << type);
 }
 
 const XAO::Type XaoUtils::stringToFieldType(const std::string& type)
@@ -116,7 +117,8 @@ const XAO::Type XaoUtils::stringToFieldType(const std::string& type)
         return XAO::DOUBLE;
     if (type == "string")
         return XAO::STRING;
-    throw SALOME_Exception("Bad type");
+
+    throw SALOME_Exception(MsgBuilder() << "Bad type: " << type);
 }
 
 const std::string XaoUtils::shapeFormatToString(const XAO::Format& format)
@@ -125,7 +127,8 @@ const std::string XaoUtils::shapeFormatToString(const XAO::Format& format)
         return "BREP";
     if (format == XAO::STEP)
         return "STEP";
-    throw SALOME_Exception("Bad format");
+
+    throw SALOME_Exception(MsgBuilder() << "Bad format: " << format);
 }
 
 const XAO::Format XaoUtils::stringToShapeFormat(const std::string& format)
@@ -134,5 +137,6 @@ const XAO::Format XaoUtils::stringToShapeFormat(const std::string& format)
         return XAO::BREP;
     if (format == "STEP")
         return XAO::STEP;
-    throw SALOME_Exception("Bad format");
+
+    throw SALOME_Exception(MsgBuilder() << "Bad format: " << format);
 }

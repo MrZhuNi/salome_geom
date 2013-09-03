@@ -179,15 +179,6 @@ void ImportExportTest::checkImport(Xao& xao)
 
 void ImportExportTest::testImportXaoFromText()
 {
-//    std::ifstream rstr;
-//    int length;
-//    rstr.open(TestUtils::getTestFilePath("test.xao").c_str());
-//    rstr.seekg(0, rstr.end);        // go to the end
-//    length = rstr.tellg();          // report location (this is the length)
-//    rstr.seekg(0, rstr.beg);        // go back to the beginning
-//    char* txt = new char[length];   // allocate memory for a buffer of appropriate dimension
-//    rstr.read(txt, length);         // read the whole file into the buffer
-//    rstr.close();
     char* txt = TestUtils::readTextFile(TestUtils::getTestFilePath("test.xao"));
 
     Xao xao;

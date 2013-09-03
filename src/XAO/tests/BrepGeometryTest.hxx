@@ -11,7 +11,9 @@ namespace XAO
     {
         CPPUNIT_TEST_SUITE(BrepGeometryTest);
         CPPUNIT_TEST(testGetIDs);
-        CPPUNIT_TEST(testGeometricalElements);
+        CPPUNIT_TEST(testGetEdgeVertices);
+        CPPUNIT_TEST(testGetFaceWires);
+        CPPUNIT_TEST(testSolidShells);
         CPPUNIT_TEST(testGetVertex);
         CPPUNIT_TEST(testGetEdgeLength);
         CPPUNIT_TEST(testGetFaceArea);
@@ -24,7 +26,9 @@ namespace XAO
         void cleanUp();
 
         void testGetIDs();
-        void testGeometricalElements();
+        void testGetEdgeVertices();
+        void testGetFaceWires();
+        void testSolidShells();
 
         void testGetVertex();
         void testGetEdgeLength();

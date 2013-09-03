@@ -18,6 +18,8 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
+#include <cassert>
+
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
@@ -74,7 +76,7 @@ TopoDS_Shape BrepGeometry::getGeometricalElement(TopAbs_ShapeEnum shapeType, con
         }
     }
 
-    throw SALOME_Exception("Shape not found"); // TODO
+    throw SALOME_Exception(MsgBuilder() << "Shape not found: " << shapeIndex);
 }
 
 const int BrepGeometry::countGeometricalElements(TopoDS_Shape shape, TopAbs_ShapeEnum shapeType)
@@ -121,10 +123,14 @@ std::vector<int> BrepGeometry::getGeometricalElements(TopoDS_Shape shape, TopAbs
     return indexList;
 }
 
-
 void BrepGeometry::getEdgeVertices(const int& edge, int& vertexA, int& vertexB)
 {
-    throw SALOME_Exception("Not implemented");
+    TopoDS_Shape shape = getGeometricalElement(TopAbs_EDGE, edge);
+    std::vector<int> vertices = getGeometricalElements(shape, TopAbs_VERTEX);
+    assert(vertices.size() == 2);
+
+    vertexA = vertices[0];
+    vertexB = vertices[1];
 }
 
 const int BrepGeometry::countFaceWires(const int& face)
@@ -153,23 +159,21 @@ std::vector<int> BrepGeometry::getSolidShells(const int& solid)
 
 void BrepGeometry::getVertexXYZ(const int& vertex, double& xCoord, double& yCoord, double& zCoord)
 {
-    TopoDS_Shape shape = getGeometricalElement(TopAbs_VERTEX, vertex);
-
     xCoord = 0.;
     yCoord = 0.;
     zCoord = 0.;
-    if ( shape.ShapeType() != TopAbs_VERTEX )
-    {
-        throw SALOME_Exception("not a point"); // TODO
-    }
 
-    TopoDS_Vertex aPoint = TopoDS::Vertex( shape );
-    if ( !aPoint.IsNull() )
+    TopoDS_Shape shape = getGeometricalElement(TopAbs_VERTEX, vertex);
+    if (shape.ShapeType() != TopAbs_VERTEX)
+        throw SALOME_Exception(MsgBuilder() << "Shape " << vertex << " is not a point.");
+
+    TopoDS_Vertex point = TopoDS::Vertex(shape);
+    if (!point.IsNull())
     {
-      gp_Pnt aPnt = BRep_Tool::Pnt( aPoint );
-      xCoord = aPnt.X();
-      yCoord = aPnt.Y();
-      zCoord = aPnt.Z();
+        gp_Pnt aPnt = BRep_Tool::Pnt(point);
+        xCoord = aPnt.X();
+        yCoord = aPnt.Y();
+        zCoord = aPnt.Z();
     }
 }
 
@@ -296,4 +300,3 @@ void BrepGeometry::changeSolidName(const int& id, const std::string& name)
 {
     setSolidName(findSolid(id), name);
 }
-

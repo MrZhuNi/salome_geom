@@ -25,26 +25,26 @@
 
 using namespace XAO;
 
-BooleanField::BooleanField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents)
+BooleanField::BooleanField(const XAO::Dimension& dimension,
+                           const int& nbElements, const int& nbComponents)
     : Field("", dimension, nbElements, nbComponents)
 {
 }
 
-BooleanField::BooleanField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents)
+BooleanField::BooleanField(const std::string& name, const XAO::Dimension& dimension,
+                           const int& nbElements, const int& nbComponents)
     : Field(name, dimension, nbElements, nbComponents)
 {
 }
 
 Step* BooleanField::addNewStep(const int& step)
 {
-    return addStep(step);
+    return addStep(step, 0);
 }
 
 BooleanStep* BooleanField::addStep(const int& step)
 {
-    BooleanStep* bstep = new BooleanStep(step, m_nbElements, m_nbComponents);
-    m_steps.push_back(bstep);
-    return bstep;
+    return addStep(step, 0);
 }
 
 BooleanStep* BooleanField::addStep(const int& step, const int& stamp)
@@ -56,7 +56,6 @@ BooleanStep* BooleanField::addStep(const int& step, const int& stamp)
 
 BooleanStep* BooleanField::getStep(const int& index)
 {
-    if (index < m_steps.size())
-        return (BooleanStep*)m_steps[index];
-   throw SALOME_Exception("IndexOutOfRange");
+    checkStepIndex(index);
+    return (BooleanStep*)m_steps[index];
 }

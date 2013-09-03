@@ -89,7 +89,7 @@ namespace XAO
          * Gets the author of the file.
          * \return the author of the file.
          */
-        const std::string getAuthor()
+        const std::string getAuthor() const
         {
             return m_author;
         }
@@ -106,7 +106,7 @@ namespace XAO
          * Gets the version of the file.
          * \return the version of the file.
          */
-        const std::string getVersion()
+        const std::string getVersion() const
         {
             return m_version;
         }
@@ -127,7 +127,7 @@ namespace XAO
          * Gets the geometry.
          * \return the geometry.
          */
-        Geometry* getGeometry()
+        Geometry* getGeometry() const
         {
             return m_geometry;
         }
@@ -148,7 +148,7 @@ namespace XAO
          * Gets the number of groups.
          * \return the number of groups.
          */
-        const int countGroups();
+        const int countGroups() const;
         /**
          * Gets a group.
          * \param index the index of the wanted group.
@@ -182,7 +182,7 @@ namespace XAO
          * Gets the number of fields.
          * \return the number of fields.
          */
-        const int countFields();
+        const int countFields() const;
         /**
          * Gets a field.
          * \param index the index of the wanted field.
@@ -241,7 +241,7 @@ namespace XAO
         const bool setXML(const std::string& xml);
 
     private:
-        void checkGeometry();
+        void checkGeometry() const;
 
     private:
         /** The author of the file. */

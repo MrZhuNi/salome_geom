@@ -19,16 +19,16 @@
 // Author : Frederic Pons (OpenCascade)
 
 #include <string>
-#include <sstream>
 #include <iostream>
+#include <Utils_SALOME_Exception.hxx>
+
 #include "Xao.hxx"
 #include "Field.hxx"
 #include "BooleanField.hxx"
 #include "IntegerField.hxx"
 #include "DoubleField.hxx"
 #include "StringField.hxx"
-
-#include <Utils_SALOME_Exception.hxx>
+#include "XaoUtils.hxx"
 
 using namespace XAO;
 
@@ -67,26 +67,19 @@ Field* Field::createField(const XAO::Type& type, const std::string& name, const 
     if (type == XAO::STRING)
         return new StringField(name, dimension, nbElements, nbComponents);
 
-    throw SALOME_Exception("Bad Type");
+    throw SALOME_Exception(MsgBuilder() << "Bad Type:" << type);
 }
 
 const std::string Field::getComponentName(const int& index)
 {
-    if (index < m_components.size())
-        return m_components[index];
-
-    throw SALOME_Exception("IndexOutOfRange component");
+    checkComponent(index);
+    return m_components[index];
 }
 
 void Field::setComponentName(const int& index, const std::string& name)
 {
-    if (index < m_components.size())
-    {
-        m_components[index] = name;
-        return;
-    }
-
-    throw SALOME_Exception("IndexOutOfRange component");
+    checkComponent(index);
+    m_components[index] = name;
 }
 
 bool Field::removeStep(Step* step)
@@ -105,12 +98,20 @@ bool Field::removeStep(Step* step)
     return false;
 }
 
-void Field::checkStep(const int& step)
+void Field::checkComponent(const int& component)
 {
-    if (step >= m_steps.size() || step < 0)
-    {
-        std::ostringstream str;
-        str << "Step index is out of range [0, " << m_steps.size() << "] : " << step;
-        throw SALOME_Exception(str.str().c_str());
-    }
+    if (component < m_nbComponents && component >= 0)
+        return;
+
+    throw SALOME_Exception(MsgBuilder() << "Step index is out of range [0, "
+                                        << m_nbComponents << "] : " << component);
+}
+
+void Field::checkStepIndex(const int& step)
+{
+    if (step < m_steps.size() && step >= 0)
+        return;
+
+    throw SALOME_Exception(MsgBuilder() << "Step index is out of range [0, "
+                                        << m_steps.size() << "] : " << step);
 }

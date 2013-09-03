@@ -41,7 +41,7 @@ GeometricElement::~GeometricElement()
 {
 }
 
-bool GeometricElement::hasName()
+const bool GeometricElement::hasName()
 {
     return !m_name.empty();
 }

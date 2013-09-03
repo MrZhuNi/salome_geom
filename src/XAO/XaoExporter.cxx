@@ -1,5 +1,4 @@
 
-#include <sstream>
 #include <libxml/parser.h>
 #include <Utils_SALOME_Exception.hxx>
 
@@ -81,10 +80,8 @@ std::string XaoExporter::readStringProp(xmlNodePtr node, const xmlChar* attribut
             if (exception.size() > 0)
                 throw SALOME_Exception(exception.c_str());
 
-            std::ostringstream str;
-            str << "Line " << node->line << ": ";
-            str << "Property " << (char*)attribute << " is required.";
-            throw SALOME_Exception(str.str().c_str());
+            throw SALOME_Exception(MsgBuilder() << "Line " << node->line << ": "
+                                                << "Property " << (char*)attribute << " is required.");
         }
 
         return defaultValue;
@@ -107,9 +104,8 @@ int XaoExporter::readIntegerProp(xmlNodePtr node, const xmlChar* attribute,
             if (exception.size() > 0)
                 throw SALOME_Exception(exception.c_str());
 
-            std::ostringstream str;
-            str << "Property " << (char*)attribute << " is required.";
-            throw SALOME_Exception(str.str().c_str());
+            throw SALOME_Exception(MsgBuilder() << "Line " << node->line << ": "
+                                                << "Property " << (char*)attribute << " is required.");
         }
 
         return defaultValue;
@@ -205,7 +201,6 @@ void XaoExporter::exportGroups(Xao* xaoObject, xmlNodePtr xao)
     xmlNodePtr groups = xmlNewChild(xao, 0, C_TAG_GROUPS, 0);
     xmlNewProp(groups, C_ATTR_COUNT, BAD_CAST XaoUtils::intToString(xaoObject->countGroups()).c_str());
 
-    //for (std::list<Group*>::iterator it = m_groups.begin(); it != m_groups.end(); ++it)
     for (int i = 0; i < xaoObject->countGroups(); i++)
     {
         //Group* grp = (*it);
@@ -215,7 +210,6 @@ void XaoExporter::exportGroups(Xao* xaoObject, xmlNodePtr xao)
         xmlNewProp(group, C_ATTR_GROUP_DIM, BAD_CAST XaoUtils::dimensionToString(grp->getDimension()).c_str());
         xmlNewProp(group, C_ATTR_COUNT, BAD_CAST XaoUtils::intToString(grp->count()).c_str());
 
-        //for (int j = 0; j < grp->count(); j++)
         for (std::set<int>::iterator it = grp->begin(); it != grp->end(); ++it)
         {
             int grpElt = (*it);
@@ -379,9 +373,8 @@ void XaoExporter::parseShapeNode(xmlDocPtr doc, xmlNodePtr shapeNode, Geometry* 
     }
     else
     {
-        std::ostringstream str;
-        str << "Shape format not supported: " << XaoUtils::shapeFormatToString(geometry->getFormat());
-        throw SALOME_Exception(str.str().c_str());
+        throw SALOME_Exception(MsgBuilder() << "Shape format not supported: "
+                                            << XaoUtils::shapeFormatToString(geometry->getFormat()));
     }
 }
 
@@ -535,7 +528,10 @@ void XaoExporter::parseFieldNode(xmlNodePtr fieldNode, Xao* xaoObject)
 
     // ensure that the components node is defined
     if (componentsNode == NULL)
-        throw SALOME_Exception("No components defined for field"); // TODO
+    {
+        throw SALOME_Exception(MsgBuilder() << "Line " << fieldNode->line << ": "
+                                            << "No components defined for field.");
+    }
 
     // create the field
     int nbComponents = readIntegerProp(componentsNode, C_ATTR_COUNT, true, -1);
@@ -602,9 +598,7 @@ void XaoExporter::parseStepElementNode(xmlNodePtr eltNode, Step* step)
 
             if (data == NULL)
             {
-                std::ostringstream str;
-                str << "Line " << valNode->line << ": no content for value.";
-                throw SALOME_Exception(str.str().c_str());
+                throw SALOME_Exception(MsgBuilder() << "Line " << valNode->line << ": no content for value.");
             }
 
             std::string value = (char*)data;

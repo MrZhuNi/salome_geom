@@ -18,9 +18,10 @@
 //
 // Author : Nathalie Gore (OpenCascade), Frederic Pons (OpenCascade)
 
-#include <sstream>
-#include "Group.hxx"
 #include <Utils_SALOME_Exception.hxx>
+
+#include "XaoUtils.hxx"
+#include "Group.hxx"
 
 using namespace XAO;
 
@@ -37,6 +38,9 @@ Group::Group(const std::string& name, const XAO::Dimension& dim, const int& nbEl
 
 void Group::initGroup(const std::string& name, const XAO::Dimension& dim, const int& nbElements)
 {
+    if (dim == XAO::WHOLE)
+        throw SALOME_Exception("Dimension WHOLE is not valid for group.");
+
     m_name = name;
     m_dimension = dim;
     m_count = 0;
@@ -49,12 +53,11 @@ Group::~Group()
 
 void Group::checkIndex(const int& element)
 {
-    if (element >= m_elements.size() || element < 0)
-    {
-        std::ostringstream str;
-        str << "Index of element is out of range [0, " << m_elements.size()-1 << "]: " << element;
-        throw SALOME_Exception(str.str().c_str());
-    }
+    if (element < m_elements.size() && element >= 0)
+        return;
+
+    throw SALOME_Exception(MsgBuilder() << "Index of element is out of range [0, "
+                                        << m_elements.size()-1 << "]: " << element);
 }
 
 void Group::add(const int& value)

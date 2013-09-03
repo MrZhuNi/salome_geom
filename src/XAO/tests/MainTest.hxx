@@ -62,7 +62,7 @@ Arguments parseArguments(int argc, char* argv[])
             {
                 res.Err = true;
             }
-            if (strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "--test") == 0)
+            else if (strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "--test") == 0)
             {
                 if (i+1 < argc)
                     res.Test = argv[++i];

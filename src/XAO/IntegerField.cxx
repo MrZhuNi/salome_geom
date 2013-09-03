@@ -37,14 +37,12 @@ IntegerField::IntegerField(const std::string& name, const XAO::Dimension& dimens
 
 Step* IntegerField::addNewStep(const int& step)
 {
-    return addStep(step);
+    return addStep(step, 0);
 }
 
 IntegerStep* IntegerField::addStep(const int& step)
 {
-    IntegerStep* bstep = new IntegerStep(step, m_nbElements, m_nbComponents);
-    m_steps.push_back(bstep);
-    return bstep;
+    return addStep(step, 0);
 }
 
 IntegerStep* IntegerField::addStep(const int& step, const int& stamp)
@@ -56,7 +54,6 @@ IntegerStep* IntegerField::addStep(const int& step, const int& stamp)
 
 IntegerStep* IntegerField::getStep(const int& index)
 {
-    if (index < m_steps.size())
-        return (IntegerStep*)m_steps[index];
-   throw SALOME_Exception("IndexOutOfRange");
+    checkStepIndex(index);
+    return (IntegerStep*)m_steps[index];
 }

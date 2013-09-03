@@ -60,7 +60,7 @@ namespace XAO
         * Gets the name of the group.
         * \return the name of the group.
         */
-       const std::string getName() const
+       const std::string getName()
        {
            return m_name;
        }
@@ -95,7 +95,7 @@ namespace XAO
          * Gets the number of elements in the group.
          * \return the number of elements.
          */
-        const int count()
+        const int count() const
         {
             return m_elements.size();
         }

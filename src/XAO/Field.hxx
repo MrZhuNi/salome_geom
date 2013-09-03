@@ -90,7 +90,7 @@ namespace XAO
          * Gets the name of the Field.
          * @return the name of the Field.
          */
-        const std::string getName()
+        const std::string getName() const
         {
             return m_name;
         }
@@ -108,7 +108,7 @@ namespace XAO
          * Gets the Dimension of the Field.
          * @return the Dimension of the Field.
          */
-        const XAO::Dimension getDimension()
+        const XAO::Dimension getDimension() const
         {
             return m_dimension;
         }
@@ -117,7 +117,7 @@ namespace XAO
          * Gets the number of elements of each step.
          * @return the number of elements of each step.
          */
-        const int countElements()
+        const int countElements() const
         {
             return m_nbElements;
         }
@@ -126,7 +126,7 @@ namespace XAO
          * Gets the number of components.
          * @return the number of components.
          */
-        const int countComponents()
+        const int countComponents() const
         {
             return m_nbComponents;
         }
@@ -135,7 +135,7 @@ namespace XAO
          * Gets the number of values for each step.
          * @return the number of values for each step.
          */
-        const int countValues()
+        const int countValues() const
         {
             return m_nbElements * m_nbComponents;
         }
@@ -144,7 +144,7 @@ namespace XAO
          * Gets the number of the steps.
          * @return the number of steps.
          */
-        const int countSteps() { return m_steps.size(); }
+        const int countSteps() const { return m_steps.size(); }
 
         /**
          * Gets the name of a component.
@@ -186,10 +186,10 @@ namespace XAO
          */
         stepIterator end() { return m_steps.end(); }
 
-    private:
+    protected:
         /** Ensures that component is valid (< m_nbComponents). */
         void checkComponent(const int& component);
-        void checkStep(const int& step);
+        void checkStepIndex(const int& step);
 
     protected:
         /** The name of the Field. */

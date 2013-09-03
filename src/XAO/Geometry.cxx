@@ -56,14 +56,15 @@ Geometry::Geometry(const std::string& name)
 
 Geometry* Geometry::createGeometry(const XAO::Format& format)
 {
-    return createGeometry(format,"");
+    return createGeometry(format, "");
 }
 
 Geometry* Geometry::createGeometry(const XAO::Format& format, const std::string& name)
 {
     if (format == XAO::BREP)
         return new BrepGeometry(name);
-    throw SALOME_Exception("Geometry format not supported.");
+
+    throw SALOME_Exception(MsgBuilder() << "Geometry format not supported: " << format);
 }
 
 Geometry::~Geometry()
@@ -175,7 +176,7 @@ const int Geometry::countElements(const XAO::Dimension& dim)
     if (dim == XAO::SOLID)
         return countSolids();
 
-    throw SALOME_Exception("Unknown dimension"); // TODO
+    throw SALOME_Exception(MsgBuilder() << "Unknown dimension:" << dim);
 }
 
 const std::string Geometry::getElementReference(const XAO::Dimension& dim, const int& index)
@@ -189,7 +190,7 @@ const std::string Geometry::getElementReference(const XAO::Dimension& dim, const
     if (dim == XAO::SOLID)
         return getSolidReference(index);
 
-    throw SALOME_Exception("Unknown dimension"); // TODO
+    throw SALOME_Exception(MsgBuilder() << "Unknown dimension:" << dim);
 }
 
 const int Geometry::getElementIndexByReference(const XAO::Dimension& dim, const std::string& reference)
@@ -203,7 +204,7 @@ const int Geometry::getElementIndexByReference(const XAO::Dimension& dim, const 
     if (dim == XAO::SOLID)
         return getSolidIndexByReference(reference);
 
-    throw SALOME_Exception("Unknown dimension"); // TODO
+    throw SALOME_Exception(MsgBuilder() << "Unknown dimension:" << dim);
 }
 
 GeometricElementList::iterator Geometry::begin(const XAO::Dimension& dim)
@@ -217,7 +218,7 @@ GeometricElementList::iterator Geometry::begin(const XAO::Dimension& dim)
     if (dim == XAO::SOLID)
         return m_solids.begin();
 
-    throw SALOME_Exception("Unknown dimension"); // TODO
+    throw SALOME_Exception(MsgBuilder() << "Unknown dimension:" << dim);
 }
 
 GeometricElementList::iterator Geometry::end(const XAO::Dimension& dim)
@@ -231,5 +232,5 @@ GeometricElementList::iterator Geometry::end(const XAO::Dimension& dim)
     if (dim == XAO::SOLID)
         return m_solids.end();
 
-    throw SALOME_Exception("Unknown dimension"); // TODO
+    throw SALOME_Exception(MsgBuilder() << "Unknown dimension:" << dim);
 }

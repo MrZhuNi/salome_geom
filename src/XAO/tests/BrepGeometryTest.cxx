@@ -48,7 +48,21 @@ void BrepGeometryTest::testGetIDs()
     delete geom;
 }
 
-void BrepGeometryTest::testGeometricalElements()
+void BrepGeometryTest::testGetEdgeVertices()
+{
+    BrepGeometry* geom = new BrepGeometry("box");
+    readBrep(geom, "Box_2.brep");
+
+    int v1, v2;
+    geom->getEdgeVertices(63, v1, v2);
+    std::cout << "# " << v1 << ", " << v2 << std::endl;
+    CPPUNIT_ASSERT_EQUAL(47, v1);
+    CPPUNIT_ASSERT_EQUAL(59, v2);
+
+    delete geom;
+}
+
+void BrepGeometryTest::testGetFaceWires()
 {
     BrepGeometry* geom = new BrepGeometry("box");
     readBrep(geom, "Box_2.brep");
@@ -61,7 +75,21 @@ void BrepGeometryTest::testGeometricalElements()
     CPPUNIT_ASSERT_EQUAL(2, wires[0]);
     CPPUNIT_ASSERT_EQUAL(11, wires[1]);
 
-    CPPUNIT_ASSERT_EQUAL(1, geom->countSolidShells(1));
+    delete geom;
+}
+
+void BrepGeometryTest::testSolidShells()
+{
+    BrepGeometry* geom = new BrepGeometry("box");
+    readBrep(geom, "Cut_2.brep");
+
+    CPPUNIT_ASSERT_EQUAL(5, geom->countSolidShells(1));
+
+    std::vector<int> shells = geom->getSolidShells(1);
+    CPPUNIT_ASSERT_EQUAL(5, (int)shells.size());
+    int ids[5] = { 2, 35, 68, 76, 84 };
+    for (int i = 0; i < 5; ++i)
+        CPPUNIT_ASSERT_EQUAL(ids[i], shells[i]);
 
     delete geom;
 }

@@ -37,14 +37,12 @@ StringField::StringField(const std::string& name, const XAO::Dimension& dimensio
 
 Step* StringField::addNewStep(const int& step)
 {
-    return addStep(step);
+    return addStep(step, 0);
 }
 
 StringStep* StringField::addStep(const int& step)
 {
-    StringStep* bstep = new StringStep(step, m_nbElements, m_nbComponents);
-    m_steps.push_back(bstep);
-    return bstep;
+    return addStep(step, 0);
 }
 
 StringStep* StringField::addStep(const int& step, const int& stamp)
@@ -56,7 +54,6 @@ StringStep* StringField::addStep(const int& step, const int& stamp)
 
 StringStep* StringField::getStep(const int& index)
 {
-    if (index < m_steps.size())
-        return (StringStep*)m_steps[index];
-   throw SALOME_Exception("IndexOutOfRange");
+    checkStepIndex(index);
+    return (StringStep*)m_steps[index];
 }

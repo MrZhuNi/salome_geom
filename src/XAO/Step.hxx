@@ -115,8 +115,12 @@ namespace XAO
         virtual void setStringValue(const int& element, const int& component, const std::string& value) = 0;
 
     protected:
-        void checkElement(const int& element);
-        void checkComponent(const int& component);
+        void checkElementIndex(const int& element);
+        void checkComponentIndex(const int& component);
+
+        void checkNbElements(const int& nbElements);
+        void checkNbComponents(const int& nbComponents);
+        void checkNbValues(const int& nbValues);
 
     protected:
         /** the index of the step. */

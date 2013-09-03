@@ -65,7 +65,7 @@ Xao::~Xao()
     }
 }
 
-const int Xao::countGroups()
+const int Xao::countGroups() const
 {
     return m_groups.size();
 }
@@ -100,7 +100,7 @@ void Xao::removeGroup(Group* group)
     m_groups.remove(group);
 }
 
-const int Xao::countFields()
+const int Xao::countFields() const
 {
     return m_fields.size();
 }
@@ -138,25 +138,11 @@ void Xao::removeField(Field* field)
 
 const bool Xao::exportXAO(const std::string& fileName)
 {
-//    xmlDocPtr doc = exportXMLDoc();
-//    xmlSaveFormatFileEnc(fileName, doc, "UTF-8", 2);
-//    xmlFreeDoc(doc);
-//
-//    return true;
     return XaoExporter::saveToFile(this, fileName);
 }
 
 const std::string Xao::getXML()
 {
-//    xmlDocPtr doc = exportXMLDoc();
-//
-//    xmlChar *xmlbuff;
-//    int buffersize;
-//    xmlDocDumpFormatMemory(doc, &xmlbuff, &buffersize, 1);
-//    xmlFreeDoc(doc);
-//    xmlCleanupGlobals();
-//
-//    return (char*)xmlbuff;
     return XaoExporter::saveToXml(this);
 }
 
@@ -170,8 +156,8 @@ const bool Xao::setXML(const std::string& xml)
     return XaoExporter::setXML(xml, this);
 }
 
-void Xao::checkGeometry()
+void Xao::checkGeometry() const
 {
     if (m_geometry == NULL)
-        throw SALOME_Exception("Geometry is null"); // TODO
+        throw SALOME_Exception("Geometry is null");
 }

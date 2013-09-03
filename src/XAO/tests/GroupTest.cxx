@@ -52,9 +52,7 @@ void GroupTest::testGroup()
     delete group;
 }
 
-
-
-
-
-
-
+void GroupTest::testGroupErrors()
+{
+    CPPUNIT_ASSERT_THROW(new Group(XAO::WHOLE, 20), SALOME_Exception);
+}

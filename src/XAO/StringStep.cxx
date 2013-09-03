@@ -73,7 +73,7 @@ std::vector<std::string> StringStep::getValues()
 
 std::vector<std::string> StringStep::getElement(const int& element)
 {
-    checkElement(element);
+    checkElementIndex(element);
 
     std::vector<std::string> result(m_values[element]);
     return result;
@@ -81,7 +81,7 @@ std::vector<std::string> StringStep::getElement(const int& element)
 
 std::vector<std::string> StringStep::getComponent(const int& component)
 {
-    checkComponent(component);
+    checkComponentIndex(component);
 
     std::vector<std::string> result;
     result.reserve(m_nbElements);
@@ -98,8 +98,8 @@ std::vector<std::string> StringStep::getComponent(const int& component)
 
 const std::string StringStep::getValue(const int& element, const int& component)
 {
-    checkElement(element);
-    checkComponent(component);
+    checkElementIndex(element);
+    checkComponentIndex(component);
 
     return m_values[element][component];
 }
@@ -111,8 +111,7 @@ const std::string StringStep::getStringValue(const int& element, const int& comp
 
 void StringStep::setValues(const std::vector<std::string>& values)
 {
-    if (values.size() != m_nbComponents * m_nbElements)
-        throw SALOME_Exception("bad size"); // TODO
+    checkNbValues(values.size());
 
     for (int i = 0; i < m_nbElements; ++i)
     {
@@ -125,9 +124,8 @@ void StringStep::setValues(const std::vector<std::string>& values)
 
 void StringStep::setElements(const int& element, const std::vector<std::string>& elements)
 {
-    checkElement(element);
-    if (elements.size() != m_nbComponents)
-        throw SALOME_Exception("bad size"); // TODO
+    checkElementIndex(element);
+    checkNbComponents(elements.size());
 
     for (int i = 0; i < m_nbComponents; ++i)
         m_values[element][i] = elements[i];
@@ -135,9 +133,8 @@ void StringStep::setElements(const int& element, const std::vector<std::string>&
 
 void StringStep::setComponents(const int& component, const std::vector<std::string>& components)
 {
-    checkElement(component);
-    if (components.size() != m_nbElements)
-        throw SALOME_Exception("bad size"); // TODO
+    checkElementIndex(component);
+    checkNbElements(components.size());
 
     for (int i = 0; i < m_nbElements; ++i)
         m_values[i][component] = components[i];
@@ -145,8 +142,8 @@ void StringStep::setComponents(const int& component, const std::vector<std::stri
 
 void StringStep::setValue(const int& element, const int& component, const std::string& value)
 {
-    checkElement(element);
-    checkComponent(component);
+    checkElementIndex(element);
+    checkComponentIndex(component);
 
     m_values[element][component] = value;
 }

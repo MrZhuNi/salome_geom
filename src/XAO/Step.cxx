@@ -18,16 +18,15 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-#include <sstream>
 #include <Utils_SALOME_Exception.hxx>
 
 #include "Xao.hxx"
+#include "XaoUtils.hxx"
 #include "Step.hxx"
 #include "BooleanStep.hxx"
 #include "IntegerStep.hxx"
 #include "DoubleStep.hxx"
 #include "StringStep.hxx"
-
 
 using namespace XAO;
 
@@ -45,22 +44,47 @@ Step* Step::createStep(const XAO::Type& type, const int& step, const int& stamp,
     throw SALOME_Exception("Unknown Type");
 }
 
-void Step::checkElement(const int& element)
+void Step::checkElementIndex(const int& element)
 {
-    if (element >= m_nbElements || element < 0)
-    {
-        std::ostringstream str;
-        str << "Element index is out of range [0, " << m_nbElements-1 << "] : " << element;
-        throw SALOME_Exception(str.str().c_str());
-    }
+    if (element < m_nbElements && element >= 0)
+        return;
+
+    throw SALOME_Exception(MsgBuilder() << "Element index is out of range [0, "
+                                        << m_nbElements-1 << "] : " << element);
 }
 
-void Step::checkComponent(const int& component)
+void Step::checkComponentIndex(const int& component)
 {
-    if (component >= m_nbComponents || component < 0)
-    {
-        std::ostringstream str;
-        str << "Component index is out of range [0, " << m_nbComponents-1 << "] : " << component;
-        throw SALOME_Exception(str.str().c_str());
-    }
+    if (component < m_nbComponents && component >= 0)
+        return;
+
+    throw SALOME_Exception(MsgBuilder() << "Component index is out of range [0, "
+                                        << m_nbComponents-1 << "] : " << component);
+}
+
+void Step::checkNbElements(const int& nbElements)
+{
+    if (nbElements == m_nbElements)
+        return;
+
+    throw SALOME_Exception(MsgBuilder() << "Invalid number of elements:" << nbElements
+                                        << ", expected " << m_nbElements);
+}
+
+void Step::checkNbComponents(const int& nbComponents)
+{
+    if (nbComponents == m_nbComponents)
+        return;
+
+    throw SALOME_Exception(MsgBuilder() << "Invalid number of components:" << nbComponents
+                                        << ", expected " << m_nbComponents);
+}
+
+void Step::checkNbValues(const int& nbValues)
+{
+    if (nbValues == m_nbElements * m_nbComponents)
+        return;
+
+    throw SALOME_Exception(MsgBuilder() << "Invalid number of values:" << nbValues
+                                        << ", expected " << m_nbElements * m_nbComponents);
 }

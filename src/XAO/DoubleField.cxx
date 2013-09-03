@@ -37,14 +37,12 @@ DoubleField::DoubleField(const std::string& name, const XAO::Dimension& dimensio
 
 Step* DoubleField::addNewStep(const int& step)
 {
-    return addStep(step);
+    return addStep(step, 0);
 }
 
 DoubleStep* DoubleField::addStep(const int& step)
 {
-    DoubleStep* bstep = new DoubleStep(step, m_nbElements, m_nbComponents);
-    m_steps.push_back(bstep);
-    return bstep;
+    return addStep(step, 0);
 }
 
 DoubleStep* DoubleField::addStep(const int& step, const int& stamp)
@@ -56,7 +54,6 @@ DoubleStep* DoubleField::addStep(const int& step, const int& stamp)
 
 DoubleStep* DoubleField::getStep(const int& index)
 {
-    if (index < m_steps.size())
-        return (DoubleStep*)m_steps[index];
-   throw SALOME_Exception("IndexOutOfRange");
+    checkStepIndex(index);
+    return (DoubleStep*)m_steps[index];
 }

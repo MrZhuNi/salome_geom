@@ -21,6 +21,9 @@
 #ifndef __XAO_UTILS_HXX__
 #define __XAO_UTILS_HXX__
 
+#include <sstream>
+#include <string>
+
 #include "Xao.hxx"
 #include "Field.hxx"
 
@@ -91,7 +94,26 @@ namespace XAO
          * \throw SALOME_Exception
          */
         static const XAO::Format stringToShapeFormat(const std::string& format);
-};
+    };
+
+    class MsgBuilder
+    {
+    public:
+        MsgBuilder() {};
+
+        template <typename T>
+        MsgBuilder& operator <<(const T& t)
+        {
+            m_stream << t;
+            return *this;
+        }
+
+        operator const char*() const   { return m_stream.str().c_str(); }
+
+    private :
+        std::stringstream m_stream;
+    };
+
 }
 
 

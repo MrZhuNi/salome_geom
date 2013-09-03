@@ -74,7 +74,7 @@ std::vector<double> DoubleStep::getValues()
 
 std::vector<double> DoubleStep::getElement(const int& element)
 {
-    checkElement(element);
+    checkElementIndex(element);
 
     std::vector<double> result(m_values[element]);
     return result;
@@ -82,7 +82,7 @@ std::vector<double> DoubleStep::getElement(const int& element)
 
 std::vector<double> DoubleStep::getComponent(const int& component)
 {
-    checkComponent(component);
+    checkComponentIndex(component);
 
     std::vector<double> result;
     result.reserve(m_nbElements);
@@ -99,8 +99,8 @@ std::vector<double> DoubleStep::getComponent(const int& component)
 
 const double DoubleStep::getValue(const int& element, const int& component)
 {
-    checkElement(element);
-    checkComponent(component);
+    checkElementIndex(element);
+    checkComponentIndex(component);
 
     return m_values[element][component];
 }
@@ -112,8 +112,7 @@ const std::string DoubleStep::getStringValue(const int& element, const int& comp
 
 void DoubleStep::setValues(const std::vector<double>& values)
 {
-    if (values.size() != m_nbComponents * m_nbElements)
-        throw SALOME_Exception("bad size"); // TODO
+    checkNbValues(values.size());
 
     for (int i = 0; i < m_nbElements; ++i)
     {
@@ -126,9 +125,8 @@ void DoubleStep::setValues(const std::vector<double>& values)
 
 void DoubleStep::setElements(const int& element, const std::vector<double>& elements)
 {
-    checkElement(element);
-    if (elements.size() != m_nbComponents)
-        throw SALOME_Exception("bad size"); // TODO
+    checkElementIndex(element);
+    checkNbComponents(elements.size());
 
     for (int i = 0; i < m_nbComponents; ++i)
         m_values[element][i] = elements[i];
@@ -136,9 +134,8 @@ void DoubleStep::setElements(const int& element, const std::vector<double>& elem
 
 void DoubleStep::setComponents(const int& component, const std::vector<double>& components)
 {
-    checkElement(component);
-    if (components.size() != m_nbElements)
-        throw SALOME_Exception("bad size"); // TODO
+    checkElementIndex(component);
+    checkNbElements(components.size());
 
     for (int i = 0; i < m_nbElements; ++i)
         m_values[i][component] = components[i];
@@ -146,8 +143,8 @@ void DoubleStep::setComponents(const int& component, const std::vector<double>& 
 
 void DoubleStep::setValue(const int& element, const int& component, const double& value)
 {
-    checkElement(element);
-    checkComponent(component);
+    checkElementIndex(element);
+    checkComponentIndex(component);
 
     m_values[element][component] = value;
 }
