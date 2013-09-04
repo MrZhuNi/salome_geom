@@ -50,7 +50,7 @@ void Step::checkElementIndex(const int& element)
         return;
 
     throw SALOME_Exception(MsgBuilder() << "Element index is out of range [0, "
-                                        << m_nbElements-1 << "] : " << element);
+                                        << m_nbElements-1 << "]: " << element);
 }
 
 void Step::checkComponentIndex(const int& component)
@@ -59,7 +59,7 @@ void Step::checkComponentIndex(const int& component)
         return;
 
     throw SALOME_Exception(MsgBuilder() << "Component index is out of range [0, "
-                                        << m_nbComponents-1 << "] : " << component);
+                                        << m_nbComponents-1 << "]: " << component);
 }
 
 void Step::checkNbElements(const int& nbElements)
@@ -67,7 +67,7 @@ void Step::checkNbElements(const int& nbElements)
     if (nbElements == m_nbElements)
         return;
 
-    throw SALOME_Exception(MsgBuilder() << "Invalid number of elements:" << nbElements
+    throw SALOME_Exception(MsgBuilder() << "Invalid number of elements: " << nbElements
                                         << ", expected " << m_nbElements);
 }
 
@@ -76,7 +76,7 @@ void Step::checkNbComponents(const int& nbComponents)
     if (nbComponents == m_nbComponents)
         return;
 
-    throw SALOME_Exception(MsgBuilder() << "Invalid number of components:" << nbComponents
+    throw SALOME_Exception(MsgBuilder() << "Invalid number of components: " << nbComponents
                                         << ", expected " << m_nbComponents);
 }
 

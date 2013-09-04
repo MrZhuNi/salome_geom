@@ -67,7 +67,7 @@ Field* Field::createField(const XAO::Type& type, const std::string& name, const 
     if (type == XAO::STRING)
         return new StringField(name, dimension, nbElements, nbComponents);
 
-    throw SALOME_Exception(MsgBuilder() << "Bad Type:" << type);
+    throw SALOME_Exception(MsgBuilder() << "Bad Type: " << type);
 }
 
 const std::string Field::getComponentName(const int& index)
@@ -104,7 +104,7 @@ void Field::checkComponent(const int& component)
         return;
 
     throw SALOME_Exception(MsgBuilder() << "Step index is out of range [0, "
-                                        << m_nbComponents << "] : " << component);
+                                        << m_nbComponents << "]: " << component);
 }
 
 void Field::checkStepIndex(const int& step)
@@ -113,5 +113,5 @@ void Field::checkStepIndex(const int& step)
         return;
 
     throw SALOME_Exception(MsgBuilder() << "Step index is out of range [0, "
-                                        << m_steps.size() << "] : " << step);
+                                        << m_steps.size() << "]: " << step);
 }

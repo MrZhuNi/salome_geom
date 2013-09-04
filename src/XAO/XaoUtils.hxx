@@ -42,10 +42,39 @@ namespace XAO
          * \return the string.
          */
         static const std::string intToString(const int& value);
+
+        /**
+         * Converts a string into an integer.
+         * \param value the string to convert.
+         * \return the integer value.
+         */
         static const int stringToInt(const std::string& value);
 
+        /**
+         * Converts a double into a string.
+         * @param value the double to convert.
+         * @return the string.
+         */
         static const std::string doubleToString(const double& value);
+        /**
+         * Converts a string into a double.
+         * @param value the string to convert.
+         * @return the double value.
+         */
         static const double stringToDouble(const std::string& value);
+
+        /**
+         * Converts a boolean into a string.
+         * @param value the boolean to convert.
+         * @return the string.
+         */
+        static const std::string booleanToString(const bool& value);
+        /**
+         * Converts a string into a boolean.
+         * @param value the string to convert.
+         * @return the boolean value.
+         */
+        static const bool stringToBoolean(const std::string& value);
 
         /**
          * Converts a Dimension to string.

@@ -18,7 +18,10 @@ namespace XAO
         CPPUNIT_TEST(testIntegerStep);
         CPPUNIT_TEST(testDoubleStep);
         CPPUNIT_TEST(testStringStep);
+        CPPUNIT_TEST(testBooleanStepValues);
         CPPUNIT_TEST(testIntegerStepValues);
+        CPPUNIT_TEST(testDoubleStepValues);
+        CPPUNIT_TEST(testStringStepValues);
         CPPUNIT_TEST_SUITE_END();
 
     public:
@@ -26,7 +29,7 @@ namespace XAO
         void tearDown();
         void cleanUp();
 
-        void testField(XAO::Type type);
+        Field* testField(XAO::Type type);
         void testBooleanField();
         void testIntegerField();
         void testDoubleField();
@@ -38,7 +41,10 @@ namespace XAO
         void testDoubleStep();
         void testStringStep();
 
+        void testBooleanStepValues();
         void testIntegerStepValues();
+        void testDoubleStepValues();
+        void testStringStepValues();
     };
 }
 

@@ -39,6 +39,7 @@ TestXAO_LDFLAGS = \
     ../libXAO.la
 
 dist_TestXAO_SOURCES = \
+    XaoUtilsTest.cxx \
     GroupTest.cxx \
     FieldTest.cxx \
     GeometryTest.cxx \

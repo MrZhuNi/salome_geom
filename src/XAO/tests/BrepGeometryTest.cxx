@@ -31,19 +31,63 @@ void BrepGeometryTest::testGetIDs()
     BrepGeometry* geom = new BrepGeometry("box");
     readBrep(geom, "Box_1.brep");
 
+    CPPUNIT_ASSERT_EQUAL(8, geom->countElements(XAO::VERTEX));
+    CPPUNIT_ASSERT_EQUAL(8, geom->countVertices());
     int vertices[8] = { 6,7,9,11,16,17,19,21 };
     for (int i = 0; i < 8; ++i)
         CPPUNIT_ASSERT_EQUAL(vertices[i], geom->getVertexID(i));
 
+    CPPUNIT_ASSERT_EQUAL(12, geom->countElements(XAO::EDGE));
+    CPPUNIT_ASSERT_EQUAL(12, geom->countEdges());
     int edges[12] = { 5,8,10,12,15,18,20,22,25,26,29,30 };
     for (int i = 0; i < 12; ++i)
         CPPUNIT_ASSERT_EQUAL(edges[i], geom->getEdgeID(i));
 
+    CPPUNIT_ASSERT_EQUAL(6, geom->countElements(XAO::FACE));
+    CPPUNIT_ASSERT_EQUAL(6, geom->countFaces());
     int faces[6] = { 3,13,23,27,31,33 };
     for (int i = 0; i < 6; ++i)
         CPPUNIT_ASSERT_EQUAL(faces[i], geom->getFaceID(i));
 
+    CPPUNIT_ASSERT_EQUAL(1, geom->countElements(XAO::SOLID));
+    CPPUNIT_ASSERT_EQUAL(1, geom->countSolids());
     CPPUNIT_ASSERT_EQUAL(1, geom->getSolidID(0));
+
+    delete geom;
+}
+
+void BrepGeometryTest::testGetReferences()
+{
+    BrepGeometry* geom = new BrepGeometry("box");
+    readBrep(geom, "Box_1.brep");
+
+    // vertex of index 1 has id = 7
+    CPPUNIT_ASSERT_EQUAL(std::string("7"), geom->getElementReference(XAO::VERTEX, 1));
+    CPPUNIT_ASSERT_EQUAL(std::string("7"), geom->getVertexReference(1));
+    CPPUNIT_ASSERT_EQUAL(7, geom->getVertexID(1));
+    CPPUNIT_ASSERT_EQUAL(1, geom->getElementIndexByReference(XAO::VERTEX, "7"));
+    CPPUNIT_ASSERT_EQUAL(1, geom->findVertex(7));
+
+    // edge of index 1 has id = 8
+    CPPUNIT_ASSERT_EQUAL(std::string("8"), geom->getElementReference(XAO::EDGE, 1));
+    CPPUNIT_ASSERT_EQUAL(std::string("8"), geom->getEdgeReference(1));
+    CPPUNIT_ASSERT_EQUAL(8, geom->getEdgeID(1));
+    CPPUNIT_ASSERT_EQUAL(1, geom->getElementIndexByReference(XAO::EDGE, "8"));
+    CPPUNIT_ASSERT_EQUAL(1, geom->findEdge(8));
+
+    // face of index 1 has id = 13
+    CPPUNIT_ASSERT_EQUAL(std::string("13"), geom->getElementReference(XAO::FACE, 1));
+    CPPUNIT_ASSERT_EQUAL(std::string("13"), geom->getFaceReference(1));
+    CPPUNIT_ASSERT_EQUAL(13, geom->getFaceID(1));
+    CPPUNIT_ASSERT_EQUAL(1, geom->getElementIndexByReference(XAO::FACE, "13"));
+    CPPUNIT_ASSERT_EQUAL(1, geom->findFace(13));
+
+    // solid of index 0 has id = 1
+    CPPUNIT_ASSERT_EQUAL(std::string("1"), geom->getElementReference(XAO::SOLID, 0));
+    CPPUNIT_ASSERT_EQUAL(std::string("1"), geom->getSolidReference(0));
+    CPPUNIT_ASSERT_EQUAL(1, geom->getSolidID(0));
+    CPPUNIT_ASSERT_EQUAL(0, geom->getElementIndexByReference(XAO::SOLID, "1"));
+    CPPUNIT_ASSERT_EQUAL(0, geom->findSolid(1));
 
     delete geom;
 }

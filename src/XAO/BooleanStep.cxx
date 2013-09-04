@@ -107,7 +107,7 @@ const bool BooleanStep::getValue(const int& element, const int& component)
 
 const std::string BooleanStep::getStringValue(const int& element, const int& component)
 {
-    return (getValue(element, component) ? "true" : "false");
+    return XaoUtils::booleanToString(getValue(element, component));
 }
 
 void BooleanStep::setValues(const std::vector<bool>& values)
@@ -126,7 +126,7 @@ void BooleanStep::setValues(const std::vector<bool>& values)
 void BooleanStep::setElements(const int& element, const std::vector<bool>& elements)
 {
     checkElementIndex(element);
-    checkNbElements((int)elements.size());
+    checkNbComponents(elements.size());
 
     for (int i = 0; i < m_nbComponents; ++i)
         m_values[element][i] = elements[i];
@@ -135,7 +135,7 @@ void BooleanStep::setElements(const int& element, const std::vector<bool>& eleme
 void BooleanStep::setComponents(const int& component, const std::vector<bool>& components)
 {
     checkComponentIndex(component);
-    checkNbElements((int)components.size());
+    checkNbElements(components.size());
 
     for (int i = 0; i < m_nbElements; ++i)
         m_values[i][component] = components[i];
@@ -151,8 +151,5 @@ void BooleanStep::setValue(const int& element, const int& component, const bool&
 
 void BooleanStep::setStringValue(const int& element, const int& component, const std::string& value)
 {
-    if (value != "true" && value != "false")
-        throw SALOME_Exception(MsgBuilder() << "Bad boolean value: " << value);
-
-    setValue(element, component, value == "true");
+    setValue(element, component, XaoUtils::stringToBoolean(value));
 }

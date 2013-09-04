@@ -41,7 +41,7 @@ const int XaoUtils::stringToInt(const std::string& value)
     int res;
     std::istringstream convert(value);
     if ( !(convert >> res) )
-        res = 0;
+        throw SALOME_Exception(MsgBuilder() << "Cannot convert '" << value << "' to integer.");
     return res;
 }
 
@@ -57,8 +57,20 @@ const double XaoUtils::stringToDouble(const std::string& value)
     double res;
     std::istringstream convert(value);
     if ( !(convert >> res) )
-        res = 0;
+        throw SALOME_Exception(MsgBuilder() << "Cannot convert '" << value << "' to double.");
     return res;
+}
+
+const std::string XaoUtils::booleanToString(const bool& value)
+{
+    if (value)
+        return "true";
+    return "false";
+}
+
+const bool XaoUtils::stringToBoolean(const std::string& value)
+{
+    return (value == std::string("true"));
 }
 
 const std::string XaoUtils::dimensionToString(const XAO::Dimension& dimension)
