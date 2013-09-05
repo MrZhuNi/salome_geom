@@ -34,8 +34,6 @@ TestXAO_LDFLAGS = \
     $(CAS_LDPATH)   \
     $(LIBXML_LIBS)  \
     $(GEOM_LDFLAGS) \
-    -lxml2 \
-    ../../GEOMBase/libGEOMBase.la \
     ../libXAO.la
 
 dist_TestXAO_SOURCES = \

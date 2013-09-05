@@ -65,7 +65,6 @@ dist_libXAO_la_SOURCES = \
     StringStep.cxx \
     XaoExporter.cxx
 
-
 libXAO_la_CPPFLAGS = \
     $(GEOM_CXXFLAGS)                    \
     $(CAS_CPPFLAGS)                     \
@@ -76,5 +75,7 @@ libXAO_la_CPPFLAGS = \
 libXAO_la_LDFLAGS = \
     $(CAS_LDPATH)                       \
     $(LIBXML_LIBS)                      \
-    $(GEOM_LDFLAGS)
+    $(KERNEL_LDFLAGS)                   \
+    $(GEOM_LDFLAGS)                     \
+    -lOpUtil -lTKBRep -lTKTopAlgo -lxml2
 
