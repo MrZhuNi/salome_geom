@@ -35,7 +35,6 @@ namespace XAO
     class DoubleField : public Field
     {
     public:
-        DoubleField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
         DoubleField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::DOUBLE; }

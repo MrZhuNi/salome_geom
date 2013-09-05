@@ -35,7 +35,6 @@ namespace XAO
     class StringField : public Field
     {
     public:
-        StringField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
         StringField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::STRING; }

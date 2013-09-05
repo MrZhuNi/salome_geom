@@ -25,12 +25,6 @@
 
 using namespace XAO;
 
-BooleanField::BooleanField(const XAO::Dimension& dimension,
-                           const int& nbElements, const int& nbComponents)
-    : Field("", dimension, nbElements, nbComponents)
-{
-}
-
 BooleanField::BooleanField(const std::string& name, const XAO::Dimension& dimension,
                            const int& nbElements, const int& nbComponents)
     : Field(name, dimension, nbElements, nbComponents)

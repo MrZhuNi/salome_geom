@@ -35,7 +35,6 @@ namespace XAO
     class IntegerField : public Field
     {
     public:
-        IntegerField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
         IntegerField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::INTEGER; }

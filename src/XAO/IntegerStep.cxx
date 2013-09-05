@@ -24,22 +24,7 @@
 
 using namespace XAO;
 
-IntegerStep::IntegerStep(const int& nbElements, const int& nbComponents)
-{
-    init(0, 0, nbElements, nbComponents);
-}
-
-IntegerStep::IntegerStep(const int& step, const int& nbElements, const int& nbComponents)
-{
-    init(step, 0, nbElements, nbComponents);
-}
-
 IntegerStep::IntegerStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
-{
-    init(step, stamp, nbElements, nbComponents);
-}
-
-void IntegerStep::init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
 {
     m_nbElements = nbElements;
     m_nbComponents = nbComponents;

@@ -32,8 +32,6 @@ namespace XAO
     class IntegerStep : public Step
     {
     public:
-        IntegerStep(const int& nbElements, const int& nbComponents);
-        IntegerStep(const int& step, const int& nbElements, const int& nbComponents);
         IntegerStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::INTEGER; }
@@ -51,9 +49,6 @@ namespace XAO
 
         virtual const std::string getStringValue(const int& element, const int& component);
         virtual void setStringValue(const int& element, const int& component, const std::string& value);
-
-    private:
-        void init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
 
     private:
         std::vector< std::vector<int> > m_values;

@@ -25,11 +25,6 @@
 
 using namespace XAO;
 
-StringField::StringField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents)
-    : Field("", dimension, nbElements, nbComponents)
-{
-}
-
 StringField::StringField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents)
     : Field(name, dimension, nbElements, nbComponents)
 {

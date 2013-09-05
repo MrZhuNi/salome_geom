@@ -32,8 +32,6 @@ namespace XAO
     class DoubleStep : public Step
     {
     public:
-        DoubleStep(const int& nbElements, const int& nbComponents);
-        DoubleStep(const int& step, const int& nbElements, const int& nbComponents);
         DoubleStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::DOUBLE; }
@@ -51,9 +49,6 @@ namespace XAO
 
         virtual const std::string getStringValue(const int& element, const int& component);
         virtual void setStringValue(const int& element, const int& component, const std::string& value);
-
-    private:
-        void init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
 
     private:
         std::vector< std::vector<double> > m_values;

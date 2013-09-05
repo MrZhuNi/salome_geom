@@ -25,11 +25,6 @@
 
 using namespace XAO;
 
-IntegerField::IntegerField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents)
-    : Field("", dimension, nbElements, nbComponents)
-{
-}
-
 IntegerField::IntegerField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents)
     : Field(name, dimension, nbElements, nbComponents)
 {

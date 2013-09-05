@@ -23,22 +23,7 @@
 
 using namespace XAO;
 
-StringStep::StringStep(const int& nbElements, const int& nbComponents)
-{
-    init(0, 0, nbElements, nbComponents);
-}
-
-StringStep::StringStep(const int& step, const int& nbElements, const int& nbComponents)
-{
-    init(step, 0, nbElements, nbComponents);
-}
-
 StringStep::StringStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
-{
-    init(step, stamp, nbElements, nbComponents);
-}
-
-void StringStep::init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
 {
     m_nbElements = nbElements;
     m_nbComponents = nbComponents;

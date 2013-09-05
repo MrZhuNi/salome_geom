@@ -34,7 +34,6 @@ namespace XAO
     class BooleanField : public Field
     {
     public:
-        BooleanField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
         BooleanField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::BOOLEAN; }

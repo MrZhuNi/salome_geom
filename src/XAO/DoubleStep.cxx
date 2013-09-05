@@ -24,22 +24,7 @@
 
 using namespace XAO;
 
-DoubleStep::DoubleStep(const int& nbElements, const int& nbComponents)
-{
-    init(0, 0, nbElements, nbComponents);
-}
-
-DoubleStep::DoubleStep(const int& step, const int& nbElements, const int& nbComponents)
-{
-    init(step, 0, nbElements, nbComponents);
-}
-
 DoubleStep::DoubleStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
-{
-    init(step, stamp, nbElements, nbComponents);
-}
-
-void DoubleStep::init(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
 {
     m_nbElements = nbElements;
     m_nbComponents = nbComponents;
