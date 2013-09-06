@@ -98,6 +98,19 @@ bool Field::removeStep(Step* step)
     return false;
 }
 
+bool Field::hasStep(const int& step)
+{
+    std::vector<Step*>::iterator it = m_steps.begin();
+    for (; it != m_steps.end(); ++it)
+    {
+        Step* current = *it;
+        if (current->getStep() == step)
+            return true;
+    }
+
+    return false;
+}
+
 void Field::checkComponent(const int& component)
 {
     if (component < m_nbComponents && component >= 0)

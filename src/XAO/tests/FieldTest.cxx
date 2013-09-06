@@ -57,6 +57,7 @@ Field* FieldTest::testField(XAO::Type type)
     step = f->addNewStep(1);
     step = f->addNewStep(2);
     CPPUNIT_ASSERT_EQUAL(3, f->countSteps());
+    CPPUNIT_ASSERT_THROW(f->addNewStep(2), SALOME_Exception); // step already exists
 
     CPPUNIT_ASSERT_EQUAL(true, f->removeStep(step));
     CPPUNIT_ASSERT_EQUAL(2, f->countSteps());
@@ -78,7 +79,9 @@ void FieldTest::testBooleanField()
     step = f->addStep(10);
     CPPUNIT_ASSERT_EQUAL(XAO::BOOLEAN, step->getType());
     CPPUNIT_ASSERT_EQUAL(3, f->countSteps());
+    CPPUNIT_ASSERT_THROW(f->addStep(10), SALOME_Exception); // step already exists
 }
+
 void FieldTest::testIntegerField()
 {
     IntegerField* f = (IntegerField*)testField(XAO::INTEGER);
@@ -91,6 +94,7 @@ void FieldTest::testIntegerField()
     step = f->addStep(10);
     CPPUNIT_ASSERT_EQUAL(XAO::INTEGER, step->getType());
     CPPUNIT_ASSERT_EQUAL(3, f->countSteps());
+    CPPUNIT_ASSERT_THROW(f->addStep(10), SALOME_Exception); // step already exists
 }
 void FieldTest::testDoubleField()
 {
@@ -104,6 +108,7 @@ void FieldTest::testDoubleField()
     step = f->addStep(10);
     CPPUNIT_ASSERT_EQUAL(XAO::DOUBLE, step->getType());
     CPPUNIT_ASSERT_EQUAL(3, f->countSteps());
+    CPPUNIT_ASSERT_THROW(f->addStep(10), SALOME_Exception); // step already exists
 }
 void FieldTest::testStringField()
 {
@@ -117,6 +122,7 @@ void FieldTest::testStringField()
     step = f->addStep(10);
     CPPUNIT_ASSERT_EQUAL(XAO::STRING, step->getType());
     CPPUNIT_ASSERT_EQUAL(3, f->countSteps());
+    CPPUNIT_ASSERT_THROW(f->addStep(10), SALOME_Exception); // step already exists
 }
 
 void FieldTest::testStep(XAO::Type type)

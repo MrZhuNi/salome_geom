@@ -162,17 +162,24 @@ namespace XAO
 
         /**
          * Adds a new step of the same type than the field.
-         * @param step the index of the step.
+         * @param number the numer of the step.
          * @return the new create step.
          */
-        virtual Step* addNewStep(const int& step) = 0;
+        virtual Step* addNewStep(const int& number) = 0;
 
         /**
          * Remove a step.
          * @param step the step to remove.
-         * @return true if the step has been removed.
+         * @return true if the step has been removed, false otherwise.
          */
         bool removeStep(Step* step);
+
+        /**
+         * Verifies if the field has a step with the given step number.
+         * @param step the step number.
+         * @return true if the field has a step for the given number.
+         */
+        bool hasStep(const int& step);
 
         /**
          * Returns the first step.

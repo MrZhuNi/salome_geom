@@ -23,7 +23,7 @@ void BrepGeometryTest::cleanUp()
 void readBrep(Geometry* geom, const std::string& fileName)
 {
     char* txt = TestUtils::readTextFile(TestUtils::getTestFilePath(fileName));
-    geom->setBREP(txt);
+    geom->setShape(txt);
 }
 
 void BrepGeometryTest::testGetIDs()
@@ -97,43 +97,67 @@ void BrepGeometryTest::testGetEdgeVertices()
     BrepGeometry* geom = new BrepGeometry("box");
     readBrep(geom, "Box_2.brep");
 
+    // edge of index 23, id = #63
+    // vertex are 47 (#12), 59 (#15)
     int v1, v2;
-    geom->getEdgeVertices(63, v1, v2);
-    std::cout << "# " << v1 << ", " << v2 << std::endl;
-    CPPUNIT_ASSERT_EQUAL(47, v1);
-    CPPUNIT_ASSERT_EQUAL(59, v2);
+    geom->getEdgeVertices(23, v1, v2);
+    CPPUNIT_ASSERT_EQUAL(12, v1);
+    CPPUNIT_ASSERT_EQUAL(15, v2);
 
     delete geom;
 }
 
-void BrepGeometryTest::testGetFaceWires()
+void printVector(std::vector<int>& v)
+{
+    std::cout << "# ";
+    for (int i = 0; i < v.size(); i++)
+        std::cout << v[i] << ", ";
+    std::cout << std::endl;
+}
+
+void BrepGeometryTest::testGetFaceEdges()
 {
     BrepGeometry* geom = new BrepGeometry("box");
     readBrep(geom, "Box_2.brep");
 
-    CPPUNIT_ASSERT_EQUAL(2, geom->countFaceWires(13));
-    CPPUNIT_ASSERT_EQUAL(1, geom->countFaceWires(29));
+    CPPUNIT_ASSERT_EQUAL(2, geom->countFaceWires(1)); // face 13
+    CPPUNIT_ASSERT_EQUAL(1, geom->countFaceWires(2)); // face 29
 
-    std::vector<int> wires = geom->getFaceWires(13);
-    CPPUNIT_ASSERT_EQUAL(2, (int)wires.size());
-    CPPUNIT_ASSERT_EQUAL(2, wires[0]);
-    CPPUNIT_ASSERT_EQUAL(11, wires[1]);
+    // wire 0 of face 1 (#13) => edge 4 (#15), 5 (#17), 0 (#5), 6 (#19)
+    std::vector<int> edges = geom->getFaceEdges(1, 0);
+    CPPUNIT_ASSERT_EQUAL(4, (int)edges.size());
+    int ids1[4] = { 4,5,0,6 };
+    for (int i = 0; i < 4; ++i)
+        CPPUNIT_ASSERT_EQUAL(ids1[i], edges[i]);
+
+    // wire 1 of face 13 => edge 7 (#21) ,8 (#24), 9 (#26), 10 (#28)
+    edges = geom->getFaceEdges(1, 1);
+    CPPUNIT_ASSERT_EQUAL(4, (int)edges.size());
+    int ids2[4] = { 7,8,9,10 };
+    for (int i = 0; i < 4; ++i)
+        CPPUNIT_ASSERT_EQUAL(ids2[i], edges[i]);
 
     delete geom;
 }
 
-void BrepGeometryTest::testSolidShells()
+void BrepGeometryTest::testSolidFaces()
 {
     BrepGeometry* geom = new BrepGeometry("box");
     readBrep(geom, "Cut_2.brep");
 
-    CPPUNIT_ASSERT_EQUAL(5, geom->countSolidShells(1));
+    CPPUNIT_ASSERT_EQUAL(5, geom->countSolidShells(0));
 
-    std::vector<int> shells = geom->getSolidShells(1);
-    CPPUNIT_ASSERT_EQUAL(5, (int)shells.size());
-    int ids[5] = { 2, 35, 68, 76, 84 };
-    for (int i = 0; i < 5; ++i)
-        CPPUNIT_ASSERT_EQUAL(ids[i], shells[i]);
+    std::vector<int> faces = geom->getSolidFaces(0, 0);
+    CPPUNIT_ASSERT_EQUAL(6, (int)faces.size());
+    int ids[6] = { 0, 1, 2, 3, 4, 5 };
+    for (int i = 0; i < 6; ++i)
+        CPPUNIT_ASSERT_EQUAL(ids[i], faces[i]);
+
+    faces = geom->getSolidFaces(0, 1);
+    CPPUNIT_ASSERT_EQUAL(6, (int)faces.size());
+    int ids2[6] = { 6, 7, 8, 9, 10, 11 };
+    for (int i = 0; i < 6; ++i)
+        CPPUNIT_ASSERT_EQUAL(ids2[i], faces[i]);
 
     delete geom;
 }
@@ -144,7 +168,7 @@ void BrepGeometryTest::testGetVertex()
     readBrep(geom, "Box_2.brep");
 
     double x, y, z;
-    geom->getVertexXYZ(59, x, y, z);
+    geom->getVertexXYZ(15, x, y, z);
     CPPUNIT_ASSERT_DOUBLES_EQUAL(60., x, 1e-6);
     CPPUNIT_ASSERT_DOUBLES_EQUAL(80., y, 1e-6);
     CPPUNIT_ASSERT_DOUBLES_EQUAL(60., z, 1e-6);
@@ -157,8 +181,9 @@ void BrepGeometryTest::testGetEdgeLength()
     BrepGeometry* geom = new BrepGeometry("box");
     readBrep(geom, "Box_2.brep");
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(200., geom->getEdgeLength(5), 0);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(80., geom->getEdgeLength(21), 0);
+    // edges 0 (#5), 7 (#21)
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(200., geom->getEdgeLength(0), 0);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(80., geom->getEdgeLength(7), 0);
 
     delete geom;
 }
@@ -168,8 +193,9 @@ void BrepGeometryTest::testGetFaceArea()
     BrepGeometry* geom = new BrepGeometry("box");
     readBrep(geom, "Box_2.brep");
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(40000., geom->getFaceArea(3), 1e-9);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(33600., geom->getFaceArea(13), 1e-9);
+    // faces 0 (#3), 1 (#13)
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(40000., geom->getFaceArea(0), 1e-9);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(33600., geom->getFaceArea(1), 1e-9);
 
     delete geom;
 }
@@ -179,7 +205,7 @@ void BrepGeometryTest::testGetSolidVolume()
     BrepGeometry* geom = new BrepGeometry("box");
     readBrep(geom, "Box_2.brep");
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(7488000., geom->getSolidVolume(1), 1e-9);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(7488000., geom->getSolidVolume(0), 1e-9);
 
     delete geom;
 }

@@ -13,8 +13,8 @@ namespace XAO
         CPPUNIT_TEST(testGetIDs);
         CPPUNIT_TEST(testGetReferences);
         CPPUNIT_TEST(testGetEdgeVertices);
-        CPPUNIT_TEST(testGetFaceWires);
-        CPPUNIT_TEST(testSolidShells);
+        CPPUNIT_TEST(testGetFaceEdges);
+        CPPUNIT_TEST(testSolidFaces);
         CPPUNIT_TEST(testGetVertex);
         CPPUNIT_TEST(testGetEdgeLength);
         CPPUNIT_TEST(testGetFaceArea);
@@ -29,8 +29,8 @@ namespace XAO
         void testGetIDs();
         void testGetReferences();
         void testGetEdgeVertices();
-        void testGetFaceWires();
-        void testSolidShells();
+        void testGetFaceEdges();
+        void testSolidFaces();
 
         void testGetVertex();
         void testGetEdgeLength();

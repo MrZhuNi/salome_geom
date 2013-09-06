@@ -20,20 +20,24 @@
 
 #include <cassert>
 
+#include <Standard_TypeMismatch.hxx>
+
+#include <BRepTools.hxx>
+#include <BRep_Builder.hxx>
+#include <TopAbs.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
-#include <TColStd_HArray1OfInteger.hxx>
-#include <TColStd_HSequenceOfInteger.hxx>
+//#include <TColStd_ListIteratorOfListOfInteger.hxx>
+//#include <TColStd_HArray1OfInteger.hxx>
+//#include <TColStd_HSequenceOfInteger.hxx>
 #include <GProp_GProps.hxx>
 #include <BRepGProp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
-#include <BRep_Tool.hxx>
 
 #include <Utils_SALOME_Exception.hxx>
 
@@ -50,7 +54,46 @@ BrepGeometry::BrepGeometry(const std::string& name) : Geometry(name)
 {
 }
 
-TopoDS_Shape BrepGeometry::getGeometricalElement(TopAbs_ShapeEnum shapeType, const int& shapeIndex)
+const std::string BrepGeometry::getShape()
+{
+    std::ostringstream streamShape;
+    BRepTools::Write(m_shape, streamShape);
+    std::string data = streamShape.str();
+    char* res = new char[data.size()];
+    strcpy(res, data.c_str());
+    return res;
+}
+
+void BrepGeometry::setShape(const std::string& shape)
+{
+    std::istringstream streamBrep(shape.c_str());
+    BRep_Builder builder;
+    BRepTools::Read(m_shape, streamBrep, builder);
+
+    initIds();
+}
+
+TopoDS_Shape BrepGeometry::getTopoDS_Shape()
+{
+    return m_shape;
+}
+
+void BrepGeometry::setTopoDS_Shape(const TopoDS_Shape& shape)
+{
+    m_shape = shape;
+    initIds();
+}
+
+void BrepGeometry::initIds()
+{
+    // intialization of Ids
+    initListIds(TopAbs_VERTEX, m_vertices);
+    initListIds(TopAbs_EDGE, m_edges);
+    initListIds(TopAbs_FACE, m_faces);
+    initListIds(TopAbs_SOLID, m_solids);
+}
+
+void BrepGeometry::initListIds(const TopAbs_ShapeEnum& shapeType, GeometricElementList& eltList)
 {
     TopTools_MapOfShape mapShape;
     TopTools_ListOfShape listShape;
@@ -62,24 +105,61 @@ TopoDS_Shape BrepGeometry::getGeometricalElement(TopAbs_ShapeEnum shapeType, con
             listShape.Append(exp.Current());
     }
 
+    if (listShape.IsEmpty())
+        return;
+
+    TopTools_IndexedMapOfShape indices;
+    TopExp::MapShapes(m_shape, indices);
+
+    std::list<int> indexList;
+    TopTools_ListIteratorOfListOfShape itSub(listShape);
+    for (int index = 1; itSub.More(); itSub.Next(), ++index)
+    {
+        TopoDS_Shape value = itSub.Value();
+        indexList.push_back(indices.FindIndex(value));
+    }
+
+    std::list<int>::iterator it = indexList.begin();
+
+    eltList.setSize(indexList.size());
+    for (int i = 0; it != indexList.end(); it++, i++)
+        eltList.setReference(i, XaoUtils::intToString((*it)));
+}
+
+TopoDS_Shape BrepGeometry::getSubShape(const TopoDS_Shape& mainShape, const TopAbs_ShapeEnum& shapeType, const int& shapeIndex)
+{
+    TopTools_MapOfShape mapShape;
+    TopTools_ListOfShape listShape;
+
+    TopExp_Explorer exp(mainShape, shapeType);
+    for (; exp.More(); exp.Next())
+    {
+        if (mapShape.Add(exp.Current()))
+            listShape.Append(exp.Current());
+    }
+
     if (!listShape.IsEmpty())
     {
+        // use main shape indices
         TopTools_IndexedMapOfShape indices;
-        TopExp::MapShapes(m_shape, indices);
+        TopExp::MapShapes(mainShape, indices);
 
         TopTools_ListIteratorOfListOfShape itSub(listShape);
         for (int index = 1; itSub.More(); itSub.Next(), ++index)
         {
-            TopoDS_Shape value = itSub.Value();
-            if (shapeIndex == (int)indices.FindIndex(value))
+            if (shapeIndex + 1 == index)
+            {
+                TopoDS_Shape value = itSub.Value();
                 return value;
+            }
         }
     }
 
-    throw SALOME_Exception(MsgBuilder() << "Shape not found: " << shapeIndex);
+    throw SALOME_Exception(MsgBuilder() << "Shape with reference [" << shapeIndex << "]  not found.");
 }
 
-const int BrepGeometry::countGeometricalElements(TopoDS_Shape shape, TopAbs_ShapeEnum shapeType)
+// -----------------------------
+const int BrepGeometry::countGeometricalElements(const TopoDS_Shape& shape, const TopAbs_ShapeEnum& shapeType)
 {
     int res = 0;
     TopTools_MapOfShape mapShape;
@@ -93,7 +173,7 @@ const int BrepGeometry::countGeometricalElements(TopoDS_Shape shape, TopAbs_Shap
     return res;
 }
 
-std::vector<int> BrepGeometry::getGeometricalElements(TopoDS_Shape shape, TopAbs_ShapeEnum shapeType)
+std::vector<int> BrepGeometry::getGeometricalElements(const TopoDS_Shape& shape, const TopAbs_ShapeEnum& shapeType, const XAO::Dimension& dim)
 {
     std::vector<int> indexList;
 
@@ -109,65 +189,71 @@ std::vector<int> BrepGeometry::getGeometricalElements(TopoDS_Shape shape, TopAbs
 
     if (!listShape.IsEmpty())
     {
+        // use the shape of the geometry for the indices
         TopTools_IndexedMapOfShape indices;
-        TopExp::MapShapes(shape, indices);
+        TopExp::MapShapes(m_shape, indices);
 
         TopTools_ListIteratorOfListOfShape itSub(listShape);
         for (int index = 1; itSub.More(); itSub.Next(), ++index)
         {
             TopoDS_Shape value = itSub.Value();
-            indexList.push_back(indices.FindIndex(value));
+            int id = indices.FindIndex(value);
+            indexList.push_back(findElement(dim, id));
         }
     }
 
     return indexList;
 }
 
-void BrepGeometry::getEdgeVertices(const int& edge, int& vertexA, int& vertexB)
+void BrepGeometry::getEdgeVertices(const int& edgeIndex, int& vertexA, int& vertexB)
 {
-    TopoDS_Shape shape = getGeometricalElement(TopAbs_EDGE, edge);
-    std::vector<int> vertices = getGeometricalElements(shape, TopAbs_VERTEX);
+    TopoDS_Shape edge = getSubShape(m_shape, TopAbs_EDGE, edgeIndex);
+    std::vector<int> vertices = getGeometricalElements(edge, TopAbs_VERTEX, XAO::VERTEX);
     assert(vertices.size() == 2);
 
     vertexA = vertices[0];
     vertexB = vertices[1];
 }
 
-const int BrepGeometry::countFaceWires(const int& face)
+const int BrepGeometry::countFaceWires(const int& faceIndex)
 {
-    TopoDS_Shape shape = getGeometricalElement(TopAbs_FACE, face);
-    return countGeometricalElements(shape, TopAbs_WIRE);
+    TopoDS_Shape face = getSubShape(m_shape, TopAbs_FACE, faceIndex);
+    return countGeometricalElements(face, TopAbs_WIRE);
 }
 
-std::vector<int> BrepGeometry::getFaceWires(const int& face)
+std::vector<int> BrepGeometry::getFaceEdges(const int& faceIndex, const int& wireIndex)
 {
-    TopoDS_Shape shape = getGeometricalElement(TopAbs_FACE, face);
-    return getGeometricalElements(shape, TopAbs_WIRE);
+    // get the face
+    TopoDS_Shape face = getSubShape(m_shape, TopAbs_FACE, faceIndex);
+    // get the wire
+    TopoDS_Shape wire = getSubShape(face, TopAbs_WIRE, wireIndex);
+    return getGeometricalElements(wire, TopAbs_EDGE, XAO::EDGE);
 }
 
-const int BrepGeometry::countSolidShells(const int& solid)
+const int BrepGeometry::countSolidShells(const int& solidIndex)
 {
-    TopoDS_Shape shape = getGeometricalElement(TopAbs_SOLID, solid);
-    return countGeometricalElements(shape, TopAbs_SHELL);
+    TopoDS_Shape solid = getSubShape(m_shape, TopAbs_SOLID, solidIndex);
+    return countGeometricalElements(solid, TopAbs_SHELL);
 }
 
-std::vector<int> BrepGeometry::getSolidShells(const int& solid)
+std::vector<int> BrepGeometry::getSolidFaces(const int& solidIndex, const int& shellIndex)
 {
-    TopoDS_Shape shape = getGeometricalElement(TopAbs_SOLID, solid);
-    return getGeometricalElements(shape, TopAbs_SHELL);
+    TopoDS_Shape solid = getSubShape(m_shape, TopAbs_SOLID, solidIndex);
+    TopoDS_Shape shell = getSubShape(solid, TopAbs_SHELL, shellIndex);
+    return getGeometricalElements(shell, TopAbs_FACE, XAO::FACE);
 }
 
-void BrepGeometry::getVertexXYZ(const int& vertex, double& xCoord, double& yCoord, double& zCoord)
+void BrepGeometry::getVertexXYZ(const int& vertexIndex, double& xCoord, double& yCoord, double& zCoord)
 {
     xCoord = 0.;
     yCoord = 0.;
     zCoord = 0.;
 
-    TopoDS_Shape shape = getGeometricalElement(TopAbs_VERTEX, vertex);
-    if (shape.ShapeType() != TopAbs_VERTEX)
-        throw SALOME_Exception(MsgBuilder() << "Shape " << vertex << " is not a point.");
+    TopoDS_Shape vertex = getSubShape(m_shape, TopAbs_VERTEX, vertexIndex);
+    if (vertex.ShapeType() != TopAbs_VERTEX)
+        throw SALOME_Exception(MsgBuilder() << "Shape " << vertexIndex<< " is not a point.");
 
-    TopoDS_Vertex point = TopoDS::Vertex(shape);
+    TopoDS_Vertex point = TopoDS::Vertex(vertex);
     if (!point.IsNull())
     {
         gp_Pnt aPnt = BRep_Tool::Pnt(point);
@@ -177,68 +263,85 @@ void BrepGeometry::getVertexXYZ(const int& vertex, double& xCoord, double& yCoor
     }
 }
 
-const double BrepGeometry::getEdgeLength(const int& edge)
+// -----------------------------
+const double BrepGeometry::getEdgeLength(const int& edgeIndex)
 {
-    TopoDS_Shape shape = getGeometricalElement(TopAbs_EDGE, edge);
+    TopoDS_Shape edge = getSubShape(m_shape, TopAbs_EDGE, edgeIndex);
     GProp_GProps system;
-    BRepGProp::LinearProperties(shape, system);
+    BRepGProp::LinearProperties(edge, system);
     return system.Mass();
 }
 
-const double BrepGeometry::getFaceArea(const int& face)
+const double BrepGeometry::getFaceArea(const int& faceIndex)
 {
-    TopoDS_Shape shape = getGeometricalElement(TopAbs_FACE, face);
+    TopoDS_Shape face = getSubShape(m_shape, TopAbs_FACE, faceIndex);
     GProp_GProps system;
-    BRepGProp::SurfaceProperties(shape, system);
+    BRepGProp::SurfaceProperties(face, system);
     return system.Mass();
 }
 
-const double BrepGeometry::getSolidVolume(const int& solid)
+const double BrepGeometry::getSolidVolume(const int& solidIndex)
 {
-    TopoDS_Shape shape = getGeometricalElement(TopAbs_SOLID, solid);
+    TopoDS_Shape solid = getSubShape(m_shape, TopAbs_SOLID, solidIndex);
     GProp_GProps system;
-    BRepGProp::VolumeProperties(shape, system);
+    BRepGProp::VolumeProperties(solid, system);
     return system.Mass();
 }
 
-const int BrepGeometry::getVertexID(const int& vertex)
+// -----------------------------
+const int BrepGeometry::getVertexID(const int& index)
 {
-    return XaoUtils::stringToInt(getVertexReference(vertex));
+    return XaoUtils::stringToInt(getVertexReference(index));
 }
 
-const int BrepGeometry::getEdgeID(const int& edge)
+const int BrepGeometry::getEdgeID(const int& index)
 {
-    return XaoUtils::stringToInt(getEdgeReference(edge));
+    return XaoUtils::stringToInt(getEdgeReference(index));
 }
 
-const int BrepGeometry::getFaceID(const int& face)
+const int BrepGeometry::getFaceID(const int& index)
 {
-    return XaoUtils::stringToInt(getFaceReference(face));
+    return XaoUtils::stringToInt(getFaceReference(index));
 }
 
-const int BrepGeometry::getSolidID(const int& solid)
+const int BrepGeometry::getSolidID(const int& index)
 {
-    return XaoUtils::stringToInt(getSolidReference(solid));
+    return XaoUtils::stringToInt(getSolidReference(index));
 }
 
-void BrepGeometry::setVertexID(const int& vertex, const int& id)
+// -----------------------------
+void BrepGeometry::setVertexID(const int& index, const int& id)
 {
-    setVertexReference(vertex, XaoUtils::intToString(id));
+    setVertexReference(index, XaoUtils::intToString(id));
 }
 
-void BrepGeometry::setEdgeID(const int& edge, const int& id)
+void BrepGeometry::setEdgeID(const int& index, const int& id)
 {
-    setEdgeReference(edge, XaoUtils::intToString(id));
+    setEdgeReference(index, XaoUtils::intToString(id));
 }
 
-void BrepGeometry::setFaceID(const int& face, const int& id)
+void BrepGeometry::setFaceID(const int& index, const int& id)
 {
-    setEdgeReference(face, XaoUtils::intToString(id));
+    setEdgeReference(index, XaoUtils::intToString(id));
 }
 
-void BrepGeometry::setSolidID(const int& solid, const int& id)
+void BrepGeometry::setSolidID(const int& index, const int& id)
 {
-    setEdgeReference(solid, XaoUtils::intToString(id));
+    setEdgeReference(index, XaoUtils::intToString(id));
+}
+
+// -----------------------------
+const int BrepGeometry::findElement(const XAO::Dimension& dim, const int& id)
+{
+    if (dim == XAO::VERTEX)
+        return findVertex(id);
+    if (dim == XAO::EDGE)
+        return findEdge(id);
+    if (dim == XAO::FACE)
+        return findFace(id);
+    if (dim == XAO::SOLID)
+        return findSolid(id);
+    throw SALOME_Exception(MsgBuilder() << "Unknown Dimension: " << dim);
 }
 
 const int BrepGeometry::findVertex(const int& id)
@@ -261,6 +364,7 @@ const int BrepGeometry::findSolid(const int& id)
     return getSolidIndexByReference(XaoUtils::intToString(id));
 }
 
+// -----------------------------
 const std::string BrepGeometry::findVertexName(const int& id)
 {
     return getVertexName(findVertex(id));
@@ -281,6 +385,7 @@ const std::string BrepGeometry::findSolidName(const int& id)
     return getSolidName(findSolid(id));
 }
 
+// -----------------------------
 void BrepGeometry::changeVertexName(const int& id, const std::string& name)
 {
     setVertexName(findVertex(id), name);

@@ -23,9 +23,6 @@
 
 #include <string>
 
-#include <SALOMEconfig.h>
-#include <TopoDS_Shape.hxx>
-
 #include "Xao.hxx"
 #include "GeometricElement.hxx"
 
@@ -78,22 +75,8 @@ namespace XAO
          */
         virtual const XAO::Format getFormat() = 0;
 
-        /**
-         * Gets the shape of the geometry.
-         * @return the shape of the geometry.
-         */
-        TopoDS_Shape getShape()
-        {
-            return m_shape;
-        }
-        /**
-         * Sets the shape of the geometry.
-         * @param shape the shape to set.
-         */
-        void setShape(const TopoDS_Shape& shape);
-
-        const char* getBREP();
-        void setBREP(const char* brep);
+        virtual const std::string getShape() = 0;
+        virtual void setShape(const std::string& shape) = 0;
 
         const int countElements(const XAO::Dimension& dim);
         const int countVertices() { return m_vertices.getSize(); }
@@ -146,13 +129,8 @@ namespace XAO
         GeometricElementList::iterator begin(const XAO::Dimension& dim);
         GeometricElementList::iterator end(const XAO::Dimension& dim);
 
-    private:
-        void initListIds(const Standard_Integer shapeType);
-
-
     protected:
         std::string m_name;
-        TopoDS_Shape m_shape;
         GeometricElementList m_vertices;
         GeometricElementList m_edges;
         GeometricElementList m_faces;

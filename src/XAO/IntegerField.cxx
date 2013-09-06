@@ -20,6 +20,7 @@
 
 #include "IntegerField.hxx"
 #include "IntegerStep.hxx"
+#include "XaoUtils.hxx"
 
 #include <Utils_SALOME_Exception.hxx>
 
@@ -42,6 +43,9 @@ IntegerStep* IntegerField::addStep(const int& step)
 
 IntegerStep* IntegerField::addStep(const int& step, const int& stamp)
 {
+    if (hasStep(step))
+        throw SALOME_Exception(MsgBuilder() << "Step with number " << step << "already exists.");
+
     IntegerStep* bstep = new IntegerStep(step, stamp, m_nbElements, m_nbComponents);
     m_steps.push_back(bstep);
     return bstep;

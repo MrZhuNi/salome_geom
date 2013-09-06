@@ -21,6 +21,7 @@
 #include <Utils_SALOME_Exception.hxx>
 
 #include "GeometricElement.hxx"
+#include "XaoUtils.hxx"
 
 using namespace XAO;
 
@@ -86,9 +87,7 @@ const std::string GeometricElementList::getName(const int& index)
 void GeometricElementList::setName(const int& index, const std::string& name)
 {
     if (m_count == 0 || index > m_count)
-    {
         throw SALOME_Exception("Problem with number of elements");
-    }
 
     m_elements[index].setName(name);
 }
@@ -96,9 +95,7 @@ void GeometricElementList::setName(const int& index, const std::string& name)
 const bool GeometricElementList::hasName(const int& index)
 {
     if (m_count == 0 || index > m_count)
-    {
         throw SALOME_Exception("Problem with number of elements");
-    }
 
     return m_elements[index].hasName();
 }
@@ -124,9 +121,8 @@ const int GeometricElementList::getIndexByReference(const std::string& ref)
     for (int index = 0; index < m_count; ++index)
     {
         if (ref == m_elements[index].getReference())
-        {
             return index;
-        }
     }
-    return -1;
+
+    throw SALOME_Exception(MsgBuilder() << "Reference not found: " << ref);
 }

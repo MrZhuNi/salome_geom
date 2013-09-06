@@ -163,7 +163,7 @@ void XaoExporter::exportGeometricElements(Geometry* xaoGeometry,
         xmlNodePtr topology, XAO::Dimension dim, const xmlChar* colTag, const xmlChar* eltTag)
 {
     xmlNodePtr vertices = xmlNewChild(topology, 0, colTag, 0);
-    xmlNewProp(vertices, C_ATTR_COUNT, BAD_CAST XaoUtils::intToString(xaoGeometry->countVertices()).c_str());
+    xmlNewProp(vertices, C_ATTR_COUNT, BAD_CAST XaoUtils::intToString(xaoGeometry->countElements(dim)).c_str());
     GeometricElementList::iterator it = xaoGeometry->begin(dim);
     for (; it != xaoGeometry->end(dim); it++)
     {
@@ -184,8 +184,8 @@ void XaoExporter::exportGeometry(Geometry* xaoGeometry, xmlDocPtr doc, xmlNodePt
 
     xmlNodePtr shape = xmlNewChild(geometry, 0, C_TAG_SHAPE, 0);
     xmlNewProp(shape, C_ATTR_SHAPE_FORMAT, BAD_CAST XaoUtils::shapeFormatToString(xaoGeometry->getFormat()).c_str());
-    const char* brep = xaoGeometry->getBREP();
-    xmlNodePtr cdata = xmlNewCDataBlock(doc, BAD_CAST brep, strlen(brep));
+    std::string txtShape = xaoGeometry->getShape();
+    xmlNodePtr cdata = xmlNewCDataBlock(doc, BAD_CAST txtShape.c_str(), txtShape.size());
     xmlAddChild(shape, cdata);
 
     xmlNodePtr topology = xmlNewChild(geometry, 0, C_TAG_TOPOLOGY, 0);
@@ -368,7 +368,7 @@ void XaoExporter::parseShapeNode(xmlDocPtr doc, xmlNodePtr shapeNode, Geometry* 
         xmlChar* data = xmlNodeGetContent(shapeNode->children);
         if (data == NULL)
             throw SALOME_Exception("Missing BREP");
-        geometry->setBREP((char*)data);
+        geometry->setShape((char*)data);
         xmlFree(data);
     }
     else
