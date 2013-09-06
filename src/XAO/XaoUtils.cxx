@@ -70,7 +70,12 @@ const std::string XaoUtils::booleanToString(const bool& value)
 
 const bool XaoUtils::stringToBoolean(const std::string& value)
 {
-    return (value == std::string("true"));
+    if (value == "true" || value == "1")
+        return true;
+    if (value == "false" || value == "0")
+        return false;
+
+    throw SALOME_Exception(MsgBuilder() << "Invalid boolean value: " << value);
 }
 
 const std::string XaoUtils::dimensionToString(const XAO::Dimension& dimension)

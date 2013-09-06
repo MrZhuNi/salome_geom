@@ -19,6 +19,18 @@ void XaoUtilsTest::cleanUp()
 {
 }
 
+void XaoUtilsTest::testBoolean()
+{
+    CPPUNIT_ASSERT_EQUAL(std::string("true"), XaoUtils::booleanToString(true));
+    CPPUNIT_ASSERT_EQUAL(std::string("false"), XaoUtils::booleanToString(false));
+
+    CPPUNIT_ASSERT_EQUAL(true, XaoUtils::stringToBoolean("true"));
+    CPPUNIT_ASSERT_EQUAL(true, XaoUtils::stringToBoolean("1"));
+    CPPUNIT_ASSERT_EQUAL(false, XaoUtils::stringToBoolean("false"));
+    CPPUNIT_ASSERT_EQUAL(false, XaoUtils::stringToBoolean("0"));
+    CPPUNIT_ASSERT_THROW(XaoUtils::stringToBoolean("abc"), SALOME_Exception);
+}
+
 void XaoUtilsTest::testInteger()
 {
     CPPUNIT_ASSERT_EQUAL(std::string("0"), XaoUtils::intToString(0));

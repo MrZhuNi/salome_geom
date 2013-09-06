@@ -10,6 +10,7 @@ namespace XAO
     class XaoUtilsTest: public CppUnit::TestFixture
     {
         CPPUNIT_TEST_SUITE(XaoUtilsTest);
+        CPPUNIT_TEST(testBoolean);
         CPPUNIT_TEST(testInteger);
         CPPUNIT_TEST(testDouble);
         CPPUNIT_TEST(testDimension);
@@ -22,6 +23,7 @@ namespace XAO
         void tearDown();
         void cleanUp();
 
+        void testBoolean();
         void testInteger();
         void testDouble();
         void testDimension();
