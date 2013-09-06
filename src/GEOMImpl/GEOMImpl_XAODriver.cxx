@@ -26,10 +26,10 @@
 #include <TFunction_Logbook.hxx>
 #include <StdFail_NotDone.hxx>
 
-#include "Xao.hxx"
-#include "Geometry.hxx"
-#include "Group.hxx"
-#include "XaoUtils.hxx"
+#include "XAO_Xao.hxx"
+#include "XAO_Geometry.hxx"
+#include "XAO_Group.hxx"
+#include "XAO_XaoUtils.hxx"
 //@@ include required header files here @@//
 
 //=======================================================================

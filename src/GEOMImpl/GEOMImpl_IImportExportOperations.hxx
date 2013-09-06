@@ -26,7 +26,7 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
-#include "Geometry.hxx"
+#include <XAO_Geometry.hxx>
 
 class GEOMImpl_IShapesOperations;
 class GEOMImpl_IGroupOperations;

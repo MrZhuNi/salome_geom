@@ -45,10 +45,12 @@
 #include "GEOM_ISubShape.hxx"
 #include "GEOM_PythonDump.hxx"
 
-#include "Xao.hxx"
-#include "Geometry.hxx"
-#include "Group.hxx"
-#include "XaoUtils.hxx"
+#include <XAO_Xao.hxx>
+#include <XAO_Geometry.hxx>
+#include <XAO_BrepGeometry.hxx>
+#include <XAO_Group.hxx>
+#include <XAO_Field.hxx>
+#include <XAO_XaoUtils.hxx>
 
 #include <GEOMImpl_XAODriver.hxx>
 #include <GEOMImpl_IImportExportXAO.hxx>
@@ -177,10 +179,15 @@ bool GEOMImpl_IImportExportOperations::ExportXAO(Handle(GEOM_Object) shape,
     xaoObject->setAuthor(author);
 
     XAO::Geometry* geometry = XAO::Geometry::createGeometry(XAO::BREP);
-    TopoDS_Shape topoShape = shape->GetValue();
-    exportFunction->SetValue(topoShape);
-    geometry->setShape(topoShape);
     geometry->setName(shape->GetName());
+
+    if (geometry->getFormat() == XAO::BREP)
+    {
+        TopoDS_Shape topoShape = shape->GetValue();
+        exportFunction->SetValue(topoShape);
+        XAO::BrepGeometry* brep = (XAO::BrepGeometry*)geometry;
+        brep->setTopoDS_Shape(topoShape);
+    }
 
     Handle(TColStd_HSequenceOfTransient) subObjects = m_shapesOperations->GetExistingSubObjects(shape, false);
     int nbSubObjects = subObjects->Length();
@@ -399,9 +406,13 @@ bool GEOMImpl_IImportExportOperations::ImportXAO(const char* fileName,
     if (function->GetDriverGUID() != GEOMImpl_XAODriver::GetID()) return false;
 
     // set the geometry
-    TopoDS_Shape geomShape = xaoGeometry->getShape();
-    function->SetValue(geomShape);
-    shape->SetName(xaoGeometry->getName().c_str());
+    if (xaoGeometry->getFormat() == XAO::BREP)
+    {
+        XAO::BrepGeometry* brep = (XAO::BrepGeometry*)xaoGeometry;
+        TopoDS_Shape geomShape = brep->getTopoDS_Shape();
+        function->SetValue(geomShape);
+        shape->SetName(xaoGeometry->getName().c_str());
+    }
 
     // create sub shapes with names
 
