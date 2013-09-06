@@ -3,7 +3,7 @@
 
 #include "TestUtils.hxx"
 #include "GeometryTest.hxx"
-#include "../Geometry.hxx"
+#include "../XAO_Geometry.hxx"
 
 using namespace XAO;
 

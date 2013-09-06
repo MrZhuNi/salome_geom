@@ -22,11 +22,11 @@
 
 #include "TestUtils.hxx"
 #include "ImportExportTest.hxx"
-#include "../Geometry.hxx"
-#include "../Group.hxx"
-#include "../Field.hxx"
-#include "../IntegerField.hxx"
-#include "../IntegerStep.hxx"
+#include "../XAO_Geometry.hxx"
+#include "../XAO_Group.hxx"
+#include "../XAO_Field.hxx"
+#include "../XAO_IntegerField.hxx"
+#include "../XAO_IntegerStep.hxx"
 
 using namespace XAO;
 

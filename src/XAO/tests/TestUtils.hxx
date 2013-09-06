@@ -2,7 +2,7 @@
 #define __XAO_TESTUTILS_HXX__
 
 #include <fstream>
-#include "../Xao.hxx"
+#include <cstdlib>
 
 namespace XAO
 {

@@ -3,8 +3,8 @@
 
 #include "TestUtils.hxx"
 #include "GroupTest.hxx"
-#include "../Xao.hxx"
-#include "../Group.hxx"
+#include "../XAO_Xao.hxx"
+#include "../XAO_Group.hxx"
 
 using namespace XAO;
 

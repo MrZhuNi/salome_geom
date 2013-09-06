@@ -1,8 +1,8 @@
 #include <Utils_SALOME_Exception.hxx>
 
 #include "XaoUtilsTest.hxx"
-#include "../Xao.hxx"
-#include "../XaoUtils.hxx"
+#include "../XAO_Xao.hxx"
+#include "../XAO_XaoUtils.hxx"
 
 using namespace XAO;
 

@@ -3,8 +3,6 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../Xao.hxx"
-
 namespace XAO
 {
     class BrepGeometryTest: public CppUnit::TestFixture

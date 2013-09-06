@@ -3,8 +3,8 @@
 
 #include "TestUtils.hxx"
 #include "BrepGeometryTest.hxx"
-#include "../Xao.hxx"
-#include "../BrepGeometry.hxx"
+#include "../XAO_Xao.hxx"
+#include "../XAO_BrepGeometry.hxx"
 
 using namespace XAO;
 

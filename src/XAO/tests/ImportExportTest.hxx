@@ -3,7 +3,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../Xao.hxx"
+#include "../XAO_Xao.hxx"
 
 namespace XAO
 {

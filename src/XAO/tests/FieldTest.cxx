@@ -2,14 +2,14 @@
 #include <Utils_SALOME_Exception.hxx>
 
 #include "FieldTest.hxx"
-#include "../Xao.hxx"
-#include "../XaoUtils.hxx"
-#include "../Field.hxx"
-#include "../Step.hxx"
-#include "../BooleanField.hxx"
-#include "../IntegerField.hxx"
-#include "../DoubleField.hxx"
-#include "../StringField.hxx"
+#include "../XAO_Xao.hxx"
+#include "../XAO_XaoUtils.hxx"
+#include "../XAO_Field.hxx"
+#include "../XAO_Step.hxx"
+#include "../XAO_BooleanField.hxx"
+#include "../XAO_IntegerField.hxx"
+#include "../XAO_DoubleField.hxx"
+#include "../XAO_StringField.hxx"
 
 using namespace XAO;
 
