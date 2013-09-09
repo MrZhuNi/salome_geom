@@ -1,0 +1,70 @@
+#include <vector>
+#include <Utils_SALOME_Exception.hxx>
+
+#include "TestUtils.hxx"
+#include "XaoTest.hxx"
+#include "../XAO_Xao.hxx"
+#include "../XAO_BrepGeometry.hxx"
+#include "../XAO_Group.hxx"
+#include "../XAO_Field.hxx"
+
+using namespace XAO;
+
+void XaoTest::setUp()
+{
+}
+
+void XaoTest::tearDown()
+{
+}
+
+void XaoTest::cleanUp()
+{
+}
+
+void XaoTest::testGroups()
+{
+    Xao obj;
+    CPPUNIT_ASSERT_THROW(obj.addGroup(XAO::FACE), SALOME_Exception);
+
+    BrepGeometry* geom = new BrepGeometry("test");
+    obj.setGeometry(geom);
+    Group* gr = obj.addGroup(XAO::FACE);
+    CPPUNIT_ASSERT_EQUAL(XAO::FACE, gr->getDimension());
+    CPPUNIT_ASSERT_EQUAL(1, obj.countGroups());
+    Group* gr2 = obj.addGroup(XAO::FACE);
+
+    Group* agr = obj.getGroup(0);
+    CPPUNIT_ASSERT(gr == agr);
+    CPPUNIT_ASSERT_THROW(obj.getGroup(10), SALOME_Exception);
+
+    CPPUNIT_ASSERT_EQUAL(true, obj.removeGroup(gr2));
+    CPPUNIT_ASSERT(gr2 != NULL);
+    CPPUNIT_ASSERT_EQUAL(1, obj.countGroups());
+    CPPUNIT_ASSERT_EQUAL(false, obj.removeGroup(gr2)); // remove again
+}
+
+void XaoTest::testFields()
+{
+    Xao obj;
+    CPPUNIT_ASSERT_THROW(obj.addField(XAO::INTEGER, XAO::FACE, 3), SALOME_Exception);
+
+    BrepGeometry* geom = new BrepGeometry("test");
+    obj.setGeometry(geom);
+    Field* fi = obj.addField(XAO::INTEGER, XAO::FACE, 3);
+    CPPUNIT_ASSERT_EQUAL(1, obj.countFields());
+    CPPUNIT_ASSERT_EQUAL(XAO::INTEGER, fi->getType());
+    CPPUNIT_ASSERT_EQUAL(XAO::FACE, fi->getDimension());
+    CPPUNIT_ASSERT_EQUAL(3, fi->countComponents());
+
+    Field* fb = obj.addField(XAO::BOOLEAN, XAO::FACE, 3);
+    Field* fd = obj.addField(XAO::DOUBLE, XAO::FACE, 3);
+    Field* fs = obj.addField(XAO::STRING, XAO::FACE, 3);
+    CPPUNIT_ASSERT_EQUAL(4, obj.countFields());
+    CPPUNIT_ASSERT_THROW(obj.getField(10), SALOME_Exception);
+
+    CPPUNIT_ASSERT_EQUAL(true, obj.removeField(fb));
+    CPPUNIT_ASSERT(fb != NULL);
+    CPPUNIT_ASSERT_EQUAL(3, obj.countFields());
+    CPPUNIT_ASSERT_EQUAL(false, obj.removeField(fb)); // remove again
+}
