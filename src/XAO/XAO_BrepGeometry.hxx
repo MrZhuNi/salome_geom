@@ -146,8 +146,6 @@ namespace XAO
         void setFaceID(const int& index, const int& id);
         void setSolidID(const int& index, const int& id);
 
-        const int findElement(const XAO::Dimension& dim, const int& id);
-
         /**
          * Finds a vertex with its ID.
          * @param id the ID of the vertex.
@@ -238,6 +236,7 @@ namespace XAO
         TopoDS_Shape getSubShape(const TopoDS_Shape& mainShape, const TopAbs_ShapeEnum& shapeType, const int& shapeIndex);
         const int countGeometricalElements(const TopoDS_Shape& shape, const TopAbs_ShapeEnum& shapeType);
         std::vector<int> getGeometricalElements(const TopoDS_Shape& shape, const TopAbs_ShapeEnum& shapeType, const XAO::Dimension& dim);
+        const int findElement(const XAO::Dimension& dim, const int& id);
 
     private:
         TopoDS_Shape m_shape;

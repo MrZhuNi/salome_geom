@@ -201,6 +201,9 @@ namespace XAO
         iterator end() { return m_elements.end(); }
 
     private:
+        void checkElementIndex(const int& index) const;
+
+    private:
         int m_count;
         std::map<int, GeometricElement> m_elements;
     };

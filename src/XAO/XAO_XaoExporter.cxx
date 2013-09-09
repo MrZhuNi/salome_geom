@@ -115,7 +115,7 @@ int XaoExporter::readIntegerProp(xmlNodePtr node, const xmlChar* attribute,
 const bool XaoExporter::saveToFile(Xao* xaoObject, const std::string& fileName)
 {
     xmlDocPtr doc = exportXMLDoc(xaoObject);
-    xmlSaveFormatFileEnc(fileName.c_str(), doc, "UTF-8", 2);
+    xmlSaveFormatFileEnc(fileName.c_str(), doc, "UTF-8", 1); // format = 1 for node indentation
     xmlFreeDoc(doc);
 
     return true;
@@ -127,7 +127,7 @@ const std::string XaoExporter::saveToXml(Xao* xaoObject)
 
     xmlChar *xmlbuff;
     int buffersize;
-    xmlDocDumpFormatMemory(doc, &xmlbuff, &buffersize, 1);
+    xmlDocDumpFormatMemory(doc, &xmlbuff, &buffersize, 1); // format = 1 for node indentation
     xmlFreeDoc(doc);
     xmlCleanupGlobals();
 
@@ -267,7 +267,7 @@ void XaoExporter::exportStep(Step* step, Field* field, xmlNodePtr nodeSteps)
         for (int j = 0; j < step->countComponents(); ++j)
         {
             std::string content = step->getStringValue(i, j);
-            xmlNodePtr nodeValue= xmlNewTextChild(nodeElt, 0, C_TAG_VALUE, BAD_CAST content.c_str());
+            xmlNodePtr nodeValue = xmlNewChild(nodeElt, NULL, C_TAG_VALUE, BAD_CAST content.c_str());
             xmlNewProp(nodeValue, C_ATTR_VALUE_COMPONENT, BAD_CAST XaoUtils::intToString(j).c_str());
         }
     }

@@ -5,6 +5,7 @@
 
 #include "../XAO_Xao.hxx"
 #include "../XAO_Field.hxx"
+#include "../XAO_Step.hxx"
 
 namespace XAO
 {
@@ -36,7 +37,7 @@ namespace XAO
         void testDoubleField();
         void testStringField();
 
-        void testStep(XAO::Type type);
+        void testStep(XAO::Type type, Step* step);
         void testBooleanStep();
         void testIntegerStep();
         void testDoubleStep();

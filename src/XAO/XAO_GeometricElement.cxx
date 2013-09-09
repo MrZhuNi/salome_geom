@@ -54,7 +54,7 @@ GeometricElementList::GeometricElementList()
 
 GeometricElementList::GeometricElementList(const int& count)
 {
-    setSize(m_count);
+    setSize(count);
 }
 
 void GeometricElementList::setSize(const int& nb)
@@ -67,52 +67,48 @@ void GeometricElementList::setSize(const int& nb)
     }
 }
 
+void GeometricElementList::checkElementIndex(const int& index) const
+{
+    if (m_count >= 0 && index < m_count)
+        return;
+
+    throw SALOME_Exception(MsgBuilder() << "Index of element is out of range [0, " << m_count<< "]: " << index);
+}
+
 void GeometricElementList::setElement(const int& index, const std::string& name, const std::string& reference)
 {
-    if (m_count == 0 || index > m_count)
-        throw SALOME_Exception("Problem with number of elements");
-
+    checkElementIndex(index);
     m_elements[index].setName(name);
     m_elements[index].setReference(reference);
 }
 
 const std::string GeometricElementList::getName(const int& index)
 {
-    if (m_count == 0 || index > m_count)
-        throw SALOME_Exception("Problem with number of elements");
-
+    checkElementIndex(index);
     return m_elements[index].getName();
 }
 
 void GeometricElementList::setName(const int& index, const std::string& name)
 {
-    if (m_count == 0 || index > m_count)
-        throw SALOME_Exception("Problem with number of elements");
-
+    checkElementIndex(index);
     m_elements[index].setName(name);
 }
 
 const bool GeometricElementList::hasName(const int& index)
 {
-    if (m_count == 0 || index > m_count)
-        throw SALOME_Exception("Problem with number of elements");
-
+    checkElementIndex(index);
     return m_elements[index].hasName();
 }
 
 const std::string GeometricElementList::getReference(const int& index)
 {
-    if (m_count == 0 || index > m_count)
-        throw SALOME_Exception("Problem with number of elements");
-
+    checkElementIndex(index);
     return m_elements[index].getReference();
 }
 
 void GeometricElementList::setReference(const int& index, const std::string& name)
 {
-    if (m_count == 0 || index > m_count)
-        throw SALOME_Exception("Problem with number of elements");
-
+    checkElementIndex(index);
     m_elements[index].setReference(name);
 }
 

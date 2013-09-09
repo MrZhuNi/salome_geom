@@ -8,6 +8,8 @@ namespace XAO
     class GeometryTest: public CppUnit::TestFixture
     {
         CPPUNIT_TEST_SUITE(GeometryTest);
+        CPPUNIT_TEST(testGeometryElement);
+        CPPUNIT_TEST(testGeometryElementList);
         CPPUNIT_TEST(testGeometry);
         CPPUNIT_TEST(testGeometryErrors);
         CPPUNIT_TEST_SUITE_END();
@@ -17,8 +19,11 @@ namespace XAO
         void tearDown();
         void cleanUp();
 
+        void testGeometryElement();
+        void testGeometryElementList();
         void testGeometry();
         void testGeometryErrors();
+        void testSetElement();
     };
 }
 

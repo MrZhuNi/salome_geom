@@ -34,17 +34,6 @@ namespace XAO
 
     public:
         /**
-         * Creates a step.
-         * @param type the type of the values for the step.
-         * @param step the index of the step.
-         * @param stamp the stamp of the step.
-         * @param nbElements the number of elements in the step.
-         * @param nbComponents the number of components in the step.
-         * @return
-         */
-        static Step* createStep(const XAO::Type& type, const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
-
-        /**
          * Destructor.
          */
         virtual ~Step() {}

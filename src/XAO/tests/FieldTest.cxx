@@ -53,6 +53,7 @@ Field* FieldTest::testField(XAO::Type type)
 
     CPPUNIT_ASSERT_EQUAL(0, f->countSteps());
     Step* step = f->addNewStep(0);
+    CPPUNIT_ASSERT_EQUAL(type, step->getType());
     CPPUNIT_ASSERT_EQUAL(1, f->countSteps());
     step = f->addNewStep(1);
     step = f->addNewStep(2);
@@ -125,9 +126,8 @@ void FieldTest::testStringField()
     CPPUNIT_ASSERT_THROW(f->addStep(10), SALOME_Exception); // step already exists
 }
 
-void FieldTest::testStep(XAO::Type type)
+void FieldTest::testStep(XAO::Type type, Step* step)
 {
-    Step* step = Step::createStep(type, 0, 0, 5, 3);
     CPPUNIT_ASSERT_EQUAL(type, step->getType());
 
     CPPUNIT_ASSERT_EQUAL(0, step->getStep());
@@ -145,19 +145,23 @@ void FieldTest::testStep(XAO::Type type)
 
 void FieldTest::testBooleanStep()
 {
-    testStep(XAO::BOOLEAN);
+    Step* step = new BooleanStep(0, 0, 5, 3);
+    testStep(XAO::BOOLEAN, step);
 }
 void FieldTest::testIntegerStep()
 {
-    testStep(XAO::INTEGER);
+    Step* step = new IntegerStep(0, 0, 5, 3);
+    testStep(XAO::INTEGER, step);
 }
 void FieldTest::testDoubleStep()
 {
-    testStep(XAO::DOUBLE);
+    Step* step = new DoubleStep(0, 0, 5, 3);
+    testStep(XAO::DOUBLE, step);
 }
 void FieldTest::testStringStep()
 {
-    testStep(XAO::STRING);
+    Step* step = new StringStep(0, 0, 5, 3);
+    testStep(XAO::STRING, step);
 }
 
 void FieldTest::testBooleanStepValues()
@@ -165,7 +169,7 @@ void FieldTest::testBooleanStepValues()
     int nbComponents = 3; // > 1
     int nbElements = 5;   // > 1
 
-    BooleanStep* step = (BooleanStep*)Step::createStep(XAO::BOOLEAN, 0, 0, nbElements, nbComponents);
+    BooleanStep* step = new BooleanStep(0, 0, nbElements, nbComponents);
     for (int i = 0; i < step->countElements(); ++i)
     {
         for (int j = 0; j < step->countComponents(); ++j)
@@ -225,7 +229,7 @@ void FieldTest::testBooleanStepValues()
 
     // set string value
     step->setStringValue(0, 0, "true");
-    CPPUNIT_ASSERT_NO_THROW(step->setStringValue(0, 0, "aa")); // set false
+    CPPUNIT_ASSERT_THROW(step->setStringValue(0, 0, "aa"), SALOME_Exception);
 
     // set all values
     std::vector<bool> allValues;
@@ -243,7 +247,7 @@ void FieldTest::testIntegerStepValues()
     int nbComponents = 3;
     int nbElements = 5;
 
-    IntegerStep* step = (IntegerStep*)Step::createStep(XAO::INTEGER, 0, 0, nbElements, nbComponents);
+    IntegerStep* step = new IntegerStep(0, 0, nbElements, nbComponents);
     for (int i = 0; i < step->countElements(); ++i)
     {
         for (int j = 0; j < step->countComponents(); ++j)
@@ -314,7 +318,7 @@ void FieldTest::testDoubleStepValues()
     int nbComponents = 3;
     int nbElements = 5;
 
-    DoubleStep* step = (DoubleStep*)Step::createStep(XAO::DOUBLE, 0, 0, nbElements, nbComponents);
+    DoubleStep* step = new DoubleStep(0, 0, nbElements, nbComponents);
     for (int i = 0; i < step->countElements(); ++i)
     {
         for (int j = 0; j < step->countComponents(); ++j)
@@ -383,7 +387,7 @@ void FieldTest::testStringStepValues()
     int nbComponents = 3;
     int nbElements = 5;
 
-    StringStep* step = (StringStep*)Step::createStep(XAO::STRING, 0, 0, nbElements, nbComponents);
+    StringStep* step = new StringStep(0, 0, nbElements, nbComponents);
     for (int i = 0; i < step->countElements(); ++i)
     {
         for (int j = 0; j < step->countComponents(); ++j)

@@ -92,6 +92,48 @@ void BrepGeometryTest::testGetReferences()
     delete geom;
 }
 
+void BrepGeometryTest::testGetNames()
+{
+    BrepGeometry* geom = new BrepGeometry("box");
+    readBrep(geom, "Box_1.brep");
+
+    int id;
+
+    // vertex of index 1 has id = 7
+    id = 7;
+    CPPUNIT_ASSERT_EQUAL(std::string(""), geom->findVertexName(id));
+    geom->changeVertexName(id, std::string("va"));
+    CPPUNIT_ASSERT_EQUAL(std::string("va"), geom->findVertexName(id));
+    CPPUNIT_ASSERT_THROW(geom->changeVertexName(100, "a"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(geom->findVertexName(100), SALOME_Exception);
+
+    // edge of index 1 has id = 8
+    id = 8;
+    CPPUNIT_ASSERT_EQUAL(std::string(""), geom->findEdgeName(id));
+    geom->changeEdgeName(id, std::string("ea"));
+    CPPUNIT_ASSERT_EQUAL(std::string("ea"), geom->findEdgeName(id));
+    CPPUNIT_ASSERT_THROW(geom->changeEdgeName(100, "a"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(geom->findEdgeName(100), SALOME_Exception);
+
+    // face of index 1 has id = 13
+    id = 13;
+    CPPUNIT_ASSERT_EQUAL(std::string(""), geom->findFaceName(id));
+    geom->changeFaceName(id, std::string("fa"));
+    CPPUNIT_ASSERT_EQUAL(std::string("fa"), geom->findFaceName(id));
+    CPPUNIT_ASSERT_THROW(geom->changeFaceName(100, "a"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(geom->findFaceName(100), SALOME_Exception);
+
+    // solid of index 0 has id = 1
+    id = 1;
+    CPPUNIT_ASSERT_EQUAL(std::string(""), geom->findSolidName(id));
+    geom->changeSolidName(id, std::string("sa"));
+    CPPUNIT_ASSERT_EQUAL(std::string("sa"), geom->findSolidName(id));
+    CPPUNIT_ASSERT_THROW(geom->changeSolidName(100, "a"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(geom->findSolidName(100), SALOME_Exception);
+
+    delete geom;
+}
+
 void BrepGeometryTest::testGetEdgeVertices()
 {
     BrepGeometry* geom = new BrepGeometry("box");

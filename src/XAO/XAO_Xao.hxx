@@ -170,8 +170,9 @@ namespace XAO
         /**
          * Removes a group.
          * \param group the group to remove.
+         * \return true if the group has been removed, false otherwise.
          */
-        void removeGroup(Group* group);
+        bool removeGroup(Group* group);
 
         //
         // Fields
@@ -208,8 +209,9 @@ namespace XAO
         /**
          * Removes a field.
          * \param field the field to remove.
+         * \return true if the field has been removed, false otherwise.
          */
-        void removeField(Field* field);
+        bool removeField(Field* field);
 
         //
         // Import / Export
@@ -241,6 +243,8 @@ namespace XAO
 
     private:
         void checkGeometry() const;
+        void checkGroupIndex(const int& index) const;
+        void checkFieldIndex(const int& index) const;
 
     private:
         /** The author of the file. */

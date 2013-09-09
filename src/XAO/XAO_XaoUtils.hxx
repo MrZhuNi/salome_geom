@@ -129,6 +129,7 @@ namespace XAO
     {
     public:
         MsgBuilder() {};
+        ~MsgBuilder() {};
 
         template <typename T>
         MsgBuilder& operator <<(const T& t)

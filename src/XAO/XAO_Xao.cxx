@@ -71,6 +71,8 @@ const int Xao::countGroups() const
 
 Group* Xao::getGroup(const int& index)
 {
+    checkGroupIndex(index);
+
     int i = 0;
     for (std::list<Group*>::iterator it = m_groups.begin(); it != m_groups.end(); ++it, ++i)
     {
@@ -94,9 +96,11 @@ Group* Xao::addGroup(const std::string& name, const XAO::Dimension& dim)
     return group;
 }
 
-void Xao::removeGroup(Group* group)
+bool Xao::removeGroup(Group* group)
 {
+    int nb = countGroups();
     m_groups.remove(group);
+    return (nb-1 == countGroups());
 }
 
 const int Xao::countFields() const
@@ -106,6 +110,8 @@ const int Xao::countFields() const
 
 Field* Xao::getField(const int& index)
 {
+    checkFieldIndex(index);
+
     int i = 0;
     for (std::list<Field*>::iterator it = m_fields.begin(); it != m_fields.end(); ++it, ++i)
     {
@@ -130,9 +136,11 @@ Field* Xao::addField(const XAO::Type& type, const std::string& name, const XAO::
     return field;
 }
 
-void Xao::removeField(Field* field)
+bool Xao::removeField(Field* field)
 {
+    int nb = countFields();
     m_fields.remove(field);
+    return (nb-1 == countFields());
 }
 
 const bool Xao::exportXAO(const std::string& fileName)
@@ -159,4 +167,22 @@ void Xao::checkGeometry() const
 {
     if (m_geometry == NULL)
         throw SALOME_Exception("Geometry is null");
+}
+
+void Xao::checkGroupIndex(const int& index) const
+{
+    if (index >= 0 && index < countGroups())
+        return;
+
+    throw SALOME_Exception(MsgBuilder() << "Group index is out of range [0, "
+                                        << countGroups()-1 << "]: " << index);
+}
+
+void Xao::checkFieldIndex(const int& index) const
+{
+    if (index >= 0 && index < countFields())
+        return;
+
+    throw SALOME_Exception(MsgBuilder() << "Field index is out of range [0, "
+                                        << countFields()-1 << "]: " << index);
 }

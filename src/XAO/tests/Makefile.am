@@ -43,6 +43,7 @@ dist_TestXAO_SOURCES = \
     GeometryTest.cxx \
     ImportExportTest.cxx \
     BrepGeometryTest.cxx \
+    XaoTest.cxx \
     XAOTests.cxx
 
 UNIT_TEST_PROG = TestXAO

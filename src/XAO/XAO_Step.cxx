@@ -30,20 +30,6 @@
 
 using namespace XAO;
 
-Step* Step::createStep(const XAO::Type& type, const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
-{
-    if (type == XAO::BOOLEAN)
-        return new BooleanStep(step, stamp, nbElements, nbComponents);
-    if (type == XAO::INTEGER)
-        return new IntegerStep(step, stamp, nbElements, nbComponents);
-    if (type == XAO::DOUBLE)
-        return new DoubleStep(step, stamp, nbElements, nbComponents);
-    if (type == XAO::STRING)
-        return new StringStep(step, stamp, nbElements, nbComponents);
-
-    throw SALOME_Exception("Unknown Type");
-}
-
 void Step::checkElementIndex(const int& element)
 {
     if (element < m_nbElements && element >= 0)

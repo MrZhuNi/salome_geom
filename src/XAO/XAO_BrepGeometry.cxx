@@ -95,11 +95,15 @@ void BrepGeometry::initListIds(const TopAbs_ShapeEnum& shapeType, GeometricEleme
     TopTools_MapOfShape mapShape;
     TopTools_ListOfShape listShape;
 
+    int nbElt = 0;
     TopExp_Explorer exp(m_shape, shapeType);
     for (; exp.More(); exp.Next())
     {
         if (mapShape.Add(exp.Current()))
+        {
             listShape.Append(exp.Current());
+            nbElt++;
+        }
     }
 
     if (listShape.IsEmpty())
@@ -108,19 +112,14 @@ void BrepGeometry::initListIds(const TopAbs_ShapeEnum& shapeType, GeometricEleme
     TopTools_IndexedMapOfShape indices;
     TopExp::MapShapes(m_shape, indices);
 
-    std::list<int> indexList;
+    eltList.setSize(nbElt);
     TopTools_ListIteratorOfListOfShape itSub(listShape);
-    for (int index = 1; itSub.More(); itSub.Next(), ++index)
+    for (int index = 0; itSub.More(); itSub.Next(), ++index)
     {
         TopoDS_Shape value = itSub.Value();
-        indexList.push_back(indices.FindIndex(value));
+        int ref = indices.FindIndex(value);
+        eltList.setReference(index, XaoUtils::intToString(ref));
     }
-
-    std::list<int>::iterator it = indexList.begin();
-
-    eltList.setSize(indexList.size());
-    for (int i = 0; it != indexList.end(); it++, i++)
-        eltList.setReference(i, XaoUtils::intToString((*it)));
 }
 
 TopoDS_Shape BrepGeometry::getSubShape(const TopoDS_Shape& mainShape, const TopAbs_ShapeEnum& shapeType, const int& shapeIndex)
@@ -137,14 +136,10 @@ TopoDS_Shape BrepGeometry::getSubShape(const TopoDS_Shape& mainShape, const TopA
 
     if (!listShape.IsEmpty())
     {
-        // use main shape indices
-        TopTools_IndexedMapOfShape indices;
-        TopExp::MapShapes(mainShape, indices);
-
         TopTools_ListIteratorOfListOfShape itSub(listShape);
-        for (int index = 1; itSub.More(); itSub.Next(), ++index)
+        for (int index = 0; itSub.More(); itSub.Next(), ++index)
         {
-            if (shapeIndex + 1 == index)
+            if (shapeIndex == index)
             {
                 TopoDS_Shape value = itSub.Value();
                 return value;
@@ -159,13 +154,9 @@ TopoDS_Shape BrepGeometry::getSubShape(const TopoDS_Shape& mainShape, const TopA
 const int BrepGeometry::countGeometricalElements(const TopoDS_Shape& shape, const TopAbs_ShapeEnum& shapeType)
 {
     int res = 0;
-    TopTools_MapOfShape mapShape;
     TopExp_Explorer exp(shape, shapeType);
     for (; exp.More(); exp.Next())
-    {
-//        if (mapShape.Add(exp.Current()))
-            res++;
-    }
+        res++;
 
     return res;
 }
@@ -191,7 +182,7 @@ std::vector<int> BrepGeometry::getGeometricalElements(const TopoDS_Shape& shape,
         TopExp::MapShapes(m_shape, indices);
 
         TopTools_ListIteratorOfListOfShape itSub(listShape);
-        for (int index = 1; itSub.More(); itSub.Next(), ++index)
+        for (int index = 0; itSub.More(); itSub.Next(), ++index)
         {
             TopoDS_Shape value = itSub.Value();
             int id = indices.FindIndex(value);
@@ -338,6 +329,7 @@ const int BrepGeometry::findElement(const XAO::Dimension& dim, const int& id)
         return findFace(id);
     if (dim == XAO::SOLID)
         return findSolid(id);
+
     throw SALOME_Exception(MsgBuilder() << "Unknown Dimension: " << dim);
 }
 
