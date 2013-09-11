@@ -29,16 +29,46 @@
 
 namespace XAO
 {
+    /**
+     * @class StringField
+     * Represents a field with string values.
+     */
     class StringField : public Field
     {
     public:
+        /**
+         * Constructor.
+         * @param name the name of the field.
+         * @param dimension the dimension of the field.
+         * @param nbElements the number of elements.
+         * @param nbComponents the number of components.
+         */
         StringField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::STRING; }
 
         virtual Step* addNewStep(const int& step);
+
+        /**
+         * Adds a new step.
+         * @param step the number of the step.
+         * @return the newly created step.
+         */
         StringStep* addStep(const int& step);
+
+        /**
+         * Adds a new step.
+         * @param step the number of the step.
+         * @param stamp the stamp of the step.
+         * @return the newly created step.
+         */
         StringStep* addStep(const int& step, const int& stamp);
+
+        /**
+         * Gets the step of given index.
+         * @param index the index of the step.
+         * @return the step for the given index.
+         */
         StringStep* getStep(const int& index);
     };
 }

@@ -29,22 +29,78 @@
 
 namespace XAO
 {
+    /**
+     * @class DoubleStep
+     * Step with double values.
+     */
     class DoubleStep : public Step
     {
     public:
+        /**
+         * Constructor.
+         * @param step the step number.
+         * @param stamp the stamp of the step.
+         * @param nbElements the number elements of the geometry.
+         * @param nbComponents the number of components of the field.
+         */
         DoubleStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::DOUBLE; }
 
+        /**
+         * Gets all the values of the step as a list.
+         * @return a vector containing all the values of the step.
+         */
         std::vector<double> getValues();
+
+        /**
+         * Gets all the values for a given element.
+         * @param element the index of the element.
+         * @return a vector containing all the values for the given element.
+         */
         std::vector<double> getElement(const int& element);
+
+        /**
+         * Gets all the values for a given component.
+         * @param component the index of the component.
+         * @return a vector containing all the values for the given component.
+         */
         std::vector<double> getComponent(const int& component);
 
+        /**
+         * Gets the value for an element and a component.
+         * @param element the index of the element.
+         * @param component the index of the component.
+         * @return the value for the given element and component.
+         */
         const double getValue(const int& element, const int& component);
 
+        /**
+         * Sets all the values from a list.
+         * @param values the list of values to set.
+         */
         void setValues(const std::vector<double>& values);
+
+        /**
+         * Sets the values for an element.
+         * @param element the index of the element to set.
+         * @param elements the values to set.
+         */
         void setElements(const int& element, const std::vector<double>& elements);
+
+        /**
+         * Sets the values for a component.
+         * @param component the index of the component to set.
+         * @param components the values to set.
+         */
         void setComponents(const int& component, const std::vector<double>& components);
+
+        /**
+         * Sets the value for an element and a component.
+         * @param element the index of the element.
+         * @param component the index of the component.
+         * @param value the value.
+         */
         void setValue(const int& element, const int& component, const double& value);
 
         virtual const std::string getStringValue(const int& element, const int& component);

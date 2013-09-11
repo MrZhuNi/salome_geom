@@ -28,9 +28,17 @@
 
 namespace XAO
 {
+    /**
+     * @class Geometry
+     * Base class for geometries.
+     */
     class Geometry
     {
     protected:
+        /**
+         * Constructor.
+         * @param name the name of the Geometry.
+         */
         Geometry(const std::string& name);
 
     public:

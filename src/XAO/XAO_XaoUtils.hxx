@@ -125,12 +125,19 @@ namespace XAO
         static const XAO::Format stringToShapeFormat(const std::string& format);
     };
 
+    /**
+     * @class MsgBuilder
+     * MsgBuilder can be use to easily create messages.
+     */
     class MsgBuilder
     {
     public:
+        /** Constructor. */
         MsgBuilder() {};
+        /** Destructor. */
         ~MsgBuilder() {};
 
+        /** Stream operator. */
         template <typename T>
         MsgBuilder& operator <<(const T& t)
         {
@@ -138,6 +145,9 @@ namespace XAO
             return *this;
         }
 
+        /**
+         * Conversion operator to char*.
+         */
         operator const char*() const   { return m_stream.str().c_str(); }
 
     private :

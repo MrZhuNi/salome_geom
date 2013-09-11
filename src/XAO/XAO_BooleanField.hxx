@@ -29,16 +29,46 @@
 
 namespace XAO
 {
+    /**
+     * @class BooleanField
+     * Represents a field with boolean values.
+     */
     class BooleanField : public Field
     {
     public:
+        /**
+         * Constructor.
+         * @param name the name of the field.
+         * @param dimension the dimension of the field.
+         * @param nbElements the number of elements.
+         * @param nbComponents the number of components.
+         */
         BooleanField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
 
         virtual const XAO::Type getType() { return XAO::BOOLEAN; }
 
         virtual Step* addNewStep(const int& step);
+
+        /**
+         * Adds a new step.
+         * @param step the number of the step.
+         * @return the newly created step.
+         */
         BooleanStep* addStep(const int& step);
+
+        /**
+         * Adds a new step.
+         * @param step the number of the step.
+         * @param stamp the stamp of the step.
+         * @return the newly created step.
+         */
         BooleanStep* addStep(const int& step, const int& stamp);
+
+        /**
+         * Gets the step of given index.
+         * @param index the index.
+         * @return the step for the given index.
+         */
         BooleanStep* getStep(const int& index);
     };
 }

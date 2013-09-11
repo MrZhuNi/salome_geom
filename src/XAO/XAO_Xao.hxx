@@ -27,7 +27,7 @@
 namespace XAO
 {
     /**
-     * @enum CAD
+     * @enum Format
      */
     enum Format
     {
@@ -200,7 +200,7 @@ namespace XAO
         /**
          * Adds a field.
          * \param type the type of the field.
-         * \param the name of the field.
+         * \param name the name of the field.
          * \param dim the dimension of the field.
          * \param nbComponents the number of components in the field.
          * \return the created field.

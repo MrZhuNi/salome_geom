@@ -31,18 +31,52 @@
 
 namespace XAO
 {
+    /**
+     * @class BrepGeometry
+     * Representation of a BRep Geometry.
+     */
     class BrepGeometry : public Geometry
     {
     public:
+        /**
+         * Default Constructor.
+         */
         BrepGeometry();
+
+        /**
+         * Constructor.
+         * @param name the name of the geometry.
+         */
         BrepGeometry(const std::string& name);
 
+        /**
+         * Gets the format of the geometry.
+         * @return the format of the geometry.
+         */
         virtual const XAO::Format getFormat() { return XAO::BREP; }
 
+        /**
+         * Gets the shape as a string.
+         * @return the shape as a string.
+         */
         virtual const std::string getShape();
+
+        /**
+         * Sets the shape from a string.
+         * @param shape the shape as a string.
+         */
         virtual void setShape(const std::string& shape);
 
+        /**
+         * Gets the shape as a TopoDS_Shape.
+         * @return the TopoDS_Shape.
+         */
         TopoDS_Shape getTopoDS_Shape();
+
+        /**
+         * Sets the shape from a TopoDS_Shape.
+         * @param shape the TopoDS_Shape to set.
+         */
         void setTopoDS_Shape(const TopoDS_Shape& shape);
 
         /**
@@ -94,56 +128,79 @@ namespace XAO
 
         /**
          * Gets the length of an edge.
-         * @param edge the index of the edge.
+         * @param index the index of the edge.
          * @return the length of the edge.
          */
         const double getEdgeLength(const int& index);
 
         /**
          * Gets the are of a face.
-         * @param face the index of a face.
+         * @param index the index of a face.
          * @return the area of the face.
          */
         const double getFaceArea(const int& index);
 
         /**
          * Gets the volume of a solid.
-         * @param solid the index of the solid.
+         * @param index the index of the solid.
          * @return the volume of the solid.
          */
         const double getSolidVolume(const int& index);
 
         /**
          * Gets the ID of a vertex.
-         * @param vertex the index of the vertex.
+         * @param index the index of the vertex.
          * @return the ID of the vertex.
          */
         const int getVertexID(const int& index);
 
         /**
          * Gets the ID of an edge.
-         * @param edge the index of the edge.
+         * @param index the index of the edge.
          * @return the ID of the edge.
          */
         const int getEdgeID(const int& index);
 
         /**
          * Gets the ID of a face.
-         * @param face the index of the face.
+         * @param index the index of the face.
          * @return the ID of the face.
          */
         const int getFaceID(const int& index);
 
         /**
          * Gets the ID of a solid.
-         * @param solid the index of the solid.
+         * @param index the index of the solid.
          * @return the ID of the solid.
          */
-        const int getSolidID(const int& solid);
+        const int getSolidID(const int& index);
 
+        /**
+         * Sets the ID of a vertex.
+         * @param index the index of the vertex to set.
+         * @param id the id to set.
+         */
         void setVertexID(const int& index, const int& id);
+
+        /**
+         * Sets the ID of an edge.
+         * @param index the index of the edge to set.
+         * @param id the id to set.
+         */
         void setEdgeID(const int& index, const int& id);
+
+        /**
+         * Sets the ID of a face.
+         * @param index the index of the face to set.
+         * @param id the id to set.
+         */
         void setFaceID(const int& index, const int& id);
+
+        /**
+         * Sets the ID of a solid.
+         * @param index the index of the solid to set.
+         * @param id the id to set.
+         */
         void setSolidID(const int& index, const int& id);
 
         /**

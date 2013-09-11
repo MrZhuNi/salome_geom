@@ -11,13 +11,42 @@
 
 namespace XAO
 {
+    /**
+     * @class XaoExporter
+     * Util class for import/export XAO.
+     */
     class XaoExporter
     {
     public:
+        /**
+         * Saves the XAO object to a file.
+         * @param xaoObject the object to export.
+         * @param fileName the path of the file to create.
+         * @return true if the export was successful, false otherwise.
+         */
         static const bool saveToFile(Xao* xaoObject, const std::string& fileName);
+
+        /**
+         * Saves the XAO object to a XML string.
+         * @param xaoObject the object to export.
+         * @return the XML string.
+         */
         static const std::string saveToXml(Xao* xaoObject);
 
+        /**
+         * Reads a XAO object from a file.
+         * @param fileName the path of the file to read.
+         * @param xaoObject the XAO object.
+         * @return true if the XAO object was read successful, false otherwise.
+         */
         static const bool readFromFile(const std::string& fileName, Xao* xaoObject);
+
+        /**
+         * Reads a XAO object from an XML string.
+         * @param xml the XML string.
+         * @param xaoObject the XAO object.
+         * @return true if the XAO object was read successful, false otherwise.
+         */
         static const bool setXML(const std::string& xml, Xao* xaoObject);
 
     private:
