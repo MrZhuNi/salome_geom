@@ -1,5 +1,4 @@
 #include <vector>
-#include <Utils_SALOME_Exception.hxx>
 
 #include "FieldTest.hxx"
 #include "../XAO_Xao.hxx"
@@ -48,8 +47,8 @@ Field* FieldTest::testField(XAO::Type type)
     CPPUNIT_ASSERT_EQUAL(std::string("x"), f->getComponentName(0));
     CPPUNIT_ASSERT_EQUAL(std::string("y"), f->getComponentName(1));
     CPPUNIT_ASSERT_EQUAL(std::string("z"), f->getComponentName(2));
-    CPPUNIT_ASSERT_THROW(f->setComponentName(3, "a"), SALOME_Exception);
-    CPPUNIT_ASSERT_THROW(f->getComponentName(3), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(f->setComponentName(3, "a"), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(f->getComponentName(3), XAO_Exception);
 
     CPPUNIT_ASSERT_EQUAL(0, f->countSteps());
     Step* step = f->addNewStep(0);
@@ -58,7 +57,7 @@ Field* FieldTest::testField(XAO::Type type)
     step = f->addNewStep(1);
     step = f->addNewStep(2);
     CPPUNIT_ASSERT_EQUAL(3, f->countSteps());
-    CPPUNIT_ASSERT_THROW(f->addNewStep(2), SALOME_Exception); // step already exists
+    CPPUNIT_ASSERT_THROW(f->addNewStep(2), XAO_Exception); // step already exists
 
     CPPUNIT_ASSERT_EQUAL(true, f->removeStep(step));
     CPPUNIT_ASSERT_EQUAL(2, f->countSteps());
@@ -75,12 +74,12 @@ void FieldTest::testBooleanField()
     BooleanStep* step = f->getStep(0);
     CPPUNIT_ASSERT_EQUAL(XAO::BOOLEAN, step->getType());
     CPPUNIT_ASSERT_MESSAGE("step is NULL", step != NULL);
-    CPPUNIT_ASSERT_THROW(f->getStep(2), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(f->getStep(2), XAO_Exception);
 
     step = f->addStep(10);
     CPPUNIT_ASSERT_EQUAL(XAO::BOOLEAN, step->getType());
     CPPUNIT_ASSERT_EQUAL(3, f->countSteps());
-    CPPUNIT_ASSERT_THROW(f->addStep(10), SALOME_Exception); // step already exists
+    CPPUNIT_ASSERT_THROW(f->addStep(10), XAO_Exception); // step already exists
 }
 
 void FieldTest::testIntegerField()
@@ -90,12 +89,12 @@ void FieldTest::testIntegerField()
     IntegerStep* step = f->getStep(0);
     CPPUNIT_ASSERT_EQUAL(XAO::INTEGER, step->getType());
     CPPUNIT_ASSERT_MESSAGE("step is NULL", step != NULL);
-    CPPUNIT_ASSERT_THROW(f->getStep(2), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(f->getStep(2), XAO_Exception);
 
     step = f->addStep(10);
     CPPUNIT_ASSERT_EQUAL(XAO::INTEGER, step->getType());
     CPPUNIT_ASSERT_EQUAL(3, f->countSteps());
-    CPPUNIT_ASSERT_THROW(f->addStep(10), SALOME_Exception); // step already exists
+    CPPUNIT_ASSERT_THROW(f->addStep(10), XAO_Exception); // step already exists
 }
 void FieldTest::testDoubleField()
 {
@@ -104,12 +103,12 @@ void FieldTest::testDoubleField()
     DoubleStep* step = f->getStep(0);
     CPPUNIT_ASSERT_EQUAL(XAO::DOUBLE, step->getType());
     CPPUNIT_ASSERT_MESSAGE("step is NULL", step != NULL);
-    CPPUNIT_ASSERT_THROW(f->getStep(2), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(f->getStep(2), XAO_Exception);
 
     step = f->addStep(10);
     CPPUNIT_ASSERT_EQUAL(XAO::DOUBLE, step->getType());
     CPPUNIT_ASSERT_EQUAL(3, f->countSteps());
-    CPPUNIT_ASSERT_THROW(f->addStep(10), SALOME_Exception); // step already exists
+    CPPUNIT_ASSERT_THROW(f->addStep(10), XAO_Exception); // step already exists
 }
 void FieldTest::testStringField()
 {
@@ -118,12 +117,12 @@ void FieldTest::testStringField()
     StringStep* step = f->getStep(0);
     CPPUNIT_ASSERT_EQUAL(XAO::STRING, step->getType());
     CPPUNIT_ASSERT_MESSAGE("step is NULL", step != NULL);
-    CPPUNIT_ASSERT_THROW(f->getStep(2), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(f->getStep(2), XAO_Exception);
 
     step = f->addStep(10);
     CPPUNIT_ASSERT_EQUAL(XAO::STRING, step->getType());
     CPPUNIT_ASSERT_EQUAL(3, f->countSteps());
-    CPPUNIT_ASSERT_THROW(f->addStep(10), SALOME_Exception); // step already exists
+    CPPUNIT_ASSERT_THROW(f->addStep(10), XAO_Exception); // step already exists
 }
 
 void FieldTest::testStep(XAO::Type type, Step* step)
@@ -180,8 +179,8 @@ void FieldTest::testBooleanStepValues()
 
     CPPUNIT_ASSERT_EQUAL(true, step->getValue(1, 2));
     CPPUNIT_ASSERT_EQUAL(std::string("true"), step->getStringValue(1, 2));
-    CPPUNIT_ASSERT_THROW(step->getValue(nbElements, 2), SALOME_Exception);
-    CPPUNIT_ASSERT_THROW(step->getValue(1, nbComponents), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->getValue(nbElements, 2), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(step->getValue(1, nbComponents), XAO_Exception);
 
     // get all values
     std::vector<bool> values;
@@ -195,14 +194,14 @@ void FieldTest::testBooleanStepValues()
 
     // get one element
     values = step->getElement(2);
-    CPPUNIT_ASSERT_THROW(step->getElement(nbElements), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->getElement(nbElements), XAO_Exception);
     CPPUNIT_ASSERT_EQUAL(nbComponents, (int)values.size());
     for (int i = 0; i < nbComponents; ++i)
         CPPUNIT_ASSERT((i % 2 == 0) == values[i]);
 
     // get one component
     values = step->getComponent(1);
-    CPPUNIT_ASSERT_THROW(step->getComponent(nbComponents), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->getComponent(nbComponents), XAO_Exception);
     CPPUNIT_ASSERT_EQUAL(nbElements, (int)values.size());
     for (int i = 0; i < nbElements; ++i)
         CPPUNIT_ASSERT(false == values[i]);
@@ -211,7 +210,7 @@ void FieldTest::testBooleanStepValues()
     std::vector<bool> newEltValues;
     // only one value
     newEltValues.push_back(true);
-    CPPUNIT_ASSERT_THROW(step->setElements(2, newEltValues), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setElements(2, newEltValues), XAO_Exception);
     // all values
     for (int i = 1; i < nbComponents; ++i)
         newEltValues.push_back(true);
@@ -221,7 +220,7 @@ void FieldTest::testBooleanStepValues()
     std::vector<bool> newCompValues;
     // only one value
     newCompValues.push_back(true);
-    CPPUNIT_ASSERT_THROW(step->setComponents(1, newCompValues), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setComponents(1, newCompValues), XAO_Exception);
     // all values
     for (int i = 1; i < nbElements; ++i)
         newCompValues.push_back(true);
@@ -229,13 +228,13 @@ void FieldTest::testBooleanStepValues()
 
     // set string value
     step->setStringValue(0, 0, "true");
-    CPPUNIT_ASSERT_THROW(step->setStringValue(0, 0, "aa"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setStringValue(0, 0, "aa"), XAO_Exception);
 
     // set all values
     std::vector<bool> allValues;
     // only one value
     allValues.push_back(true);
-    CPPUNIT_ASSERT_THROW(step->setValues(allValues), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setValues(allValues), XAO_Exception);
     // all values
     for (int i = 1; i < nbElements*nbComponents; ++i)
         allValues.push_back(true);
@@ -255,8 +254,8 @@ void FieldTest::testIntegerStepValues()
     }
 
     CPPUNIT_ASSERT_EQUAL(12, step->getValue(1, 2));
-    CPPUNIT_ASSERT_THROW(step->getValue(nbElements, 2), SALOME_Exception);
-    CPPUNIT_ASSERT_THROW(step->getValue(1, nbComponents), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->getValue(nbElements, 2), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(step->getValue(1, nbComponents), XAO_Exception);
 
     // get all values
     std::vector<int> values;
@@ -270,14 +269,14 @@ void FieldTest::testIntegerStepValues()
 
     // get one element
     values = step->getElement(2);
-    CPPUNIT_ASSERT_THROW(step->getElement(nbElements), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->getElement(nbElements), XAO_Exception);
     CPPUNIT_ASSERT_EQUAL(nbComponents, (int)values.size());
     for (int i = 0; i < nbComponents; ++i)
         CPPUNIT_ASSERT_EQUAL(20+i, values[i]);
 
     // get one component
     values = step->getComponent(1);
-    CPPUNIT_ASSERT_THROW(step->getComponent(nbComponents), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->getComponent(nbComponents), XAO_Exception);
     CPPUNIT_ASSERT_EQUAL(nbElements, (int)values.size());
     for (int i = 0; i < nbElements; ++i)
         CPPUNIT_ASSERT_EQUAL(10*i+1, values[i]);
@@ -285,7 +284,7 @@ void FieldTest::testIntegerStepValues()
     // set one element
     std::vector<int> newEltValues;
     newEltValues.push_back(1);
-    CPPUNIT_ASSERT_THROW(step->setElements(2, newEltValues), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setElements(2, newEltValues), XAO_Exception);
     for (int i = 1; i < nbComponents; ++i)
         newEltValues.push_back(1);
     step->setElements(2, newEltValues);
@@ -293,20 +292,20 @@ void FieldTest::testIntegerStepValues()
     // set one component
     std::vector<int> newCompValues;
     newCompValues.push_back(100);
-    CPPUNIT_ASSERT_THROW(step->setComponents(1, newCompValues), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setComponents(1, newCompValues), XAO_Exception);
     for (int i = 1; i < nbElements; ++i)
         newCompValues.push_back(100);
     step->setComponents(1, newCompValues);
 
     // set string value
     step->setStringValue(0, 0, "0");
-    CPPUNIT_ASSERT_THROW(step->setStringValue(0, 0, "aa"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setStringValue(0, 0, "aa"), XAO_Exception);
 
     // set all values
     std::vector<int> allValues;
     // only one value
     allValues.push_back(11);
-    CPPUNIT_ASSERT_THROW(step->setValues(allValues), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setValues(allValues), XAO_Exception);
     // all values
     for (int i = 1; i < nbElements*nbComponents; ++i)
         allValues.push_back(11);
@@ -326,8 +325,8 @@ void FieldTest::testDoubleStepValues()
     }
 
     CPPUNIT_ASSERT_EQUAL(10.2, step->getValue(1, 2));
-    CPPUNIT_ASSERT_THROW(step->getValue(nbElements, 2), SALOME_Exception);
-    CPPUNIT_ASSERT_THROW(step->getValue(1, nbComponents), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->getValue(nbElements, 2), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(step->getValue(1, nbComponents), XAO_Exception);
 
     // get all values
     std::vector<double> values;
@@ -341,14 +340,14 @@ void FieldTest::testDoubleStepValues()
 
     // get one element
     values = step->getElement(2);
-    CPPUNIT_ASSERT_THROW(step->getElement(nbElements), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->getElement(nbElements), XAO_Exception);
     CPPUNIT_ASSERT_EQUAL(nbComponents, (int)values.size());
     for (int i = 0; i < nbComponents; ++i)
         CPPUNIT_ASSERT_EQUAL(20+i*0.1, values[i]);
 
     // get one component
     values = step->getComponent(1);
-    CPPUNIT_ASSERT_THROW(step->getComponent(nbComponents), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->getComponent(nbComponents), XAO_Exception);
     CPPUNIT_ASSERT_EQUAL(nbElements, (int)values.size());
     for (int i = 0; i < nbElements; ++i)
         CPPUNIT_ASSERT_EQUAL(10*i+0.1, values[i]);
@@ -356,7 +355,7 @@ void FieldTest::testDoubleStepValues()
     // set one element
     std::vector<double> newEltValues;
     newEltValues.push_back(1.);
-    CPPUNIT_ASSERT_THROW(step->setElements(2, newEltValues), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setElements(2, newEltValues), XAO_Exception);
     for (int i = 1; i < nbComponents; ++i)
         newEltValues.push_back(1.);
     step->setElements(2, newEltValues);
@@ -364,19 +363,19 @@ void FieldTest::testDoubleStepValues()
     // set one component
     std::vector<double> newCompValues;
     newCompValues.push_back(100.0);
-    CPPUNIT_ASSERT_THROW(step->setComponents(1, newCompValues), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setComponents(1, newCompValues), XAO_Exception);
     for (int i = 1; i < nbElements; ++i)
         newCompValues.push_back(100.0);
     step->setComponents(1, newCompValues);
 
     // set string value
     step->setStringValue(0, 0, "0.2");
-    CPPUNIT_ASSERT_THROW(step->setStringValue(0, 0, "aa"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setStringValue(0, 0, "aa"), XAO_Exception);
 
     std::vector<double> allValues;
     // only one value
     allValues.push_back(1.1);
-    CPPUNIT_ASSERT_THROW(step->setValues(allValues), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setValues(allValues), XAO_Exception);
     // all values
     for (int i = 1; i < nbElements*nbComponents; ++i)
         allValues.push_back(1.1);
@@ -395,8 +394,8 @@ void FieldTest::testStringStepValues()
     }
 
     CPPUNIT_ASSERT_EQUAL(std::string("12"), step->getValue(1, 2));
-    CPPUNIT_ASSERT_THROW(step->getValue(nbElements, 2), SALOME_Exception);
-    CPPUNIT_ASSERT_THROW(step->getValue(1, nbComponents), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->getValue(nbElements, 2), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(step->getValue(1, nbComponents), XAO_Exception);
 
     // get all values
     std::vector<std::string> values;
@@ -410,14 +409,14 @@ void FieldTest::testStringStepValues()
 
     // get one element
     values = step->getElement(2);
-    CPPUNIT_ASSERT_THROW(step->getElement(nbElements), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->getElement(nbElements), XAO_Exception);
     CPPUNIT_ASSERT_EQUAL(nbComponents, (int)values.size());
     for (int i = 0; i < nbComponents; ++i)
         CPPUNIT_ASSERT_EQUAL(XaoUtils::intToString(20+i), values[i]);
 
     // get one component
     values = step->getComponent(1);
-    CPPUNIT_ASSERT_THROW(step->getComponent(nbComponents), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->getComponent(nbComponents), XAO_Exception);
     CPPUNIT_ASSERT_EQUAL(nbElements, (int)values.size());
     for (int i = 0; i < nbElements; ++i)
         CPPUNIT_ASSERT_EQUAL(XaoUtils::intToString(10*i+1), values[i]);
@@ -425,7 +424,7 @@ void FieldTest::testStringStepValues()
     // set one element
     std::vector<std::string> newEltValues;
     newEltValues.push_back("1");
-    CPPUNIT_ASSERT_THROW(step->setElements(2, newEltValues), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setElements(2, newEltValues), XAO_Exception);
     for (int i = 1; i < nbComponents; ++i)
         newEltValues.push_back("1");
     step->setElements(2, newEltValues);
@@ -433,7 +432,7 @@ void FieldTest::testStringStepValues()
     // set one component
     std::vector<std::string> newCompValues;
     newCompValues.push_back("100");
-    CPPUNIT_ASSERT_THROW(step->setComponents(1, newCompValues), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setComponents(1, newCompValues), XAO_Exception);
     for (int i = 1; i < nbElements; ++i)
         newCompValues.push_back("100");
     step->setComponents(1, newCompValues);
@@ -445,7 +444,7 @@ void FieldTest::testStringStepValues()
     std::vector<std::string> allValues;
     // only one value
     allValues.push_back("abc");
-    CPPUNIT_ASSERT_THROW(step->setValues(allValues), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(step->setValues(allValues), XAO_Exception);
     // all values
     for (int i = 1; i < nbElements*nbComponents; ++i)
         allValues.push_back("abc");

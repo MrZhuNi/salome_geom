@@ -18,8 +18,6 @@
 //
 // Author : Nathalie Gore (OpenCascade)
 
-#include <Utils_SALOME_Exception.hxx>
-
 #include "XAO_XaoUtils.hxx"
 #include "XAO_Geometry.hxx"
 #include "XAO_BrepGeometry.hxx"
@@ -32,23 +30,26 @@ Geometry::Geometry(const std::string& name)
 }
 
 Geometry* Geometry::createGeometry(const XAO::Format& format)
+throw (XAO_Exception)
 {
     return createGeometry(format, "");
 }
 
 Geometry* Geometry::createGeometry(const XAO::Format& format, const std::string& name)
+throw (XAO_Exception)
 {
     if (format == XAO::BREP)
         return new BrepGeometry(name);
 
-    throw SALOME_Exception(MsgBuilder() << "Geometry format not supported: " << format);
+    throw XAO_Exception(MsgBuilder() << "Geometry format not supported: " << format);
 }
 
 Geometry::~Geometry()
 {
 }
 
-const int Geometry::countElements(const XAO::Dimension& dim)
+const int Geometry::countElements(const XAO::Dimension& dim) const
+throw (XAO_Exception)
 {
     if (dim == XAO::VERTEX)
         return countVertices();
@@ -59,10 +60,11 @@ const int Geometry::countElements(const XAO::Dimension& dim)
     if (dim == XAO::SOLID)
         return countSolids();
 
-    throw SALOME_Exception(MsgBuilder() << "Unknown dimension:" << dim);
+    throw XAO_Exception(MsgBuilder() << "Unknown dimension:" << dim);
 }
 
 const std::string Geometry::getElementReference(const XAO::Dimension& dim, const int& index)
+throw (XAO_Exception)
 {
     if (dim == XAO::VERTEX)
         return getVertexReference(index);
@@ -73,10 +75,11 @@ const std::string Geometry::getElementReference(const XAO::Dimension& dim, const
     if (dim == XAO::SOLID)
         return getSolidReference(index);
 
-    throw SALOME_Exception(MsgBuilder() << "Unknown dimension:" << dim);
+    throw XAO_Exception(MsgBuilder() << "Unknown dimension:" << dim);
 }
 
 const int Geometry::getElementIndexByReference(const XAO::Dimension& dim, const std::string& reference)
+throw (XAO_Exception)
 {
     if (dim == XAO::VERTEX)
         return getVertexIndexByReference(reference);
@@ -87,10 +90,11 @@ const int Geometry::getElementIndexByReference(const XAO::Dimension& dim, const 
     if (dim == XAO::SOLID)
         return getSolidIndexByReference(reference);
 
-    throw SALOME_Exception(MsgBuilder() << "Unknown dimension:" << dim);
+    throw XAO_Exception(MsgBuilder() << "Unknown dimension:" << dim);
 }
 
 GeometricElementList::iterator Geometry::begin(const XAO::Dimension& dim)
+throw (XAO_Exception)
 {
     if (dim == XAO::VERTEX)
         return m_vertices.begin();
@@ -101,10 +105,11 @@ GeometricElementList::iterator Geometry::begin(const XAO::Dimension& dim)
     if (dim == XAO::SOLID)
         return m_solids.begin();
 
-    throw SALOME_Exception(MsgBuilder() << "Unknown dimension:" << dim);
+    throw XAO_Exception(MsgBuilder() << "Unknown dimension:" << dim);
 }
 
 GeometricElementList::iterator Geometry::end(const XAO::Dimension& dim)
+throw (XAO_Exception)
 {
     if (dim == XAO::VERTEX)
         return m_vertices.end();
@@ -115,5 +120,5 @@ GeometricElementList::iterator Geometry::end(const XAO::Dimension& dim)
     if (dim == XAO::SOLID)
         return m_solids.end();
 
-    throw SALOME_Exception(MsgBuilder() << "Unknown dimension:" << dim);
+    throw XAO_Exception(MsgBuilder() << "Unknown dimension:" << dim);
 }

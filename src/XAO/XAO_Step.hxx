@@ -103,7 +103,7 @@ namespace XAO
          * @param element the index of the element.
          * @param component the index of the component.
          * @param value the string value.
-         * @throw SALOME_Exception if the value is not valid.
+         * @throw XAO_Exception if the value is not valid.
          */
         virtual void setStringValue(const int& element, const int& component, const std::string& value) = 0;
 
@@ -112,30 +112,30 @@ namespace XAO
          * Checks that given element index is in the range of element indexes.
          * @param element the index to check.
          */
-        void checkElementIndex(const int& element);
+        void checkElementIndex(const int& element) throw (XAO_Exception);
         /**
          * Checks that given component index is in the range of component indexes.
          * @param component the index to check.
          */
-        void checkComponentIndex(const int& component);
+        void checkComponentIndex(const int& component)throw (XAO_Exception);
 
         /**
          * Checks that the given number of elements is correct.
          * @param nbElements the number of elements to check.
          */
-        void checkNbElements(const int& nbElements);
+        void checkNbElements(const int& nbElements)throw (XAO_Exception);
 
         /**
          * Checks that the given number of components is correct.
          * @param nbComponents the number of components to check.
          */
-        void checkNbComponents(const int& nbComponents);
+        void checkNbComponents(const int& nbComponents)throw (XAO_Exception);
 
         /**
          * checks that the given number of values is correct.
          * @param nbValues the number of values to check.
          */
-        void checkNbValues(const int& nbValues);
+        void checkNbValues(const int& nbValues)throw (XAO_Exception);
 
     protected:
         /** the index of the step. */

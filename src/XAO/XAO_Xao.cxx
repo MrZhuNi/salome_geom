@@ -18,8 +18,6 @@
 //
 // Author : Nathalie Gore (OpenCascade), Frederic Pons (OpenCascade)
 
-#include <Utils_SALOME_Exception.hxx>
-
 #include "XAO_XaoUtils.hxx"
 #include "XAO_Xao.hxx"
 #include "XAO_Geometry.hxx"
@@ -70,6 +68,7 @@ const int Xao::countGroups() const
 }
 
 Group* Xao::getGroup(const int& index)
+throw (XAO_Exception)
 {
     checkGroupIndex(index);
 
@@ -84,13 +83,17 @@ Group* Xao::getGroup(const int& index)
 }
 
 Group* Xao::addGroup(const XAO::Dimension& dim)
+throw (XAO_Exception)
 {
     return addGroup("", dim);
 }
 
 Group* Xao::addGroup(const std::string& name, const XAO::Dimension& dim)
+throw (XAO_Exception)
 {
     checkGeometry();
+    checkGroupDimension(dim);
+
     Group* group = new Group(name, dim, m_geometry->countElements(dim));
     m_groups.push_back(group);
     return group;
@@ -109,6 +112,7 @@ const int Xao::countFields() const
 }
 
 Field* Xao::getField(const int& index)
+throw (XAO_Exception)
 {
     checkFieldIndex(index);
 
@@ -123,11 +127,13 @@ Field* Xao::getField(const int& index)
 }
 
 Field* Xao::addField(const XAO::Type& type, const XAO::Dimension& dim, const int& nbComponents)
+throw (XAO_Exception)
 {
     return addField(type, "", dim, nbComponents);
 }
 
 Field* Xao::addField(const XAO::Type& type, const std::string& name, const XAO::Dimension& dim, const int& nbComponents)
+throw (XAO_Exception)
 {
     checkGeometry();
     int nbElts = m_geometry->countElements(dim);
@@ -164,25 +170,35 @@ const bool Xao::setXML(const std::string& xml)
 }
 
 void Xao::checkGeometry() const
+throw(XAO_Exception)
 {
     if (m_geometry == NULL)
-        throw SALOME_Exception("Geometry is null");
+        throw XAO_Exception("Geometry is null");
 }
 
 void Xao::checkGroupIndex(const int& index) const
+throw(XAO_Exception)
 {
     if (index >= 0 && index < countGroups())
         return;
 
-    throw SALOME_Exception(MsgBuilder() << "Group index is out of range [0, "
-                                        << countGroups()-1 << "]: " << index);
+    throw XAO_Exception(MsgBuilder() << "Group index is out of range [0, "
+                                     << countGroups()-1 << "]: " << index);
 }
 
 void Xao::checkFieldIndex(const int& index) const
+throw(XAO_Exception)
 {
     if (index >= 0 && index < countFields())
         return;
 
-    throw SALOME_Exception(MsgBuilder() << "Field index is out of range [0, "
-                                        << countFields()-1 << "]: " << index);
+    throw XAO_Exception(MsgBuilder() << "Field index is out of range [0, "
+                                     << countFields()-1 << "]: " << index);
+}
+
+void Xao::checkGroupDimension(const XAO::Dimension& dim) const
+throw(XAO_Exception)
+{
+    if (dim == XAO::WHOLE)
+        throw XAO_Exception(MsgBuilder() << "Invalid dimension for group: " << dim);
 }

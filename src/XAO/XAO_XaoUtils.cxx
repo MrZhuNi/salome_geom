@@ -18,10 +18,7 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-#include <cstring>
 #include <sstream>
-#include <iosfwd>
-#include <Utils_SALOME_Exception.hxx>
 
 #include "XAO_Xao.hxx"
 #include "XAO_XaoUtils.hxx"
@@ -37,11 +34,12 @@ const std::string XaoUtils::intToString(const int& value)
 }
 
 const int XaoUtils::stringToInt(const std::string& value)
+throw(XAO_Exception)
 {
     int res;
     std::istringstream convert(value);
     if ( !(convert >> res) )
-        throw SALOME_Exception(MsgBuilder() << "Cannot convert '" << value << "' to integer.");
+        throw XAO_Exception(MsgBuilder() << "Cannot convert '" << value << "' to integer.");
     return res;
 }
 
@@ -53,11 +51,12 @@ const std::string XaoUtils::doubleToString(const double& value)
 }
 
 const double XaoUtils::stringToDouble(const std::string& value)
+throw(XAO_Exception)
 {
     double res;
     std::istringstream convert(value);
     if ( !(convert >> res) )
-        throw SALOME_Exception(MsgBuilder() << "Cannot convert '" << value << "' to double.");
+        throw XAO_Exception(MsgBuilder() << "Cannot convert '" << value << "' to double.");
     return res;
 }
 
@@ -69,16 +68,18 @@ const std::string XaoUtils::booleanToString(const bool& value)
 }
 
 const bool XaoUtils::stringToBoolean(const std::string& value)
+throw(XAO_Exception)
 {
     if (value == "true" || value == "1")
         return true;
     if (value == "false" || value == "0")
         return false;
 
-    throw SALOME_Exception(MsgBuilder() << "Invalid boolean value: " << value);
+    throw XAO_Exception(MsgBuilder() << "Invalid boolean value: " << value);
 }
 
 const std::string XaoUtils::dimensionToString(const XAO::Dimension& dimension)
+throw(XAO_Exception)
 {
     if (dimension == XAO::VERTEX)
         return "vertex";
@@ -91,10 +92,11 @@ const std::string XaoUtils::dimensionToString(const XAO::Dimension& dimension)
     if (dimension == XAO::WHOLE)
         return "whole";
 
-    throw SALOME_Exception(MsgBuilder() << "Bad dimension: " << dimension);
+    throw XAO_Exception(MsgBuilder() << "Bad dimension: " << dimension);
 }
 
 const XAO::Dimension XaoUtils::stringToDimension(const std::string& dimension)
+throw(XAO_Exception)
 {
     if (dimension == "vertex")
         return XAO::VERTEX;
@@ -107,10 +109,11 @@ const XAO::Dimension XaoUtils::stringToDimension(const std::string& dimension)
     if (dimension == "whole")
         return XAO::WHOLE;
 
-    throw SALOME_Exception(MsgBuilder() << "Bad dimension: " << dimension);
+    throw XAO_Exception(MsgBuilder() << "Bad dimension: " << dimension);
 }
 
 const std::string XaoUtils::fieldTypeToString(const XAO::Type& type)
+throw(XAO_Exception)
 {
     if (type ==XAO:: BOOLEAN)
         return "boolean";
@@ -121,10 +124,11 @@ const std::string XaoUtils::fieldTypeToString(const XAO::Type& type)
     if (type == XAO::STRING)
         return "string";
 
-    throw SALOME_Exception(MsgBuilder() << "Bad type: " << type);
+    throw XAO_Exception(MsgBuilder() << "Bad type: " << type);
 }
 
 const XAO::Type XaoUtils::stringToFieldType(const std::string& type)
+throw(XAO_Exception)
 {
     if (type == "boolean")
         return XAO::BOOLEAN;
@@ -135,25 +139,27 @@ const XAO::Type XaoUtils::stringToFieldType(const std::string& type)
     if (type == "string")
         return XAO::STRING;
 
-    throw SALOME_Exception(MsgBuilder() << "Bad type: " << type);
+    throw XAO_Exception(MsgBuilder() << "Bad type: " << type);
 }
 
 const std::string XaoUtils::shapeFormatToString(const XAO::Format& format)
+throw(XAO_Exception)
 {
     if (format == XAO::BREP)
         return "BREP";
     if (format == XAO::STEP)
         return "STEP";
 
-    throw SALOME_Exception(MsgBuilder() << "Bad format: " << format);
+    throw XAO_Exception(MsgBuilder() << "Bad format: " << format);
 }
 
 const XAO::Format XaoUtils::stringToShapeFormat(const std::string& format)
+throw(XAO_Exception)
 {
     if (format == "BREP")
         return XAO::BREP;
     if (format == "STEP")
         return XAO::STEP;
 
-    throw SALOME_Exception(MsgBuilder() << "Bad format: " << format);
+    throw XAO_Exception(MsgBuilder() << "Bad format: " << format);
 }

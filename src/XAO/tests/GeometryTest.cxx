@@ -1,8 +1,8 @@
 #include <vector>
-#include <Utils_SALOME_Exception.hxx>
 
 #include "TestUtils.hxx"
 #include "GeometryTest.hxx"
+#include "../XAO_XaoUtils.hxx"
 #include "../XAO_Geometry.hxx"
 #include "../XAO_GeometricElement.hxx"
 
@@ -51,16 +51,16 @@ void GeometryTest::testGeometryElementList()
     CPPUNIT_ASSERT_EQUAL(std::string(""), otherLst.getName(0));
     CPPUNIT_ASSERT_EQUAL(std::string(""), otherLst.getReference(0));
 
-    CPPUNIT_ASSERT_THROW(otherLst.getName(20), SALOME_Exception);
-    CPPUNIT_ASSERT_THROW(otherLst.getReference(20), SALOME_Exception);
-    CPPUNIT_ASSERT_THROW(otherLst.hasName(20), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(otherLst.getName(20), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(otherLst.getReference(20), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(otherLst.hasName(20), XAO_Exception);
 
     otherLst.setName(0, "aa");
     CPPUNIT_ASSERT_EQUAL(std::string("aa"), otherLst.getName(0));
-    CPPUNIT_ASSERT_THROW(otherLst.setName(20, "aa"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(otherLst.setName(20, "aa"), XAO_Exception);
     otherLst.setReference(0, "bb");
     CPPUNIT_ASSERT_EQUAL(std::string("bb"), otherLst.getReference(0));
-    CPPUNIT_ASSERT_THROW(otherLst.setReference(20, "aa"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(otherLst.setReference(20, "aa"), XAO_Exception);
 
     otherLst.setSize(10);
     CPPUNIT_ASSERT_EQUAL(std::string(""), otherLst.getName(0));
@@ -71,7 +71,7 @@ void GeometryTest::testGeometryElementList()
     CPPUNIT_ASSERT_EQUAL(std::string("name"), otherLst.getName(3));
     CPPUNIT_ASSERT_EQUAL(std::string("ref"), otherLst.getReference(3));
     CPPUNIT_ASSERT_EQUAL(true, otherLst.hasName(3));
-    CPPUNIT_ASSERT_THROW(otherLst.setElement(30, "name", "ref"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(otherLst.setElement(30, "name", "ref"), XAO_Exception);
 
     // ---- create elements "name i", "Ri"
     for (int i = 0; i < otherLst.getSize(); ++i)
@@ -85,7 +85,7 @@ void GeometryTest::testGeometryElementList()
     }
 
     CPPUNIT_ASSERT_EQUAL(8, otherLst.getIndexByReference("R8"));
-    CPPUNIT_ASSERT_THROW(otherLst.getIndexByReference("ZZ"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(otherLst.getIndexByReference("ZZ"), XAO_Exception);
 
     GeometricElementList::iterator first = otherLst.begin();
     GeometricElement firstElt = first->second;
@@ -107,14 +107,14 @@ void GeometryTest::testGeometry()
 
 void GeometryTest::testGeometryErrors()
 {
-    CPPUNIT_ASSERT_THROW(Geometry::createGeometry(XAO::STEP), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(Geometry::createGeometry(XAO::STEP), XAO_Exception);
 }
 
 void GeometryTest::testSetElement()
 {
     Geometry* geom = Geometry::createGeometry(XAO::BREP, "cube");
 
-    CPPUNIT_ASSERT_THROW(geom->setVertexName(0, "aa"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(geom->setVertexName(0, "aa"), XAO_Exception);
 
     char* txt = TestUtils::readTextFile(TestUtils::getTestFilePath("Box_1.brep"));
     geom->setShape(txt);
@@ -123,20 +123,20 @@ void GeometryTest::testSetElement()
     geom->setVertexName(0, "va");
     CPPUNIT_ASSERT_EQUAL(true, geom->hasVertexName(0));
     CPPUNIT_ASSERT_EQUAL(std::string("va"), geom->getVertexName(0));
-    CPPUNIT_ASSERT_THROW(geom->getVertexName(100), SALOME_Exception);
-    CPPUNIT_ASSERT_THROW(geom->hasVertexName(100), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(geom->getVertexName(100), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(geom->hasVertexName(100), XAO_Exception);
 
     geom->setEdgeName(0, "ea");
     CPPUNIT_ASSERT_EQUAL(std::string("ea"), geom->getEdgeName(0));
-    CPPUNIT_ASSERT_THROW(geom->getEdgeName(100), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(geom->getEdgeName(100), XAO_Exception);
 
     geom->setFaceName(0, "fa");
     CPPUNIT_ASSERT_EQUAL(std::string("fa"), geom->getFaceName(0));
-    CPPUNIT_ASSERT_THROW(geom->getFaceName(100), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(geom->getFaceName(100), XAO_Exception);
 
     geom->setSolidName(0, "sa");
     CPPUNIT_ASSERT_EQUAL(std::string("sa"), geom->getSolidName(0));
-    CPPUNIT_ASSERT_THROW(geom->getSolidName(100), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(geom->getSolidName(100), XAO_Exception);
 
     delete geom;
 }

@@ -18,8 +18,6 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-#include <Utils_SALOME_Exception.hxx>
-
 #include "XAO_Xao.hxx"
 #include "XAO_XaoUtils.hxx"
 #include "XAO_Step.hxx"
@@ -31,46 +29,51 @@
 using namespace XAO;
 
 void Step::checkElementIndex(const int& element)
+throw (XAO_Exception)
 {
     if (element < m_nbElements && element >= 0)
         return;
 
-    throw SALOME_Exception(MsgBuilder() << "Element index is out of range [0, "
+    throw XAO_Exception(MsgBuilder() << "Element index is out of range [0, "
                                         << m_nbElements-1 << "]: " << element);
 }
 
 void Step::checkComponentIndex(const int& component)
+throw (XAO_Exception)
 {
     if (component < m_nbComponents && component >= 0)
         return;
 
-    throw SALOME_Exception(MsgBuilder() << "Component index is out of range [0, "
+    throw XAO_Exception(MsgBuilder() << "Component index is out of range [0, "
                                         << m_nbComponents-1 << "]: " << component);
 }
 
 void Step::checkNbElements(const int& nbElements)
+throw (XAO_Exception)
 {
     if (nbElements == m_nbElements)
         return;
 
-    throw SALOME_Exception(MsgBuilder() << "Invalid number of elements: " << nbElements
+    throw XAO_Exception(MsgBuilder() << "Invalid number of elements: " << nbElements
                                         << ", expected " << m_nbElements);
 }
 
 void Step::checkNbComponents(const int& nbComponents)
+throw (XAO_Exception)
 {
     if (nbComponents == m_nbComponents)
         return;
 
-    throw SALOME_Exception(MsgBuilder() << "Invalid number of components: " << nbComponents
+    throw XAO_Exception(MsgBuilder() << "Invalid number of components: " << nbComponents
                                         << ", expected " << m_nbComponents);
 }
 
 void Step::checkNbValues(const int& nbValues)
+throw (XAO_Exception)
 {
     if (nbValues == m_nbElements * m_nbComponents)
         return;
 
-    throw SALOME_Exception(MsgBuilder() << "Invalid number of values:" << nbValues
+    throw XAO_Exception(MsgBuilder() << "Invalid number of values:" << nbValues
                                         << ", expected " << m_nbElements * m_nbComponents);
 }

@@ -124,7 +124,8 @@ namespace XAO
          * @param yCoord the Y coordinate.
          * @param zCoord the Z coordinate.
          */
-        void getVertexXYZ(const int& vertexIndex, double& xCoord, double& yCoord, double& zCoord);
+        void getVertexXYZ(const int& vertexIndex, double& xCoord, double& yCoord, double& zCoord)
+        throw (XAO_Exception);
 
         /**
          * Gets the length of an edge.
@@ -264,36 +265,38 @@ namespace XAO
          * @param id the ID of the vertex.
          * @param name the name to set.
          */
-        void changeVertexName(const int& id, const std::string& name);
+        void changeVertexName(const int& id, const std::string& name) throw (XAO_Exception);
 
         /**
          * Changes the name of an edge.
          * @param id the ID of the edge
          * @param name the name to set.
          */
-        void changeEdgeName(const int& id, const std::string& name);
+        void changeEdgeName(const int& id, const std::string& name) throw (XAO_Exception);
 
         /**
          * Changes the name of a face.
          * @param id the ID of the face.
          * @param name the name to set.
          */
-        void changeFaceName(const int& id, const std::string& name);
+        void changeFaceName(const int& id, const std::string& name) throw (XAO_Exception);
 
         /**
          * Changes the name of a solid.
          * @param id the ID of the solid.
          * @param name the name to set.
          */
-        void changeSolidName(const int& id, const std::string& name);
+        void changeSolidName(const int& id, const std::string& name) throw (XAO_Exception);
 
     private:
         void initIds();
         void initListIds(const TopAbs_ShapeEnum& shapeType, GeometricElementList& eltList);
-        TopoDS_Shape getSubShape(const TopoDS_Shape& mainShape, const TopAbs_ShapeEnum& shapeType, const int& shapeIndex);
+        TopoDS_Shape getSubShape(const TopoDS_Shape& mainShape, const TopAbs_ShapeEnum& shapeType, const int& shapeIndex)
+            throw (XAO_Exception);
         const int countGeometricalElements(const TopoDS_Shape& shape, const TopAbs_ShapeEnum& shapeType);
         std::vector<int> getGeometricalElements(const TopoDS_Shape& shape, const TopAbs_ShapeEnum& shapeType, const XAO::Dimension& dim);
-        const int findElement(const XAO::Dimension& dim, const int& id);
+        const int findElement(const XAO::Dimension& dim, const int& id)
+            throw (XAO_Exception);
 
     private:
         TopoDS_Shape m_shape;

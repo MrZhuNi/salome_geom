@@ -18,8 +18,6 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-#include <Utils_SALOME_Exception.hxx>
-
 #include "XAO_GeometricElement.hxx"
 #include "XAO_XaoUtils.hxx"
 
@@ -68,14 +66,16 @@ void GeometricElementList::setSize(const int& nb)
 }
 
 void GeometricElementList::checkElementIndex(const int& index) const
+throw (XAO_Exception)
 {
     if (m_count >= 0 && index < m_count)
         return;
 
-    throw SALOME_Exception(MsgBuilder() << "Index of element is out of range [0, " << m_count<< "]: " << index);
+    throw XAO_Exception(MsgBuilder() << "Index of element is out of range [0, " << m_count<< "]: " << index);
 }
 
 void GeometricElementList::setElement(const int& index, const std::string& name, const std::string& reference)
+throw (XAO_Exception)
 {
     checkElementIndex(index);
     m_elements[index].setName(name);
@@ -83,36 +83,42 @@ void GeometricElementList::setElement(const int& index, const std::string& name,
 }
 
 const std::string GeometricElementList::getName(const int& index)
+throw (XAO_Exception)
 {
     checkElementIndex(index);
     return m_elements[index].getName();
 }
 
 void GeometricElementList::setName(const int& index, const std::string& name)
+throw (XAO_Exception)
 {
     checkElementIndex(index);
     m_elements[index].setName(name);
 }
 
 const bool GeometricElementList::hasName(const int& index)
+throw (XAO_Exception)
 {
     checkElementIndex(index);
     return m_elements[index].hasName();
 }
 
 const std::string GeometricElementList::getReference(const int& index)
+throw (XAO_Exception)
 {
     checkElementIndex(index);
     return m_elements[index].getReference();
 }
 
 void GeometricElementList::setReference(const int& index, const std::string& name)
+throw (XAO_Exception)
 {
     checkElementIndex(index);
     m_elements[index].setReference(name);
 }
 
 const int GeometricElementList::getIndexByReference(const std::string& ref)
+throw (XAO_Exception)
 {
     for (int index = 0; index < m_count; ++index)
     {
@@ -120,5 +126,5 @@ const int GeometricElementList::getIndexByReference(const std::string& ref)
             return index;
     }
 
-    throw SALOME_Exception(MsgBuilder() << "Reference not found: " << ref);
+    throw XAO_Exception(MsgBuilder() << "Reference not found: " << ref);
 }

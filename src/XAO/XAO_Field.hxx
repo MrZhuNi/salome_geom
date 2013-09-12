@@ -58,7 +58,8 @@ namespace XAO
          * @return the created field.
          */
         static Field* createField(const XAO::Type& type, const XAO::Dimension& dimension,
-                                  const int& nbElements, const int& nbComponents);
+                                  const int& nbElements, const int& nbComponents)
+        throw (XAO_Exception);
 
         /**
         /**
@@ -71,7 +72,8 @@ namespace XAO
          * @return the created field.
          */
         static Field* createField(const XAO::Type& type, const std::string& name, const XAO::Dimension& dimension,
-                                  const int& nbElements, const int& nbComponents);
+                                  const int& nbElements, const int& nbComponents)
+        throw (XAO_Exception);
 
         /**
          * Destructor.
@@ -149,14 +151,14 @@ namespace XAO
          * @param index the index of the component to get.
          * @return the name of the component for the given index.
          */
-        const std::string getComponentName(const int& index);
+        const std::string getComponentName(const int& index) throw (XAO_Exception);
 
         /**
          * Sets the name of a component.
          * @param componentIndex the index of the component to set.
          * @param name the name to set.
          */
-        void setComponentName(const int& componentIndex, const std::string& name);
+        void setComponentName(const int& componentIndex, const std::string& name) throw (XAO_Exception);
 
         /**
          * Adds a new step of the same type than the field.
@@ -192,9 +194,8 @@ namespace XAO
         stepIterator end() { return m_steps.end(); }
 
     protected:
-        /** Ensures that component is valid (< m_nbComponents). */
-        void checkComponent(const int& component);
-        void checkStepIndex(const int& step);
+        void checkComponent(const int& component) throw (XAO_Exception);
+        void checkStepIndex(const int& step) throw (XAO_Exception);
 
     protected:
         /** The name of the Field. */

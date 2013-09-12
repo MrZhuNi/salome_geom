@@ -20,7 +20,6 @@
 
 #include <string>
 #include <iostream>
-#include <Utils_SALOME_Exception.hxx>
 
 #include "XAO_Xao.hxx"
 #include "XAO_Field.hxx"
@@ -51,12 +50,14 @@ Field::~Field()
 
 Field* Field::createField(const XAO::Type& type, const XAO::Dimension& dimension,
         const int& nbElements, const int& nbComponents)
+throw (XAO_Exception)
 {
     return createField(type, "", dimension, nbElements, nbComponents);
 }
 
 Field* Field::createField(const XAO::Type& type, const std::string& name, const XAO::Dimension& dimension,
         const int& nbElements, const int& nbComponents)
+throw (XAO_Exception)
 {
     if (type == XAO::BOOLEAN)
         return new BooleanField(name, dimension, nbElements, nbComponents);
@@ -67,16 +68,18 @@ Field* Field::createField(const XAO::Type& type, const std::string& name, const 
     if (type == XAO::STRING)
         return new StringField(name, dimension, nbElements, nbComponents);
 
-    throw SALOME_Exception(MsgBuilder() << "Bad Type: " << type);
+    throw XAO_Exception(MsgBuilder() << "Bad Type: " << type);
 }
 
 const std::string Field::getComponentName(const int& index)
+throw (XAO_Exception)
 {
     checkComponent(index);
     return m_components[index];
 }
 
 void Field::setComponentName(const int& index, const std::string& name)
+throw (XAO_Exception)
 {
     checkComponent(index);
     m_components[index] = name;
@@ -112,19 +115,21 @@ bool Field::hasStep(const int& step)
 }
 
 void Field::checkComponent(const int& component)
+throw (XAO_Exception)
 {
     if (component < m_nbComponents && component >= 0)
         return;
 
-    throw SALOME_Exception(MsgBuilder() << "Step index is out of range [0, "
-                                        << m_nbComponents << "]: " << component);
+    throw XAO_Exception(MsgBuilder() << "Step index is out of range [0, "
+                                     << m_nbComponents << "]: " << component);
 }
 
 void Field::checkStepIndex(const int& step)
+throw (XAO_Exception)
 {
     if (step < m_steps.size() && step >= 0)
         return;
 
-    throw SALOME_Exception(MsgBuilder() << "Step index is out of range [0, "
-                                        << m_steps.size() << "]: " << step);
+    throw XAO_Exception(MsgBuilder() << "Step index is out of range [0, "
+                                     << m_steps.size() << "]: " << step);
 }

@@ -58,14 +58,14 @@ namespace XAO
          * @param element the index of the element.
          * @return a vector containing all the values for the given element.
          */
-        std::vector<int> getElement(const int& element);
+        std::vector<int> getElement(const int& element) throw (XAO_Exception);
 
         /**
          * Gets all the values for a given component.
          * @param component the index of the component.
          * @return a vector containing all the values for the given component.
          */
-        std::vector<int> getComponent(const int& component);
+        std::vector<int> getComponent(const int& component) throw (XAO_Exception);
 
         /**
          * Gets the value for an element and a component.
@@ -73,27 +73,27 @@ namespace XAO
          * @param component the index of the component.
          * @return the value for the given element and component.
          */
-        const int getValue(const int& element, const int& component);
+        const int getValue(const int& element, const int& component) throw (XAO_Exception);
 
         /**
          * Sets all the values from a list.
          * @param values the list of values to set.
          */
-        void setValues(const std::vector<int>& values);
+        void setValues(const std::vector<int>& values) throw (XAO_Exception);
 
         /**
          * Sets the values for an element.
          * @param element the index of the element to set.
          * @param elements the values to set.
          */
-        void setElements(const int& element, const std::vector<int>& elements);
+        void setElements(const int& element, const std::vector<int>& elements) throw (XAO_Exception);
 
         /**
          * Sets the values for a component.
          * @param component the index of the component to set.
          * @param components the values to set.
          */
-        void setComponents(const int& component, const std::vector<int>& components);
+        void setComponents(const int& component, const std::vector<int>& components) throw (XAO_Exception);
 
         /**
          * Sets the value for an element and a component.
@@ -101,10 +101,10 @@ namespace XAO
          * @param component the index of the component.
          * @param value the value.
          */
-        void setValue(const int& element, const int& component, const int& value);
+        void setValue(const int& element, const int& component, const int& value) throw (XAO_Exception);
 
-        virtual const std::string getStringValue(const int& element, const int& component);
-        virtual void setStringValue(const int& element, const int& component, const std::string& value);
+        virtual const std::string getStringValue(const int& element, const int& component) throw (XAO_Exception);
+        virtual void setStringValue(const int& element, const int& component, const std::string& value)  throw (XAO_Exception);
 
     private:
         std::vector< std::vector<int> > m_values;

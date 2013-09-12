@@ -1,8 +1,8 @@
 #include <vector>
-#include <Utils_SALOME_Exception.hxx>
 
 #include "TestUtils.hxx"
 #include "XaoTest.hxx"
+#include "../XAO_XaoUtils.hxx"
 #include "../XAO_Xao.hxx"
 #include "../XAO_BrepGeometry.hxx"
 #include "../XAO_Group.hxx"
@@ -25,7 +25,7 @@ void XaoTest::cleanUp()
 void XaoTest::testGroups()
 {
     Xao obj;
-    CPPUNIT_ASSERT_THROW(obj.addGroup(XAO::FACE), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(obj.addGroup(XAO::FACE), XAO_Exception);
 
     BrepGeometry* geom = new BrepGeometry("test");
     obj.setGeometry(geom);
@@ -36,7 +36,7 @@ void XaoTest::testGroups()
 
     Group* agr = obj.getGroup(0);
     CPPUNIT_ASSERT(gr == agr);
-    CPPUNIT_ASSERT_THROW(obj.getGroup(10), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(obj.getGroup(10), XAO_Exception);
 
     CPPUNIT_ASSERT_EQUAL(true, obj.removeGroup(gr2));
     CPPUNIT_ASSERT(gr2 != NULL);
@@ -47,7 +47,7 @@ void XaoTest::testGroups()
 void XaoTest::testFields()
 {
     Xao obj;
-    CPPUNIT_ASSERT_THROW(obj.addField(XAO::INTEGER, XAO::FACE, 3), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(obj.addField(XAO::INTEGER, XAO::FACE, 3), XAO_Exception);
 
     BrepGeometry* geom = new BrepGeometry("test");
     obj.setGeometry(geom);
@@ -61,7 +61,7 @@ void XaoTest::testFields()
     Field* fd = obj.addField(XAO::DOUBLE, XAO::FACE, 3);
     Field* fs = obj.addField(XAO::STRING, XAO::FACE, 3);
     CPPUNIT_ASSERT_EQUAL(4, obj.countFields());
-    CPPUNIT_ASSERT_THROW(obj.getField(10), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(obj.getField(10), XAO_Exception);
 
     CPPUNIT_ASSERT_EQUAL(true, obj.removeField(fb));
     CPPUNIT_ASSERT(fb != NULL);

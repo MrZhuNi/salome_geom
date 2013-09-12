@@ -1,8 +1,8 @@
 #include <vector>
-#include <Utils_SALOME_Exception.hxx>
 
 #include "TestUtils.hxx"
 #include "GroupTest.hxx"
+#include "../XAO_XaoUtils.hxx"
 #include "../XAO_Xao.hxx"
 #include "../XAO_Group.hxx"
 
@@ -41,7 +41,7 @@ void GroupTest::testGroup()
 
     CPPUNIT_ASSERT_EQUAL(10, group->get(0));
     CPPUNIT_ASSERT_EQUAL(12, group->get(1));
-    CPPUNIT_ASSERT_THROW(group->get(2), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(group->get(2), XAO_Exception);
 
     group->remove(15);
     CPPUNIT_ASSERT_EQUAL(2, group->count());
@@ -54,5 +54,5 @@ void GroupTest::testGroup()
 
 void GroupTest::testGroupErrors()
 {
-    CPPUNIT_ASSERT_THROW(new Group(XAO::WHOLE, 20), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(new Group(XAO::WHOLE, 20), XAO_Exception);
 }

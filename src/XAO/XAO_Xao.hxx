@@ -23,6 +23,7 @@
 
 #include <string>
 #include <list>
+#include "XAO_Exception.hxx"
 
 namespace XAO
 {
@@ -151,22 +152,22 @@ namespace XAO
         /**
          * Gets a group.
          * \param index the index of the wanted group.
-         * \return the group or NULL if index is bigger than the number of groups.
+         * \return the group.
          */
-        Group* getGroup(const int& index);
+        Group* getGroup(const int& index) throw (XAO_Exception);
         /**
          * Adds a group.
          * \param dim the dimension of the group.
          * \return the created group.
          */
-        Group* addGroup(const XAO::Dimension& dim);
+        Group* addGroup(const XAO::Dimension& dim) throw (XAO_Exception);
         /**
          * Adds a group.
          * \param name the name of the group.
          * \param dim the dimension of the group.
          * \return the created group.
          */
-        Group* addGroup(const std::string& name, const XAO::Dimension& dim);
+        Group* addGroup(const std::string& name, const XAO::Dimension& dim) throw (XAO_Exception);
         /**
          * Removes a group.
          * \param group the group to remove.
@@ -186,9 +187,9 @@ namespace XAO
         /**
          * Gets a field.
          * \param index the index of the wanted field.
-         * \return the field or NULL if the index is bigger than the number of fields.
+         * \return the field.
          */
-        Field* getField(const int& index);
+        Field* getField(const int& index) throw (XAO_Exception);
         /**
          * Adds a field.
          * \param type the type of the field.
@@ -196,7 +197,8 @@ namespace XAO
          * \param nbComponents the number of components in the field.
          * \return the created field.
          */
-        Field* addField(const XAO::Type& type, const XAO::Dimension& dim, const int& nbComponents);
+        Field* addField(const XAO::Type& type, const XAO::Dimension& dim, const int& nbComponents)
+        throw (XAO_Exception);
         /**
          * Adds a field.
          * \param type the type of the field.
@@ -205,7 +207,8 @@ namespace XAO
          * \param nbComponents the number of components in the field.
          * \return the created field.
          */
-        Field* addField(const XAO::Type& type, const std::string& name, const XAO::Dimension& dim, const int& nbComponents);
+        Field* addField(const XAO::Type& type, const std::string& name, const XAO::Dimension& dim, const int& nbComponents)
+        throw (XAO_Exception);
         /**
          * Removes a field.
          * \param field the field to remove.
@@ -242,9 +245,10 @@ namespace XAO
         const bool setXML(const std::string& xml);
 
     private:
-        void checkGeometry() const;
-        void checkGroupIndex(const int& index) const;
-        void checkFieldIndex(const int& index) const;
+        void checkGeometry() const throw (XAO_Exception);
+        void checkGroupIndex(const int& index) const throw (XAO_Exception);
+        void checkFieldIndex(const int& index) const throw (XAO_Exception);
+        void checkGroupDimension(const XAO::Dimension& dim) const throw (XAO_Exception);
 
     private:
         /** The author of the file. */

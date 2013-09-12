@@ -18,8 +18,6 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-#include <Utils_SALOME_Exception.hxx>
-
 #include "XAO_StringField.hxx"
 #include "XAO_StringStep.hxx"
 #include "XAO_XaoUtils.hxx"
@@ -32,19 +30,22 @@ StringField::StringField(const std::string& name, const XAO::Dimension& dimensio
 }
 
 Step* StringField::addNewStep(const int& step)
+throw (XAO_Exception)
 {
     return addStep(step, 0);
 }
 
 StringStep* StringField::addStep(const int& step)
+throw (XAO_Exception)
 {
     return addStep(step, 0);
 }
 
 StringStep* StringField::addStep(const int& step, const int& stamp)
+throw (XAO_Exception)
 {
     if (hasStep(step))
-        throw SALOME_Exception(MsgBuilder() << "Step with number " << step << "already exists.");
+        throw XAO_Exception(MsgBuilder() << "Step with number " << step << "already exists.");
 
     StringStep* bstep = new StringStep(step, stamp, m_nbElements, m_nbComponents);
     m_steps.push_back(bstep);
@@ -52,6 +53,7 @@ StringStep* StringField::addStep(const int& step, const int& stamp)
 }
 
 StringStep* StringField::getStep(const int& index)
+throw (XAO_Exception)
 {
     checkStepIndex(index);
     return (StringStep*)m_steps[index];

@@ -24,7 +24,6 @@ bin_PROGRAMS= TestXAO
 
 TestXAO_CPPFLAGS= \
     @CPPUNIT_INCLUDES@ @PTHREAD_CFLAGS@  \
-    $(GEOM_CXXFLAGS)                     \
     $(CAS_CPPFLAGS)                      \
     $(LIBXML_INCLUDES)                   \
     -I$(srcdir)
@@ -33,7 +32,6 @@ TestXAO_LDFLAGS = \
     @CPPUNIT_LIBS@  \
     $(CAS_LDPATH)   \
     $(LIBXML_LIBS)  \
-    $(GEOM_LDFLAGS) \
     ../libXAO.la
 
 dist_TestXAO_SOURCES = \

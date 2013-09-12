@@ -18,8 +18,6 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-#include <Utils_SALOME_Exception.hxx>
-
 #include "XAO_DoubleStep.hxx"
 #include "XAO_XaoUtils.hxx"
 
@@ -59,6 +57,7 @@ std::vector<double> DoubleStep::getValues()
 }
 
 std::vector<double> DoubleStep::getElement(const int& element)
+throw (XAO_Exception)
 {
     checkElementIndex(element);
 
@@ -67,6 +66,7 @@ std::vector<double> DoubleStep::getElement(const int& element)
 }
 
 std::vector<double> DoubleStep::getComponent(const int& component)
+throw (XAO_Exception)
 {
     checkComponentIndex(component);
 
@@ -84,6 +84,7 @@ std::vector<double> DoubleStep::getComponent(const int& component)
 }
 
 const double DoubleStep::getValue(const int& element, const int& component)
+throw (XAO_Exception)
 {
     checkElementIndex(element);
     checkComponentIndex(component);
@@ -92,11 +93,13 @@ const double DoubleStep::getValue(const int& element, const int& component)
 }
 
 const std::string DoubleStep::getStringValue(const int& element, const int& component)
+throw (XAO_Exception)
 {
     return XaoUtils::doubleToString(getValue(element, component));
 }
 
 void DoubleStep::setValues(const std::vector<double>& values)
+throw (XAO_Exception)
 {
     checkNbValues(values.size());
 
@@ -110,6 +113,7 @@ void DoubleStep::setValues(const std::vector<double>& values)
 }
 
 void DoubleStep::setElements(const int& element, const std::vector<double>& elements)
+throw (XAO_Exception)
 {
     checkElementIndex(element);
     checkNbComponents(elements.size());
@@ -119,6 +123,7 @@ void DoubleStep::setElements(const int& element, const std::vector<double>& elem
 }
 
 void DoubleStep::setComponents(const int& component, const std::vector<double>& components)
+throw (XAO_Exception)
 {
     checkElementIndex(component);
     checkNbElements(components.size());
@@ -128,6 +133,7 @@ void DoubleStep::setComponents(const int& component, const std::vector<double>& 
 }
 
 void DoubleStep::setValue(const int& element, const int& component, const double& value)
+throw (XAO_Exception)
 {
     checkElementIndex(element);
     checkComponentIndex(component);
@@ -136,6 +142,7 @@ void DoubleStep::setValue(const int& element, const int& component, const double
 }
 
 void DoubleStep::setStringValue(const int& element, const int& component, const std::string& value)
+throw (XAO_Exception)
 {
     setValue(element, component, XaoUtils::stringToDouble(value));
 }

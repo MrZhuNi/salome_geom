@@ -18,8 +18,6 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-#include <Utils_SALOME_Exception.hxx>
-
 #include "XAO_IntegerStep.hxx"
 #include "XAO_XaoUtils.hxx"
 
@@ -59,6 +57,7 @@ std::vector<int> IntegerStep::getValues()
 }
 
 std::vector<int> IntegerStep::getElement(const int& element)
+throw (XAO_Exception)
 {
     checkElementIndex(element);
 
@@ -67,6 +66,7 @@ std::vector<int> IntegerStep::getElement(const int& element)
 }
 
 std::vector<int> IntegerStep::getComponent(const int& component)
+throw (XAO_Exception)
 {
     checkComponentIndex(component);
 
@@ -84,6 +84,7 @@ std::vector<int> IntegerStep::getComponent(const int& component)
 }
 
 const int IntegerStep::getValue(const int& element, const int& component)
+throw (XAO_Exception)
 {
     checkElementIndex(element);
     checkComponentIndex(component);
@@ -92,11 +93,13 @@ const int IntegerStep::getValue(const int& element, const int& component)
 }
 
 const std::string IntegerStep::getStringValue(const int& element, const int& component)
+throw (XAO_Exception)
 {
     return XaoUtils::intToString(getValue(element, component));
 }
 
 void IntegerStep::setValues(const std::vector<int>& values)
+throw (XAO_Exception)
 {
     checkNbValues(values.size());
 
@@ -110,6 +113,7 @@ void IntegerStep::setValues(const std::vector<int>& values)
 }
 
 void IntegerStep::setElements(const int& element, const std::vector<int>& elements)
+throw (XAO_Exception)
 {
     checkElementIndex(element);
     checkNbComponents(elements.size());
@@ -119,6 +123,7 @@ void IntegerStep::setElements(const int& element, const std::vector<int>& elemen
 }
 
 void IntegerStep::setComponents(const int& component, const std::vector<int>& components)
+throw (XAO_Exception)
 {
     checkElementIndex(component);
     checkNbElements(components.size());
@@ -128,6 +133,7 @@ void IntegerStep::setComponents(const int& component, const std::vector<int>& co
 }
 
 void IntegerStep::setValue(const int& element, const int& component, const int& value)
+throw (XAO_Exception)
 {
     checkElementIndex(element);
     checkComponentIndex(component);
@@ -136,6 +142,7 @@ void IntegerStep::setValue(const int& element, const int& component, const int& 
 }
 
 void IntegerStep::setStringValue(const int& element, const int& component, const std::string& value)
+throw (XAO_Exception)
 {
     setValue(element, component, XaoUtils::stringToInt(value));
 }

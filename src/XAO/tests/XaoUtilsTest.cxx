@@ -1,5 +1,3 @@
-#include <Utils_SALOME_Exception.hxx>
-
 #include "XaoUtilsTest.hxx"
 #include "../XAO_Xao.hxx"
 #include "../XAO_XaoUtils.hxx"
@@ -28,7 +26,7 @@ void XaoUtilsTest::testBoolean()
     CPPUNIT_ASSERT_EQUAL(true, XaoUtils::stringToBoolean("1"));
     CPPUNIT_ASSERT_EQUAL(false, XaoUtils::stringToBoolean("false"));
     CPPUNIT_ASSERT_EQUAL(false, XaoUtils::stringToBoolean("0"));
-    CPPUNIT_ASSERT_THROW(XaoUtils::stringToBoolean("abc"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(XaoUtils::stringToBoolean("abc"), XAO_Exception);
 }
 
 void XaoUtilsTest::testInteger()
@@ -37,7 +35,7 @@ void XaoUtilsTest::testInteger()
     CPPUNIT_ASSERT_EQUAL(std::string("123"), XaoUtils::intToString(123));
 
     CPPUNIT_ASSERT_EQUAL(123, XaoUtils::stringToInt("123"));
-    CPPUNIT_ASSERT_THROW(XaoUtils::stringToInt("abc"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(XaoUtils::stringToInt("abc"), XAO_Exception);
 }
 
 void XaoUtilsTest::testDouble()
@@ -46,7 +44,7 @@ void XaoUtilsTest::testDouble()
     CPPUNIT_ASSERT_EQUAL(std::string("12.3"), XaoUtils::doubleToString(12.3));
 
     CPPUNIT_ASSERT_DOUBLES_EQUAL(0.123, XaoUtils::stringToDouble("0.123"), 1e-3);
-    CPPUNIT_ASSERT_THROW(XaoUtils::stringToDouble("abc"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(XaoUtils::stringToDouble("abc"), XAO_Exception);
 }
 
 void XaoUtilsTest::testDimension()
@@ -62,7 +60,7 @@ void XaoUtilsTest::testDimension()
     CPPUNIT_ASSERT_EQUAL(XAO::FACE, XaoUtils::stringToDimension("face"));
     CPPUNIT_ASSERT_EQUAL(XAO::SOLID, XaoUtils::stringToDimension("solid"));
     CPPUNIT_ASSERT_EQUAL(XAO::WHOLE, XaoUtils::stringToDimension("whole"));
-    CPPUNIT_ASSERT_THROW(XaoUtils::stringToDimension("zz"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(XaoUtils::stringToDimension("zz"), XAO_Exception);
 }
 
 void XaoUtilsTest::testType()
@@ -76,7 +74,7 @@ void XaoUtilsTest::testType()
     CPPUNIT_ASSERT_EQUAL(XAO::INTEGER, XaoUtils::stringToFieldType("integer"));
     CPPUNIT_ASSERT_EQUAL(XAO::DOUBLE, XaoUtils::stringToFieldType("double"));
     CPPUNIT_ASSERT_EQUAL(XAO::STRING, XaoUtils::stringToFieldType("string"));
-    CPPUNIT_ASSERT_THROW(XaoUtils::stringToFieldType("zz"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(XaoUtils::stringToFieldType("zz"), XAO_Exception);
 }
 
 void XaoUtilsTest::testFormat()
@@ -86,5 +84,5 @@ void XaoUtilsTest::testFormat()
 
     CPPUNIT_ASSERT_EQUAL(XAO::BREP, XaoUtils::stringToShapeFormat("BREP"));
     CPPUNIT_ASSERT_EQUAL(XAO::STEP, XaoUtils::stringToShapeFormat("STEP"));
-    CPPUNIT_ASSERT_THROW(XaoUtils::stringToShapeFormat("zz"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(XaoUtils::stringToShapeFormat("zz"), XAO_Exception);
 }

@@ -47,7 +47,7 @@ namespace XAO
          * @param format the format of the geometry.
          * @return the created geometry.
          */
-        static Geometry* createGeometry(const XAO::Format& format);
+        static Geometry* createGeometry(const XAO::Format& format) throw (XAO_Exception);
 
         /**
          * Constructor.
@@ -55,7 +55,8 @@ namespace XAO
          * @name name the name of the geometry.
          * @return the created geometry.
          */
-        static Geometry* createGeometry(const XAO::Format& format, const std::string& name);
+        static Geometry* createGeometry(const XAO::Format& format, const std::string& name)
+        throw (XAO_Exception);
 
         /** Destructor. */
         ~Geometry();
@@ -86,37 +87,37 @@ namespace XAO
         virtual const std::string getShape() = 0;
         virtual void setShape(const std::string& shape) = 0;
 
-        const int countElements(const XAO::Dimension& dim);
-        const int countVertices() { return m_vertices.getSize(); }
-        const int countEdges() { return m_edges.getSize(); }
-        const int countFaces() { return m_faces.getSize(); }
-        const int countSolids() { return m_solids.getSize(); }
+        const int countElements(const XAO::Dimension& dim) const throw (XAO_Exception);
+        const int countVertices() const { return m_vertices.getSize(); }
+        const int countEdges() const { return m_edges.getSize(); }
+        const int countFaces() const { return m_faces.getSize(); }
+        const int countSolids() const { return m_solids.getSize(); }
 
         void setCountVertices(const int& nb) { m_vertices.setSize(nb); }
         void setCountEdges(const int& nb) { m_edges.setSize(nb); }
         void setCountFaces(const int& nb) { m_faces.setSize(nb); }
         void setCountSolids(const int& nb) { m_solids.setSize(nb); }
 
-        const std::string getVertexName(const int& index) { return m_vertices.getName(index); }
-        const std::string getEdgeName(const int& index) { return m_edges.getName(index); }
-        const std::string getFaceName(const int& index) { return m_faces.getName(index); }
-        const std::string getSolidName(const int& index) { return m_solids.getName(index); }
+        const std::string getVertexName(const int& index) throw (XAO_Exception) { return m_vertices.getName(index); }
+        const std::string getEdgeName(const int& index) throw (XAO_Exception) { return m_edges.getName(index); }
+        const std::string getFaceName(const int& index) throw (XAO_Exception) { return m_faces.getName(index); }
+        const std::string getSolidName(const int& index) throw (XAO_Exception) { return m_solids.getName(index); }
 
-        void setVertexName(const int& index, const std::string& name) { m_vertices.setName(index, name); }
-        void setEdgeName(const int& index, const std::string& name) { m_edges.setName(index, name); }
-        void setFaceName(const int& index, const std::string& name) { m_faces.setName(index, name); }
-        void setSolidName(const int& index, const std::string& name) { m_solids.setName(index, name); }
+        void setVertexName(const int& index, const std::string& name) throw (XAO_Exception) { m_vertices.setName(index, name); }
+        void setEdgeName(const int& index, const std::string& name) throw (XAO_Exception) { m_edges.setName(index, name); }
+        void setFaceName(const int& index, const std::string& name) throw (XAO_Exception) { m_faces.setName(index, name); }
+        void setSolidName(const int& index, const std::string& name) throw (XAO_Exception) { m_solids.setName(index, name); }
 
-        const bool hasVertexName(const int& index) { return m_vertices.hasName(index); }
-        const bool hasEdgeName(const int& index) { return m_edges.hasName(index); }
-        const bool hasFaceName(const int& index) { return m_faces.hasName(index); }
-        const bool hasSolidName(const int& index) { return m_solids.hasName(index); }
+        const bool hasVertexName(const int& index) throw (XAO_Exception) { return m_vertices.hasName(index); }
+        const bool hasEdgeName(const int& index) throw (XAO_Exception) { return m_edges.hasName(index); }
+        const bool hasFaceName(const int& index) throw (XAO_Exception) { return m_faces.hasName(index); }
+        const bool hasSolidName(const int& index) throw (XAO_Exception) { return m_solids.hasName(index); }
 
         const std::string getVertexReference(const int& index) { return m_vertices.getReference(index); }
         const std::string getEdgeReference(const int& index) { return m_edges.getReference(index); }
         const std::string getFaceReference(const int& index) { return m_faces.getReference(index); }
         const std::string getSolidReference(const int& index) { return m_solids.getReference(index); }
-        const std::string getElementReference(const XAO::Dimension& dim, const int& index);
+        const std::string getElementReference(const XAO::Dimension& dim, const int& index) throw (XAO_Exception);
 
         void setVertexReference(const int& index, const std::string& reference) { m_vertices.setReference(index, reference); }
         void setEdgeReference(const int& index, const std::string& reference) { m_edges.setReference(index, reference); }
@@ -132,10 +133,10 @@ namespace XAO
         const int getEdgeIndexByReference(const std::string& reference) { return m_edges.getIndexByReference(reference); }
         const int getFaceIndexByReference(const std::string& reference) { return m_faces.getIndexByReference(reference); }
         const int getSolidIndexByReference(const std::string& reference) { return m_solids.getIndexByReference(reference); }
-        const int getElementIndexByReference(const XAO::Dimension& dim, const std::string& reference);
+        const int getElementIndexByReference(const XAO::Dimension& dim, const std::string& reference) throw (XAO_Exception);
 
-        GeometricElementList::iterator begin(const XAO::Dimension& dim);
-        GeometricElementList::iterator end(const XAO::Dimension& dim);
+        GeometricElementList::iterator begin(const XAO::Dimension& dim) throw (XAO_Exception);
+        GeometricElementList::iterator end(const XAO::Dimension& dim) throw (XAO_Exception);
 
     protected:
         std::string m_name;

@@ -1,6 +1,5 @@
 
 #include <libxml/parser.h>
-#include <Utils_SALOME_Exception.hxx>
 
 #include "XAO_XaoExporter.hxx"
 #include "XAO_Xao.hxx"
@@ -74,10 +73,10 @@ std::string XaoExporter::readStringProp(xmlNodePtr node, const xmlChar* attribut
         if (required)
         {
             if (exception.size() > 0)
-                throw SALOME_Exception(exception.c_str());
+                throw XAO_Exception(exception.c_str());
 
-            throw SALOME_Exception(MsgBuilder() << "Line " << node->line << ": "
-                                                << "Property " << (char*)attribute << " is required.");
+            throw XAO_Exception(MsgBuilder() << "Line " << node->line << ": "
+                                             << "Property " << (char*)attribute << " is required.");
         }
 
         return defaultValue;
@@ -98,10 +97,10 @@ int XaoExporter::readIntegerProp(xmlNodePtr node, const xmlChar* attribute,
         if (required)
         {
             if (exception.size() > 0)
-                throw SALOME_Exception(exception.c_str());
+                throw XAO_Exception(exception.c_str());
 
-            throw SALOME_Exception(MsgBuilder() << "Line " << node->line << ": "
-                                                << "Property " << (char*)attribute << " is required.");
+            throw XAO_Exception(MsgBuilder() << "Line " << node->line << ": "
+                                             << "Property " << (char*)attribute << " is required.");
         }
 
         return defaultValue;
@@ -113,6 +112,7 @@ int XaoExporter::readIntegerProp(xmlNodePtr node, const xmlChar* attribute,
 }
 
 const bool XaoExporter::saveToFile(Xao* xaoObject, const std::string& fileName)
+throw (XAO_Exception)
 {
     xmlDocPtr doc = exportXMLDoc(xaoObject);
     xmlSaveFormatFileEnc(fileName.c_str(), doc, "UTF-8", 1); // format = 1 for node indentation
@@ -122,6 +122,7 @@ const bool XaoExporter::saveToFile(Xao* xaoObject, const std::string& fileName)
 }
 
 const std::string XaoExporter::saveToXml(Xao* xaoObject)
+throw (XAO_Exception)
 {
     xmlDocPtr doc = exportXMLDoc(xaoObject);
 
@@ -274,13 +275,14 @@ void XaoExporter::exportStep(Step* step, Field* field, xmlNodePtr nodeSteps)
 }
 
 const bool XaoExporter::readFromFile(const std::string& fileName, Xao* xaoObject)
+throw (XAO_Exception)
 {
     // parse the file and get the DOM
     int options = XML_PARSE_HUGE || XML_PARSE_NOCDATA;
     xmlDocPtr doc = xmlReadFile(fileName.c_str(), NULL, options);
     if (doc == NULL)
     {
-        throw SALOME_Exception("Cannot read XAO file");
+        throw XAO_Exception("Cannot read XAO file");
     }
 
     parseXMLDoc(doc, xaoObject);
@@ -288,12 +290,13 @@ const bool XaoExporter::readFromFile(const std::string& fileName, Xao* xaoObject
 }
 
 const bool XaoExporter::setXML(const std::string& xml, Xao* xaoObject)
+throw (XAO_Exception)
 {
     int options = XML_PARSE_HUGE || XML_PARSE_NOCDATA;
     xmlDocPtr doc = xmlReadDoc(BAD_CAST xml.c_str(), "", NULL, options);
     if (doc == NULL)
     {
-        throw SALOME_Exception("Cannot read XAO stream");
+        throw XAO_Exception("Cannot read XAO stream");
     }
 
     parseXMLDoc(doc, xaoObject);
@@ -305,7 +308,7 @@ void XaoExporter::parseXMLDoc(xmlDocPtr doc, Xao* xaoObject)
     // Get the root element node
     xmlNodePtr root = xmlDocGetRootElement(doc);
     if (xmlStrcmp(root->name , C_TAG_XAO) != 0)
-        throw SALOME_Exception("Cannot read XAO file: invalid format XAO node not found");
+        throw XAO_Exception("Cannot read XAO file: invalid format XAO node not found");
 
     parseXaoNode(doc, root, xaoObject);
 
@@ -363,14 +366,14 @@ void XaoExporter::parseShapeNode(xmlDocPtr doc, xmlNodePtr shapeNode, Geometry* 
     {
         xmlChar* data = xmlNodeGetContent(shapeNode->children);
         if (data == NULL)
-            throw SALOME_Exception("Missing BREP");
+            throw XAO_Exception("Missing BREP");
         geometry->setShape((char*)data);
         xmlFree(data);
     }
     else
     {
-        throw SALOME_Exception(MsgBuilder() << "Shape format not supported: "
-                                            << XaoUtils::shapeFormatToString(geometry->getFormat()));
+        throw XAO_Exception(MsgBuilder() << "Shape format not supported: "
+                                         << XaoUtils::shapeFormatToString(geometry->getFormat()));
     }
 }
 
@@ -525,8 +528,8 @@ void XaoExporter::parseFieldNode(xmlNodePtr fieldNode, Xao* xaoObject)
     // ensure that the components node is defined
     if (componentsNode == NULL)
     {
-        throw SALOME_Exception(MsgBuilder() << "Line " << fieldNode->line << ": "
-                                            << "No components defined for field.");
+        throw XAO_Exception(MsgBuilder() << "Line " << fieldNode->line << ": "
+                                         << "No components defined for field.");
     }
 
     // create the field
@@ -594,7 +597,7 @@ void XaoExporter::parseStepElementNode(xmlNodePtr eltNode, Step* step)
 
             if (data == NULL)
             {
-                throw SALOME_Exception(MsgBuilder() << "Line " << valNode->line << ": no content for value.");
+                throw XAO_Exception(MsgBuilder() << "Line " << valNode->line << ": no content for value.");
             }
 
             std::string value = (char*)data;

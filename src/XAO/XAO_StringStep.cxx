@@ -18,8 +18,6 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-#include <Utils_SALOME_Exception.hxx>
-
 #include "XAO_StringStep.hxx"
 
 using namespace XAO;
@@ -58,6 +56,7 @@ std::vector<std::string> StringStep::getValues()
 }
 
 std::vector<std::string> StringStep::getElement(const int& element)
+throw (XAO_Exception)
 {
     checkElementIndex(element);
 
@@ -66,6 +65,7 @@ std::vector<std::string> StringStep::getElement(const int& element)
 }
 
 std::vector<std::string> StringStep::getComponent(const int& component)
+throw (XAO_Exception)
 {
     checkComponentIndex(component);
 
@@ -83,6 +83,7 @@ std::vector<std::string> StringStep::getComponent(const int& component)
 }
 
 const std::string StringStep::getValue(const int& element, const int& component)
+throw (XAO_Exception)
 {
     checkElementIndex(element);
     checkComponentIndex(component);
@@ -91,11 +92,13 @@ const std::string StringStep::getValue(const int& element, const int& component)
 }
 
 const std::string StringStep::getStringValue(const int& element, const int& component)
+throw (XAO_Exception)
 {
     return getValue(element, component);
 }
 
 void StringStep::setValues(const std::vector<std::string>& values)
+throw (XAO_Exception)
 {
     checkNbValues(values.size());
 
@@ -109,6 +112,7 @@ void StringStep::setValues(const std::vector<std::string>& values)
 }
 
 void StringStep::setElements(const int& element, const std::vector<std::string>& elements)
+throw (XAO_Exception)
 {
     checkElementIndex(element);
     checkNbComponents(elements.size());
@@ -118,6 +122,7 @@ void StringStep::setElements(const int& element, const std::vector<std::string>&
 }
 
 void StringStep::setComponents(const int& component, const std::vector<std::string>& components)
+throw (XAO_Exception)
 {
     checkElementIndex(component);
     checkNbElements(components.size());
@@ -127,6 +132,7 @@ void StringStep::setComponents(const int& component, const std::vector<std::stri
 }
 
 void StringStep::setValue(const int& element, const int& component, const std::string& value)
+throw (XAO_Exception)
 {
     checkElementIndex(element);
     checkComponentIndex(component);
@@ -135,6 +141,7 @@ void StringStep::setValue(const int& element, const int& component, const std::s
 }
 
 void StringStep::setStringValue(const int& element, const int& component, const std::string& value)
+throw (XAO_Exception)
 {
     setValue(element, component, value);
 }

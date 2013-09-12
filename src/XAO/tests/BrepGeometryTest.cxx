@@ -1,8 +1,8 @@
 #include <vector>
-#include <Utils_SALOME_Exception.hxx>
 
 #include "TestUtils.hxx"
 #include "BrepGeometryTest.hxx"
+#include "../XAO_XaoUtils.hxx"
 #include "../XAO_Xao.hxx"
 #include "../XAO_BrepGeometry.hxx"
 
@@ -104,32 +104,32 @@ void BrepGeometryTest::testGetNames()
     CPPUNIT_ASSERT_EQUAL(std::string(""), geom->findVertexName(id));
     geom->changeVertexName(id, std::string("va"));
     CPPUNIT_ASSERT_EQUAL(std::string("va"), geom->findVertexName(id));
-    CPPUNIT_ASSERT_THROW(geom->changeVertexName(100, "a"), SALOME_Exception);
-    CPPUNIT_ASSERT_THROW(geom->findVertexName(100), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(geom->changeVertexName(100, "a"), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(geom->findVertexName(100), XAO_Exception);
 
     // edge of index 1 has id = 8
     id = 8;
     CPPUNIT_ASSERT_EQUAL(std::string(""), geom->findEdgeName(id));
     geom->changeEdgeName(id, std::string("ea"));
     CPPUNIT_ASSERT_EQUAL(std::string("ea"), geom->findEdgeName(id));
-    CPPUNIT_ASSERT_THROW(geom->changeEdgeName(100, "a"), SALOME_Exception);
-    CPPUNIT_ASSERT_THROW(geom->findEdgeName(100), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(geom->changeEdgeName(100, "a"), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(geom->findEdgeName(100), XAO_Exception);
 
     // face of index 1 has id = 13
     id = 13;
     CPPUNIT_ASSERT_EQUAL(std::string(""), geom->findFaceName(id));
     geom->changeFaceName(id, std::string("fa"));
     CPPUNIT_ASSERT_EQUAL(std::string("fa"), geom->findFaceName(id));
-    CPPUNIT_ASSERT_THROW(geom->changeFaceName(100, "a"), SALOME_Exception);
-    CPPUNIT_ASSERT_THROW(geom->findFaceName(100), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(geom->changeFaceName(100, "a"), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(geom->findFaceName(100), XAO_Exception);
 
     // solid of index 0 has id = 1
     id = 1;
     CPPUNIT_ASSERT_EQUAL(std::string(""), geom->findSolidName(id));
     geom->changeSolidName(id, std::string("sa"));
     CPPUNIT_ASSERT_EQUAL(std::string("sa"), geom->findSolidName(id));
-    CPPUNIT_ASSERT_THROW(geom->changeSolidName(100, "a"), SALOME_Exception);
-    CPPUNIT_ASSERT_THROW(geom->findSolidName(100), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(geom->changeSolidName(100, "a"), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(geom->findSolidName(100), XAO_Exception);
 
     delete geom;
 }

@@ -18,8 +18,6 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-#include <Utils_SALOME_Exception.hxx>
-
 #include "XAO_IntegerField.hxx"
 #include "XAO_IntegerStep.hxx"
 #include "XAO_XaoUtils.hxx"
@@ -32,19 +30,22 @@ IntegerField::IntegerField(const std::string& name, const XAO::Dimension& dimens
 }
 
 Step* IntegerField::addNewStep(const int& step)
+throw (XAO_Exception)
 {
     return addStep(step, 0);
 }
 
 IntegerStep* IntegerField::addStep(const int& step)
+throw (XAO_Exception)
 {
     return addStep(step, 0);
 }
 
 IntegerStep* IntegerField::addStep(const int& step, const int& stamp)
+throw (XAO_Exception)
 {
     if (hasStep(step))
-        throw SALOME_Exception(MsgBuilder() << "Step with number " << step << "already exists.");
+        throw XAO_Exception(MsgBuilder() << "Step with number " << step << "already exists.");
 
     IntegerStep* bstep = new IntegerStep(step, stamp, m_nbElements, m_nbComponents);
     m_steps.push_back(bstep);
@@ -52,6 +53,7 @@ IntegerStep* IntegerField::addStep(const int& step, const int& stamp)
 }
 
 IntegerStep* IntegerField::getStep(const int& index)
+throw (XAO_Exception)
 {
     checkStepIndex(index);
     return (IntegerStep*)m_steps[index];

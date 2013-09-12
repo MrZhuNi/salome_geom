@@ -23,9 +23,11 @@
 
 #include <sstream>
 #include <string>
+#include <exception>
 
 #include "XAO_Xao.hxx"
-#include "XAO_Field.hxx"
+#include "XAO_Exception.hxx"
+
 
 namespace XAO
 {
@@ -47,82 +49,86 @@ namespace XAO
          * Converts a string into an integer.
          * \param value the string to convert.
          * \return the integer value.
+         * \throw XAO_Exception if value cannot be converted to string.
          */
-        static const int stringToInt(const std::string& value);
+        static const int stringToInt(const std::string& value) throw(XAO_Exception);
 
         /**
          * Converts a double into a string.
-         * @param value the double to convert.
-         * @return the string.
+         * \param value the double to convert.
+         * \return the string.
          */
         static const std::string doubleToString(const double& value);
         /**
          * Converts a string into a double.
-         * @param value the string to convert.
-         * @return the double value.
+         * \param value the string to convert.
+         * \return the double value.
+         * \throw XAO_Exception if value cannot be converted to string.
          */
-        static const double stringToDouble(const std::string& value);
+        static const double stringToDouble(const std::string& value) throw(XAO_Exception);
 
         /**
          * Converts a boolean into a string.
-         * @param value the boolean to convert.
-         * @return the string.
+         * \param value the boolean to convert.
+         * \return the string.
          */
         static const std::string booleanToString(const bool& value);
         /**
          * Converts a string into a boolean.
-         * @param value the string to convert.
-         * @return the boolean value.
+         * \param value the string to convert.
+         * \return the boolean value.
+         * \throw XAO_Exception if value cannot be converted to boolean.
+         * \note accepted values are "true", "1", "false", "0".
          */
-        static const bool stringToBoolean(const std::string& value);
+        static const bool stringToBoolean(const std::string& value) throw(XAO_Exception);
 
         /**
          * Converts a Dimension to string.
          * \param dimension the Dimension to convert.
          * \return the dimension as a string.
-         * \throw SALOME_Exception
+         * \throw XAO_Exception
          */
-        static const std::string dimensionToString(const XAO::Dimension& dimension);
+        static const std::string dimensionToString(const XAO::Dimension& dimension) throw(XAO_Exception);
 
         /**
          * Converts a string into a Dimension.
          * \param dimension the dimension as a string.
          * \return the converted Dimension.
-         * \throw SALOME_Exception
+         * \throw XAO_Exception if dimension cannot be converted.
          */
-        static const XAO::Dimension stringToDimension(const std::string& dimension);
+        static const XAO::Dimension stringToDimension(const std::string& dimension) throw(XAO_Exception);
 
         /**
          * Converts a Type to string.
          * \param type the Type to convert.
          * \return the Type as a string.
-         * \throw SALOME_Exception
+         * \throw XAO_Exception
          */
-        static const std::string fieldTypeToString(const XAO::Type& type);
+        static const std::string fieldTypeToString(const XAO::Type& type) throw(XAO_Exception);
 
         /**
          * Converts a string into a Type.
          * \param type the Type as a string.
          * \return the converted Type.
-         * \throw SALOME_Exception
+         * \throw XAO_Exception if type cannot be converted.
          */
-        static const XAO::Type stringToFieldType(const std::string& type);
+        static const XAO::Type stringToFieldType(const std::string& type) throw(XAO_Exception);
 
         /**
          * Converts a Format to string.
          * \param format the Format to convert.
          * \return the Format as a string.
-         * \throw SALOME_Exception
+         * \throw XAO_Exception
          */
-        static const std::string shapeFormatToString(const XAO::Format& format);
+        static const std::string shapeFormatToString(const XAO::Format& format) throw(XAO_Exception);
 
         /**
          * Converts a string into a Format.
          * \param format the Format as a string.
          * \return the converted Format.
-         * \throw SALOME_Exception
+         * \throw XAO_Exception if format cannot be converted.
          */
-        static const XAO::Format stringToShapeFormat(const std::string& format);
+        static const XAO::Format stringToShapeFormat(const std::string& format) throw(XAO_Exception);
     };
 
     /**

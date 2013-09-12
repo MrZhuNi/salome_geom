@@ -36,8 +36,6 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
 
-#include <Utils_SALOME_Exception.hxx>
-
 #include "XAO_BrepGeometry.hxx"
 #include "XAO_XaoUtils.hxx"
 
@@ -123,6 +121,7 @@ void BrepGeometry::initListIds(const TopAbs_ShapeEnum& shapeType, GeometricEleme
 }
 
 TopoDS_Shape BrepGeometry::getSubShape(const TopoDS_Shape& mainShape, const TopAbs_ShapeEnum& shapeType, const int& shapeIndex)
+throw (XAO_Exception)
 {
     TopTools_MapOfShape mapShape;
     TopTools_ListOfShape listShape;
@@ -147,7 +146,7 @@ TopoDS_Shape BrepGeometry::getSubShape(const TopoDS_Shape& mainShape, const TopA
         }
     }
 
-    throw SALOME_Exception(MsgBuilder() << "Shape with reference [" << shapeIndex << "]  not found.");
+    throw XAO_Exception(MsgBuilder() << "Shape with reference [" << shapeIndex << "]  not found.");
 }
 
 // -----------------------------
@@ -232,6 +231,7 @@ std::vector<int> BrepGeometry::getSolidFaces(const int& solidIndex, const int& s
 }
 
 void BrepGeometry::getVertexXYZ(const int& vertexIndex, double& xCoord, double& yCoord, double& zCoord)
+throw (XAO_Exception)
 {
     xCoord = 0.;
     yCoord = 0.;
@@ -239,7 +239,7 @@ void BrepGeometry::getVertexXYZ(const int& vertexIndex, double& xCoord, double& 
 
     TopoDS_Shape vertex = getSubShape(m_shape, TopAbs_VERTEX, vertexIndex);
     if (vertex.ShapeType() != TopAbs_VERTEX)
-        throw SALOME_Exception(MsgBuilder() << "Shape " << vertexIndex<< " is not a point.");
+        throw XAO_Exception(MsgBuilder() << "Shape " << vertexIndex<< " is not a point.");
 
     TopoDS_Vertex point = TopoDS::Vertex(vertex);
     if (!point.IsNull())
@@ -320,6 +320,7 @@ void BrepGeometry::setSolidID(const int& index, const int& id)
 
 // -----------------------------
 const int BrepGeometry::findElement(const XAO::Dimension& dim, const int& id)
+throw (XAO_Exception)
 {
     if (dim == XAO::VERTEX)
         return findVertex(id);
@@ -330,7 +331,7 @@ const int BrepGeometry::findElement(const XAO::Dimension& dim, const int& id)
     if (dim == XAO::SOLID)
         return findSolid(id);
 
-    throw SALOME_Exception(MsgBuilder() << "Unknown Dimension: " << dim);
+    throw XAO_Exception(MsgBuilder() << "Unknown Dimension: " << dim);
 }
 
 const int BrepGeometry::findVertex(const int& id)
@@ -376,21 +377,25 @@ const std::string BrepGeometry::findSolidName(const int& id)
 
 // -----------------------------
 void BrepGeometry::changeVertexName(const int& id, const std::string& name)
+throw (XAO_Exception)
 {
     setVertexName(findVertex(id), name);
 }
 
 void BrepGeometry::changeEdgeName(const int& id, const std::string& name)
+throw (XAO_Exception)
 {
     setEdgeName(findEdge(id), name);
 }
 
 void BrepGeometry::changeFaceName(const int& id, const std::string& name)
+throw (XAO_Exception)
 {
     setFaceName(findFace(id), name);
 }
 
 void BrepGeometry::changeSolidName(const int& id, const std::string& name)
+throw (XAO_Exception)
 {
     setSolidName(findSolid(id), name);
 }

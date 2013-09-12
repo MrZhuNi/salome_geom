@@ -18,10 +18,9 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-#include <Utils_SALOME_Exception.hxx>
-
 #include "TestUtils.hxx"
 #include "ImportExportTest.hxx"
+#include "../XAO_XaoUtils.hxx"
 #include "../XAO_Geometry.hxx"
 #include "../XAO_Group.hxx"
 #include "../XAO_Field.hxx"
@@ -116,7 +115,7 @@ void ImportExportTest::testGeometryError()
     xao.setGeometry(geom);
 
     geom->setCountVertices(2);
-    CPPUNIT_ASSERT_THROW(geom->setVertex(3, "v4", "4"), SALOME_Exception);
+    CPPUNIT_ASSERT_THROW(geom->setVertex(3, "v4", "4"), XAO_Exception);
 }
 
 void ImportExportTest::testImportXao()

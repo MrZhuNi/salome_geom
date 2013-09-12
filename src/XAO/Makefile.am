@@ -66,7 +66,6 @@ dist_libXAO_la_SOURCES = \
     XAO_XaoExporter.cxx
 
 libXAO_la_CPPFLAGS = \
-    $(GEOM_CXXFLAGS)                    \
     $(CAS_CPPFLAGS)                     \
     $(LIBXML_INCLUDES)                  \
     -I$(top_builddir)                   \
@@ -75,7 +74,5 @@ libXAO_la_CPPFLAGS = \
 libXAO_la_LDFLAGS = \
     $(CAS_LDPATH)                       \
     $(LIBXML_LIBS)                      \
-    $(KERNEL_LDFLAGS)                   \
-    $(GEOM_LDFLAGS)                     \
-    -lOpUtil -lTKBRep -lTKTopAlgo -lxml2
+    -lTKBRep -lTKTopAlgo -lxml2
 
