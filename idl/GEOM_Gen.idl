@@ -4018,9 +4018,8 @@ module GEOM
      *  \param fields The list of fields to export
      *  \param author The author of the export
      *  \param fileName The name of the file to export
-     *  \return boolean indicating if export was succeful.
+     *  \return boolean indicating if export was successful.
      */
-
      boolean ExportXAO(in GEOM_Object shape,
              in ListOfGO groups, in ListOfGO fields,
              in string author, in string fileName);
@@ -4029,13 +4028,13 @@ module GEOM
       *  Import a shape from XAO format
       *  \param xao The name of the file to import
       *  \param shape The imported shape
+      *  \param subShapes The list of imported subShapes
       *  \param groups The list of imported groups
       *  \param fields The list of imported fields
-      *  \return boolean indicating if import was succeful.
+      *  \return boolean indicating if import was successful.
       */
-
-      boolean ImportXAO(in string fileName,
-              out GEOM_Object shape, out ListOfGO groups, out ListOfGO fields);
+      boolean ImportXAO(in string fileName, out GEOM_Object shape,
+              out ListOfGO subShapes, out ListOfGO groups, out ListOfGO fields);
      
     /*@@ insert new functions before this line @@ do not remove this line @@*/
   };

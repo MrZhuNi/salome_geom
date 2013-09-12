@@ -45,6 +45,7 @@ public:
             const char* fileName);
     CORBA::Boolean ImportXAO (const char* fileName,
             GEOM::GEOM_Object_out shape,
+            GEOM::ListOfGO_out subShapes,
             GEOM::ListOfGO_out groups,
             GEOM::ListOfGO_out fields);
     /*@@ insert new functions before this line @@ do not remove this line @@*/

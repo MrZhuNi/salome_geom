@@ -113,28 +113,39 @@ CORBA::Boolean GEOM_IImportExportOperations_i::ExportXAO(GEOM::GEOM_Object_ptr s
 //=============================================================================
 CORBA::Boolean GEOM_IImportExportOperations_i::ImportXAO(const char* fileName,
         GEOM::GEOM_Object_out shape,
+        GEOM::ListOfGO_out subShapes,
         GEOM::ListOfGO_out groups,
         GEOM::ListOfGO_out fields)
 {
     GEOM::GEOM_Object_var vshape;
     shape = vshape._retn();
 
+    subShapes = new GEOM::ListOfGO;
     groups = new GEOM::ListOfGO;
     fields = new GEOM::ListOfGO;
 
     // Set a not done flag
     GetOperations()->SetNotDone();
 
+    Handle(TColStd_HSequenceOfTransient) importedSubShapes = new TColStd_HSequenceOfTransient();
     Handle(TColStd_HSequenceOfTransient) importedGroups = new TColStd_HSequenceOfTransient();
     Handle(TColStd_HSequenceOfTransient) importedFields = new TColStd_HSequenceOfTransient();
     Handle(GEOM_Object) hshape;
-    bool res = GetOperations()->ImportXAO(fileName, hshape, importedGroups, importedFields);
+    bool res = GetOperations()->ImportXAO(fileName, hshape, importedSubShapes, importedGroups, importedFields);
 
     if (!GetOperations()->IsDone() || !res)
         return false;
 
+    // parse fields
+    int n = importedSubShapes->Length();
+    subShapes->length(n);
+    for (int i = 1; i <= n; i++)
+    {
+        (*subShapes)[i - 1] = GetObject(Handle(GEOM_Object)::DownCast(importedSubShapes->Value(i)));
+    }
+
     // parse groups
-    int n = importedGroups->Length();
+    n = importedGroups->Length();
     groups->length(n);
     for (int i = 1; i <= n; i++)
     {

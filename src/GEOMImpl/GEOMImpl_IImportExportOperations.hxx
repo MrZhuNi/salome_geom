@@ -27,6 +27,7 @@
 #include "GEOM_Object.hxx"
 
 #include <XAO_Geometry.hxx>
+#include <XAO_BrepGeometry.hxx>
 
 class GEOMImpl_IShapesOperations;
 class GEOMImpl_IGroupOperations;
@@ -44,17 +45,24 @@ public:
             const char* fileName);
     Standard_EXPORT bool ImportXAO(const char* fileName,
             Handle(GEOM_Object)& shape,
-            Handle(TColStd_HSequenceOfTransient)& groupList,
-            Handle(TColStd_HSequenceOfTransient)& fieldList);
+            Handle(TColStd_HSequenceOfTransient)& subShapes,
+            Handle(TColStd_HSequenceOfTransient)& groups,
+            Handle(TColStd_HSequenceOfTransient)& fields);
     /*@@ insert new functions before this line @@ do not remove this line @@*/
 
 private:
     GEOMImpl_IShapesOperations* m_shapesOperations;
     GEOMImpl_IGroupOperations* m_groupOperations;
 
-    bool importSubShapes(XAO::Geometry* xaoGeometry,
-            Handle(GEOM_Function) function,
-            Handle(TColStd_HSequenceOfTransient)& fieldList, int shapeType, XAO::Dimension dim);
+    void importSubShapes(XAO::Geometry* xaoGeometry, Handle(GEOM_Function) function,
+            const int& shapeType, const XAO::Dimension& dim,
+            Handle(TColStd_HSequenceOfTransient)& subshapeList);
+    void exportSubshapes(const Handle(GEOM_Object)& shape, XAO::BrepGeometry* geometry);
+    void exportFields(std::list<Handle(GEOM_Object)> fieldList, XAO::Xao* xaoObject,
+            XAO::BrepGeometry* geometry);
+    void exportGroups(std::list<Handle(GEOM_Object)> groupList, XAO::Xao* xaoObject,
+            XAO::BrepGeometry* geometry);
+
 
 };
 #endif
