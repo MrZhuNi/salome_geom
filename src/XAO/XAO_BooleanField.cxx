@@ -46,7 +46,7 @@ BooleanStep* BooleanField::addStep(const int& step, const int& stamp)
 throw (XAO_Exception)
 {
     if (hasStep(step))
-        throw XAO_Exception(MsgBuilder() << "Step with number " << step << "already exists.");
+        throw XAO_Exception(MsgBuilder() << "Step with number " << step << " already exists.");
 
     BooleanStep* bstep = new BooleanStep(step, stamp, m_nbElements, m_nbComponents);
     m_steps.push_back(bstep);

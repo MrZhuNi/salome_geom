@@ -165,7 +165,7 @@ namespace XAO
          * @param number the numer of the step.
          * @return the new create step.
          */
-        virtual Step* addNewStep(const int& number) = 0;
+        virtual Step* addNewStep(const int& number) throw (XAO_Exception) = 0;
 
         /**
          * Remove a step.
