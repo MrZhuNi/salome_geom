@@ -11,14 +11,29 @@
 namespace XAO
 {
 
+    /**
+     * \class XAO_Exception
+     * Exception for XAO operations.
+     */
     class XAO_Exception : public std::exception
     {
     public:
+        /**
+         * Default constructor.
+         * @param message the exception message.
+         */
         XAO_Exception(const char* message) : m_message(message)
         {
         }
 
-        virtual const char* what() const throw () { return m_message; }
+        /**
+         * Returns the error message.
+         * @return the error message.
+         */
+        virtual const char* what() const throw ()
+        {
+            return m_message;
+        }
 
     private:
         const char* m_message;
