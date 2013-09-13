@@ -23,7 +23,7 @@
 
 SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo SKETCHER OCC2VTK GEOM	\
           BREPExport BREPImport IGESExport IGESImport STEPExport	\
-          STEPImport STLExport VTKExport ShHealOper XAO GEOMImpl GEOM_I	\
+          STEPImport STLExport VTKExport ShHealOper XAO XAO_Swig GEOMImpl GEOM_I	\
           GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
 
 if WITH_OPENCV

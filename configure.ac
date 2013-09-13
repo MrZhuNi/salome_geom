@@ -505,6 +505,7 @@ AC_OUTPUT([ \
   src/AdvancedGUI/Makefile \
   src/XAO/Makefile \
   src/XAO/tests/Makefile \
+  src/XAO_Swig/Makefile \
   src/ImportExportGUI/Makefile \
   src/ARCHIMEDE/Makefile \
   src/BREPExport/Makefile \

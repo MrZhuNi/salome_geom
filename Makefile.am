@@ -56,3 +56,6 @@ docs: usr_docs
 
 dev_docs:
 	(cd doc && $(MAKE) $(AM_MAKEFLAGS) dev_docs)
+	
+unittest:
+	( ./src/XAO/tests/TestXAO )
