@@ -18,13 +18,12 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-
 #ifndef __XAO_DOUBLESTEP_HXX__
 #define __XAO_DOUBLESTEP_HXX__
 
 #include <vector>
 
-#include "XAO_Xao.hxx"
+#include "XAO_XaoUtils.hxx"
 #include "XAO_Step.hxx"
 
 namespace XAO

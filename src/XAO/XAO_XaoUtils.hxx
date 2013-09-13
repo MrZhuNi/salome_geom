@@ -25,12 +25,43 @@
 #include <string>
 #include <exception>
 
-#include "XAO_Xao.hxx"
 #include "XAO_Exception.hxx"
 
 
 namespace XAO
 {
+    /**
+     * @enum Format
+     */
+    enum Format
+    {
+        BREP,
+        STEP
+    };
+
+    /**
+     * @enum Dimension
+     */
+    enum Dimension
+    {
+        VERTEX = 0,//!< VERTEX
+        EDGE = 1,  //!< EDGE
+        FACE = 2,  //!< FACE
+        SOLID = 3, //!< SOLID
+        WHOLE = -1 //!< WHOLE
+    };
+
+    /**
+     * @enum Type
+     */
+    enum Type
+    {
+        BOOLEAN = 0,//!< BOOLEAN
+        INTEGER = 1,//!< INTEGER
+        DOUBLE = 2, //!< DOUBLE
+        STRING = 3  //!< STRING
+    };
+
     /**
      * \class XaoUtils
      * Utilities class to convert types.

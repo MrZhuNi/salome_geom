@@ -23,7 +23,7 @@
 
 #include <string>
 
-#include "XAO_Xao.hxx"
+#include "XAO_XaoUtils.hxx"
 #include "XAO_Field.hxx"
 #include "XAO_StringStep.hxx"
 

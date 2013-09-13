@@ -18,14 +18,13 @@
 //
 // Author : Frederic Pons (OpenCascade)
 
-
 #ifndef __XAO_STRINGSTEP_HXX__
 #define __XAO_STRINGSTEP_HXX__
 
 #include <string>
 #include <vector>
 
-#include "XAO_Xao.hxx"
+#include "XAO_XaoUtils.hxx"
 #include "XAO_Step.hxx"
 
 namespace XAO

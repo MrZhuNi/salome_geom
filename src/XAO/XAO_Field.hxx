@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-#include "XAO_Xao.hxx"
+#include "XAO_XaoUtils.hxx"
 #include "XAO_Step.hxx"
 
 namespace XAO

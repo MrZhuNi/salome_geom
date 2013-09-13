@@ -24,7 +24,7 @@
 #include <string>
 #include <set>
 
-#include "XAO_Xao.hxx"
+#include "XAO_XaoUtils.hxx"
 
 namespace XAO
 {

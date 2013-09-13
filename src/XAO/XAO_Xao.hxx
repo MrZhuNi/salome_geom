@@ -24,42 +24,11 @@
 #include <string>
 #include <list>
 #include "XAO_Exception.hxx"
+#include "XAO_XaoUtils.hxx"
+#include "XAO_Geometry.hxx"
 
 namespace XAO
 {
-    /**
-     * @enum Format
-     */
-    enum Format
-    {
-        BREP,
-        STEP
-    };
-
-    /**
-     * @enum Dimension
-     */
-    enum Dimension
-    {
-        VERTEX = 0,//!< VERTEX
-        EDGE = 1,  //!< EDGE
-        FACE = 2,  //!< FACE
-        SOLID = 3, //!< SOLID
-        WHOLE = -1 //!< WHOLE
-    };
-
-    /**
-     * @enum Type
-     */
-    enum Type
-    {
-        BOOLEAN = 0,//!< BOOLEAN
-        INTEGER = 1,//!< INTEGER
-        DOUBLE = 2, //!< DOUBLE
-        STRING = 3  //!< STRING
-    };
-
-    class Geometry;
     class Group;
     class Field;
 
@@ -135,9 +104,12 @@ namespace XAO
          * Sets the geometry.
          * \param geometry the geometry to set.
          */
-        void setGeometry(Geometry* geometry)
+        void setGeometry(Geometry* geometry) throw (XAO_Exception)
         {
+            if (m_geometry != NULL)
+                throw XAO_Exception("Geometry already set.");
             m_geometry = geometry;
+            m_geometry->setReadOnly();
         }
 
         //

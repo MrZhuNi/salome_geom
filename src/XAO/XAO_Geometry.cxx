@@ -27,6 +27,7 @@ using namespace XAO;
 Geometry::Geometry(const std::string& name)
     : m_name(name)
 {
+    m_readOnly = false;
 }
 
 Geometry* Geometry::createGeometry(const XAO::Format& format)
@@ -46,6 +47,13 @@ throw (XAO_Exception)
 
 Geometry::~Geometry()
 {
+}
+
+void Geometry::checkReadOnly()
+throw (XAO_Exception)
+{
+    if (m_readOnly)
+        throw XAO_Exception("Geometry is read only.");
 }
 
 const int Geometry::countElements(const XAO::Dimension& dim) const
@@ -121,4 +129,67 @@ throw (XAO_Exception)
         return m_solids.end();
 
     throw XAO_Exception(MsgBuilder() << "Unknown dimension:" << dim);
+}
+
+void Geometry::setCountVertices(const int& nb) throw (XAO_Exception)
+{
+    checkReadOnly();
+    m_vertices.setSize(nb);
+}
+void Geometry::setCountEdges(const int& nb) throw (XAO_Exception)
+{
+    checkReadOnly();
+    m_edges.setSize(nb);
+}
+void Geometry::setCountFaces(const int& nb) throw (XAO_Exception)
+{
+    checkReadOnly();
+    m_faces.setSize(nb);
+}
+void Geometry::setCountSolids(const int& nb) throw (XAO_Exception)
+{
+    checkReadOnly();
+    m_solids.setSize(nb);
+}
+
+void Geometry::setVertexReference(const int& index, const std::string& reference) throw (XAO_Exception)
+{
+    checkReadOnly();
+    m_vertices.setReference(index, reference);
+}
+void Geometry::setEdgeReference(const int& index, const std::string& reference) throw (XAO_Exception)
+{
+    checkReadOnly();
+    m_edges.setReference(index, reference);
+}
+void Geometry::setFaceReference(const int& index, const std::string& reference) throw (XAO_Exception)
+{
+    checkReadOnly();
+    m_faces.setReference(index, reference);
+}
+void Geometry::setSolidReference(const int& index, const std::string& reference) throw (XAO_Exception)
+{
+    checkReadOnly();
+    m_solids.setReference(index, reference);
+}
+
+void Geometry::setVertex(const int& index, const std::string& name, const std::string& reference) throw (XAO_Exception)
+{
+    checkReadOnly();
+    m_vertices.setElement(index, name, reference);
+}
+void Geometry::setEdge(const int& index, const std::string& name, const std::string& reference) throw (XAO_Exception)
+{
+    checkReadOnly();
+    m_edges.setElement(index, name, reference);
+}
+void Geometry::setFace(const int& index, const std::string& name, const std::string& reference) throw (XAO_Exception)
+{
+    checkReadOnly();
+    m_faces.setElement(index, name, reference);
+}
+void Geometry::setSolid(const int& index, const std::string& name, const std::string& reference) throw (XAO_Exception)
+{
+    checkReadOnly();
+    m_solids.setElement(index, name, reference);
 }

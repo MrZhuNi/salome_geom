@@ -26,7 +26,7 @@
 
 #include <TopoDS_Shape.hxx>
 
-#include "XAO_Xao.hxx"
+#include "XAO_XaoUtils.hxx"
 #include "XAO_Geometry.hxx"
 
 namespace XAO

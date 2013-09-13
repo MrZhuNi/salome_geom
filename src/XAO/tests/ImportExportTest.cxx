@@ -55,7 +55,7 @@ void ImportExportTest::testExportGeometry()
     Xao xao("me", "1.0");
     Geometry* geom = Geometry::createGeometry(XAO::BREP);
     geom->setName("mygeom");
-    xao.setGeometry(geom);
+    CPPUNIT_ASSERT_EQUAL(false, geom->isReadOnly());
 
     // add elements
     geom->setCountVertices(4);
@@ -75,6 +75,9 @@ void ImportExportTest::testExportGeometry()
 
     geom->setCountSolids(1);
     geom->setSolid(0, "s1", "10");
+
+    xao.setGeometry(geom);
+    CPPUNIT_ASSERT_EQUAL(true, geom->isReadOnly());
 
     // groups
     Group* group = xao.addGroup(XAO::SOLID);
@@ -109,19 +112,26 @@ void ImportExportTest::testExportGeometry()
 
 void ImportExportTest::testGeometryError()
 {
-    Xao xao("me", "1.0");
     Geometry* geom = Geometry::createGeometry(XAO::BREP);
     geom->setName("mygeom");
-    xao.setGeometry(geom);
-
     geom->setCountVertices(2);
     CPPUNIT_ASSERT_THROW(geom->setVertex(3, "v4", "4"), XAO_Exception);
+    delete geom;
 }
 
 void ImportExportTest::testImportXao()
 {
     Xao xao;
     xao.importXAO(TestUtils::getTestFilePath("test.xao"));
+    checkImport(xao);
+}
+
+void ImportExportTest::testImportXaoFromText()
+{
+    char* txt = TestUtils::readTextFile(TestUtils::getTestFilePath("test.xao"));
+
+    Xao xao;
+    xao.setXML(txt);
     checkImport(xao);
 }
 
@@ -174,13 +184,4 @@ void ImportExportTest::checkImport(Xao& xao)
     CPPUNIT_ASSERT_EQUAL(XAO::FACE, group->getDimension());
     CPPUNIT_ASSERT_EQUAL(0, group->get(0));
     CPPUNIT_ASSERT_EQUAL(1, group->get(1));
-}
-
-void ImportExportTest::testImportXaoFromText()
-{
-    char* txt = TestUtils::readTextFile(TestUtils::getTestFilePath("test.xao"));
-
-    Xao xao;
-    xao.setXML(txt);
-    checkImport(xao);
 }
