@@ -733,7 +733,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
 #endif
         GeometryGUI::getTexture( study, textureId, aWidth, aHeight );
       if ( !aTexture.IsNull() ) {
-#if OCC_VERSION_LARGE > 0x06050500 // Porting to OCCT higher 6.5.5 version
+#if OCC_VERSION_LARGE > 0x06060000 // Porting to OCCT higher 6.6.0 version
         Handle(Prs3d_PointAspect) aTextureAspect =
           new Prs3d_PointAspect( HasColor() ? 
 				 // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
