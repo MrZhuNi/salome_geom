@@ -26,6 +26,7 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
+#include <XAO_Xao.hxx>
 #include <XAO_Geometry.hxx>
 #include <XAO_BrepGeometry.hxx>
 
