@@ -39,9 +39,9 @@ namespace XAO
          * Constructor.
          * @param dim the dimension of the group.
          * @param nbElements the number of geometrical elements for the dimension in the geometry.
-         * @param the name of the group.
+         * @param name the name of the group.
          */
-        Group(const XAO::Dimension& dim, const int& nbelements, const std::string& name = std::string(""))
+        Group(const XAO::Dimension& dim, const int& nbElements, const std::string& name = std::string(""))
         throw (XAO_Exception);
 
         /**

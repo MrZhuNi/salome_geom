@@ -43,7 +43,7 @@ namespace XAO
          * @param nbComponents the number of components.
          * @param name the name of the field.
          */
-        DoubleField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponentsconst, const std::string& name);
+        DoubleField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents, const std::string& name);
 
         virtual const XAO::Type getType() { return XAO::DOUBLE; }
 
