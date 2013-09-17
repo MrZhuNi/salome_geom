@@ -43,7 +43,7 @@ _xao_swig_la_CPPFLAGS = \
 	-I$(srcdir)/../XAO \
 	-I$(top_builddir)/idl
 
-_xao_swig_la_LDFLAGS = -module
+_xao_swig_la_LDFLAGS = -module $(PYTHON_LIBS)
 _xao_swig_la_LIBADD  = \
 	../XAO/libXAO.la
 

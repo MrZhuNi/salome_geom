@@ -24,6 +24,7 @@
 %include "std_list.i"
 %include "std_map.i"
 %include "std_set.i"
+%include "exception.i"
 namespace std
 {
 %template(ListGroup)    list<XAO::Group*>;
@@ -63,3 +64,4 @@ namespace std
 %include XAO_Geometry.hxx
 %include XAO_BrepGeometry.hxx
 %include XAO_Xao.hxx
+

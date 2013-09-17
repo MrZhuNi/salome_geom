@@ -1,28 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 
+# Copyright (C) 2013  CEA/DEN, EDF R&D
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+
 from xao_swig import *
-
-#from xao_swig import BOOLEAN, INTEGER, DOUBLE, STRING
-#from xao_swig import VERTEX, EDGE, FACE, SOLID, WHOLE
-#from xao_swig import BREP, STEP
-
-#from xao_swig import VectorBoolean, VectorDouble, VectorInteger, VectorString, VectorStep
-#from xao_swig import VectorVectorBoolean, VectorVectorDouble, VectorVectorInteger, VectorVectorString
-#from xao_swig import ListField, ListGroup, SetInt
-
-#from xao_swig import Field, BooleanField, IntegerField, DoubleField, StringField
-#from xao_swig import Step, BooleanStep, IntegerStep, DoubleStep, StringStep
-#from xao_swig import Xao, Group, Geometry, GeometricElement
-
-#from xao_swig import XAO_Exception
-
-#from xao_swig import BrepGeometry as _BrepGeometry
-
-#class BrepGeometry(_BrepGeometry):
-#    def setShape(self, shape):
-#        if shape is not None and 'GetShapeStream' in dir(shape):
-#            _BrepGeometry.setShape(self, shape.GetShapeStream())
-#        else:
-#            raise XAO_Exception("toto")
-
