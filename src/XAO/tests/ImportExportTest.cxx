@@ -90,7 +90,7 @@ void ImportExportTest::testExportGeometry()
     group->add(1);
 
     // fields
-    IntegerField* field = (IntegerField*)xao.addField(XAO::INTEGER, "color", XAO::FACE, 2);
+    IntegerField* field = (IntegerField*)xao.addField(XAO::INTEGER, XAO::FACE, 2, "color");
     for (int stepIndex = 0; stepIndex < 10; ++stepIndex)
     {
         IntegerStep* istep = field->addStep(stepIndex, 100*stepIndex);

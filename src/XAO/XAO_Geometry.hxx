@@ -43,6 +43,7 @@ namespace XAO
         Geometry(const std::string& name);
 
     public:
+
         /**
          * Creates a geometry.
          * @param format the format of the geometry.
@@ -60,7 +61,7 @@ namespace XAO
         throw (XAO_Exception);
 
         /** Destructor. */
-        ~Geometry();
+        virtual ~Geometry();
 
         /**
          * Gets the name of the geometry.
@@ -85,8 +86,8 @@ namespace XAO
          */
         virtual const XAO::Format getFormat() = 0;
 
-        virtual const std::string getShape() = 0;
-        virtual void setShape(const std::string& shape) = 0;
+        virtual const std::string getShapeString() = 0;
+        virtual void setShapeString(const std::string& shape) = 0;
 
         const int countElements(const XAO::Dimension& dim) const throw (XAO_Exception);
         const int countVertices() const { return m_vertices.getSize(); }

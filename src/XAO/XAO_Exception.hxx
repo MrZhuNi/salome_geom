@@ -38,6 +38,8 @@ namespace XAO
         {
         }
 
+        virtual ~XAO_Exception() throw() {};
+
         /**
          * Returns the error message.
          * @return the error message.
@@ -46,6 +48,16 @@ namespace XAO
         {
             return m_message;
         }
+
+#ifdef SWIG
+        %extend
+        {
+          std::string __str__() const
+            {
+              return std::string(self->what());
+            }
+        }
+#endif
 
     private:
         const char* m_message;

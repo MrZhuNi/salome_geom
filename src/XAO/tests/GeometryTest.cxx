@@ -117,7 +117,7 @@ void GeometryTest::testSetElement()
     CPPUNIT_ASSERT_THROW(geom->setVertexName(0, "aa"), XAO_Exception);
 
     char* txt = TestUtils::readTextFile(TestUtils::getTestFilePath("Box_1.brep"));
-    geom->setShape(txt);
+    geom->setShapeString(txt);
 
     CPPUNIT_ASSERT_EQUAL(false, geom->hasVertexName(0));
     geom->setVertexName(0, "va");

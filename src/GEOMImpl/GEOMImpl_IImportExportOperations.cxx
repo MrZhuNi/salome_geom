@@ -154,7 +154,7 @@ void GEOMImpl_IImportExportOperations::exportGroups(std::list<Handle(GEOM_Object
 
         TopAbs_ShapeEnum shapeGroup = m_groupOperations->GetType(currGroup);
         XAO::Dimension dim = shapeEnumToDimension(shapeGroup);
-        XAO::Group* group = xaoObject->addGroup(currGroup->GetName(), dim);
+        XAO::Group* group = xaoObject->addGroup(dim, currGroup->GetName());
 
         switch (shapeGroup)
         {

@@ -200,7 +200,7 @@ void XaoExporter::exportGeometry(Geometry* xaoGeometry, xmlDocPtr doc, xmlNodePt
 
     xmlNodePtr shape = xmlNewChild(geometry, 0, C_TAG_SHAPE, 0);
     xmlNewProp(shape, C_ATTR_SHAPE_FORMAT, BAD_CAST XaoUtils::shapeFormatToString(xaoGeometry->getFormat()).c_str());
-    std::string txtShape = xaoGeometry->getShape();
+    std::string txtShape = xaoGeometry->getShapeString();
     xmlNodePtr cdata = xmlNewCDataBlock(doc, BAD_CAST txtShape.c_str(), txtShape.size());
     xmlAddChild(shape, cdata);
 
@@ -386,7 +386,7 @@ void XaoExporter::parseShapeNode(xmlDocPtr doc, xmlNodePtr shapeNode, Geometry* 
         xmlChar* data = xmlNodeGetContent(shapeNode->children);
         if (data == NULL)
             throw XAO_Exception("Missing BREP");
-        geometry->setShape((char*)data);
+        geometry->setShapeString((char*)data);
         xmlFree(data);
     }
     else

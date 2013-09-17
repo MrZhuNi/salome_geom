@@ -23,7 +23,7 @@ void BrepGeometryTest::cleanUp()
 void readBrep(Geometry* geom, const std::string& fileName)
 {
     char* txt = TestUtils::readTextFile(TestUtils::getTestFilePath(fileName));
-    geom->setShape(txt);
+    geom->setShapeString(txt);
 }
 
 void BrepGeometryTest::testGetIDs()

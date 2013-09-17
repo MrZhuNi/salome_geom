@@ -38,12 +38,12 @@ namespace XAO
     public:
         /**
          * Constructor.
-         * @param name the name of the field.
          * @param dimension the dimension of the field.
          * @param nbElements the number of elements.
          * @param nbComponents the number of components.
+         * @param name the name of the field.
          */
-        StringField(const std::string& name, const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents);
+        StringField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents, const std::string& name);
 
         virtual const XAO::Type getType() { return XAO::STRING; }
 

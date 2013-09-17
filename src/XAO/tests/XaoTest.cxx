@@ -33,15 +33,19 @@ void XaoTest::testGroups()
     CPPUNIT_ASSERT_EQUAL(XAO::FACE, gr->getDimension());
     CPPUNIT_ASSERT_EQUAL(1, obj.countGroups());
     Group* gr2 = obj.addGroup(XAO::FACE);
+    gr2->setName("AA");
 
     Group* agr = obj.getGroup(0);
     CPPUNIT_ASSERT(gr == agr);
     CPPUNIT_ASSERT_THROW(obj.getGroup(10), XAO_Exception);
 
     CPPUNIT_ASSERT_EQUAL(true, obj.removeGroup(gr2));
-    CPPUNIT_ASSERT(gr2 != NULL);
     CPPUNIT_ASSERT_EQUAL(1, obj.countGroups());
-    CPPUNIT_ASSERT_EQUAL(false, obj.removeGroup(gr2)); // remove again
+
+    // remove other group
+    Group* gr3 = new Group(XAO::FACE, 3);
+    CPPUNIT_ASSERT_EQUAL(false, obj.removeGroup(gr3));
+    delete gr3;
 }
 
 void XaoTest::testFields()
@@ -64,7 +68,10 @@ void XaoTest::testFields()
     CPPUNIT_ASSERT_THROW(obj.getField(10), XAO_Exception);
 
     CPPUNIT_ASSERT_EQUAL(true, obj.removeField(fb));
-    CPPUNIT_ASSERT(fb != NULL);
     CPPUNIT_ASSERT_EQUAL(3, obj.countFields());
-    CPPUNIT_ASSERT_EQUAL(false, obj.removeField(fb)); // remove again
+
+
+    Field* ff = Field::createField(XAO::INTEGER, XAO::FACE, 3, 3);
+    CPPUNIT_ASSERT_EQUAL(false, obj.removeField(ff));
+    delete ff;
 }

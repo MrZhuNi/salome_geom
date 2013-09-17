@@ -33,8 +33,8 @@ using namespace XAO;
 
 // -------------------------------------------------------
 
-Field::Field(const std::string& name, const XAO::Dimension& dimension,
-        const int& nbElements, const int& nbComponents)
+Field::Field(const XAO::Dimension& dimension,
+        const int& nbElements, const int& nbComponents, const std::string& name)
     : m_name(name), m_dimension(dimension), m_nbElements(nbElements), m_nbComponents(nbComponents)
 {
     m_components.reserve(nbComponents);
@@ -49,24 +49,17 @@ Field::~Field()
 }
 
 Field* Field::createField(const XAO::Type& type, const XAO::Dimension& dimension,
-        const int& nbElements, const int& nbComponents)
-throw (XAO_Exception)
-{
-    return createField(type, "", dimension, nbElements, nbComponents);
-}
-
-Field* Field::createField(const XAO::Type& type, const std::string& name, const XAO::Dimension& dimension,
-        const int& nbElements, const int& nbComponents)
+        const int& nbElements, const int& nbComponents, const std::string& name)
 throw (XAO_Exception)
 {
     if (type == XAO::BOOLEAN)
-        return new BooleanField(name, dimension, nbElements, nbComponents);
+        return new BooleanField(dimension, nbElements, nbComponents, name);
     if (type == XAO::INTEGER)
-        return new IntegerField(name, dimension, nbElements, nbComponents);
+        return new IntegerField(dimension, nbElements, nbComponents, name);
     if (type == XAO::DOUBLE)
-        return new DoubleField(name, dimension, nbElements, nbComponents);
+        return new DoubleField(dimension, nbElements, nbComponents, name);
     if (type == XAO::STRING)
-        return new StringField(name, dimension, nbElements, nbComponents);
+        return new StringField(dimension, nbElements, nbComponents, name);
 
     throw XAO_Exception(MsgBuilder() << "Bad Type: " << type);
 }
@@ -121,7 +114,7 @@ throw (XAO_Exception)
         return;
 
     throw XAO_Exception(MsgBuilder() << "Step index is out of range [0, "
-                                     << m_nbComponents << "]: " << component);
+                                     << m_nbComponents-1 << "]: " << component);
 }
 
 void Field::checkStepIndex(const int& step)
@@ -131,5 +124,5 @@ throw (XAO_Exception)
         return;
 
     throw XAO_Exception(MsgBuilder() << "Step index is out of range [0, "
-                                     << m_steps.size() << "]: " << step);
+                                     << m_steps.size()-1 << "]: " << step);
 }

@@ -24,19 +24,7 @@
 using namespace XAO;
 
 
-Group::Group(const XAO::Dimension& dim, const int& nbElements)
-throw (XAO_Exception)
-{
-    initGroup("", dim, nbElements);
-}
-
-Group::Group(const std::string& name, const XAO::Dimension& dim, const int& nbElements)
-throw (XAO_Exception)
-{
-    initGroup(name, dim, nbElements);
-}
-
-void Group::initGroup(const std::string& name, const XAO::Dimension& dim, const int& nbElements)
+Group::Group(const XAO::Dimension& dim, const int& nbElements, const std::string& name)
 throw (XAO_Exception)
 {
     if (dim == XAO::WHOLE)

@@ -130,16 +130,10 @@ namespace XAO
         /**
          * Adds a group.
          * \param dim the dimension of the group.
-         * \return the created group.
-         */
-        Group* addGroup(const XAO::Dimension& dim) throw (XAO_Exception);
-        /**
-         * Adds a group.
          * \param name the name of the group.
-         * \param dim the dimension of the group.
          * \return the created group.
          */
-        Group* addGroup(const std::string& name, const XAO::Dimension& dim) throw (XAO_Exception);
+        Group* addGroup(const XAO::Dimension& dim, const std::string& name = std::string("")) throw (XAO_Exception);
         /**
          * Removes a group.
          * \param group the group to remove.
@@ -162,25 +156,19 @@ namespace XAO
          * \return the field.
          */
         Field* getField(const int& index) throw (XAO_Exception);
+
         /**
          * Adds a field.
          * \param type the type of the field.
          * \param dim the dimension of the field.
          * \param nbComponents the number of components in the field.
-         * \return the created field.
-         */
-        Field* addField(const XAO::Type& type, const XAO::Dimension& dim, const int& nbComponents)
-        throw (XAO_Exception);
-        /**
-         * Adds a field.
-         * \param type the type of the field.
          * \param name the name of the field.
-         * \param dim the dimension of the field.
-         * \param nbComponents the number of components in the field.
          * \return the created field.
          */
-        Field* addField(const XAO::Type& type, const std::string& name, const XAO::Dimension& dim, const int& nbComponents)
+        Field* addField(const XAO::Type& type, const XAO::Dimension& dim, const int& nbComponents,
+                const std::string& name = std::string(""))
         throw (XAO_Exception);
+
         /**
          * Removes a field.
          * \param field the field to remove.

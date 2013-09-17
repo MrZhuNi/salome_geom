@@ -71,7 +71,8 @@ throw (XAO_Exception)
     if (m_count >= 0 && index < m_count)
         return;
 
-    throw XAO_Exception(MsgBuilder() << "Index of element is out of range [0, " << m_count<< "]: " << index);
+    throw XAO_Exception(MsgBuilder() << "Index of element is out of range [0, "
+                                     << m_count-1 << "]: " << index);
 }
 
 void GeometricElementList::setElement(const int& index, const std::string& name, const std::string& reference)

@@ -39,16 +39,10 @@ namespace XAO
          * Constructor.
          * @param dim the dimension of the group.
          * @param nbElements the number of geometrical elements for the dimension in the geometry.
+         * @param the name of the group.
          */
-        Group(const XAO::Dimension& dim, const int& nbElements) throw (XAO_Exception);
-
-        /**
-         * Constructor.
-         * @name the name of the group.
-         * @param dim the dimension of the group.
-         * @param nbElements the number of geometrical elements for the dimension in the geometry.
-         */
-        Group(const std::string& name, const XAO::Dimension& dim, const int& nbelements) throw (XAO_Exception);
+        Group(const XAO::Dimension& dim, const int& nbelements, const std::string& name = std::string(""))
+        throw (XAO_Exception);
 
         /**
          * Destructor.
@@ -138,15 +132,6 @@ namespace XAO
         std::set<int>::iterator end() { return m_elements.end(); }
 
     private:
-        /**
-         * Initialize the groups.
-         * @param name the name of the group.
-         * @param dim the dimension of the group.
-         * @param nbElements the number of elements in the geometry for the dimension.
-         */
-        void initGroup(const std::string& name, const XAO::Dimension& dim, const int& nbElements)
-        throw (XAO_Exception);
-
         /**
          * Ensures that the given element is valid.
          * @param element

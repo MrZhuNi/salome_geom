@@ -40,39 +40,28 @@ namespace XAO
     protected:
         /**
          * Constructor.
-         * @param name the name of the field.
          * @param dimension the dimension ot the field.
          * @param nbElements the number of elements.
          * @param nbComponents the number of components.
+         * @param name the name of the field.
          */
-        Field(const std::string& name, const XAO::Dimension& dimension,
-              const int& nbElements, const int& nbComponents);
+        Field(const XAO::Dimension& dimension,
+              const int& nbElements, const int& nbComponents, const std::string& name);
 
     public:
         /**
+        /**
          * Creates a Field of the given type.
          * @param type the type of the field to create.
          * @param dimension the dimension.
          * @param nbElements the number of geometrical elements.
          * @param nbComponents the number of components.
+         * @name the name of the field.
          * @return the created field.
          */
         static Field* createField(const XAO::Type& type, const XAO::Dimension& dimension,
-                                  const int& nbElements, const int& nbComponents)
-        throw (XAO_Exception);
-
-        /**
-        /**
-         * Creates a Field of the given type.
-         * @param type the type of the field to create.
-         * @name the name of the field.
-         * @param dimension the dimension.
-         * @param nbElements the number of geometrical elements.
-         * @param nbComponents the number of components.
-         * @return the created field.
-         */
-        static Field* createField(const XAO::Type& type, const std::string& name, const XAO::Dimension& dimension,
-                                  const int& nbElements, const int& nbComponents)
+                                  const int& nbElements, const int& nbComponents,
+                                  const std::string& name = std::string(""))
         throw (XAO_Exception);
 
         /**

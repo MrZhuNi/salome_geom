@@ -49,6 +49,8 @@ namespace XAO
          */
         BrepGeometry(const std::string& name);
 
+        virtual ~BrepGeometry() {}
+
         /**
          * Gets the format of the geometry.
          * @return the format of the geometry.
@@ -59,13 +61,23 @@ namespace XAO
          * Gets the shape as a string.
          * @return the shape as a string.
          */
-        virtual const std::string getShape();
+        virtual const std::string getShapeString();
 
         /**
          * Sets the shape from a string.
          * @param shape the shape as a string.
          */
-        virtual void setShape(const std::string& shape);
+        virtual void setShapeString(const std::string& shape);
+
+#ifdef SWIG
+        %pythoncode %{
+        def setShape(self, shape):
+            if shape is not None and 'GetShapeStream' in dir(shape):
+                self.setShapeString(shape.GetShapeStream())
+            else:
+                raise XAO_Exception("Cannot set shape")
+        %}
+#endif
 
         /**
          * Gets the shape as a TopoDS_Shape.

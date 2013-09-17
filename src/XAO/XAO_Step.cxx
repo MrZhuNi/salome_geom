@@ -35,7 +35,7 @@ throw (XAO_Exception)
         return;
 
     throw XAO_Exception(MsgBuilder() << "Element index is out of range [0, "
-                                        << m_nbElements-1 << "]: " << element);
+                                     << m_nbElements-1 << "]: " << element);
 }
 
 void Step::checkComponentIndex(const int& component)
@@ -45,7 +45,7 @@ throw (XAO_Exception)
         return;
 
     throw XAO_Exception(MsgBuilder() << "Component index is out of range [0, "
-                                        << m_nbComponents-1 << "]: " << component);
+                                     << m_nbComponents-1 << "]: " << component);
 }
 
 void Step::checkNbElements(const int& nbElements)

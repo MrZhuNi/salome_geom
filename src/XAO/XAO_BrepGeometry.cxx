@@ -49,7 +49,7 @@ BrepGeometry::BrepGeometry(const std::string& name) : Geometry(name)
 {
 }
 
-const std::string BrepGeometry::getShape()
+const std::string BrepGeometry::getShapeString()
 {
     std::ostringstream streamShape;
     BRepTools::Write(m_shape, streamShape);
@@ -59,7 +59,7 @@ const std::string BrepGeometry::getShape()
     return res;
 }
 
-void BrepGeometry::setShape(const std::string& shape)
+void BrepGeometry::setShapeString(const std::string& shape)
 {
     std::istringstream streamBrep(shape.c_str());
     BRep_Builder builder;

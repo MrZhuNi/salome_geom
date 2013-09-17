@@ -174,6 +174,7 @@ namespace XAO
         /** Destructor. */
         ~MsgBuilder() {};
 
+#ifndef SWIG
         /** Stream operator. */
         template <typename T>
         MsgBuilder& operator <<(const T& t)
@@ -186,6 +187,7 @@ namespace XAO
          * Conversion operator to char*.
          */
         operator const char*() const   { return m_stream.str().c_str(); }
+#endif
 
     private :
         std::stringstream m_stream;
