@@ -9085,15 +9085,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def ExportXAO(self, shape, groups, fields, author, fileName):
             res = self.ImpExpOp.ExportXAO(shape, groups, fields, author, fileName)
             RaiseIfFailed("ExportXAO", self.ImpExpOp)
-            #if Parameters: anObj.SetParameters(Parameters)
             return res
 
         ## Import a shape from XAO format
         #  @param shape Shape to export
         #  @param fileName The name of the file to import
-        #  @return tuple (res, shape, groups, fields)
-        #       res Flag indicating if the import was succeful
+        #  @return tuple (res, shape, subShapes, groups, fields)
+        #       res Flag indicating if the import was successful
         #       shape The imported shape
+        #       subShapes The list of imported subShapes
         #       groups The list of imported groups
         #       fields The list of imported fields
         #
@@ -9101,7 +9101,6 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def ImportXAO(self, fileName):
             res = self.ImpExpOp.ImportXAO(fileName)
             RaiseIfFailed("ImportXAO", self.ImpExpOp)
-            #if Parameters: anObj.SetParameters(Parameters)
             return res
 
         #@@ insert new functions before this line @@ do not remove this line @@#
