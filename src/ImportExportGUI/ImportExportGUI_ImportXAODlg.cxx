@@ -214,10 +214,10 @@ bool ImportExportGUI_ImportXAODlg::execute(ObjectList& objects)
 
     QString fileName = ledFileName->text();
     GEOM::GEOM_Object_var shape;
-    GEOM::ListOfGO_var groups, fields;
+    GEOM::ListOfGO_var groups, fields, subShapes;
 
     GEOM::GEOM_IImportExportOperations_var ieOp = GEOM::GEOM_IImportExportOperations::_narrow(getOperation());
-    res = ieOp->ImportXAO(fileName.toStdString().c_str(), shape, groups, fields);
+    res = ieOp->ImportXAO(fileName.toStdString().c_str(), shape, subShapes, groups, fields);
 
     if (!shape->_is_nil())
     {
@@ -229,6 +229,10 @@ bool ImportExportGUI_ImportXAODlg::execute(ObjectList& objects)
         m_mainShape = NULL;
     }
 
+    for (int i = 0; i < subShapes->length(); i++)
+    {
+        objects.push_back(GEOM::GEOM_Object::_duplicate(subShapes[i]));
+    }
     for (int i = 0; i < groups->length(); i++)
     {
         objects.push_back(GEOM::GEOM_Object::_duplicate(groups[i]));
