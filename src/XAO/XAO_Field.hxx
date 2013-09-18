@@ -150,6 +150,12 @@ namespace XAO
         void setComponentName(const int& componentIndex, const std::string& name) throw (XAO_Exception);
 
         /**
+         * Sets the name of the components.
+         * @param names the names to set.
+         */
+        void setComponentsNames(const std::vector<std::string>& names) throw (XAO_Exception);
+
+        /**
          * Adds a new step of the same type than the field.
          * @param number the numer of the step.
          * @return the new create step.

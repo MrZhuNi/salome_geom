@@ -24,6 +24,7 @@ namespace XAO
         CPPUNIT_TEST(testIntegerStepValues);
         CPPUNIT_TEST(testDoubleStepValues);
         CPPUNIT_TEST(testStringStepValues);
+        CPPUNIT_TEST(testSetComponents);
         CPPUNIT_TEST_SUITE_END();
 
     public:
@@ -47,6 +48,7 @@ namespace XAO
         void testIntegerStepValues();
         void testDoubleStepValues();
         void testStringStepValues();
+        void testSetComponents();
     };
 }
 

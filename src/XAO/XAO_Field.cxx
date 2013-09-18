@@ -78,6 +78,16 @@ throw (XAO_Exception)
     m_components[index] = name;
 }
 
+void Field::setComponentsNames(const std::vector<std::string>& names)
+throw (XAO_Exception)
+{
+    for (int i = 0; i < names.size(); ++i)
+    {
+        if (i < m_nbComponents)
+            m_components[i] = names[i];
+    }
+}
+
 bool Field::removeStep(Step* step)
 {
     std::vector<Step*>::iterator it = m_steps.begin();
