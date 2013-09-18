@@ -43,6 +43,11 @@ namespace std
 %template(VectorVectorString)   vector< vector<string> >;
 }
 
+%ignore XAO::Xao::addField;
+%ignore XAO::Xao::getField;
+%ignore XAO::MsgBuilder;
+%ignore XAO::XaoUtils;
+
 %include XAO_Exception.hxx
 %include XAO_XaoUtils.hxx
 
