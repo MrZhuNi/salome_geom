@@ -31,6 +31,10 @@ namespace XAO
 {
     class Group;
     class Field;
+    class IntegerField;
+    class DoubleField;
+    class BooleanField;
+    class StringField;
 
     /**
      * @class Xao
@@ -150,12 +154,25 @@ namespace XAO
          * \return the number of fields.
          */
         const int countFields() const;
+
+        /**
+         * Gets the type of a field.
+         * \param index the index of the wanted field.
+         * \return the type of the field.
+         */
+        const XAO::Type getFieldType(const int& index) throw (XAO_Exception);
+
         /**
          * Gets a field.
          * \param index the index of the wanted field.
          * \return the field.
          */
         Field* getField(const int& index) throw (XAO_Exception);
+
+        BooleanField* getBooleanField(const int& index) throw (XAO_Exception);
+        DoubleField* getDoubleField(const int& index) throw (XAO_Exception);
+        IntegerField* getIntegerField(const int& index) throw (XAO_Exception);
+        StringField* getStringField(const int& index) throw (XAO_Exception);
 
         /**
          * Adds a field.
@@ -168,6 +185,15 @@ namespace XAO
         Field* addField(const XAO::Type& type, const XAO::Dimension& dim, const int& nbComponents,
                 const std::string& name = std::string(""))
         throw (XAO_Exception);
+
+        BooleanField* addBooleanField(const XAO::Dimension& dim, const int& nbComponents,
+                const std::string& name = std::string("")) throw (XAO_Exception);
+        IntegerField* addIntegerField(const XAO::Dimension& dim, const int& nbComponents,
+                const std::string& name = std::string("")) throw (XAO_Exception);
+        DoubleField* addDoubleField(const XAO::Dimension& dim, const int& nbComponents,
+                const std::string& name = std::string("")) throw (XAO_Exception);
+        StringField* addStringField(const XAO::Dimension& dim, const int& nbComponents,
+                const std::string& name = std::string("")) throw (XAO_Exception);
 
         /**
          * Removes a field.

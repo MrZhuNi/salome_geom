@@ -10,6 +10,7 @@ namespace XAO
         CPPUNIT_TEST_SUITE(XaoTest);
         CPPUNIT_TEST(testGroups);
         CPPUNIT_TEST(testFields);
+        CPPUNIT_TEST(testFieldsTypes);
         CPPUNIT_TEST_SUITE_END();
 
     public:
@@ -19,6 +20,7 @@ namespace XAO
 
         void testGroups();
         void testFields();
+        void testFieldsTypes();
     };
 }
 

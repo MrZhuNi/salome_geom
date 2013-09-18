@@ -25,6 +25,9 @@
 #include "XAO_Group.hxx"
 #include "XAO_Field.hxx"
 #include "XAO_IntegerField.hxx"
+#include "XAO_BooleanField.hxx"
+#include "XAO_DoubleField.hxx"
+#include "XAO_StringField.hxx"
 #include "XAO_XaoExporter.hxx"
 
 using namespace XAO;
@@ -115,6 +118,12 @@ const int Xao::countFields() const
     return m_fields.size();
 }
 
+const XAO::Type Xao::getFieldType(const int& index)
+throw (XAO_Exception)
+{
+    return getField(index)->getType();
+}
+
 Field* Xao::getField(const int& index)
 throw (XAO_Exception)
 {
@@ -127,7 +136,43 @@ throw (XAO_Exception)
             return (*it);
     }
 
-    return NULL;
+    throw XAO_Exception("Field not found.");
+}
+
+BooleanField* Xao::getBooleanField(const int& index)
+throw (XAO_Exception)
+{
+    Field* field = getField(index);
+    if (field->getType() != XAO::BOOLEAN)
+        throw XAO_Exception(MsgBuilder() << "Field " << index << " is not a boolean field.");
+    return (BooleanField*)field;
+}
+
+DoubleField* Xao::getDoubleField(const int& index)
+throw (XAO_Exception)
+{
+    Field* field = getField(index);
+    if (field->getType() != XAO::DOUBLE)
+        throw XAO_Exception(MsgBuilder() << "Field " << index << " is not a double field.");
+    return (DoubleField*)field;
+}
+
+IntegerField* Xao::getIntegerField(const int& index)
+throw (XAO_Exception)
+{
+    Field* field = getField(index);
+    if (field->getType() != XAO::INTEGER)
+        throw XAO_Exception(MsgBuilder() << "Field " << index << " is not an integer field.");
+    return (IntegerField*)field;
+}
+
+StringField* Xao::getStringField(const int& index)
+throw (XAO_Exception)
+{
+    Field* field = getField(index);
+    if (field->getType() != XAO::STRING)
+        throw XAO_Exception(MsgBuilder() << "Field " << index << " is not a string field.");
+    return (StringField*)field;
 }
 
 Field* Xao::addField(const XAO::Type& type, const XAO::Dimension& dim, const int& nbComponents, const std::string& name)
@@ -139,6 +184,45 @@ throw (XAO_Exception)
     m_fields.push_back(field);
     return field;
 }
+
+IntegerField* Xao::addIntegerField(const XAO::Dimension& dim, const int& nbComponents, const std::string& name)
+throw (XAO_Exception)
+{
+    checkGeometry();
+    int nbElts = m_geometry->countElements(dim);
+    IntegerField* field = new IntegerField(dim, nbElts, nbComponents, name);
+    m_fields.push_back(field);
+    return field;
+}
+BooleanField* Xao::addBooleanField(const XAO::Dimension& dim, const int& nbComponents, const std::string& name)
+throw (XAO_Exception)
+{
+    checkGeometry();
+    int nbElts = m_geometry->countElements(dim);
+    BooleanField* field = new BooleanField(dim, nbElts, nbComponents, name);
+    m_fields.push_back(field);
+    return field;
+}
+DoubleField* Xao::addDoubleField(const XAO::Dimension& dim, const int& nbComponents, const std::string& name)
+throw (XAO_Exception)
+{
+    checkGeometry();
+    int nbElts = m_geometry->countElements(dim);
+    DoubleField* field = new DoubleField(dim, nbElts, nbComponents, name);
+    m_fields.push_back(field);
+    return field;
+}
+StringField* Xao::addStringField(const XAO::Dimension& dim, const int& nbComponents, const std::string& name)
+throw (XAO_Exception)
+{
+    checkGeometry();
+    int nbElts = m_geometry->countElements(dim);
+    StringField* field = new StringField(dim, nbElts, nbComponents, name);
+    m_fields.push_back(field);
+    return field;
+}
+
+
 
 bool Xao::removeField(Field* field)
 {

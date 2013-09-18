@@ -75,3 +75,29 @@ void XaoTest::testFields()
     CPPUNIT_ASSERT_EQUAL(false, obj.removeField(ff));
     delete ff;
 }
+
+void XaoTest::testFieldsTypes()
+{
+    Xao obj;
+    BrepGeometry* geom = new BrepGeometry("test");
+    obj.setGeometry(geom);
+
+    IntegerField* fi = obj.addIntegerField(XAO::FACE, 3);
+    BooleanField* fb = obj.addBooleanField(XAO::FACE, 3);
+    DoubleField* fd = obj.addDoubleField(XAO::FACE, 3);
+    StringField* fs = obj.addStringField(XAO::FACE, 3);
+
+    IntegerField* gfi = obj.getIntegerField(0);
+    CPPUNIT_ASSERT(gfi == fi);
+    BooleanField* gfb = obj.getBooleanField(1);
+    CPPUNIT_ASSERT(gfb == fb);
+    DoubleField* gfd = obj.getDoubleField(2);
+    CPPUNIT_ASSERT(gfd == fd);
+    StringField* gfs = obj.getStringField(3);
+    CPPUNIT_ASSERT(gfs == fs);
+
+    CPPUNIT_ASSERT_THROW(obj.getIntegerField(1), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(obj.getBooleanField(0), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(obj.getDoubleField(0), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(obj.getStringField(0), XAO_Exception);
+}
