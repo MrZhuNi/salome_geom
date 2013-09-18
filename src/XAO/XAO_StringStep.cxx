@@ -111,7 +111,7 @@ throw (XAO_Exception)
     }
 }
 
-void StringStep::setElements(const int& element, const std::vector<std::string>& elements)
+void StringStep::setElement(const int& element, const std::vector<std::string>& elements)
 throw (XAO_Exception)
 {
     checkElementIndex(element);
@@ -121,7 +121,7 @@ throw (XAO_Exception)
         m_values[element][i] = elements[i];
 }
 
-void StringStep::setComponents(const int& component, const std::vector<std::string>& components)
+void StringStep::setComponent(const int& component, const std::vector<std::string>& components)
 throw (XAO_Exception)
 {
     checkElementIndex(component);

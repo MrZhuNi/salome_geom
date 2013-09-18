@@ -112,7 +112,7 @@ throw (XAO_Exception)
     }
 }
 
-void IntegerStep::setElements(const int& element, const std::vector<int>& elements)
+void IntegerStep::setElement(const int& element, const std::vector<int>& elements)
 throw (XAO_Exception)
 {
     checkElementIndex(element);
@@ -122,7 +122,7 @@ throw (XAO_Exception)
         m_values[element][i] = elements[i];
 }
 
-void IntegerStep::setComponents(const int& component, const std::vector<int>& components)
+void IntegerStep::setComponent(const int& component, const std::vector<int>& components)
 throw (XAO_Exception)
 {
     checkElementIndex(component);

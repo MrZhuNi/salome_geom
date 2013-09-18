@@ -210,21 +210,21 @@ void FieldTest::testBooleanStepValues()
     std::vector<bool> newEltValues;
     // only one value
     newEltValues.push_back(true);
-    CPPUNIT_ASSERT_THROW(step->setElements(2, newEltValues), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(step->setElement(2, newEltValues), XAO_Exception);
     // all values
     for (int i = 1; i < nbComponents; ++i)
         newEltValues.push_back(true);
-    step->setElements(2, newEltValues);
+    step->setElement(2, newEltValues);
 
     // set one component
     std::vector<bool> newCompValues;
     // only one value
     newCompValues.push_back(true);
-    CPPUNIT_ASSERT_THROW(step->setComponents(1, newCompValues), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(step->setComponent(1, newCompValues), XAO_Exception);
     // all values
     for (int i = 1; i < nbElements; ++i)
         newCompValues.push_back(true);
-    step->setComponents(1, newCompValues);
+    step->setComponent(1, newCompValues);
 
     // set string value
     step->setStringValue(0, 0, "true");
@@ -284,18 +284,18 @@ void FieldTest::testIntegerStepValues()
     // set one element
     std::vector<int> newEltValues;
     newEltValues.push_back(1);
-    CPPUNIT_ASSERT_THROW(step->setElements(2, newEltValues), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(step->setElement(2, newEltValues), XAO_Exception);
     for (int i = 1; i < nbComponents; ++i)
         newEltValues.push_back(1);
-    step->setElements(2, newEltValues);
+    step->setElement(2, newEltValues);
 
     // set one component
     std::vector<int> newCompValues;
     newCompValues.push_back(100);
-    CPPUNIT_ASSERT_THROW(step->setComponents(1, newCompValues), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(step->setComponent(1, newCompValues), XAO_Exception);
     for (int i = 1; i < nbElements; ++i)
         newCompValues.push_back(100);
-    step->setComponents(1, newCompValues);
+    step->setComponent(1, newCompValues);
 
     // set string value
     step->setStringValue(0, 0, "0");
@@ -355,18 +355,18 @@ void FieldTest::testDoubleStepValues()
     // set one element
     std::vector<double> newEltValues;
     newEltValues.push_back(1.);
-    CPPUNIT_ASSERT_THROW(step->setElements(2, newEltValues), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(step->setElement(2, newEltValues), XAO_Exception);
     for (int i = 1; i < nbComponents; ++i)
         newEltValues.push_back(1.);
-    step->setElements(2, newEltValues);
+    step->setElement(2, newEltValues);
 
     // set one component
     std::vector<double> newCompValues;
     newCompValues.push_back(100.0);
-    CPPUNIT_ASSERT_THROW(step->setComponents(1, newCompValues), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(step->setComponent(1, newCompValues), XAO_Exception);
     for (int i = 1; i < nbElements; ++i)
         newCompValues.push_back(100.0);
-    step->setComponents(1, newCompValues);
+    step->setComponent(1, newCompValues);
 
     // set string value
     step->setStringValue(0, 0, "0.2");
@@ -424,21 +424,20 @@ void FieldTest::testStringStepValues()
     // set one element
     std::vector<std::string> newEltValues;
     newEltValues.push_back("1");
-    CPPUNIT_ASSERT_THROW(step->setElements(2, newEltValues), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(step->setElement(2, newEltValues), XAO_Exception);
     for (int i = 1; i < nbComponents; ++i)
         newEltValues.push_back("1");
-    step->setElements(2, newEltValues);
+    step->setElement(2, newEltValues);
 
     // set one component
     std::vector<std::string> newCompValues;
     newCompValues.push_back("100");
-    CPPUNIT_ASSERT_THROW(step->setComponents(1, newCompValues), XAO_Exception);
+    CPPUNIT_ASSERT_THROW(step->setComponent(1, newCompValues), XAO_Exception);
     for (int i = 1; i < nbElements; ++i)
         newCompValues.push_back("100");
-    step->setComponents(1, newCompValues);
+    step->setComponent(1, newCompValues);
 
     // set string value
-    std::cout << "set string value" << std::endl;
     step->setStringValue(0, 0, "0");
 
     std::vector<std::string> allValues;
@@ -448,4 +447,34 @@ void FieldTest::testStringStepValues()
     // all values
     for (int i = 1; i < nbElements*nbComponents; ++i)
         allValues.push_back("abc");
-    step->setValues(allValues);}
+    step->setValues(allValues);
+}
+
+void FieldTest::testSetComponents()
+{
+    // field with 3 components
+    Field* f = Field::createField(XAO::INTEGER, XAO::FACE, 6, 3);
+    CPPUNIT_ASSERT_EQUAL(std::string(""), f->getComponentName(0));
+    CPPUNIT_ASSERT_EQUAL(std::string(""), f->getComponentName(1));
+    CPPUNIT_ASSERT_EQUAL(std::string(""), f->getComponentName(2));
+
+    std::vector<std::string> names;
+    names.push_back("vx");
+    f->setComponentsNames(names);
+    CPPUNIT_ASSERT_EQUAL(std::string("vx"), f->getComponentName(0));
+    CPPUNIT_ASSERT_EQUAL(std::string(""), f->getComponentName(1));
+    CPPUNIT_ASSERT_EQUAL(std::string(""), f->getComponentName(2));
+
+    names.push_back("vy");
+    f->setComponentsNames(names);
+    CPPUNIT_ASSERT_EQUAL(std::string("vx"), f->getComponentName(0));
+    CPPUNIT_ASSERT_EQUAL(std::string("vy"), f->getComponentName(1));
+    CPPUNIT_ASSERT_EQUAL(std::string(""), f->getComponentName(2));
+
+    names.push_back("vz");
+    names.push_back("t");
+    f->setComponentsNames(names);
+    CPPUNIT_ASSERT_EQUAL(std::string("vx"), f->getComponentName(0));
+    CPPUNIT_ASSERT_EQUAL(std::string("vy"), f->getComponentName(1));
+    CPPUNIT_ASSERT_EQUAL(std::string("vz"), f->getComponentName(2));
+}

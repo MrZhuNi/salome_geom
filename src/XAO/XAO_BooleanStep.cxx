@@ -112,7 +112,7 @@ throw (XAO_Exception)
     }
 }
 
-void BooleanStep::setElements(const int& element, const std::vector<bool>& elements)
+void BooleanStep::setElement(const int& element, const std::vector<bool>& elements)
 throw (XAO_Exception)
 {
     checkElementIndex(element);
@@ -122,7 +122,7 @@ throw (XAO_Exception)
         m_values[element][i] = elements[i];
 }
 
-void BooleanStep::setComponents(const int& component, const std::vector<bool>& components)
+void BooleanStep::setComponent(const int& component, const std::vector<bool>& components)
 throw (XAO_Exception)
 {
     checkComponentIndex(component);

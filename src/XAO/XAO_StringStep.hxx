@@ -86,14 +86,14 @@ namespace XAO
          * @param element the index of the element to set.
          * @param elements the values to set.
          */
-        void setElements(const int& element, const std::vector<std::string>& elements) throw (XAO_Exception);
+        void setElement(const int& element, const std::vector<std::string>& elements) throw (XAO_Exception);
 
         /**
          * Sets the values for a component.
          * @param component the index of the component to set.
          * @param components the values to set.
          */
-        void setComponents(const int& component, const std::vector<std::string>& components) throw (XAO_Exception);
+        void setComponent(const int& component, const std::vector<std::string>& components) throw (XAO_Exception);
 
         /**
          * Sets the value for an element and a component.

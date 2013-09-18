@@ -112,7 +112,7 @@ throw (XAO_Exception)
     }
 }
 
-void DoubleStep::setElements(const int& element, const std::vector<double>& elements)
+void DoubleStep::setElement(const int& element, const std::vector<double>& elements)
 throw (XAO_Exception)
 {
     checkElementIndex(element);
@@ -122,7 +122,7 @@ throw (XAO_Exception)
         m_values[element][i] = elements[i];
 }
 
-void DoubleStep::setComponents(const int& component, const std::vector<double>& components)
+void DoubleStep::setComponent(const int& component, const std::vector<double>& components)
 throw (XAO_Exception)
 {
     checkElementIndex(component);
