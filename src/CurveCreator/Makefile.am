@@ -90,7 +90,6 @@ libCurveCreator_la_CPPFLAGS =		\
 	$(CORBA_INCLUDES)		\
 	-I$(srcdir)/../GEOMGUI		\
 	-I$(srcdir)/../GEOMUtils	\
-	-I$(srcdir)/../GEOMBase		\
 	-I$(top_builddir)/idl
 
 
@@ -102,5 +101,4 @@ libCurveCreator_la_LDFLAGS  =		\
 	$(KERNEL_LDFLAGS) 		\
 	$(GUI_LDFLAGS) -lqtx -lsuit	\
 	../GEOMUtils/libGEOM.la		\
-	../GEOMUtils/libGEOMUtils.la	\
-	../GEOMUtils/libGEOMBase.la	
+	../GEOMUtils/libGEOMUtils.la	

@@ -7,9 +7,9 @@
 #include "CurveCreator_NewSectionDlg.h"
 
 #include <GEOMUtils.hxx>
-#include <GEOMBase_Helper.h>
 
 #include <SUIT_Session.h>
+#include <SUIT_Desktop.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_ViewManager.h>
 
@@ -304,10 +304,13 @@ void CurveCreator_Widget::onNewPoint()
   myNewPointEditor->setSectionName(aSectName);
   myNewPointEditor->setDimension(myCurve->getDimension());
 
-  SUIT_ViewWindow* aViewWindow = GEOMBase_Helper::getActiveView();
-  SUIT_ViewManager* aViewManager = aViewWindow->getViewManager();
+  SUIT_ViewWindow* aViewWindow = 0;
+  SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
+  if ( activeStudy )
+    aViewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
   if ( aViewWindow == 0 )
     return;
+  SUIT_ViewManager* aViewManager = aViewWindow->getViewManager();
   if ( aViewManager->getType() == OCCViewer_Viewer::Type() ) {
     connect( aViewManager, SIGNAL( mousePress( SUIT_ViewWindow*, QMouseEvent* ) ),
              this, SLOT( onMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
