@@ -176,10 +176,14 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
     connect( anAct, SIGNAL(triggered()), this, SLOT(onJoinAll()) );
 
     QVBoxLayout* aSectLayout = new QVBoxLayout();
+    aSectLayout->setMargin( 5 );
+    aSectLayout->setSpacing( 5 );
     aSectLayout->addWidget(aTB);
     aSectLayout->addWidget(mySectionView);
     aSectionGroup->setLayout(aSectLayout);
     QVBoxLayout* aLay = new QVBoxLayout();
+    aLay->setMargin( 0 );
+    aLay->setSpacing( 5 );
 //    aLay->addLayout(aNameLayout);
     aLay->addWidget(aSectionGroup);
     setLayout(aLay);
