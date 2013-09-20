@@ -86,11 +86,7 @@ libCurveCreator_la_CPPFLAGS =		\
 	$(CAS_CPPFLAGS)			\
 	$(KERNEL_CXXFLAGS) 		\
 	$(GUI_CXXFLAGS)			\
-	$(CORBA_CXXFLAGS)		\
-	$(CORBA_INCLUDES)		\
-	-I$(srcdir)/../GEOMGUI		\
-	-I$(srcdir)/../GEOMUtils	\
-	-I$(top_builddir)/idl
+	-I$(srcdir)/../GEOMUtils
 
 
 libCurveCreator_la_LDFLAGS  =		\
@@ -100,5 +96,4 @@ libCurveCreator_la_LDFLAGS  =		\
 	$(OCCViewer)			\
 	$(KERNEL_LDFLAGS) 		\
 	$(GUI_LDFLAGS) -lqtx -lsuit	\
-	../GEOMUtils/libGEOM.la		\
 	../GEOMUtils/libGEOMUtils.la	
