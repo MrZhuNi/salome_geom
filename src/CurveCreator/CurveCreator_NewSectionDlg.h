@@ -3,7 +3,7 @@
 
 #include "CurveCreator.hxx"
 
-#include <QDialog>
+#include <QDockWidget>
 
 class CurveCreator_Curve;
 
@@ -13,8 +13,9 @@ class QCheckBox;
 class QPushButton;
 class QAbstractButton;
 class QDialogButtonBox;
+class QFrame;
 
-class CurveCreator_NewSectionDlg : public QDialog
+class CurveCreator_NewSectionDlg : public QWidget
 {
   Q_OBJECT
 public:
@@ -31,19 +32,20 @@ public:
 
 signals:
   void    addSection();
+  void    modifySection();
+  void    cancelSection();
 public slots:
 protected slots:
-  void onBtnClicked(QAbstractButton* theBtn );
 protected:
   void    updateTitle();
 private:
+  QFrame*             myBtnFrame;
   QLineEdit*          myName;
   QComboBox*          myLineType;
   QCheckBox*          myIsClosed;
   bool                myIsEdit;
-  QPushButton*        myContBtn;
   QPushButton*        myAddBtn;
-  QDialogButtonBox*   myBtnBox;
+  QPushButton*        myCancelBtn;
 };
 
 #endif // CURVECREATOR_NEWSECTION_H

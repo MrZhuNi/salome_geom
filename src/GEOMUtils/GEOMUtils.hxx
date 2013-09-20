@@ -33,6 +33,8 @@
 #include <gp_Ax3.hxx>
 #include <gp_Vec.hxx>
 
+#include <V3d_View.hxx>
+
 #include <NCollection_DataMap.hxx>
 
 #include <functional>
@@ -131,6 +133,16 @@ class GEOMUtils {
    */
   Standard_EXPORT static TopoDS_Shape GetEdgeNearPoint (const TopoDS_Shape&  theShape,
                                                         const TopoDS_Vertex& thePoint);
+
+  /*!
+   * \brief Returns the point clicked in 3D view.
+   *
+   * \param x The X coordinate in the view.
+   * \param y The Y coordinate in the view.
+   * \param theView View where the given point takes place.
+   * \retval gp_Pnt Returns the point clicked in 3D view
+   */
+  Standard_EXPORT static gp_Pnt ConvertClickToPoint( int x, int y, Handle(V3d_View) theView );
 
 };
 

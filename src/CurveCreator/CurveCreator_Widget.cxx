@@ -1,14 +1,24 @@
 #include "CurveCreator_Widget.h"
 #include "CurveCreator_TreeView.h"
-#include "QVBoxLayout"
 #include "CurveCreator_Curve.hxx"
 #include "CurveCreator_CurveEditor.hxx"
 #include "CurveCreator.hxx"
 #include "CurveCreator_NewPointDlg.h"
 #include "CurveCreator_NewSectionDlg.h"
 
+#include <GEOMUtils.hxx>
+#include <GEOMBase_Helper.h>
+
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
+#include <SUIT_ViewManager.h>
+
+#include <OCCViewer_ViewWindow.h>
+#include <OCCViewer_ViewManager.h>
+#include <OCCViewer_ViewPort3d.h>
+
+#include <BRep_Tool.hxx>
+#include <TopoDS.hxx>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -19,6 +29,7 @@
 #include <QToolBar>
 #include <QAction>
 #include <QMenu>
+#include <QMouseEvent>
 
 CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
                                          CurveCreator_Curve *theCurve,
@@ -28,14 +39,20 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
     if( myCurve )
         myEdit = new CurveCreator_CurveEditor( myCurve );
 
-    CurveCreator::Dimension aDim = CurveCreator::Dim3d;
+    CurveCreator::Dimension aDim = CurveCreator::Dim2d;
     if( myCurve )
         aDim = myCurve->getDimension();
-    myNewPointEditor = new CurveCreator_NewPointDlg(aDim, this);
-    connect( myNewPointEditor, SIGNAL(addPoint()), this, SLOT(onAddNewPoint()));
+    myNewPointEditor = new CurveCreator_NewPointDlg( aDim, this );
+    myNewPointEditor->hide();
+    connect( myNewPointEditor, SIGNAL(addPoint()), this, SLOT(onAddNewPoint()) );
+    connect( myNewPointEditor, SIGNAL(modifyPoint()), this, SLOT(onModifyPoint()) );
+    connect( myNewPointEditor, SIGNAL(cancelPoint()), this, SLOT(onCancelPoint()) );
 
-    myNewSectionEditor = new CurveCreator_NewSectionDlg(this);
-    connect( myNewSectionEditor, SIGNAL(addSection()), this, SLOT(onAddNewSection()));
+    myNewSectionEditor = new CurveCreator_NewSectionDlg( this );
+    myNewSectionEditor->hide();
+    connect( myNewSectionEditor, SIGNAL(addSection()), this, SLOT(onAddNewSection()) );
+    connect( myNewSectionEditor, SIGNAL(modifySection()), this, SLOT(onModifySection()) );
+    connect( myNewSectionEditor, SIGNAL(cancelSection()), this, SLOT(onCancelSection()) );
 
     QGroupBox* aSectionGroup = new QGroupBox(tr("Sections"),this);
 
@@ -286,9 +303,16 @@ void CurveCreator_Widget::onNewPoint()
   myNewPointEditor->setEditMode(false);
   myNewPointEditor->setSectionName(aSectName);
   myNewPointEditor->setDimension(myCurve->getDimension());
-  if( myNewPointEditor->exec() == QDialog::Accepted ){
-    onAddNewPoint();
+
+  SUIT_ViewWindow* aViewWindow = GEOMBase_Helper::getActiveView();
+  SUIT_ViewManager* aViewManager = aViewWindow->getViewManager();
+  if ( aViewWindow == 0 )
+    return;
+  if ( aViewManager->getType() == OCCViewer_Viewer::Type() ) {
+    connect( aViewManager, SIGNAL( mousePress( SUIT_ViewWindow*, QMouseEvent* ) ),
+             this, SLOT( onMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
   }
+  emit subOperationStarted( myNewPointEditor );
 }
 
 void CurveCreator_Widget::onAddNewPoint()
@@ -298,7 +322,7 @@ void CurveCreator_Widget::onAddNewPoint()
   CurveCreator::Coordinates aCoords = myNewPointEditor->getCoordinates();
   myEdit->insertPoints(aCoords, mySection, myPointNum );
   mySectionView->pointsAdded( mySection, myPointNum );
-  myNewPointEditor->clear();
+//  myNewPointEditor->clear();
   myPointNum++;
   onSelectionChanged();
   updateUndoRedo();
@@ -312,9 +336,7 @@ void CurveCreator_Widget::onNewSection()
   myNewSectionEditor->setEditMode(false);
   QString aSectName = QString( myCurve->getUnicSectionName().c_str() );
   myNewSectionEditor->setSectionParameters(aSectName, true, CurveCreator::Polyline );
-  if( myNewSectionEditor->exec() == QDialog::Accepted ){
-    onAddNewSection();
-  }
+  emit subOperationStarted( myNewSectionEditor );
 }
 
 void CurveCreator_Widget::onAddNewSection()
@@ -330,6 +352,17 @@ void CurveCreator_Widget::onAddNewSection()
   mySection++;
   onSelectionChanged();
   updateUndoRedo();
+  onCancelSection();
+}
+
+void CurveCreator_Widget::onCancelPoint()
+{
+  emit subOperationFinished( myNewPointEditor );
+}
+
+void CurveCreator_Widget::onCancelSection()
+{
+  emit subOperationFinished( myNewSectionEditor );
 }
 
 QAction* CurveCreator_Widget::createAction( ActionId theId, const QString& theName, const QPixmap& theImage,
@@ -362,38 +395,51 @@ void CurveCreator_Widget::onEditSection( int theSection )
   CurveCreator::Type aType = myCurve->getType(theSection);
   myNewSectionEditor->setEditMode(true);
   myNewSectionEditor->setSectionParameters( aSectName, isClosed, aType );
-  if( myNewSectionEditor->exec() == QDialog::Accepted ){
-    QString aName = myNewSectionEditor->getName();
-    bool    isClosed = myNewSectionEditor->isClosed();
-    CurveCreator::Type aSectType = myNewSectionEditor->getSectionType();
-    myEdit->startOperation();
-    myEdit->setClosed( isClosed, mySection );
-    myEdit->setName( aName.toStdString(), mySection );
-    myEdit->setType( aSectType, mySection );
-    myEdit->finishOperation();
-    mySectionView->sectionChanged(mySection);
-    updateUndoRedo();
-  }
+
+  emit subOperationStarted( myNewSectionEditor );
+}
+
+void CurveCreator_Widget::onModifySection()
+{
+  if( !myEdit )
+    return;
+  QString aName = myNewSectionEditor->getName();
+  bool isClosed = myNewSectionEditor->isClosed();
+  CurveCreator::Type aSectType = myNewSectionEditor->getSectionType();
+  myEdit->startOperation();
+  myEdit->setClosed( isClosed, mySection );
+  myEdit->setName( aName.toStdString(), mySection );
+  myEdit->setType( aSectType, mySection );
+  myEdit->finishOperation();
+  mySectionView->sectionChanged(mySection);
+  updateUndoRedo();
+  onCancelSection();
 }
 
 void CurveCreator_Widget::onEditPoint( int theSection, int thePoint )
 {
-  if( !myNewPointEditor )
+  if( !myNewPointEditor || !myEdit )
     return;
-  if( !myEdit )
-    return;
+  mySection = theSection;
+  myPointNum = thePoint;
   QString aSectName = QString::fromStdString( myCurve->getSectionName(theSection));
   myNewPointEditor->setEditMode(true);
   myNewPointEditor->setSectionName(aSectName);
   myNewPointEditor->setDimension( myCurve->getDimension() );
   CurveCreator::Coordinates aCoords = myCurve->getCoordinates(theSection,thePoint);
   myNewPointEditor->setCoordinates(aCoords);
-  if( myNewPointEditor->exec() == QDialog::Accepted ){
-    aCoords = myNewPointEditor->getCoordinates();
-    myEdit->setCoordinates(aCoords, theSection, thePoint);
-    mySectionView->pointDataChanged(theSection, thePoint );
-    updateUndoRedo();
-  }
+  emit subOperationStarted( myNewPointEditor );
+}
+
+void CurveCreator_Widget::onModifyPoint()
+{
+  if( !myEdit )
+    return;
+  CurveCreator::Coordinates aCoords = myNewPointEditor->getCoordinates();
+  myEdit->setCoordinates( aCoords, mySection, myPointNum );
+  mySectionView->pointDataChanged( mySection, myPointNum );
+  updateUndoRedo();
+  onCancelPoint();
 }
 
 void CurveCreator_Widget::onJoin()
@@ -688,4 +734,44 @@ QList<int> CurveCreator_Widget::getSelectedSections()
 QList< QPair< int, int > > CurveCreator_Widget::getSelectedPoints()
 {
   return mySectionView->getSelectedPoints();
+}
+
+//=================================================================================
+// function : GeometryGUI::OnMousePress()
+// purpose  : Manage mouse press events [static]
+//=================================================================================
+void CurveCreator_Widget::onMousePress( SUIT_ViewWindow* theViewWindow, QMouseEvent* pe )
+{
+  if ( myNewPointEditor && theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&
+       pe->modifiers() != Qt::ControlModifier ) {
+    OCCViewer_Viewer* anOCCViewer =
+      ( (OCCViewer_ViewManager*)( theViewWindow->getViewManager() ) )->getOCCViewer();
+    Handle(AIS_InteractiveContext) ic = anOCCViewer->getAISContext();
+
+    gp_Pnt aPnt;    
+
+    ic->InitSelected();
+    if ( pe->modifiers() == Qt::ShiftModifier )
+      ic->ShiftSelect();  // Append selection
+    else
+      ic->Select();       // New selection
+
+    ic->InitSelected();
+    if ( ic->MoreSelected() ) {
+      TopoDS_Shape aShape = ic->SelectedShape();
+      if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
+        aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
+    } else {
+      OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+      aPnt = GEOMUtils::ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
+    }
+    // set the coordinates into dialog
+    CurveCreator::Coordinates aCoords;
+    aCoords.push_back( aPnt.X() );
+    aCoords.push_back( aPnt.Y() );
+    if ( myCurve->getDimension() == 3 ) {
+      aCoords.push_back( aPnt.Z() );
+    }
+    myNewPointEditor->setCoordinates( aCoords );
+  }
 }

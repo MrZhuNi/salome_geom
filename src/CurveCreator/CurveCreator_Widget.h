@@ -4,8 +4,9 @@
 #include "CurveCreator_Curve.hxx"
 
 #include <QWidget>
-
 #include <QMap>
+
+#include <SUIT_ViewWindow.h>
 
 class QAction;
 class QPixmap;
@@ -29,6 +30,8 @@ public:
 
 signals:
     void selectionChanged();
+    void subOperationStarted( QWidget* );
+    void subOperationFinished( QWidget* );
 
 public slots:
 
@@ -40,6 +43,10 @@ protected slots:
     void     onAddNewSection();
     void     onEditSection( int theSection );
     void     onEditPoint( int theSection, int thePoint );
+    void     onModifyPoint();
+    void     onModifySection();
+    void     onCancelPoint();
+    void     onCancelSection();
     void     onJoin();
     void     onRemove();
     void     onMoveUp();
@@ -58,6 +65,7 @@ protected slots:
     void     onRedo();
     void     onUndoSettings();
     void     onContextMenu(QPoint thePoint);
+    void     onMousePress( SUIT_ViewWindow*, QMouseEvent* );
 protected:
     enum ActionId{ UNDO_ID, REDO_ID, NEW_SECTION_ID, NEW_POINT_ID, REMOVE_ID, REMOVE_ALL_ID, JOIN_ID,
                    JOIN_ALL_ID, UP_ID, DOWN_ID, INSERT_SECTION_BEFORE_ID, INSERT_SECTION_AFTER_ID,

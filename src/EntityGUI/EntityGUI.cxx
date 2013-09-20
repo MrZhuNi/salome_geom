@@ -28,6 +28,7 @@
 
 #include <GeometryGUI.h>
 #include "GeometryGUI_Operations.h"
+#include <GEOMUtils.hxx>
 
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
@@ -152,7 +153,7 @@ bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWi
         }
         else {
           OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
-          aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
+          aPnt = GEOMUtils::ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
         }
         
         Qt::KeyboardModifiers modifiers = pe->modifiers();
@@ -240,7 +241,7 @@ bool EntityGUI::OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWin
     if ( aSketcherDlg->acceptMouseEvent() ) 
     {    
       OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
-      gp_Pnt aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
+      gp_Pnt aPnt = GEOMUtils::ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
   
       Qt::KeyboardModifiers modifiers = pe->modifiers();
       if (QApplication::mouseButtons() == Qt::LeftButton )
@@ -249,32 +250,6 @@ bool EntityGUI::OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWin
   }
     
   return false;
-}
-
-//=======================================================================
-// function : ConvertClickToPoint()
-// purpose  : Returns the point clicked in 3D view
-//=======================================================================
-gp_Pnt EntityGUI::ConvertClickToPoint( int x, int y, Handle(V3d_View) aView )
-{
-  V3d_Coordinate XEye, YEye, ZEye, XAt, YAt, ZAt;
-  aView->Eye( XEye, YEye, ZEye );
-
-  aView->At( XAt, YAt, ZAt );
-  gp_Pnt EyePoint( XEye, YEye, ZEye );
-  gp_Pnt AtPoint( XAt, YAt, ZAt );
-
-  gp_Vec EyeVector( EyePoint, AtPoint );
-  gp_Dir EyeDir( EyeVector );
-
-  gp_Pln PlaneOfTheView = gp_Pln( AtPoint, EyeDir );
-  Standard_Real X, Y, Z;
-  aView->Convert( x, y, X, Y, Z );
-  gp_Pnt ConvertedPoint( X, Y, Z );
-
-  gp_Pnt2d ConvertedPointOnPlane = ProjLib::Project( PlaneOfTheView, ConvertedPoint );
-  gp_Pnt ResultPoint = ElSLib::Value( ConvertedPointOnPlane.X(), ConvertedPointOnPlane.Y(), PlaneOfTheView );
-  return ResultPoint;
 }
 
 //=====================================================================================

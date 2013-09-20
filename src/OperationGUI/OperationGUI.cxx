@@ -30,6 +30,8 @@
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
 #include <SalomeApp_Application.h>
+#include <OCCViewer_ViewWindow.h>
+#include <SUIT_ViewManager.h>
 
 #include <TopTools_MapOfShape.hxx>
 #include <TopExp_Explorer.hxx>
@@ -100,7 +102,11 @@ bool OperationGUI::OnGUIEvent (int theCommandID, SUIT_Desktop* parent)
       static CurveCreator_Curve *aStaticCurve = NULL;
 
       if (aStaticCurve == NULL) {
-        aStaticCurve = new CurveCreator_Curve(CurveCreator::Dim3d);
+        aStaticCurve = new CurveCreator_Curve(CurveCreator::Dim2d);
+      }
+      if (CurveCreator::Dim2d == aStaticCurve->getDimension()) {
+        OCCViewer_ViewWindow* vw = (OCCViewer_ViewWindow*)getGeometryGUI()->getApp()->activeViewManager()->getActiveView();
+        vw->onTopView();
       }
 
       QDialog     *aDialog     = new QDialog(parent);

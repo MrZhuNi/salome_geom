@@ -54,5 +54,5 @@ libGEOMUtils_la_LDFLAGS  =			\
 	../ARCHIMEDE/libGEOMArchimede.la	\
 	../SKETCHER/libGEOMSketcher.la		\
 	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics	\
-	$(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset -lTKFeat	\
+	$(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset -lTKFeat -lTKV3d	\
 	$(STDLIB)

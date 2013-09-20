@@ -227,6 +227,7 @@ void CurveCreator_TreeView::pointsAdded( int theSection, int thePoint, int thePo
   if( aModel ){
     QModelIndex aSectIndx = aModel->sectionIndex( theSection );
     rowsInserted(aSectIndx, thePoint, thePoint + thePointsCnt - 1 );
+    expand( aSectIndx );
   }
 }
 

@@ -101,6 +101,7 @@ libBasicGUI_la_CPPFLAGS =			\
 	-I$(srcdir)/../GEOMBase			\
 	-I$(srcdir)/../GEOMImpl			\
 	-I$(srcdir)/../GEOMClient		\
+	-I$(srcdir)/../GEOMUtils		\
 	-I$(top_builddir)/src/DlgRef		\
 	-I$(top_builddir)/idl
 
@@ -109,6 +110,7 @@ libBasicGUI_la_LDFLAGS  =					\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
 	../GEOMBase/libGEOMBase.la				\
 	../GEOMGUI/libGEOM.la					\
+	../GEOMUtils/libGEOMUtils.la				\
 	$(CAS_LDFLAGS) -lTKGeomBase                             \
 	$(GUI_LDFLAGS) -lsuit					\
-	$(OPENCV_LIBS) 
+	$(OPENCV_LIBS) 						

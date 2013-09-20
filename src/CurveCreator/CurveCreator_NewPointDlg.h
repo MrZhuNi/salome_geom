@@ -3,15 +3,16 @@
 
 #include "CurveCreator.hxx"
 
-#include <QDialog>
+#include <QDockWidget>
 
 class QDoubleSpinBox;
 class QDialogButtonBox;
 class QAbstractButton;
 class QPushButton;
 class QLabel;
+class QFrame;
 
-class CurveCreator_NewPointDlg : public QDialog
+class CurveCreator_NewPointDlg : public QWidget
 {
   Q_OBJECT
 public:
@@ -24,21 +25,22 @@ public:
   void setDimension(CurveCreator::Dimension theDim);
 signals:
   void addPoint();
+  void modifyPoint();
+  void cancelPoint();
 public slots:
 protected slots:
-  void onBtnClicked(QAbstractButton* theBtn );
 protected:
   void updateTitle();
   void initSpinBox(QDoubleSpinBox *theSpinBox);
 private:
-  QDialogButtonBox*       myBtnBox;
+  QFrame*                 myBtnFrame;
   CurveCreator::Dimension myDim;
   QDoubleSpinBox*         myX;
   QDoubleSpinBox*         myY;
   QDoubleSpinBox*         myZ;
   QLabel*                 myZLabel;
-  QPushButton*            myContBtn;
   QPushButton*            myAddBtn;
+  QPushButton*            myCancelBtn;
   bool                    myIsEdit;
   QString                 mySectionName;
 };

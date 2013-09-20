@@ -11,45 +11,52 @@
 #include <QLocale>
 
 CurveCreator_NewPointDlg::CurveCreator_NewPointDlg(CurveCreator::Dimension theDim, QWidget *parent) :
-  QDialog(parent), myX(NULL), myY(NULL), myZ(NULL), myIsEdit(false), myDim(theDim)
+  QWidget(parent), myX(NULL), myY(NULL), myZ(NULL), myIsEdit(false), myDim(theDim)
 {
-  QGridLayout* aCoordLay = new QGridLayout();
-
   QString aTitle = QString(tr("ADD_NEW_POINT"));
   setWindowTitle(aTitle);
 
+  QFrame* aFrame = new QFrame( this );
+  QVBoxLayout* aLayout = new QVBoxLayout( aFrame );
+
+  QFrame* aCoordFrame = new QFrame( aFrame );
+  QGridLayout* aCoordLayout = new QGridLayout( aCoordFrame );
+
   QLabel* aLbl = new QLabel( tr("X_COORD"), this);
   myX = new QDoubleSpinBox(this);
-  aCoordLay->addWidget(aLbl, 0, 0);
-  aCoordLay->addWidget(myX, 0, 1 );
+  aCoordLayout->addWidget(aLbl, 0, 0);
+  aCoordLayout->addWidget(myX, 0, 1 );
 
   aLbl = new QLabel( tr("Y_COORD"), this);
   myY = new QDoubleSpinBox(this);
-  aCoordLay->addWidget(aLbl, 1, 0 );
-  aCoordLay->addWidget(myY, 1, 1 );
+  aCoordLayout->addWidget(aLbl, 1, 0 );
+  aCoordLayout->addWidget(myY, 1, 1 );
 
   myZLabel = new QLabel( tr("Z_COORD"), this);
   myZ = new QDoubleSpinBox(this);
-  aCoordLay->addWidget(myZLabel, 2,0 );
-  aCoordLay->addWidget(myZ, 2,1 );
+  aCoordLayout->addWidget(myZLabel, 2,0 );
+  aCoordLayout->addWidget(myZ, 2,1 );
 
   if( theDim != CurveCreator::Dim3d ){
     myZ->hide();
     myZLabel->hide();
   }
 
-  myBtnBox = new QDialogButtonBox(this);
-  myAddBtn = myBtnBox->addButton(tr("ADD_BTN"), QDialogButtonBox::AcceptRole );
-  myContBtn = myBtnBox->addButton(tr("ADD_CONTINUE_BTN"), QDialogButtonBox::ResetRole );
-  myBtnBox->addButton(tr("CANCEL"), QDialogButtonBox::RejectRole );
+  myBtnFrame = new QFrame( aFrame );
+  QHBoxLayout* aBtnsLayout = new QHBoxLayout( myBtnFrame );
 
-  connect( myBtnBox, SIGNAL(accepted()), this, SLOT(accept()));
-  connect( myBtnBox, SIGNAL(rejected()), this, SLOT(reject()));
-  connect( myBtnBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onBtnClicked(QAbstractButton*) ));
-  QVBoxLayout* aMainLay = new QVBoxLayout();
-  aMainLay->addLayout(aCoordLay);
-  aMainLay->addWidget(myBtnBox);
-  setLayout(aMainLay);
+  myAddBtn = new QPushButton( tr( "ADD_BTN" ), myBtnFrame );
+  myCancelBtn = new QPushButton( tr( "CANCEL" ), myBtnFrame );
+
+  connect( myCancelBtn, SIGNAL( clicked() ), this, SIGNAL( cancelPoint() ) );
+
+  aBtnsLayout->addWidget( myAddBtn );
+  aBtnsLayout->addStretch( 1 );
+  aBtnsLayout->addWidget( myCancelBtn );
+
+  aLayout->addWidget( aCoordFrame, 0 );
+  aLayout->addWidget( myBtnFrame, 1 );
+
   clear();
   updateTitle();
 }
@@ -64,12 +71,14 @@ void CurveCreator_NewPointDlg::setEditMode( bool isEdit )
 {
   myIsEdit = isEdit;
   if( myIsEdit ){
-    myContBtn->hide();
     myAddBtn->setText(tr("OK"));
+    myAddBtn->disconnect( SIGNAL( clicked() ) );
+    connect( myAddBtn, SIGNAL( clicked() ), this, SIGNAL( modifyPoint() ) );
   }
   else{
-    myContBtn->show();
     myAddBtn->setText(tr("ADD_BTN"));
+    myAddBtn->disconnect( SIGNAL( clicked() ) );
+    connect( myAddBtn, SIGNAL( clicked() ), this, SIGNAL( addPoint() ) );
   }
   updateTitle();
 }
@@ -103,13 +112,6 @@ CurveCreator::Coordinates CurveCreator_NewPointDlg::getCoordinates() const
     aCoords.push_back(aZ);
   }
   return aCoords;
-}
-
-void CurveCreator_NewPointDlg::onBtnClicked(QAbstractButton* theBtn )
-{
-  if( myBtnBox->buttonRole(theBtn) == QDialogButtonBox::ResetRole ){
-    emit addPoint();
-  }
 }
 
 void CurveCreator_NewPointDlg::clear()

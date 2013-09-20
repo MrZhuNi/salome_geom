@@ -13,14 +13,18 @@
 #include <QPushButton>
 
 CurveCreator_NewSectionDlg::CurveCreator_NewSectionDlg( QWidget *parent ) :
-  QDialog(parent)
+  QWidget(parent)
 {
-  std::string aNameStr;
-  QGridLayout* aLay = new QGridLayout();
+  QFrame* aFrame = new QFrame( this );
+  QVBoxLayout* aLayout = new QVBoxLayout( aFrame );
+
+  QFrame* aCoordFrame = new QFrame( aFrame );
+  QGridLayout* aCoordLayout = new QGridLayout( aCoordFrame );
+
   QLabel* aLbl = new QLabel(tr("NAME"), this);
   myName = new QLineEdit(this);
-  aLay->addWidget(aLbl, 0, 0);
-  aLay->addWidget(myName, 0 , 1);
+  aCoordLayout->addWidget(aLbl, 0, 0);
+  aCoordLayout->addWidget(myName, 0 , 1);
 
   aLbl = new QLabel(tr("LINE_TYPE"));
   myLineType = new QComboBox(this);
@@ -34,27 +38,29 @@ CurveCreator_NewSectionDlg::CurveCreator_NewSectionDlg( QWidget *parent ) :
   myLineType->addItem(aPolylinePixmap, tr("POLYLINE_TYPE"));
   myLineType->addItem(aSplinePixmap, tr("SPLINE_TYPE"));
   myLineType->setCurrentIndex(0);
-  aLay->addWidget(aLbl, 1, 0);
-  aLay->addWidget(myLineType, 1 , 1);
+  aCoordLayout->addWidget(aLbl, 1, 0);
+  aCoordLayout->addWidget(myLineType, 1 , 1);
 
   aLbl = new QLabel(tr("LINE_CLOSED"));
   myIsClosed = new QCheckBox(this);
-  aLay->addWidget(aLbl, 2, 0);
-  aLay->addWidget(myIsClosed, 2, 1);
+  aCoordLayout->addWidget(aLbl, 2, 0);
+  aCoordLayout->addWidget(myIsClosed, 2, 1);
 
-  myBtnBox = new QDialogButtonBox(this);
-  myAddBtn = myBtnBox->addButton(tr("ADD_BTN"), QDialogButtonBox::AcceptRole );
-  myContBtn = myBtnBox->addButton(tr("ADD_CONTINUE_BTN"), QDialogButtonBox::ResetRole );
-  myBtnBox->addButton(tr("CANCEL"), QDialogButtonBox::RejectRole );
+  myBtnFrame = new QFrame( aFrame );
+  QHBoxLayout* aBtnsLayout = new QHBoxLayout( myBtnFrame );
 
-  connect( myBtnBox, SIGNAL(accepted()), this, SLOT(accept()));
-  connect( myBtnBox, SIGNAL(rejected()), this, SLOT(reject()));
-  connect( myBtnBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onBtnClicked(QAbstractButton*) ));
+  myAddBtn = new QPushButton( tr( "ADD_BTN" ), myBtnFrame );
+  myCancelBtn = new QPushButton( tr( "CANCEL" ), myBtnFrame );
 
-  QVBoxLayout* aMainLay = new QVBoxLayout();
-  aMainLay->addLayout(aLay);
-  aMainLay->addWidget(myBtnBox);
-  setLayout(aMainLay);
+  connect( myAddBtn,  SIGNAL( clicked() ), this, SIGNAL( addSection() ) );
+  connect( myCancelBtn, SIGNAL( clicked() ), this, SIGNAL( cancelSection() ) );
+
+  aBtnsLayout->addWidget( myAddBtn );
+  aBtnsLayout->addStretch( 1 );
+  aBtnsLayout->addWidget( myCancelBtn );
+
+  aLayout->addWidget( aCoordFrame, 0 );
+  aLayout->addWidget( myBtnFrame, 1 );
 }
 
 void CurveCreator_NewSectionDlg::setSectionParameters( const QString& theName, bool isClosed, CurveCreator::Type theType )
@@ -78,12 +84,14 @@ void CurveCreator_NewSectionDlg::setEditMode( bool isEdit )
 {
   myIsEdit = isEdit;
   if( myIsEdit ){
-    myContBtn->hide();
     myAddBtn->setText(tr("OK"));
+    myAddBtn->disconnect( SIGNAL( clicked() ) );
+    connect( myAddBtn, SIGNAL( clicked() ), this, SIGNAL( modifySection() ) );
   }
   else{
-    myContBtn->show();
     myAddBtn->setText(tr("ADD_BTN"));
+    myAddBtn->disconnect( SIGNAL( clicked() ) );
+    connect( myAddBtn, SIGNAL( clicked() ), this, SIGNAL( addSection() ) );
   }
   updateTitle();
 }
@@ -119,11 +127,4 @@ void CurveCreator_NewSectionDlg::updateTitle()
 void CurveCreator_NewSectionDlg::setSectionName( const QString& theName )
 {
   myName->setText(theName);
-}
-
-void CurveCreator_NewSectionDlg::onBtnClicked(QAbstractButton* theBtn )
-{
-  if( myBtnBox->buttonRole(theBtn) == QDialogButtonBox::ResetRole ){
-    emit addSection();
-  }
 }
