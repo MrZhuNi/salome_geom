@@ -28,6 +28,7 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # header files  
 salomeinclude_HEADERS = \
     XAO_XaoUtils.hxx \
+    XAO_Exception.hxx \
     XAO_GeometricElement.hxx \
     XAO_Xao.hxx \
     XAO_Geometry.hxx \
