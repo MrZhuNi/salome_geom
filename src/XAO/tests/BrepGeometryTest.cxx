@@ -251,3 +251,55 @@ void BrepGeometryTest::testGetSolidVolume()
 
     delete geom;
 }
+
+void BrepGeometryTest::testParse()
+{
+    BrepGeometry* geom = new BrepGeometry("box");
+    readBrep(geom, "Box_2.brep");
+    std::cout << std::endl;
+
+    for (int solidIndex = 0; solidIndex < geom->countSolids(); ++solidIndex)
+    {
+        std::cout << "Solid #" << solidIndex << " : " << geom->getSolidReference(solidIndex) << std::endl;
+        int nbShells = geom->countSolidShells(solidIndex);
+        for (int shellIndex = 0; shellIndex < nbShells; ++shellIndex)
+        {
+            std::cout << "  Shell #" << shellIndex << std::endl;
+            std::vector<int> faces = geom->getSolidFaces(solidIndex, shellIndex);
+            for (int indf = 0; indf < faces.size(); ++indf)
+            {
+                int faceIndex = faces[indf];
+                std::cout  << "    Face #" << geom->getFaceReference(faceIndex) << std::endl;
+
+                int nbWires = geom->countFaceWires(faceIndex);
+                for (int wireIndex = 0; wireIndex < nbWires; ++wireIndex)
+                {
+                    std::cout << "      Wire #" << wireIndex << std::endl;
+                    std::vector<int> edges = geom->getFaceEdges(faceIndex, wireIndex);
+                    for (int inde = 0; inde < edges.size(); ++inde)
+                    {
+                        int edgeIndex = edges[inde];
+                        std::cout << "        Edge #" << geom->getEdgeReference(edgeIndex) << " : ";
+
+                        int va = 0, vb = 0;
+                        geom->getEdgeVertices(edgeIndex, va, vb);
+                        int vaRef = geom->getVertexID(va);
+                        int vbRef = geom->getVertexID(vb);
+                        double ax, ay, az, bx, by, bz;
+                        geom->getVertexXYZ(va, ax, ay, az);
+                        geom->getVertexXYZ(vb, bx, by, bz);
+
+                        std::cout << vaRef << " (" << ax << ", " << ay << ", " << az << ")";
+                        std::cout << " - ";
+                        std::cout << vbRef << " (" << bx << ", " << by << ", " << bz << ")";
+                        std::cout << std::endl;
+                    }
+                }
+
+
+            }
+        }
+    }
+
+    delete geom;
+}

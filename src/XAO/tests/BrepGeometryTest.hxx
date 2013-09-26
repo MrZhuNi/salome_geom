@@ -18,6 +18,7 @@ namespace XAO
         CPPUNIT_TEST(testGetEdgeLength);
         CPPUNIT_TEST(testGetFaceArea);
         CPPUNIT_TEST(testGetSolidVolume);
+        CPPUNIT_TEST(testParse);
         CPPUNIT_TEST_SUITE_END();
 
     public:
@@ -36,6 +37,8 @@ namespace XAO
         void testGetEdgeLength();
         void testGetFaceArea();
         void testGetSolidVolume();
+
+        void testParse();
     };
 }
 
