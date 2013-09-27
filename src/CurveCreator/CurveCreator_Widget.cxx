@@ -743,6 +743,19 @@ QList< QPair< int, int > > CurveCreator_Widget::getSelectedPoints()
   return mySectionView->getSelectedPoints();
 }
 
+bool CurveCreator_Widget::isInstantSketchingEnabled() const
+{
+  if( myNewPointEditor )
+    return myNewPointEditor->isInstantSketchingEnabled();
+  return false;
+}
+
+void CurveCreator_Widget::setInstantSketchingEnabled( const bool theState )
+{
+  if( myNewPointEditor )
+    myNewPointEditor->setInstantSketchingEnabled( theState );
+}
+
 //=================================================================================
 // function : GeometryGUI::OnMousePress()
 // purpose  : Manage mouse press events [static]

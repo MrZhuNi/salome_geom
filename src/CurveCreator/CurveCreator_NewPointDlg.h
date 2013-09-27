@@ -23,6 +23,8 @@ public:
   void setEditMode( bool isEdit );
   void setCoordinates( const CurveCreator::Coordinates& theCoords );
   void setDimension(CurveCreator::Dimension theDim);
+  bool isInstantSketchingEnabled() const;
+  void setInstantSketchingEnabled( const bool theState );
 signals:
   void addPoint();
   void modifyPoint();
@@ -43,6 +45,7 @@ private:
   QPushButton*            myCancelBtn;
   bool                    myIsEdit;
   QString                 mySectionName;
+  bool                    myIsInstantSketchingEnabled;
 };
 
 #endif // CURVECREATOR_NEWPOINTDLG_H

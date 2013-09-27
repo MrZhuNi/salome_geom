@@ -28,6 +28,9 @@ public:
     QList<int> getSelectedSections();
     QList< QPair< int, int > > getSelectedPoints();
 
+    bool isInstantSketchingEnabled() const;
+    void setInstantSketchingEnabled( const bool theState );
+
 signals:
     void selectionChanged();
     void subOperationStarted( QWidget* );

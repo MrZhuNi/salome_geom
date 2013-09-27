@@ -11,7 +11,8 @@
 #include <QLocale>
 
 CurveCreator_NewPointDlg::CurveCreator_NewPointDlg(CurveCreator::Dimension theDim, QWidget *parent) :
-  QWidget(parent), myX(NULL), myY(NULL), myZ(NULL), myIsEdit(false), myDim(theDim)
+  QWidget(parent), myX(NULL), myY(NULL), myZ(NULL), myIsEdit(false), myDim(theDim),
+  myIsInstantSketchingEnabled(false)
 {
   QString aTitle = QString(tr("ADD_NEW_POINT"));
   setWindowTitle(aTitle);
@@ -143,6 +144,18 @@ void CurveCreator_NewPointDlg::setCoordinates( const CurveCreator::Coordinates& 
     double aZ = theCoords[2];
     myZ->setValue(aZ);
   }
+  if( isInstantSketchingEnabled() )
+    emit addPoint();
+}
+
+bool CurveCreator_NewPointDlg::isInstantSketchingEnabled() const
+{
+  return myIsInstantSketchingEnabled;
+}
+
+void CurveCreator_NewPointDlg::setInstantSketchingEnabled( const bool theState )
+{
+  myIsInstantSketchingEnabled = theState;
 }
 
 //=======================================================================
