@@ -776,12 +776,15 @@ void CurveCreator_Widget::onMousePress( SUIT_ViewWindow* theViewWindow, QMouseEv
     else
       ic->Select();       // New selection
 
+    TopoDS_Shape aShape;
+
     ic->InitSelected();
-    if ( ic->MoreSelected() ) {
-      TopoDS_Shape aShape = ic->SelectedShape();
-      if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
-        aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
-    } else {
+    if ( ic->MoreSelected() )
+      aShape = ic->SelectedShape();
+
+    if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
+      aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
+    else {
       OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
       aPnt = GEOMUtils::ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
     }
