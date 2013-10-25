@@ -15,6 +15,7 @@ public:
   virtual QVariant	data(const QModelIndex & index, int role = Qt::DisplayRole) const;
   virtual QModelIndex	index(int row, int column, const QModelIndex & parent = QModelIndex()) const;
   virtual QModelIndex	parent(const QModelIndex & theIndex) const;
+//  virtual bool setHeaderData(int section, Qt::Orientation orientation, const QVariant & value, int role = Qt::EditRole);
 
   QModelIndex sectionIndex( int theSection ) const;
   QModelIndex pointIndex( int theSection, int thePoint ) const;

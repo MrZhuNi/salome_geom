@@ -40,14 +40,16 @@ CurveCreator_TreeViewModel::CurveCreator_TreeViewModel( CurveCreator_Curve* theC
   if( !aPointIcon.isNull() )
     myCachedIcons[ICON_POINT] = aPointIcon;
 
+  setHeaderData(1, Qt::Horizontal, QVariant("Name"), Qt::DisplayRole);
+  setHeaderData(2, Qt::Horizontal, QVariant("Nb points"), Qt::DisplayRole);
 }
 
 int	CurveCreator_TreeViewModel::columnCount(const QModelIndex & parent ) const
 {
   if( parent.internalId() == ID_SECTION )
-    return 1;
+    return 2;
   else
-    return 1;
+    return 2;
 }
 
 QVariant	CurveCreator_TreeViewModel::data(const QModelIndex & index, int role ) const
@@ -59,6 +61,8 @@ QVariant	CurveCreator_TreeViewModel::data(const QModelIndex & index, int role ) 
       if( role == Qt::DisplayRole ){
         if( aColumn == 0 )
           return QString::fromStdString(myCurve->getSectionName(aRow));
+        else if( aColumn == 1 )
+          return QString::number(myCurve->getNbPoints(aRow));
         return QVariant();
       }
       else if( role == Qt::DecorationRole ){
@@ -83,7 +87,7 @@ QVariant	CurveCreator_TreeViewModel::data(const QModelIndex & index, int role ) 
         }
       }
     }
-    else{
+/*    else{
       if( role == Qt::DisplayRole ){
         if( aColumn == 1 )
           return QVariant();
@@ -105,7 +109,7 @@ QVariant	CurveCreator_TreeViewModel::data(const QModelIndex & index, int role ) 
           return myCachedIcons[ICON_POINT];
         }
       }
-    }
+    }*/
   }
   return QVariant();
 }
@@ -193,13 +197,15 @@ CurveCreator_TreeView::CurveCreator_TreeView( CurveCreator_Curve* theCurve, QWid
   QTreeView(parent)
 {
   header()->hide();
+  header()->setResizeMode(QHeaderView::ResizeToContents);
   setUniformRowHeights(true);
   setContextMenuPolicy( Qt::CustomContextMenu );
   CurveCreator_TreeViewModel* aModel = new CurveCreator_TreeViewModel(theCurve, this);
   setModel(aModel);
   setSelectionBehavior(SelectRows);
   setSelectionMode(ExtendedSelection);
-  setExpandsOnDoubleClick(false);
+  setRootIsDecorated(false);
+  setItemsExpandable(false);
   connect( selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
            this, SIGNAL(selectionChanged()) );
   connect( this, SIGNAL(activated(QModelIndex)), this, SLOT(onActivated(QModelIndex)));
@@ -211,7 +217,8 @@ QList<int> CurveCreator_TreeView::getSelectedSections() const
   CurveCreator_TreeViewModel* aModel = dynamic_cast<CurveCreator_TreeViewModel*>(model());
   if( !aModel )
     return aSect;
-  QModelIndexList anIndxs = selectionModel()->selectedIndexes();
+//  QModelIndexList anIndxs = selectionModel()->selectedIndexes();
+  QModelIndexList anIndxs = selectionModel()->selectedRows();
   for( int i = 0 ; i < anIndxs.size() ; i++ ){
     if( aModel->isSection(anIndxs[i]) ){
       aSect << aModel->getSection( anIndxs[i] );
@@ -227,7 +234,7 @@ void CurveCreator_TreeView::pointsAdded( int theSection, int thePoint, int thePo
   if( aModel ){
     QModelIndex aSectIndx = aModel->sectionIndex( theSection );
     rowsInserted(aSectIndx, thePoint, thePoint + thePointsCnt - 1 );
-    expand( aSectIndx );
+//    expand( aSectIndx );
   }
 }
 

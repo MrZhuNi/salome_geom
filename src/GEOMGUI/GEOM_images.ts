@@ -36,6 +36,10 @@
             <translation>new_section.png</translation>
         </message>
         <message>
+            <source>ICON_CC_EDIT_POINTS</source>
+            <translation>edit_points.png</translation>
+        </message>
+        <message>
             <source>ICON_CC_POINT</source>
             <translation>point2.png</translation>
         </message>

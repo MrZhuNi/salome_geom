@@ -30,6 +30,7 @@
 
 
 #include <CurveCreator.hxx>
+#include <CurveCreator_ICurve.hxx>
 #include <CurveCreator_Macro.hxx>
 #include <CurveCreator_Operation.hxx>
 
@@ -45,12 +46,8 @@ class CurveCreator_Listener;
  *  only ends � start and end points � in other words non-manifold curves
  *  are not supported.
  */
-class CURVECREATOR_EXPORT CurveCreator_Curve
+class CURVECREATOR_EXPORT CurveCreator_Curve : public CurveCreator_ICurve
 {
-
-  //! List of curves
-  typedef std::deque<CurveCreator_Section *> Sections;
-
 public:
   //! Constructor of the curve.
   /** The dimension is explicitly specified in the constructor
@@ -58,137 +55,11 @@ public:
    */
   CurveCreator_Curve(const CurveCreator::Dimension theDimension);
 
-  //! Destructor.
-  ~CurveCreator_Curve();
-
-  //! Returns true if this curve is locked by a curve editor.
-  bool isLocked() const;
-
-  //! Get the dimension.
-  CurveCreator::Dimension getDimension() const;
-
-  //! Get number of sections.
-  int getNbSections() const;
-
-  /** Get number of points in specified section or (the total number of points
-   *  in Curve if theISection is equal to -1).
-   */
-  int getNbPoints(const int theISection = -1) const;
-
-  //! Get coordinates of specified point
-  CurveCreator::Coordinates getCoordinates
-                  (const int theISection, const int theIPnt) const;
-
-  //! Get points of a section.
-  const CurveCreator::Coordinates &getPoints(const int theISection) const;
-
-  //! Get type of the specified section
-  CurveCreator::Type getType(const int theISection) const;
-
-  //! Get �closed� flag of the specified section
-  bool isClosed(const int theISection) const;
-
-  //! Returns specifyed section name
-  std::string   getSectionName(const int theISection) const;
-
-  /**
-   * Return unic section name
-   */
-  std::string getUnicSectionName();
-
-  /**
-   * Set curve creator listener object
-   */
-  void setListener( CurveCreator_Listener*   myWatcher );
-
-  /**
-   * Remove curve creator listener object
-   */
-  void removeListener();
-
-protected:
-
-  /** Set type of the specified section (or all sections
-   *  if \a theISection is -1).
-   */
-  void setType(const CurveCreator::Type theType, const int theISection = -1);
-
   /** Add points to the specified section (or last section
    *  if \a theISection is -1).
    */
-  void addPoints
+  virtual void addPoints
     (const CurveCreator::Coordinates &thePoints, const int theISection = -1);
-
-  //! Add a new section.
-  void addSection (const std::string &theName, const CurveCreator::Type theType,
-                   const bool theIsClosed,
-                   const CurveCreator::Coordinates &thePoints);
-
-  //! Removes the section. If theISection equals -1, removes the last section.
-  void removeSection(const int theISection = -1);
-
-  /** Insert points in the given position (add to the end of list
-   *  if \a theIPnt parameter is -1) of the specified section
-   *  (or last section if \a theISection parameter is -1).
-   */
-  void insertPoints(const CurveCreator::Coordinates &thePoints,
-                    const int theISection = -1,
-                    const int theIPnt = -1);
-
-  /** Remove \a nbPoints points from given \a theISection,
-   *  starting from given \a theIPnt (of all points up to the end of
-   *  section if \a theNbPoints is -1).
-   */
-  void removePoints(const int theISection,
-                    const int theIPnt,
-                    const int theNbPoints = -1);
-
-  /** Move specified  point within section to new position
-   */
-  void movePoint(const int theISection,
-                 const int theIPointFrom,
-                 const int theNewIndex);
-
-  //! Remove all sections.
-  void clear();
-
-  //! Set coordinates of specified point
-  void setCoordinates(const CurveCreator::Coordinates &theCoords,
-                      const int theISection,
-                      const int theIPnt);
-
-  /** Set �closed� flag of the specified section (all sections if
-   *  \a theISection is -1).
-   */
-  void setClosed(const bool theIsClosed, const int theISection = -1);
-
-  /** Set name of the specified section.
-   */
-  void setName( const std::string& theName, const int theISection );
-
-  /** Move specified \a theISection to the specified position
-   *  in the sections list.
-   */
-  void moveSection(const int theISection, const int theNewIndex);
-
-  //! Join two sections to one section
-  void join(const int theISectionTo, const int theISectionFrom);
-
-  //! Join all sections to the single curve
-  void join();
-
-  /**
-   * This method converts the point index to the index in
-   * an array of coordinates.
-   */
-  int toICoord(const int theIPnt) const;
-
-protected:
-
-  bool                    myIsLocked;
-  Sections                mySections;   //!< curve data
-  CurveCreator::Dimension myDimension;  //!< curve dimension
-  CurveCreator_Listener*  myListener;   //!< listener
 
   friend class CurveCreator_CurveEditor;
   friend class CurveCreator_Operation;

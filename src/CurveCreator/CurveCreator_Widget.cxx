@@ -69,6 +69,8 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
     QPixmap aRedoPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_REDO")));
     QPixmap aNewSectionPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_NEW_SECTION")));
     QPixmap aNewPointPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_NEW_POINT")));
+    QPixmap anEditPointsPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_EDIT_POINTS")));
+    QPixmap aDetectPointsPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_EDIT_POINTS")));
     QPixmap aPolylinePixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_POLYLINE")));
     QPixmap aSplinePixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_SPLINE")));
     QPixmap aRemovePixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_DELETE")));
@@ -103,6 +105,7 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
                           QKeySequence(Qt::ControlModifier|Qt::Key_N) );
     connect(anAct, SIGNAL(triggered()), this, SLOT(onNewSection()) );
     aTB->addAction(anAct);
+    aTB->addSeparator();
 
     anAct = createAction( INSERT_SECTION_BEFORE_ID, tr("INSERT_SECTION_BEFORE"), QPixmap(), 
                           tr("INSERT_SECTION_BEFORE_TLT"),
@@ -114,11 +117,26 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
                           QKeySequence(Qt::ControlModifier | Qt::ShiftModifier | Qt::Key_Insert ) );
     connect(anAct, SIGNAL(triggered()), this, SLOT(onInsertSectionAfter()) );
 
-    anAct = createAction( NEW_POINT_ID, tr("NEW_POINT"), aNewPointPixmap, tr("NEW_POINT_TLT"), 
-                          QKeySequence(Qt::ControlModifier|Qt::Key_P) );
-    connect(anAct, SIGNAL(triggered()), this, SLOT(onNewPoint()) );
+    anAct = createAction( CREATION_MODE_ID, tr("CREATION_MODE"), aNewPointPixmap, tr("CREATION_MODE_TLT"), 
+                          QKeySequence() );
+    anAct->setCheckable(true);
+    connect(anAct, SIGNAL(triggered(bool)), this, SLOT(onNewPoint(bool)) );
+    connect(anAct, SIGNAL(toggled(bool)), this, SLOT(onModeChanged(bool)) );
     aTB->addAction(anAct);
-    aTB->addSeparator();
+    
+    anAct = createAction( EDITION_MODE_ID, tr("EDITION_MODE"), anEditPointsPixmap, tr("EDITION_MODE_TLT"), 
+                          QKeySequence() );
+    anAct->setCheckable(true);
+    connect(anAct, SIGNAL(triggered(bool)), this, SLOT(onEditPoints(bool)) );
+    connect(anAct, SIGNAL(toggled(bool)), this, SLOT(onModeChanged(bool)) );
+    aTB->addAction(anAct);
+
+    anAct = createAction( DETECTION_MODE_ID, tr("DETECTION_MODE"), aDetectPointsPixmap, tr("DETECTION_MODE_TLT"), 
+                          QKeySequence() );
+    anAct->setCheckable(true);
+    connect(anAct, SIGNAL(triggered(bool)), this, SLOT(onDetectPoints(bool)) );
+    connect(anAct, SIGNAL(toggled(bool)), this, SLOT(onModeChanged(bool)) );
+    aTB->addAction(anAct);
 
     anAct = createAction( INSERT_POINT_BEFORE_ID, tr("INSERT_POINT_BEFORE"), QPixmap(), 
                           tr("INSERT_POINT_BEFORE_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_B) );
@@ -160,12 +178,10 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
     anAct = createAction( UP_ID, tr("STEP_UP"), aStepUpPixmap, tr("STEP_UP_TLT"), 
                           QKeySequence(Qt::ControlModifier|Qt::Key_Up ) );
     connect( anAct, SIGNAL(triggered()), this, SLOT(onMoveUp()) );
-    aTB->addAction(anAct);
 
     anAct = createAction( DOWN_ID, tr("STEP_DOWN"), aStepDownPixmap, tr("STEP_DOWN"), 
                           QKeySequence(Qt::ControlModifier|Qt::Key_Down ) );
     connect( anAct, SIGNAL(triggered()), this, SLOT(onMoveDown()) );
-    aTB->addAction(anAct);
 
     anAct = createAction( CLEAR_ALL_ID, tr("CLEAR_ALL"), QPixmap(), tr("CLEAR_ALL_TLT"), 
                           QKeySequence(Qt::ControlModifier | Qt::ShiftModifier | Qt::Key_Delete ) );
@@ -230,7 +246,7 @@ void CurveCreator_Widget::onSelectionChanged()
         anEnabledAct << UP_ID;
       }
       if( aSelSections.size() == 1 ){
-        anEnabledAct << NEW_POINT_ID << INSERT_SECTION_BEFORE_ID << INSERT_SECTION_AFTER_ID;
+        anEnabledAct << CREATION_MODE_ID << EDITION_MODE_ID;
       }
       if( aSelSections[ aSelSections.size() - 1 ] < ( myCurve->getNbSections() - 1 ) ){
         anEnabledAct << DOWN_ID;
@@ -278,10 +294,29 @@ void CurveCreator_Widget::onSelectionChanged()
   emit selectionChanged();
 }
 
-void CurveCreator_Widget::onNewPoint()
+void CurveCreator_Widget::onNewPoint(bool checked)
 {
   if( !myEdit )
     return;
+
+  SUIT_ViewWindow* aViewWindow = 0;
+  SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
+  if ( activeStudy )
+    aViewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  if ( aViewWindow == 0 )
+    return;
+  SUIT_ViewManager* aViewManager = aViewWindow->getViewManager();
+  if ( aViewManager->getType() == OCCViewer_Viewer::Type() ) {
+    if (checked) {
+      connect( aViewManager, SIGNAL( mousePress( SUIT_ViewWindow*, QMouseEvent* ) ),
+             this, SLOT( onMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
+    } else {
+      disconnect( aViewManager, SIGNAL( mousePress( SUIT_ViewWindow*, QMouseEvent* ) ),
+             this, SLOT( onMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
+      return;
+    }
+  }
+
   mySection= -1;
   myPointNum = -1;
   QList<int> aSelSection = mySectionView->getSelectedSections();
@@ -308,18 +343,36 @@ void CurveCreator_Widget::onNewPoint()
   myNewPointEditor->setSectionName(aSectName);
   myNewPointEditor->setDimension(myCurve->getDimension());
 
-  SUIT_ViewWindow* aViewWindow = 0;
-  SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
-  if ( activeStudy )
-    aViewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
-  if ( aViewWindow == 0 )
+//  emit subOperationStarted( myNewPointEditor );
+}
+
+void CurveCreator_Widget::onEditPoints(bool checked)
+{
+}
+
+void CurveCreator_Widget::onDetectPoints(bool checked)
+{
+}
+
+void CurveCreator_Widget::onModeChanged(bool checked)
+{
+  if (!checked)
     return;
-  SUIT_ViewManager* aViewManager = aViewWindow->getViewManager();
-  if ( aViewManager->getType() == OCCViewer_Viewer::Type() ) {
-    connect( aViewManager, SIGNAL( mousePress( SUIT_ViewWindow*, QMouseEvent* ) ),
-             this, SLOT( onMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
+  QAction* anAction = (QAction*)sender();
+  switch(myActionMap.key(anAction)) {
+    case CREATION_MODE_ID:
+      myActionMap[EDITION_MODE_ID]->setChecked(false);
+      myActionMap[DETECTION_MODE_ID]->setChecked(false);
+      break;
+    case EDITION_MODE_ID:
+      myActionMap[CREATION_MODE_ID]->setChecked(false);
+      myActionMap[DETECTION_MODE_ID]->setChecked(false);
+      break;
+    case DETECTION_MODE_ID:
+      myActionMap[CREATION_MODE_ID]->setChecked(false);
+      myActionMap[EDITION_MODE_ID]->setChecked(false);
+      break;
   }
-  emit subOperationStarted( myNewPointEditor );
 }
 
 void CurveCreator_Widget::onAddNewPoint()
@@ -328,7 +381,7 @@ void CurveCreator_Widget::onAddNewPoint()
     return;
   CurveCreator::Coordinates aCoords = myNewPointEditor->getCoordinates();
   myEdit->insertPoints(aCoords, mySection, myPointNum );
-  mySectionView->pointsAdded( mySection, myPointNum );
+//  mySectionView->pointsAdded( mySection, myPointNum );
 //  myNewPointEditor->clear();
   myPointNum++;
   onSelectionChanged();

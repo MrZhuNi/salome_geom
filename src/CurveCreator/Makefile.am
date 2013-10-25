@@ -34,10 +34,12 @@ dist_libCurveCreator_la_SOURCES =	\
 	CurveCreator_Operation.hxx \
 	CurveCreator_Diff.hxx \
 	CurveCreator_Section.hxx \
+	CurveCreator_ICurve.hxx \
 	CurveCreator_Curve.hxx \
 	CurveCreator_CurveEditor.hxx \
 	CurveCreator_Operation.cxx \
 	CurveCreator_Diff.cxx \
+	CurveCreator_ICurve.cxx \
 	CurveCreator_Curve.cxx \
 	CurveCreator_CurveEditor.cxx
 
@@ -48,6 +50,7 @@ salomeinclude_HEADERS =	\
 	CurveCreator_Operation.hxx \
 	CurveCreator_Diff.hxx \
 	CurveCreator_Section.hxx \
+	CurveCreator_ICurve.hxx \
 	CurveCreator_Curve.hxx \
 	CurveCreator_CurveEditor.hxx \
         CurveCreator_Listener.hxx

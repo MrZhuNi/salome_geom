@@ -86,6 +86,7 @@ display.png			\
 displayonly.png			\
 displayall.png			\
 draft.png			\
+edit_points.png			\
 erase.png			\
 eraseall.png			\
 extruded_boss.png		\
