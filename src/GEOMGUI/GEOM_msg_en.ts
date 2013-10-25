@@ -5336,6 +5336,14 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <translation>Edition mode</translation>
     </message>
     <message>
+        <source>DETECTION_MODE</source>
+        <translation>Detection mode</translation>
+    </message>
+    <message>
+        <source>DETECTION_MODE_TLT</source>
+        <translation>Detection mode</translation>
+    </message>
+    <message>
         <source>INSERT_POINT_BEFORE</source>
         <translation>Insert point before</translation>
     </message>

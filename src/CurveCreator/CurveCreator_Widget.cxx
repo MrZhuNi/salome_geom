@@ -246,7 +246,7 @@ void CurveCreator_Widget::onSelectionChanged()
         anEnabledAct << UP_ID;
       }
       if( aSelSections.size() == 1 ){
-        anEnabledAct << CREATION_MODE_ID << EDITION_MODE_ID;
+        anEnabledAct << CREATION_MODE_ID << EDITION_MODE_ID << DETECTION_MODE_ID;
       }
       if( aSelSections[ aSelSections.size() - 1 ] < ( myCurve->getNbSections() - 1 ) ){
         anEnabledAct << DOWN_ID;
@@ -361,16 +361,22 @@ void CurveCreator_Widget::onModeChanged(bool checked)
   QAction* anAction = (QAction*)sender();
   switch(myActionMap.key(anAction)) {
     case CREATION_MODE_ID:
-      myActionMap[EDITION_MODE_ID]->setChecked(false);
-      myActionMap[DETECTION_MODE_ID]->setChecked(false);
+      if (myActionMap[EDITION_MODE_ID]->isChecked())
+        myActionMap[EDITION_MODE_ID]->trigger();
+      else if (myActionMap[DETECTION_MODE_ID]->isChecked())
+        myActionMap[DETECTION_MODE_ID]->trigger();
       break;
     case EDITION_MODE_ID:
-      myActionMap[CREATION_MODE_ID]->setChecked(false);
-      myActionMap[DETECTION_MODE_ID]->setChecked(false);
+      if (myActionMap[CREATION_MODE_ID]->isChecked())
+        myActionMap[CREATION_MODE_ID]->trigger();
+      else if (myActionMap[DETECTION_MODE_ID]->isChecked())
+        myActionMap[DETECTION_MODE_ID]->trigger();
       break;
     case DETECTION_MODE_ID:
-      myActionMap[CREATION_MODE_ID]->setChecked(false);
-      myActionMap[EDITION_MODE_ID]->setChecked(false);
+      if (myActionMap[CREATION_MODE_ID]->isChecked())
+        myActionMap[CREATION_MODE_ID]->trigger();
+      else if (myActionMap[EDITION_MODE_ID]->isChecked())
+        myActionMap[EDITION_MODE_ID]->trigger();
       break;
   }
 }
