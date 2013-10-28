@@ -18,6 +18,7 @@ public:
 //  virtual bool setHeaderData(int section, Qt::Orientation orientation, const QVariant & value, int role = Qt::EditRole);
 
   QModelIndex sectionIndex( int theSection ) const;
+  QModelIndex nbPointsIndex( int theSection ) const;
   QModelIndex pointIndex( int theSection, int thePoint ) const;
 
   bool    isSection( const QModelIndex& theIndx ) const;

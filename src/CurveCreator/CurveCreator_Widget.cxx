@@ -226,11 +226,6 @@ void CurveCreator_Widget::onSelectionChanged()
   QList<ActionId> anEnabledAct;
   if( myCurve ){
     anEnabledAct << NEW_SECTION_ID;
-    int aSectCnt = myCurve->getNbPoints();
-    if( aSectCnt > 0 )
-      anEnabledAct << CLEAR_ALL_ID;
-    if( aSectCnt > 1 )
-      anEnabledAct << JOIN_ALL_ID;
     QList<int> aSelSections = mySectionView->getSelectedSections();
     QList< QPair< int, int > > aSelPoints = mySectionView->getSelectedPoints();
     CurveCreator_TreeView::SelectionType aSelType = mySectionView->getSelectionType();
@@ -239,22 +234,40 @@ void CurveCreator_Widget::onSelectionChanged()
       break;
     }
     case CurveCreator_TreeView::ST_SECTIONS:{
-      if( aSelSections.size() > 1 ){
-        anEnabledAct << JOIN_ID;
-      }
-      if( aSelSections[0] > 0 ){
+      /*if( aSelSections[0] > 0 ){
         anEnabledAct << UP_ID;
-      }
+      }*/
       if( aSelSections.size() == 1 ){
         anEnabledAct << CREATION_MODE_ID << EDITION_MODE_ID << DETECTION_MODE_ID;
       }
-      if( aSelSections[ aSelSections.size() - 1 ] < ( myCurve->getNbSections() - 1 ) ){
-        anEnabledAct << DOWN_ID;
+      if (myActionMap[CREATION_MODE_ID]->isChecked()) {
+        mySection = -1;
+        myPointNum = -1;
+        QList<int> aSelSection = mySectionView->getSelectedSections();
+        if( aSelSection.size() > 0 ){
+          mySection = aSelSection[0];
+          myPointNum = myCurve->getNbPoints(mySection);
+        }
+      } else if (myActionMap[EDITION_MODE_ID]->isChecked()) {
+        anEnabledAct << REMOVE_ID;
+        anEnabledAct << CLOSE_SECTIONS_ID << UNCLOSE_SECTIONS_ID << SET_SECTIONS_POLYLINE_ID << SET_SECTIONS_SPLINE_ID;
+        int aSectCnt = myCurve->getNbSections();
+        if( aSectCnt > 0 )
+          anEnabledAct << CLEAR_ALL_ID;
+        if( aSectCnt > 1 )
+          anEnabledAct << JOIN_ALL_ID;
+        if( aSelSections.size() > 1 ){
+          anEnabledAct << JOIN_ID;
+        }
+      } else if (myActionMap[DETECTION_MODE_ID]->isChecked()) {
+      } else { //no active mode
       }
-      anEnabledAct << CLOSE_SECTIONS_ID << UNCLOSE_SECTIONS_ID << SET_SECTIONS_POLYLINE_ID << SET_SECTIONS_SPLINE_ID;
+      /*if( aSelSections[ aSelSections.size() - 1 ] < ( myCurve->getNbSections() - 1 ) ){
+        anEnabledAct << DOWN_ID;
+      }*/
       break;
     }
-    case CurveCreator_TreeView::ST_POINTS_ONE_SECTION:{
+    /*case CurveCreator_TreeView::ST_POINTS_ONE_SECTION:{
       if( aSelPoints[0].second > 0 ){
         anEnabledAct << UP_ID;
       }
@@ -267,15 +280,17 @@ void CurveCreator_Widget::onSelectionChanged()
         anEnabledAct << INSERT_POINT_BEFORE_ID << INSERT_POINT_AFTER_ID;
       }
       break;
+    }*/
+
     }
-    }
-    int aSelObjsCnt = aSelPoints.size() + aSelSections.size();
+    
+    /*int aSelObjsCnt = aSelPoints.size() + aSelSections.size();
     if( aSelObjsCnt > 0 ){
       anEnabledAct << REMOVE_ID;
     }
     if( (myCurve->getNbSections() + myCurve->getNbPoints()) > 0 ){
       anEnabledAct << REMOVE_ALL_ID;
-    }
+    }*/
     if( myCurve->getNbSections() > 1 ){
       anEnabledAct << JOIN_ALL_ID;
     }
@@ -356,29 +371,30 @@ void CurveCreator_Widget::onDetectPoints(bool checked)
 
 void CurveCreator_Widget::onModeChanged(bool checked)
 {
-  if (!checked)
-    return;
-  QAction* anAction = (QAction*)sender();
-  switch(myActionMap.key(anAction)) {
-    case CREATION_MODE_ID:
-      if (myActionMap[EDITION_MODE_ID]->isChecked())
-        myActionMap[EDITION_MODE_ID]->trigger();
-      else if (myActionMap[DETECTION_MODE_ID]->isChecked())
-        myActionMap[DETECTION_MODE_ID]->trigger();
-      break;
-    case EDITION_MODE_ID:
-      if (myActionMap[CREATION_MODE_ID]->isChecked())
-        myActionMap[CREATION_MODE_ID]->trigger();
-      else if (myActionMap[DETECTION_MODE_ID]->isChecked())
-        myActionMap[DETECTION_MODE_ID]->trigger();
-      break;
-    case DETECTION_MODE_ID:
-      if (myActionMap[CREATION_MODE_ID]->isChecked())
-        myActionMap[CREATION_MODE_ID]->trigger();
-      else if (myActionMap[EDITION_MODE_ID]->isChecked())
-        myActionMap[EDITION_MODE_ID]->trigger();
-      break;
+  if (checked) {
+    QAction* anAction = (QAction*)sender();
+    switch(myActionMap.key(anAction)) {
+      case CREATION_MODE_ID:
+        if (myActionMap[EDITION_MODE_ID]->isChecked())
+          myActionMap[EDITION_MODE_ID]->trigger();
+        else if (myActionMap[DETECTION_MODE_ID]->isChecked())
+          myActionMap[DETECTION_MODE_ID]->trigger();
+        break;
+      case EDITION_MODE_ID:
+        if (myActionMap[CREATION_MODE_ID]->isChecked())
+          myActionMap[CREATION_MODE_ID]->trigger();
+        else if (myActionMap[DETECTION_MODE_ID]->isChecked())
+          myActionMap[DETECTION_MODE_ID]->trigger();
+        break;
+      case DETECTION_MODE_ID:
+        if (myActionMap[CREATION_MODE_ID]->isChecked())
+          myActionMap[CREATION_MODE_ID]->trigger();
+        else if (myActionMap[EDITION_MODE_ID]->isChecked())
+          myActionMap[EDITION_MODE_ID]->trigger();
+        break;
+    }
   }
+  onSelectionChanged();
 }
 
 void CurveCreator_Widget::onAddNewPoint()
@@ -387,8 +403,8 @@ void CurveCreator_Widget::onAddNewPoint()
     return;
   CurveCreator::Coordinates aCoords = myNewPointEditor->getCoordinates();
   myEdit->insertPoints(aCoords, mySection, myPointNum );
-//  mySectionView->pointsAdded( mySection, myPointNum );
-//  myNewPointEditor->clear();
+  mySectionView->pointsAdded( mySection, myPointNum );
+  myNewPointEditor->clear();
   myPointNum++;
   onSelectionChanged();
   updateUndoRedo();

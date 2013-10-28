@@ -216,7 +216,8 @@ void CurveCreator_ICurve::removeSection(const int theISection)
     delete *anIterRm;
     mySections.erase(anIterRm);
   }
-   myListener->sectionRemoved(theISection);
+  if( myListener )
+    myListener->sectionRemoved(theISection);
 }
 
 //=======================================================================
@@ -268,7 +269,8 @@ void CurveCreator_ICurve::removePoints(const int theISection,
     aSection->myPoints.end() : anIterBegin + toICoord(theNbPoints));
 
   aSection->myPoints.erase(anIterBegin, anIterEnd);
-  myListener->pointRemoved(theISection, theIPnt, theNbPoints );
+  if( myListener )
+    myListener->pointRemoved(theISection, theIPnt, theNbPoints );
 }
 
 //=======================================================================

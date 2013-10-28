@@ -160,6 +160,11 @@ QModelIndex CurveCreator_TreeViewModel::sectionIndex( int theSection ) const
   return createIndex( theSection, 0, ID_SECTION );
 }
 
+QModelIndex CurveCreator_TreeViewModel::nbPointsIndex( int theSection ) const
+{
+  return createIndex( theSection, 1, ID_SECTION );
+}
+
 QModelIndex CurveCreator_TreeViewModel::pointIndex( int theSection, int thePoint ) const
 {
   return createIndex( thePoint, 0, theSection );
@@ -203,9 +208,10 @@ CurveCreator_TreeView::CurveCreator_TreeView( CurveCreator_Curve* theCurve, QWid
   CurveCreator_TreeViewModel* aModel = new CurveCreator_TreeViewModel(theCurve, this);
   setModel(aModel);
   setSelectionBehavior(SelectRows);
-  setSelectionMode(ExtendedSelection);
+  setSelectionMode(SingleSelection);
   setRootIsDecorated(false);
   setItemsExpandable(false);
+  setAllColumnsShowFocus(true);
   connect( selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
            this, SIGNAL(selectionChanged()) );
   connect( this, SIGNAL(activated(QModelIndex)), this, SLOT(onActivated(QModelIndex)));
@@ -235,6 +241,7 @@ void CurveCreator_TreeView::pointsAdded( int theSection, int thePoint, int thePo
     QModelIndex aSectIndx = aModel->sectionIndex( theSection );
     rowsInserted(aSectIndx, thePoint, thePoint + thePointsCnt - 1 );
 //    expand( aSectIndx );
+    update( aModel->nbPointsIndex( theSection ) );
   }
 }
 
