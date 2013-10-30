@@ -30,6 +30,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QApplication>
 
 CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
                                          CurveCreator_Curve *theCurve,
@@ -44,7 +45,7 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
         aDim = myCurve->getDimension();
     myNewPointEditor = new CurveCreator_NewPointDlg( aDim, this );
     myNewPointEditor->hide();
-    connect( myNewPointEditor, SIGNAL(addPoint()), this, SLOT(onAddNewPoint()) );
+//    connect( myNewPointEditor, SIGNAL(addPoint()), this, SLOT(onAddNewPoint()) );
     connect( myNewPointEditor, SIGNAL(modifyPoint()), this, SLOT(onModifyPoint()) );
     connect( myNewPointEditor, SIGNAL(cancelPoint()), this, SLOT(onCancelPoint()) );
 
@@ -117,17 +118,17 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
                           QKeySequence(Qt::ControlModifier | Qt::ShiftModifier | Qt::Key_Insert ) );
     connect(anAct, SIGNAL(triggered()), this, SLOT(onInsertSectionAfter()) );
 
-    anAct = createAction( CREATION_MODE_ID, tr("CREATION_MODE"), aNewPointPixmap, tr("CREATION_MODE_TLT"), 
+    anAct = createAction( ADDITION_MODE_ID, tr("ADDITION_MODE"), aNewPointPixmap, tr("ADDITION_MODE_TLT"), 
                           QKeySequence() );
     anAct->setCheckable(true);
-    connect(anAct, SIGNAL(triggered(bool)), this, SLOT(onNewPoint(bool)) );
+    connect(anAct, SIGNAL(triggered(bool)), this, SLOT(onAdditionMode(bool)) );
     connect(anAct, SIGNAL(toggled(bool)), this, SLOT(onModeChanged(bool)) );
     aTB->addAction(anAct);
     
-    anAct = createAction( EDITION_MODE_ID, tr("EDITION_MODE"), anEditPointsPixmap, tr("EDITION_MODE_TLT"), 
+    anAct = createAction( MODIFICATION_MODE_ID, tr("MODIFICATION_MODE"), anEditPointsPixmap, tr("MODIFICATION_MODE_TLT"), 
                           QKeySequence() );
     anAct->setCheckable(true);
-    connect(anAct, SIGNAL(triggered(bool)), this, SLOT(onEditPoints(bool)) );
+    connect(anAct, SIGNAL(triggered(bool)), this, SLOT(onModificationMode(bool)) );
     connect(anAct, SIGNAL(toggled(bool)), this, SLOT(onModeChanged(bool)) );
     aTB->addAction(anAct);
 
@@ -238,9 +239,9 @@ void CurveCreator_Widget::onSelectionChanged()
         anEnabledAct << UP_ID;
       }*/
       if( aSelSections.size() == 1 ){
-        anEnabledAct << CREATION_MODE_ID << EDITION_MODE_ID << DETECTION_MODE_ID;
+        anEnabledAct << ADDITION_MODE_ID << MODIFICATION_MODE_ID << DETECTION_MODE_ID;
       }
-      if (myActionMap[CREATION_MODE_ID]->isChecked()) {
+      if (myActionMap[ADDITION_MODE_ID]->isChecked()) {
         mySection = -1;
         myPointNum = -1;
         QList<int> aSelSection = mySectionView->getSelectedSections();
@@ -248,7 +249,7 @@ void CurveCreator_Widget::onSelectionChanged()
           mySection = aSelSection[0];
           myPointNum = myCurve->getNbPoints(mySection);
         }
-      } else if (myActionMap[EDITION_MODE_ID]->isChecked()) {
+      } else if (myActionMap[MODIFICATION_MODE_ID]->isChecked()) {
         anEnabledAct << REMOVE_ID;
         anEnabledAct << CLOSE_SECTIONS_ID << UNCLOSE_SECTIONS_ID << SET_SECTIONS_POLYLINE_ID << SET_SECTIONS_SPLINE_ID;
         int aSectCnt = myCurve->getNbSections();
@@ -309,7 +310,7 @@ void CurveCreator_Widget::onSelectionChanged()
   emit selectionChanged();
 }
 
-void CurveCreator_Widget::onNewPoint(bool checked)
+void CurveCreator_Widget::onAdditionMode(bool checked)
 {
   if( !myEdit )
     return;
@@ -321,13 +322,14 @@ void CurveCreator_Widget::onNewPoint(bool checked)
   if ( aViewWindow == 0 )
     return;
   SUIT_ViewManager* aViewManager = aViewWindow->getViewManager();
+
   if ( aViewManager->getType() == OCCViewer_Viewer::Type() ) {
     if (checked) {
       connect( aViewManager, SIGNAL( mousePress( SUIT_ViewWindow*, QMouseEvent* ) ),
-             this, SLOT( onMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
+             this, SLOT( onGetPointByClick( SUIT_ViewWindow*, QMouseEvent* ) ) );
     } else {
       disconnect( aViewManager, SIGNAL( mousePress( SUIT_ViewWindow*, QMouseEvent* ) ),
-             this, SLOT( onMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
+             this, SLOT( onGetPointByClick( SUIT_ViewWindow*, QMouseEvent* ) ) );
       return;
     }
   }
@@ -345,6 +347,7 @@ void CurveCreator_Widget::onNewPoint(bool checked)
       myPointNum = aSelPoints[0].second + 1;
     }
   }
+/*
   QString aSectName;
   if( mySection < 0 ){
     mySection = myCurve->getNbSections() - 1;
@@ -357,12 +360,34 @@ void CurveCreator_Widget::onNewPoint(bool checked)
   myNewPointEditor->setEditMode(false);
   myNewPointEditor->setSectionName(aSectName);
   myNewPointEditor->setDimension(myCurve->getDimension());
-
+*/
 //  emit subOperationStarted( myNewPointEditor );
 }
 
-void CurveCreator_Widget::onEditPoints(bool checked)
+void CurveCreator_Widget::onModificationMode(bool checked)
 {
+  SUIT_ViewWindow* aViewWindow = 0;
+  SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
+  if ( activeStudy )
+    aViewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  if ( aViewWindow == 0 )
+    return;
+  SUIT_ViewManager* aViewManager = aViewWindow->getViewManager();
+  if ( aViewManager->getType() == OCCViewer_Viewer::Type() ) {
+    if (checked) {
+//      connect( aViewManager, SIGNAL( mouseRelease( SUIT_ViewWindow*, QMouseEvent* ) ),
+//             this, SLOT( onPointSelect( SUIT_ViewWindow*, QMouseEvent* ) ) );
+      connect( aViewManager, SIGNAL( mouseMove( SUIT_ViewWindow*, QMouseEvent* ) ),
+             this, SLOT( onPointDrag( SUIT_ViewWindow*, QMouseEvent* ) ) );
+    }
+    else {
+//      disconnect( aViewManager, SIGNAL( mouseRelease( SUIT_ViewWindow*, QMouseEvent* ) ),
+//             this, SLOT( onPointSelect( SUIT_ViewWindow*, QMouseEvent* ) ) );
+      disconnect( aViewManager, SIGNAL( mouseMove( SUIT_ViewWindow*, QMouseEvent* ) ),
+             this, SLOT( onPointDrag( SUIT_ViewWindow*, QMouseEvent* ) ) );
+      return;
+    }
+  }
 }
 
 void CurveCreator_Widget::onDetectPoints(bool checked)
@@ -374,37 +399,37 @@ void CurveCreator_Widget::onModeChanged(bool checked)
   if (checked) {
     QAction* anAction = (QAction*)sender();
     switch(myActionMap.key(anAction)) {
-      case CREATION_MODE_ID:
-        if (myActionMap[EDITION_MODE_ID]->isChecked())
-          myActionMap[EDITION_MODE_ID]->trigger();
+      case ADDITION_MODE_ID:
+        if (myActionMap[MODIFICATION_MODE_ID]->isChecked())
+          myActionMap[MODIFICATION_MODE_ID]->trigger();
         else if (myActionMap[DETECTION_MODE_ID]->isChecked())
           myActionMap[DETECTION_MODE_ID]->trigger();
         break;
-      case EDITION_MODE_ID:
-        if (myActionMap[CREATION_MODE_ID]->isChecked())
-          myActionMap[CREATION_MODE_ID]->trigger();
+      case MODIFICATION_MODE_ID:
+        if (myActionMap[ADDITION_MODE_ID]->isChecked())
+          myActionMap[ADDITION_MODE_ID]->trigger();
         else if (myActionMap[DETECTION_MODE_ID]->isChecked())
           myActionMap[DETECTION_MODE_ID]->trigger();
         break;
       case DETECTION_MODE_ID:
-        if (myActionMap[CREATION_MODE_ID]->isChecked())
-          myActionMap[CREATION_MODE_ID]->trigger();
-        else if (myActionMap[EDITION_MODE_ID]->isChecked())
-          myActionMap[EDITION_MODE_ID]->trigger();
+        if (myActionMap[ADDITION_MODE_ID]->isChecked())
+          myActionMap[ADDITION_MODE_ID]->trigger();
+        else if (myActionMap[MODIFICATION_MODE_ID]->isChecked())
+          myActionMap[MODIFICATION_MODE_ID]->trigger();
         break;
     }
   }
   onSelectionChanged();
 }
 
-void CurveCreator_Widget::onAddNewPoint()
+void CurveCreator_Widget::onAddNewPoint(const CurveCreator::Coordinates& theCoords)
 {
   if( !myEdit )
     return;
-  CurveCreator::Coordinates aCoords = myNewPointEditor->getCoordinates();
-  myEdit->insertPoints(aCoords, mySection, myPointNum );
+//  CurveCreator::Coordinates aCoords = myNewPointEditor->getCoordinates();
+  myEdit->insertPoints(theCoords, mySection, myPointNum );
   mySectionView->pointsAdded( mySection, myPointNum );
-  myNewPointEditor->clear();
+//  myNewPointEditor->clear();
   myPointNum++;
   onSelectionChanged();
   updateUndoRedo();
@@ -832,10 +857,10 @@ void CurveCreator_Widget::setInstantSketchingEnabled( const bool theState )
 }
 
 //=================================================================================
-// function : GeometryGUI::OnMousePress()
-// purpose  : Manage mouse press events [static]
+// function : GeometryGUI::onGetPointByClick()
+// purpose  : Manage mouse press events in Additon mode
 //=================================================================================
-void CurveCreator_Widget::onMousePress( SUIT_ViewWindow* theViewWindow, QMouseEvent* pe )
+void CurveCreator_Widget::onGetPointByClick( SUIT_ViewWindow* theViewWindow, QMouseEvent* pe )
 {
   if ( myNewPointEditor && theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&
        pe->modifiers() != Qt::ControlModifier ) {
@@ -851,7 +876,7 @@ void CurveCreator_Widget::onMousePress( SUIT_ViewWindow* theViewWindow, QMouseEv
     else
       ic->Select();       // New selection
 
-    TopoDS_Shape aShape;
+    /*TopoDS_Shape aShape;
 
     ic->InitSelected();
     if ( ic->MoreSelected() )
@@ -859,7 +884,8 @@ void CurveCreator_Widget::onMousePress( SUIT_ViewWindow* theViewWindow, QMouseEv
 
     if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
       aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
-    else {
+    else*/
+    {
       OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
       aPnt = GEOMUtils::ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
     }
@@ -870,6 +896,28 @@ void CurveCreator_Widget::onMousePress( SUIT_ViewWindow* theViewWindow, QMouseEv
     if ( myCurve->getDimension() == 3 ) {
       aCoords.push_back( aPnt.Z() );
     }
-    myNewPointEditor->setCoordinates( aCoords );
+    onAddNewPoint(aCoords);
+//    myNewPointEditor->setCoordinates( aCoords );
   }
+}
+
+//=================================================================================
+// function : GeometryGUI::onPointDrag()
+// purpose  : Manage mouse move events in Modification mode
+//=================================================================================
+void CurveCreator_Widget::onPointDrag( SUIT_ViewWindow* theViewWindow, QMouseEvent* pe )
+{
+  if ( !(pe->buttons() & Qt::LeftButton) )
+    return;
+  if ( (pe->pos() - myDragStartPosition).manhattanLength() < QApplication::startDragDistance() )
+    return;
+/*  
+  QDrag *drag = new QDrag(this);
+  QMimeData *mimeData = new QMimeData;
+  
+  mimeData->setData(mimeType, data);
+  drag->setMimeData(mimeData);
+  
+  Qt::DropAction dropAction = drag->exec(Qt::CopyAction | Qt::MoveAction);
+  */
 }

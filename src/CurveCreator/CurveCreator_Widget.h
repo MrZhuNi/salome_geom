@@ -2,6 +2,7 @@
 #define CURVECREATOR_WIDGET_H
 
 #include "CurveCreator_Curve.hxx"
+#include "CurveCreator.hxx"
 
 #include <QWidget>
 #include <QMap>
@@ -39,13 +40,13 @@ signals:
 public slots:
 
 protected slots:
-    void     onNewPoint(bool checked);
-    void     onEditPoints(bool checked);
+    void     onAdditionMode(bool checked);
+    void     onModificationMode(bool checked);
     void     onDetectPoints(bool checked);
     void     onModeChanged(bool checked);
     void     onNewSection();
     void     onSelectionChanged();
-    void     onAddNewPoint();
+    void     onAddNewPoint(const CurveCreator::Coordinates& theCoords);
     void     onAddNewSection();
     void     onEditSection( int theSection );
     void     onEditPoint( int theSection, int thePoint );
@@ -71,13 +72,15 @@ protected slots:
     void     onRedo();
     void     onUndoSettings();
     void     onContextMenu(QPoint thePoint);
-    void     onMousePress( SUIT_ViewWindow*, QMouseEvent* );
+    void     onGetPointByClick( SUIT_ViewWindow*, QMouseEvent* );
+//    void     onPointSelect( SUIT_ViewWindow*, QMouseEvent* );
+    void     onPointDrag( SUIT_ViewWindow*, QMouseEvent* );
 protected:
-    enum ActionId{ UNDO_ID, REDO_ID, NEW_SECTION_ID, CREATION_MODE_ID, REMOVE_ID, REMOVE_ALL_ID, JOIN_ID,
+    enum ActionId{ UNDO_ID, REDO_ID, NEW_SECTION_ID, ADDITION_MODE_ID, REMOVE_ID, REMOVE_ALL_ID, JOIN_ID,
                    JOIN_ALL_ID, UP_ID, DOWN_ID, INSERT_SECTION_BEFORE_ID, INSERT_SECTION_AFTER_ID,
                    INSERT_POINT_BEFORE_ID, INSERT_POINT_AFTER_ID, CLOSE_SECTIONS_ID, UNCLOSE_SECTIONS_ID,
                    SET_SECTIONS_POLYLINE_ID, SET_SECTIONS_SPLINE_ID, CLEAR_ALL_ID, SEPARATOR_ID, 
-                   EDITION_MODE_ID, DETECTION_MODE_ID };
+                   MODIFICATION_MODE_ID, DETECTION_MODE_ID };
 private:
     QAction* createAction( ActionId theId, const QString& theName, const QPixmap& theImage,
                            const QString& theToolTip, const QKeySequence& theShortcut );
@@ -92,6 +95,7 @@ private:
     CurveCreator_NewSectionDlg* myNewSectionEditor;
     int                         mySection;
     int                         myPointNum;
+    QPoint                      myDragStartPosition;
 };
 
 #endif // CURVECREATOR_WIDGET_H

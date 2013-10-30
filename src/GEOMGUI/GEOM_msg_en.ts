@@ -5320,20 +5320,20 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <translation>Insert section after</translation>
     </message>
     <message>
-        <source>CREATION_MODE</source>
-        <translation>Creation mode</translation>
+        <source>ADDITION_MODE</source>
+        <translation>Addition mode</translation>
     </message>
     <message>
-        <source>CREATION_MODE_TLT</source>
-        <translation>Creation mode</translation>
+        <source>ADDITION_MODE_TLT</source>
+        <translation>Addition mode</translation>
     </message>
     <message>
-        <source>EDITION_MODE</source>
-        <translation>Edition mode</translation>
+        <source>MODIFICATION_MODE</source>
+        <translation>Modification mode</translation>
     </message>
     <message>
-        <source>EDITION_MODE_TLT</source>
-        <translation>Edition mode</translation>
+        <source>MODIFICATION_MODE_TLT</source>
+        <translation>Modification mode</translation>
     </message>
     <message>
         <source>DETECTION_MODE</source>
