@@ -54,7 +54,8 @@ namespace GEOM
     PointColor,
     IsosColor,
     OutlineColor,
-    LastProperty = OutlineColor,
+    Dimensions,
+    LastProperty = Dimensions,
   };
 
   GEOM_OBJECT_EXPORT double minDeflection();
@@ -63,6 +64,8 @@ namespace GEOM
   GEOM_OBJECT_EXPORT QString subSectionSeparator();
 
   GEOM_OBJECT_EXPORT QString propertyName( Property );
+
+  GEOM_OBJECT_EXPORT int sharedPropertiesId();
 }
 
   

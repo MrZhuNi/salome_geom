@@ -38,6 +38,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/Material
   ${PROJECT_SOURCE_DIR}/src/GEOMClient
   ${PROJECT_SOURCE_DIR}/src/GEOMImpl
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
@@ -56,6 +57,7 @@ SET(_link_LIBRARIES
   GEOMFiltersSelection
   Material
   GEOMImpl
+  GEOMUtils
   ${KERNEL_SALOMELocalTrace}
   ${KERNEL_SalomeDS}
   ${KERNEL_SalomeDSClient}

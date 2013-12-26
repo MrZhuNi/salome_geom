@@ -30,6 +30,7 @@ INCLUDE_DIRECTORIES(
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
   ${CAS_DEFINITIONS}
+  ${OMNIORB_DEFINITIONS}
   )
 
 # libraries to link to
@@ -40,7 +41,10 @@ SET(_link_LIBRARIES
   ${CAS_TKG3d}
   ${CAS_TKV3d}
   ${CAS_TKGeomBase}
+  ${GUI_SalomeApp}
   ${KERNEL_SALOMELocalTrace}
+  ${KERNEL_SalomeDS}
+  ${KERNEL_SalomeDSClient}
   )
 
 # --- headers ---
@@ -48,12 +52,14 @@ SET(_link_LIBRARIES
 SET(GEOMUtils_HEADERS
   GEOMUtils.hxx
   GEOMUtils_Hatcher.hxx
+  GEOMUtils_DimensionProperty.hxx
   )
 # --- sources ---
 
 SET(GEOMUtils_SOURCES
   GEOMUtils.cxx
   GEOMUtils_Hatcher.cxx
+  GEOMUtils_DimensionProperty.cxx
   )
 
 # --- rules ---
