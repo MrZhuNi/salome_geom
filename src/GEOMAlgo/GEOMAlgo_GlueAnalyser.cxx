@@ -266,7 +266,7 @@
   Standard_Integer i, aNbF, aNbSDF, iErr;
   TopoDS_Shape aNewShape;
   TopTools_IndexedMapOfShape aMF;
-  TopTools_ListIteratorOfListOfShape aItS;
+  NCollection_List<TopoDS_Shape>::Iterator aItS;
   GEOMAlgo_PassKeyShape aPKF;
   GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape aMPKLF;
   //
@@ -291,11 +291,11 @@
     }
     //
     if (aMPKLF.Contains(aPKF)) {
-      TopTools_ListOfShape& aLSDF=aMPKLF.ChangeFromKey(aPKF);
+      NCollection_List<TopoDS_Shape>& aLSDF=aMPKLF.ChangeFromKey(aPKF);
       aLSDF.Append(aS);
     }
     else {
-      TopTools_ListOfShape aLSDF;
+      NCollection_List<TopoDS_Shape> aLSDF;
       //
       aLSDF.Append(aS);
       aMPKLF.Add(aPKF, aLSDF);
@@ -313,7 +313,7 @@
   // Images/Origins
   aNbF=aMPKLF.Extent();
   for (i=1; i<=aNbF; ++i) {
-    const TopTools_ListOfShape& aLSDF=aMPKLF(i);
+    const NCollection_List<TopoDS_Shape>& aLSDF=aMPKLF(i);
     aNbSDF=aLSDF.Extent();
     if (!aNbSDF) {
       myErrorStatus=4; // it must not be
@@ -322,7 +322,9 @@
     const TopoDS_Shape& aS1=aLSDF.First();
     aNewShape=aS1;
     //
-    myImages.Bind(aNewShape, aLSDF);
+    TopTools_ListOfShape aConvLSDF;
+    GEOMAlgo_AlgoTools::ConvertNCollectionListToTopToolsListOfShape(aLSDF, aConvLSDF);
+    myImages.Bind(aNewShape, aConvLSDF);
     // origins
     aItS.Initialize(aLSDF);
     for (; aItS.More(); aItS.Next()) {
@@ -397,7 +399,7 @@
     //qt
     //
     if (!aMPKLS.Contains(aPKSx)) {
-      TopTools_ListOfShape aLSx;
+      NCollection_List<TopoDS_Shape> aLSx;
       //
       aLSx.Append(aSx[0]);
       aLSx.Append(aSx[1]);
@@ -416,7 +418,7 @@
   }
   //
   for (i=1; i<=aNbC; ++i) {
-    const TopTools_ListOfShape& aLSx=aMPKLS(i);
+    const NCollection_List<TopoDS_Shape>& aLSx=aMPKLS(i);
     const TopoDS_Shape& aSx1=aLSx.First();
     const TopoDS_Shape& aSx2=aLSx.Last();
     aCS.SetShape1(aSx1);

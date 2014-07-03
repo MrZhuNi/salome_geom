@@ -30,7 +30,7 @@
 
 #include <TopAbs_ShapeEnum.hxx>
 #include <TColStd_DataMapOfIntegerInteger.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <QMap>
@@ -101,7 +101,7 @@ private:
   int                                 getNbComps() const;
   void                                updateShapeIDs();
   void                                updateDims(int curDim=-1);
-  int                                 getSelectedSubshapes (TColStd_IndexedMapOfInteger& map);
+  int                                 getSelectedSubshapes (NCollection_IndexedMap<Standard_Integer>& map);
 
 private:
   bool                                myIsCreation;

@@ -36,7 +36,7 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>
 #include <TopExp.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 #include <gp_Pnt.hxx>
 
 #include <QTabWidget>
@@ -541,7 +541,7 @@ void AdvancedGUI_PipeTShapeDlg::SelectionIntoArgument()
       TopoDS_Shape aShape;
       if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
 
-        TColStd_IndexedMapOfInteger aMap;
+        NCollection_IndexedMap<Standard_Integer> aMap;
         aSelMgr->GetIndexes(anIO, aMap);
         if (aMap.Extent() == 1) { // Local Selection
           int anIndex = aMap(1);

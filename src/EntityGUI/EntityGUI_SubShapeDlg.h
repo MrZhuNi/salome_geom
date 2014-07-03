@@ -29,7 +29,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 
 class DlgRef_1Sel1List1Check3Btn;
 
@@ -77,7 +77,7 @@ private:
                                                          const int) const;
 
   void                                activateSelection();
-  int                                 getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMapIndex);
+  int                                 getSelectedSubshapes (NCollection_IndexedMap<Standard_Integer>& theMapIndex);
   void                                updateButtonState();
   bool                                isAllSubShapes() const;
   int                                 shapeType() const;

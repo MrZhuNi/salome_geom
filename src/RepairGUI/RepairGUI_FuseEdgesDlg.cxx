@@ -34,7 +34,7 @@
 
 // OCCT Includes
 #include <TColStd_MapOfInteger.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 
 #include <GEOMImpl_Types.hxx>
 
@@ -176,7 +176,7 @@ void RepairGUI_FuseEdgesDlg::SelectionIntoArgument()
         QString aName = GEOMBase::GetName(anObj);
         TopoDS_Shape aShape;
         if (GEOMBase::GetShape(anObj, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
-          TColStd_IndexedMapOfInteger aMap;
+          NCollection_IndexedMap<Standard_Integer> aMap;
           aSelMgr->GetIndexes(aSelList.First(), aMap);
           if (aMap.Extent() == 1) { // Local Selection
             int anIndex = aMap(1);

@@ -47,7 +47,7 @@
 #include <BRep_Tool.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 
 //=================================================================================
 // class    : RepairGUI_DivideEdgeDlg()
@@ -256,7 +256,7 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
         {
           GEOM::short_array anIndexes;
 
-          TColStd_IndexedMapOfInteger aMap;
+          NCollection_IndexedMap<Standard_Integer> aMap;
           SalomeApp_Application* anApp =
             (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
           anApp->selectionMgr()->GetIndexes( anIO, aMap );

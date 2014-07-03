@@ -31,7 +31,7 @@
 
 #include <TopAbs_ShapeEnum.hxx>
 #include <TColStd_DataMapOfIntegerInteger.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 
 class QGroupBox;
 class QLineEdit;
@@ -90,7 +90,7 @@ private:
   void                                highlightSubShapes();
   void                                onGetInPlace();
   void                                setInPlaceObj (GEOM::GEOM_Object_var, const bool isVisible=1);
-  int                                 getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMapIndex);
+  int                                 getSelectedSubshapes (NCollection_IndexedMap<Standard_Integer>& theMapIndex);
 
 private:
   Mode                                myMode;

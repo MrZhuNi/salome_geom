@@ -118,7 +118,7 @@ public:
         Standard_Boolean isTopLevel();
         void setTopLevel(Standard_Boolean);
         Handle_SALOME_InteractiveObject getIO() ;
-        void highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, const Standard_Boolean aHighlight );
+        void highlightSubShapes(const NCollection_IndexedMap<Standard_Integer>& aIndexMap, const Standard_Boolean aHighlight );
         ~GEOM_AISShape();
 
         void SetShadingColor(const Quantity_Color &aCol);

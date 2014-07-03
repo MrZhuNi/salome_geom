@@ -26,15 +26,15 @@
 #define GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape_HeaderFile
 
 #include <GEOMAlgo_PassKeyShape.hxx>
-#include <TopTools_ListOfShape.hxx>
 #include <GEOMAlgo_PassKeyShapeMapHasher.hxx>
 
 
 #define _NCollection_MapHasher
 #include <NCollection_IndexedDataMap.hxx>
+#include <NCollection_List.hxx>
 
 
-typedef NCollection_IndexedDataMap<GEOMAlgo_PassKeyShape, TopTools_ListOfShape, GEOMAlgo_PassKeyShapeMapHasher> GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape;
+typedef NCollection_IndexedDataMap<GEOMAlgo_PassKeyShape, NCollection_List<TopoDS_Shape>, GEOMAlgo_PassKeyShapeMapHasher> GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape;
 
 #undef _NCollection_MapHasher
 

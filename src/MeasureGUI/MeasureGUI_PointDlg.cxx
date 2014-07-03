@@ -43,7 +43,7 @@
 #include <BRep_Tool.hxx>
 #include <TopExp.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 #include <gp_Pnt.hxx>
 
 //=================================================================================
@@ -143,7 +143,7 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
 
     myObj = aSelectedObject;
 
-    TColStd_IndexedMapOfInteger anIndexes;
+    NCollection_IndexedMap<Standard_Integer> anIndexes;
     aSelMgr->GetIndexes(aSelList.First(), anIndexes);
 
     TopoDS_Shape aShape;

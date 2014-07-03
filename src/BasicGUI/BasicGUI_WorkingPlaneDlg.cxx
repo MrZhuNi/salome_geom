@@ -44,7 +44,7 @@
 #include <gp_Dir.hxx>
 #include <TColStd_MapOfInteger.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
 // QT Includes
@@ -328,7 +328,7 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
     if ( aRes && !aSelectedObject->_is_nil() ) {
       TopoDS_Shape aShape;
       if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-        TColStd_IndexedMapOfInteger aMap;
+        NCollection_IndexedMap<Standard_Integer> aMap;
         aSelMgr->GetIndexes(aSelList.First(), aMap);
         if ( aMap.Extent() == 1 ) {
           int anIndex = aMap( 1 );

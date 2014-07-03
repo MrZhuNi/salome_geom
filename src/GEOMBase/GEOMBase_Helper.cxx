@@ -54,7 +54,7 @@
 
 #include <TColStd_MapOfInteger.hxx>
 #include <TCollection_AsciiString.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 
 //To disable automatic genericobj management, the following line should be commented.
 //Otherwise, it should be uncommented. Refer to KERNEL_SRC/src/SALOMEDSImpl/SALOMEDSImpl_AttributeIOR.cxx
@@ -1274,7 +1274,7 @@ QList<GEOM::GeomObjPtr> GEOMBase_Helper::getSelected( const QList<TopAbs_ShapeEn
         Handle(SALOME_InteractiveObject) IO = it.Value();
         GEOM::GeomObjPtr object = GEOMBase::ConvertIOinGEOMObject( IO );
         if ( object ) {
-          TColStd_IndexedMapOfInteger subShapes;
+          NCollection_IndexedMap<Standard_Integer> subShapes;
           selMgr->GetIndexes( IO, subShapes );
           int nbSubShapes = subShapes.Extent();
           if ( nbSubShapes == 0 ) {

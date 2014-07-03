@@ -55,8 +55,7 @@
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <TopTools_MapOfShape.hxx>
-#include <TopTools_MapIteratorOfMapOfShape.hxx>
+#include <NCollection_Map.hxx>
 
 #include <GEOMAlgo_BoxBndTree.hxx>
 #include <GEOMAlgo_CoupleOfShapes.hxx>
@@ -412,7 +411,7 @@ void GEOMAlgo_GetInPlace::FillEdgesOn(const TopoDS_Shape &theShape)
   Standard_Integer i, aNbE;
   TopoDS_Iterator aIt;
   TopTools_IndexedMapOfShape aME;
-  TopTools_MapIteratorOfMapOfShape aItMS;
+  NCollection_Map<TopoDS_Shape>::Iterator aItMS;
   //
   TopExp::MapShapes(theShape, TopAbs_EDGE, aME);
   aNbE=aME.Extent();
@@ -426,7 +425,7 @@ void GEOMAlgo_GetInPlace::FillEdgesOn(const TopoDS_Shape &theShape)
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aV1=aIt.Value();
       if (myShapesOn.IsBound(aV1)) {
-        const TopTools_MapOfShape& aMSOn=myShapesOn.Find(aV1);
+        const NCollection_Map<TopoDS_Shape>& aMSOn=myShapesOn.Find(aV1);
         //aNbSOn=aMSOn.Extent();
         aItMS.Initialize(aMSOn);
         for (; aItMS.More(); aItMS.Next()) {
@@ -456,7 +455,7 @@ void GEOMAlgo_GetInPlace::PerformVE()
     const TopoDS_Shape& aV2=aCS.Shape2();
     //
     if (myShapesOn.IsBound(aE1)) {
-      const TopTools_MapOfShape& aMSOn=myShapesOn.Find(aE1);
+      const NCollection_Map<TopoDS_Shape>& aMSOn=myShapesOn.Find(aE1);
       if (aMSOn.Contains(aV2)) {
         continue;
       }
@@ -508,12 +507,12 @@ void GEOMAlgo_GetInPlace::PerformEE(const TopoDS_Shape &theE1,
 {
   Standard_Boolean bHasOn, bHasIn, bFound;
   TopoDS_Iterator aIt;
-  TopTools_MapOfShape aMSX;
+  NCollection_Map<TopoDS_Shape> aMSX;
   //
   bHasOn=myShapesOn.IsBound(theE1);
   bHasIn=myShapesIn.IsBound(theE1);
-  const TopTools_MapOfShape& aMSOn=(bHasOn) ? myShapesOn.Find(theE1) : aMSX;
-  const TopTools_MapOfShape& aMSIn=(bHasIn) ? myShapesIn.Find(theE1) : aMSX;
+  const NCollection_Map<TopoDS_Shape>& aMSOn=(bHasOn) ? myShapesOn.Find(theE1) : aMSX;
+  const NCollection_Map<TopoDS_Shape>& aMSIn=(bHasIn) ? myShapesIn.Find(theE1) : aMSX;
   //
   bFound=Standard_True;
   aIt.Initialize(theE2);
@@ -544,7 +543,7 @@ void GEOMAlgo_GetInPlace::PerformVF()
 {
   Standard_Boolean bHasOn, bHasIn, bFound;
   Standard_Integer i, aNbE;
-  TopTools_MapOfShape aMSX;
+  NCollection_Map<TopoDS_Shape> aMSX;
   TopTools_IndexedMapOfShape aME;
   //
   myErrorStatus=0;
@@ -569,8 +568,8 @@ void GEOMAlgo_GetInPlace::PerformVF()
       //
       bHasOn=myShapesOn.IsBound(aE1);
       bHasIn=myShapesIn.IsBound(aE1);
-      const TopTools_MapOfShape& aMSOn=(bHasOn) ? myShapesOn.Find(aE1) : aMSX;
-      const TopTools_MapOfShape& aMSIn=(bHasIn) ? myShapesIn.Find(aE1) : aMSX;
+      const NCollection_Map<TopoDS_Shape>& aMSOn=(bHasOn) ? myShapesOn.Find(aE1) : aMSX;
+      const NCollection_Map<TopoDS_Shape>& aMSIn=(bHasIn) ? myShapesIn.Find(aE1) : aMSX;
       bFound= (aMSOn.Contains(aV2) || aMSIn.Contains(aV2));
       if (bFound) {
         break;
@@ -599,7 +598,7 @@ void GEOMAlgo_GetInPlace::FillFacesOn(const TopoDS_Shape &theShape)
   Standard_Integer i, j, aNbF, aNbE;
   TopoDS_Iterator aIt;
   TopTools_IndexedMapOfShape aMF, aME;
-  TopTools_MapIteratorOfMapOfShape aItMS;
+  NCollection_Map<TopoDS_Shape>::Iterator aItMS;
   //
   TopExp::MapShapes(theShape, TopAbs_FACE, aMF);
   aNbF=aMF.Extent();
@@ -616,7 +615,7 @@ void GEOMAlgo_GetInPlace::FillFacesOn(const TopoDS_Shape &theShape)
       }
       //
       if (myShapesOn.IsBound(aE1)) {
-        const TopTools_MapOfShape& aMSOn=myShapesOn.Find(aE1);
+        const NCollection_Map<TopoDS_Shape>& aMSOn=myShapesOn.Find(aE1);
         aItMS.Initialize(aMSOn);
         for (; aItMS.More(); aItMS.Next()) {
           const TopoDS_Shape& aS2=aItMS.Key();
@@ -625,7 +624,7 @@ void GEOMAlgo_GetInPlace::FillFacesOn(const TopoDS_Shape &theShape)
       }
       //
       if (myShapesIn.IsBound(aE1)) {
-        const TopTools_MapOfShape& aMSIn=myShapesIn.Find(aE1);
+        const NCollection_Map<TopoDS_Shape>& aMSIn=myShapesIn.Find(aE1);
         aItMS.Initialize(aMSIn);
         for (; aItMS.More(); aItMS.Next()) {
           const TopoDS_Shape& aS2=aItMS.Key();
@@ -643,7 +642,7 @@ void GEOMAlgo_GetInPlace::PerformEF()
 {
   Standard_Boolean  bFound, bHasOnF, bHasInF;
   TopoDS_Iterator aIt;
-  TopTools_MapOfShape aMSX;
+  NCollection_Map<TopoDS_Shape> aMSX;
   //
   myErrorStatus=0;
   myWarningStatus=0;
@@ -656,7 +655,7 @@ void GEOMAlgo_GetInPlace::PerformEF()
     //
     // 1.
     bHasOnF=myShapesOn.IsBound(aF1);
-    const TopTools_MapOfShape& aMSOnF=(bHasOnF) ? myShapesOn.Find(aF1) : aMSX;
+    const NCollection_Map<TopoDS_Shape>& aMSOnF=(bHasOnF) ? myShapesOn.Find(aF1) : aMSX;
     bFound=aMSOnF.Contains(aE2);
     if (bFound) {
       continue;
@@ -664,7 +663,7 @@ void GEOMAlgo_GetInPlace::PerformEF()
     //
     // 2.
     bHasInF=myShapesIn.IsBound(aF1);
-    const TopTools_MapOfShape& aMSInF=(bHasInF) ? myShapesIn.Find(aF1) : aMSX;
+    const NCollection_Map<TopoDS_Shape>& aMSInF=(bHasInF) ? myShapesIn.Find(aF1) : aMSX;
     //
     aIt.Initialize(aE2);
     for (; aIt.More(); aIt.Next()) {
@@ -724,14 +723,14 @@ void GEOMAlgo_GetInPlace::PerformFF(const TopoDS_Shape &theF1,
 {
   Standard_Boolean  bFound, bHasOnF, bHasInF;
   Standard_Integer i, aNbS2;
-  TopTools_MapOfShape aMSX;
+  NCollection_Map<TopoDS_Shape> aMSX;
   TopTools_IndexedMapOfShape aMS2;
   //
   bHasOnF=myShapesOn.IsBound(theF1);
-  const TopTools_MapOfShape& aMSOnF=(bHasOnF) ? myShapesOn.Find(theF1) : aMSX;
+  const NCollection_Map<TopoDS_Shape>& aMSOnF=(bHasOnF) ? myShapesOn.Find(theF1) : aMSX;
   //
   bHasInF=myShapesIn.IsBound(theF1);
-  const TopTools_MapOfShape& aMSInF=(bHasInF) ? myShapesIn.Find(theF1) : aMSX;
+  const NCollection_Map<TopoDS_Shape>& aMSInF=(bHasInF) ? myShapesIn.Find(theF1) : aMSX;
   //
   MapBRepShapes(theF2, aMS2);
   //
@@ -767,7 +766,7 @@ void GEOMAlgo_GetInPlace::FillSolidsOn(const TopoDS_Shape &theShape)
 {
   Standard_Integer i, j, aNbS, aNbF;
   TopTools_IndexedMapOfShape aMS, aMF;
-  TopTools_MapIteratorOfMapOfShape aItMS;
+  NCollection_Map<TopoDS_Shape>::Iterator aItMS;
   //
   TopExp::MapShapes(theShape, TopAbs_SOLID, aMS);
   //
@@ -782,7 +781,7 @@ void GEOMAlgo_GetInPlace::FillSolidsOn(const TopoDS_Shape &theShape)
       const TopoDS_Shape& aF1=aMF(j);
       //
       if (myShapesOn.IsBound(aF1)) {
-        const TopTools_MapOfShape& aMSOn=myShapesOn.Find(aF1);
+        const NCollection_Map<TopoDS_Shape>& aMSOn=myShapesOn.Find(aF1);
         aItMS.Initialize(aMSOn);
         for (; aItMS.More(); aItMS.Next()) {
           const TopoDS_Shape& aS2=aItMS.Key();
@@ -791,7 +790,7 @@ void GEOMAlgo_GetInPlace::FillSolidsOn(const TopoDS_Shape &theShape)
       }
       //
       if (myShapesIn.IsBound(aF1)) {
-        const TopTools_MapOfShape& aMSIn=myShapesIn.Find(aF1);
+        const NCollection_Map<TopoDS_Shape>& aMSIn=myShapesIn.Find(aF1);
         aItMS.Initialize(aMSIn);
         for (; aItMS.More(); aItMS.Next()) {
           const TopoDS_Shape& aS2=aItMS.Key();
@@ -808,7 +807,7 @@ void GEOMAlgo_GetInPlace::FillSolidsOn(const TopoDS_Shape &theShape)
 void GEOMAlgo_GetInPlace::PerformZF()
 {
   Standard_Boolean  bFound, bHasOnF;
-  TopTools_MapOfShape aMSX;
+  NCollection_Map<TopoDS_Shape> aMSX;
   //
   myErrorStatus=0;
   myWarningStatus=0;
@@ -820,7 +819,7 @@ void GEOMAlgo_GetInPlace::PerformZF()
     const TopoDS_Shape& aF2=aCS.Shape2();
     //
     bHasOnF=myShapesOn.IsBound(aSo1);
-    const TopTools_MapOfShape& aMSOnF=(bHasOnF) ? myShapesOn.Find(aSo1) : aMSX;
+    const NCollection_Map<TopoDS_Shape>& aMSOnF=(bHasOnF) ? myShapesOn.Find(aSo1) : aMSX;
     bFound=aMSOnF.Contains(aF2);
     if (bFound) {
       continue;
@@ -872,14 +871,14 @@ void GEOMAlgo_GetInPlace::PerformZZ(const TopoDS_Shape &theSo1,
 {
   Standard_Boolean bFound, bHasOn, bHasIn;
   Standard_Integer i, aNbS2, iCntOn, iCntIn, iCntOut;
-  TopTools_MapOfShape aMSX;
+  NCollection_Map<TopoDS_Shape> aMSX;
   TopTools_IndexedMapOfShape aMS2;
   //
   bHasOn=myShapesOn.IsBound(theSo1);
-  const TopTools_MapOfShape& aMSOn=(bHasOn) ? myShapesOn.Find(theSo1) : aMSX;
+  const NCollection_Map<TopoDS_Shape>& aMSOn=(bHasOn) ? myShapesOn.Find(theSo1) : aMSX;
   //
   bHasIn=myShapesIn.IsBound(theSo1);
-  const TopTools_MapOfShape& aMSIn=(bHasIn) ? myShapesIn.Find(theSo1) : aMSX;
+  const NCollection_Map<TopoDS_Shape>& aMSIn=(bHasIn) ? myShapesIn.Find(theSo1) : aMSX;
   //
   TopExp::MapShapes(theSo2, TopAbs_FACE, aMS2);
   //
@@ -982,9 +981,9 @@ void GEOMAlgo_GetInPlace::FillImgSimple
     const TopoDS_Shape& aS = aMS(i);
 
     if (aShapesInOn.IsBound(aS)) {
-      const TopTools_MapOfShape& aMSx = aShapesInOn.Find(aS);
+      const NCollection_Map<TopoDS_Shape>& aMSx = aShapesInOn.Find(aS);
       TopTools_ListOfShape aLSx;
-      TopTools_MapIteratorOfMapOfShape aItMS(aMSx);
+      NCollection_Map<TopoDS_Shape>::Iterator aItMS(aMSx);
 
       for (; aItMS.More(); aItMS.Next()) {
         const TopoDS_Shape& aSx = aItMS.Key();
@@ -1011,10 +1010,10 @@ void GEOMAlgo_GetInPlace::FillImgSimple
 void GEOMAlgo_GetInPlace::FillImgComplex(const TopoDS_Shape     &theShape,
                                          const Standard_Boolean  IsWhere)
 {
-  TopTools_MapOfShape  aMapRemaining;
+  NCollection_Map<TopoDS_Shape>  aMapRemaining;
   TopoDS_Iterator      aIt(theShape);
   TopTools_ListOfShape aLSx;
-  TopTools_MapOfShape  aMSx;
+  NCollection_Map<TopoDS_Shape>  aMSx;
 
   for(; aIt.More(); aIt.Next()) {
     const TopoDS_Shape &aSubS = aIt.Value();
@@ -1044,7 +1043,7 @@ void GEOMAlgo_GetInPlace::FillImgComplex(const TopoDS_Shape     &theShape,
   if (!(IsWhere || aMapRemaining.IsEmpty())) {
     // Find the whole from parts.
     while (!aMapRemaining.IsEmpty()) {
-      TopTools_MapIteratorOfMapOfShape anIter(aMapRemaining);
+      NCollection_Map<TopoDS_Shape>::Iterator anIter(aMapRemaining);
       const TopoDS_Shape &aShape = anIter.Key();
 
       if (myShapesInclusive.IsBound(aShape)) {
@@ -1109,11 +1108,11 @@ void GEOMAlgo_GetInPlace::FillShapesIn(const TopoDS_Shape& aS1,
                                        const TopoDS_Shape& aS2)
 {
   if (myShapesIn.IsBound(aS1)) {
-    TopTools_MapOfShape& aMS=myShapesIn.ChangeFind(aS1);
+    NCollection_Map<TopoDS_Shape>& aMS=myShapesIn.ChangeFind(aS1);
     aMS.Add(aS2);
   }
   else {
-    TopTools_MapOfShape aMS;
+    NCollection_Map<TopoDS_Shape> aMS;
     //
     aMS.Add(aS2);
     myShapesIn.Bind(aS1, aMS);
@@ -1127,11 +1126,11 @@ void GEOMAlgo_GetInPlace::FillShapesOn(const TopoDS_Shape& aS1,
                                        const TopoDS_Shape& aS2)
 {
   if (myShapesOn.IsBound(aS1)) {
-    TopTools_MapOfShape& aMS=myShapesOn.ChangeFind(aS1);
+    NCollection_Map<TopoDS_Shape>& aMS=myShapesOn.ChangeFind(aS1);
     aMS.Add(aS2);
   }
   else {
-    TopTools_MapOfShape aMS;
+    NCollection_Map<TopoDS_Shape> aMS;
     //
     aMS.Add(aS2);
     myShapesOn.Bind(aS1, aMS);

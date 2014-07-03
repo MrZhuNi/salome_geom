@@ -1,18 +1,15 @@
 #ifndef OCC2VTK_INTERNAL_H
 #define OCC2VTK_INTERNAL_H
 
-#include <NCollection_BaseCollection.hxx>
 #include <NCollection_BaseList.hxx>
 #include <NCollection_TListNode.hxx>
 #include <NCollection_TListIterator.hxx>
-
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Edge.hxx> 
 #include <TopoDS_Face.hxx> 
 
-template <class TheItemType> class GEOM_Set
-  : public NCollection_BaseCollection<TheItemType>,
-    public NCollection_BaseList
+template <class TheItemType>
+class GEOM_Set : public NCollection_BaseList
 {
 public:
   typedef NCollection_TListNode<TheItemType> SetNode;
@@ -21,12 +18,10 @@ public:
 public:
   //! Constructor
   GEOM_Set(const Handle(NCollection_BaseAllocator)& theAllocator=0L) :
-    NCollection_BaseCollection<TheItemType>(theAllocator),
     NCollection_BaseList() {}
 
   //! Copy constructor
   GEOM_Set (const GEOM_Set& theOther) :
-    NCollection_BaseCollection<TheItemType>(theOther.myAllocator),
     NCollection_BaseList()
   { *this = theOther; }
 
@@ -35,18 +30,19 @@ public:
   { return Extent(); }
 
   //! Replace this list by the items of theOther collection
-  virtual void Assign (const NCollection_BaseCollection<TheItemType>& theOther)
+  GEOM_Set& Assign (const GEOM_Set& theOther)
   {
     if (this == &theOther) 
-      return;
-    Clear();
-    TYPENAME NCollection_BaseCollection<TheItemType>::Iterator& anIter = 
-      theOther.CreateIterator();
+      return *this;
+
+    Clear( theOther.myAllocator );
+    Iterator anIter( theOther );
     for (; anIter.More(); anIter.Next())
     {
       SetNode* pNew = new (this->myAllocator) SetNode(anIter.Value());
       PAppend (pNew);
     }
+    return *this;
   }
 
   //! Replace this list by the items of theOther Set
@@ -67,7 +63,7 @@ public:
 
   //! Clear this set
   void Clear (void)
-  { PClear (SetNode::delNode, this->myAllocator); }
+  { PClear ( SetNode::delNode ); }
 
   //! Add item
   Standard_Boolean Add (const TheItemType& theItem)
@@ -194,12 +190,6 @@ public:
   //! Destructor - clears the List
   ~GEOM_Set (void)
   { Clear(); }
-
-private:
-  //! Creates Iterator for use on BaseCollection
-  virtual TYPENAME NCollection_BaseCollection<TheItemType>::Iterator& 
-    CreateIterator(void) const
-  { return *(new (this->IterAllocator()) Iterator(*this)); }
 
 };
 

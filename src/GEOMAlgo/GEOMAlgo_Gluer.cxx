@@ -599,7 +599,7 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
   Standard_Integer i, aNbF, aNbSDF, iErr;
   TopoDS_Shape aNewShape;
   TopTools_IndexedMapOfShape aMF;
-  TopTools_ListIteratorOfListOfShape aItS;
+  NCollection_List<TopoDS_Shape>::Iterator aItS;
   GEOMAlgo_PassKeyShape aPKF;
   GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape aMPKLF;
   //
@@ -623,11 +623,11 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
     }
     //
     if (aMPKLF.Contains(aPKF)) {
-      TopTools_ListOfShape& aLSDF=aMPKLF.ChangeFromKey(aPKF);
+      NCollection_List<TopoDS_Shape>& aLSDF=aMPKLF.ChangeFromKey(aPKF);
       aLSDF.Append(aS);
     }
     else {
-      TopTools_ListOfShape aLSDF;
+      NCollection_List<TopoDS_Shape> aLSDF;
       //
       aLSDF.Append(aS);
       aMPKLF.Add(aPKF, aLSDF);
@@ -646,7 +646,7 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
   //
   aNbF=aMPKLF.Extent();
   for (i=1; i<=aNbF; ++i) {
-    const TopTools_ListOfShape& aLSDF=aMPKLF(i);
+    const NCollection_List<TopoDS_Shape>& aLSDF=aMPKLF(i);
     aNbSDF=aLSDF.Extent();
     if (!aNbSDF) {
       myErrorStatus=4; // it must not be
@@ -682,7 +682,9 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
       }
     }
     //
-    myImages.Bind(aNewShape, aLSDF);
+    TopTools_ListOfShape aConvLSDF;
+    GEOMAlgo_AlgoTools::ConvertNCollectionListToTopToolsListOfShape(aLSDF, aConvLSDF);
+    myImages.Bind(aNewShape, aConvLSDF);
     // origins
     aItS.Initialize(aLSDF);
     for (; aItS.More(); aItS.Next()) {
@@ -798,7 +800,7 @@ void GEOMAlgo_Gluer::FacePassKey(const TopoDS_Face& aF,
 				 GEOMAlgo_PassKeyShape& aPK)
 {
   Standard_Integer i, aNbE;
-  TopTools_ListOfShape aLE;
+  NCollection_List<TopoDS_Shape> aLE;
   TopTools_IndexedMapOfShape aME;
   //
   TopExp::MapShapes(aF, TopAbs_EDGE, aME);

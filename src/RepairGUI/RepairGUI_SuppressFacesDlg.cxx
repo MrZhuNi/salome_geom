@@ -41,7 +41,7 @@
 #include <TopExp_Explorer.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TColStd_MapOfInteger.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 
 #include <GEOMImpl_Types.hxx>
 
@@ -199,7 +199,7 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
     }
   }
   else if (myEditCurrentArgument == GroupArgs->LineEdit2) {
-    TColStd_IndexedMapOfInteger aMap;
+    NCollection_IndexedMap<Standard_Integer> aMap;
 
     if (aSelList.Extent() == 1) {
       Handle(SALOME_InteractiveObject) anIO = aSelList.First();

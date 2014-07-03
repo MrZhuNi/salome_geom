@@ -35,7 +35,7 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <Standard_Boolean.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TopTools_ListOfShape.hxx>
+#include <NCollection_List.hxx>
 
 
 //=======================================================================
@@ -79,7 +79,7 @@ class GEOMAlgo_PassKeyShape  {
                    const TopoDS_Shape& aS4) ;
 
   Standard_EXPORT
-    void SetShapes(const TopTools_ListOfShape& aLS) ;
+    void SetShapes(const NCollection_List<TopoDS_Shape>& aLS) ;
 
   Standard_EXPORT
     void Clear() ;

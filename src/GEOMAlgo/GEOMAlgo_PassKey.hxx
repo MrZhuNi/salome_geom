@@ -34,7 +34,7 @@
 #include <Standard_Boolean.hxx>
 
 #include <TColStd_ListOfInteger.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 
 //=======================================================================
 //class : GEOMAlgo_PassKey
@@ -100,6 +100,6 @@ class GEOMAlgo_PassKey  {
  protected:
   Standard_Integer myNbIds;
   Standard_Integer mySum;
-  TColStd_IndexedMapOfInteger myMap;
+  NCollection_IndexedMap<Standard_Integer> myMap;
 };
 #endif

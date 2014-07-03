@@ -439,7 +439,7 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
         GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
       if ( !anObj->_is_nil() ) {
-         TColStd_IndexedMapOfInteger anIndexes;
+         NCollection_IndexedMap<Standard_Integer> anIndexes;
          aSelMgr->GetIndexes(aSelList.First(), anIndexes);
 
          if (anIndexes.Extent() == 1) {
@@ -461,7 +461,7 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
         GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
       if ( !anObj->_is_nil() ) {
-        TColStd_IndexedMapOfInteger anIndexes;
+        NCollection_IndexedMap<Standard_Integer> anIndexes;
         aSelMgr->GetIndexes(aSelList.First(), anIndexes);
 
         if (anIndexes.Extent() > 0) {

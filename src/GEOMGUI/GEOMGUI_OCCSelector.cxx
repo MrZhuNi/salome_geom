@@ -46,7 +46,7 @@
 #include <TopExp.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 #include <NCollection_DataMap.hxx>
 
 
@@ -204,7 +204,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
   Handle(AIS_InteractiveContext) ic = vw->getAISContext();
 
   // "entry - list_of_int" map for LOCAL selection
-  NCollection_DataMap<TCollection_AsciiString, TColStd_IndexedMapOfInteger> indexesMap;
+  NCollection_DataMap<TCollection_AsciiString, NCollection_IndexedMap<Standard_Integer> > indexesMap;
 
   QMap<QString,int> globalSelMap; // only Key=entry from this map is used.  value(int) is NOT used at all.
   SelectMgr_IndexedMapOfOwner ownersmap; // map of owners to be selected
@@ -222,13 +222,13 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
       QString entry = subOwner->entry();
       if ( indexesMap.IsBound( TCollection_AsciiString(entry.toLatin1().data())))
       {
-        TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind(entry.toLatin1().data());
+        NCollection_IndexedMap<Standard_Integer>& subIndexes = indexesMap.ChangeFind(entry.toLatin1().data());
         subIndexes.Add( subOwner->index() );
         //indexesMap.replace( entry, subIndexes );
       }
       else
       {
-        TColStd_IndexedMapOfInteger subIndexes;
+        NCollection_IndexedMap<Standard_Integer> subIndexes;
         subIndexes.Add( subOwner->index() );
         indexesMap.Bind(entry.toLatin1().data(), subIndexes);
       }
@@ -304,7 +304,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
         {
           if (isLocal)
           {
-            const TColStd_IndexedMapOfInteger& subIndexes =
+            const NCollection_IndexedMap<Standard_Integer>& subIndexes =
               indexesMap.ChangeFind(entryStr.toLatin1().data());
 
             const TopoDS_Shape& aSubShape = anOwner->Shape();
@@ -364,7 +364,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
         SalomeApp_Study* appStudy =
           dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
         QString anEntry = appStudy->referencedToEntry( owner->entry() );
-        if (globalSelMap[anEntry] == 1) mySelectedExternals.append(*itr2);
+        if (globalSelMap[anEntry] == 1) mySelectedExternals.append(*itr2)	;
       }
     }
   }

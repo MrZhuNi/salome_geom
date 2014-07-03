@@ -30,15 +30,14 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <GEOMAlgo_CoupleOfShapes.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
 
 
 
 static
   void ProcessBlock(const TopoDS_Shape& aF,
                     const GEOMAlgo_IndexedDataMapOfShapeIndexedMapOfShape& aMCV,
-                    TopTools_IndexedMapOfShape& aProcessed,
-                    TopTools_IndexedMapOfShape& aChain);
+                    NCollection_IndexedMap<TopoDS_Shape>& aProcessed,
+                    NCollection_IndexedMap<TopoDS_Shape>& aChain);
 
 //=======================================================================
 // function: FindChains
@@ -59,24 +58,24 @@ void GEOMAlgo_AlgoTools::FindChains(const GEOMAlgo_ListOfCoupleOfShapes& aLCS,
     //
     //
     if (aMCV.Contains(aF1)) {
-      TopTools_IndexedMapOfShape& aMV=aMCV.ChangeFromKey(aF1);
+      NCollection_IndexedMap<TopoDS_Shape>& aMV=aMCV.ChangeFromKey(aF1);
       aMV.Add(aF1);
       aMV.Add(aF2);
     }
     else {
-      TopTools_IndexedMapOfShape aMV;
+      NCollection_IndexedMap<TopoDS_Shape> aMV;
       aMV.Add(aF1);
       aMV.Add(aF2);
       aMCV.Add(aF1, aMV);
     }
     //
     if (aMCV.Contains(aF2)) {
-      TopTools_IndexedMapOfShape& aMV=aMCV.ChangeFromKey(aF2);
+      NCollection_IndexedMap<TopoDS_Shape>& aMV=aMCV.ChangeFromKey(aF2);
       aMV.Add(aF1);
       aMV.Add(aF2);
     }
     else {
-      TopTools_IndexedMapOfShape aMV;
+      NCollection_IndexedMap<TopoDS_Shape> aMV;
       aMV.Add(aF1);
       aMV.Add(aF2);
       aMCV.Add(aF2, aMV);
@@ -92,7 +91,7 @@ void GEOMAlgo_AlgoTools::FindChains(const GEOMAlgo_IndexedDataMapOfShapeIndexedM
 				    GEOMAlgo_IndexedDataMapOfShapeIndexedMapOfShape& aMapChains)
 {
   Standard_Integer  i, j, aNbCV, aNbV;
-  TopTools_IndexedMapOfShape aProcessed, aChain;
+  NCollection_IndexedMap<TopoDS_Shape> aProcessed, aChain;
   //
   aNbCV=aMCV.Extent();
   for (i=1; i<=aNbCV; ++i) {
@@ -104,7 +103,7 @@ void GEOMAlgo_AlgoTools::FindChains(const GEOMAlgo_IndexedDataMapOfShapeIndexedM
     aProcessed.Add(aF);
     aChain.Add(aF);
     //
-    const TopTools_IndexedMapOfShape& aMV=aMCV(i);
+    const NCollection_IndexedMap<TopoDS_Shape>& aMV=aMCV(i);
     aNbV=aMV.Extent();
     for (j=1; j<=aNbV; ++j) {
       const TopoDS_Shape& aFx=aMV(j);
@@ -120,8 +119,8 @@ void GEOMAlgo_AlgoTools::FindChains(const GEOMAlgo_IndexedDataMapOfShapeIndexedM
 //=======================================================================
 void ProcessBlock(const TopoDS_Shape& aF,
                   const GEOMAlgo_IndexedDataMapOfShapeIndexedMapOfShape& aMCV,
-                  TopTools_IndexedMapOfShape& aProcessed,
-                  TopTools_IndexedMapOfShape& aChain)
+                  NCollection_IndexedMap<TopoDS_Shape>& aProcessed,
+                  NCollection_IndexedMap<TopoDS_Shape>& aChain)
 {
   Standard_Integer j, aNbV;
   //
@@ -131,7 +130,7 @@ void ProcessBlock(const TopoDS_Shape& aF,
   aProcessed.Add(aF);
   aChain.Add(aF);
   //
-  const TopTools_IndexedMapOfShape& aMV=aMCV.FindFromKey(aF);
+  const NCollection_IndexedMap<TopoDS_Shape>& aMV=aMCV.FindFromKey(aF);
   aNbV=aMV.Extent();
   for (j=1; j<=aNbV; ++j) {
     const TopoDS_Shape& aFx=aMV(j);

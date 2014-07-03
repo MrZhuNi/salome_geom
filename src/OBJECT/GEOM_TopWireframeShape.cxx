@@ -80,7 +80,7 @@ Standard_CString GEOM_TopWireframeShape::getName(){
 }
 
 
-void GEOM_TopWireframeShape::highlightSubShapes(const TColStd_IndexedMapOfInteger& /*aIndexMap*/, 
+void GEOM_TopWireframeShape::highlightSubShapes(const NCollection_IndexedMap<Standard_Integer>& /*aIndexMap*/,
                                        const Standard_Boolean /*aHighlight*/ )
 {
 }

@@ -74,9 +74,8 @@
 #include <IntTools_Tools.hxx>
 
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
+#include <NCollection_List.hxx>
 
-#include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopAbs_ShapeEnum.hxx>
 
@@ -632,7 +631,7 @@ void GEOMAlgo_AlgoTools::PointOnShape(const TopoDS_Shape& aS,
 //=======================================================================
 Standard_Integer GEOMAlgo_AlgoTools::FindSDShapes
   (const TopoDS_Shape& aE1,
-   const TopTools_ListOfShape& aLE,
+   const NCollection_List<TopoDS_Shape>& aLE,
    const Standard_Real aTol,
    TopTools_ListOfShape& aLESD,
 #if OCC_VERSION_LARGE > 0x06070100
@@ -645,7 +644,7 @@ Standard_Integer GEOMAlgo_AlgoTools::FindSDShapes
   Standard_Boolean bIsDone;
   Standard_Real aTol2, aD2;
   gp_Pnt aP1, aP2;
-  TopTools_ListIteratorOfListOfShape aIt;
+  NCollection_List<TopoDS_Shape>::Iterator aIt;
   //
   aTol2=aTol*aTol;
   GEOMAlgo_AlgoTools::PointOnShape(aE1, aP1);
@@ -676,7 +675,7 @@ Standard_Integer GEOMAlgo_AlgoTools::FindSDShapes
 //purpose  :
 //=======================================================================
 Standard_Integer GEOMAlgo_AlgoTools::FindSDShapes
-  (const TopTools_ListOfShape& aLE,
+  (const NCollection_List<TopoDS_Shape>& aLE,
    const Standard_Real aTol,
    TopTools_IndexedDataMapOfShapeListOfShape& aMEE,
 #if OCC_VERSION_LARGE > 0x06070100
@@ -688,7 +687,8 @@ Standard_Integer GEOMAlgo_AlgoTools::FindSDShapes
 {
   Standard_Integer aNbE, aNbEProcessed, aNbESD, iErr;
   TopTools_ListOfShape aLESD;
-  TopTools_ListIteratorOfListOfShape aIt, aIt1;
+  NCollection_List<TopoDS_Shape>::Iterator aIt;
+  TopTools_ListIteratorOfListOfShape aIt1;
   TopTools_IndexedMapOfShape aMProcessed;
   TopAbs_ShapeEnum aType;
   //
@@ -766,7 +766,7 @@ Standard_Integer GEOMAlgo_AlgoTools::RefineSDShapes
   //
   aNbE=aMPKLE.Extent();
   for (i=1; i<=aNbE; ++i) {
-    TopTools_ListOfShape& aLSDE=aMPKLE.ChangeFromIndex(i);
+    NCollection_List<TopoDS_Shape>& aLSDE=aMPKLE.ChangeFromIndex(i);
     //
     aMEE.Clear();
     iErr=GEOMAlgo_AlgoTools::FindSDShapes(aLSDE, aTol, aMEE, aCtx);
@@ -780,15 +780,17 @@ Standard_Integer GEOMAlgo_AlgoTools::RefineSDShapes
     }
     //
     for (j=1; j<=aNbEE; ++j) {
-      TopTools_ListOfShape& aLEE=aMEE.ChangeFromIndex(j);
+      TopTools_ListOfShape& aTopToolsLEE = aMEE.ChangeFromIndex(j);
       //
       if (j==1) {
+        NCollection_List<TopoDS_Shape> aLEE;
+        ConvertTopToolsListOfShapeToNCollectionList( aTopToolsLEE, aLEE);
         aLSDE.Clear();
         aLSDE.Append(aLEE);
       }
       else {
-        const TopoDS_Shape& aE1=aLEE.First();
-        aMEToAdd.Add(aE1, aLEE);
+        const TopoDS_Shape& aE1=aTopToolsLEE.First();
+        aMEToAdd.Add(aE1, aTopToolsLEE);
       }
     }
   }
@@ -802,7 +804,9 @@ Standard_Integer GEOMAlgo_AlgoTools::RefineSDShapes
     GEOMAlgo_PassKeyShape aPKE1;
     //
     const TopoDS_Shape& aE1=aMEToAdd.FindKey(i);
-    const TopTools_ListOfShape& aLE=aMEToAdd(i);
+    NCollection_List<TopoDS_Shape> aConvLE;
+    GEOMAlgo_AlgoTools::ConvertTopToolsListOfShapeToNCollectionList(aMEToAdd(i), aConvLE);
+    const NCollection_List<TopoDS_Shape>& aLE=aConvLE;
     //
     aPKE1.SetShapes(aE1);
     aMPKLE.Add(aPKE1, aLE);
@@ -1021,4 +1025,23 @@ Standard_Integer GEOMAlgo_AlgoTools::PntInFace(const TopoDS_Face& aF,
   theP=aPx;
   //
   return iErr;
+}
+
+void GEOMAlgo_AlgoTools::ConvertTopToolsListOfShapeToNCollectionList(const TopTools_ListOfShape& aLS,
+                                                                NCollection_List<TopoDS_Shape>& aNLS)
+{
+  TopTools_ListIteratorOfListOfShape aIt;
+  aIt.Initialize(aLS);
+  for (; aIt.More(); aIt.Next())
+    aNLS.Append(aIt.Value());
+}
+
+
+void GEOMAlgo_AlgoTools::ConvertNCollectionListToTopToolsListOfShape(const NCollection_List<TopoDS_Shape>& aLS,
+                                                                     TopTools_ListOfShape& aNLS)
+{
+  NCollection_List<TopoDS_Shape>::Iterator aIt;
+  aIt.Initialize(aLS);
+  for (; aIt.More(); aIt.Next())
+    aNLS.Append(aIt.Value());
 }

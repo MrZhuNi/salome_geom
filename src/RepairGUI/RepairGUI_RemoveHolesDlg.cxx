@@ -39,7 +39,7 @@
 // OCCT Includes
 #include <TopAbs.hxx>
 #include <TColStd_MapOfInteger.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 
 #include <GEOMImpl_Types.hxx>
 
@@ -205,7 +205,7 @@ void RepairGUI_RemoveHolesDlg::SelectionIntoArgument()
     }
     else if (myEditCurrentArgument == GroupPoints->LineEdit2 &&
              !GroupPoints->CheckButton1->isChecked()) {
-      TColStd_IndexedMapOfInteger aMap;
+      NCollection_IndexedMap<Standard_Integer> aMap;
       aSelMgr->GetIndexes(anIO, aMap);
       const int n = aMap.Extent();
       myWiresInd->length(n);

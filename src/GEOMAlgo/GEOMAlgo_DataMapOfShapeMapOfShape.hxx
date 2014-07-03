@@ -32,9 +32,10 @@
 
 #define _NCollection_MapHasher
 #include <NCollection_DataMap.hxx>
+#include <NCollection_Map.hxx>
 
 
-typedef NCollection_DataMap<TopoDS_Shape, TopTools_MapOfShape, TopTools_ShapeMapHasher> GEOMAlgo_DataMapOfShapeMapOfShape;
+typedef NCollection_DataMap<TopoDS_Shape, NCollection_Map<TopoDS_Shape>, TopTools_ShapeMapHasher> GEOMAlgo_DataMapOfShapeMapOfShape;
 typedef GEOMAlgo_DataMapOfShapeMapOfShape::Iterator GEOMAlgo_DataMapIteratorOfDataMapOfShapeMapOfShape;
 
 #undef _NCollection_MapHasher

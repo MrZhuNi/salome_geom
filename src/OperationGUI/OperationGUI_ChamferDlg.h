@@ -29,7 +29,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 
 #include <QMap>
 
@@ -93,11 +93,11 @@ private:
   
   GEOM::GEOM_Object_var               myShape; 
   QMap< int, int >                    myFace;  // indexes of faces from second tab ( Face1,2 )
-  TColStd_IndexedMapOfInteger         myFaces; // indexes of faces from first tab ( Faces )
-  TColStd_IndexedMapOfInteger         myEdges; // indexes of edges from fourth tab (Edges)
+  NCollection_IndexedMap<Standard_Integer>   myFaces; // indexes of faces from first tab ( Faces )
+  NCollection_IndexedMap<Standard_Integer>   myEdges; // indexes of edges from fourth tab (Edges)
 
   // to initialize the first selection field with a selected object on the dialog creation
-  bool                               myInitial;
+  bool                                myInitial;
   
   QGroupBox*                          myGrp1;
   QGroupBox*                          myGrp2;

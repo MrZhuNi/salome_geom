@@ -26,7 +26,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 
 class DlgRef_2Sel1Spin2Check;
 
@@ -64,11 +64,11 @@ private:
   double                              getRadius() const;
 
 private:
-  bool                                myIs1D;
-  GEOM::GEOM_Object_var               myShape;
-  TColStd_IndexedMapOfInteger         myVertexes;
+  bool                                      myIs1D;
+  GEOM::GEOM_Object_var                     myShape;
+  NCollection_IndexedMap<Standard_Integer>  myVertexes;
 
-  DlgRef_2Sel1Spin2Check*             GroupVertexes;
+  DlgRef_2Sel1Spin2Check*                   GroupVertexes;
 };
 
 #endif // OPERATIONGUI_Fillet1d2dDLG_H

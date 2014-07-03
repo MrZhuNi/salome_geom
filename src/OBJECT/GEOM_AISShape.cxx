@@ -63,7 +63,7 @@
 #include <StdPrs_ShadedShape.hxx>
 #include <StdPrs_WFDeflectionShape.hxx>
 
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
 #include <TopExp.hxx>
@@ -120,7 +120,7 @@ static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
   }
 }
 
-static void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
+static void indicesToOwners( const NCollection_IndexedMap<Standard_Integer>& aIndexMap,
                              const TopoDS_Shape& aMainShape,
                              const SelectMgr_IndexedMapOfOwner& anAllMap, 
                              SelectMgr_IndexedMapOfOwner& aToHiliteMap )
@@ -357,7 +357,7 @@ void GEOM_AISShape::SetEdgesInShadingColor(const Quantity_Color &aCol)
   myEdgesInShadingColor = aCol;
 }
 
-void GEOM_AISShape::highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, 
+void GEOM_AISShape::highlightSubShapes(const NCollection_IndexedMap<Standard_Integer>& aIndexMap,
                                        const Standard_Boolean aHighlight )
 {
   Handle(AIS_InteractiveObject) anObj = this;
@@ -585,7 +585,7 @@ void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
   TopTools_IndexedMapOfShape aShapeMap;
   TopExp::MapShapes( myshape, aShapeMap );
 
-  TColStd_IndexedMapOfInteger anIndexMap;
+  NCollection_IndexedMap<Standard_Integer> anIndexMap;
 
   TopExp_Explorer anExp;
   for( anExp.Init( myshape, aShapeType ); anExp.More(); anExp.Next() )

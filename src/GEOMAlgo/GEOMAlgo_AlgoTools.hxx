@@ -51,9 +51,10 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
 
+#include <NCollection_List.hxx>
 #include <TopTools_ListOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeShape.hxx>
 
 #include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
@@ -102,7 +103,7 @@ class GEOMAlgo_AlgoTools  {
        ) ;
 
   Standard_EXPORT
-    static  Standard_Integer FindSDShapes(const TopTools_ListOfShape& aLE,
+    static  Standard_Integer FindSDShapes(const NCollection_List<TopoDS_Shape>& aLE,
 					  const Standard_Real aTol,
 					  TopTools_IndexedDataMapOfShapeListOfShape& aMEE,
 #if OCC_VERSION_LARGE > 0x06070100
@@ -113,7 +114,7 @@ class GEOMAlgo_AlgoTools  {
 					  ) ;
   Standard_EXPORT
     static  Standard_Integer FindSDShapes(const TopoDS_Shape& aE1,
-					  const TopTools_ListOfShape& aLE,
+					  const NCollection_List<TopoDS_Shape>& aLE,
 					  const Standard_Real aTol,
 					  TopTools_ListOfShape& aLESD,
 #if OCC_VERSION_LARGE > 0x06070100
@@ -247,5 +248,13 @@ class GEOMAlgo_AlgoTools  {
     static  void CopyShape(const TopoDS_Shape& aS,
 			   TopoDS_Shape& aSC,
 			   TopTools_IndexedDataMapOfShapeShape& aMSS) ;
+
+  Standard_EXPORT
+    static void ConvertTopToolsListOfShapeToNCollectionList(const TopTools_ListOfShape&,
+                                                            NCollection_List<TopoDS_Shape>&) ;
+
+  Standard_EXPORT
+    static void ConvertNCollectionListToTopToolsListOfShape(const NCollection_List<TopoDS_Shape>&,
+                                                            TopTools_ListOfShape&) ;
 };
 #endif

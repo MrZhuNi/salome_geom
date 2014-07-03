@@ -194,7 +194,7 @@ void GEOMAlgo_Gluer2::PerformShapesToWork()
   aNbC=aMC.Extent();
   for (i=1; i<=aNbC; ++i) {
     const TopoDS_Shape& aSkey=aMC.FindKey(i);
-    const TopTools_IndexedMapOfShape& aM=aMC(i);
+    const NCollection_IndexedMap<TopoDS_Shape>& aM=aMC(i);
     aLSX.Clear();
     aNb=aM.Extent();
     for (j=1; j<=aNb; ++j) {

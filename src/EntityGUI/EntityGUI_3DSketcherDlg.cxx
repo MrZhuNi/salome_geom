@@ -52,7 +52,7 @@
 
 //OCCT includes
 #include <TopoDS.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakePolygon.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -761,7 +761,7 @@ void EntityGUI_3DSketcherDlg::SelectionIntoArgument()
       TopoDS_Shape aShape;
       if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE)) {
         // Explore the shape if its a local selection
-        TColStd_IndexedMapOfInteger aMap;
+        NCollection_IndexedMap<Standard_Integer> aMap;
         aSelMgr->GetIndexes(aSelList.First(), aMap);
         if (aMap.Extent() == 1) {
           int anIndex = aMap(1);

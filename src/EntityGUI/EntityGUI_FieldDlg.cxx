@@ -69,7 +69,6 @@
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerInteger.hxx>
 
@@ -1206,7 +1205,7 @@ void EntityGUI_FieldDlg::SelectionIntoArgument()
     myCurStepTable->blockSignals(true);
 
     QList< int > rowsToSelect;
-    TColStd_IndexedMapOfInteger aMapIndex;
+    NCollection_IndexedMap<Standard_Integer> aMapIndex;
     if ( getSelectedSubshapes(aMapIndex ))
       for (int ii = 1, nn = aMapIndex.Extent(); ii <= nn; ii++) {
         const int shapeID = aMapIndex( ii );
@@ -1442,7 +1441,7 @@ void EntityGUI_FieldDlg::showCurStep()
 // function : getSelectedSubshapes
 // purpose  :
 //=================================================================================
-int EntityGUI_FieldDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMapIndex)
+int EntityGUI_FieldDlg::getSelectedSubshapes (NCollection_IndexedMap<Standard_Integer>& theMapIndex)
 {
   theMapIndex.Clear();
 

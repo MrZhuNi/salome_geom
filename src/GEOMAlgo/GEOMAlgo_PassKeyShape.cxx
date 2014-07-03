@@ -27,7 +27,6 @@
 //
 #include <GEOMAlgo_PassKeyShape.hxx>
 
-#include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 
 
@@ -104,7 +103,7 @@ static
   void GEOMAlgo_PassKeyShape::SetShapes(const TopoDS_Shape& aS1,
                                         const TopoDS_Shape& aS2)
 {
-  TopTools_ListOfShape aLS;
+  NCollection_List<TopoDS_Shape> aLS;
   //
   aLS.Append(aS1);
   aLS.Append(aS2);
@@ -118,7 +117,7 @@ static
                                         const TopoDS_Shape& aS2,
                                         const TopoDS_Shape& aS3)
 {
-  TopTools_ListOfShape aLS;
+  NCollection_List<TopoDS_Shape> aLS;
   //
   aLS.Append(aS1);
   aLS.Append(aS2);
@@ -134,7 +133,7 @@ static
                                         const TopoDS_Shape& aS3,
                                         const TopoDS_Shape& aS4)
 {
-  TopTools_ListOfShape aLS;
+  NCollection_List<TopoDS_Shape> aLS;
   //
   aLS.Append(aS1);
   aLS.Append(aS2);
@@ -146,10 +145,10 @@ static
 //function :SetShapes
 //purpose  :
 //=======================================================================
-  void GEOMAlgo_PassKeyShape::SetShapes(const TopTools_ListOfShape& aLS)
+  void GEOMAlgo_PassKeyShape::SetShapes(const NCollection_List<TopoDS_Shape>& aLS)
 {
   Standard_Integer i, aId, aIdN;
-  TopTools_ListIteratorOfListOfShape aIt;
+  NCollection_List<TopoDS_Shape>::Iterator aIt;
   //
   Clear();
   aIt.Initialize(aLS);

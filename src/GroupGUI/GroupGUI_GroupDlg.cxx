@@ -62,7 +62,6 @@
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerInteger.hxx>
 
@@ -567,7 +566,7 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
     myIdList->blockSignals(true);
     myIdList->clearSelection();
 
-    TColStd_IndexedMapOfInteger aMapIndex;
+    NCollection_IndexedMap<Standard_Integer> aMapIndex;
     int nbSel = getSelectedSubshapes(aMapIndex);
 
     if (nbSel) {
@@ -763,7 +762,7 @@ void GroupGUI_GroupDlg::showOnlySelected()
 // function : getSelectedSubshapes
 // purpose  :
 //=================================================================================
-int GroupGUI_GroupDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMapIndex)
+int GroupGUI_GroupDlg::getSelectedSubshapes (NCollection_IndexedMap<Standard_Integer>& theMapIndex)
 {
   theMapIndex.Clear();
 
@@ -842,7 +841,7 @@ int GroupGUI_GroupDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMap
 //=================================================================================
 void GroupGUI_GroupDlg::add()
 {
-  TColStd_IndexedMapOfInteger aMapIndex;
+  NCollection_IndexedMap<Standard_Integer> aMapIndex;
   int nbSel = getSelectedSubshapes(aMapIndex);
 
   TColStd_MapOfInteger aMap;

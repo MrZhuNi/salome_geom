@@ -38,7 +38,6 @@
 
 // OCCT Includes
 #include <TColStd_MapOfInteger.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
 
 #include <GEOMImpl_Types.hxx>
 
@@ -205,7 +204,7 @@ void OperationGUI_Fillet1d2dDlg::SelectionIntoArgument()
         QString aName = GEOMBase::GetName( anObj );
         TopoDS_Shape aShape;
         if ( GEOMBase::GetShape( anObj, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-          TColStd_IndexedMapOfInteger aMap;
+          NCollection_IndexedMap<Standard_Integer> aMap;
           aSelMgr->GetIndexes(aSelList.First(), aMap);
           if ( aMap.Extent() == 1 ) { // Local Selection
             int anIndex = aMap( 1 );
@@ -243,7 +242,7 @@ void OperationGUI_Fillet1d2dDlg::SelectionIntoArgument()
         GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
       if ( !anObj->_is_nil() ) {
-        TColStd_IndexedMapOfInteger anIndexes;
+        NCollection_IndexedMap<Standard_Integer> anIndexes;
         aSelMgr->GetIndexes(aSelList.First(), anIndexes);
 
         if (anIndexes.Extent() > 0) {

@@ -32,13 +32,14 @@
 
 #include <TopoDS_Shape.hxx>
 #include <TopTools_ShapeMapHasher.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
 
 #define _NCollection_MapHasher
 #include <NCollection_IndexedDataMap.hxx>
+#include <NCollection_IndexedMap.hxx>
 
 
-typedef NCollection_IndexedDataMap <TopoDS_Shape, TopTools_IndexedMapOfShape, TopTools_ShapeMapHasher> GEOMAlgo_IndexedDataMapOfShapeIndexedMapOfShape;
+typedef NCollection_IndexedDataMap <TopoDS_Shape, NCollection_IndexedMap<TopoDS_Shape>,
+		                            TopTools_ShapeMapHasher> GEOMAlgo_IndexedDataMapOfShapeIndexedMapOfShape;
 
 #undef _NCollection_MapHasher
 

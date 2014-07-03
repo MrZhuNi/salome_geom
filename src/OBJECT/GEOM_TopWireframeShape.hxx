@@ -75,7 +75,7 @@ public:
     virtual  void setTopLevel(Standard_Boolean);
     virtual  Standard_CString getName();
     virtual  void setName(const Standard_CString aName);
-    virtual  void highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, const Standard_Boolean aHighlight );
+    virtual  void highlightSubShapes(const NCollection_IndexedMap<Standard_Integer>& aIndexMap, const Standard_Boolean aHighlight );
     ~GEOM_TopWireframeShape();
 
     // Type management

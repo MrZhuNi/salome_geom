@@ -37,7 +37,7 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>
 #include <TopExp.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <GEOMImpl_Types.hxx>
@@ -184,7 +184,7 @@ void MeasureGUI_NormaleDlg::SelectionIntoArgument()
     TopoDS_Shape aShape;
     if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
     {
-      TColStd_IndexedMapOfInteger aMap;
+      NCollection_IndexedMap<Standard_Integer> aMap;
       aSelMgr->GetIndexes(aSelList.First(), aMap);
       if (aMap.Extent() == 1) // Local Selection
       {
@@ -217,7 +217,7 @@ void MeasureGUI_NormaleDlg::SelectionIntoArgument()
     TopoDS_Shape aShape;
     if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
     {
-      TColStd_IndexedMapOfInteger aMap;
+      NCollection_IndexedMap<Standard_Integer> aMap;
       aSelMgr->GetIndexes(aSelList.First(), aMap);
       if (aMap.Extent() == 1) // Local Selection
       {

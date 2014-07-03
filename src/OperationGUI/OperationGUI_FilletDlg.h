@@ -29,7 +29,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 
 class DlgRef_1Sel1Spin;
 class DlgRef_2Sel3Spin2Rb;
@@ -74,8 +74,8 @@ private:
   int                                 myConstructorId;
   
   GEOM::GEOM_Object_var               myShape;
-  TColStd_IndexedMapOfInteger         myEdges;
-  TColStd_IndexedMapOfInteger         myFaces;
+  NCollection_IndexedMap<Standard_Integer>  myEdges;
+  NCollection_IndexedMap<Standard_Integer>  myFaces;
 
   // to initialize the first selection field with a selected object on the dialog creation
   bool                               myInitial;

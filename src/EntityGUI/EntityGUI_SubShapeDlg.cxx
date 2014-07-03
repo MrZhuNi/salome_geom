@@ -49,8 +49,6 @@
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
-#include <TColStd_IndexedMapOfInteger.hxx>
-
 #include <QMessageBox>
 
 #include <GEOMImpl_Types.hxx>
@@ -653,7 +651,7 @@ void EntityGUI_SubShapeDlg::showOnlySelected()
 // function : getSelectedSubshapes
 // purpose  :
 //=================================================================================
-int EntityGUI_SubShapeDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMapIndex)
+int EntityGUI_SubShapeDlg::getSelectedSubshapes (NCollection_IndexedMap<Standard_Integer>& theMapIndex)
 {
   theMapIndex.Clear();
 
@@ -824,7 +822,7 @@ bool EntityGUI_SubShapeDlg::isValid (QString& msg)
   if (isAllSubShapes())
     isOk = true;
   else {
-    TColStd_IndexedMapOfInteger aMapIndex;
+    NCollection_IndexedMap<Standard_Integer> aMapIndex;
     int nbSel = getSelectedSubshapes(aMapIndex);
     isOk = nbSel > 0;
 
@@ -845,7 +843,7 @@ bool EntityGUI_SubShapeDlg::execute (ObjectList& objects)
 
   if (!isAllSubShapes()) {
     // manual selection
-    TColStd_IndexedMapOfInteger aMapIndex;
+    NCollection_IndexedMap<Standard_Integer> aMapIndex;
     int nbSel = getSelectedSubshapes(aMapIndex);
 
     if (nbSel > 0) {

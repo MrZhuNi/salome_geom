@@ -41,8 +41,6 @@
 #include <TopoDS_Compound.hxx>
 
 #include <TopTools_IndexedMapOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
@@ -318,7 +316,7 @@ void GEOMAlgo_GlueDetector::DetectShapes(const TopAbs_ShapeEnum aType)
   Standard_Boolean bDegenerated;
   Standard_Integer i, aNbF, aNbSDF, iErr;
   TopTools_IndexedMapOfShape aMF;
-  TopTools_ListIteratorOfListOfShape aItLS;
+  NCollection_List<TopoDS_Shape>::Iterator aItLS;
   GEOMAlgo_PassKeyShape aPKF;
   GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape aMPKLF;
   //
@@ -344,11 +342,11 @@ void GEOMAlgo_GlueDetector::DetectShapes(const TopAbs_ShapeEnum aType)
     }
     //
     if (aMPKLF.Contains(aPKF)) {
-      TopTools_ListOfShape& aLSDF=aMPKLF.ChangeFromKey(aPKF);
+      NCollection_List<TopoDS_Shape>& aLSDF=aMPKLF.ChangeFromKey(aPKF);
       aLSDF.Append(aS);
     }
     else {
-      TopTools_ListOfShape aLSDF;
+      NCollection_List<TopoDS_Shape> aLSDF;
       //
       aLSDF.Append(aS);
       aMPKLF.Add(aPKF, aLSDF);
@@ -366,7 +364,7 @@ void GEOMAlgo_GlueDetector::DetectShapes(const TopAbs_ShapeEnum aType)
   // Images/Origins
   aNbF=aMPKLF.Extent();
   for (i=1; i<=aNbF; ++i) {
-    const TopTools_ListOfShape& aLSDF=aMPKLF(i);
+    const NCollection_List<TopoDS_Shape>& aLSDF=aMPKLF(i);
     aNbSDF=aLSDF.Extent();
     if (!aNbSDF) {
       myErrorStatus=4; // it must not be
@@ -386,7 +384,9 @@ void GEOMAlgo_GlueDetector::DetectShapes(const TopAbs_ShapeEnum aType)
       }
     }
     //
-    myImages.Bind(aS1, aLSDF);
+    TopTools_ListOfShape aConvLSDF;
+    GEOMAlgo_AlgoTools::ConvertNCollectionListToTopToolsListOfShape(aLSDF, aConvLSDF);
+    myImages.Bind(aS1, aConvLSDF);
     //
     // origins
     aItLS.Initialize(aLSDF);
@@ -407,7 +407,7 @@ void GEOMAlgo_GlueDetector::FacePassKey(const TopoDS_Face& aF,
 {
   Standard_Integer i, aNbE;
   TopoDS_Shape aER;
-  TopTools_ListOfShape aLE;
+  NCollection_List<TopoDS_Shape> aLE;
   TopTools_IndexedMapOfShape aME;
   //
   TopExp::MapShapes(aF, TopAbs_EDGE, aME);
@@ -441,7 +441,7 @@ void GEOMAlgo_GlueDetector::EdgePassKey(const TopoDS_Edge& aE,
   TopAbs_Orientation aOr;
   TopoDS_Shape aVR;
   TopoDS_Iterator aIt;
-  TopTools_ListOfShape aLV;
+  NCollection_List<TopoDS_Shape> aLV;
   //
   aIt.Initialize(aE);
   for (; aIt.More(); aIt.Next()) {

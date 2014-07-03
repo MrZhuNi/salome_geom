@@ -21,7 +21,7 @@
 
 #include <Precision.hxx>
 #include <TColStd_MapOfInteger.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 
 #include <gp_Lin.hxx>
 #include <gp_XYZ.hxx>
@@ -188,7 +188,7 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
   gp_Pnt aPi, aPc;
   gp_Dir aDir[3];
   gp_XYZ aXYZc;
-  TColStd_IndexedMapOfInteger aMp;
+  NCollection_IndexedMap<Standard_Integer> aMp;
   TopTools_IndexedMapOfShape aMV, aMFi;
   //
   // barycenter aPc

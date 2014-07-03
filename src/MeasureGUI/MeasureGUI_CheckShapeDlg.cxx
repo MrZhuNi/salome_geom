@@ -38,7 +38,7 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NCollection_IndexedMap.hxx>
 #include <TColStd_MapOfInteger.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopExp.hxx>
@@ -595,7 +595,7 @@ bool MeasureGUI_CheckShapeDlg::execute( ObjectList& objects )
   const bool isPublishAllErrors = (aNbErrsSelected < 1);
   const bool isPublishAllShapes =
     (aNbErrsSelected != 1 || myGrp->ListBox2->selectedItems().empty());
-  TColStd_IndexedMapOfInteger aMapIndex;
+  NCollection_IndexedMap<Standard_Integer> aMapIndex;
   const int aNbErrs = aErrs.length();
   int i;
 

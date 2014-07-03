@@ -30,9 +30,8 @@
 #include <Standard_Macro.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
-
-#include <TopTools_ListOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <NCollection_List.hxx>
 
 #include <GEOMAlgo_GluerAlgo.hxx>
 #include <GEOMAlgo_Algo.hxx>
