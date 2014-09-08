@@ -17,27 +17,29 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        CurveCreator_Section.hxx
-// Author:      Sergey KHROMOV
+// File:        CurveCreator_PosPoint.hxx
+// Author:      Alexander KOVALEV
 
-#ifndef _CurveCreator_Section_HeaderFile
-#define _CurveCreator_Section_HeaderFile
+#ifndef _CurveCreator_PosPoint_HeaderFile
+#define _CurveCreator_PosPoint_HeaderFile
 
 #include "CurveCreator.hxx"
 
-#include <string>
-
-//! Structure to store sections representing the CurveCreator_Curve object
-struct CurveCreator_Section
+struct CurveCreator_PosPoint
 {
-  //! Constructor. Initializes object with default values.
-  CurveCreator_Section() : myName("Section"),myType(CurveCreator::Polyline), myIsClosed(false)
-  { }
+public:
+  CurveCreator_PosPoint( int theID, CurveCreator::Coordinates theCoords ) 
+    : myID( theID ), myCoords( theCoords )
+  { };
 
-  std::string               myName; //!< section name
-  CurveCreator::Coordinates myPoints;   //!< points coordinates
-  CurveCreator::SectionType myType;     //!< type of the section
-  bool                      myIsClosed; //!< closed or not
+  ////! Overloaded operator to use sorting.
+  //bool operator < (CurveCreator_PosPoint const & thePosPoint) const 
+  //{
+  //  return myID < thePosPoint.myID;
+  //}
+
+  int                       myID;     // point ID
+  CurveCreator::Coordinates myCoords; // point coordinates
 
 };
 
