@@ -1,9 +1,9 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
+// version 2.1 of the License.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 //
 
 #include "CurveCreator_NewSectionDlg.h"
-#include "CurveCreator_Curve.hxx"
+//#include "CurveCreator_Curve.hxx"
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -31,11 +31,17 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 
-CurveCreator_NewSectionDlg::CurveCreator_NewSectionDlg( QWidget *parent ) :
-  QWidget(parent)
+CurveCreator_NewSectionDlg::CurveCreator_NewSectionDlg( QWidget *parent, bool enableClosed ) :
+  QWidget(parent), myIsEnableClosed( enableClosed )
 {
+  QVBoxLayout* aMainLayout = new QVBoxLayout( this );
+  aMainLayout->setMargin( 0 );
+
   QFrame* aFrame = new QFrame( this );
+  aMainLayout->addWidget( aFrame );
+
   QVBoxLayout* aLayout = new QVBoxLayout( aFrame );
+  aLayout->setMargin( 0 );
 
   QFrame* aCoordFrame = new QFrame( aFrame );
   QGridLayout* aCoordLayout = new QGridLayout( aCoordFrame );
@@ -64,6 +70,10 @@ CurveCreator_NewSectionDlg::CurveCreator_NewSectionDlg( QWidget *parent ) :
   myIsClosed = new QCheckBox(this);
   aCoordLayout->addWidget(aLbl, 2, 0);
   aCoordLayout->addWidget(myIsClosed, 2, 1);
+  if ( !myIsEnableClosed ) {
+    aLbl->hide();
+    myIsClosed->hide();
+  }
 
   myBtnFrame = new QFrame( aFrame );
   QHBoxLayout* aBtnsLayout = new QHBoxLayout( myBtnFrame );
@@ -82,7 +92,7 @@ CurveCreator_NewSectionDlg::CurveCreator_NewSectionDlg( QWidget *parent ) :
   aLayout->addWidget( myBtnFrame, 1 );
 }
 
-void CurveCreator_NewSectionDlg::setSectionParameters( const QString& theName, bool isClosed, CurveCreator::Type theType )
+void CurveCreator_NewSectionDlg::setSectionParameters( const QString& theName, bool isClosed, CurveCreator::SectionType theType )
 {
   myName->setText(theName);
   myIsClosed->setChecked(isClosed);
@@ -125,12 +135,12 @@ bool CurveCreator_NewSectionDlg::isClosed() const
   return myIsClosed->isChecked();
 }
 
-CurveCreator::Type CurveCreator_NewSectionDlg::getSectionType() const
+CurveCreator::SectionType CurveCreator_NewSectionDlg::getSectionType() const
 {
   if( myLineType->currentIndex() == 0 )
     return CurveCreator::Polyline;
   else
-    return CurveCreator::BSpline;
+    return CurveCreator::Spline;
 }
 
 void CurveCreator_NewSectionDlg::updateTitle()

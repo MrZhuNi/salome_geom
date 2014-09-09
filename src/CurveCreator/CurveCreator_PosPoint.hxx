@@ -1,9 +1,9 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
+// version 2.1 of the License.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,25 +17,30 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#ifndef CURVE_CREATOR_LISTENER_HXX
-#define CURVE_CREATOR_LISTENER_HXX
+// File:        CurveCreator_PosPoint.hxx
+// Author:      Alexander KOVALEV
 
-class CurveCreator_Listener
+#ifndef _CurveCreator_PosPoint_HeaderFile
+#define _CurveCreator_PosPoint_HeaderFile
+
+#include "CurveCreator.hxx"
+
+struct CurveCreator_PosPoint
 {
 public:
-  CurveCreator_Listener(void){};
-  virtual ~CurveCreator_Listener(void){};
+  CurveCreator_PosPoint( int theID, CurveCreator::Coordinates theCoords ) 
+    : myID( theID ), myCoords( theCoords )
+  { };
 
-  virtual void pointChanged( int theSection, int thePoint ){}
-  virtual void pointRemoved( int theSection, int theFirstPoint, int thePointCnt ){}
-  virtual void pointInserted( int theSection, int theIndx ){}
+  ////! Overloaded operator to use sorting.
+  //bool operator < (CurveCreator_PosPoint const & thePosPoint) const 
+  //{
+  //  return myID < thePosPoint.myID;
+  //}
 
-  virtual void sectionClosed( int theSection, bool isClosed ){}
-  virtual void sectionAdded( int theSection ){}
-  virtual void sectionRemoved( int theSection ){}
-  virtual void sectionTypeChanged( int theSection ){}
+  int                       myID;     // point ID
+  CurveCreator::Coordinates myCoords; // point coordinates
 
-  virtual void curveChanged(){}
 };
 
 #endif
