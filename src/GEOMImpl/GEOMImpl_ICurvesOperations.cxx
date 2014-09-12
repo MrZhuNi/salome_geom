@@ -1499,3 +1499,37 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeIsoline
   SetErrorCode(OK);
   return anIsoline;
 }
+
+//=============================================================================
+/*!
+ *  MakePolyline2D
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline2D
+            (const std::list <std::list <double> >         &theCoords,
+             const Handle(TColStd_HArray1OfExtendedString) &theNames,
+             const Handle(TColStd_HArray1OfByte)           &theTypes,
+             const Handle(TColStd_HArray1OfByte)           &theCloseds,
+             const Handle(TColStd_HArray1OfReal)           &theWorkingPlane)
+{
+  Handle(GEOM_Object) aResult;
+
+  return aResult;
+}
+
+//=============================================================================
+/*!
+ *  MakePolyline2DOnPlane
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline2DOnPlane
+            (const std::list <std::list <double> >         &theCoords,
+             const Handle(TColStd_HArray1OfExtendedString) &theNames,
+             const Handle(TColStd_HArray1OfByte)           &theTypes,
+             const Handle(TColStd_HArray1OfByte)           &theCloseds,
+             const Handle(GEOM_Object)                     &theWorkingPlane)
+{
+  Handle(GEOM_Object) aResult;
+
+  return aResult;
+}
