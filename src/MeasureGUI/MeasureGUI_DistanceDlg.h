@@ -116,7 +116,7 @@ private:
   MeasureGUI_DistanceGroup*           myGrp;
   GEOM::ListOfDouble_var              myDbls;
 
-private slots:
+private Q_SLOTS:
   void                                ClickOnOk();
   bool                                ClickOnApply();
   void                                ActivateThisDialog();

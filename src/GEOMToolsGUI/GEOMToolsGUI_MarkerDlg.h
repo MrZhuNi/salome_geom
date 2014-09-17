@@ -59,7 +59,7 @@ private:
   void                             addTexture( int, bool = false ) const;
   SalomeApp_Study*                 getStudy() const;
 
-private slots:
+private Q_SLOTS:
   void                             browse();
   void                             help();
 

@@ -64,7 +64,7 @@ protected:
 
   void                                closeEvent (QCloseEvent*);
 
-private slots:
+private Q_SLOTS:
   void                                ClickOnOk();
   bool                                ClickOnApply();
   void                                ActivateThisDialog();

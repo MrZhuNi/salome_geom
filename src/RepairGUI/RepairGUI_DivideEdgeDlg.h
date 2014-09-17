@@ -66,7 +66,7 @@ private:
   QButtonGroup*                      myIsParameterGr;
   SalomeApp_DoubleSpinBox*           myValEdt;
 
-protected slots:
+protected Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
 

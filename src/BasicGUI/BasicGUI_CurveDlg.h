@@ -77,7 +77,7 @@ private:
   QList<GEOM::GeomObjPtr>            myPoints;
   GEOM::GeomObjPtr                   myVec1, myVec2;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
 

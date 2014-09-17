@@ -181,7 +181,7 @@ private:
   bool                               myIsUndoRedo;
   XYZ                                myWorkPoint;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   void                               ClickOnAddPoint();
   bool                               ClickOnApply();

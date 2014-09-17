@@ -65,7 +65,7 @@ private:
   DlgRef_3Sel*                       Group3Pnts;
   DlgRef_3Sel*                       GroupCenter2Pnts;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
 

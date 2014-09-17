@@ -68,7 +68,7 @@ private:
   GEOM::GeomObjPtr                   myFace;
 
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
 

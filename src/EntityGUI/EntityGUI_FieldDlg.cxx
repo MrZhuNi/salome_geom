@@ -531,7 +531,7 @@ QList<int> EntityGUI_FieldDlg::StepTable::selectedRows()
   QTableWidgetItem* anItem;
   QList<int> rows;
 
-  foreach( anItem, selItems ) {
+  Q_FOREACH( anItem, selItems ) {
     int r = row( anItem );
     if ( !rows.contains( r ) ) rows.append( r );
   }

@@ -61,7 +61,7 @@ protected:
   };
 
 /* User event logics */
-protected slots:
+protected Q_SLOTS:
   void                            StartObjectSelection() { StartSelection( Selection_Object ); }
   void                            StartSelection( const Selection theSelection );
   void                            StopSelection();

@@ -65,7 +65,7 @@ private:
   DlgRef_3Radio*                     GroupOrientation;
   DlgRef_3Radio*                     GroupType;
     
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
 

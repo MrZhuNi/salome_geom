@@ -51,14 +51,14 @@ public:
     bool isInstantSketchingEnabled() const;
     void setInstantSketchingEnabled( const bool theState );
 
-signals:
+Q_SIGNALS:
     void selectionChanged();
     void subOperationStarted( QWidget* );
     void subOperationFinished( QWidget* );
 
-public slots:
+public Q_SLOTS:
 
-protected slots:
+protected Q_SLOTS:
     void     onAdditionMode(bool checked);
     void     onModificationMode(bool checked);
     void     onDetectPoints(bool checked);

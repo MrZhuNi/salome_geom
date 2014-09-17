@@ -79,12 +79,12 @@ public:
 
   void    setCurve( CurveCreator_Curve* theCurve );
 
-signals:
+Q_SIGNALS:
   void    selectionChanged();
   void    sectionEntered(int);
   void    pointEntered(int,int);
-public slots:
-protected slots:
+public Q_SLOTS:
+protected Q_SLOTS:
   void onActivated( QModelIndex theIndx );
 protected:
   void setIndexState( const QModelIndex& theIndx, bool& isExpanded, bool& isSelected, bool& isCurrent );

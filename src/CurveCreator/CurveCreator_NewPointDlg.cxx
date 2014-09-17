@@ -165,7 +165,7 @@ void CurveCreator_NewPointDlg::setCoordinates( const CurveCreator::Coordinates& 
     myZ->setValue(aZ);
   }
   if( isInstantSketchingEnabled() )
-    emit addPoint();
+    Q_EMIT addPoint();
 }
 
 bool CurveCreator_NewPointDlg::isInstantSketchingEnabled() const

@@ -57,7 +57,7 @@ private:
     QPushButton* btnFileSelect;
     GEOM::GEOM_Object_var m_mainShape;
 
-private slots:
+private Q_SLOTS:
     void ClickOnOk();
     bool ClickOnApply();
     void ActivateThisDialog();

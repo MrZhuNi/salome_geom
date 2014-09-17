@@ -64,11 +64,11 @@ public:
 
   DependencyTree_Object*  getObjectByEntry( const std::string& );
 
-public slots:
+public Q_SLOTS:
 
   void                    onRebuildModel();
 
-private slots:
+private Q_SLOTS:
 
   void                    onUpdateModel();
   void                    onMoveNodes( bool );

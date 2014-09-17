@@ -62,7 +62,7 @@ private:
   void                               activateSelection();
   GEOM_Displayer*                    getDisplayer();
 
-private slots:
+private Q_SLOTS:
   void                               onClose();
   void                               onHelp(); 
   void                               onDeactivate();

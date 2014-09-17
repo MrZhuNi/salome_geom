@@ -65,7 +65,7 @@ private:
   QPushButton*      resetButton;
   QComboBox*        TypeCB;
 
-private slots:
+private Q_SLOTS:
   void              ClickOnOk();
   bool              ClickOnApply();
   void              onActivate();

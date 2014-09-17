@@ -64,7 +64,7 @@ private:
   DlgRef_2SelExt*                    GroupPoints;
   QButtonGroup*                      myIsVertexGr;
   
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   

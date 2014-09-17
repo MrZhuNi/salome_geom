@@ -732,7 +732,7 @@ bool MeasureGUI_DimensionInteractor::eventFilter( QObject* theObject, QEvent* th
       anAISContext->ClearSelected( Standard_False );
       anAISContext->AddOrRemoveSelected( aDetectedOwner );
 
-      emit InteractionStarted( myInteractedIO );
+      Q_EMIT InteractionStarted( myInteractedIO );
 
       return true;
     }
@@ -757,7 +757,7 @@ bool MeasureGUI_DimensionInteractor::eventFilter( QObject* theObject, QEvent* th
 
         myOperation = Operation_None;
 
-        emit InteractionFinished( myInteractedIO );
+        Q_EMIT InteractionFinished( myInteractedIO );
 
         return true;
       }

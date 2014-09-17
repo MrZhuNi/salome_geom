@@ -68,7 +68,7 @@ private:
   DlgRef_2Sel*                       Group2F;
   DlgRef_6Sel*                       Group6F;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();

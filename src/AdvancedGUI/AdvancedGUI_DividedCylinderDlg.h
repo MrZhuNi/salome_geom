@@ -55,7 +55,7 @@ private:
   DlgRef_3Radio*                     GroupPattern;
   GEOM::pattern                      myPattern;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();

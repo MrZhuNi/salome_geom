@@ -562,7 +562,7 @@ void GEOMToolsGUI::OnEditDelete()
   SALOME_View* view;
   ViewManagerList vmans = app->viewManagers();
   SUIT_ViewManager* vman;
-  foreach ( vman, vmans ) {
+  Q_FOREACH ( vman, vmans ) {
     SUIT_ViewModel* vmod = vman->getViewModel();
     view = dynamic_cast<SALOME_View*> ( vmod ); // must work for OCC and VTK views
     if ( view )

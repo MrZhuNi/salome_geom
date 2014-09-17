@@ -56,7 +56,7 @@ private:
   QLabel*   myValueLab;
   QString   myHelpFileName;
 
-private slots: 
+private Q_SLOTS:
   void      ClickOnOk();
   void      ClickOnClose();
   void      ClickOnHelp();

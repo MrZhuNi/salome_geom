@@ -78,7 +78,7 @@ GEOMToolsGUI_MaterialList::GEOMToolsGUI_MaterialList( QWidget* parent )
 */
 void GEOMToolsGUI_MaterialList::contextMenuEvent( QContextMenuEvent* e )
 {
-  emit contextMenu( e );
+  Q_EMIT contextMenu( e );
 }
 
 /*!
@@ -264,7 +264,7 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
   item->setData( TypeRole, QVariant( Current ) );
   myMaterials->addItem( item );
   // - global materials
-  foreach( QString material, globalMaterials ) {
+  Q_FOREACH( QString material, globalMaterials ) {
     item = new QListWidgetItem( material );
     item->setForeground( QColor( Qt::blue ) );
     item->setData( TypeRole, QVariant( Global ) );
@@ -272,7 +272,7 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
     myMaterials->addItem( item );
   }
   // - user materials
-  foreach ( QString material, userMaterials ) {
+  Q_FOREACH ( QString material, userMaterials ) {
     item = new QListWidgetItem( material );
     item->setData( TypeRole, QVariant( User ) );
     item->setData( NameRole, QVariant( material ) );

@@ -60,10 +60,10 @@ private:
                                         QListWidgetItem* = 0,
                                         bool = false );
 
-signals:
+Q_SIGNALS:
   void                  changed();
 
-private slots:
+private Q_SLOTS:
   void                  onChanged();
   void                  onMaterialChanged();
   void                  onItemChanged( QListWidgetItem* );
@@ -108,7 +108,7 @@ public:
   GEOMToolsGUI_MaterialList( QWidget* parent );
 protected:
   void contextMenuEvent( QContextMenuEvent* e );
-signals:
+Q_SIGNALS:
   void contextMenu( QContextMenuEvent* );
 };
 

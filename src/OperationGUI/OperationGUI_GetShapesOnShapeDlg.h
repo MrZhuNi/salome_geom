@@ -59,7 +59,7 @@ private:
   
   DlgRef_2Sel2List*                  GroupPoints;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               SetEditCurrentArgument();

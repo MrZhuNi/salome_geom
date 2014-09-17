@@ -88,10 +88,10 @@ private:
 
   TopAbs_ShapeEnum                   myGlueMode;
 
-protected slots:
+protected Q_SLOTS:
   virtual void                       ClickOnCancel();
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
 

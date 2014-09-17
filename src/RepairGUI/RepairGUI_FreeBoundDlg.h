@@ -69,7 +69,7 @@ private:
   int                                   myNbOpen;
   int                                   myCurrObj;
 
-private slots:
+private Q_SLOTS:
   void                                  ClickOnOk();
   bool                                  ClickOnApply();
   void                                  SelectionIntoArgument();

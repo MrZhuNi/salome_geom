@@ -60,7 +60,7 @@ private:
   int                                myOrientation;
   GEOM::pattern                      myPattern;
   
-private slots:
+private Q_SLOTS:
   void                               ConstructorsClicked ( int );
   void                               ClickOnOk();
   bool                               ClickOnApply();

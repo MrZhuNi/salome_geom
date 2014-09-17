@@ -207,7 +207,7 @@ private:
                     DIR_TAN_LENGTH, DIR_TAN_X, DIR_TAN_Y,
                     DIR_DXDY_LENGTH, DIR_DXDY_X, DIR_DXDY_Y };
   
-private slots:
+private Q_SLOTS:
   void                               ClickOnEnd();
   void                               ClickOnCancel();
   bool                               ClickOnApply();

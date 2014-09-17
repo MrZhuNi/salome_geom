@@ -68,7 +68,7 @@ private:
   
   gp_Ax3                myWPlane;
   
-private slots:
+private Q_SLOTS:
   void                  ClickOnOk();
   bool                  ClickOnApply();
   

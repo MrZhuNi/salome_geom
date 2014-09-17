@@ -48,7 +48,7 @@ protected:
   virtual                             bool isValid( QString& );
   virtual                             bool execute( ObjectList& );
 
-private slots:
+private Q_SLOTS:
   void                                ClickOnOk();
   bool                                ClickOnApply();
   void                                ActivateThisDialog();

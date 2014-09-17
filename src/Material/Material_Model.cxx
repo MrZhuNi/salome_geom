@@ -57,7 +57,7 @@ void Material_Model::fromProperties( const QString& props )
 
   // parse material properties
   QStringList propList = props.split( ":", QString::SkipEmptyParts );
-  foreach ( QString prop, propList ) 
+  Q_FOREACH ( QString prop, propList )
   {
     QStringList pdata = prop.split( "=" );
     if ( pdata.count() < 2 ) continue;

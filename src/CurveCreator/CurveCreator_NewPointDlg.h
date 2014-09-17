@@ -44,12 +44,12 @@ public:
   void setDimension(CurveCreator::Dimension theDim);
   bool isInstantSketchingEnabled() const;
   void setInstantSketchingEnabled( const bool theState );
-signals:
+Q_SIGNALS:
   void addPoint();
   void modifyPoint();
   void cancelPoint();
-public slots:
-protected slots:
+public Q_SLOTS:
+protected Q_SLOTS:
 protected:
   void updateTitle();
   void initSpinBox(QDoubleSpinBox *theSpinBox);

@@ -51,7 +51,7 @@ public:
   void      setU( const int );
   void      setV( const int );
   
-private slots:
+private Q_SLOTS:
   void      ClickOnHelp();
 
 private:

@@ -385,7 +385,7 @@ void GeometryGUI::SetActiveDialogBox( QDialog* aDlg )
 //=======================================================================
 void GeometryGUI::EmitSignalDeactivateDialog()
 {
-  emit SignalDeactivateActiveDialog();
+  Q_EMIT SignalDeactivateActiveDialog();
 }
 
 //=======================================================================
@@ -394,7 +394,7 @@ void GeometryGUI::EmitSignalDeactivateDialog()
 //=======================================================================
 void GeometryGUI::EmitSignalCloseAllDialogs()
 {
-  emit SignalCloseAllDialogs();
+  Q_EMIT SignalCloseAllDialogs();
 }
 
 //=======================================================================
@@ -404,7 +404,7 @@ void GeometryGUI::EmitSignalCloseAllDialogs()
 //=======================================================================
 void GeometryGUI::EmitSignalDefaultStepValueChanged(double newVal)
 {
-  emit SignalDefaultStepValueChanged(newVal);
+  Q_EMIT SignalDefaultStepValueChanged(newVal);
 }
 
 //=======================================================================
@@ -793,7 +793,7 @@ void GeometryGUI::OnKeyPress( SUIT_ViewWindow* w, QKeyEvent* e )
 {
   if ( !application() )
     return;
-  foreach ( GEOMGUI* lib, myGUIMap )
+  Q_FOREACH ( GEOMGUI* lib, myGUIMap )
     lib->OnKeyPress( e, application()->desktop(), w );
 }
 
@@ -805,7 +805,7 @@ void GeometryGUI::OnMouseMove( SUIT_ViewWindow* w, QMouseEvent* e )
 {
   if ( !application() )
     return;
-  foreach ( GEOMGUI* lib, myGUIMap )
+  Q_FOREACH ( GEOMGUI* lib, myGUIMap )
     lib->OnMouseMove( e, application()->desktop(), w );
 }
 
@@ -817,7 +817,7 @@ void GeometryGUI::OnMouseRelease( SUIT_ViewWindow* w, QMouseEvent* e )
 {
   if ( !application() )
     return;
-  foreach ( GEOMGUI* lib, myGUIMap )
+  Q_FOREACH ( GEOMGUI* lib, myGUIMap )
     lib->OnMouseRelease( e, application()->desktop(), w );
 }
 
@@ -829,7 +829,7 @@ void GeometryGUI::OnMousePress( SUIT_ViewWindow* w, QMouseEvent* e )
 {
   if ( !application() )
     return;
-  foreach ( GEOMGUI* lib, myGUIMap )
+  Q_FOREACH ( GEOMGUI* lib, myGUIMap )
     lib->OnMousePress( e, application()->desktop(), w );
 }
 
@@ -1754,7 +1754,7 @@ void GeometryGUI::addPluginActions()
                        QString() /*shortcutAction*/);
 
           int menuId = -1;
-          foreach (QString subMenu, smenus) {
+          Q_FOREACH (QString subMenu, smenus) {
             subMenu = subMenu.toUpper().prepend("MEN_");
             menuId = createMenu(tr(subMenu.toLatin1().constData()), menuId, -1);
           }
@@ -2270,7 +2270,7 @@ void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString&
       // get list of all predefined materials
       QStringList materials = Material_ResourceMgr::resourceMgr()->materials();
       bool found = false;
-      foreach ( QString material, materials )
+      Q_FOREACH ( QString material, materials )
       {
         QAction* menAct = matMenu->addAction( material );
         connect(menAct, SIGNAL( toggled( bool ) ), signalMapper, SLOT( map() ) );
@@ -2752,7 +2752,7 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
       aDisplayer.UpdateViewer();
     }
     else if ( param.startsWith( "dependency_tree") )
-      emit SignalDependencyTreeParamChanged( section, param );
+      Q_EMIT SignalDependencyTreeParamChanged( section, param );
   }
 }
 
@@ -3319,7 +3319,7 @@ bool GeometryGUI::renameObject( const QString& entry, const QString& name)
       GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
       if (!CORBA::is_nil(anObj)) {
         anObj->SetName( name.toLatin1().data() );  // Rename the corresponding GEOM_Object
-        emit SignalDependencyTreeRenameObject( anObj->GetEntry() );
+        Q_EMIT SignalDependencyTreeRenameObject( anObj->GetEntry() );
       }
       result = true;
     }

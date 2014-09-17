@@ -69,7 +69,7 @@ private:
   GEOM::GeomObjPtr              myVectorX;
   GEOM::GeomObjPtr              myVectorY;
 
-private slots:
+private Q_SLOTS:
   void                          onOk();
   bool                          onApply();
   void                          onActivate();

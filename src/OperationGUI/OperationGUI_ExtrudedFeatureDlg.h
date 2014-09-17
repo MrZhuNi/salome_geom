@@ -75,7 +75,7 @@ private:
   
   DlgRef_2Sel2Spin2Push*      myGroup;
   
-private slots:
+private Q_SLOTS:
   void                        ClickOnOk();
   bool                        ClickOnApply();
   void                        ActivateThisDialog();

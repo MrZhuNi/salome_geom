@@ -70,7 +70,7 @@ private:
   DlgRef_2Sel1Spin*                  Group2Vec;
   DlgRef_3Radio1Sel1Spin*            GroupLCS;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   

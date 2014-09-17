@@ -67,7 +67,7 @@ private:
   
   DlgRef_2Sel2Spin3Check*            myGroup;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               SetEditCurrentArgument();

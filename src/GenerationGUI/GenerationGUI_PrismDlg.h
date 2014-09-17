@@ -69,7 +69,7 @@ private:
   DlgRef_1Sel3Spin2Check1Spin*       GroupDXDYDZ;
   DlgRef_1Check1Spin1Check*          GroupThickening;
   
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();

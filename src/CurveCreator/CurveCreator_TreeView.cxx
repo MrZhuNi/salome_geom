@@ -469,11 +469,11 @@ void CurveCreator_TreeView::onActivated( QModelIndex theIndx )
     return;
   int aSect = aModel->getSection(theIndx);
   if( aModel->isSection(theIndx) ){
-    emit sectionEntered( aSect );
+    Q_EMIT sectionEntered( aSect );
     return;
   }
   int aPointNum = aModel->getPoint( theIndx );
-  emit pointEntered( aSect, aPointNum );
+  Q_EMIT pointEntered( aSect, aPointNum );
 }
 
 void CurveCreator_TreeView::setCurve( CurveCreator_Curve* theCurve )

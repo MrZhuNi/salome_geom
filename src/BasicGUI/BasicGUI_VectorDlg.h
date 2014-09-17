@@ -62,7 +62,7 @@ private:
   DlgRef_2Sel*                       GroupPoints;
   DlgRef_3Spin1Check*                GroupDimensions;
     
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
 

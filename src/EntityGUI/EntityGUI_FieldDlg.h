@@ -71,7 +71,7 @@ protected:
   virtual bool                        isValid (QString&);
   virtual bool                        execute ();
 
-private slots:
+private Q_SLOTS:
   void                                ClickOnOk();
   bool                                ClickOnApply();
   void                                ActivateThisDialog();
@@ -184,7 +184,7 @@ public:
   GEOM::GEOM_FieldStep_var getStep() { return myStep; }
   void                     setValues(GEOM::GEOM_FieldStep_var& step);
 
-public slots:
+public Q_SLOTS:
   void                     setIsChanged() { myIsChanged = true; }
   void                     headerDblClicked( int );
 };

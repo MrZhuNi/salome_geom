@@ -52,7 +52,7 @@ protected:
   virtual bool                        isValid( QString& );
   virtual bool extractPrefix() const;
 
-private slots:
+private Q_SLOTS:
   void                                SelectionIntoArgument();
   void                                ClickOnOk();
   bool                                ClickOnApply();

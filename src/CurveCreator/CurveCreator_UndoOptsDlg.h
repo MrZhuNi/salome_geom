@@ -54,7 +54,7 @@ private:
 
   void setTabOrder();
 
-private slots:
+private Q_SLOTS:
 
   void optionChanged(int theId);
 

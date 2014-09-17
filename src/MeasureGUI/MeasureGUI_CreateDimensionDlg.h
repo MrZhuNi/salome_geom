@@ -84,11 +84,11 @@ public:
   void                                Init();
 
 
-signals:
+Q_SIGNALS:
   void                                applyClicked();
 
 /* User event logics */
-protected slots:
+protected Q_SLOTS:
   void                                ConstructTypeChanged( int theType );
   void                                OnArgumentTabChanged();
   void                                OnStartSelection( const QList<TopAbs_ShapeEnum>& theModes );
@@ -142,7 +142,7 @@ public:
 public:
   BaseSelectorPane( QWidget* theParent );
 
-signals:
+Q_SIGNALS:
   void               StartSelection( const QList<TopAbs_ShapeEnum>& theModes );
   void               StopSelection();
   void               SelectionDone();
@@ -154,7 +154,7 @@ public:
   void               SelectionIntoArguments( const GEOM::GeomObjPtr& theSelected );
   GEOM::GeomObjPtr   GetSelection( QLineEdit* theSelector ) const;
 
-public slots:
+public Q_SLOTS:
   void               OnSelectorClicked();
   void               OnTabChanged();
 

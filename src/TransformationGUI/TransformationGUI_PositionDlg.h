@@ -68,7 +68,7 @@ private:
 
   DlgRef_4Sel1Spin3Check*            Group1;
     
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();

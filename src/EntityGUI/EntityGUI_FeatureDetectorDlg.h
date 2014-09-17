@@ -73,7 +73,7 @@ private:
   ShapeRec_Parameters*               parametersChanged();
 
   
-private slots:
+private Q_SLOTS:
   void                               SelectionIntoArgument();
   void                               ConstructorsClicked( int );
 //   void                               onViewClicked( int );

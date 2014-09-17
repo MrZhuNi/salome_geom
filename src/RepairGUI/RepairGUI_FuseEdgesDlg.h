@@ -45,7 +45,7 @@ protected:
   virtual bool                       execute (ObjectList&);
   virtual void                       addSubshapesToStudy();
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();

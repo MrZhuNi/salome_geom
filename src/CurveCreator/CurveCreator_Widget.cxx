@@ -326,7 +326,7 @@ void CurveCreator_Widget::onSelectionChanged()
       }
     }
   }
-  emit selectionChanged();
+  Q_EMIT selectionChanged();
 }
 
 void CurveCreator_Widget::onAdditionMode(bool checked)
@@ -380,7 +380,7 @@ void CurveCreator_Widget::onAdditionMode(bool checked)
   myNewPointEditor->setSectionName(aSectName);
   myNewPointEditor->setDimension(myCurve->getDimension());
 */
-//  emit subOperationStarted( myNewPointEditor );
+//  Q_EMIT subOperationStarted( myNewPointEditor );
 }
 
 void CurveCreator_Widget::onModificationMode(bool checked)
@@ -462,7 +462,7 @@ void CurveCreator_Widget::onNewSection()
   myNewSectionEditor->setEditMode(false);
   QString aSectName = QString( myCurve->getUnicSectionName().c_str() );
   myNewSectionEditor->setSectionParameters(aSectName, true, CurveCreator::Polyline );
-  emit subOperationStarted( myNewSectionEditor );
+  Q_EMIT subOperationStarted( myNewSectionEditor );
 }
 
 void CurveCreator_Widget::onAddNewSection()
@@ -483,12 +483,12 @@ void CurveCreator_Widget::onAddNewSection()
 
 void CurveCreator_Widget::onCancelPoint()
 {
-  emit subOperationFinished( myNewPointEditor );
+  Q_EMIT subOperationFinished( myNewPointEditor );
 }
 
 void CurveCreator_Widget::onCancelSection()
 {
-  emit subOperationFinished( myNewSectionEditor );
+  Q_EMIT subOperationFinished( myNewSectionEditor );
 }
 
 QAction* CurveCreator_Widget::createAction( ActionId theId, const QString& theName, const QPixmap& theImage,
@@ -522,7 +522,7 @@ void CurveCreator_Widget::onEditSection( int theSection )
   myNewSectionEditor->setEditMode(true);
   myNewSectionEditor->setSectionParameters( aSectName, isClosed, aType );
 
-  emit subOperationStarted( myNewSectionEditor );
+  Q_EMIT subOperationStarted( myNewSectionEditor );
 }
 
 void CurveCreator_Widget::onModifySection()
@@ -554,7 +554,7 @@ void CurveCreator_Widget::onEditPoint( int theSection, int thePoint )
   myNewPointEditor->setDimension( myCurve->getDimension() );
   CurveCreator::Coordinates aCoords = myCurve->getCoordinates(theSection,thePoint);
   myNewPointEditor->setCoordinates(aCoords);
-  emit subOperationStarted( myNewPointEditor );
+  Q_EMIT subOperationStarted( myNewPointEditor );
 }
 
 void CurveCreator_Widget::onModifyPoint()

@@ -58,7 +58,7 @@ private:
   void                               Init();
   void                               enterEvent (QEvent*);
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               SetEditCurrentArgument();

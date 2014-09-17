@@ -297,7 +297,7 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIORinGEOMAISShape(const QString& IOR, boo
         views.append( SUIT_Session::session()->activeApplication()->desktop()->activeWindow() );
       else 
         views = SUIT_Session::session()->activeApplication()->desktop()->windows();
-      foreach ( SUIT_ViewWindow* view, views ) {
+      Q_FOREACH ( SUIT_ViewWindow* view, views ) {
         if ( view && view->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
           Handle(AIS_InteractiveContext) ic = ((OCCViewer_Viewer*)view->getViewManager()->getViewModel())->getAISContext();
 
@@ -345,7 +345,7 @@ GEOM_Actor* GEOMBase::ConvertIORinGEOMActor(const QString& IOR, bool onlyInActiv
         views.append( SUIT_Session::session()->activeApplication()->desktop()->activeWindow() );
       else 
         views = SUIT_Session::session()->activeApplication()->desktop()->windows();
-      foreach ( SUIT_ViewWindow* view, views ) {
+      Q_FOREACH ( SUIT_ViewWindow* view, views ) {
         if ( view && view->getViewManager()->getType() == SVTK_Viewer::Type() ) {
           SVTK_ViewWindow* aVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>( view );
           if( !aVTKViewWindow )
@@ -389,7 +389,7 @@ Handle(AIS_InteractiveObject) GEOMBase::GetAIS( const Handle(SALOME_InteractiveO
     else 
       views = SUIT_Session::session()->activeApplication()->desktop()->windows();
     
-    foreach ( SUIT_ViewWindow* view, views ) {
+    Q_FOREACH ( SUIT_ViewWindow* view, views ) {
       if ( view && view->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
         OCCViewer_Viewer* occViewer=(OCCViewer_Viewer*)view->getViewManager()->getViewModel();
         SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);

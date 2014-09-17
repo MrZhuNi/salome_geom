@@ -58,7 +58,7 @@ private:
   SalomeApp_IntSpinBox              *myDegMaxSpin;
   SalomeApp_DoubleSpinBox           *myDMaxSpin;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   

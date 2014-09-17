@@ -54,7 +54,7 @@ private:
   
   DlgRef_1List1Spin1Btn*     GroupPoints;
   
-private slots:
+private Q_SLOTS:
   void                       ClickOnOk();
   void                       ActivateThisDialog();
   void                       SelectionIntoArgument();

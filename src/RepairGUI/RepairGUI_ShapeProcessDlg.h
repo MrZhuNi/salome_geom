@@ -121,7 +121,7 @@ private:
   
   SalomeApp_DoubleSpinBox*           mySameParameterTol3D;
   
-private slots:
+private Q_SLOTS:
   void                               onOk();
   bool                               onApply();
 

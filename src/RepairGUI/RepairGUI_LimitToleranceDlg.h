@@ -66,7 +66,7 @@ private:
   DlgRef_1SelExt*                    GroupPoints;
   SalomeApp_DoubleSpinBox*           myTolEdt;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
 

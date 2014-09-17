@@ -49,7 +49,7 @@ protected:
   virtual bool                        execute (ObjectList&);
   virtual GEOM::GEOM_Object_ptr       getFather (GEOM::GEOM_Object_ptr);
 
-private slots:
+private Q_SLOTS:
   void                                ClickOnOk();
   bool                                ClickOnApply();
   void                                ActivateThisDialog();

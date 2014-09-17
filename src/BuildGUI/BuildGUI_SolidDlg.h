@@ -60,7 +60,7 @@ private:
 
   DlgRef_1Sel1Check*                 GroupSolid;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               SetEditCurrentArgument();

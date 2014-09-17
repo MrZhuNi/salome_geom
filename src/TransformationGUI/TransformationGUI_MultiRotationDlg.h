@@ -115,7 +115,7 @@ private:
 
   TransformationGUI_2Sel4Spin1Check* GroupArgs;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();

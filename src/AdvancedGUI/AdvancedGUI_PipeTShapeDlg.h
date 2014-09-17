@@ -115,7 +115,7 @@ private:
   bool myOkPoint1, myOkPoint2, myOkPoint3;
   ObjectList pipeTShapeGroupObjects;
 
-private slots:
+private Q_SLOTS:
   void ClickOnOk();
   bool ClickOnApply();
   void ActivateThisDialog();

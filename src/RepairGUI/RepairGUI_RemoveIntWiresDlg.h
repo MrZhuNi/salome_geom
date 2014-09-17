@@ -60,7 +60,7 @@ private:
   
   DlgRef_1Sel1Check1Sel*             GroupPoints;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   

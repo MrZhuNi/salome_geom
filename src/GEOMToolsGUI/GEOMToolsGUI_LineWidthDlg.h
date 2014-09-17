@@ -45,7 +45,7 @@ public:
   int       getTheLW() const;
   void      setTheLW( const int );
 
-private slots:
+private Q_SLOTS:
   void      ClickOnHelp();
 
 private:

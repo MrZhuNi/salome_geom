@@ -125,7 +125,7 @@ protected:
    */
   void                   MoveText( const Handle(V3d_View)& theView, const int theX, const int theY );
 
-signals:
+Q_SIGNALS:
   void                   InteractionStarted( Handle_AIS_InteractiveObject theIO );
   void                   InteractionFinished( Handle_AIS_InteractiveObject theIO );
 
@@ -155,7 +155,7 @@ protected:
    */
   virtual bool           eventFilter( QObject*, QEvent* );
 
-protected slots:
+protected Q_SLOTS:
   void                   OnViewCreated( SUIT_ViewWindow* );
   void                   OnViewRemoved( SUIT_ViewWindow* );
 

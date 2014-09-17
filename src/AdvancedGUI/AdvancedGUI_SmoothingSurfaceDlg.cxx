@@ -255,7 +255,7 @@ int AdvancedGUI_SmoothingSurfaceDlg::getNbPoints() const
 {
   TopTools_IndexedMapOfShape aMap;
 
-  foreach (GEOM::GeomObjPtr anObj, myPoints) {
+  Q_FOREACH (GEOM::GeomObjPtr anObj, myPoints) {
     TopoDS_Shape aShape;
 
     if(anObj && GEOMBase::GetShape(anObj.get(), aShape) && !aShape.IsNull()) {
@@ -286,7 +286,7 @@ void AdvancedGUI_SmoothingSurfaceDlg::SelectionIntoArgument()
   QList<GEOM::GeomObjPtr> points = getSelected( aTypes, -1 );
 
   // Check the selected compounds if they consist of points only.
-  foreach (GEOM::GeomObjPtr anObj, points) {
+  Q_FOREACH (GEOM::GeomObjPtr anObj, points) {
     TopoDS_Shape aShape;
 
     if(anObj && GEOMBase::GetShape(anObj.get(), aShape) && !aShape.IsNull()) {

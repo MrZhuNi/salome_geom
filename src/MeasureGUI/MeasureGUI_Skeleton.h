@@ -44,7 +44,7 @@ public:
   MeasureGUI_Skeleton( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
   ~MeasureGUI_Skeleton();
   
-protected slots:
+protected Q_SLOTS:
   virtual void                       ClickOnCancel();
   virtual void                       ClickOnHelp(); 
   virtual void                       DeactivateActiveDialog();

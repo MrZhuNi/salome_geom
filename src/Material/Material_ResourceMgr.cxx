@@ -217,5 +217,5 @@ void Material_ResourceMgr::saved()
 void Material_ResourceMgr::update()
 {
   Updater( this ).wait();
-  emit changed();
+  Q_EMIT changed();
 }

@@ -156,7 +156,7 @@ public:
 					   SUIT_DataObject* where,
 					   const int row, Qt::DropAction action );
 
-public slots:
+public Q_SLOTS:
   virtual bool                deactivateModule( SUIT_Study* );
   virtual bool                activateModule( SUIT_Study* );
   virtual void                OnKeyPress  ( SUIT_ViewWindow*, QKeyEvent*   );
@@ -164,11 +164,11 @@ public slots:
   virtual void                OnMouseMove ( SUIT_ViewWindow*, QMouseEvent* );
   virtual void                OnMouseRelease ( SUIT_ViewWindow*, QMouseEvent* );
 
-protected slots:
+protected Q_SLOTS:
   virtual void                onViewManagerAdded( SUIT_ViewManager* );
   virtual void                onViewManagerRemoved( SUIT_ViewManager* );
 
-private slots:
+private Q_SLOTS:
   void                        OnGUIEvent();
   void                        onWindowActivated( SUIT_ViewWindow* );
   void                        onViewAboutToShow();
@@ -178,7 +178,7 @@ private slots:
   void                        onAutoBringToFront();
   void                        updateFieldColorScale();
 
-signals :
+Q_SIGNALS:
   void                        SignalDeactivateActiveDialog();
   void                        SignalCloseAllDialogs();
   void                        SignalDefaultStepValueChanged( double newVal );

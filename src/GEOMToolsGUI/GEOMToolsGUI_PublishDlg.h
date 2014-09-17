@@ -65,7 +65,7 @@ protected:
   void               getDrawableList(QTreeWidgetItem* theItem, QList<QTreeWidgetItem*>& theList);
   void               getTails(QTreeWidgetItem* theItem, QList<QTreeWidgetItem*>& theList);
   
-protected slots:
+protected Q_SLOTS:
   void clickOnOk();
   void clickOnApply();
   void clickOnSelectAll();

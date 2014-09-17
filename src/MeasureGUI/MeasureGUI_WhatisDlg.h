@@ -49,7 +49,7 @@ protected:
   // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
   virtual void                        processObject();
   
-protected slots:
+protected Q_SLOTS:
   virtual void                        ClickOnProperties();
 
 private:

@@ -61,7 +61,7 @@ private:
 
   DlgRef_2Sel*                       GroupArgs;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
 

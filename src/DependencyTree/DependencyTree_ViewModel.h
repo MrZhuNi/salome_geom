@@ -37,7 +37,7 @@ public:
 
   virtual void  contextMenuPopup( QMenu* );
 
-private slots:
+private Q_SLOTS:
 
   void          onShowSelected();
   void          onShowOnlySelected();

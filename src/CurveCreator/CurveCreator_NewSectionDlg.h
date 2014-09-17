@@ -49,12 +49,12 @@ public:
   void    clear();
   void    setEditMode( bool isEdit );
 
-signals:
+Q_SIGNALS:
   void    addSection();
   void    modifySection();
   void    cancelSection();
-public slots:
-protected slots:
+public Q_SLOTS:
+protected Q_SLOTS:
 protected:
   void    updateTitle();
 private:

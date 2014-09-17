@@ -105,7 +105,7 @@ protected:
     QButtonGroup*       myRBGroup;             //!< radio button group
     DlgRef_Skeleton*    myMainFrame;           //!< dialog box's mainframe widgetx
 
-protected slots:
+protected Q_SLOTS:
     virtual void        ClickOnCancel();
     virtual void        processPreview();
     void                LineEditReturnPressed();
@@ -113,7 +113,7 @@ protected slots:
     void                ActivateThisDialog();
     void                ClickOnHelp();
 
-signals:
+Q_SIGNALS:
     void                constructorsClicked( int );
 };
 

@@ -67,7 +67,7 @@ private:
   DlgRef_2Sel1List2Check*            GroupPoints;
   QCheckBox                         *mySelfInte;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();

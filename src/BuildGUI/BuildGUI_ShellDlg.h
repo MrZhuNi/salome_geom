@@ -59,7 +59,7 @@ private:
   
   DlgRef_1Sel*                       GroupShell;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               SetEditCurrentArgument();

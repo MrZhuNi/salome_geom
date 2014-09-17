@@ -59,7 +59,7 @@ private:
   QPushButton*                       myPushButton;
   QLineEdit*                         myLineEdit;
   
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
 // 

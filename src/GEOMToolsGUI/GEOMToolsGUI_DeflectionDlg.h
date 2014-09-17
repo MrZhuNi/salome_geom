@@ -45,7 +45,7 @@ public:
   double    getTheDC() const;
   void      setTheDC( const double );
 
-private slots:
+private Q_SLOTS:
   void      ClickOnHelp();
 
 private:

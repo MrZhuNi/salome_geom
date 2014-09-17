@@ -64,7 +64,7 @@ private:
   DlgRef_2Sel*                       GroupPoints;
   DlgRef_2Sel*                       GroupFaces;
     
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
 

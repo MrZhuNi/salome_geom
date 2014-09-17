@@ -58,7 +58,7 @@ private:
   GEOM::GeomObjPtr                   myCompound; /* compound of curves */
   DlgRef_1Sel5Spin1Check*            GroupPoints;
     
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();

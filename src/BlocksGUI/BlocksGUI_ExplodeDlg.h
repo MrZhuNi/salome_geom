@@ -74,7 +74,7 @@ private:
 
   DlgRef_1Sel2Spin1View1Check*       myGrp1;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();

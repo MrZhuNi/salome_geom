@@ -67,7 +67,7 @@ private:
   DlgRef_1Sel2Spin*                  GroupWire;
   DlgRef_2Sel1Spin*                  GroupOnCurve;
 
-private slots:
+private Q_SLOTS:
   void                               ConstructorsClicked (int);
   void                               ClickOnOk();
   bool                               ClickOnApply();

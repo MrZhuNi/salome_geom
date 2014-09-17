@@ -2641,7 +2641,7 @@ void GEOM_Displayer::EraseWithChildren(const Handle(SALOME_InteractiveObject)& t
   SALOME_View* view;
   ViewManagerList vmans = app->viewManagers();
   SUIT_ViewManager* vman;
-  foreach ( vman, vmans ) {
+  Q_FOREACH ( vman, vmans ) {
     SUIT_ViewModel* vmod = vman->getViewModel();
     view = dynamic_cast<SALOME_View*> ( vmod );
     if ( view )
@@ -2654,10 +2654,10 @@ void GEOM_Displayer::EraseWithChildren(const Handle(SALOME_InteractiveObject)& t
   //Erase childrens w/o update views
   DataObjectList listObj = parent->children( true );
   SUIT_DataObject* obj;
-  foreach( obj, listObj ) {
+  Q_FOREACH( obj, listObj ) {
     LightApp_DataObject* l_obj = dynamic_cast<LightApp_DataObject*>(obj);
     if(l_obj)
-      foreach ( view, views ) {
+      Q_FOREACH ( view, views ) {
       Handle(SALOME_InteractiveObject) anIO =
         new SALOME_InteractiveObject(qPrintable(l_obj->entry()), "GEOM", "");
       Erase(anIO, false, false, view);
@@ -2665,7 +2665,7 @@ void GEOM_Displayer::EraseWithChildren(const Handle(SALOME_InteractiveObject)& t
   }
 
   //Erase parent with view update or repaint views
-  foreach ( view, views ) {
+  Q_FOREACH ( view, views ) {
     if(!eraseOnlyChildren)
       Erase(theIO, false, true, view);
     else

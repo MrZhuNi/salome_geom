@@ -52,14 +52,14 @@ public:
 
   QStringList materials( MaterialType = All, bool = true );
 
-signals:
+Q_SIGNALS:
   void changed();
 
 private:
   void watchUserFile( bool );
   void saved();
 
-private slots:
+private Q_SLOTS:
   void update();
 
 private:

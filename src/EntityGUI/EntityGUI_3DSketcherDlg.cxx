@@ -1742,7 +1742,7 @@ bool EntityGUI_3DSketcherDlg::createShapes (GEOM::GEOM_Object_ptr /*theObject*/,
                                             TopoDS_Shape&         theLastSegment)
 {
   QList<gp_Pnt> points;
-  foreach (XYZ xyz, myPointsList) {
+  Q_FOREACH (XYZ xyz, myPointsList) {
     gp_Pnt p(xyz.x, xyz.y, xyz.z);
     if (points.isEmpty() || points.last().Distance(p) > gp::Resolution())
       points << p;
@@ -1756,7 +1756,7 @@ bool EntityGUI_3DSketcherDlg::createShapes (GEOM::GEOM_Object_ptr /*theObject*/,
   else if (points.count() > 1) {
     // wire is created
     BRepBuilderAPI_MakePolygon mkWire;
-    foreach(gp_Pnt p, points)
+    Q_FOREACH(gp_Pnt p, points)
       mkWire.Add(p);
     theApplyedWire = mkWire.Shape();
   }

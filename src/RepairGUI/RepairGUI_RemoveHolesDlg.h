@@ -65,7 +65,7 @@ private:
   int                                myClosed; // Number of free closed boundaries detected. Calculated in execute(), used in onDetect().
   int                                myOpen;   // Number of free open   boundaries detected. Calculated in execute(), used in onDetect().
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
 

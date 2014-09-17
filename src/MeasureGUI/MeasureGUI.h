@@ -54,7 +54,7 @@ public:
   void ChangeDimensionsVisibility( const bool theIsVisible );
 private:
   QDialog* myManageDimensionDlg;
-private slots:
+private Q_SLOTS:
   void onFinished(int);
 };
 

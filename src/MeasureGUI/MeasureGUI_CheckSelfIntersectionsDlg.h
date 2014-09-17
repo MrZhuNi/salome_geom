@@ -47,7 +47,7 @@ protected:
   // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
   virtual void                        processObject();
 
-private slots:
+private Q_SLOTS:
   void                                onErrorsListSelectionChanged();
   void                                onSubShapesListSelectionChanged();
 

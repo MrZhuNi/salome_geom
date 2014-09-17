@@ -85,7 +85,7 @@ private:
   QMap<int, QPushButton*>            mySelBtn;
   QMap<int, QLineEdit*>              mySelName;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();

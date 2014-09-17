@@ -390,7 +390,7 @@ bool MeasureGUI_CreateDimensionDlg::ClickOnApply()
 
   if ( !isApplyAndClose() )
   {
-    emit applyClicked();
+    Q_EMIT applyClicked();
     Init();
     ConstructTypeChanged( getConstructorId() );
   }
@@ -920,8 +920,8 @@ void MeasureGUI_CreateDimensionDlg::BaseSelectorPane::SelectionIntoArguments( co
   mySelectionButtons[myCurrentSelector]->setDown( false );
 
   // every selector is populated - construct presentation
-  emit StopSelection();
-  emit SelectionDone();
+  Q_EMIT StopSelection();
+  Q_EMIT SelectionDone();
 }
 
 //=================================================================================
@@ -968,7 +968,7 @@ void MeasureGUI_CreateDimensionDlg::BaseSelectorPane::OnSelectorClicked()
     aButton->setDown( isClickedOnes );
   }
 
-  emit StartSelection( mySelectionModes[myCurrentSelector] );
+  Q_EMIT StartSelection( mySelectionModes[myCurrentSelector] );
 }
 
 //=================================================================================
@@ -992,7 +992,7 @@ void MeasureGUI_CreateDimensionDlg::BaseSelectorPane::OnTabChanged()
 
   mySelectionButtons[aFirstSelector]->click();
 
-  emit TabChanged();
+  Q_EMIT TabChanged();
 }
 
 //=================================================================================

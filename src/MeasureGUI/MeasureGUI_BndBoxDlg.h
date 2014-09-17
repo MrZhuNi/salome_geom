@@ -62,7 +62,7 @@ private:
   GEOM::GEOM_Object_var              myObj;
   MeasureGUI_1Sel6LineEdit*          myGrp;
 
-private slots:
+private Q_SLOTS:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               SelectionIntoArgument();

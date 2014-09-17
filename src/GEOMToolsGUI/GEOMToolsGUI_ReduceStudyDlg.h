@@ -65,7 +65,7 @@ public:
   GEOMToolsGUI_ReduceStudyDlg( QWidget* );
   ~GEOMToolsGUI_ReduceStudyDlg();
 
-private slots:
+private Q_SLOTS:
   void                          onItemClicked(QTreeWidgetItem*, int );
   void                          onHeaderClicked( int );
 
