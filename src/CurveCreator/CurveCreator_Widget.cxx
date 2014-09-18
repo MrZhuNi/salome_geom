@@ -1176,6 +1176,7 @@ void CurveCreator_Widget::removePoint()
 
   myCurve->removeSeveralPoints( aPoints );
   finishCurveModification( CurveCreator_ICurve::SectionToPointList() );
+  mySectionView->reset();
 }
 
 void CurveCreator_Widget::addNewPoint(const CurveCreator::Coordinates& theCoords)
