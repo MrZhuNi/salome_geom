@@ -72,6 +72,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_PointDriver.hxx
   GEOMImpl_IPoint.hxx
   GEOMImpl_IPolyline.hxx
+  GEOMImpl_IPolyline2D.hxx
   GEOMImpl_ICircle.hxx
   GEOMImpl_ISpline.hxx
   GEOMImpl_IEllipse.hxx
@@ -190,6 +191,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_IMeasureOperations.cxx
   GEOMImpl_IGroupOperations.cxx
   GEOMImpl_IFieldOperations.cxx
+  GEOMImpl_IPolyline2D.cxx
   GEOMImpl_Gen.cxx
   GEOMImpl_PointDriver.cxx
   GEOMImpl_VectorDriver.cxx

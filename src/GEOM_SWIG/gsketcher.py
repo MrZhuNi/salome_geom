@@ -1251,7 +1251,7 @@ class Polyline2D:
     #  @param theClosed True for closed section; False otherwise
     #  @param thePoints the list of 2D points coordinates in the form:
     #         [x1, y1, x2, y2, ..., xN, yN] for N points.
-    def addSection(self, theName, theType, theClosed, thePoints = []):
+    def addSection(self, theName, theType, theClosed, thePoints = None):
         """
         Add a new section to the polyline.
 
@@ -1273,7 +1273,10 @@ class Polyline2D:
         self.myNameList.append(theName)
         self.myTypeList.append(EnumToLong(theType))
         self.myClosedList.append(theClosed)
-        self.myCoordsList.append(thePoints)
+        if thePoints is None:
+            self.myCoordsList.append([])
+        else:
+            self.myCoordsList.append(thePoints)
         pass
 
     ## Add a points to the last added section of the polyline. If there are

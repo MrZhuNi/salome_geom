@@ -51,6 +51,7 @@
 #include "GEOMImpl_3DSketcherDriver.hxx"
 
 #include "GEOMImpl_IPolyline.hxx"
+#include "GEOMImpl_IPolyline2D.hxx"
 #include "GEOMImpl_ICircle.hxx"
 #include "GEOMImpl_ISpline.hxx"
 #include "GEOMImpl_IEllipse.hxx"
@@ -65,6 +66,7 @@
 #include "utilities.h"
 
 #include <TDF_Tool.hxx>
+#include <TColStd_HArray1OfByte.hxx>
 #include <TColStd_HArray1OfReal.hxx>
 
 #include <Standard_Failure.hxx>
@@ -1512,8 +1514,53 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline2D
              const Handle(TColStd_HArray1OfByte)           &theCloseds,
              const Handle(TColStd_HArray1OfReal)           &theWorkingPlane)
 {
-  Handle(GEOM_Object) aResult;
+  SetErrorCode(KO);
 
+  if (theCoords.empty()   || theNames.IsNull() || theTypes.IsNull() ||
+      theCloseds.IsNull() || theWorkingPlane.IsNull()) {
+    return NULL;
+  }
+
+  // Add a new Polyline object
+  Handle(GEOM_Object)   aResult   =
+    GetEngine()->AddObject(GetDocID(), GEOM_POLYLINE2D);
+  Handle(GEOM_Function) aFunction = aResult->AddFunction
+    (GEOMImpl_PolylineDriver::GetID(), POLYLINE2D_PLN_COORDS);
+
+  if (aFunction.IsNull()) {
+    return NULL;
+  }
+
+  // Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PolylineDriver::GetID()) {
+    return NULL;
+  }
+
+  GEOMImpl_IPolyline2D aCI(aFunction);
+
+  aCI.SetCoords(theCoords);
+  aCI.SetNames(theNames);
+  aCI.SetTypes(theTypes);
+  aCI.SetClosedFlags(theCloseds);
+  aCI.SetWorkingPlaneDbls(theWorkingPlane);
+
+  // Compute the isoline curve
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Polyline driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  SetErrorCode(OK);
   return aResult;
 }
 
@@ -1529,7 +1576,58 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline2DOnPlane
              const Handle(TColStd_HArray1OfByte)           &theCloseds,
              const Handle(GEOM_Object)                     &theWorkingPlane)
 {
-  Handle(GEOM_Object) aResult;
+  SetErrorCode(KO);
 
+  if (theCoords.empty()   || theNames.IsNull() || theTypes.IsNull() ||
+      theCloseds.IsNull() || theWorkingPlane.IsNull()) {
+    return NULL;
+  }
+
+  //Add a new Polyline object
+  Handle(GEOM_Object) aResult =
+    GetEngine()->AddObject(GetDocID(), GEOM_POLYLINE2D);
+  Handle(GEOM_Function) aFunction = aResult->AddFunction
+    (GEOMImpl_PolylineDriver::GetID(), POLYLINE2D_PLN_OBJECT);
+
+  if (aFunction.IsNull()) {
+    return NULL;
+  }
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PolylineDriver::GetID()) {
+    return NULL;
+  }
+
+  Handle(GEOM_Function) aRefPlane = theWorkingPlane->GetLastFunction();
+
+  if (aRefPlane.IsNull()) {
+    return NULL;
+  }
+
+  GEOMImpl_IPolyline2D aCI(aFunction);
+
+  aCI.SetCoords(theCoords);
+  aCI.SetNames(theNames);
+  aCI.SetTypes(theTypes);
+  aCI.SetClosedFlags(theCloseds);
+  aCI.SetWorkingPlane(aRefPlane);
+
+  //Compute the isoline curve
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Polyline driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  SetErrorCode(OK);
   return aResult;
 }

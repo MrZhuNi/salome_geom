@@ -20,38 +20,20 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-//  File   : Sketcher_Profile.h
-//  Author : Damien COQUERET
+//  File   : Sketcher.hxx
+//  Author : Sergey KHROMOV
 
+#ifndef SKETCHER_HXX
+#define SKETCHER_HXX
 
-#include "Sketcher.hxx"
-#include <TopoDS_Shape.hxx>
-#include <TCollection_AsciiString.hxx>
-#include <TColStd_Array1OfAsciiString.hxx>
+#if defined WIN32
+#  if defined SKETCHER_SALOME_EXPORTS || defined SKETCHER_EXPORTS || defined GEOMSketcher_EXPORTS || defined GEOMSKETCHER_EXPORTS
+#    define SKETCHER_SALOME_EXPORT _declspec( dllexport )
+#  else
+#    define SKETCHER_SALOME_EXPORT _declspec( dllimport )
+#  endif
+#else
+#  define SKETCHER_SALOME_EXPORT
+#endif
 
-#include <string>
-
-class SKETCHER_SALOME_EXPORT Sketcher_Profile
-{
-  class Functor;
-  class ShapeFunctor;
-  class DumpFunctor;
-
-public:
-  Sketcher_Profile();
-  Sketcher_Profile( const char* );
-
-  void                    SetCommand( const char* );
-
-  TopoDS_Shape            GetShape( bool* = 0, double* = 0 );
-  TCollection_AsciiString GetDump( bool* = 0 );
-
-private:
-  void parse( const TCollection_AsciiString&, Functor* );
-  void badArgs();
-  void findNextCommand( const TColStd_Array1OfAsciiString&, TColStd_Array1OfAsciiString&, int, int& );
-  TCollection_AsciiString extractCommand( const TCollection_AsciiString& );
-
-private:
-  TCollection_AsciiString myCommand;
-};
+#endif // SKETCHER_HXX

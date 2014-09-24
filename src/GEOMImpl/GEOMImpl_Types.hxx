@@ -113,6 +113,8 @@
 
 #define GEOM_ISOLINE   55
 
+#define GEOM_POLYLINE2D 56
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -364,6 +366,9 @@
 // import/export XAO
 #define IMPORTEXPORT_EXPORTXAO 1
 #define IMPORTEXPORT_IMPORTXAO 2
+
+#define POLYLINE2D_PLN_COORDS 1
+#define POLYLINE2D_PLN_OBJECT 2
 
 // Advanced functions (base = 200)
 #define ADVANCED_BASE 200  // NO OPERATION (advanced operations base)
