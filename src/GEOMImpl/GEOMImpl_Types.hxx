@@ -252,7 +252,9 @@
 #define PARTITION_HALF      2
 #define PARTITION_NO_SELF_INTERSECTIONS 3
 
-#define POLYLINE_POINTS 1
+#define POLYLINE_POINTS       1
+#define POLYLINE2D_PLN_COORDS 2
+#define POLYLINE2D_PLN_OBJECT 3
 
 #define SPLINE_BEZIER            1
 #define SPLINE_INTERPOLATION     2
@@ -366,9 +368,6 @@
 // import/export XAO
 #define IMPORTEXPORT_EXPORTXAO 1
 #define IMPORTEXPORT_IMPORTXAO 2
-
-#define POLYLINE2D_PLN_COORDS 1
-#define POLYLINE2D_PLN_OBJECT 2
 
 // Advanced functions (base = 200)
 #define ADVANCED_BASE 200  // NO OPERATION (advanced operations base)

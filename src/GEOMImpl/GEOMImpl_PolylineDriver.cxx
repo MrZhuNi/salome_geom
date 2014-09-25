@@ -294,10 +294,9 @@ GetCreationInformation(std::string&             theOperationName,
   GEOMImpl_ICurveParametric aIP( function );
   Standard_Integer aType = function->GetType();
 
-  theOperationName = "CURVE";
-
   switch ( aType ) {
   case POLYLINE_POINTS:
+    theOperationName = "CURVE";
     AddParam( theParams, "Type", "Polyline");
     if ( aIP.HasData() )
     {
@@ -332,6 +331,103 @@ GetCreationInformation(std::string&             theOperationName,
           pntParam << aCI.GetPoint( i ) << " ";
       }
       AddParam( theParams, "Is closed", aCI.GetIsClosed() );
+    }
+    break;
+  case POLYLINE2D_PLN_COORDS:
+  case POLYLINE2D_PLN_OBJECT:
+    {
+      theOperationName = "SKETCH";
+
+      GEOMImpl_IPolyline2D                    aP2d(function);
+      Handle(TColStd_HArray1OfExtendedString) aNames = aP2d.GetNames();
+
+      if (aNames.IsNull() == Standard_False) {
+        if (aNames->Length() == 1) {
+          // This is the single curve. Make its full dump.
+          AddParam(theParams, "Name", aNames->Value(aNames->Lower()));
+
+          Handle(TColStd_HArray1OfByte) aTypes = aP2d.GetTypes();
+
+          if (aTypes.IsNull() == Standard_False && aTypes->Length() == 1) {
+            Standard_Integer aType = aTypes->Value(aTypes->Lower());
+
+            if (aType == GEOMImpl_ICurvesOperations::Polyline) {
+              AddParam(theParams, "Type") << "Polyline";
+            } else if (aType == GEOMImpl_ICurvesOperations::Interpolation) {
+              AddParam(theParams, "Type") << "Interpolation";
+            }
+          }
+
+          Handle(TColStd_HArray1OfByte) aCloseds = aP2d.GetClosedFlags();
+
+          if (aCloseds.IsNull() == Standard_False && aCloseds->Length() == 1) {
+            const char *aYesNo =
+              aCloseds->Value(aCloseds->Lower()) ? "Yes" : "No";
+
+            AddParam(theParams, "Is closed", aYesNo);
+          }
+
+          std::list <std::list <double> > aCoords;
+
+          aP2d.GetCoords(aCoords);
+
+          if (aCoords.size() == 1) {
+            AddParam(theParams, "Number of points", aCoords.front().size());
+          }
+        } else {
+          // There are more than 1 curve.
+          Standard_Integer                aNbCurves = aNames->Length();
+          Standard_Integer                i;
+          std::list <std::list <double> > aCoords;
+
+          AddParam(theParams, "Number of curves", aNbCurves);
+          aP2d.GetCoords(aCoords);
+
+          Standard_Integer aNbCoords = aCoords.size();
+          std::list <std::list <double> >::const_iterator
+                           anIt      = aCoords.begin();
+
+          for (i = 0; i < aNbCurves; i++) {
+            TCollection_AsciiString aName("Curve ");
+            TCollection_ExtendedString
+              aValue(aNames->Value(aNames->Lower() + i));
+
+            aName.AssignCat(i + 1);
+
+            if (anIt != aCoords.end()) {
+              aValue.AssignCat(" (");
+              aValue.AssignCat(Standard_Integer(anIt->size()));
+              aValue.AssignCat(" points)");
+              anIt++;
+            }
+
+            AddParam(theParams, aName.ToCString(), aValue);
+          }
+        }
+      }
+
+      if (aType == POLYLINE2D_PLN_COORDS) {
+        Handle(TColStd_HArray1OfReal) aPln = aP2d.GetWorkingPlaneDbls();
+
+        if (aPln.IsNull() == Standard_False && aPln->Length() == 9) {
+          Standard_Integer i = aPln->Lower();
+
+          AddParam( theParams, "Origin")
+            << aPln->Value(i)     << " "
+            << aPln->Value(i + 1) << " "
+            << aPln->Value(i + 2);
+          AddParam( theParams, "OZ")
+            << aPln->Value(i + 3) << " "
+            << aPln->Value(i + 4) << " "
+            << aPln->Value(i + 5);
+          AddParam( theParams, "OX")
+            << aPln->Value(i + 6) << " "
+            << aPln->Value(i + 7) << " "
+            << aPln->Value(i + 8);
+        }
+      } else {
+        AddParam(theParams, "Working plane", aP2d.GetWorkingPlane(), "XOY");
+      }
     }
     break;
   default:
