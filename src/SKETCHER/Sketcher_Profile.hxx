@@ -24,6 +24,10 @@
 //  Author : Damien COQUERET
 
 
+#ifndef _Sketcher_Profile_HXX_
+#define _Sketcher_Profile_HXX_
+
+
 #include "Sketcher.hxx"
 #include <TopoDS_Shape.hxx>
 #include <TCollection_AsciiString.hxx>
@@ -55,3 +59,5 @@ private:
 private:
   TCollection_AsciiString myCommand;
 };
+
+#endif

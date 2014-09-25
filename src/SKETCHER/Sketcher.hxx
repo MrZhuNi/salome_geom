@@ -23,8 +23,8 @@
 //  File   : Sketcher.hxx
 //  Author : Sergey KHROMOV
 
-#ifndef SKETCHER_HXX
-#define SKETCHER_HXX
+#ifndef _SKETCHER_HXX_
+#define _SKETCHER_HXX_
 
 #if defined WIN32
 #  if defined SKETCHER_SALOME_EXPORTS || defined SKETCHER_EXPORTS || defined GEOMSketcher_EXPORTS || defined GEOMSKETCHER_EXPORTS

@@ -24,6 +24,10 @@
 //  Author : Sergey KHROMOV
 
 
+#ifndef _Sketcher_Utils_HXX_
+#define _Sketcher_Utils_HXX_
+
+
 #include "Sketcher.hxx"
 
 #include <gp_Pnt.hxx>
@@ -95,3 +99,5 @@ public:
                          std::list <gp_Pnt> &thePoints);
 
 };
+
+#endif
