@@ -91,5 +91,4 @@ class GEOMIMPL_EXPORT GEOMImpl_IPolyline2D
   Handle(GEOM_Function) _func;
 };
 
-
 #endif
