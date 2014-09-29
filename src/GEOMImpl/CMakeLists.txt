@@ -149,6 +149,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_Block6Explorer.hxx
   GEOMImpl_MeasureDriver.hxx
   GEOMImpl_PolylineDriver.hxx
+  GEOMImpl_PolylineDumper.hxx
   GEOMImpl_CircleDriver.hxx
   GEOMImpl_EllipseDriver.hxx
   GEOMImpl_ArcDriver.hxx
@@ -221,6 +222,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_Block6Explorer.cxx
   GEOMImpl_MeasureDriver.cxx
   GEOMImpl_PolylineDriver.cxx
+  GEOMImpl_PolylineDumper.cxx
   GEOMImpl_CircleDriver.cxx
   GEOMImpl_EllipseDriver.cxx
   GEOMImpl_ArcDriver.cxx

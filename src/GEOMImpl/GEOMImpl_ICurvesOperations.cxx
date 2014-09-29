@@ -60,6 +60,7 @@
 #include "GEOMImpl_I3DSketcher.hxx"
 #include "GEOMImpl_ICurveParametric.hxx"
 #include "GEOMImpl_IIsoline.hxx"
+#include "GEOMImpl_PolylineDumper.hxx"
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -1560,6 +1561,17 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline2D
     return NULL;
   }
 
+  //Make a Python command
+  GEOMImpl_PolylineDumper aDumper(theCoords, theNames, theTypes,
+                                  theCloseds, theWorkingPlane);
+
+  aDumper.Dump(aResult);
+
+  if (aDumper.IsDone() == Standard_False) {
+    SetErrorCode("Python dump failed");
+    return NULL;
+  }
+
   SetErrorCode(OK);
   return aResult;
 }
@@ -1625,6 +1637,17 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline2DOnPlane
   catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOMImpl_PolylineDumper aDumper(theCoords, theNames, theTypes,
+                                  theCloseds, theWorkingPlane);
+
+  aDumper.Dump(aResult);
+
+  if (aDumper.IsDone() == Standard_False) {
+    SetErrorCode("Python dump failed");
     return NULL;
   }
 
