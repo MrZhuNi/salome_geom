@@ -46,12 +46,12 @@ CurveCreator_NewSectionDlg::CurveCreator_NewSectionDlg( QWidget *parent, bool en
   QFrame* aCoordFrame = new QFrame( aFrame );
   QGridLayout* aCoordLayout = new QGridLayout( aCoordFrame );
 
-  QLabel* aLbl = new QLabel(tr("NAME"), this);
+  QLabel* aLbl = new QLabel(tr("SECTION_NAME"), this);
   myName = new QLineEdit(this);
   aCoordLayout->addWidget(aLbl, 0, 0);
   aCoordLayout->addWidget(myName, 0 , 1);
 
-  aLbl = new QLabel(tr("LINE_TYPE"));
+  aLbl = new QLabel(tr("SECTION_LINE_TYPE"));
   myLineType = new QComboBox(this);
 
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
@@ -60,13 +60,13 @@ CurveCreator_NewSectionDlg::CurveCreator_NewSectionDlg( QWidget *parent, bool en
 
 //  QPixmap aPolylinePixmap = QPixmap(tr(":images/ICON_POLYLINE"));
 //  QPixmap aSplinePixmap = QPixmap(tr(":images/ICON_SPLINE"));
-  myLineType->addItem(aPolylinePixmap, tr("POLYLINE_TYPE"));
-  myLineType->addItem(aSplinePixmap, tr("SPLINE_TYPE"));
+  myLineType->addItem(aPolylinePixmap, tr("SECTION_POLYLINE_TYPE"));
+  myLineType->addItem(aSplinePixmap, tr("SECTION_SPLINE_TYPE"));
   myLineType->setCurrentIndex(0);
   aCoordLayout->addWidget(aLbl, 1, 0);
   aCoordLayout->addWidget(myLineType, 1 , 1);
 
-  aLbl = new QLabel(tr("LINE_CLOSED"));
+  aLbl = new QLabel(tr("SECTION_LINE_CLOSED"));
   myIsClosed = new QCheckBox(this);
   aCoordLayout->addWidget(aLbl, 2, 0);
   aCoordLayout->addWidget(myIsClosed, 2, 1);
@@ -78,8 +78,8 @@ CurveCreator_NewSectionDlg::CurveCreator_NewSectionDlg( QWidget *parent, bool en
   myBtnFrame = new QFrame( aFrame );
   QHBoxLayout* aBtnsLayout = new QHBoxLayout( myBtnFrame );
 
-  myAddBtn = new QPushButton( tr( "ADD_BTN" ), myBtnFrame );
-  myCancelBtn = new QPushButton( tr( "CANCEL" ), myBtnFrame );
+  myAddBtn = new QPushButton( tr( "SECTION_ADD_BTN" ), myBtnFrame );
+  myCancelBtn = new QPushButton( tr( "SECTION_CANCEL_BTN" ), myBtnFrame );
 
   connect( myAddBtn,  SIGNAL( clicked() ), this, SIGNAL( addSection() ) );
   connect( myCancelBtn, SIGNAL( clicked() ), this, SIGNAL( cancelSection() ) );
@@ -113,12 +113,12 @@ void CurveCreator_NewSectionDlg::setEditMode( bool isEdit )
 {
   myIsEdit = isEdit;
   if( myIsEdit ){
-    myAddBtn->setText(tr("OK"));
+    myAddBtn->setText(tr("SECTION_OK_BTN"));
     myAddBtn->disconnect( SIGNAL( clicked() ) );
     connect( myAddBtn, SIGNAL( clicked() ), this, SIGNAL( modifySection() ) );
   }
   else{
-    myAddBtn->setText(tr("ADD_BTN"));
+    myAddBtn->setText(tr("SECTION_ADD_BTN"));
     myAddBtn->disconnect( SIGNAL( clicked() ) );
     connect( myAddBtn, SIGNAL( clicked() ), this, SIGNAL( addSection() ) );
   }

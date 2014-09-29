@@ -104,10 +104,10 @@ CurveCreator_TableView::CurveCreator_TableView( CurveCreator_ICurve* theCurve,
   setColumnWidth( 0, SECTION_NAME_COLUMN_WIDTH );
   setColumnWidth( 1, POINT_INDEX_COLUMN_WIDTH );
   QStringList aLabels;
-  QString aCoord1 = theCoordTitles.size() > 0 ? theCoordTitles[0] : tr( "X" ); // tr( "X_POSITION_LBL" )
-  QString aCoord2 = theCoordTitles.size() > 1 ? theCoordTitles[1] : tr( "Y" ); // tr( "Y_POSITION_LBL" )
+  QString aCoord1 = theCoordTitles.size() > 0 ? theCoordTitles[0] : tr( "TABLE_X" ); // tr( "X_POSITION_LBL" )
+  QString aCoord2 = theCoordTitles.size() > 1 ? theCoordTitles[1] : tr( "TABLE_Y" ); // tr( "Y_POSITION_LBL" )
   //aLabels << tr( "SECTION_LABEL" ) << tr( "IDENTIFIER_LABEL" ) << aCoord1 << aCoord2;
-  aLabels << tr( "Section" ) << "Index" << aCoord1 << aCoord2;
+  aLabels << tr( "TABLE_SECTION" ) << tr("TABLE_INDEX") << aCoord1 << aCoord2;
   setHorizontalHeaderLabels( aLabels );
 }
 

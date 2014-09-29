@@ -5153,6 +5153,22 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <source>CC_PNT_ITEM_X_Y_Z</source>
         <translation>X=%1, Y=%2, Z=%3</translation>
     </message>
+    <message>
+        <source>TABLE_SECTION</source>
+        <translation>Section</translation>
+    </message>
+    <message>
+        <source>TABLE_INDEX</source>
+        <translation>Index</translation>
+    </message>
+    <message>
+        <source>TABLE_X</source>
+        <translation>X</translation>
+    </message>
+    <message>
+        <source>TABLE_Y</source>
+        <translation>Y</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
@@ -5395,73 +5411,38 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
     </message>
 </context>
 <context>
-    <name>CurveCreator_NewPointDlg</name>
-    <message>
-        <source>ADD_NEW_POINT</source>
-        <translation>Add new points</translation>
-    </message>
-    <message>
-        <source>X_COORD</source>
-        <translation>X</translation>
-    </message>
-    <message>
-        <source>Y_COORD</source>
-        <translation>Y</translation>
-    </message>
-    <message>
-        <source>Z_COORD</source>
-        <translation>Z</translation>
-    </message>
-    <message>
-        <source>ADD_BTN</source>
-        <translation>Add</translation>
-    </message>
-    <message>
-        <source>ADD_CONTINUE_BTN</source>
-        <translation>Add and continue</translation>
-    </message>
-    <message>
-        <source>ADD_NEW_POINT_TO_%1</source>
-        <translation>Add new point to %1</translation>
-    </message>
-    <message>
-        <source>SET_POINT_COORDINATES</source>
-        <translation>Set point coordinates</translation>
-    </message>
-</context>
-<context>
     <name>CurveCreator_NewSectionDlg</name>
     <message>
-        <source>NAME</source>
+        <source>SECTION_NAME</source>
         <translation>Name</translation>
     </message>
     <message>
-        <source>LINE_TYPE</source>
+        <source>SECTION_LINE_TYPE</source>
         <translation>Type</translation>
     </message>
     <message>
-        <source>POLYLINE_TYPE</source>
+        <source>SECTION_POLYLINE_TYPE</source>
         <translation>Polyline</translation>
     </message>
     <message>
-        <source>SPLINE_TYPE</source>
+        <source>SECTION_SPLINE_TYPE</source>
         <translation>Spline</translation>
     </message>
     <message>
-        <source>LINE_CLOSED</source>
+        <source>SECTION_LINE_CLOSED</source>
         <translation>Closed</translation>
     </message>
     <message>
-        <source>OK</source>
-        <translation>Ok</translation>
-    </message>
-    <message>
-        <source>ADD_BTN</source>
+        <source>SECTION_ADD_BTN</source>
         <translation>Add</translation>
     </message>
     <message>
-        <source>ADD_CONTINUE_BTN</source>
-        <translation>Add and continue</translation>
+        <source>SECTION_OK_BTN</source>
+        <translation>Ok</translation>
+    </message>
+    <message>
+        <source>SECTION_CANCEL_BTN</source>
+        <translation>Cancel</translation>
     </message>
     <message>
         <source>ADD_NEW_SECTION</source>
@@ -5486,11 +5467,7 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
 <context>
     <name>CurveCreator_Widget</name>
     <message>
-        <source>CURVE_NAME_TLT</source>
-        <translation>Name</translation>
-    </message>
-    <message>
-        <source>SECTION_GROUP_TLT</source>
+        <source>SECTION_GROUP_TITLE</source>
         <translation>Sections</translation>
     </message>
     <message>
@@ -5518,22 +5495,6 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <translation>Insert new section</translation>
     </message>
     <message>
-        <source>INSERT_SECTION_BEFORE</source>
-        <translation>Insert section before</translation>
-    </message>
-    <message>
-        <source>INSERT_SECTION_BEFORE_TLT</source>
-        <translation>Insert section before</translation>
-    </message>
-    <message>
-        <source>INSERT_SECTION_AFTER</source>
-        <translation>Insert section after</translation>
-    </message>
-    <message>
-        <source>INSERT_SECTION_AFTER_TLT</source>
-        <translation>Insert section after</translation>
-    </message>
-    <message>
         <source>ADDITION_MODE</source>
         <translation>Addition mode</translation>
     </message>
@@ -5556,18 +5517,6 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
     <message>
         <source>DETECTION_MODE_TLT</source>
         <translation>Detection mode</translation>
-    </message>
-    <message>
-        <source>INSERT_POINT_BEFORE</source>
-        <translation>Insert point before</translation>
-    </message>
-    <message>
-        <source>INSERT_POINT_BEFORE_TLT</source>
-        <translation>Insert point before</translation>
-    </message>
-    <message>
-        <source>INSERT_POINT_AFTER</source>
-        <translation>Insert point after</translation>
     </message>
     <message>
         <source>CLOSE_SECTIONS</source>
@@ -5616,22 +5565,6 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
     <message>
         <source>JOIN_TLT</source>
         <translation>Join selected sections</translation>
-    </message>
-    <message>
-        <source>STEP_UP</source>
-        <translation>Move up</translation>
-    </message>
-    <message>
-        <source>STEP_UP_TLT</source>
-        <translation>Move selected objects up</translation>
-    </message>
-    <message>
-        <source>STEP_DOWN</source>
-        <translation>Move down</translation>
-    </message>
-    <message>
-        <source>STEP_DOWN_TLT</source>
-        <translation>Move selected objects down</translation>
     </message>
     <message>
         <source>CLEAR_ALL</source>

@@ -93,7 +93,7 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
   connect( myNewSectionEditor, SIGNAL(modifySection()), this, SLOT(onModifySection()) );
   connect( myNewSectionEditor, SIGNAL(cancelSection()), this, SLOT(onCancelSection()) );
 
-  QGroupBox* aSectionGroup = new QGroupBox(tr("Sections"),this);
+  QGroupBox* aSectionGroup = new QGroupBox(tr("SECTION_GROUP_TITLE"),this);
 
   mySectionView = new CurveCreator_TreeView(myCurve, aSectionGroup);
   mySectionView->setSelectionMode( QTreeView::ExtendedSelection );
@@ -105,7 +105,7 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
   connect( myLocalPointView, SIGNAL( cellChanged( int, int ) ),
            this, SLOT( onCellChanged( int, int ) ) );
 
-  QToolBar* aTB = new QToolBar(tr("TOOL_BAR_TLT"), aSectionGroup);
+  QToolBar* aTB = new QToolBar(tr("SECTION_GROUP_TITLE"), aSectionGroup);
 //    QToolButton* anUndoBtn = new QToolButton(aTB);
 
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
@@ -174,12 +174,12 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
   connect(anAct, SIGNAL(triggered()), this, SLOT(onUncloseSections()) );
 
   anAct = createAction( SET_SECTIONS_POLYLINE_ID, tr("SET_SECTIONS_POLYLINE"), 
-                        aPolylinePixmap, tr("SET_POLYLINE_TLT"), 
+                        aPolylinePixmap, tr("SET_SECTIONS_POLYLINE_TLT"), 
                         QKeySequence(Qt::ControlModifier|Qt::Key_E) );
   connect(anAct, SIGNAL(triggered()), this, SLOT(onSetPolyline()) );
 
   anAct = createAction( SET_SECTIONS_SPLINE_ID, tr("SET_SECTIONS_SPLINE"), aSplinePixmap, 
-                        tr("SET_SPLINE_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_R) );
+                        tr("SET_SECTIONS_SPLINE_TLT"), QKeySequence(Qt::ControlModifier|Qt::Key_R) );
   connect(anAct, SIGNAL(triggered()), this, SLOT(onSetSpline()) );
 
   anAct = createAction( REMOVE_ID, tr("REMOVE"), aRemovePixmap, tr("REMOVE_TLT"), 

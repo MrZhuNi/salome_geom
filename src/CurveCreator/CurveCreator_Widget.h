@@ -45,7 +45,6 @@ class QAction;
 class QPixmap;
 class CurveCreator_TableView;
 class CurveCreator_TreeView;
-class CurveCreator_NewPointDlg;
 class CurveCreator_NewSectionDlg;
 
 class CURVECREATOR_EXPORT CurveCreator_Widget : public QWidget
