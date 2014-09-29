@@ -2370,7 +2370,15 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>MEN_CURVE_CREATOR</source>
-        <translation>Curve creator</translation>
+        <translation>2D Polyline</translation>
+    </message>
+    <message>
+      <source>TOP_CURVE_CREATOR</source>
+      <translation>Create 2D polyline</translation>
+    </message>
+    <message>
+      <source>STB_CURVE_CREATOR</source>
+      <translation>Create 2D polyline</translation>
     </message>
     <message>
         <source>MEN_ALL_SEL_ONLY</source>
