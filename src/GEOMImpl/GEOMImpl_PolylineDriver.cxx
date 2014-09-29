@@ -128,7 +128,7 @@ Standard_Integer GEOMImpl_PolylineDriver::MakePolyline2D
     gp_Dir aDirX(aPlaneCoords->Value(i + 6), aPlaneCoords->Value(i + 7),
                  aPlaneCoords->Value(i + 8));
     aWPlane = gp_Ax3(aOrigin, aDirZ, aDirX);
-  } else if (aType == POLYLINE2D_PLN_COORDS) {
+  } else if (aType == POLYLINE2D_PLN_OBJECT) {
     Handle(GEOM_Function) aRefFace = aCI.GetWorkingPlane();
     TopoDS_Shape aShape = aRefFace->GetValue();
 
