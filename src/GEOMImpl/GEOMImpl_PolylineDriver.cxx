@@ -143,6 +143,7 @@ Standard_Integer GEOMImpl_PolylineDriver::MakePolyline2D
   Standard_Integer iC = aClosedFlags->Lower();
   std::list <std::list <double> >::const_iterator anIter = aCoords.begin();
   BRep_Builder aBuilder;
+  Standard_Boolean isEmpty = Standard_True;
 
   if (aNbSections > 1) {
     aBuilder.MakeCompound(TopoDS::Compound(aShape));
@@ -160,20 +161,20 @@ Standard_Integer GEOMImpl_PolylineDriver::MakePolyline2D
         (*anIter, aClosedFlags->Value(iC), aWPlane);
     }
 
-    if (aSection.IsNull()) {
-      return 0;
-    }
-
     if (aNbSections > 1) {
       // There are multiple sections.
-      aBuilder.Add(aShape, aSection);
+      if (aSection.IsNull() == Standard_False) {
+        aBuilder.Add(aShape, aSection);
+        isEmpty = Standard_False;
+      }
     } else {
       // There is only one section.
-      aShape = aSection;
+      isEmpty = aSection.IsNull();
+      aShape  = aSection;
     }
   }
 
-  if (aShape.IsNull()) {
+  if (isEmpty) {
     return 0;
   }
 
