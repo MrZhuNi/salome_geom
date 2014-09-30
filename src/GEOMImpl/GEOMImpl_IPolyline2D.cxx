@@ -34,45 +34,41 @@
 void GEOMImpl_IPolyline2D::SetCoords
                   (const std::list <std::list <double> > &theValue)
 {
-  // Compute the total number of points and fill the array of start indices.
-  Standard_Integer                                i;
-  const Standard_Integer                          aNbSec    = theValue.size();
-  Standard_Integer                                aNbCoords = 0;
-  Handle(TColStd_HArray1OfInteger)                anIndices;
-  std::list <std::list <double> >::const_iterator aSecIter;
+  const Standard_Integer aNbSec = theValue.size();
 
-  if (aNbSec == 1) {
-    // There is only one section.
-    aNbCoords = theValue.front().size();
-  } else {
-    // Here we assume that there are more than one section.
-    anIndices  = new TColStd_HArray1OfInteger(1, aNbSec - 1);
-    aSecIter   = theValue.begin();
-    aNbCoords += aSecIter->size();
+  if (aNbSec > 0) {
+    // Compute the total number of points and fill the array of start indices.
+    Standard_Integer                                i;
+    Standard_Integer                                aNbCoords = 0;
+    Handle(TColStd_HArray1OfInteger)                anIndices =
+      new TColStd_HArray1OfInteger(1, aNbSec);
+    Handle(TColStd_HArray1OfReal)                   aCoords;
+    std::list <std::list <double> >::const_iterator aSecIter = theValue.begin();
 
-    for (i = 1, ++aSecIter; aSecIter != theValue.end(); ++aSecIter, ++i) {
+    for (i = 1; aSecIter != theValue.end(); ++aSecIter, ++i) {
       anIndices->SetValue(i, aNbCoords + 1);
       aNbCoords += aSecIter->size();
     }
-  }
 
-  // Fill the array of coordinates.
-  Handle(TColStd_HArray1OfReal)     aCoords =
-    new TColStd_HArray1OfReal(1, aNbCoords);
-  std::list<double>::const_iterator aCIter;
+    if (aNbCoords > 0) {
+      // Fill the array of coordinates.
+      std::list<double>::const_iterator aCIter;
 
-  aSecIter = theValue.begin();
+      aCoords  = new TColStd_HArray1OfReal(1, aNbCoords);
+      aSecIter = theValue.begin();
 
-  for (i = 1; aSecIter != theValue.end(); ++aSecIter) {
-    for (aCIter = aSecIter->begin(); aCIter != aSecIter->end(); ++aCIter) {
-      aCoords->SetValue(i++, *aCIter);
+      for (i = 1; aSecIter != theValue.end(); ++aSecIter) {
+        for (aCIter = aSecIter->begin(); aCIter != aSecIter->end(); ++aCIter) {
+          aCoords->SetValue(i++, *aCIter);
+        }
+      }
     }
-  }
 
-  // Store the coordinates.
-  _func->SetRealArray(POLY_ARG_COORDS, aCoords);
+    // Store the coordinates.
+    if (aCoords.IsNull() == Standard_False) {
+      _func->SetRealArray(POLY_ARG_COORDS, aCoords);
+    }
 
-  if (anIndices.IsNull() == Standard_False) {
     _func->SetIntegerArray(POLY_ARG_START_INDICES, anIndices);
   }
 }
@@ -91,35 +87,26 @@ void GEOMImpl_IPolyline2D::GetCoords(std::list <std::list <double> > &theValue)
   Handle(TColStd_HArray1OfInteger) anIndices =
     _func->GetIntegerArray(POLY_ARG_START_INDICES);
 
-  if (aCoords.IsNull() == Standard_False) {
-    std::list <double> anEmptyList;
-    Standard_Integer   i;
-    Standard_Integer   iNextSec      = 0;
-    Standard_Integer   aNextSecIndex = aCoords->Upper() + 1;
+  if (anIndices.IsNull() == Standard_False) {
+    const Standard_Integer aNbSec = anIndices->Length();
 
-    if (anIndices.IsNull() == Standard_False) {
-      iNextSec      = anIndices->Lower();
-      aNextSecIndex = anIndices->Value(iNextSec);
-    }
+    // Create an empty sections.
+    theValue.resize(aNbSec);
 
-    theValue.push_back(anEmptyList);
+    if (aCoords.IsNull() == Standard_False) {
+      Standard_Integer i;
+      Standard_Integer j;
+      std::list <std::list <double> >::iterator anIt = theValue.begin();
 
-    for (i = aCoords->Lower(); i <= aCoords->Upper(); ++i) {
-      // Check if it is necessary to create a new section.
-      // Assume a case if there are empty sections.
-      while (i == aNextSecIndex) {
-        // Create a next section.
-        theValue.push_back(anEmptyList);
-        ++iNextSec;
+      for (i = anIndices->Lower(); i <= anIndices->Upper(); ++i, ++anIt) {
+        const Standard_Integer iCoord1 = anIndices->Value(i);
+        const Standard_Integer iCoord2 = i + 1 > anIndices->Upper() ?
+          aCoords->Upper() + 1 : anIndices->Value(i + 1);
 
-        if (iNextSec > anIndices->Upper()) {
-          aNextSecIndex = aCoords->Upper() + 1;
-        } else {
-          aNextSecIndex = anIndices->Value(iNextSec);
+        for (j = iCoord1; j < iCoord2; ++j) {
+          anIt->push_back(aCoords->Value(j));
         }
       }
-
-      theValue.back().push_back(aCoords->Value(i));
     }
   }
 }
