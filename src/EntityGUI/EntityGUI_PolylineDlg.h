@@ -59,12 +59,40 @@ protected:
 	
 private:
 
-  void                               Init();
+  void Init();
+  void Clear();
+  void enterEvent(QEvent *);
+
+  /**
+   * This method converts the curve into curve parameters required to
+   * construct an object using the interface
+   * GEOM_ICurvesOperations::MakePolyline2DOnPlane.
+   *
+   * \param theCurve a curve object, that contains data.
+   *  \param theCoordsList the list of coordinates list. theCoordsList[0]
+   *         is the coordinates list of the first section. theCoordsList[1]
+   *         is for the second section etc. Output parameter.
+   *  \param theNamesList the list of names. The order corresponds to
+   *         theCoordsList. Output parameter.
+   *  \param theTypesList the list of curve types. The order corresponds to
+   *         theCoordsList. Output parameter.
+   *  \param theClosedList the list of Closed flags. The order corresponds to
+   *         theCoordsList. Output parameter.
+   */
+  void GetCurveParams(GEOM::ListOfListOfDouble &theCoords,
+                      GEOM::string_array       &theNames,
+                      GEOM::short_array        &theTypes,
+                      GEOM::ListOfBool         &theCloseds);
 
 protected slots:
 
+  void ClickOnOk();
+  bool ClickOnApply();
   void processStartedSubOperation( QWidget*, bool );
   void processFinishedSubOperation( QWidget* );
+  void SelectionIntoArgument();
+  void ActivateThisDialog();
+  void onUpdatePreview();
 
 private:
 

@@ -97,6 +97,7 @@ signals:
   void selectionChanged();
   void subOperationStarted( QWidget*, bool );
   void subOperationFinished( QWidget* );
+  void curveModified();
 
 public slots:
 
