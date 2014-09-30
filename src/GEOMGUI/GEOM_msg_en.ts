@@ -5584,6 +5584,29 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
     </message>
 </context>
 <context>
+    <name>EntityGUI_PolylineDlg</name>
+    <message>
+        <source>POLYLINE_DLG_TITLE</source>
+        <translation>Polyline Construction</translation>
+    </message>
+    <message>
+        <source>POLYLINE_TITLE</source>
+        <translation>Polyline</translation>
+    </message>
+    <message>
+        <source>POLYLINE_NAME</source>
+        <translation>Polyline</translation>
+    </message>
+    <message>
+        <source>POLYLINE_ADD_SECTION</source>
+        <translation>Add section</translation>
+    </message>
+    <message>
+        <source>POLYLINE_EDIT_SECTION</source>
+        <translation>Edit section</translation>
+    </message>
+</context>
+<context>
     <name>EntityGUI_SketcherDlg</name>
     <message>
         <source>CANNOT_CLOSE</source>
