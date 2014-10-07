@@ -26,10 +26,10 @@
 
 #include <GEOMBase_Skeleton.h>
 
-
 class CurveCreator_Curve;
 class CurveCreator_Widget;
 class QGroupBox;
+class QComboBox;
 
 
 //=================================================================================
@@ -84,21 +84,68 @@ private:
                       GEOM::short_array        &theTypes,
                       GEOM::ListOfBool         &theCloseds);
 
+  /**
+   * This method returns the current local coordinate system.
+   *
+   * \return local coordinate system.
+   */
+  gp_Ax3 GetActiveLocalCS();
+
+  /**
+   * This method returns the current working plane. Can be null.
+   *
+   * \return the current working plane.
+   */
+  GEOM::GeomObjPtr GetActiveWPlane();
+
+  /**
+   * This method add a local coordinate system of the selected object.
+   *
+   * \param theSelectedObject the selected object. It can be a planar face
+   *        or an inported polyline.
+   * \param IsPlane true for planar face; false for imported polyline.
+   * \param theLCS the local coordinate system.
+   */
+  void AddLocalCS(GEOM::GeomObjPtr  theSelectedObject,
+                  const bool        IsPlane,
+                  const gp_Ax3      &theLCS);
+
+  /**
+   * This method converts the working plane object into
+   * the local coordinate system of the polyline.
+   *
+   * \param theGeomObj the working plane
+   * \return the local coordinate system
+   */
+  gp_Ax3 WPlaneToLCS(GEOM::GeomObjPtr theGeomObj);
+
 protected slots:
 
   void ClickOnOk();
   bool ClickOnApply();
+  void ClickOnCancel();
   void processStartedSubOperation( QWidget*, bool );
   void processFinishedSubOperation( QWidget* );
+  void SetEditCurrentArgument();
   void SelectionIntoArgument();
   void ActivateThisDialog();
   void onUpdatePreview();
+  void ActivateLocalCS();
 
 private:
 
-  CurveCreator_Curve  *myCurve;
-  CurveCreator_Widget *myEditorWidget;
-  QGroupBox           *myAddElementBox;
+  CurveCreator_Curve           *myCurve;
+  CurveCreator_Widget          *myEditorWidget;
+  QGroupBox                    *myAddElementBox;
+  QComboBox                    *myPlnComboBox;
+  QPushButton                  *myPlnButton;
+  QPushButton                  *myPlnSelButton;
+  QPushButton                  *myPolylineSelButton;
+  QLineEdit                    *myWPlaneLineEdit;
+  QLineEdit                    *myPolylineEdit;
+  QLineEdit                    *myEditCurrentArgument;   /* Current LineEdit */
+  QList<gp_Ax3>                 myLCSList;
+  QList<GEOM::GeomObjPtr>       myWPlaneList;
 
 };
 

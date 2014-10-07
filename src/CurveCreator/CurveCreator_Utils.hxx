@@ -29,9 +29,12 @@
 #include <gp_Pnt.hxx>
 #include <Geom_Curve.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TColgp_HArray1OfPnt.hxx>
 
 #include <list>
 #include <vector> // TODO: remove
+
+class CurveCreator_Curve;
 
 
 class CurveCreator_Utils
@@ -68,6 +71,19 @@ public:
    */
   CURVECREATOR_EXPORT static void constructShape( const CurveCreator_ICurve* theCurve,
                                                   TopoDS_Shape& theShape );
+
+  /**
+   * Generates a curve from a shape.
+   * \param theShape a shape to be converted to curve.
+   * \param theCurve a curve object to be initialized.
+   * \param theLocalCS the local coordinate system of the curve.
+   * \return true in case of success; false otherwise. Warning: the curve can
+   *         be modified even if the shape is not valid for curve construction.
+   */
+  CURVECREATOR_EXPORT static bool constructCurve
+                      (const TopoDS_Shape        theShape,
+                             CurveCreator_Curve *theCurve,
+                             gp_Ax3             &theLocalCS);
 
   /**
    * Find selected points in the context
@@ -124,12 +140,12 @@ protected:
    * \param theCurve a geometry curve
    * \param theOutPoint a found projected point on the curve
   */
-  CURVECREATOR_EXPORT static bool hasProjectPointOnCurve(
-                                                 Handle(V3d_View) theView,
-                                                 const int theX, const int theY,
-                                                 const Handle(Geom_Curve)& theCurve,
-                                                 Standard_Real& theParameter,
-                                                 int& theDelta );
+  static bool hasProjectPointOnCurve(
+                             Handle(V3d_View) theView,
+                             const int theX, const int theY,
+                             const Handle(Geom_Curve)& theCurve,
+                             Standard_Real& theParameter,
+                             int& theDelta );
 
   /*
    * Returns whether the X and Y coordinates is in the pixel tolerance
@@ -141,9 +157,9 @@ protected:
    * \param theDelta the sum of the a square of X and a square of Y
    * \returns whether the points are provide to the pixel tolerance
   */
-  CURVECREATOR_EXPORT static bool isEqualPixels( const int theX, const int theY,
-                                                 const int theOtherX, const int theOtherY,
-                                                 const double theTolerance, int& theDelta );
+  static bool isEqualPixels( const int theX, const int theY,
+                             const int theOtherX, const int theOtherY,
+                             const double theTolerance, int& theDelta );
 
 
   /*
@@ -152,8 +168,44 @@ protected:
    * \param theOtherPoint the second point
    * \returns whether the points are provide to the pixel tolerance
   */
-  CURVECREATOR_EXPORT static bool isEqualPoints( const gp_Pnt& thePoint,
-                                                 const gp_Pnt& theOtherPoint );
+  static bool isEqualPoints( const gp_Pnt& thePoint,
+                             const gp_Pnt& theOtherPoint );
+
+  /**
+   * Returns the array of points of a shape to construct a curve section. The
+   * shape can be either a wire or a vertex. For vertex a single point in the
+   * array is returned.
+   *
+   * \param theShape the shape. Can be either a wire or a vertex.
+   * \param IsClosed closed flag. Output parameter.
+   * \param IsBSpline BSpline flag. Output parameter.
+   * \return the array of points. Null handle in case of failure.
+   */
+  static Handle_TColgp_HArray1OfPnt getPoints
+                           (const TopoDS_Shape &theShape,
+                                  bool         &IsClosed,
+                                  bool         &IsBSpline);
+
+  /**
+   * This method computes a plane using the input points. The plane is defined
+   * by gp_Pln object and the status. The status can have one of the following
+   * values:
+   *   - 0 plane is not set.<BR>
+   *   - 1 origin of the plane is fixed. The plane is defined by 1 or several
+   *       coincident points.<BR>
+   *   - 2 origin + OX axis of the plane is fixed. The plane is defined by 2
+   *       or more points that lie on a particular line.<BR>
+   *   - 3 plane is fixed. Plane is defined by 3 not coincident points.<BR>
+   *
+   * \param thePoints the points.
+   * \param thePlane the current plane on input. It can be modified on output.
+   * \param thePlnStatus the current status on input. It can be modified on
+   *        output.
+   */
+  static void FindPlane(const Handle_TColgp_HArray1OfPnt &thePoints,
+                              gp_Pln                     &thePlane,
+                              Standard_Integer           &thePlnStatus);
+
 };
 
 #endif // CURVECREATOR_UTILS_H

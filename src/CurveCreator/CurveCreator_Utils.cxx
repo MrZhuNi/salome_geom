@@ -19,6 +19,7 @@
 
 #include "CurveCreator_Utils.hxx"
 #include "CurveCreator.hxx"
+#include "CurveCreator_Curve.hxx"
 #include "CurveCreator_UtilsICurve.hxx"
 
 #include <GEOMUtils.hxx>
@@ -41,9 +42,12 @@
 #include <Geom_Point.hxx>
 #include <Geom_BSplineCurve.hxx>
 #include <Geom_Line.hxx>
+#include <Geom_Curve.hxx>
+#include <Geom_TrimmedCurve.hxx>
 
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <GeomAPI_ProjectPointOnCurve.hxx>
 #include <SelectMgr_EntityOwner.hxx>
 #include <SelectMgr_Selection.hxx>
@@ -54,9 +58,11 @@
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepTools_WireExplorer.hxx>
 
 #include <TColgp_HArray1OfPnt.hxx>
 #include <TColStd_HArray1OfBoolean.hxx>
+#include <TColStd_Array1OfReal.hxx>
 #include <TColgp_Array1OfVec.hxx>
 #include <GeomAPI_Interpolate.hxx>
 
@@ -70,6 +76,48 @@
 const double LOCAL_SELECTION_TOLERANCE = 0.0001;
 const int    SCENE_PIXEL_PROJECTION_TOLERANCE = 10;
 const int    SCENE_PIXEL_POINT_TOLERANCE = 5;
+
+#define PLN_FREE   0
+#define PLN_ORIGIN 1
+#define PLN_OX     2
+#define PLN_FIXED  3
+
+/**
+ * This static function returns the curve of original type from the edge.
+ *
+ * \param theEdge the edge
+ * \return the curve of original type. Can be null handle.
+ */
+static Handle(Geom_Curve) GetCurve(const TopoDS_Edge &theEdge)
+{
+  Handle(Geom_Curve) aResult;
+
+  if (theEdge.IsNull()) {
+    return aResult;
+  }
+
+  Standard_Real aF;
+  Standard_Real aL;
+
+  aResult = BRep_Tool::Curve(theEdge, aF, aL);
+
+  if (aResult.IsNull()) {
+    return aResult;
+  }
+
+  // Get the curve of original type
+  Handle(Standard_Type) aType = aResult->DynamicType();
+
+  while (aType == STANDARD_TYPE(Geom_TrimmedCurve)) {
+    Handle(Geom_TrimmedCurve) aTrCurve =
+      Handle(Geom_TrimmedCurve)::DownCast(aResult);
+
+    aResult = aTrCurve->BasisCurve();
+    aType  = aResult->DynamicType();
+  }
+
+  return aResult;
+}
 
 //=======================================================================
 // function : ConvertClickToPoint()
@@ -243,6 +291,200 @@ void CurveCreator_Utils::constructShape( const CurveCreator_ICurve* theCurve,
     }
   }
   theShape = aComp;
+}
+
+/**
+ * This is an intermediate structure for curve construction.
+ */
+struct Section3D
+{
+  Section3D() : myIsClosed(false), myIsBSpline(false)
+  { }
+
+  bool                        myIsClosed;
+  bool                        myIsBSpline;
+  Handle(TColgp_HArray1OfPnt) myPoints;
+};
+
+//=======================================================================
+// function : constructCurve
+// purpose  : 
+//=======================================================================
+bool CurveCreator_Utils::constructCurve
+                      (const TopoDS_Shape        theShape,
+                             CurveCreator_Curve *theCurve,
+                             gp_Ax3             &theLocalCS)
+{
+  if (theShape.IsNull()) {
+    return false;
+  }
+
+  // Collect wires or vertices from shape.
+  TopTools_ListOfShape aWOrV;
+  TopAbs_ShapeEnum     aType = theShape.ShapeType();
+
+  if (aType == TopAbs_WIRE || aType == TopAbs_VERTEX) {
+    aWOrV.Append(theShape);
+  } else if (aType == TopAbs_COMPOUND) {
+    TopoDS_Iterator aShIter(theShape);
+
+    for (; aShIter.More(); aShIter.Next()) {
+      const TopoDS_Shape &aSubShape = aShIter.Value();
+
+      aType = aSubShape.ShapeType();
+
+      if (aType == TopAbs_WIRE || aType == TopAbs_VERTEX) {
+        aWOrV.Append(aSubShape);
+      } else {
+        // Only subshapes of types wire or vertex are supported.
+        return false;
+      }
+    }
+  } else {
+    // Only wire (vertex) or compound of wires (vertices) are supported.
+    return false;
+  }
+
+  // Treat each wire or vertex. Get points, compute the working plane.
+  gp_Pln                             aPlane;
+  Standard_Integer                   aPlaneStatus = PLN_FREE;
+  TopTools_ListIteratorOfListOfShape anIter(aWOrV);
+  std::list<Section3D>               aListSec;
+
+  for (; anIter.More(); anIter.Next()) {
+    Section3D aSec3D;
+
+    aSec3D.myPoints = CurveCreator_Utils::getPoints
+      (anIter.Value(), aSec3D.myIsClosed, aSec3D.myIsBSpline);
+
+    if (aSec3D.myPoints.IsNull()) {
+      return false;
+    }
+
+    aListSec.push_back(aSec3D);
+
+    if (aPlaneStatus != PLN_FIXED) {
+      // Compute plane
+      CurveCreator_Utils::FindPlane(aSec3D.myPoints, aPlane, aPlaneStatus);
+    }
+  }
+
+  // Check if it is possible to change a computed coordinate system by
+  // XOY, XOZ or YOZ or parallel to them.
+  gp_Pnt        aO(0., 0., 0.);
+  gp_Dir        aNDir(0., 0., 1.);
+  gp_Dir        aXDir(1., 0., 0.);
+  gp_Ax3        anAxis;
+  Standard_Real aTolAng = Precision::Confusion(); // Angular() is too small.
+
+  switch (aPlaneStatus) {
+    case PLN_ORIGIN:
+      {
+        // Change the location.
+        aO.SetZ(aPlane.Location().Z());
+        anAxis.SetLocation(aO);
+        aPlane.SetPosition(anAxis);
+      }
+      break;
+    case PLN_OX:
+      {
+        // Fixed origin + OX axis
+        const gp_Dir &aPlnX = aPlane.Position().XDirection();
+
+        if (Abs(aPlnX.Z()) <= aTolAng) {
+          // Make a coordinate system parallel to XOY.
+          aO.SetZ(aPlane.Location().Z());
+          anAxis.SetLocation(aO);
+          aPlane.SetPosition(anAxis);
+        } else if (Abs(aPlnX.Y()) <= aTolAng) {
+          // Make a coordinate system parallel to XOZ.
+          aO.SetY(aPlane.Location().Y());
+          aNDir.SetCoord(0., 1., 0.);
+          aXDir.SetCoord(0., 0., 1.);
+          anAxis = gp_Ax3(aO, aNDir, aXDir);
+          aPlane.SetPosition(anAxis);
+        } else if (Abs(aPlnX.X()) <= aTolAng) {
+          // Make a coordinate system parallel to YOZ.
+          aO.SetX(aPlane.Location().X());
+          aNDir.SetCoord(1., 0., 0.);
+          aXDir.SetCoord(0., 1., 0.);
+          anAxis = gp_Ax3(aO, aNDir, aXDir);
+          aPlane.SetPosition(anAxis);
+        }
+      }
+      break;
+    case PLN_FIXED:
+      {
+        const gp_Dir &aPlnN = aPlane.Position().Direction();
+        gp_Dir        aYDir(0., 1., 0.);
+
+        if (aPlnN.IsParallel(aNDir, aTolAng)) {
+          // Make a coordinate system parallel to XOY.
+          aO.SetZ(aPlane.Location().Z());
+          anAxis.SetLocation(aO);
+          aPlane.SetPosition(anAxis);
+        } else if (aPlnN.IsParallel(aYDir, aTolAng)) {
+          // Make a coordinate system parallel to XOZ.
+          aO.SetY(aPlane.Location().Y());
+          aNDir.SetCoord(0., 1., 0.);
+          aXDir.SetCoord(0., 0., 1.);
+          anAxis = gp_Ax3(aO, aNDir, aXDir);
+          aPlane.SetPosition(anAxis);
+        } else if (aPlnN.IsParallel(aXDir, aTolAng)) {
+          // Make a coordinate system parallel to YOZ.
+          aO.SetX(aPlane.Location().X());
+          aNDir.SetCoord(1., 0., 0.);
+          aXDir.SetCoord(0., 1., 0.);
+          anAxis = gp_Ax3(aO, aNDir, aXDir);
+          aPlane.SetPosition(anAxis);
+        }
+      }
+      break;
+    case PLN_FREE:
+    default:
+      // Use XOY plane.
+      aPlane.SetPosition(anAxis);
+      break;
+  }
+
+  // Compute 2d points.
+  std::list<Section3D>::const_iterator aSecIt = aListSec.begin();
+  Standard_Real                        aTolConf2 =
+    Precision::Confusion()*Precision::Confusion();
+  Standard_Real                        aX;
+  Standard_Real                        aY;
+
+  for (; aSecIt != aListSec.end(); ++aSecIt) {
+    Standard_Integer          i;
+    CurveCreator::Coordinates aCoords;
+
+    for (i = aSecIt->myPoints->Lower(); i <= aSecIt->myPoints->Upper(); ++i) {
+      const gp_Pnt &aPnt = aSecIt->myPoints->Value(i);
+
+      if (aPlane.SquareDistance(aPnt) > aTolConf2) {
+        // The point doesn't lie on the plane.
+        return false;
+      }
+
+      ElSLib::Parameters(aPlane, aPnt, aX, aY);
+      aCoords.push_back(aX);
+      aCoords.push_back(aY);
+    }
+
+    // Add a new section to the curve.
+    const std::string               aSecName =
+      CurveCreator_UtilsICurve::getUniqSectionName(theCurve);
+    const CurveCreator::SectionType aSecType = aSecIt->myIsBSpline ?
+      CurveCreator::Spline : CurveCreator::Polyline;
+
+    theCurve->addSectionInternal(aSecName, aSecType,
+                                 aSecIt->myIsClosed, aCoords);
+  }
+
+  // Set the local coordinate system.
+  theLocalCS = aPlane.Position();
+
+  return true;
 }
 
 class CompareSectionToPoint
@@ -534,4 +776,219 @@ bool CurveCreator_Utils::isEqualPixels( const int theX, const int theY, const in
 bool CurveCreator_Utils::isEqualPoints( const gp_Pnt& thePoint, const gp_Pnt& theOtherPoint )
 {
   return theOtherPoint.IsEqual( thePoint, LOCAL_SELECTION_TOLERANCE );
+}
+
+//=======================================================================
+// function : getPoints
+// purpose  : 
+//=======================================================================
+Handle(TColgp_HArray1OfPnt) CurveCreator_Utils::getPoints
+                  (const TopoDS_Shape &theShape,
+                         bool         &IsClosed,
+                         bool         &IsBSpline)
+{
+  Handle(TColgp_HArray1OfPnt) aResult;
+
+  IsClosed  = false;
+  IsBSpline = false;
+
+  if (theShape.IsNull()) {
+    return aResult;
+  }
+
+  const TopAbs_ShapeEnum aShType = theShape.ShapeType();
+
+  if (aShType == TopAbs_VERTEX) {
+    // There is a single point.
+    gp_Pnt aPnt = BRep_Tool::Pnt(TopoDS::Vertex(theShape));
+
+    aResult = new TColgp_HArray1OfPnt(1, 1, aPnt);
+
+    return aResult;
+  } else if (aShType != TopAbs_WIRE) {
+    // The shape is neither a vertex nor a wire.
+    return aResult;
+  }
+
+  // Treat wire.
+  BRepTools_WireExplorer anExp(TopoDS::Wire(theShape));
+
+  if (!anExp.More()) {
+    // Empty wires are not allowed.
+    return aResult;
+  }
+
+  // Treat the first edge.
+  TopoDS_Edge        anEdge = anExp.Current();
+  Handle(Geom_Curve) aCurve = GetCurve(anEdge);
+
+  if (aCurve.IsNull()) {
+    return aResult;
+  }
+
+  // Check the curve type.
+  Handle(Standard_Type) aType     = aCurve->DynamicType();
+
+  if (aType == STANDARD_TYPE(Geom_BSplineCurve)) {
+    IsBSpline = true;
+  } else if (aType != STANDARD_TYPE(Geom_Line)) {
+    // The curve is neither a line or a BSpline. It is not valid.
+    return aResult;
+  }
+
+  // Go to the next edge.
+  TopoDS_Vertex aFirstVtx = anExp.CurrentVertex();
+
+  anExp.Next();
+
+  if (IsBSpline) {
+    // There should be a single BSpline curve in the wire.
+    if (anExp.More()) {
+      return aResult;
+    }
+
+    // Construct a section from poles of BSpline.
+    Handle(Geom_BSplineCurve) aBSplCurve =
+      Handle(Geom_BSplineCurve)::DownCast(aCurve);
+
+    // Check if the edge is valid. It should not be based on trimmed curve.
+    gp_Pnt aCP[2] = { aBSplCurve->StartPoint(), aBSplCurve->EndPoint() };
+    TopoDS_Vertex aV[2];
+    Standard_Integer i;
+
+    TopExp::Vertices(anEdge, aV[0], aV[1]);
+
+    for (i = 0; i < 2; i++) {
+      gp_Pnt        aPnt = BRep_Tool::Pnt(aV[i]);
+      Standard_Real aTol = BRep_Tool::Tolerance(aV[i]);
+
+      if (!aPnt.IsEqual(aCP[i], aTol)) {
+        return aResult;
+      }
+    }
+
+    IsClosed = aV[0].IsSame(aV[1]) ? true : false;
+    
+    const Standard_Integer aNbPoints = aBSplCurve->NbKnots();
+    TColStd_Array1OfReal   aKnots(1, aNbPoints);
+
+    aBSplCurve->Knots(aKnots);
+    aResult = new TColgp_HArray1OfPnt(1, aBSplCurve->NbKnots());
+
+    for (i = aKnots.Lower(); i <= aKnots.Upper(); ++i) {
+      aResult->SetValue(i, aBSplCurve->Value(aKnots.Value(i)));
+    }
+  } else {
+    // This is a polyline.
+    TopTools_ListOfShape aVertices;
+    Standard_Integer     aNbVtx = 1;
+
+
+    aVertices.Append(aFirstVtx);
+
+    for (; anExp.More(); anExp.Next(), ++aNbVtx) {
+      anEdge = anExp.Current();
+      aCurve = GetCurve(anEdge);
+
+      if (aCurve.IsNull()) {
+        return aResult;
+      }
+
+      aType = aCurve->DynamicType();
+
+      if (aType != STANDARD_TYPE(Geom_Line)) {
+        // The curve is not a line. It is not valid.
+        return aResult;
+      }
+
+      // Add the current vertex to the list.
+      aVertices.Append(anExp.CurrentVertex());
+    }
+
+    // Check if the section is closed.
+    TopoDS_Vertex aLastVtx = TopExp::LastVertex(anEdge, Standard_True);
+
+    IsClosed = aFirstVtx.IsSame(aLastVtx) ? true : false;
+
+    // Fill the array of points.
+    aResult = new TColgp_HArray1OfPnt(1, aNbVtx);
+
+    Standard_Integer i;
+    TopTools_ListIteratorOfListOfShape aVtxIter(aVertices);
+
+    for (i = 1; aVtxIter.More(); aVtxIter.Next(), ++i) {
+      gp_Pnt aPnt = BRep_Tool::Pnt(TopoDS::Vertex(aVtxIter.Value()));
+
+      aResult->SetValue(i, aPnt);
+    }
+  }
+
+  return aResult;
+}
+//=======================================================================
+// function : FindPlane
+// purpose  : 
+//=======================================================================
+void CurveCreator_Utils::FindPlane
+                       (const Handle_TColgp_HArray1OfPnt &thePoints,
+                              gp_Pln                     &thePlane,
+                              Standard_Integer           &thePlnStatus)
+{
+  if (thePoints.IsNull() || thePlnStatus == PLN_FIXED) {
+    // The plane can't be defined or is fixed. Nothing to change.
+    return;
+  }
+
+  Standard_Integer    i;
+  const Standard_Real aTolConf = Precision::Confusion();
+
+  for (i = thePoints->Lower(); i <= thePoints->Upper(); ++i) {
+    const gp_Pnt &aPnt = thePoints->Value(i);
+
+    switch (thePlnStatus) {
+      case PLN_FREE:
+        // Fix the origin.
+        thePlane.SetLocation(aPnt);
+        thePlnStatus = PLN_ORIGIN;
+        break;
+      case PLN_ORIGIN:
+        {
+          // Fix origin + OX axis
+          const gp_Pnt &aPlnLoc = thePlane.Location();
+
+          if (!aPnt.IsEqual(aPlnLoc, aTolConf)) {
+            // Set the X axis.
+            gp_Dir aXDir(aPnt.XYZ().Subtracted(aPlnLoc.XYZ()));
+            gp_Ax3 aXNorm(aPlnLoc, aXDir);
+            gp_Ax3 aNewPlnPos(aPlnLoc, aXNorm.XDirection(), aXNorm.Direction());
+
+            thePlane.SetPosition(aNewPlnPos);
+            thePlnStatus = PLN_OX;
+          }
+        }
+        break;
+      case PLN_OX:
+        {
+          // Fix OY axis
+          gp_Lin aXLin(thePlane.XAxis());
+          Standard_Real aSqrDist = aXLin.SquareDistance(aPnt);
+
+          if (aSqrDist > aTolConf*aTolConf) {
+            // Compute main axis.
+            const gp_Pnt &aPlnLoc = thePlane.Location();
+            gp_Dir        aDir(aPnt.XYZ().Subtracted(aPlnLoc.XYZ()));
+            gp_Ax3        aXNorm(aPlnLoc, aXLin.Direction(), aDir);
+            gp_Ax3        aNewPlnPos(aPlnLoc, aXNorm.YDirection(),
+                                     aXNorm.Direction());
+
+            thePlane.SetPosition(aNewPlnPos);
+            thePlnStatus = PLN_FIXED;
+            return;
+          }
+        }
+        break;
+      default:
+        return;
+    }
+  }
 }

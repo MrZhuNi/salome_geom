@@ -27,6 +27,7 @@
 #include <QWidget>
 #include <QMap>
 
+#include <OCCViewer_ViewWindow.h>
 #include <SUIT_ViewWindow.h>
 #include <AIS_InteractiveObject.hxx>
 #include <AIS_InteractiveContext.hxx>
@@ -92,6 +93,8 @@ public:
 
   void setActionMode( const ActionMode& theMode );
   ActionMode getActionMode() const;
+
+  void SetViewer2DMode(const bool To2D);
 
 signals:
   void selectionChanged();
@@ -222,6 +225,7 @@ private:
   QByteArray                  myGuiState;
   int                         myPressedX;
   int                         myPressedY;
+  OCCViewer_ViewWindow::Mode2dType myOld2DMode;
 };
 
 #endif // CURVECREATOR_WIDGET_H

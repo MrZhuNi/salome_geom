@@ -31,7 +31,6 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_ViewManager.h>
 
-#include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewManager.h>
 #include <OCCViewer_ViewPort3d.h>
 #include <OCCViewer_Utilities.h>
@@ -84,7 +83,8 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
                                          int theLocalPointRowLimit )
 : QWidget(parent), myNewSectionEditor(NULL), myCurve(theCurve), mySection(0),
   myDragStarted( false ), myDragInteractionStyle( SUIT_ViewModel::STANDARD ),
-  myOCCViewer( 0 ), myLocalPointRowLimit( theLocalPointRowLimit )
+  myOCCViewer( 0 ), myLocalPointRowLimit( theLocalPointRowLimit ),
+  myOld2DMode(OCCViewer_ViewWindow::No2dMode)
 {
   bool isToEnableClosed = !( theActionFlags & DisableClosedSection );
   myNewSectionEditor = new CurveCreator_NewSectionDlg( this, isToEnableClosed );
@@ -240,7 +240,7 @@ void CurveCreator_Widget::setOCCViewer( OCCViewer_Viewer* theViewer )
     disconnect( aViewManager, SIGNAL( lastViewClosed( SUIT_ViewManager* ) ),
            this, SLOT( onLastViewClosed( SUIT_ViewManager* ) ) );
     // restore normal mode in the viewer
-    OCCViewer_Utilities::setViewer2DMode( myOCCViewer, OCCViewer_ViewWindow::No2dMode );
+    SetViewer2DMode(false);
     // all local contexts should be closed if the viewer is not more used
     setLocalPointContext( false, true );
   }
@@ -257,7 +257,7 @@ void CurveCreator_Widget::setOCCViewer( OCCViewer_Viewer* theViewer )
            this, SLOT( onMouseMove( SUIT_ViewWindow*, QMouseEvent* ) ) );
     connect( aViewManager, SIGNAL( lastViewClosed( SUIT_ViewManager* ) ),
            this, SLOT( onLastViewClosed( SUIT_ViewManager* ) ) );
-    OCCViewer_Utilities::setViewer2DMode( myOCCViewer, OCCViewer_ViewWindow::XYPlane );
+    SetViewer2DMode(true);
   }
 }
 
@@ -944,6 +944,18 @@ CurveCreator_Widget::ActionMode CurveCreator_Widget::getActionMode() const
     aMode = DetectionMode;
 
   return aMode;
+}
+
+void CurveCreator_Widget::SetViewer2DMode(const bool To2D)
+{
+  if (myOCCViewer) {
+    if (To2D) {
+      myOld2DMode = OCCViewer_Utilities::setViewer2DMode
+                    (myOCCViewer, OCCViewer_ViewWindow::XYPlane);
+    } else {
+      OCCViewer_Utilities::setViewer2DMode(myOCCViewer, myOld2DMode);
+    }
+  }
 }
 
 //=================================================================================

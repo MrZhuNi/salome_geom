@@ -5598,6 +5598,10 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <translation>Polyline</translation>
     </message>
     <message>
+        <source>POLYLINE_IMPORT</source>
+        <translation>Import polyline</translation>
+    </message>
+    <message>
         <source>POLYLINE_ADD_SECTION</source>
         <translation>Add section</translation>
     </message>
