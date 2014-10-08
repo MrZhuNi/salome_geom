@@ -373,7 +373,7 @@ GetCreationInformation(std::string&             theOperationName,
           aP2d.GetCoords(aCoords);
 
           if (aCoords.size() == 1) {
-            AddParam(theParams, "Number of points", aCoords.front().size());
+            AddParam(theParams, "Number of points", aCoords.front().size()/2);
           }
         } else {
           // There are more than 1 curve.
