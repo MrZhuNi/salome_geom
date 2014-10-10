@@ -143,6 +143,9 @@ void RepairGUI_FreeFacesDlg::Init()
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
 
+  initName(tr("GEOM_FREE_FACES_NAME"));
+  buttonOk()->setEnabled(false);
+  buttonApply()->setEnabled(false);
   activateSelection();
   SelectionIntoArgument();
 }
@@ -165,6 +168,8 @@ bool RepairGUI_FreeFacesDlg::ClickOnApply()
 {
   if (!onAccept())
     return false;
+
+  initName();
   return true;
 }
 
@@ -208,6 +213,8 @@ void RepairGUI_FreeFacesDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   if ( aSelList.Extent() != 1 ) {
+    buttonOk()->setEnabled(false);
+    buttonApply()->setEnabled(false);
     return;
   }
 
@@ -215,6 +222,8 @@ void RepairGUI_FreeFacesDlg::SelectionIntoArgument()
     GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
   if ( !GEOMBase::IsShape( anObj ) ) {
+    buttonOk()->setEnabled(false);
+    buttonApply()->setEnabled(false);
     return;
   } else {
     myObj = anObj;
@@ -265,11 +274,15 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
   TopoDS_Shape aSelShape;
   TopoDS_Shape aFace; 
   TopTools_IndexedMapOfShape anIndices;
+  int aNbObj = 0;
+
   if ( !myObj->_is_nil() && GEOMBase::GetShape( myObj, aSelShape ) ) {
     myEdit->setText( GEOMBase::GetName( myObj ) );
     QString aMess;
     if ( !isValid( aMess ) ) {
       erasePreview( true );
+      buttonOk()->setEnabled(false);
+      buttonApply()->setEnabled(false);
       return false;
     }
     
@@ -315,6 +328,8 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
       catch( const SALOME::SALOME_Exception& e )
       {
         SalomeApp_Tools::QtCatchCorbaException( e );
+        buttonOk()->setEnabled(false);
+        buttonApply()->setEnabled(false);
         return false;
       }
     }
@@ -322,12 +337,18 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
     // Create sub-objects
     GEOM::ListOfGO_var aList = anOper->MakeSubShapes(myObj, aFaceLst);
 
-    for (i = 0, n = aList->length(); i < n; i++) {
+    aNbObj = aList->length();
+
+    for (i = 0; i < aNbObj; i++) {
       objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
     }
 
     aResult = true;
   }
+
+  buttonOk()->setEnabled(aNbObj > 0);
+  buttonApply()->setEnabled(aNbObj > 0);
+
   return aResult;
 }
 
@@ -340,17 +361,6 @@ GEOM_Displayer* RepairGUI_FreeFacesDlg::getDisplayer()
   if ( !myDisplayer )
     myDisplayer = new GEOM_Displayer( getStudy() );
   return myDisplayer;
-}
-
-//================================================================
-// Function : getNewObjectName
-// Purpose  : Redefine this method to return proper name for a new object
-//================================================================
-QString RepairGUI_FreeFacesDlg::getNewObjectName (int currObj) const
-{
-  QString aName = tr("GEOM_FREE_FACES_NAME").arg(currObj);
-
-  return aName;
 }
 
 //================================================================

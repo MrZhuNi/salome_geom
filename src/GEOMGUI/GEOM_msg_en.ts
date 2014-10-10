@@ -838,7 +838,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_FREE_FACES_NAME</source>
-        <translation>Free_face_%1</translation>
+        <translation>Free_face</translation>
     </message>
     <message>
         <source>GEOM_FREE_FACES_TITLE</source>

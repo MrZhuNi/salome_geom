@@ -50,8 +50,7 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
-  virtual GEOM::GEOM_Object_ptr         getFather (GEOM::GEOM_Object_ptr);
-  virtual QString                       getNewObjectName (int CurrObj = -1) const;
+  virtual GEOM::GEOM_Object_ptr      getFather (GEOM::GEOM_Object_ptr);
 
 private:
   void                               Init();
