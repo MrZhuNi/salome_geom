@@ -26,7 +26,7 @@
 #ifndef MEASUREGUI_CHECKSELFINTERDLG_H
 #define MEASUREGUI_CHECKSELFINTERDLG_H
 
-#include <MeasureGUI_Skeleton.h>
+#include <GEOMBase_Skeleton.h>
 
 class MeasureGUI_1Sel1TextView2ListBox;
 
@@ -35,29 +35,38 @@ class MeasureGUI_1Sel1TextView2ListBox;
 // purpose  :
 //=================================================================================
 
-class MeasureGUI_CheckSelfIntersectionsDlg : public MeasureGUI_Skeleton
+class MeasureGUI_CheckSelfIntersectionsDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 
 public:
+
   MeasureGUI_CheckSelfIntersectionsDlg(GeometryGUI*, QWidget*);
   ~MeasureGUI_CheckSelfIntersectionsDlg();
 
 protected:
-  // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
-  virtual void                        processObject();
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr  createOperation();
+
+  void                                processObject();
 
 private slots:
+
   void                                onErrorsListSelectionChanged();
   void                                onSubShapesListSelectionChanged();
+  void                                SelectionIntoArgument();
+  void                                SetEditCurrentArgument();
 
 private:
+
   void                                Init();
 
 private:
-  MeasureGUI_1Sel1TextView2ListBox*   myGrp;
 
+  MeasureGUI_1Sel1TextView2ListBox*   myGrp;
+  GEOM::GEOM_Object_var               myObj;
   GEOM::ListOfLong_var                myInters;
+
 };
 
 #endif // MEASUREGUI_CHECKSELFINTERDLG_H

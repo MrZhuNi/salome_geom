@@ -26,6 +26,7 @@
 #include "MeasureGUI_CheckSelfIntersectionsDlg.h"
 #include "MeasureGUI_Widgets.h"
 
+#include <SUIT_OverrideCursor.h>
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <LightApp_SelectionMgr.h>
@@ -52,7 +53,7 @@
 //            true to construct a modal dialog.
 //=================================================================================
 MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (GeometryGUI* GUI, QWidget* parent)
-  : MeasureGUI_Skeleton(GUI, parent, false)
+  : GEOMBase_Skeleton(GUI, parent, false)
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_CHECK_SELF_INTERSECTIONS")));
@@ -63,6 +64,10 @@ MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (Geom
   /***************************************************************/
   mainFrame()->GroupConstructors->setTitle(tr("GEOM_CHECK_SELF_INTERSECTIONS"));
   mainFrame()->RadioButton1->setIcon(image0);
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
   myGrp = new MeasureGUI_1Sel1TextView2ListBox (centralWidget());
   myGrp->GroupBox1->setTitle(tr("GEOM_CHECK_INFOS"));
@@ -107,12 +112,60 @@ MeasureGUI_CheckSelfIntersectionsDlg::~MeasureGUI_CheckSelfIntersectionsDlg()
 //=================================================================================
 void MeasureGUI_CheckSelfIntersectionsDlg::Init()
 {
-  mySelBtn = myGrp->PushButton1;
-  mySelEdit = myGrp->LineEdit1;
-  MeasureGUI_Skeleton::Init();
-
+  connect(myGrp->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(myGrp->ListBox1, SIGNAL(itemSelectionChanged()), SLOT(onErrorsListSelectionChanged()));
   connect(myGrp->ListBox2, SIGNAL(itemSelectionChanged()), SLOT(onSubShapesListSelectionChanged()));
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this,  SLOT(SelectionIntoArgument()));
+}
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr MeasureGUI_CheckSelfIntersectionsDlg::createOperation()
+{
+  return getGeomEngine()->GetIMeasureOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : SetEditCurrentArgument
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckSelfIntersectionsDlg::SetEditCurrentArgument()
+{
+  myGrp->LineEdit1->setFocus();
+  SelectionIntoArgument();
+}
+
+//=================================================================================
+// function : SelectionIntoArgument
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckSelfIntersectionsDlg::SelectionIntoArgument()
+{
+  myObj = GEOM::GEOM_Object::_nil();
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  GEOM::GEOM_Object_var aSelectedObject = GEOM::GEOM_Object::_nil();
+
+  if (aSelList.Extent() > 0) {
+    aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+  }
+
+  if (aSelectedObject->_is_nil()) {
+    myGrp->LineEdit1->setText("");
+    processObject();
+    erasePreview();
+    return;
+  }
+
+  myObj = aSelectedObject;
+  myGrp->LineEdit1->setText(GEOMBase::GetName(myObj));
+  processObject();
 }
 
 //=================================================================================
