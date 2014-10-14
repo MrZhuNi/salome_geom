@@ -291,7 +291,7 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::findSelfIntersections
   int  nbPairs  = 0;
 
   try {
-    HasSelfInte = !anOper->CheckSelfIntersections(myObj, myInters);
+    HasSelfInte = !anOper->CheckSelfIntersections(myObj, GEOM::SI_ALL, myInters);
     nbPairs = myInters->length()/2;
 
     if (nbPairs*2 != myInters->length()) {
@@ -384,11 +384,9 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onInteListSelectionChanged()
 {
   erasePreview();
   int aCurItem = myGrp->ListBox1->currentRow();
-  int aNbItems = myGrp->ListBox1->count();
+
   if (aCurItem < 0)
     return;
-
-  //int nbPairs = myInters->length()/2;
 
   QStringList aSubShapeList;
   TopoDS_Shape aSelShape;
