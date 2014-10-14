@@ -54,6 +54,8 @@ class GEOM_I_EXPORT GEOM_IOperations_i : public virtual POA_GEOM::GEOM_IOperatio
 
   virtual Handle(TColStd_HSequenceOfTransient)
                GetListOfObjectsImpl(const GEOM::ListOfGO& theObjects);
+  bool GetListOfObjectsImpl(const GEOM::ListOfGO&             theObjects,
+                            std::list< Handle(GEOM_Object) >& theList);
 
   virtual void StartOperation();
 
