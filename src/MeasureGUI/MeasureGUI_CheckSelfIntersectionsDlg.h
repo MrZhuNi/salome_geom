@@ -47,25 +47,39 @@ public:
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr  createOperation();
+  virtual bool                        isValid(QString &);
+  virtual bool                        execute(ObjectList &);
+  virtual bool                        extractPrefix() const;
+  virtual GEOM::GEOM_Object_ptr       getFather (GEOM::GEOM_Object_ptr);
 
   void                                processObject();
 
 private slots:
 
-  void                                onErrorsListSelectionChanged();
+  void                                onInteListSelectionChanged();
   void                                onSubShapesListSelectionChanged();
+  void                                ClickOnOk();
+  bool                                ClickOnApply();
+  void                                ActivateThisDialog();
+  void                                DeactivateActiveDialog();
   void                                SelectionIntoArgument();
   void                                SetEditCurrentArgument();
 
 private:
 
   void                                Init();
+  void                                activateSelection();
+  void                                enterEvent(QEvent *);
+  bool                                findSelfIntersections
+                                                    (bool    &HasSelfInte,
+                                                     QString &theErrMsg);
 
 private:
 
   MeasureGUI_1Sel1TextView2ListBox*   myGrp;
   GEOM::GEOM_Object_var               myObj;
   GEOM::ListOfLong_var                myInters;
+  GEOM::GEOM_IShapesOperations_var    myShapesOper;
 
 };
 

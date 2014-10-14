@@ -24,6 +24,7 @@
 // File   : MeasureGUI_CheckSelfIntersectionsDlg.cxx
 
 #include "MeasureGUI_CheckSelfIntersectionsDlg.h"
+#include "MeasureGUI.h"
 #include "MeasureGUI_Widgets.h"
 
 #include <SUIT_OverrideCursor.h>
@@ -35,6 +36,7 @@
 
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
 #include <TColStd_MapOfInteger.hxx>
 
 #include <DlgRef.h>
@@ -112,11 +114,95 @@ MeasureGUI_CheckSelfIntersectionsDlg::~MeasureGUI_CheckSelfIntersectionsDlg()
 //=================================================================================
 void MeasureGUI_CheckSelfIntersectionsDlg::Init()
 {
-  connect(myGrp->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(myGrp->ListBox1, SIGNAL(itemSelectionChanged()), SLOT(onErrorsListSelectionChanged()));
-  connect(myGrp->ListBox2, SIGNAL(itemSelectionChanged()), SLOT(onSubShapesListSelectionChanged()));
-  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-          this,  SLOT(SelectionIntoArgument()));
+  connect(myGeomGUI,          SIGNAL(SignalDeactivateActiveDialog()),
+          this,               SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI,          SIGNAL(SignalCloseAllDialogs()),
+          this,               SLOT(ClickOnCancel()));
+  connect(buttonOk(),         SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonApply(),      SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect(myGrp->PushButton1, SIGNAL(clicked()),
+          this,               SLOT(SetEditCurrentArgument()));
+  connect(myGrp->ListBox1,    SIGNAL(itemSelectionChanged()),
+          SLOT(onInteListSelectionChanged()));
+  connect(myGrp->ListBox2,    SIGNAL(itemSelectionChanged()),
+          SLOT(onSubShapesListSelectionChanged()));
+
+  LightApp_SelectionMgr* aSel = myGeomGUI->getApp()->selectionMgr();
+
+  connect(aSel,               SIGNAL(currentSelectionChanged()),
+          this,               SLOT(SelectionIntoArgument()));
+
+  initName( tr( "GEOM_SELF_INTERSECTION_NAME") );
+  buttonOk()->setEnabled( false );
+  buttonApply()->setEnabled( false );
+  activateSelection();
+  SelectionIntoArgument();
+}
+
+//=================================================================================
+// function : ActivateThisDialog()
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckSelfIntersectionsDlg::ActivateThisDialog()
+{
+  GEOMBase_Skeleton::ActivateThisDialog();
+
+  LightApp_SelectionMgr* aSel = myGeomGUI->getApp()->selectionMgr();
+  if ( aSel )
+    connect( aSel, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+
+  activateSelection();
+  DISPLAY_PREVIEW_MACRO
+}
+
+//=================================================================================
+// function : DeactivateActiveDialog()
+// purpose  : public slot to deactivate if active
+//=================================================================================
+void MeasureGUI_CheckSelfIntersectionsDlg::DeactivateActiveDialog()
+{
+  GEOMBase_Skeleton::DeactivateActiveDialog();
+}
+
+//=================================================================================
+// function : activateSelection
+// purpose  : 
+//=================================================================================
+void MeasureGUI_CheckSelfIntersectionsDlg::activateSelection()
+{
+  globalSelection(GEOM_ALLSHAPES);
+}
+
+//=================================================================================
+// function : ClickOnOk()
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckSelfIntersectionsDlg::ClickOnOk()
+{
+  if ( ClickOnApply() )
+    ClickOnCancel();
+}
+
+//=================================================================================
+// function : ClickOnApply()
+// purpose  :
+//=================================================================================
+bool MeasureGUI_CheckSelfIntersectionsDlg::ClickOnApply()
+{
+  if ( !onAccept() )
+    return false;
+
+  initName();
+  return true;
+}
+
+//=================================================================================
+// function : SelectionIntoArgument
+// purpose  :
+//=================================================================================
+bool MeasureGUI_CheckSelfIntersectionsDlg::extractPrefix() const
+{
+  return true;
 }
 
 //=================================================================================
@@ -126,6 +212,15 @@ void MeasureGUI_CheckSelfIntersectionsDlg::Init()
 GEOM::GEOM_IOperations_ptr MeasureGUI_CheckSelfIntersectionsDlg::createOperation()
 {
   return getGeomEngine()->GetIMeasureOperations( getStudyId() );
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool MeasureGUI_CheckSelfIntersectionsDlg::isValid( QString& )
+{
+  return !myObj->_is_nil();
 }
 
 //=================================================================================
@@ -166,6 +261,61 @@ void MeasureGUI_CheckSelfIntersectionsDlg::SelectionIntoArgument()
   myObj = aSelectedObject;
   myGrp->LineEdit1->setText(GEOMBase::GetName(myObj));
   processObject();
+  DISPLAY_PREVIEW_MACRO;
+}
+
+//=================================================================================
+// function : enterEvent
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckSelfIntersectionsDlg::enterEvent(QEvent *)
+{
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
+    ActivateThisDialog();
+}
+
+//=================================================================================
+// function : findSelfIntersections
+// purpose  :
+//=================================================================================
+bool MeasureGUI_CheckSelfIntersectionsDlg::findSelfIntersections
+        (bool &HasSelfInte, QString &theErrMsg)
+{
+  if (myObj->_is_nil()) {
+    return false;
+  }
+
+  GEOM::GEOM_IMeasureOperations_var anOper =
+    GEOM::GEOM_IMeasureOperations::_narrow(getOperation());
+  bool isOK = true;
+  int  nbPairs  = 0;
+
+  try {
+    HasSelfInte = !anOper->CheckSelfIntersections(myObj, myInters);
+    nbPairs = myInters->length()/2;
+
+    if (nbPairs*2 != myInters->length()) {
+      isOK = false;
+    }
+  }
+  catch (const SALOME::SALOME_Exception& e) {
+    SalomeApp_Tools::QtCatchCorbaException(e);
+    isOK = false;
+  }
+
+  if (!anOper->IsDone()) {
+    if (myInters->length() == 0) {
+      theErrMsg = tr(anOper->GetErrorCode());
+      isOK = false;
+    } else {
+      // Valid case. Display all computed self-intersections
+      theErrMsg = tr("GEOM_CHECK_SELF_INTERSECTIONS_ERRORS");
+    }
+  } else if (!isOK) {
+    theErrMsg = tr("GEOM_CHECK_SELF_INTERSECTIONS_FAILED");
+  }
+
+  return isOK;
 }
 
 //=================================================================================
@@ -174,75 +324,67 @@ void MeasureGUI_CheckSelfIntersectionsDlg::SelectionIntoArgument()
 //=================================================================================
 void MeasureGUI_CheckSelfIntersectionsDlg::processObject()
 {
+  disconnect(myGrp->ListBox1, SIGNAL(itemSelectionChanged()), this, 0 );
+  disconnect(myGrp->ListBox2, SIGNAL(itemSelectionChanged()), this, 0 );
   myGrp->ListBox1->clear();
   myGrp->ListBox2->clear();
+  connect(myGrp->ListBox1,    SIGNAL(itemSelectionChanged()),
+          SLOT(onInteListSelectionChanged()));
+  connect(myGrp->ListBox2,    SIGNAL(itemSelectionChanged()),
+          SLOT(onSubShapesListSelectionChanged()));
   erasePreview();
 
-  if (myObj->_is_nil())
-    return;
+  bool    hasSelfInte = false;
+  QString anErrMsg("");
 
-  QString aMsg ("");
-  GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow(getOperation());
-  bool isGood = false, isFailed = false;
-  int nbPairs = 0;
-  try {
-    isGood = anOper->CheckSelfIntersections(myObj, myInters);
-    nbPairs = myInters->length()/2;
-    if (nbPairs*2 != myInters->length()) {
-      isFailed = true;
-    }
-  }
-  catch (const SALOME::SALOME_Exception& e) {
-    SalomeApp_Tools::QtCatchCorbaException(e);
-    isFailed = true;
-  }
-
-  if (!anOper->IsDone() && myInters->length() == 0) {
-    aMsg += tr(anOper->GetErrorCode());
-    myGrp->TextView1->setText(aMsg);
-    return;
-  }
-  else if (isFailed) {
-    aMsg += tr("GEOM_CHECK_SELF_INTERSECTIONS_FAILED");
-    myGrp->TextView1->setText(aMsg);
+  if (!findSelfIntersections(hasSelfInte, anErrMsg)) {
+    myGrp->TextView1->setText(anErrMsg);
     return;
   }
 
-  // Status
-  if (isGood) {
-    aMsg += tr("GEOM_NO_SELF_INTERSECTIONS");
-  }
-  else {
+  // Status and apply buttons
+  QString aMsg("");
+
+  if (hasSelfInte) {
     aMsg += tr("GEOM_SELF_INTERSECTIONS_FOUND");
+    buttonOk()->setEnabled(true);
+    buttonApply()->setEnabled(true);
+  } else {
+    aMsg += tr("GEOM_NO_SELF_INTERSECTIONS");
+    buttonOk()->setEnabled(false);
+    buttonApply()->setEnabled(false);
   }
 
-  if (!anOper->IsDone()) {
+  if (!anErrMsg.isEmpty()) {
     aMsg += "\n\n";
-    aMsg += tr("GEOM_CHECK_SELF_INTERSECTIONS_ERRORS");
+    aMsg += anErrMsg;
   }
 
   myGrp->TextView1->setText(aMsg);
 
   // Pairs
-  QStringList aErrList;
-  QString aErrStr ("");
+  QStringList anInteList;
+  QString anInteStr ("");
+  int nbPairs = myInters->length()/2;
+
   for (int i = 1; i <= nbPairs; i++) {
-    aErrStr = "Intersection # ";
-    aErrStr += QString::number(i);
-    aErrList.append(aErrStr);
+    anInteStr = "Intersection # ";
+    anInteStr += QString::number(i);
+    anInteList.append(anInteStr);
   }
 
-  myGrp->ListBox1->addItems(aErrList);
+  myGrp->ListBox1->addItems(anInteList);
 }
 
 //=================================================================================
-// function : onErrorsListSelectionChanged
+// function : onInteListSelectionChanged
 // purpose  :
 //=================================================================================
-void MeasureGUI_CheckSelfIntersectionsDlg::onErrorsListSelectionChanged()
+void MeasureGUI_CheckSelfIntersectionsDlg::onInteListSelectionChanged()
 {
   erasePreview();
   int aCurItem = myGrp->ListBox1->currentRow();
+  int aNbItems = myGrp->ListBox1->count();
   if (aCurItem < 0)
     return;
 
@@ -311,4 +453,83 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onSubShapesListSelectionChanged()
       }
     }
   }
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool MeasureGUI_CheckSelfIntersectionsDlg::execute(ObjectList& objects)
+{
+  bool hasSelfInte;
+  QString anErrMsg;
+
+  if (!findSelfIntersections(hasSelfInte, anErrMsg)) {
+    return false;
+  }
+
+  const int  aNbInteSelected    = myGrp->ListBox1->selectedItems().size();
+  const bool isPublishAllInte   = (aNbInteSelected < 1);
+  const bool isPublishAllShapes =
+    (aNbInteSelected != 1 || myGrp->ListBox2->selectedItems().empty());
+  int        i;
+  const int  n = myGrp->ListBox1->count();
+  TColStd_IndexedMapOfInteger aMapIndex;
+
+  // Collect the map of indices.
+  for (i = 0; i < n; i++) {
+    if (isPublishAllInte) {
+      // Collect the both of two indices.
+      aMapIndex.Add(myInters[i*2]);
+      aMapIndex.Add(myInters[i*2 + 1]);
+    } else if (myGrp->ListBox1->item(i)->isSelected()) {
+      if (isPublishAllShapes) {
+        // Collect the both of two indices.
+        aMapIndex.Add(myInters[i*2]);
+        aMapIndex.Add(myInters[i*2 + 1]);
+      } else if (myGrp->ListBox2->count() == 2) {
+        // Collect only selected items.
+        if (myGrp->ListBox2->item(0)->isSelected()) {
+          aMapIndex.Add(myInters[i*2]);
+        }
+        if (myGrp->ListBox2->item(1)->isSelected()) {
+          aMapIndex.Add(myInters[i*2 + 1]);
+        }
+      }
+    }
+  }
+
+  // Create objects.
+  GEOM::ListOfLong_var anArray   = new GEOM::ListOfLong;
+  const int            aNbShapes = aMapIndex.Extent();
+
+  anArray->length(aNbShapes);
+
+  for (i = 1; i <= aNbShapes; i++) {
+    anArray[i - 1] = aMapIndex.FindKey(i);
+  }
+
+  if (myShapesOper->_is_nil()) {
+    myShapesOper = getGeomEngine()->GetIShapesOperations(getStudyId());
+  }
+
+  GEOM::ListOfGO_var aList = myShapesOper->MakeSubShapes(myObj, anArray);
+  const int aNbObj = aList->length();
+
+  for (i = 0; i < aNbObj; i++) {
+    objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
+  }
+
+  return true;
+}
+
+//================================================================
+// Function : getFather
+// Purpose  : Get father object for object to be added in study
+//            (called with addInStudy method)
+//================================================================
+GEOM::GEOM_Object_ptr MeasureGUI_CheckSelfIntersectionsDlg::getFather
+                  (GEOM::GEOM_Object_ptr)
+{
+  return myObj;
 }
