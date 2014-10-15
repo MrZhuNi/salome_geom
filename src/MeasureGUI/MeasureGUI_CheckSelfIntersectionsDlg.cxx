@@ -25,7 +25,6 @@
 
 #include "MeasureGUI_CheckSelfIntersectionsDlg.h"
 #include "MeasureGUI.h"
-#include "MeasureGUI_Widgets.h"
 
 #include <SUIT_OverrideCursor.h>
 #include <SUIT_Session.h>
@@ -44,6 +43,8 @@
 #include <GEOMBase.h>
 #include <GEOMImpl_Types.hxx>
 
+#include <QListWidget>
+
 #define TEXTEDIT_FONT_FAMILY "Courier"
 #define TEXTEDIT_FONT_SIZE 11
 
@@ -55,7 +56,12 @@
 //            true to construct a modal dialog.
 //=================================================================================
 MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (GeometryGUI* GUI, QWidget* parent)
-  : GEOMBase_Skeleton(GUI, parent, false)
+  : GEOMBase_Skeleton (GUI, parent, false),
+    myTextView        (0),
+    mySelButton       (0),
+    myEditObjName     (0),
+    myInteList        (0),
+    myShapeList       (0)
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_CHECK_SELF_INTERSECTIONS")));
@@ -71,26 +77,44 @@ MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (Geom
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
-  myGrp = new MeasureGUI_1Sel1TextView2ListBox (centralWidget());
-  myGrp->GroupBox1->setTitle(tr("GEOM_CHECK_INFOS"));
-  myGrp->TextLabel1->setText(tr("GEOM_OBJECT"));
+  QGroupBox *aGrp      = new QGroupBox(tr("GEOM_CHECK_INFOS"));
+  QLabel    *anObjLbl  = new QLabel(tr("GEOM_OBJECT"));
+  QLabel    *anInteLbl = new QLabel(tr("GEOM_CHECK_BLOCKS_COMPOUND_ERRORS"));
+  QLabel    *aShapeLbl = new QLabel(tr("GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES"));
+  QFont      aFont (TEXTEDIT_FONT_FAMILY, TEXTEDIT_FONT_SIZE);
 
-  myGrp->TextView1->setReadOnly(true);
-  QFont aFont (TEXTEDIT_FONT_FAMILY, TEXTEDIT_FONT_SIZE);
   aFont.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
-  myGrp->TextView1->setFont(aFont);
+  myTextView = new QTextBrowser;
+  myTextView->setReadOnly(true);
+  myTextView->setFont(aFont);
 
-  myGrp->PushButton1->setIcon(image1);
-  myGrp->LineEdit1->setReadOnly(true);
+  mySelButton = new QPushButton;
+  mySelButton->setIcon(image1);
+  mySelButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-  myGrp->TextLabel2->setText(tr("GEOM_CHECK_BLOCKS_COMPOUND_ERRORS"));
-  myGrp->TextLabel3->setText(tr("GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES"));
+  myEditObjName = new QLineEdit;
+  myEditObjName->setReadOnly(true);
 
-  myGrp->ListBox2->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  myInteList  = new QListWidget;
+  myShapeList = new QListWidget;
+  myShapeList->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+  QGridLayout *aGrpLayout = new QGridLayout(aGrp);
+
+  aGrpLayout->setMargin(9);
+  aGrpLayout->setSpacing(6);
+  aGrpLayout->addWidget(anObjLbl,   0, 0);
+  aGrpLayout->addWidget(anInteLbl,  2, 0);
+  aGrpLayout->addWidget(aShapeLbl,  2, 2);
+  aGrpLayout->addWidget(myTextView, 1, 0, 1, 3);
+  aGrpLayout->addWidget(mySelButton, 0, 1);
+  aGrpLayout->addWidget(myEditObjName, 0, 2);
+  aGrpLayout->addWidget(myInteList, 3, 0, 1, 2);
+  aGrpLayout->addWidget(myShapeList, 3, 2);
 
   QVBoxLayout* layout = new QVBoxLayout (centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
-  layout->addWidget(myGrp);
+  layout->addWidget(aGrp);
 
   /***************************************************************/
 
@@ -120,11 +144,11 @@ void MeasureGUI_CheckSelfIntersectionsDlg::Init()
           this,               SLOT(ClickOnCancel()));
   connect(buttonOk(),         SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(),      SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(myGrp->PushButton1, SIGNAL(clicked()),
+  connect(mySelButton,        SIGNAL(clicked()),
           this,               SLOT(SetEditCurrentArgument()));
-  connect(myGrp->ListBox1,    SIGNAL(itemSelectionChanged()),
+  connect(myInteList,         SIGNAL(itemSelectionChanged()),
           SLOT(onInteListSelectionChanged()));
-  connect(myGrp->ListBox2,    SIGNAL(itemSelectionChanged()),
+  connect(myShapeList,        SIGNAL(itemSelectionChanged()),
           SLOT(onSubShapesListSelectionChanged()));
 
   LightApp_SelectionMgr* aSel = myGeomGUI->getApp()->selectionMgr();
@@ -229,7 +253,7 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::isValid( QString& )
 //=================================================================================
 void MeasureGUI_CheckSelfIntersectionsDlg::SetEditCurrentArgument()
 {
-  myGrp->LineEdit1->setFocus();
+  myEditObjName->setFocus();
   SelectionIntoArgument();
 }
 
@@ -252,14 +276,14 @@ void MeasureGUI_CheckSelfIntersectionsDlg::SelectionIntoArgument()
   }
 
   if (aSelectedObject->_is_nil()) {
-    myGrp->LineEdit1->setText("");
+    myEditObjName->setText("");
     processObject();
     erasePreview();
     return;
   }
 
   myObj = aSelectedObject;
-  myGrp->LineEdit1->setText(GEOMBase::GetName(myObj));
+  myEditObjName->setText(GEOMBase::GetName(myObj));
   processObject();
   DISPLAY_PREVIEW_MACRO;
 }
@@ -324,13 +348,13 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::findSelfIntersections
 //=================================================================================
 void MeasureGUI_CheckSelfIntersectionsDlg::processObject()
 {
-  disconnect(myGrp->ListBox1, SIGNAL(itemSelectionChanged()), this, 0 );
-  disconnect(myGrp->ListBox2, SIGNAL(itemSelectionChanged()), this, 0 );
-  myGrp->ListBox1->clear();
-  myGrp->ListBox2->clear();
-  connect(myGrp->ListBox1,    SIGNAL(itemSelectionChanged()),
+  disconnect(myInteList, SIGNAL(itemSelectionChanged()), this, 0 );
+  disconnect(myShapeList, SIGNAL(itemSelectionChanged()), this, 0 );
+  myInteList->clear();
+  myShapeList->clear();
+  connect(myInteList,    SIGNAL(itemSelectionChanged()),
           SLOT(onInteListSelectionChanged()));
-  connect(myGrp->ListBox2,    SIGNAL(itemSelectionChanged()),
+  connect(myShapeList,    SIGNAL(itemSelectionChanged()),
           SLOT(onSubShapesListSelectionChanged()));
   erasePreview();
 
@@ -338,7 +362,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::processObject()
   QString anErrMsg("");
 
   if (!findSelfIntersections(hasSelfInte, anErrMsg)) {
-    myGrp->TextView1->setText(anErrMsg);
+    myTextView->setText(anErrMsg);
     return;
   }
 
@@ -360,7 +384,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::processObject()
     aMsg += anErrMsg;
   }
 
-  myGrp->TextView1->setText(aMsg);
+  myTextView->setText(aMsg);
 
   // Pairs
   QStringList anInteList;
@@ -373,7 +397,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::processObject()
     anInteList.append(anInteStr);
   }
 
-  myGrp->ListBox1->addItems(anInteList);
+  myInteList->addItems(anInteList);
 }
 
 //=================================================================================
@@ -383,7 +407,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::processObject()
 void MeasureGUI_CheckSelfIntersectionsDlg::onInteListSelectionChanged()
 {
   erasePreview();
-  int aCurItem = myGrp->ListBox1->currentRow();
+  int aCurItem = myInteList->currentRow();
 
   if (aCurItem < 0)
     return;
@@ -403,8 +427,8 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onInteListSelectionChanged()
     if (!aType.isEmpty())
       aSubShapeList.append(QString("%1_%2").arg(aType).arg(myInters[aCurItem*2 + 1]));
   }
-  myGrp->ListBox2->clear();
-  myGrp->ListBox2->addItems(aSubShapeList);
+  myShapeList->clear();
+  myShapeList->addItems(aSubShapeList);
 }
 
 //=================================================================================
@@ -416,14 +440,14 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onSubShapesListSelectionChanged()
   erasePreview();
 
   // Current pair
-  int aErrCurItem = myGrp->ListBox1->currentRow();
+  int aErrCurItem = myInteList->currentRow();
   if (aErrCurItem < 0)
     return;
 
   // Selected IDs
   QList<int> aIds;
-  for (int i = 0, n = myGrp->ListBox2->count(); i < n; i++) {
-    if (myGrp->ListBox2->item(i)->isSelected())
+  for (int i = 0, n = myShapeList->count(); i < n; i++) {
+    if (myShapeList->item(i)->isSelected())
       aIds.append(i);
   }
   if (aIds.count() < 1)
@@ -466,12 +490,12 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::execute(ObjectList& objects)
     return false;
   }
 
-  const int  aNbInteSelected    = myGrp->ListBox1->selectedItems().size();
+  const int  aNbInteSelected    = myInteList->selectedItems().size();
   const bool isPublishAllInte   = (aNbInteSelected < 1);
   const bool isPublishAllShapes =
-    (aNbInteSelected != 1 || myGrp->ListBox2->selectedItems().empty());
+    (aNbInteSelected != 1 || myShapeList->selectedItems().empty());
   int        i;
-  const int  n = myGrp->ListBox1->count();
+  const int  n = myInteList->count();
   TColStd_IndexedMapOfInteger aMapIndex;
 
   // Collect the map of indices.
@@ -480,17 +504,17 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::execute(ObjectList& objects)
       // Collect the both of two indices.
       aMapIndex.Add(myInters[i*2]);
       aMapIndex.Add(myInters[i*2 + 1]);
-    } else if (myGrp->ListBox1->item(i)->isSelected()) {
+    } else if (myInteList->item(i)->isSelected()) {
       if (isPublishAllShapes) {
         // Collect the both of two indices.
         aMapIndex.Add(myInters[i*2]);
         aMapIndex.Add(myInters[i*2 + 1]);
-      } else if (myGrp->ListBox2->count() == 2) {
+      } else if (myShapeList->count() == 2) {
         // Collect only selected items.
-        if (myGrp->ListBox2->item(0)->isSelected()) {
+        if (myShapeList->item(0)->isSelected()) {
           aMapIndex.Add(myInters[i*2]);
         }
-        if (myGrp->ListBox2->item(1)->isSelected()) {
+        if (myShapeList->item(1)->isSelected()) {
           aMapIndex.Add(myInters[i*2 + 1]);
         }
       }

@@ -28,7 +28,9 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class MeasureGUI_1Sel1TextView2ListBox;
+class QTextBrowser;
+class QListWidget;
+
 
 //=================================================================================
 // class    : MeasureGUI_CheckSelfIntersectionsDlg
@@ -76,7 +78,11 @@ private:
 
 private:
 
-  MeasureGUI_1Sel1TextView2ListBox*   myGrp;
+  QTextBrowser                       *myTextView;
+  QPushButton                        *mySelButton;
+  QLineEdit                          *myEditObjName;
+  QListWidget                        *myInteList;
+  QListWidget                        *myShapeList;
   GEOM::GEOM_Object_var               myObj;
   GEOM::ListOfLong_var                myInters;
   GEOM::GEOM_IShapesOperations_var    myShapesOper;
