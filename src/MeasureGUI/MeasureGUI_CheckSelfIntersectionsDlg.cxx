@@ -60,6 +60,8 @@ MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (Geom
     myTextView        (0),
     mySelButton       (0),
     myEditObjName     (0),
+    myLevelBox        (0),
+    myComputeButton   (0),
     myInteList        (0),
     myShapeList       (0)
 {
@@ -79,8 +81,10 @@ MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (Geom
 
   QGroupBox *aGrp      = new QGroupBox(tr("GEOM_CHECK_INFOS"));
   QLabel    *anObjLbl  = new QLabel(tr("GEOM_OBJECT"));
-  QLabel    *anInteLbl = new QLabel(tr("GEOM_CHECK_BLOCKS_COMPOUND_ERRORS"));
-  QLabel    *aShapeLbl = new QLabel(tr("GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES"));
+  QLabel    *anInteLbl = new QLabel(tr("GEOM_CHECK_INTE_INTERSECTIONS"));
+  QLabel    *aShapeLbl = new QLabel(tr("GEOM_CHECK_INTE_SUBSHAPES"));
+  QLabel    *aLevelLbl = new QLabel(tr("GEOM_CHECK_INTE_CHECK_LEVEL"));
+  QLabel    *aSummaryLbl = new QLabel(tr("GEOM_CHECK_INTE_SUMMARY"));
   QFont      aFont (TEXTEDIT_FONT_FAMILY, TEXTEDIT_FONT_SIZE);
 
   aFont.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
@@ -95,6 +99,11 @@ MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (Geom
   myEditObjName = new QLineEdit;
   myEditObjName->setReadOnly(true);
 
+  myLevelBox = new QComboBox;
+
+  myComputeButton = new QPushButton(tr("GEOM_CHECK_INTE_COMPUTE"));
+
+
   myInteList  = new QListWidget;
   myShapeList = new QListWidget;
   myShapeList->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -103,14 +112,18 @@ MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (Geom
 
   aGrpLayout->setMargin(9);
   aGrpLayout->setSpacing(6);
-  aGrpLayout->addWidget(anObjLbl,   0, 0);
-  aGrpLayout->addWidget(anInteLbl,  2, 0);
-  aGrpLayout->addWidget(aShapeLbl,  2, 2);
-  aGrpLayout->addWidget(myTextView, 1, 0, 1, 3);
-  aGrpLayout->addWidget(mySelButton, 0, 1);
-  aGrpLayout->addWidget(myEditObjName, 0, 2);
-  aGrpLayout->addWidget(myInteList, 3, 0, 1, 2);
-  aGrpLayout->addWidget(myShapeList, 3, 2);
+  aGrpLayout->addWidget(anObjLbl,        0, 0);
+  aGrpLayout->addWidget(anInteLbl,       5, 0);
+  aGrpLayout->addWidget(aShapeLbl,       5, 2);
+  aGrpLayout->addWidget(aLevelLbl,       1, 0);
+  aGrpLayout->addWidget(myLevelBox,      1, 1, 1, 2);
+  aGrpLayout->addWidget(myComputeButton, 2, 0, 1, 3);
+  aGrpLayout->addWidget(aSummaryLbl,     3, 0);
+  aGrpLayout->addWidget(myTextView,      4, 0, 1, 3);
+  aGrpLayout->addWidget(mySelButton,     0, 1);
+  aGrpLayout->addWidget(myEditObjName,   0, 2);
+  aGrpLayout->addWidget(myInteList,      6, 0, 1, 2);
+  aGrpLayout->addWidget(myShapeList,     6, 2);
 
   QVBoxLayout* layout = new QVBoxLayout (centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -157,8 +170,9 @@ void MeasureGUI_CheckSelfIntersectionsDlg::Init()
           this,               SLOT(SelectionIntoArgument()));
 
   initName( tr( "GEOM_SELF_INTERSECTION_NAME") );
-  buttonOk()->setEnabled( false );
-  buttonApply()->setEnabled( false );
+  buttonOk()->setEnabled(false);
+  buttonApply()->setEnabled(false);
+  myComputeButton->setEnabled(false);
   activateSelection();
   SelectionIntoArgument();
 }

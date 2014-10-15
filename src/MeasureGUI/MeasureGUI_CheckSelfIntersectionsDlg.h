@@ -28,8 +28,9 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class QTextBrowser;
+class QComboBox;
 class QListWidget;
+class QTextBrowser;
 
 
 //=================================================================================
@@ -81,6 +82,8 @@ private:
   QTextBrowser                       *myTextView;
   QPushButton                        *mySelButton;
   QLineEdit                          *myEditObjName;
+  QComboBox                          *myLevelBox;
+  QPushButton                        *myComputeButton;
   QListWidget                        *myInteList;
   QListWidget                        *myShapeList;
   GEOM::GEOM_Object_var               myObj;
