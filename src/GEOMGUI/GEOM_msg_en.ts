@@ -6977,5 +6977,29 @@ Do you want to create new material?</translation>
         <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
         <translation>Warning: there were errors during the operation, so the list may be incomplete.</translation>
     </message>
+    <message>
+        <source>GEOM_CHECK_INTE_V_V</source>
+        <translation>Vertex to Vertex</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_V_E</source>
+        <translation>Vertex to Edge + all above</translation>
+    </message>
+  <message>
+    <source>GEOM_CHECK_INTE_E_E</source>
+    <translation>Edge to Edge + all above</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INTE_V_F</source>
+    <translation>Vertex to Face + all above</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INTE_E_F</source>
+    <translation>Edge to Face + all above</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INTE_ALL</source>
+    <translation>All interferences</translation>
+  </message>
 </context>
 </TS>

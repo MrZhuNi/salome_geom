@@ -55,12 +55,12 @@ protected:
   virtual bool                        extractPrefix() const;
   virtual GEOM::GEOM_Object_ptr       getFather (GEOM::GEOM_Object_ptr);
 
-  void                                processObject();
-
 private slots:
 
   void                                onInteListSelectionChanged();
   void                                onSubShapesListSelectionChanged();
+  void                                clear();
+  void                                onCompute();
   void                                ClickOnOk();
   bool                                ClickOnApply();
   void                                ActivateThisDialog();

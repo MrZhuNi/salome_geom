@@ -131,7 +131,7 @@ MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (Geom
 
   /***************************************************************/
 
-  myHelpFileName = "using_measurement_tools_page.html#check_self_intersections_anchor";
+  myHelpFileName = "check_self_intersections_page.html";
 
   /* Initialisation */
   Init();
@@ -151,6 +151,15 @@ MeasureGUI_CheckSelfIntersectionsDlg::~MeasureGUI_CheckSelfIntersectionsDlg()
 //=================================================================================
 void MeasureGUI_CheckSelfIntersectionsDlg::Init()
 {
+  // Fill in the combo box.
+  myLevelBox->insertItem(GEOM::SI_V_V, tr("GEOM_CHECK_INTE_V_V"));
+  myLevelBox->insertItem(GEOM::SI_V_E, tr("GEOM_CHECK_INTE_V_E"));
+  myLevelBox->insertItem(GEOM::SI_E_E, tr("GEOM_CHECK_INTE_E_E"));
+  myLevelBox->insertItem(GEOM::SI_V_F, tr("GEOM_CHECK_INTE_V_F"));
+  myLevelBox->insertItem(GEOM::SI_E_F, tr("GEOM_CHECK_INTE_E_F"));
+  myLevelBox->insertItem(GEOM::SI_ALL, tr("GEOM_CHECK_INTE_ALL"));
+  myLevelBox->setCurrentIndex(GEOM::SI_ALL);
+
   connect(myGeomGUI,          SIGNAL(SignalDeactivateActiveDialog()),
           this,               SLOT(DeactivateActiveDialog()));
   connect(myGeomGUI,          SIGNAL(SignalCloseAllDialogs()),
@@ -163,6 +172,9 @@ void MeasureGUI_CheckSelfIntersectionsDlg::Init()
           SLOT(onInteListSelectionChanged()));
   connect(myShapeList,        SIGNAL(itemSelectionChanged()),
           SLOT(onSubShapesListSelectionChanged()));
+  connect(myLevelBox,         SIGNAL(currentIndexChanged(int)),
+          this,               SLOT(clear()));
+  connect(myComputeButton,    SIGNAL(clicked()), this, SLOT(onCompute()));
 
   LightApp_SelectionMgr* aSel = myGeomGUI->getApp()->selectionMgr();
 
@@ -178,7 +190,75 @@ void MeasureGUI_CheckSelfIntersectionsDlg::Init()
 }
 
 //=================================================================================
-// function : ActivateThisDialog()
+// function : clear
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckSelfIntersectionsDlg::clear()
+{
+  myTextView->setText("");
+  disconnect(myInteList, SIGNAL(itemSelectionChanged()), this, 0);
+  disconnect(myShapeList, SIGNAL(itemSelectionChanged()), this, 0);
+  myInteList->clear();
+  myShapeList->clear();
+  connect(myInteList,    SIGNAL(itemSelectionChanged()),
+          SLOT(onInteListSelectionChanged()));
+  connect(myShapeList,    SIGNAL(itemSelectionChanged()),
+          SLOT(onSubShapesListSelectionChanged()));
+  erasePreview();
+  buttonOk()->setEnabled(false);
+  buttonApply()->setEnabled(false);
+  myComputeButton->setEnabled(true);
+}
+
+//=================================================================================
+// function : onCompute
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckSelfIntersectionsDlg::onCompute()
+{
+  bool    hasSelfInte = false;
+  QString anErrMsg("");
+
+  if (!findSelfIntersections(hasSelfInte, anErrMsg)) {
+    myTextView->setText(anErrMsg);
+    return;
+  }
+
+  // Status and apply buttons
+  QString aMsg("");
+
+  if (hasSelfInte) {
+    aMsg += tr("GEOM_SELF_INTERSECTIONS_FOUND");
+    buttonOk()->setEnabled(true);
+    buttonApply()->setEnabled(true);
+  } else {
+    aMsg += tr("GEOM_NO_SELF_INTERSECTIONS");
+  }
+
+  if (!anErrMsg.isEmpty()) {
+    aMsg += "\n\n";
+    aMsg += anErrMsg;
+  }
+
+  myTextView->setText(aMsg);
+
+  // Pairs
+  QStringList anInteList;
+  QString anInteStr ("");
+  int nbPairs = myInters->length()/2;
+
+  for (int i = 1; i <= nbPairs; i++) {
+    anInteStr = "Intersection # ";
+    anInteStr += QString::number(i);
+    anInteList.append(anInteStr);
+  }
+
+  myInteList->addItems(anInteList);
+  myComputeButton->setEnabled(false);
+}
+
+//=================================================================================
+// function : ActivateThisDialog
 // purpose  :
 //=================================================================================
 void MeasureGUI_CheckSelfIntersectionsDlg::ActivateThisDialog()
@@ -235,7 +315,7 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::ClickOnApply()
 }
 
 //=================================================================================
-// function : SelectionIntoArgument
+// function : extractPrefix
 // purpose  :
 //=================================================================================
 bool MeasureGUI_CheckSelfIntersectionsDlg::extractPrefix() const
@@ -277,6 +357,8 @@ void MeasureGUI_CheckSelfIntersectionsDlg::SetEditCurrentArgument()
 //=================================================================================
 void MeasureGUI_CheckSelfIntersectionsDlg::SelectionIntoArgument()
 {
+  // Clear the dialog.
+  clear();
   myObj = GEOM::GEOM_Object::_nil();
 
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -291,15 +373,11 @@ void MeasureGUI_CheckSelfIntersectionsDlg::SelectionIntoArgument()
 
   if (aSelectedObject->_is_nil()) {
     myEditObjName->setText("");
-    processObject();
-    erasePreview();
     return;
   }
 
   myObj = aSelectedObject;
   myEditObjName->setText(GEOMBase::GetName(myObj));
-  processObject();
-  DISPLAY_PREVIEW_MACRO;
 }
 
 //=================================================================================
@@ -327,9 +405,10 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::findSelfIntersections
     GEOM::GEOM_IMeasureOperations::_narrow(getOperation());
   bool isOK = true;
   int  nbPairs  = 0;
+  int aLevel = myLevelBox->currentIndex();
 
   try {
-    HasSelfInte = !anOper->CheckSelfIntersections(myObj, GEOM::SI_ALL, myInters);
+    HasSelfInte = !anOper->CheckSelfIntersections(myObj, aLevel, myInters);
     nbPairs = myInters->length()/2;
 
     if (nbPairs*2 != myInters->length()) {
@@ -354,64 +433,6 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::findSelfIntersections
   }
 
   return isOK;
-}
-
-//=================================================================================
-// function : processObject
-// purpose  :
-//=================================================================================
-void MeasureGUI_CheckSelfIntersectionsDlg::processObject()
-{
-  disconnect(myInteList, SIGNAL(itemSelectionChanged()), this, 0 );
-  disconnect(myShapeList, SIGNAL(itemSelectionChanged()), this, 0 );
-  myInteList->clear();
-  myShapeList->clear();
-  connect(myInteList,    SIGNAL(itemSelectionChanged()),
-          SLOT(onInteListSelectionChanged()));
-  connect(myShapeList,    SIGNAL(itemSelectionChanged()),
-          SLOT(onSubShapesListSelectionChanged()));
-  erasePreview();
-
-  bool    hasSelfInte = false;
-  QString anErrMsg("");
-
-  if (!findSelfIntersections(hasSelfInte, anErrMsg)) {
-    myTextView->setText(anErrMsg);
-    return;
-  }
-
-  // Status and apply buttons
-  QString aMsg("");
-
-  if (hasSelfInte) {
-    aMsg += tr("GEOM_SELF_INTERSECTIONS_FOUND");
-    buttonOk()->setEnabled(true);
-    buttonApply()->setEnabled(true);
-  } else {
-    aMsg += tr("GEOM_NO_SELF_INTERSECTIONS");
-    buttonOk()->setEnabled(false);
-    buttonApply()->setEnabled(false);
-  }
-
-  if (!anErrMsg.isEmpty()) {
-    aMsg += "\n\n";
-    aMsg += anErrMsg;
-  }
-
-  myTextView->setText(aMsg);
-
-  // Pairs
-  QStringList anInteList;
-  QString anInteStr ("");
-  int nbPairs = myInters->length()/2;
-
-  for (int i = 1; i <= nbPairs; i++) {
-    anInteStr = "Intersection # ";
-    anInteStr += QString::number(i);
-    anInteList.append(anInteStr);
-  }
-
-  myInteList->addItems(anInteList);
 }
 
 //=================================================================================
