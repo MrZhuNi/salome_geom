@@ -31,6 +31,7 @@
 #include "GEOM_GenericObjPtr.h"
 
 class DlgRef_1Sel1Check;
+class DlgRef_2Sel;
 
 //=================================================================================
 // class    : BuildGUI_FaceDlg
@@ -56,10 +57,14 @@ private:
   
 private:
   QList<GEOM::GeomObjPtr>            myWires;
+  GEOM::GeomObjPtr                   myFace;
+  GEOM::GeomObjPtr                   myWire;
   
   DlgRef_1Sel1Check*                 GroupWire;
+  DlgRef_2Sel                       *myGroupSurf;
 
 private slots:
+  void                               ConstructorsClicked (int);
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
