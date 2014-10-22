@@ -3105,6 +3105,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Custom...</translation>
     </message>
     <message>
+        <source>MEN_EDGE_EXTEND</source>
+        <translation>Extended Edge</translation>
+    </message>
+    <message>
+        <source>MEN_FACE_EXTEND</source>
+        <translation>Extended Face</translation>
+    </message>
+    <message>
         <source>NAME_LBL</source>
         <translation>Name: </translation>
     </message>
