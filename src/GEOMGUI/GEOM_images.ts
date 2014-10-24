@@ -428,6 +428,14 @@
             <translation>projection.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_EXTEND_EDGE</source>
+            <translation>filling.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_EXTEND_FACE</source>
+            <translation>projection.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_PARTITION</source>
             <translation>partition.png</translation>
         </message>
@@ -1094,6 +1102,10 @@
         <message>
             <source>ICO_PROJECTION</source>
             <translation>projection.png</translation>
+        </message>
+        <message>
+            <source>ICO_EXTENSION</source>
+            <translation>filling.png</translation>
         </message>
         <message>
             <source>ICO_ORIGIN_AND_VECTORS</source>

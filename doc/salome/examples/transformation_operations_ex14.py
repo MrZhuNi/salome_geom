@@ -22,13 +22,13 @@ sphere1 = geompy.MakeSpherePntR(p1, 100)
 faces2  = geompy.SubShapeAllSorted(sphere1, GEOM.FACE)
 face2   = faces2[0]
 
-# perform edge extention
+# perform edge extension
 resEdge1 = geompy.ExtendEdge(edge1,  0.2,  0.8)
 resEdge2 = geompy.ExtendEdge(edge1, -0.3,  1.3)
 resEdge3 = geompy.ExtendEdge(edge2,  0.5,  1)
 resEdge4 = geompy.ExtendEdge(edge2,  0.2,  0.5)
 
-# perform face extention
+# perform face extension
 resFace1 = geompy.ExtendFace(face1, 0.2, 0.8, -0.3, 1.3)
 resFace2 = geompy.ExtendFace(face1, 0,   0.5,  1,   2)
 resFace3 = geompy.ExtendFace(face2, 0.2, 0.8,  0.3, 0.7)

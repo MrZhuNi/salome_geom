@@ -4981,6 +4981,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Get shared shapes</translation>
     </message>
     <message>
+        <source>TOP_EXTENSION</source>
+        <translation>Extend Edge or Face</translation>
+    </message>
+    <message>
+        <source>MEN_EXTENSION</source>
+        <translation>Extension</translation>
+    </message>
+    <message>
+        <source>STB_EXTENSION</source>
+        <translation>Extend Edge or Face</translation>
+    </message>
+    <message>
         <source>GEOM_PUBLISH_RESULT_GRP</source>
         <translation>Advanced options</translation>
     </message>
@@ -7029,5 +7041,48 @@ Do you want to create new material?</translation>
     <source>GEOM_CHECK_INTE_ALL</source>
     <translation>All interferences</translation>
   </message>
+</context>
+<context>
+    <name>TransformationGUI_ExtensionDlg</name>
+    <message>
+        <source>GEOM_EXTENSION_TITLE</source>
+        <translation>Extension of Edge or Face</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION</source>
+        <translation>Extension</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MIN</source>
+        <translation>First Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MAX</source>
+        <translation>Last Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MIN_U</source>
+        <translation>First U-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MAX_U</source>
+        <translation>Last U-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MIN_V</source>
+        <translation>First V-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MAX_V</source>
+        <translation>Last V-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_EDGE_NAME</source>
+        <translation>ExtendedEdge</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_FACE_NAME</source>
+        <translation>ExtendedFace</translation>
+    </message>
 </context>
 </TS>
