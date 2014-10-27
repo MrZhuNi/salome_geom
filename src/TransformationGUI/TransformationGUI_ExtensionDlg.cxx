@@ -123,7 +123,7 @@ TransformationGUI_ExtensionDlg::TransformationGUI_ExtensionDlg
   layout->addWidget(aGrp);
   /***************************************************************/
 
-  setHelpFileName("create_extension_page.html");
+  setHelpFileName("extension_operation_page.html");
 
   /* Initialisations */
   Init();

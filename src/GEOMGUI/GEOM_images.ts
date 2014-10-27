@@ -429,11 +429,11 @@
         </message>
         <message>
             <source>ICON_DLG_EXTEND_EDGE</source>
-            <translation>filling.png</translation>
+            <translation>edgeextension.png</translation>
         </message>
         <message>
             <source>ICON_DLG_EXTEND_FACE</source>
-            <translation>projection.png</translation>
+            <translation>faceextension.png</translation>
         </message>
         <message>
             <source>ICON_DLG_PARTITION</source>
@@ -1105,7 +1105,7 @@
         </message>
         <message>
             <source>ICO_EXTENSION</source>
-            <translation>filling.png</translation>
+            <translation>edgeextension.png</translation>
         </message>
         <message>
             <source>ICO_ORIGIN_AND_VECTORS</source>
