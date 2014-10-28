@@ -105,6 +105,7 @@ SET(EntityGUI_HEADERS
   EntityGUI_SketcherDlg.h
   EntityGUI_3DSketcherDlg.h
   EntityGUI_IsolineDlg.h
+  EntityGUI_SurfFromFaceDlg.h
   EntityGUI_SubShapeDlg.h
   EntityGUI_FeatureDetectorDlg.h
   EntityGUI_PictureImportDlg.h
@@ -117,6 +118,7 @@ SET(_moc_HEADERS
   EntityGUI_SketcherDlg.h
   EntityGUI_3DSketcherDlg.h
   EntityGUI_IsolineDlg.h
+  EntityGUI_SurfFromFaceDlg.h
   EntityGUI_SubShapeDlg.h
   EntityGUI_PictureImportDlg.h
   ${FeatureDetectorDlg_moc_h}
@@ -137,6 +139,7 @@ SET(EntityGUI_SOURCES
   EntityGUI_SketcherDlg.cxx
   EntityGUI_3DSketcherDlg.cxx
   EntityGUI_IsolineDlg.cxx
+  EntityGUI_SurfFromFaceDlg.cxx
   EntityGUI_SubShapeDlg.cxx
   EntityGUI_PictureImportDlg.cxx
   ${FeatureDetectorDlg_Sources}
