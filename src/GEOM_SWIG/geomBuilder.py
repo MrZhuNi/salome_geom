@@ -5765,7 +5765,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         publication is switched on, default value is used for result name.
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
-        #  @ref tui_surf_from_face "Example"
+        #  @ref tui_creation_surface "Example"
         @ManageTransactions("ShapesOp")
         def MakeSurfaceFromFace(self, theFace, theName=None):
             """
