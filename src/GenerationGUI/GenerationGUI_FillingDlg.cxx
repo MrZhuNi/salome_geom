@@ -105,7 +105,8 @@ void GenerationGUI_FillingDlg::Init()
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit1->setReadOnly(true);
 
-  globalSelection(GEOM_COMPOUND);
+  globalSelection();
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_COMPOUND );
 
   int SpecificStep1 = 1;
   double SpecificStep2 = 0.0001;
@@ -227,6 +228,7 @@ void GenerationGUI_FillingDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
     globalSelection(GEOM_COMPOUND);
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_COMPOUND );
     this->SelectionIntoArgument();
   }
 }
@@ -240,7 +242,8 @@ void GenerationGUI_FillingDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
            SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  globalSelection(GEOM_COMPOUND);
+    globalSelection(GEOM_COMPOUND);
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_COMPOUND );
   processPreview();
 }
 
@@ -371,4 +374,13 @@ bool GenerationGUI_FillingDlg::execute(ObjectList& objects)
   }
 
   return true;
+}
+
+//=================================================================================
+// function : addSubshapesToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void GenerationGUI_FillingDlg::addSubshapesToStudy()
+{
+  GEOMBase::PublishSubObject( myCompound.get() );
 }

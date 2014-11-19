@@ -202,13 +202,13 @@ void MeasureGUI_WhatisDlg::ClickOnProperties()
 //=================================================================================
 bool MeasureGUI_WhatisDlg::getParameters( QString& theText )
 {
-  if ( myObj->_is_nil() )
+  if ( !myObj )
     return false;
 
   GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
   try
   {
-    theText = anOper->WhatIs( myObj );
+    theText = anOper->WhatIs( myObj.get() );
   }
   catch( const SALOME::SALOME_Exception& e )
   {
@@ -231,7 +231,7 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   int aLenPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
 
-  if ( myObj->_is_nil() )
+  if ( !myObj )
     return aKindStr;
 
   GEOM::GEOM_IKindOfShape::shape_kind aKind;
@@ -242,7 +242,7 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
 
   try
   {
-    aKind = anOper->KindOfShape( myObj, anInts, aDbls );
+    aKind = anOper->KindOfShape( myObj.get(), anInts, aDbls );
   }
   catch( const SALOME::SALOME_Exception& e ) {
     SalomeApp_Tools::QtCatchCorbaException( e );

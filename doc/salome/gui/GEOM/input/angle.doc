@@ -4,6 +4,10 @@
 
 This operation returns the angle in degrees between two lines or linear edges.
 
+\n The appropriate "local" selection is automatically switched on. If there are several entities of allowed types under the mouse cursor, first of them (top-level one) is highlighted. 
+Press <CTRL> button and scroll the mouse wheel to switch between different available shapes that are pointed by the mouse cursor. The corresponding entities are highlighted in the viewer. 
+Press left mouse button to select appropriate object to the dialog box.
+
 \image html angle.png
 
 If both objects are <b>vectors</b>, the angle is computed in accordance with their orientations, otherwise the minimum angle is computed.

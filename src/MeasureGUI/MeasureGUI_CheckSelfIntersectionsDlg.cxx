@@ -125,7 +125,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::processObject()
   myGrp->ListBox2->clear();
   erasePreview();
 
-  if (myObj->_is_nil())
+  if (!myObj)
     return;
 
   QString aMsg ("");
@@ -133,7 +133,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::processObject()
   bool isGood = false, isFailed = false;
   int nbPairs = 0;
   try {
-    isGood = anOper->CheckSelfIntersections(myObj, myInters);
+	  isGood = anOper->CheckSelfIntersections(myObj.get(), myInters);
     nbPairs = myInters->length()/2;
     if (nbPairs*2 != myInters->length()) {
       isFailed = true;
@@ -197,7 +197,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onErrorsListSelectionChanged()
 
   QStringList aSubShapeList;
   TopoDS_Shape aSelShape;
-  if (!myObj->_is_nil() && GEOMBase::GetShape(myObj, aSelShape)) {
+  if (myObj && GEOMBase::GetShape(myObj.get(), aSelShape)) {
     TopTools_IndexedMapOfShape anIndices;
     TopExp::MapShapes(aSelShape, anIndices);
 
@@ -239,7 +239,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onSubShapesListSelectionChanged()
   TopoDS_Shape aSelShape;
   TopoDS_Shape aSubShape;
   TopTools_IndexedMapOfShape anIndices;
-  if (!myObj->_is_nil() && GEOMBase::GetShape(myObj, aSelShape)) {
+  if (myObj && GEOMBase::GetShape(myObj.get(), aSelShape)) {
     SALOME_Prs* aPrs = 0;
     TopExp::MapShapes(aSelShape, anIndices);
     QList<int>::iterator it;
