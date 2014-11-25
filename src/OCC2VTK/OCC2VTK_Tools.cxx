@@ -35,6 +35,12 @@
 #include <TopoDS.hxx>
 #include <TopTools_ListOfShape.hxx>
 
+
+#include <TopExp.hxx>
+#include <vtkAppendPolyData.h>
+#include <vtkPolyData.h>
+#include <BRepBuilderAPI_Copy.hxx>
+
 #define MAX2(X, Y)    (Abs(X) > Abs(Y) ? Abs(X) : Abs(Y))
 #define MAX3(X, Y, Z) (MAX2(MAX2(X,Y), Z))
 
@@ -159,4 +165,78 @@ namespace GEOM
       }
     }
   }
+
+  vtkPolyData* GetData(const TopoDS_Shape& theShape, float theDeflection)
+  {
+	  BRepBuilderAPI_Copy aCopy(theShape);
+	  if(!aCopy.IsDone())
+	  {
+		  return 0;
+	  }
+	  TopoDS_Shape aShape = aCopy.Shape();
+
+	try
+	{
+		GEOM_VertexSource* myVertexSource = GEOM_VertexSource::New();
+	 	GEOM_EdgeSource* myIsolatedEdgeSource = GEOM_EdgeSource::New();
+	 	GEOM_EdgeSource* myOneFaceEdgeSource = GEOM_EdgeSource::New();
+	 	GEOM_EdgeSource* mySharedEdgeSource = GEOM_EdgeSource::New();
+	 	GEOM_WireframeFace* myWireframeFaceSource = GEOM_WireframeFace::New();
+	 	GEOM_ShadingFace* myShadingFaceSource = GEOM_ShadingFace::New();
+
+	 	vtkAppendPolyData* myAppendFilter = vtkAppendPolyData::New();
+	 	myAppendFilter->AddInputConnection( myVertexSource->GetOutputPort() );
+	 	myAppendFilter->AddInputConnection( myIsolatedEdgeSource->GetOutputPort() );
+	 	myAppendFilter->AddInputConnection( myOneFaceEdgeSource->GetOutputPort() );
+	 	myAppendFilter->AddInputConnection( mySharedEdgeSource->GetOutputPort() );
+
+	 	myAppendFilter->AddInputConnection( myShadingFaceSource->GetOutputPort() );
+
+	 	bool anIsVector = false;
+
+	 	// Is shape triangulated?
+	 	bool wasMeshed = true;
+	 	TopExp_Explorer ex;
+	 	TopLoc_Location aLoc;
+	 	for (ex.Init(aShape, TopAbs_FACE); ex.More(); ex.Next())
+	 	{
+	 		const TopoDS_Face& aFace = TopoDS::Face(ex.Current());
+	 	    Handle(Poly_Triangulation) aPoly = BRep_Tool::Triangulation(aFace,aLoc);
+	 	    if(aPoly.IsNull())
+	 	    {
+	 	    	wasMeshed = false;
+	 	        break;
+	 	    }
+	 	}
+	 	GEOM::MeshShape( aShape, theDeflection );
+	 	TopExp_Explorer aVertexExp( aShape, TopAbs_VERTEX );
+	 	for( ; aVertexExp.More(); aVertexExp.Next() )
+	 	{
+	 		const TopoDS_Vertex& aVertex = TopoDS::Vertex( aVertexExp.Current() );
+	 	    myVertexSource->AddVertex( aVertex );
+	 	}
+
+	 	TopTools_IndexedDataMapOfShapeListOfShape anEdgeMap;
+	 	TopExp::MapShapesAndAncestors( aShape, TopAbs_EDGE, TopAbs_FACE, anEdgeMap );
+
+	 	GEOM::SetShape( aShape,
+	 			anEdgeMap,
+	 	    	anIsVector,
+	 	  		0,
+	 	  		myIsolatedEdgeSource,
+	 	  		myOneFaceEdgeSource,
+	 	  		mySharedEdgeSource,
+	 	  		myWireframeFaceSource,
+	 	  		myShadingFaceSource );
+
+	 	myAppendFilter->Update();
+
+	 	return myAppendFilter->GetOutput();
+	}
+	 catch(Standard_Failure)
+	{
+	   return 0;
+	}
+   }
+
 }
