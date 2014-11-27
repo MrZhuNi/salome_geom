@@ -110,6 +110,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_ICone.hxx
   GEOMImpl_ISphere.hxx
   GEOMImpl_ITorus.hxx
+  GEOMImpl_ITransferData.hxx
   GEOMImpl_IPrism.hxx
   GEOMImpl_IPipe.hxx
   GEOMImpl_IPipePath.hxx
