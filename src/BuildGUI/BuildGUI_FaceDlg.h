@@ -30,8 +30,29 @@
 #include "GEOMBase_Skeleton.h"
 #include "GEOM_GenericObjPtr.h"
 
+#include <QTreeWidget>
+
 class DlgRef_1Sel1Check;
 class DlgRef_2Sel;
+class DlgRef_1SelExt;
+
+//=================================================================================
+// class    : BuildGUI_TreeWidgetItem
+// purpose  : class for constraint(Edge-Face) creation
+//=================================================================================
+class BuildGUI_TreeWidgetItem : public QTreeWidgetItem
+{
+public:
+  BuildGUI_TreeWidgetItem( QTreeWidget*, const GEOM::GeomObjPtr, int = Type );
+  BuildGUI_TreeWidgetItem( QTreeWidgetItem*, const GEOM::GeomObjPtr, int = Type );
+  ~BuildGUI_TreeWidgetItem();
+  void             setFace( const GEOM::GeomObjPtr );
+  GEOM::GeomObjPtr getFace() const;
+  GEOM::GeomObjPtr getEdge() const;
+private:
+  GEOM::GeomObjPtr myEdge;
+  GEOM::GeomObjPtr myFace;
+};
 
 //=================================================================================
 // class    : BuildGUI_FaceDlg
@@ -50,26 +71,35 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );    
+  virtual void                       addSubshapesToStudy();
   
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
+  void                               updateContraintsTree();
+  void                               findEmptyTreeItem();
+  bool                               isTreeFull();
   
 private:
   QList<GEOM::GeomObjPtr>            myWires;
   GEOM::GeomObjPtr                   myFace;
   GEOM::GeomObjPtr                   myWire;
   
-  DlgRef_1Sel1Check*                 GroupWire;
+  DlgRef_1Sel1Check*                 myGroupWire;
   DlgRef_2Sel*                       myGroupSurf;
+  DlgRef_1SelExt*                    myGroupWireConstraints;
+
+  QTreeWidget*                       myTreeConstraints;
+  BuildGUI_TreeWidgetItem*           myCurrentItem;
 
 private slots:
-  void                               ConstructorsClicked (int);
+  void                               ConstructorsClicked( int );
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
+  void                               onItemClicked( QTreeWidgetItem*, int );
 };
 
 #endif // BUILDGUI_FACEDLG_H

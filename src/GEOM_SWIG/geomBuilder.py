@@ -4555,6 +4555,30 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeFaceFromSurface", self.ShapesOp)
             self._autoPublish(anObj, theName, "face")
             return anObj
+          
+        @ManageTransactions("ShapesOp")
+        def MakeFaceWithConstraints(self, theConstraints, theName=None):
+            """
+            Create a face on the given constraints.
+
+            Parameters:
+                theConstraints List of constraints. 
+                               Each constraint is a couple (Edge, Face), 
+                               where Edge is an Edge of closed Wire 
+                               and Face is a Face connected to this Edge.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created face.
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.ShapesOp.MakeFaceWithConstraints(theConstraints)
+            if anObj is None:
+                RaiseIfFailed("MakeFaceWithConstraints", self.ShapesOp)
+            self._autoPublish(anObj, theName, "face")
+            return anObj
 
         ## Create a shell from the set of faces and shells.
         #  @param theFacesAndShells List of faces and/or shells.

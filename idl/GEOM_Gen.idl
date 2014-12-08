@@ -1939,6 +1939,15 @@ module GEOM
                                     in GEOM_Object theWire);
 
     /*!
+     *  \brief Create a face on the given constraints.
+     *  \param theConstraints List of constraints. Each constraint is a couple (Edge, Face), 
+     *                        where Edge is an Edge of closed Wire 
+     *                        and Face is a Face connected to this Edge.
+     *  \return New GEOM_Object, containing the created face.
+     */
+    GEOM_Object MakeFaceWithConstraints(in ListOfGO theConstraints);
+
+    /*!
      *  \brief Create a shell from the set of faces and shells.
      *  \param theFacesAndShells List of faces and/or shells.
      *  \return New GEOM_Object, containing the created shell.
@@ -2165,6 +2174,21 @@ module GEOM
      */
     string GetShapeTypeString (in GEOM_Object theShape);
 
+    /*!
+     *  \brief Check, if the object is sub-object of other GEOM object.
+     *
+     *  \param theSubObject The checked sub-object or its parent object.
+     *  \param theSubObjectIndex If theSubObjectIndex is defined 
+     *                           this parameter is the index of checked sub-object within the source theSubObject,
+     *                           If theSubObjectIndex is not defined the checked sub-object is theSubObject.
+     *  \param theObject The object or its parent.
+     *  \param theObjectIndex The object index within the source theObject.
+     *  \return TRUE, if the given object contains the checked sub-object.
+     */
+    boolean IsSubShapeBelongsTo( in GEOM_Object theSubObject,
+                                 in long        theSubObjectIndex,
+                                 in GEOM_Object theObject,
+                                 in long        theObjectIndex);
     /*!
      *  \brief Count number of faces in the given shape.
      *  \param theShape Shape to count faces in.
