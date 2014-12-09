@@ -346,6 +346,7 @@ bool BuildGUI_FaceDlg::ClickOnApply()
 //=================================================================================
 void BuildGUI_FaceDlg::SelectionIntoArgument()
 {
+  erasePreview();
   if( myEditCurrentArgument == myGroupWire->LineEdit1 ) {
     myEditCurrentArgument->setText("");
 
@@ -394,8 +395,10 @@ void BuildGUI_FaceDlg::SelectionIntoArgument()
         myCurrentItem->setFace( aSelectedObject );
         findEmptyTreeItem();
       }
-      else
+      else {
         myCurrentItem->setFace(NULL);
+        displayPreview( myCurrentItem->getEdge().get(), true, false, true, 5, -1, Quantity_NOC_RED);
+      }
     }
     else {
       myWire.nullify();
@@ -414,7 +417,7 @@ void BuildGUI_FaceDlg::SelectionIntoArgument()
 	  }
     }
   }
-  //displayPreview(true);
+  displayPreview(true, false, true, true, -1, -1, -1, true);
 }
 
 
@@ -490,7 +493,7 @@ void BuildGUI_FaceDlg::onItemClicked( QTreeWidgetItem* theItem, int theColumn )
     return;
 
   myCurrentItem = dynamic_cast<BuildGUI_TreeWidgetItem*>( theItem );
-  erasePreview();
+  displayPreview( true );
   displayPreview( myCurrentItem->getEdge().get(), true, false, true, 5, -1, Quantity_NOC_RED);
 }
 
@@ -575,9 +578,9 @@ bool BuildGUI_FaceDlg::execute( ObjectList& objects )
     int j = 0;
     for( int i = 0; i < numberOfItems; i++ ) {
       BuildGUI_TreeWidgetItem* item = dynamic_cast<BuildGUI_TreeWidgetItem*>( myTreeConstraints->topLevelItem(i) );
-      constraints[j++] = item->getEdge().get();
+      constraints[j++] = GEOM::GEOM_Object::_duplicate(item->getEdge().get());
       if ( item->getFace() )
-        constraints[j++] = item->getFace().get();
+        constraints[j++] = GEOM::GEOM_Object::_duplicate(item->getFace().get());
     }
     constraints->length(j);
     anObj = anOper->MakeFaceWithConstraints( constraints.in() );
