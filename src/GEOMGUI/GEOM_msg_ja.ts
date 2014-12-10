@@ -532,6 +532,10 @@
       <translation>円柱の作成</translation>
     </message>
     <message>
+      <source>GEOM_CYLINDER_ANGLE_ERR</source>
+      <translation>GEOM_CYLINDER_ANGLE_ERR</translation>
+    </message>
+    <message>
       <source>GEOM_D1</source>
       <translation>D1 を：</translation>
     </message>
@@ -1449,7 +1453,7 @@
     </message>
     <message>
       <source>GEOM_PRP_EXPORT</source>
-      <translation>ジオメトリを %1 にエクスポート</translation>
+      <translation>ジオメトリを %1 にエクスポート...</translation>
     </message>
     <message>
       <source>GEOM_PRP_LOADING</source>
@@ -2352,6 +2356,14 @@
       <translation>カーブの作成</translation>
     </message>
     <message>
+      <source>TOP_CURVE_CREATOR</source>
+      <translation>TOP_CURVE_CREATOR</translation>
+    </message>
+    <message>
+      <source>STB_CURVE_CREATOR</source>
+      <translation>STB_CURVE_CREATOR</translation>
+    </message>
+    <message>
       <source>MEN_ALL_SEL_ONLY</source>
       <translation>全選択</translation>
     </message>
@@ -2677,7 +2689,7 @@
     </message>
     <message>
       <source>MEN_IMPORT</source>
-      <translation>インポート</translation>
+      <translation>インポート...</translation>
     </message>
     <message>
       <source>MEN_INERTIA</source>
@@ -2877,7 +2889,7 @@
     </message>
     <message>
       <source>MEN_POP_VERTICES</source>
-      <translation type="unfinished">Show Vertices</translation>
+      <translation>MEN_POP_VERTICES</translation>
     </message>
     <message>
       <source>MEN_PREFERENCES</source>
@@ -3053,11 +3065,11 @@
     </message>
     <message>
       <source>MEN_VERTICES_MODE_ON</source>
-      <translation type="unfinished">Show Vertices</translation>
+      <translation>MEN_VERTICES_MODE_ON</translation>
     </message>
     <message>
       <source>MEN_VERTICES_MODE_OFF</source>
-      <translation type="unfinished">Hide Vertices</translation>
+      <translation>MEN_VERTICES_MODE_OFF</translation>
     </message>
     <message>
       <source>MEN_WIREFRAME</source>
@@ -3140,8 +3152,8 @@
       <translation>表示モード</translation>
     </message>
     <message>
-        <source>PREF_TRANSPARENCY</source>
-        <translation>透明度</translation>
+      <source>PREF_TRANSPARENCY</source>
+      <translation>透明度</translation>
     </message>
     <message>
       <source>PREF_FREE_BOUND_COLOR</source>
@@ -3749,7 +3761,7 @@
     </message>
     <message>
       <source>STB_POP_VERTICES</source>
-      <translation type="unfinished">Show Vertices</translation>
+      <translation>STB_POP_VERTICES</translation>
     </message>
     <message>
       <source>STB_POP_SETTEXTURE</source>
@@ -4696,12 +4708,12 @@
       <translation>オブジェクトの基準寸法を管理</translation>
     </message>
     <message>
-        <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
-        <translation type="unfinished">Show dependency tree</translation>
+      <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
+      <translation>MEN_POP_SHOW_DEPENDENCY_TREE</translation>
     </message>
     <message>
-        <source>MEN_POP_SHOW_REDUCE_STUDY</source>
-        <translation type="unfinished">Reduce study</translation>
+      <source>MEN_POP_REDUCE_STUDY</source>
+      <translation>MEN_POP_REDUCE_STUDY</translation>
     </message>
     <message>
       <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
@@ -4968,64 +4980,64 @@
       <translation>プレビュー</translation>
     </message>
     <message>
-        <source>PREF_TAB_DEPENDENCY_VIEW</source>
-        <translation type="unfinished">Dependency Tree</translation>
+      <source>PREF_TAB_DEPENDENCY_VIEW</source>
+      <translation>PREF_TAB_DEPENDENCY_VIEW</translation>
     </message>
     <message>
-        <source>PREF_HIERARCHY_TYPE</source>
-        <translation type="unfinished">Hierarchy type</translation>
+      <source>PREF_HIERARCHY_TYPE</source>
+      <translation>PREF_HIERARCHY_TYPE</translation>
     </message>
     <message>
-        <source>MEN_ONLY_ASCENDANTS</source>
-        <translation type="unfinished">Display only ascendants tree</translation>
+      <source>MEN_ONLY_ASCENDANTS</source>
+      <translation>MEN_ONLY_ASCENDANTS</translation>
     </message>
     <message>
-        <source>MEN_ONLY_DESCENDANTS</source>
-        <translation type="unfinished">Display only descendants tree</translation>
+      <source>MEN_ONLY_DESCENDANTS</source>
+      <translation>MEN_ONLY_DESCENDANTS</translation>
     </message>
     <message>
-        <source>MEN_BOTH_ASCENDANTS_DESCENDANTS</source>
-        <translation type="unfinished">Display both ascendants and descendants trees</translation>
+      <source>MEN_BOTH_ASCENDANTS_DESCENDANTS</source>
+      <translation>MEN_BOTH_ASCENDANTS_DESCENDANTS</translation>
     </message>
     <message>
-        <source>GEOM_MOVE_POSSIBILITY</source>
-        <translation type="unfinished">Possibility to move nodes</translation>
+      <source>GEOM_MOVE_POSSIBILITY</source>
+      <translation>GEOM_MOVE_POSSIBILITY</translation>
     </message>
     <message>
-        <source>PREF_GROUP_DEPENDENCY_VIEW_COLOR</source>
-        <translation type="unfinished">Color</translation>
+      <source>PREF_GROUP_DEPENDENCY_VIEW_COLOR</source>
+      <translation>PREF_GROUP_DEPENDENCY_VIEW_COLOR</translation>
     </message>
     <message>
-        <source>PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR</source>
-        <translation type="unfinished">Background color</translation>
+      <source>PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR</source>
+      <translation>PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR</translation>
     </message>
     <message>
-        <source>PREF_DEPENDENCY_VIEW_NODE_COLOR</source>
-        <translation type="unfinished">Default node color</translation>
+      <source>PREF_DEPENDENCY_VIEW_NODE_COLOR</source>
+      <translation>PREF_DEPENDENCY_VIEW_NODE_COLOR</translation>
     </message>
     <message>
-        <source>PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR</source>
-        <translation type="unfinished">Main node color</translation>
+      <source>PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR</source>
+      <translation>PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR</translation>
     </message>
     <message>
-        <source>PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR</source>
-        <translation type="unfinished">Unpublished node color</translation>
+      <source>PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR</source>
+      <translation>PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR</translation>
     </message>
     <message>
-        <source>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</source>
-        <translation type="unfinished">Selected node color</translation>
+      <source>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</source>
+      <translation>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</translation>
     </message>
     <message>
-        <source>PREF_DEPENDENCY_VIEW_ARROW_COLOR</source>
-        <translation type="unfinished">Arrow color</translation>
+      <source>PREF_DEPENDENCY_VIEW_ARROW_COLOR</source>
+      <translation>PREF_DEPENDENCY_VIEW_ARROW_COLOR</translation>
     </message>
     <message>
-        <source>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</source>
-        <translation type="unfinished">Highlighted arrow color</translation>
+      <source>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</source>
+      <translation>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</translation>
     </message>
     <message>
-        <source>PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR</source>
-        <translation type="unfinished">Selected arrow color</translation>
+      <source>PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR</source>
+      <translation>PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR</translation>
     </message>
     <message>
       <source>GEOM_ALL_IMPORT_FILES</source>
@@ -5092,55 +5104,71 @@
     <name>GeometryGUI</name>
     <message>
       <source>TOOL_BASIC</source>
-      <translation>基礎オブジェクト</translation>
+      <translation>TOOL_BASIC</translation>
     </message>
     <message>
       <source>TOOL_BLOCKS</source>
-      <translation>ブロック分割</translation>
+      <translation>TOOL_BLOCKS</translation>
     </message>
     <message>
       <source>TOOL_BOOLEAN</source>
-      <translation>ブーリアン操作</translation>
+      <translation>TOOL_BOOLEAN</translation>
     </message>
     <message>
       <source>TOOL_FEATURES</source>
-      <translation>フィーチャー</translation>
+      <translation>TOOL_FEATURES</translation>
     </message>
     <message>
       <source>TOOL_GENERATION</source>
-      <translation>押し出し/回転</translation>
+      <translation>TOOL_GENERATION</translation>
     </message>
     <message>
       <source>TOOL_PRIMITIVES</source>
-      <translation>基本図形</translation>
+      <translation>TOOL_PRIMITIVES</translation>
     </message>
     <message>
       <source>TOOL_TRANSFORMATION</source>
-      <translation>変形/移動/回転</translation>
+      <translation>TOOL_TRANSFORMATION</translation>
     </message>
     <message>
       <source>TOOL_BUILD</source>
-      <translation>構築</translation>
+      <translation>TOOL_BUILD</translation>
     </message>
     <message>
       <source>TOOL_OPERATIONS</source>
-      <translation>操作</translation>
+      <translation>TOOL_OPERATIONS</translation>
     </message>
     <message>
       <source>TOOL_PICTURES</source>
-      <translation>画像</translation>
+      <translation>TOOL_PICTURES</translation>
     </message>
     <message>
       <source>TOOL_ADVANCED</source>
-      <translation>高度なツール</translation>
+      <translation>TOOL_ADVANCED</translation>
     </message>
     <message>
       <source>TOOL_MEASURES</source>
-      <translation>情報/測定</translation>
+      <translation>TOOL_MEASURES</translation>
     </message>
     <message>
       <source>TOOL_IMPORTEXPORT</source>
-      <translation>インポート/エクスポート</translation>
+      <translation>TOOL_IMPORTEXPORT</translation>
+    </message>
+    <message>
+      <source>TABLE_SECTION</source>
+      <translation>TABLE_SECTION</translation>
+    </message>
+    <message>
+      <source>TABLE_INDEX</source>
+      <translation>TABLE_INDEX</translation>
+    </message>
+    <message>
+      <source>TABLE_X</source>
+      <translation>TABLE_X</translation>
+    </message>
+    <message>
+      <source>TABLE_Y</source>
+      <translation>TABLE_Y</translation>
     </message>
   </context>
   <context>
@@ -5384,73 +5412,38 @@
     </message>
   </context>
   <context>
-    <name>CurveCreator_NewPointDlg</name>
-    <message>
-      <source>ADD_NEW_POINT</source>
-      <translation>新しい点の追加</translation>
-    </message>
-    <message>
-      <source>X_COORD</source>
-      <translation>X</translation>
-    </message>
-    <message>
-      <source>Y_COORD</source>
-      <translation>Y</translation>
-    </message>
-    <message>
-      <source>Z_COORD</source>
-      <translation>Z</translation>
-    </message>
-    <message>
-      <source>ADD_BTN</source>
-      <translation>追加</translation>
-    </message>
-    <message>
-      <source>ADD_CONTINUE_BTN</source>
-      <translation>追加して継続</translation>
-    </message>
-    <message>
-      <source>ADD_NEW_POINT_TO_%1</source>
-      <translation>新しい点を%1に追加</translation>
-    </message>
-    <message>
-      <source>SET_POINT_COORDINATES</source>
-      <translation>点座標の設定</translation>
-    </message>
-  </context>
-  <context>
     <name>CurveCreator_NewSectionDlg</name>
     <message>
-      <source>NAME</source>
-      <translation>名前</translation>
+      <source>SECTION_NAME</source>
+      <translation>SECTION_NAME</translation>
     </message>
     <message>
-      <source>LINE_TYPE</source>
-      <translation>ライン</translation>
+      <source>SECTION_LINE_TYPE</source>
+      <translation>SECTION_LINE_TYPE</translation>
     </message>
     <message>
-      <source>POLYLINE_TYPE</source>
-      <translation>ポリライン</translation>
+      <source>SECTION_POLYLINE_TYPE</source>
+      <translation>SECTION_POLYLINE_TYPE</translation>
     </message>
     <message>
-      <source>SPLINE_TYPE</source>
-      <translation>スプライン</translation>
+      <source>SECTION_SPLINE_TYPE</source>
+      <translation>SECTION_SPLINE_TYPE</translation>
     </message>
     <message>
-      <source>LINE_CLOSED</source>
-      <translation>閉じたライン</translation>
+      <source>SECTION_LINE_CLOSED</source>
+      <translation>SECTION_LINE_CLOSED</translation>
     </message>
     <message>
-      <source>OK</source>
-      <translation>Ok</translation>
+      <source>SECTION_ADD_BTN</source>
+      <translation>SECTION_ADD_BTN</translation>
     </message>
     <message>
-      <source>ADD_BTN</source>
-      <translation>追加</translation>
+      <source>SECTION_OK_BTN</source>
+      <translation>SECTION_OK_BTN</translation>
     </message>
     <message>
-      <source>ADD_CONTINUE_BTN</source>
-      <translation>追加して継続</translation>
+      <source>SECTION_CANCEL_BTN</source>
+      <translation>SECTION_CANCEL_BTN</translation>
     </message>
     <message>
       <source>ADD_NEW_SECTION</source>
@@ -5475,12 +5468,8 @@
   <context>
     <name>CurveCreator_Widget</name>
     <message>
-      <source>CURVE_NAME_TLT</source>
-      <translation>カーブの名前</translation>
-    </message>
-    <message>
-      <source>SECTION_GROUP_TLT</source>
-      <translation>断面グループ</translation>
+      <source>SECTION_GROUP_TITLE</source>
+      <translation>SECTION_GROUP_TITLE</translation>
     </message>
     <message>
       <source>UNDO</source>
@@ -5507,22 +5496,6 @@
       <translation>新しい断面の挿入</translation>
     </message>
     <message>
-      <source>INSERT_SECTION_BEFORE</source>
-      <translation>前に断面を挿入</translation>
-    </message>
-    <message>
-      <source>INSERT_SECTION_BEFORE_TLT</source>
-      <translation>前に断面を挿入</translation>
-    </message>
-    <message>
-      <source>INSERT_SECTION_AFTER</source>
-      <translation>後に断面の挿入</translation>
-    </message>
-    <message>
-      <source>INSERT_SECTION_AFTER_TLT</source>
-      <translation>後に断面の挿入</translation>
-    </message>
-    <message>
       <source>ADDITION_MODE</source>
       <translation>追加モード</translation>
     </message>
@@ -5545,18 +5518,6 @@
     <message>
       <source>DETECTION_MODE_TLT</source>
       <translation>検出モード</translation>
-    </message>
-    <message>
-      <source>INSERT_POINT_BEFORE</source>
-      <translation>前に点の挿入</translation>
-    </message>
-    <message>
-      <source>INSERT_POINT_BEFORE_TLT</source>
-      <translation>前に点の挿入</translation>
-    </message>
-    <message>
-      <source>INSERT_POINT_AFTER</source>
-      <translation>後に点の挿入</translation>
     </message>
     <message>
       <source>CLOSE_SECTIONS</source>
@@ -5607,22 +5568,6 @@
       <translation>選択した断面を結合</translation>
     </message>
     <message>
-      <source>STEP_UP</source>
-      <translation>上昇</translation>
-    </message>
-    <message>
-      <source>STEP_UP_TLT</source>
-      <translation>選択したオブジェクトを上昇</translation>
-    </message>
-    <message>
-      <source>STEP_DOWN</source>
-      <translation>下降</translation>
-    </message>
-    <message>
-      <source>STEP_DOWN_TLT</source>
-      <translation>選択したオブジェクトを下降</translation>
-    </message>
-    <message>
       <source>CLEAR_ALL</source>
       <translation>すべて消去</translation>
     </message>
@@ -5637,6 +5582,33 @@
     <message>
       <source>JOIN_ALL_TLT</source>
       <translation>すべての断面を結合</translation>
+    </message>
+  </context>
+  <context>
+    <name>EntityGUI_PolylineDlg</name>
+    <message>
+      <source>POLYLINE_DLG_TITLE</source>
+      <translation>POLYLINE_DLG_TITLE</translation>
+    </message>
+    <message>
+      <source>POLYLINE_TITLE</source>
+      <translation>POLYLINE_TITLE</translation>
+    </message>
+    <message>
+      <source>POLYLINE_NAME</source>
+      <translation>POLYLINE_NAME</translation>
+    </message>
+    <message>
+      <source>POLYLINE_IMPORT</source>
+      <translation>POLYLINE_IMPORT</translation>
+    </message>
+    <message>
+      <source>POLYLINE_ADD_SECTION</source>
+      <translation>POLYLINE_ADD_SECTION</translation>
+    </message>
+    <message>
+      <source>POLYLINE_EDIT_SECTION</source>
+      <translation>POLYLINE_EDIT_SECTION</translation>
     </message>
   </context>
   <context>
@@ -6811,56 +6783,56 @@
   <context>
     <name>GEOMToolsGUI_ReduceStudyDlg</name>
     <message>
-        <source>GEOM_REDUCE_STUDY_TITLE</source>
-        <translation type="unfinished">Reduce study</translation>
+      <source>GEOM_REDUCE_STUDY_TITLE</source>
+      <translation>GEOM_REDUCE_STUDY_TITLE</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_KEPT_OBJECTS</source>
-        <translation type="unfinished">Objects to be kept</translation>
+      <source>GEOM_REDUCE_STUDY_KEPT_OBJECTS</source>
+      <translation>GEOM_REDUCE_STUDY_KEPT_OBJECTS</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_REMOVE_OBJECTS</source>
-        <translation type="unfinished">Objects to be removed</translation>
+      <source>GEOM_REDUCE_STUDY_REMOVE_OBJECTS</source>
+      <translation>GEOM_REDUCE_STUDY_REMOVE_OBJECTS</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_NAME</source>
-        <translation type="unfinished">Name</translation>
+      <source>GEOM_REDUCE_STUDY_NAME</source>
+      <translation>GEOM_REDUCE_STUDY_NAME</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_OPTIONS</source>
-        <translation type="unfinished">Options</translation>
+      <source>GEOM_REDUCE_STUDY_OPTIONS</source>
+      <translation>GEOM_REDUCE_STUDY_OPTIONS</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_INTERMEDIATES</source>
-        <translation type="unfinished">Intermediate objects</translation>
+      <source>GEOM_REDUCE_STUDY_INTERMEDIATES</source>
+      <translation>GEOM_REDUCE_STUDY_INTERMEDIATES</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_SUB_OBJECTS</source>
-        <translation type="unfinished">Sub-objects</translation>
+      <source>GEOM_REDUCE_STUDY_SUB_OBJECTS</source>
+      <translation>GEOM_REDUCE_STUDY_SUB_OBJECTS</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_KEEP</source>
-        <translation type="unfinished">Keep</translation>
+      <source>GEOM_REDUCE_STUDY_KEEP</source>
+      <translation>GEOM_REDUCE_STUDY_KEEP</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_UNPUBLISH</source>
-        <translation type="unfinished">Unpublish</translation>
+      <source>GEOM_REDUCE_STUDY_UNPUBLISH</source>
+      <translation>GEOM_REDUCE_STUDY_UNPUBLISH</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_REMOVE</source>
-        <translation type="unfinished">Remove</translation>
+      <source>GEOM_REDUCE_STUDY_REMOVE</source>
+      <translation>GEOM_REDUCE_STUDY_REMOVE</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_REMOVE_EMPTY_FOLDER</source>
-        <translation type="unfinished">Remove empty folders</translation>
+      <source>GEOM_REDUCE_STUDY_REMOVE_EMPTY_FOLDER</source>
+      <translation>GEOM_REDUCE_STUDY_REMOVE_EMPTY_FOLDER</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_SOFT_REMOVAL</source>
-        <translation type="unfinished">Soft removal</translation>
+      <source>GEOM_REDUCE_STUDY_SOFT_REMOVAL</source>
+      <translation>GEOM_REDUCE_STUDY_SOFT_REMOVAL</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_WARNING_DELETE</source>
-        <translation type="unfinished">Do you really want to delete intermediate objects? After applying this operation study will be broken.</translation>
+      <source>GEOM_REDUCE_STUDY_WARNING_DELETE</source>
+      <translation>GEOM_REDUCE_STUDY_WARNING_DELETE</translation>
     </message>
   </context>
   <context>
