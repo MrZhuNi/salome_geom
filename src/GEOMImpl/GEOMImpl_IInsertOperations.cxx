@@ -399,6 +399,29 @@ bool GEOMImpl_IInsertOperations::TransferData
     return false;
   }
 
+  // Fill result list of data.
+  theResult.clear();
+
+  Handle(TColStd_HArray1OfExtendedString) aDatumName   = aTD.GetDatumName();
+  Handle(TColStd_HArray1OfInteger)        aDatumMaxVal = aTD.GetDatumMaxVal();
+  Handle(TColStd_HArray1OfInteger)        aDatumVal    = aTD.GetDatumVal();
+
+  if (!aDatumName.IsNull() && !aDatumMaxVal.IsNull() && !aDatumVal.IsNull()) {
+    Standard_Integer i;
+    Standard_Integer aNbDatum = aDatumName->Length();
+
+    for (i = 1; i <= aNbDatum; ++i) {
+      if (aDatumMaxVal->Value(i) > 0) {
+        TransferDatum aDatum;
+
+        aDatum.myName      = TCollection_AsciiString(aDatumName->Value(i));
+        aDatum.myNumber    = aDatumVal->Value(i);
+        aDatum.myMaxNumber = aDatumMaxVal->Value(i);
+        theResult.push_back(aDatum);
+      }
+    }
+  }
+
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
   pd << "geompy.TransferData(" << theObjectFrom << ", " << theObjectTo;

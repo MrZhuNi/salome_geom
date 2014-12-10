@@ -143,7 +143,7 @@ void OperationGUI_TransferDataDlg::ClickOnOk()
 //=================================================================================
 bool OperationGUI_TransferDataDlg::ClickOnApply()
 {
-  if (!onAccept())
+  if (!onAccept(false))
     return false;
   // activate first line edit
   myGroup->PushButton1->click();
@@ -157,7 +157,7 @@ bool OperationGUI_TransferDataDlg::ClickOnApply()
 void OperationGUI_TransferDataDlg::SelectionIntoArgument()
 {
   GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_SHAPE);
-    
+
   if (aSelectedObject) {
     myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject.get()));
 
@@ -305,8 +305,8 @@ bool OperationGUI_TransferDataDlg::execute (ObjectList& objects)
     if (aNbTypes == 0) {
       aMsg = tr("GEOM_TRANSFER_DATA_NOT_COPIED");
     } else {
-      aMsg = tr("GEOM_TRANSFER_DATA_COPIED\n");
-
+      aMsg = tr("GEOM_TRANSFER_DATA_COPIED");
+      aMsg += "\n";
       int i;
 
       for (i = 0; i < aNbTypes; i++ ) {
@@ -323,6 +323,8 @@ bool OperationGUI_TransferDataDlg::execute (ObjectList& objects)
     SUIT_MessageBox::information
             (SUIT_Session::session()->activeApplication()->desktop(),
              tr("GEOM_TRANSFER_DATA_INFO"), aMsg, tr("BUT_OK"));
+
+    objects.push_back(myObject2.copy());
   }
 
   return isOK;

@@ -82,6 +82,11 @@ Standard_EXPORT ~GEOMImpl_CopyDriver() {};
                               std::vector<GEOM_Param>& params);
 
 DEFINE_STANDARD_RTTI( GEOMImpl_CopyDriver )
+
+private:
+
+  Standard_Integer transferData(TFunction_Logbook& log) const;
+
 };
 
 #endif

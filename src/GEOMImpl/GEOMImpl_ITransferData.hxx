@@ -22,11 +22,24 @@
 
 //NOTE: This is an intreface to a function for the Transfer Data functionality.
 //
+
+
+#ifndef _GEOMImpl_ITransferData_HXX_
+#define _GEOMImpl_ITransferData_HXX_
+
+
+#include "GEOM_GEOMImpl.hxx"
 #include "GEOM_Function.hxx"
 
-#define TD_ARG_REF1   1
-#define TD_ARG_REF2   2
-#define TD_ARG_METHOD 3
+#include <TColStd_HArray1OfInteger.hxx>
+
+
+#define TD_ARG_REF1            1
+#define TD_ARG_REF2            2
+#define TD_ARG_METHOD          3
+#define TD_ARG_DATUM_NAME      4
+#define TD_ARG_DATUM_MAX_VALUE 5
+#define TD_ARG_DATUM_VALUE     6
 
 class GEOMImpl_ITransferData
 {
@@ -50,7 +63,52 @@ class GEOMImpl_ITransferData
 
   int GetFindMethod() { return _func->GetInteger(TD_ARG_METHOD); }
 
+  void SetDatumName(const Handle(TColStd_HArray1OfExtendedString) &theDatumName)
+  { _func->SetStringArray(TD_ARG_DATUM_NAME, theDatumName); }
+
+  Handle(TColStd_HArray1OfExtendedString) GetDatumName()
+  { return _func->GetStringArray(TD_ARG_DATUM_NAME); }
+
+  void SetDatumMaxVal(const Handle(TColStd_HArray1OfInteger) &theDatumMaxVal)
+  { _func->SetIntegerArray(TD_ARG_DATUM_MAX_VALUE, theDatumMaxVal); }
+
+  Handle(TColStd_HArray1OfInteger) GetDatumMaxVal()
+  { return _func->GetIntegerArray(TD_ARG_DATUM_MAX_VALUE); }
+
+  void SetDatumVal(const Handle(TColStd_HArray1OfInteger) &theDatumVal)
+  { _func->SetIntegerArray(TD_ARG_DATUM_VALUE, theDatumVal); }
+
+  Handle(TColStd_HArray1OfInteger) GetDatumVal()
+  { return _func->GetIntegerArray(TD_ARG_DATUM_VALUE); }
+
+  GEOMIMPL_EXPORT void SetName(const TopoDS_Shape            &theSubShape,
+                                const TCollection_AsciiString &theName)
+  { SetStringData(theSubShape, theName, Standard_True); }
+
+  GEOMIMPL_EXPORT TCollection_AsciiString GetName
+                               (const TopoDS_Shape &theSubShape)
+  { return GetStringData(theSubShape, Standard_True); }
+
+  GEOMIMPL_EXPORT void SetMaterial(const TopoDS_Shape         &theSubShape,
+                                   const TCollection_AsciiString &theName)
+  { SetStringData(theSubShape, theName, Standard_False); }
+
+  GEOMIMPL_EXPORT TCollection_AsciiString GetMaterial
+                               (const TopoDS_Shape &theSubShape)
+  { return GetStringData(theSubShape, Standard_False); }
+
+ private:
+
+  TCollection_AsciiString GetStringData(const TopoDS_Shape     &theSubShape,
+                                        const Standard_Boolean  IsName);
+
+  void SetStringData(const TopoDS_Shape            &theSubShape,
+                     const TCollection_AsciiString &theData,
+                     const Standard_Boolean         IsName);
+
  private:
 
   Handle(GEOM_Function) _func;
 };
+
+#endif

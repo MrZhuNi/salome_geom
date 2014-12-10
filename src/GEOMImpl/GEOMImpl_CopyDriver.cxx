@@ -22,18 +22,36 @@
 
 #include "GEOMImpl_CopyDriver.hxx"
 #include "GEOMImpl_ICopy.hxx"
+#include "GEOMImpl_ITransferData.hxx"
 #include "GEOMImpl_Types.hxx"
 #include "GEOM_Function.hxx"
 #include "GEOM_Object.hxx"
+#include "GEOMAlgo_GetInPlace.hxx"
 
+#include <Bnd_Box.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepBndLib.hxx>
 #include <gp_Pnt.hxx>
+#include <Precision.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopAbs.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
 #include <TNaming_CopyShape.hxx>
 #include <TColStd_IndexedDataMapOfTransientTransient.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_MapIteratorOfMapOfShape.hxx>
+
+
+#define NB_DATUM             2
+#define DATUM_NAME_INDEX     1
+#define DATUM_MATERIAL_INDEX 2
+
 
 //=======================================================================
 //function : GetID
@@ -64,6 +82,10 @@ Standard_Integer GEOMImpl_CopyDriver::Execute(TFunction_Logbook& log) const
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
 
   Standard_Integer aType = aFunction->GetType();
+
+  if (aType == TRANSFER_DATA) {
+    return transferData(log);
+  }
 
   GEOMImpl_ICopy aCI (aFunction);
   TopoDS_Shape aCopy;
@@ -127,6 +149,189 @@ GetCreationInformation(std::string&             theOperationName,
   }
   
   return true;
+}
+
+//================================================================================
+/*!
+ * \brief Performs Transfer Data operation.
+ */
+//================================================================================
+
+Standard_Integer GEOMImpl_CopyDriver::transferData(TFunction_Logbook& log) const
+{
+  Handle(GEOM_Function)  aFunction = GEOM_Function::GetFunction(Label());
+  GEOMImpl_ITransferData aTD (aFunction);
+  Handle(GEOM_Function)  aRef1     = aTD.GetRef1();
+  Handle(GEOM_Function)  aRef2     = aTD.GetRef2();
+
+  if (aRef1.IsNull() || aRef2.IsNull()) {
+    return 0;
+  }
+
+  TopoDS_Shape                              aShape1     = aRef1->GetValue();
+  TopoDS_Shape                              aShape2     = aRef2->GetValue();
+  const int                                 aFindMethod = aTD.GetFindMethod();
+  TopTools_IndexedDataMapOfShapeListOfShape aMapSoDest;
+  Standard_Integer                          i;
+  TopTools_IndexedMapOfShape                anIndices1;
+  Standard_Integer                          aNbShapes;
+
+  TopExp::MapShapes(aShape1, anIndices1);
+  aNbShapes = anIndices1.Extent();
+
+  switch (aFindMethod) {
+    case TD_GET_IN_PLACE:
+      {
+        // Compute confusion tolerance.
+        Standard_Real    aTolConf = Precision::Confusion();
+
+        for (i = 0; i < 2; ++i) {
+          TopExp_Explorer anExp(i == 0 ? aShape1 : aShape2, TopAbs_VERTEX);
+
+          for (; anExp.More(); anExp.Next()) {
+            const TopoDS_Vertex aVtx = TopoDS::Vertex(anExp.Current());
+            const Standard_Real aTolVtx = BRep_Tool::Tolerance(aVtx);
+
+            if (aTolVtx > aTolConf) {
+              aTolConf = aTolVtx;
+            }
+          }
+        }
+
+        // Compute mass tolerance.
+        Bnd_Box       aBoundingBox;
+        Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+        Standard_Real aMassTol;
+
+        BRepBndLib::Add(aShape1, aBoundingBox);
+        BRepBndLib::Add(aShape2, aBoundingBox);
+        aBoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+        aMassTol = Max(aXmax - aXmin, aYmax - aYmin);
+        aMassTol = Max(aMassTol, aZmax - aZmin);
+        aMassTol *= aTolConf;
+
+        // Searching for the sub-shapes inside the ShapeWhere shape
+        GEOMAlgo_GetInPlace aGIP;
+        aGIP.SetTolerance(aTolConf);
+        aGIP.SetTolMass(aMassTol);
+        aGIP.SetTolCG(aTolConf);
+
+        aGIP.SetArgument(aShape1);
+        aGIP.SetShapeWhere(aShape2);
+
+        aGIP.Perform();
+
+        int iErr = aGIP.ErrorStatus();
+
+        if (iErr) {
+          return 0;
+        }
+
+        const GEOMAlgo_DataMapOfShapeMapOfShape &aShapesIn = aGIP.ShapesIn();
+        const GEOMAlgo_DataMapOfShapeMapOfShape &aShapesOn = aGIP.ShapesOn();
+        Standard_Integer                         j;
+
+        for (j = 1; j <= aNbShapes; ++j) {
+          const TopoDS_Shape   &aSource = anIndices1.FindKey(j);
+          TopTools_ListOfShape  aListShapes2;
+          TopTools_MapOfShape   aMapShapes2;
+
+          for (i = 0; i < 2; ++i) {
+            const GEOMAlgo_DataMapOfShapeMapOfShape &aShapes2 =
+                          i == 0 ? aShapesIn : aShapesOn;
+
+            if (aShapes2.IsBound(aSource)) {
+              const TopTools_MapOfShape &aMapShapesDest =
+                aShapes2.Find(aSource);
+              TopTools_MapIteratorOfMapOfShape aMapIter(aMapShapesDest);
+
+              for (; aMapIter.More(); aMapIter.Next()) {
+                const TopoDS_Shape &aShapeDest = aMapIter.Key();
+
+                if (aMapShapes2.Add(aShapeDest)) {
+                  aListShapes2.Append(aShapeDest);
+                }
+              }
+            }
+          }
+
+          if (!aListShapes2.IsEmpty()) {
+            aMapSoDest.Add(aSource, aListShapes2);
+          }
+        }
+      }
+      break;
+    case TD_GET_IN_PLACE_OLD:
+    case TD_GET_IN_PLACE_BY_HISTORY:
+    default:
+      return 0;
+  }
+
+  // Perform copying names.
+  Handle(TColStd_HArray1OfExtendedString) aDatumName   =
+    new TColStd_HArray1OfExtendedString(1, NB_DATUM);
+  Handle(TColStd_HArray1OfInteger)        aDatumMaxVal =
+    new TColStd_HArray1OfInteger(1, NB_DATUM, 0);
+  Handle(TColStd_HArray1OfInteger)        aDatumVal    =
+    new TColStd_HArray1OfInteger(1, NB_DATUM, 0);
+  GEOMImpl_ITransferData                  aTD1(aRef1);
+  GEOMImpl_ITransferData                  aTD2(aRef2);
+
+  aDatumName->SetValue(DATUM_NAME_INDEX,     "GEOM_TRANSFER_DATA_NAMES");
+  aDatumName->SetValue(DATUM_MATERIAL_INDEX, "GEOM_TRANSFER_DATA_MATERIALS");
+
+  for (i = 1; i <= aNbShapes; ++i) {
+    const TopoDS_Shape      &aSource   = anIndices1.FindKey(i);
+    TCollection_AsciiString  aName     = aTD1.GetName(aSource);
+    TCollection_AsciiString  aMaterial = aTD1.GetMaterial(aSource);
+
+    // Transfer name
+    if (!aName.IsEmpty()) {
+      aDatumMaxVal->ChangeValue(DATUM_NAME_INDEX)++;
+
+      if (aMapSoDest.Contains(aSource)) {
+        aDatumVal->ChangeValue(DATUM_NAME_INDEX)++;
+
+        // Copy name to the list of subshapes of the second shape.
+        const TopTools_ListOfShape         &aListDest =
+          aMapSoDest.FindFromKey(aSource);
+        TopTools_ListIteratorOfListOfShape  anIt(aListDest);
+
+        for (; anIt.More(); anIt.Next()) {
+          const TopoDS_Shape &aShapeDest = anIt.Value();
+
+          aTD2.SetName(aShapeDest, aName);
+        }
+      }
+    }
+
+    // Transfer Material
+    if (!aMaterial.IsEmpty()) {
+      aDatumMaxVal->ChangeValue(DATUM_MATERIAL_INDEX)++;
+
+      if (aMapSoDest.Contains(aSource)) {
+        aDatumVal->ChangeValue(DATUM_MATERIAL_INDEX)++;
+
+        // Copy material to the list of subshapes of the second shape.
+        const TopTools_ListOfShape         &aListDest =
+          aMapSoDest.FindFromKey(aSource);
+        TopTools_ListIteratorOfListOfShape  anIt(aListDest);
+
+        for (; anIt.More(); anIt.Next()) {
+          const TopoDS_Shape &aShapeDest = anIt.Value();
+
+          aTD2.SetMaterial(aShapeDest, aMaterial);
+        }
+      }
+    }
+  }
+
+  // Store results.
+  aTD.SetDatumName(aDatumName);
+  aTD.SetDatumMaxVal(aDatumMaxVal);
+  aTD.SetDatumVal(aDatumVal);
+
+  return 1;
 }
 
 IMPLEMENT_STANDARD_HANDLE (GEOMImpl_CopyDriver,GEOM_BaseDriver);

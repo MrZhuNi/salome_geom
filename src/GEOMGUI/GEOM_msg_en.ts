@@ -7198,5 +7198,21 @@ Do you want to create new material?</translation>
         <source>GEOM_TRANSFER_DATA_INFO</source>
         <translation>Transfer Data: Information</translation>
     </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_NOT_COPIED</source>
+        <translation>There is nothing to be copied.</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_COPIED</source>
+        <translation>The following data is copied:</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_NAMES</source>
+        <translation>Names: %1 of %2</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_MATERIALS</source>
+        <translation>Materials: %1 of %2</translation>
+    </message>
 </context>
 </TS>
