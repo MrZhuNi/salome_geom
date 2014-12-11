@@ -297,8 +297,6 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                                             Handle(GEOM_Object)    theCenter,
                                                             const Standard_Real    theRadius);
 
-  void GetShapeProperties(const TopoDS_Shape aShape, Standard_Real propertiesArray[], gp_Pnt & aPnt);
-
   Standard_EXPORT Handle(GEOM_Object) GetInPlace (Handle(GEOM_Object) theShapeWhere,
                                                   Handle(GEOM_Object) theShapeWhat);
 

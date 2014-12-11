@@ -7204,7 +7204,7 @@ Do you want to create new material?</translation>
     </message>
     <message>
         <source>GEOM_TRANSFER_DATA_COPIED</source>
-        <translation>The following data is copied:</translation>
+        <translation>The following data are copied:</translation>
     </message>
     <message>
         <source>GEOM_TRANSFER_DATA_NAMES</source>

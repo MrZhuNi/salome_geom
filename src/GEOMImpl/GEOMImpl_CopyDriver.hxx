@@ -58,9 +58,13 @@
 #endif
 
 class TColStd_SequenceOfExtendedString;
+class TopoDS_Shape;
+class TopTools_IndexedDataMapOfShapeListOfShape;
+class TopTools_IndexedMapOfShape;
 
 
 #include "GEOM_BaseDriver.hxx"
+
 
 DEFINE_STANDARD_HANDLE( GEOMImpl_CopyDriver, GEOM_BaseDriver );
 
@@ -86,6 +90,25 @@ DEFINE_STANDARD_RTTI( GEOMImpl_CopyDriver )
 private:
 
   Standard_Integer transferData(TFunction_Logbook& log) const;
+
+  Standard_Boolean getInPlace
+    (const TopoDS_Shape                              &theSourceShape,
+     const TopTools_IndexedMapOfShape                &theSourceIndices,
+     const TopoDS_Shape                              &theDestinationShape,
+           TopTools_IndexedDataMapOfShapeListOfShape &theMapSourceDest) const;
+
+  Standard_Boolean getInPlaceOld
+    (const Handle(GEOM_Function)                     &theSourceShapeRef,
+     const TopTools_IndexedMapOfShape                &theSourceIndices,
+     const TopoDS_Shape                              &theDestinationShape,
+           TopTools_IndexedDataMapOfShapeListOfShape &theMapSourceDest) const;
+
+  Standard_Boolean getInPlaceByHistory
+    (const Handle(GEOM_Function)                     &theSourceShapeRef,
+     const TopTools_IndexedMapOfShape                &theSourceIndices,
+     const TopoDS_Shape                              &theDestinationShape,
+     const Handle(GEOM_Function)                     &theDestinationRef,
+           TopTools_IndexedDataMapOfShapeListOfShape &theMapSourceDest) const;
 
 };
 

@@ -27,6 +27,7 @@
 #include "GEOM_Function.hxx"
 #include "GEOM_Object.hxx"
 #include "GEOMAlgo_GetInPlace.hxx"
+#include "GEOMAlgo_GetInPlaceAPI.hxx"
 
 #include <Bnd_Box.hxx>
 #include <BRep_Tool.hxx>
@@ -172,97 +173,26 @@ Standard_Integer GEOMImpl_CopyDriver::transferData(TFunction_Logbook& log) const
   TopoDS_Shape                              aShape2     = aRef2->GetValue();
   const int                                 aFindMethod = aTD.GetFindMethod();
   TopTools_IndexedDataMapOfShapeListOfShape aMapSoDest;
-  Standard_Integer                          i;
   TopTools_IndexedMapOfShape                anIndices1;
-  Standard_Integer                          aNbShapes;
 
   TopExp::MapShapes(aShape1, anIndices1);
-  aNbShapes = anIndices1.Extent();
 
   switch (aFindMethod) {
     case TD_GET_IN_PLACE:
-      {
-        // Compute confusion tolerance.
-        Standard_Real    aTolConf = Precision::Confusion();
-
-        for (i = 0; i < 2; ++i) {
-          TopExp_Explorer anExp(i == 0 ? aShape1 : aShape2, TopAbs_VERTEX);
-
-          for (; anExp.More(); anExp.Next()) {
-            const TopoDS_Vertex aVtx = TopoDS::Vertex(anExp.Current());
-            const Standard_Real aTolVtx = BRep_Tool::Tolerance(aVtx);
-
-            if (aTolVtx > aTolConf) {
-              aTolConf = aTolVtx;
-            }
-          }
-        }
-
-        // Compute mass tolerance.
-        Bnd_Box       aBoundingBox;
-        Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-        Standard_Real aMassTol;
-
-        BRepBndLib::Add(aShape1, aBoundingBox);
-        BRepBndLib::Add(aShape2, aBoundingBox);
-        aBoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-        aMassTol = Max(aXmax - aXmin, aYmax - aYmin);
-        aMassTol = Max(aMassTol, aZmax - aZmin);
-        aMassTol *= aTolConf;
-
-        // Searching for the sub-shapes inside the ShapeWhere shape
-        GEOMAlgo_GetInPlace aGIP;
-        aGIP.SetTolerance(aTolConf);
-        aGIP.SetTolMass(aMassTol);
-        aGIP.SetTolCG(aTolConf);
-
-        aGIP.SetArgument(aShape1);
-        aGIP.SetShapeWhere(aShape2);
-
-        aGIP.Perform();
-
-        int iErr = aGIP.ErrorStatus();
-
-        if (iErr) {
-          return 0;
-        }
-
-        const GEOMAlgo_DataMapOfShapeMapOfShape &aShapesIn = aGIP.ShapesIn();
-        const GEOMAlgo_DataMapOfShapeMapOfShape &aShapesOn = aGIP.ShapesOn();
-        Standard_Integer                         j;
-
-        for (j = 1; j <= aNbShapes; ++j) {
-          const TopoDS_Shape   &aSource = anIndices1.FindKey(j);
-          TopTools_ListOfShape  aListShapes2;
-          TopTools_MapOfShape   aMapShapes2;
-
-          for (i = 0; i < 2; ++i) {
-            const GEOMAlgo_DataMapOfShapeMapOfShape &aShapes2 =
-                          i == 0 ? aShapesIn : aShapesOn;
-
-            if (aShapes2.IsBound(aSource)) {
-              const TopTools_MapOfShape &aMapShapesDest =
-                aShapes2.Find(aSource);
-              TopTools_MapIteratorOfMapOfShape aMapIter(aMapShapesDest);
-
-              for (; aMapIter.More(); aMapIter.Next()) {
-                const TopoDS_Shape &aShapeDest = aMapIter.Key();
-
-                if (aMapShapes2.Add(aShapeDest)) {
-                  aListShapes2.Append(aShapeDest);
-                }
-              }
-            }
-          }
-
-          if (!aListShapes2.IsEmpty()) {
-            aMapSoDest.Add(aSource, aListShapes2);
-          }
-        }
+      if (!getInPlace(aShape1, anIndices1, aShape2, aMapSoDest)) {
+        return 0;
       }
       break;
     case TD_GET_IN_PLACE_OLD:
+      if (!getInPlaceOld(aRef1, anIndices1, aShape2, aMapSoDest)) {
+        return 0;
+      }
+      break;
     case TD_GET_IN_PLACE_BY_HISTORY:
+      if (!getInPlaceByHistory(aRef1, anIndices1, aShape2, aRef2, aMapSoDest)) {
+        return 0;
+      }
+      break;
     default:
       return 0;
   }
@@ -276,6 +206,8 @@ Standard_Integer GEOMImpl_CopyDriver::transferData(TFunction_Logbook& log) const
     new TColStd_HArray1OfInteger(1, NB_DATUM, 0);
   GEOMImpl_ITransferData                  aTD1(aRef1);
   GEOMImpl_ITransferData                  aTD2(aRef2);
+  Standard_Integer                        i;
+  Standard_Integer                        aNbShapes = anIndices1.Extent();
 
   aDatumName->SetValue(DATUM_NAME_INDEX,     "GEOM_TRANSFER_DATA_NAMES");
   aDatumName->SetValue(DATUM_MATERIAL_INDEX, "GEOM_TRANSFER_DATA_MATERIALS");
@@ -332,6 +264,195 @@ Standard_Integer GEOMImpl_CopyDriver::transferData(TFunction_Logbook& log) const
   aTD.SetDatumVal(aDatumVal);
 
   return 1;
+}
+
+//================================================================================
+/*!
+ * \brief For each subshape of the source shape compute coinsident sub-shapes
+ *        of the destination shape using GetInPlace method.
+ */
+//================================================================================
+
+Standard_Boolean GEOMImpl_CopyDriver::getInPlace
+    (const TopoDS_Shape                              &theSourceShape,
+     const TopTools_IndexedMapOfShape                &theSourceIndices,
+     const TopoDS_Shape                              &theDestinationShape,
+           TopTools_IndexedDataMapOfShapeListOfShape &theMapSourceDest) const
+{
+  // Compute confusion tolerance.
+  Standard_Real    aTolConf = Precision::Confusion();
+  Standard_Integer i;
+
+  for (i = 0; i < 2; ++i) {
+    TopExp_Explorer anExp
+      (i == 0 ? theSourceShape : theDestinationShape, TopAbs_VERTEX);
+
+    for (; anExp.More(); anExp.Next()) {
+      const TopoDS_Vertex aVtx = TopoDS::Vertex(anExp.Current());
+      const Standard_Real aTolVtx = BRep_Tool::Tolerance(aVtx);
+
+      if (aTolVtx > aTolConf) {
+        aTolConf = aTolVtx;
+      }
+    }
+  }
+
+  // Compute mass tolerance.
+  Bnd_Box       aBoundingBox;
+  Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+  Standard_Real aMassTol;
+
+  BRepBndLib::Add(theSourceShape, aBoundingBox);
+  BRepBndLib::Add(theDestinationShape, aBoundingBox);
+  aBoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+  aMassTol = Max(aXmax - aXmin, aYmax - aYmin);
+  aMassTol = Max(aMassTol, aZmax - aZmin);
+  aMassTol *= aTolConf;
+
+  // Searching for the sub-shapes inside the ShapeWhere shape
+  GEOMAlgo_GetInPlace aGIP;
+  aGIP.SetTolerance(aTolConf);
+  aGIP.SetTolMass(aMassTol);
+  aGIP.SetTolCG(aTolConf);
+
+  aGIP.SetArgument(theSourceShape);
+  aGIP.SetShapeWhere(theDestinationShape);
+
+  aGIP.Perform();
+
+  int iErr = aGIP.ErrorStatus();
+
+  if (iErr) {
+    return Standard_False;
+  }
+
+  const GEOMAlgo_DataMapOfShapeMapOfShape &aShapesIn = aGIP.ShapesIn();
+  const GEOMAlgo_DataMapOfShapeMapOfShape &aShapesOn = aGIP.ShapesOn();
+  Standard_Integer                         j;
+  Standard_Integer                         aNbShapes = theSourceIndices.Extent();
+
+  for (j = 1; j <= aNbShapes; ++j) {
+    const TopoDS_Shape   &aSource = theSourceIndices.FindKey(j);
+    TopTools_ListOfShape  aListShapes2;
+    TopTools_MapOfShape   aMapShapes2;
+
+    for (i = 0; i < 2; ++i) {
+      const GEOMAlgo_DataMapOfShapeMapOfShape &aShapes2 =
+                    i == 0 ? aShapesIn : aShapesOn;
+
+      if (aShapes2.IsBound(aSource)) {
+        const TopTools_MapOfShape &aMapShapesDest =
+          aShapes2.Find(aSource);
+        TopTools_MapIteratorOfMapOfShape aMapIter(aMapShapesDest);
+
+        for (; aMapIter.More(); aMapIter.Next()) {
+          const TopoDS_Shape &aShapeDest = aMapIter.Key();
+
+          if (aMapShapes2.Add(aShapeDest)) {
+            aListShapes2.Append(aShapeDest);
+          }
+        }
+      }
+    }
+
+    if (!aListShapes2.IsEmpty()) {
+      theMapSourceDest.Add(aSource, aListShapes2);
+    }
+  }
+
+  return Standard_True;
+}
+
+//================================================================================
+/*!
+ * \brief For each subshape of the source shape compute coinsident sub-shapes
+ *        of the destination shape using an old implementation
+ *        of GetInPlace algorithm.
+ */
+//================================================================================
+
+Standard_Boolean GEOMImpl_CopyDriver::getInPlaceOld
+    (const Handle(GEOM_Function)                     &theSourceRef,
+     const TopTools_IndexedMapOfShape                &theSourceIndices,
+     const TopoDS_Shape                              &theDestinationShape,
+           TopTools_IndexedDataMapOfShapeListOfShape &theMapSourceDest) const
+{
+  const Standard_Integer aNbShapes = theSourceIndices.Extent();
+  Standard_Integer       i;
+  Standard_Integer       iErr;
+  TopTools_ListOfShape   aModifiedList;
+  GEOMImpl_ITransferData aTDSource(theSourceRef);
+
+  for (i = 1; i <= aNbShapes; ++i) {
+    const TopoDS_Shape      &aSource   = theSourceIndices.FindKey(i);
+    TCollection_AsciiString  aName     = aTDSource.GetName(aSource);
+    TCollection_AsciiString  aMaterial = aTDSource.GetMaterial(aSource);
+
+    if (aName.IsEmpty() && aMaterial.IsEmpty()) {
+      continue;
+    }
+
+    // Call old GetInPlace.
+    iErr = GEOMAlgo_GetInPlaceAPI::GetInPlaceOld
+      (theDestinationShape, aSource, aModifiedList);
+
+    if (iErr == 3) {
+      // Nothing is found. Skip.
+      continue;
+    }
+
+    if (iErr) {
+      // Error.
+      return Standard_False;
+    }
+
+    theMapSourceDest.Add(aSource, aModifiedList);
+  }
+
+  return Standard_True;
+}
+
+//================================================================================
+/*!
+ * \brief For each subshape of the source shape compute coinsident sub-shapes
+ *        of the destination shape using GetInPlaceByHistory algorithm.
+ */
+//================================================================================
+
+Standard_Boolean GEOMImpl_CopyDriver::getInPlaceByHistory
+    (const Handle(GEOM_Function)                     &theSourceRef,
+     const TopTools_IndexedMapOfShape                &theSourceIndices,
+     const TopoDS_Shape                              &theDestinationShape,
+     const Handle(GEOM_Function)                     &theDestinationRef,
+           TopTools_IndexedDataMapOfShapeListOfShape &theMapSourceDest) const
+{
+  const Standard_Integer aNbShapes = theSourceIndices.Extent();
+  Standard_Integer       i;
+  GEOMImpl_ITransferData aTDSource(theSourceRef);
+  TopTools_IndexedMapOfShape aDestIndices;
+
+  TopExp::MapShapes(theDestinationShape, aDestIndices);
+
+  for (i = 1; i <= aNbShapes; ++i) {
+    const TopoDS_Shape      &aSource   = theSourceIndices.FindKey(i);
+    TCollection_AsciiString  aName     = aTDSource.GetName(aSource);
+    TCollection_AsciiString  aMaterial = aTDSource.GetMaterial(aSource);
+
+    if (aName.IsEmpty() && aMaterial.IsEmpty()) {
+      continue;
+    }
+
+    // Call GetInPlaceByHistory.
+    TopTools_ListOfShape aModifiedList;
+    const Standard_Boolean isFound = GEOMAlgo_GetInPlaceAPI::GetInPlaceByHistory
+      (theDestinationRef, aDestIndices, aSource, aModifiedList);
+
+    if (isFound && !aModifiedList.IsEmpty()) {
+      theMapSourceDest.Add(aSource, aModifiedList);
+    }
+  }
+
+  return Standard_True;
 }
 
 IMPLEMENT_STANDARD_HANDLE (GEOMImpl_CopyDriver,GEOM_BaseDriver);
