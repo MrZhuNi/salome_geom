@@ -12869,6 +12869,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return True in case of success; False otherwise.
         #
         #  @ingroup l1_geomBuilder_auxiliary
+        #
+        #  @ref swig_TransferData "Example"
         @ManageTransactions("InsertOp")
         def TransferData(self, theObjectFrom, theObjectTo,
                          theFindMethod=GEOM.FSM_GetInPlace):
@@ -12887,8 +12889,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Returns:
                 True in case of success; False otherwise.
 
-            Example of usage: isOk = geompy.TransferData(theObjectFrom, theObjectTo,
-                                                         GEOM.FSM_GetInPlace)
+            # Example: see GEOM_TestOthers.py
             """
             # Example: see GEOM_TestAll.py
             isOk = self.InsertOp.TransferData(theObjectFrom,

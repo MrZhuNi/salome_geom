@@ -71,7 +71,7 @@ OperationGUI_TransferDataDlg::OperationGUI_TransferDataDlg (GeometryGUI* theGeom
   layout->addWidget(myGroup);
   /***************************************************************/
 
-  setHelpFileName("transferdata_page.html");
+  setHelpFileName("transfer_data_page.html");
 
   Init();
 }
