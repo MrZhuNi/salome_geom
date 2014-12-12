@@ -29,6 +29,7 @@
 
 #include <gp_Vec.hxx>
 
+class GEOMAlgo_GetInPlace;
 class Handle_GEOM_Function;
 class BRepExtrema_DistShapeShape;
 class TopoDS_Face;
@@ -48,6 +49,17 @@ class GEOMAlgo_GetInPlaceAPI
 
 public:
 
+  /**
+   *  \brief New GetInPlace method implementation.
+   *  Initializes the GEOMAlgo_GetInPlace object with correct parameters and
+   *  performs computation (calls theGIP's method Perform. Returns
+   *  Standard_True in face of success; Standard_False otherwise.
+   */
+  Standard_EXPORT static Standard_Boolean GetInPlace
+                      (const TopoDS_Shape        &theWhere,
+                       const TopoDS_Shape        &theWhat,
+                             GEOMAlgo_GetInPlace &theGIP);
+
   /*!
    *  \brief Old implementation of GetInPlace algoritm.
    *  This method searches among sub shapes of the shape theWhere parts that are
@@ -66,7 +78,7 @@ public:
 
 
   /**
-   *  \brief GetInPlaceBy history method implementation.
+   *  \brief GetInPlaceByHistory method implementation.
    *  Returns Standard_True if something is found. Warning: theShapesInPlace
    *  list is not cleared at first.
    */

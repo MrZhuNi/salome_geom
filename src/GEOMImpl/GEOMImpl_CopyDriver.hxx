@@ -26,41 +26,10 @@
 #ifndef _GEOMImpl_CopyDriver_HeaderFile
 #define _GEOMImpl_CopyDriver_HeaderFile
 
-#ifndef _TColStd_SequenceOfExtendedString_HeaderFile
-#include <TColStd_SequenceOfExtendedString.hxx>
-#endif
-#ifndef _Standard_TypeMismatch_HeaderFile
-#include <Standard_TypeMismatch.hxx>
-#endif
-
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_GUID_HeaderFile
-#include <Standard_GUID.hxx>
-#endif 
-
-#ifndef _TFunction_Driver_HeaderFile
-#include <TFunction_Driver.hxx>
-#endif
-#ifndef _TFunction_Logbook_HeaderFile
-#include <TFunction_Logbook.hxx>
-#endif
-#ifndef _Standard_CString_HeaderFile
-#include <Standard_CString.hxx>
-#endif
-
-class TColStd_SequenceOfExtendedString;
 class TopoDS_Shape;
 class TopTools_IndexedDataMapOfShapeListOfShape;
 class TopTools_IndexedMapOfShape;
+class Standard_GUID;
 
 
 #include "GEOM_BaseDriver.hxx"

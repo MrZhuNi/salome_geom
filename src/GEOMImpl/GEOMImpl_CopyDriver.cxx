@@ -29,19 +29,11 @@
 #include "GEOMAlgo_GetInPlace.hxx"
 #include "GEOMAlgo_GetInPlaceAPI.hxx"
 
-#include <Bnd_Box.hxx>
-#include <BRep_Tool.hxx>
-#include <BRepBndLib.hxx>
-#include <gp_Pnt.hxx>
-#include <Precision.hxx>
-#include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <TopAbs.hxx>
 #include <TopExp.hxx>
-#include <TopExp_Explorer.hxx>
 #include <TNaming_CopyShape.hxx>
 #include <TColStd_IndexedDataMapOfTransientTransient.hxx>
+#include <TFunction_Logbook.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
@@ -208,6 +200,7 @@ Standard_Integer GEOMImpl_CopyDriver::transferData(TFunction_Logbook& log) const
   GEOMImpl_ITransferData                  aTD2(aRef2);
   Standard_Integer                        i;
   Standard_Integer                        aNbShapes = anIndices1.Extent();
+  TopTools_MapOfShape                     aMapFence;
 
   aDatumName->SetValue(DATUM_NAME_INDEX,     "GEOM_TRANSFER_DATA_NAMES");
   aDatumName->SetValue(DATUM_MATERIAL_INDEX, "GEOM_TRANSFER_DATA_MATERIALS");
@@ -232,7 +225,9 @@ Standard_Integer GEOMImpl_CopyDriver::transferData(TFunction_Logbook& log) const
         for (; anIt.More(); anIt.Next()) {
           const TopoDS_Shape &aShapeDest = anIt.Value();
 
-          aTD2.SetName(aShapeDest, aName);
+          if (aMapFence.Add(aShapeDest)) {
+            aTD2.SetName(aShapeDest, aName);
+          }
         }
       }
     }
@@ -252,7 +247,9 @@ Standard_Integer GEOMImpl_CopyDriver::transferData(TFunction_Logbook& log) const
         for (; anIt.More(); anIt.Next()) {
           const TopoDS_Shape &aShapeDest = anIt.Value();
 
-          aTD2.SetMaterial(aShapeDest, aMaterial);
+          if (aMapFence.Add(aShapeDest)) {
+            aTD2.SetMaterial(aShapeDest, aMaterial);
+          }
         }
       }
     }
@@ -279,66 +276,28 @@ Standard_Boolean GEOMImpl_CopyDriver::getInPlace
      const TopoDS_Shape                              &theDestinationShape,
            TopTools_IndexedDataMapOfShapeListOfShape &theMapSourceDest) const
 {
-  // Compute confusion tolerance.
-  Standard_Real    aTolConf = Precision::Confusion();
-  Standard_Integer i;
-
-  for (i = 0; i < 2; ++i) {
-    TopExp_Explorer anExp
-      (i == 0 ? theSourceShape : theDestinationShape, TopAbs_VERTEX);
-
-    for (; anExp.More(); anExp.Next()) {
-      const TopoDS_Vertex aVtx = TopoDS::Vertex(anExp.Current());
-      const Standard_Real aTolVtx = BRep_Tool::Tolerance(aVtx);
-
-      if (aTolVtx > aTolConf) {
-        aTolConf = aTolVtx;
-      }
-    }
-  }
-
-  // Compute mass tolerance.
-  Bnd_Box       aBoundingBox;
-  Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-  Standard_Real aMassTol;
-
-  BRepBndLib::Add(theSourceShape, aBoundingBox);
-  BRepBndLib::Add(theDestinationShape, aBoundingBox);
-  aBoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-  aMassTol = Max(aXmax - aXmin, aYmax - aYmin);
-  aMassTol = Max(aMassTol, aZmax - aZmin);
-  aMassTol *= aTolConf;
-
-  // Searching for the sub-shapes inside the ShapeWhere shape
+  // Searching for the sub-shapes inside theDestinationShape shape
   GEOMAlgo_GetInPlace aGIP;
-  aGIP.SetTolerance(aTolConf);
-  aGIP.SetTolMass(aMassTol);
-  aGIP.SetTolCG(aTolConf);
 
-  aGIP.SetArgument(theSourceShape);
-  aGIP.SetShapeWhere(theDestinationShape);
-
-  aGIP.Perform();
-
-  int iErr = aGIP.ErrorStatus();
-
-  if (iErr) {
+  if (!GEOMAlgo_GetInPlaceAPI::GetInPlace
+          (theDestinationShape, theSourceShape, aGIP)) {
     return Standard_False;
   }
 
   const GEOMAlgo_DataMapOfShapeMapOfShape &aShapesIn = aGIP.ShapesIn();
   const GEOMAlgo_DataMapOfShapeMapOfShape &aShapesOn = aGIP.ShapesOn();
+  Standard_Integer                         i;
   Standard_Integer                         j;
   Standard_Integer                         aNbShapes = theSourceIndices.Extent();
 
-  for (j = 1; j <= aNbShapes; ++j) {
-    const TopoDS_Shape   &aSource = theSourceIndices.FindKey(j);
+  for (i = 1; i <= aNbShapes; ++i) {
+    const TopoDS_Shape   &aSource = theSourceIndices.FindKey(i);
     TopTools_ListOfShape  aListShapes2;
     TopTools_MapOfShape   aMapShapes2;
 
-    for (i = 0; i < 2; ++i) {
+    for (j = 0; j < 2; ++j) {
       const GEOMAlgo_DataMapOfShapeMapOfShape &aShapes2 =
-                    i == 0 ? aShapesIn : aShapesOn;
+                    j == 0 ? aShapesIn : aShapesOn;
 
       if (aShapes2.IsBound(aSource)) {
         const TopTools_MapOfShape &aMapShapesDest =

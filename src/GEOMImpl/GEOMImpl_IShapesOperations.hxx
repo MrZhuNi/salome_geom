@@ -34,22 +34,17 @@
 
 #include "GEOMAlgo_State.hxx"
 
-#include <TopoDS_Shape.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <NCollection_DataMap.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 
-#include <Handle_Geom_Surface.hxx>
-
-#include <gp_Pnt.hxx>
+#include <Geom_Surface.hxx>
 
 #include <list>
-#include <functional>
 
 class GEOM_Engine;
 class Handle(GEOM_Object);
 class Handle(TColStd_HArray1OfInteger);
+class TopoDS_Shape;
 
 class GEOMImpl_IShapesOperations : public GEOM_IOperations
 {

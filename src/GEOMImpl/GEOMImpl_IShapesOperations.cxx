@@ -53,63 +53,32 @@
 
 #include "GEOMAlgo_ClsfBox.hxx"
 #include "GEOMAlgo_ClsfSolid.hxx"
-//#include "GEOMAlgo_CoupleOfShapes.hxx"
 #include "GEOMAlgo_FinderShapeOn1.hxx"
 #include "GEOMAlgo_FinderShapeOnQuad.hxx"
 #include "GEOMAlgo_FinderShapeOn2.hxx"
 #include "GEOMAlgo_GetInPlace.hxx"
 #include "GEOMAlgo_GetInPlaceAPI.hxx"
 #include "GEOMAlgo_GlueDetector.hxx"
-//#include "GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx"
-//#include "GEOMAlgo_ListOfCoupleOfShapes.hxx"
-
-//#include <Basics_OCCTVersion.hxx>
 
 #include <utilities.h>
-//#include <OpUtil.hxx>
-//#include <Utils_ExceptHandlers.hxx>
 
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepAdaptor_Surface.hxx>
-#include <BRepBndLib.hxx>
-//#include <BRepBuilderAPI_MakeVertex.hxx>
-//#include <BRepClass3d_SolidClassifier.hxx>
-//#include <BRepClass_FaceClassifier.hxx>
-#include <BRepExtrema_DistShapeShape.hxx>
-#include <BRepExtrema_ExtCF.hxx>
-#include <BRepGProp.hxx>
-#include <BRepMesh_IncrementalMesh.hxx>
 #include <BRepTools.hxx>
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
-#include <Bnd_Box.hxx>
-#include <GEOMImpl_IMeasure.hxx>
-#include <GEOMImpl_MeasureDriver.hxx>
-#include <GProp_GProps.hxx>
-#include <Geom2d_Curve.hxx>
-#include <GeomAdaptor_Surface.hxx>
 #include <GeomLib_Tool.hxx>
 #include <Geom_CylindricalSurface.hxx>
 #include <Geom_Plane.hxx>
 #include <Geom_SphericalSurface.hxx>
 #include <Geom_Surface.hxx>
 #include <Precision.hxx>
-#include <TColStd_Array1OfReal.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
-#include <TColStd_ListOfInteger.hxx>
 #include <TDF_Tool.hxx>
 #include <TDataStd_Integer.hxx>
-#include <TDataStd_IntegerArray.hxx>
 #include <TDataStd_ListIteratorOfListOfExtendedString.hxx>
-#include <TFunction_Driver.hxx>
-#include <TFunction_DriverTable.hxx>
-#include <TFunction_Logbook.hxx>
-#include <TopAbs.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
-#include <TopLoc_Location.hxx>
-#include <TopTools_Array1OfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
@@ -125,14 +94,10 @@
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <gp_Cylinder.hxx>
-#include <gp_Lin.hxx>
 #include <gp_Pnt.hxx>
 
 #include <vector>
-#include <algorithm>
-#include <functional>
 
-#include <Standard_NullObject.hxx>
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
@@ -3793,130 +3758,6 @@ Handle(TColStd_HSequenceOfInteger)
 
 //=============================================================================
 /*!
- *  GetInPlaceOfShape
- */
-//=============================================================================
-static bool GetInPlaceOfShape (const Handle(GEOM_Function)& theWhereFunction,
-                               const TopTools_IndexedMapOfShape& theWhereIndices,
-                               const TopoDS_Shape& theWhat,
-                               TColStd_ListOfInteger& theModifiedList)
-{
-  if (theWhereFunction.IsNull() || theWhat.IsNull()) return false;
-
-  if (theWhereIndices.Contains(theWhat)) {
-    // entity was not changed by the operation
-    Standard_Integer aWhatIndex = theWhereIndices.FindIndex(theWhat);
-    theModifiedList.Append(aWhatIndex);
-    return true;
-  }
-
-  // try to find in history
-  TDF_Label aHistoryLabel = theWhereFunction->GetHistoryEntry(Standard_False);
-
-  // search in history for all argument shapes
-  Standard_Boolean isFound = Standard_False;
-  Standard_Boolean isGood = Standard_False;
-
-  TDF_LabelSequence aLabelSeq;
-  theWhereFunction->GetDependency(aLabelSeq);
-  Standard_Integer nbArg = aLabelSeq.Length();
-
-  for (Standard_Integer iarg = 1; iarg <= nbArg && !isFound; iarg++) {
-
-    TDF_Label anArgumentRefLabel = aLabelSeq.Value(iarg);
-
-    Handle(GEOM_Object) anArgumentObject = GEOM_Object::GetReferencedObject(anArgumentRefLabel);
-    TopoDS_Shape anArgumentShape = anArgumentObject->GetValue();
-
-    TopTools_IndexedMapOfShape anArgumentIndices;
-    TopExp::MapShapes(anArgumentShape, anArgumentIndices);
-
-    if (anArgumentIndices.Contains(theWhat)) {
-      isFound = Standard_True;
-      Standard_Integer aWhatIndex = anArgumentIndices.FindIndex(theWhat);
-
-      // Find corresponding label in history
-      TDF_Label anArgumentHistoryLabel =
-        theWhereFunction->GetArgumentHistoryEntry(anArgumentRefLabel, Standard_False);
-      if (anArgumentHistoryLabel.IsNull()) {
-        // Lost History of operation argument. Possibly, all its entities was removed.
-        isGood = Standard_True;
-      }
-      else {
-        TDF_Label aWhatHistoryLabel = anArgumentHistoryLabel.FindChild(aWhatIndex, Standard_False);
-
-        if (aWhatHistoryLabel.IsNull()) {
-          // Removed entity ? Compound ? Compsolid ? Shell ? Wire
-          isGood = Standard_False;
-        } else {
-          Handle(TDataStd_IntegerArray) anIntegerArray;
-          if (!aWhatHistoryLabel.FindAttribute(TDataStd_IntegerArray::GetID(), anIntegerArray)) {
-            //Error: Empty modifications history for the sought shape.
-            isGood = Standard_False;
-          }
-          else {
-            isGood = Standard_True;
-            Standard_Integer imod, aModifLen = anIntegerArray->Array()->Length();
-            for (imod = 1; imod <= aModifLen; imod++) {
-              theModifiedList.Append(anIntegerArray->Array()->Value(imod));
-            }
-          }
-        }
-      }
-    }
-  }
-
-  isFound = isGood;
-
-  if (!isFound) {
-    // try compound/compsolid/shell/wire element by element
-    bool isFoundAny = false;
-    TopTools_MapOfShape mapShape;
-
-    if (theWhat.ShapeType() == TopAbs_COMPOUND ||
-        theWhat.ShapeType() == TopAbs_COMPSOLID) {
-      // recursive processing of compound/compsolid
-      TopoDS_Iterator anIt (theWhat, Standard_True, Standard_True);
-      for (; anIt.More(); anIt.Next()) {
-        if (mapShape.Add(anIt.Value())) {
-          TopoDS_Shape curWhat = anIt.Value();
-          isFoundAny = GetInPlaceOfShape(theWhereFunction, theWhereIndices, curWhat, theModifiedList);
-          if (isFoundAny) isFound = Standard_True;
-        }
-      }
-    }
-    else if (theWhat.ShapeType() == TopAbs_SHELL) {
-      // try to replace a shell by its faces images
-      TopExp_Explorer anExp (theWhat, TopAbs_FACE);
-      for (; anExp.More(); anExp.Next()) {
-        if (mapShape.Add(anExp.Current())) {
-          TopoDS_Shape curWhat = anExp.Current();
-          isFoundAny = GetInPlaceOfShape(theWhereFunction, theWhereIndices, curWhat, theModifiedList);
-          if (isFoundAny) isFound = Standard_True;
-        }
-      }
-    }
-    else if (theWhat.ShapeType() == TopAbs_WIRE) {
-      // try to replace a wire by its edges images
-      TopExp_Explorer anExp (theWhat, TopAbs_EDGE);
-      for (; anExp.More(); anExp.Next()) {
-        if (mapShape.Add(anExp.Current())) {
-          TopoDS_Shape curWhat = anExp.Current();
-          isFoundAny = GetInPlaceOfShape(theWhereFunction, theWhereIndices, curWhat, theModifiedList);
-          if (isFoundAny) isFound = Standard_True;
-        }
-      }
-    }
-    else {
-      // Removed entity
-    }
-  }
-
-  return isFound;
-}
-
-//=============================================================================
-/*!
  *  case GetInPlace:
  *  default:
  */
@@ -3936,47 +3777,10 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     return NULL;
   }
 
-  // Compute confusion tolerance.
-  Standard_Real    aTolConf = Precision::Confusion();
-  Standard_Integer i;
-
-  for (i = 0; i < 2; ++i) {
-    TopExp_Explorer anExp(i == 0 ? aWhere : aWhat, TopAbs_VERTEX);
-
-    for (; anExp.More(); anExp.Next()) {
-      const TopoDS_Vertex aVtx = TopoDS::Vertex(anExp.Current());
-      const Standard_Real aTolVtx = BRep_Tool::Tolerance(aVtx);
-
-      if (aTolVtx > aTolConf) {
-        aTolConf = aTolVtx;
-      }
-    }
-  }
-
-  // Compute mass tolerance.
-  Bnd_Box       aBoundingBox;
-  Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-  Standard_Real aMassTol;
-
-  BRepBndLib::Add(aWhere, aBoundingBox);
-  BRepBndLib::Add(aWhat,  aBoundingBox);
-  aBoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-  aMassTol = Max(aXmax - aXmin, aYmax - aYmin);
-  aMassTol = Max(aMassTol, aZmax - aZmin);
-  aMassTol *= aTolConf;
-
   // Searching for the sub-shapes inside the ShapeWhere shape
   GEOMAlgo_GetInPlace aGIP;
-  aGIP.SetTolerance(aTolConf);
-  aGIP.SetTolMass(aMassTol);
-  aGIP.SetTolCG(aTolConf);
 
-  aGIP.SetArgument(aWhat);
-  aGIP.SetShapeWhere(aWhere);
-
-  aGIP.Perform();
-  int iErr = aGIP.ErrorStatus();
-  if (iErr) {
+  if (!GEOMAlgo_GetInPlaceAPI::GetInPlace(aWhere, aWhat, aGIP)) {
     SetErrorCode("Error in GEOMAlgo_GetInPlace");
     return NULL;
   }
