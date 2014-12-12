@@ -1293,7 +1293,7 @@ bool GroupGUI_GroupDlg::execute(ObjectList& objects)
       _PTR(SObject) SO (study->studyDS()->FindObjectIOR(objIOR.toLatin1().constData()));
       if (SO) {
         _PTR(StudyBuilder) aBuilder (study->studyDS()->NewBuilder());
-        aBuilder->SetName(SO, getNewObjectName().toLatin1().constData());
+        aBuilder->SetName(SO, getNewObjectName().toUtf8().constData());
       }
     }
   }

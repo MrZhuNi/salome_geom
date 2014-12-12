@@ -180,7 +180,7 @@ void GEOMBase_Helper::erase( GEOM::GEOM_Object_ptr object, const bool updateView
     QString entry = getEntry( object );
     getDisplayer()->Erase( new SALOME_InteractiveObject(
       entry.toLatin1().constData(), 
-      "GEOM", strdup( GEOMBase::GetName( object ).toLatin1().constData() ) ), true, updateView );
+      "GEOM", strdup( GEOMBase::GetName( object ).toUtf8().constData() ) ), true, updateView );
   }
 }
 
@@ -219,7 +219,7 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
 
     QString entry = getEntry( object );
     getDisplayer()->Redisplay(new SALOME_InteractiveObject
-                              (entry.toLatin1().constData(), "GEOM", strdup(GEOMBase::GetName(object).toLatin1().constData())), false);
+                              (entry.toLatin1().constData(), "GEOM", strdup(GEOMBase::GetName(object).toUtf8().constData())), false);
   }
 
   if ( withChildren ) {
@@ -237,7 +237,7 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
             if ( !aChild->_is_nil() ) {
               QString entry = getEntry( aChild );
               getDisplayer()->Redisplay( new SALOME_InteractiveObject(
-                entry.toLatin1().constData(), "GEOM", strdup( GEOMBase::GetName( aChild ).toLatin1().constData() ) ), false );
+                entry.toLatin1().constData(), "GEOM", strdup( GEOMBase::GetName( aChild ).toUtf8().constData() ) ), false );
             }
           }
         }
@@ -476,7 +476,7 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMo
     QString anEntry = getEntry( anObj );
     if ( anEntry != "" )
       aListOfIO.Append( new SALOME_InteractiveObject(
-        anEntry.toLatin1().constData(), "GEOM", strdup( GEOMBase::GetName( anObj ).toLatin1().constData() ) ) );
+        anEntry.toLatin1().constData(), "GEOM", strdup( GEOMBase::GetName( anObj ).toUtf8().constData() ) ) );
   }
 
   getDisplayer()->LocalSelection( aListOfIO, theMode );
@@ -843,23 +843,23 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
             QString aName = getObjectName(obj);
             if (aName.isEmpty()) {
               aName = getNewObjectName(currObj);
-	            if ( nbObjs > 1 ) {
-		            if (aName.isEmpty())
-		              aName = getPrefix(obj);
-		              if (nbObjs <= 30) {
-		                // Try to find a unique name
-		                aName = GEOMBase::GetDefaultName(aName, extractPrefix());
-		              } else {
-		                // Don't check name uniqueness in case of numerous objects
-		                aName = aName + "_" + QString::number(aNumber++);
-		              }
-	            } else {
-		            // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
-		            if ( aName.isEmpty() )
-		              aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
-	            }
+              if ( nbObjs > 1 ) {
+                if (aName.isEmpty())
+                  aName = getPrefix(obj);
+                if (nbObjs <= 30) {
+                  // Try to find a unique name
+                  aName = GEOMBase::GetDefaultName(aName, extractPrefix());
+                } else {
+                  // Don't check name uniqueness in case of numerous objects
+                  aName = aName + "_" + QString::number(aNumber++);
+                }
+              } else {
+                // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
+                if ( aName.isEmpty() )
+                  aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
+              }
             }
-            anEntryList << addInStudy( obj, aName.toLatin1().constData() );
+            anEntryList << addInStudy( obj, aName.toUtf8().constData() );
             // updateView=false
             if( isDisplayResult() )
               display( obj, false );

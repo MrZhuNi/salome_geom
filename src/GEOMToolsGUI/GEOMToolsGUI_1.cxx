@@ -668,7 +668,7 @@ void GEOMToolsGUI::OnEdgeWidth()
   int aMgrId = dynamic_cast< SUIT_ViewModel* >( window )->getViewManager()->getGlobalId();
 
   GEOMToolsGUI_LineWidthDlg* Dlg =
-    new GEOMToolsGUI_LineWidthDlg( SUIT_Session::session()->activeApplication()->desktop(), "EDGE_WIDTH_TLT" );
+    new GEOMToolsGUI_LineWidthDlg( SUIT_Session::session()->activeApplication()->desktop(), tr("EDGE_WIDTH_TLT") );
 
   QVariant v = appStudy->getObjectProperty( aMgrId, selected.First()->getEntry(), GEOM::propertyName( GEOM::LineWidth ), QVariant() );
   int aWidth = v.isValid() ? v.toInt() : SUIT_Session::session()->resourceMgr()->integerValue( "Geometry", "edge_width", 1 );
@@ -711,7 +711,7 @@ void GEOMToolsGUI::OnIsosWidth() {
   int aMgrId = dynamic_cast< SUIT_ViewModel* >( window )->getViewManager()->getGlobalId();
 
   GEOMToolsGUI_LineWidthDlg* Dlg =
-    new GEOMToolsGUI_LineWidthDlg( SUIT_Session::session()->activeApplication()->desktop(), "ISOS_WIDTH_TLT" );
+    new GEOMToolsGUI_LineWidthDlg( SUIT_Session::session()->activeApplication()->desktop(), tr("ISOS_WIDTH_TLT") );
 
   QVariant v = appStudy->getObjectProperty( aMgrId, selected.First()->getEntry(), GEOM::propertyName( GEOM::IsosWidth ), QVariant() );
   int aWidth = v.isValid() ? v.toInt() : SUIT_Session::session()->resourceMgr()->integerValue( "Geometry", "isolines_width", 1 );
@@ -851,7 +851,7 @@ void GEOMToolsGUI::OnCreateFolder()
   _PTR(SObject) aFatherSO(aStudy->FindObjectID(anIObject->getEntry()));
   if ( !aFatherSO ) return;
 
-  GeometryGUI::GetGeomGen()->CreateFolder( tr("NEW_FOLDER_NAME").toLatin1().constData(), 
+  GeometryGUI::GetGeomGen()->CreateFolder( tr("NEW_FOLDER_NAME").toUtf8().constData(), 
 					   _CAST(SObject, aFatherSO)->GetSObject() );
   app->updateObjectBrowser( false );
 }

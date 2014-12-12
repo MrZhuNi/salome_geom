@@ -144,7 +144,7 @@ int GEOMBase::GetNameOfSelectedIObjects( const SALOME_ListIO& IObjects,
         _PTR(GenericAttribute) anAttr;
         if ( obj && obj->FindAttribute( anAttr, "AttributeName" ) ) {
           _PTR(AttributeName) aNameAttr ( anAttr );
-          name = aNameAttr->Value().c_str();
+          name = QString::fromUtf8( aNameAttr->Value().c_str() );
         }
       }
     }
@@ -626,7 +626,7 @@ bool GEOMBase::SelectionByNameInDialogs( QWidget* widget, const QString& objectU
   /* Create a SALOME_InteractiveObject with a SALOME::SObject */
   Handle(SALOME_InteractiveObject) IO = new SALOME_InteractiveObject( listSO[0]->GetID().c_str(),
                                                                       "GEOM",
-                                                                      objectUserName.toLatin1().constData() );
+                                                                      objectUserName.toUtf8().constData() );
 
   /* Add as a selected object       */
   /* Clear any previous selection : */
@@ -769,7 +769,7 @@ QString GEOMBase::GetName( GEOM::GEOM_Object_ptr object )
       _PTR(GenericAttribute) anAttr;
       if ( aSObj && aSObj->FindAttribute( anAttr, "AttributeName") ) {
         _PTR(AttributeName) aNameAttr( anAttr );
-        name = aNameAttr->Value().c_str();
+        name = QString::fromUtf8( aNameAttr->Value().c_str() );
       }
     }
     
@@ -868,7 +868,7 @@ void GEOMBase::PublishSubObject( GEOM::GEOM_Object_ptr object )
     if ( entry.isEmpty() && !CORBA::is_nil( father ) && !fatherEntry.isEmpty() ) {
       QString name = GetName( object );
       GeometryGUI::GetGeomGen()->AddInStudy( GeometryGUI::ClientStudyToStudy( studyDS ),
-                                             object, name.toLatin1().data(), father.in() );
+                                             object, name.toUtf8().data(), father.in() );
     }
   }
 }
