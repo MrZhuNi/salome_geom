@@ -241,7 +241,7 @@ void XAOPlugin_ExportDlg::processObject()
     {
       QListWidgetItem* item = new QListWidgetItem();
       item->setData(Qt::UserRole, QVariant(i));
-      item->setText(fields[i]->GetName());
+      item->setText(QString::fromUtf8(fields[i]->GetName()));
       item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
       item->setCheckState(Qt::Checked);
       lstFields->addItem(item);

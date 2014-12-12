@@ -1236,7 +1236,8 @@ void AdvancedGUI_PipeTShapeDlg::restoreSubShapes (SALOMEDS::Study_ptr theStudy,
   ObjectList::iterator it = pipeTShapeGroupObjects.begin();
 
   for (int i = 0; it != pipeTShapeGroupObjects.end(); it++, i++) {
-    getGeomEngine()->AddInStudy(theStudy, (*it), tr((*it)->GetName()).toStdString().c_str(), theFather);
+    CORBA::String_var sname = (*it)->GetName();
+    getGeomEngine()->AddInStudy(theStudy, (*it), sname.in(), theFather);
   }
 }
 

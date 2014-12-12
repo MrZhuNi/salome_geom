@@ -363,7 +363,7 @@ bool RepairGUI_LimitToleranceDlg::onAcceptLocal()
             if (aName.isEmpty())
               aName = GEOMBase::GetDefaultName(getPrefix(*it));
           }
-          addInStudy(*it, aName.toLatin1().data());
+          addInStudy(*it, aName.toUtf8().data());
           display(*it, false);
         }
 

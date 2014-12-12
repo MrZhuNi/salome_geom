@@ -112,15 +112,11 @@ GEOM::string_array* GEOM_Field_i::GetComponents()
   if ( !comps.IsNull() )
   {
     compArr->length( comps->Length() );
-    std::string entry;
     int i, i0, nb; 
     for ( i = i0 = comps->Lower(), nb = comps->Upper(); i <= nb; ++i )
     {
       const TCollection_ExtendedString& anEntry = comps->Value( i );
-      entry.resize( anEntry.LengthOfCString() );
-      char* pstr = &entry[0];
-      anEntry.ToUTF8CString( pstr );
-      compArr[ i-i0 ] = CORBA::string_dup( entry.c_str() );
+      compArr[ i-i0 ] = CORBA::string_dup( TCollection_AsciiString( anEntry ).ToCString() );
     }
   }
   return compArr._retn();
@@ -494,15 +490,11 @@ GEOM::string_array* GEOM_StringFieldStep_i::GetValues()
   if ( !values.IsNull() )
   {
     resArray->length( values->Length() );
-    std::string entry;
     int i, i0, nb; 
     for ( i = i0 = values->Lower(), nb = values->Upper(); i <= nb; ++i )
     {
       const TCollection_ExtendedString& anEntry = values->Value( i );
-      entry.resize( anEntry.LengthOfCString() );
-      char* pstr = &entry[0];
-      anEntry.ToUTF8CString( pstr );
-      resArray[ i-i0 ] = CORBA::string_dup( entry.c_str() );
+      resArray[ i-i0 ] = CORBA::string_dup( TCollection_AsciiString( anEntry ).ToCString() );
     }
   }
   return resArray._retn();
