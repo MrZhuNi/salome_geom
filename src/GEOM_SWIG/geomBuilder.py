@@ -10832,6 +10832,41 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("CheckSelfIntersections", self.MeasuOp)
             return IsValid
 
+        ## Check intersections of the given shapes by algorithm based on mesh intersections.
+        #  @param theShape1 First shape.
+        #  @param theShape2 Second shape.
+        #  @param theTolerance  If negative or zero value,  it will be possible to detect intersections
+        #                       If non-zero positive value, it will be possible to detect gaps.
+        #  @param theDeflection  Linear deflection for shapes.
+        #                        If deflection <= 0, than use default deflection 0.001
+        #  @return TRUE, if some intersections have been detected.
+        #  @return List of IDs of sub-shapes from first shape being checked that localize the intersection.
+        #  @return List of IDs of sub-shapes from second shape being checked that localize the intersection.
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
+        def FastIntersect(self, theShape1, theShape2, theTolerance = 0.0, theDeflection = 0.001):
+            """
+            Check intersections of the given shapes by algorithm based on mesh intersections.
+
+            Parameters:
+                theShape1 First shape.
+                theShape2 Second shape.
+                theTolerance  If negative or zero value,  it will be possible to detect intersections
+                              If non-zero positive value, it will be possible to detect gaps.
+                theDeflection  Linear deflection for shapes.
+                               If deflection <= 0, than use default deflection 0.001
+ 
+            Returns:
+                TRUE, if some intersections have been detected.
+                List of IDs of sub-shapes from first shape being checked that localize the intersection.
+                List of IDs of sub-shapes from second shape being checked that localize the intersection.
+            """
+            # Example: see GEOM_TestMeasures.py
+            IsOk, Res1, Res2 = self.MeasuOp.FastIntersect(theShape1, theShape2, theTolerance, theDeflection)
+            RaiseIfFailed("FastIntersect", self.MeasuOp)
+            return IsOk, Res1, Res2
+
         ## Get position (LCS) of theShape.
         #
         #  Origin of the LCS is situated at the shape's center of mass.

@@ -4252,6 +4252,23 @@ module GEOM
                                     out ListOfLong theIntersections);
 
     /*!
+     *  \brief Check intersections of the given shapes by algorithm based on mesh intersections.
+     *  \param theShape1,theShape2 Shapes to find angle between.
+     *  \param theTolerance  If negative value,  it will be possible to detect intersections
+     *                        If non-zero positive value, it will be possible to detect gaps.
+     *  \param theDeflection  Linear deflection for shapes.
+     *                        If deflection <= 0, than use default deflection 0.001
+     *  \param theIntersections1 Output. List of overlapped  sub-shapes IDs of 1st shape.
+     *  \param theIntersections2 Output. List of overlapped  sub-shapes IDs of 2nd shape.
+     *  \return TRUE, if the are some intersections.
+     */
+    boolean FastIntersect (in GEOM_Object theShape1, in GEOM_Object theShape2,
+                                    in double        theTolerance,
+                                    in float         theDeflection,
+                                    out ListOfLong theIntersections1,
+                                    out ListOfLong theIntersections2);
+
+    /*!
      *  \brief Check if the given shape can be an argument for MakeSolid operation
      *  \param theShape Shape to be described.
      *  \return Empty string if a solid can be made on this shape, error code otherwise.

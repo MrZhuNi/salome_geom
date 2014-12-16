@@ -1,0 +1,59 @@
+/*!
+\page fast_intersection_page Fast intersection
+
+This operation checks whether or not two selected shape are overlapped.
+
+\n This tool is useful for fast detection of intersections and gaps.
+In contrast to Boolean Operations, Partition and Detect Self-intersection 
+algorithms that compute topological intersections, this algoritm computes 
+intersections by generating tessellation (triangulation) of the source 
+shapes and detecting overlapping of resulting meshes. High performance is 
+achieved through the use of existing triangulation of faces.
+
+\note For more information about Partition and Boolean Operations Algorithms
+and their limitations refer to <a href="SALOME_BOA_PA.pdf">this document</a>.
+
+\image html measures12.png
+
+In this dialog:
+
+- \b Object 1 - the checked object. \b Selection button allows picking it in the viewer or in the object browser.
+- \b Object 2 - the checked object. \b Selection button allows picking it in the viewer or in the object browser.
+
+\note This dialog supports navigation through the selectable objects (in OCC 3D viewer only):
+- Scroll mouse wheel with pressed \em Ctrl key or press \em "S", \em "P" keys when input focus is
+in the viewer to navigate between selectable objects.
+- Press left mouse button to select an appropriate object to the dialog box.
+.
+For more details, please refer to the \em "Functionality common for OCC and VTK viewers" chapter
+of the GUI module's documentation.
+
+- <b>Deflection coefficient</b> desires the quality of tessellation.
+\note Quality of the result depends on the quality of triangulation.
+In some cases changing this coefficient can strongly affect the result.  
+- <b>Detect gaps</b> - the check box that allows detecting small gaps with between shapes. 
+- <b>Tolerance</b> distance between shapes used for detecting gaps.
+- <b>Compute intersections</b> button computes interferences.
+- <b>Sub-shapes of Object 1</b> - list of sub-shapes from first shape being checked that localize the intersection.
+- <b>Sub-shapes of Object 2</b> - list of sub-shapes from second shape being checked that localize the intersection.
+- \b Apply and <b>Apply and Close</b> buttons are used to store selected intersected shapes in the study for further analysis.
+
+\note Result of this operation cannot be represented as a topological shape. Tool returns as 
+the result a list of sub-shapes from each shape being checked that localize the intersection. 
+The intersection will be published as a compound containing intersected sub-shapes from both source objects.
+This result might be helpful to the user for further analysis of the initial shapes.
+
+\n <b>Result:</b> Boolean, two lists of IDs of sub-shapes from shapes being checked that localize the intersection.
+\n <b>TUI Command:</b> <em>geompy.FastIntersect(theShape1, theShape1, theTolerance = 0.0, theDeflection = 0.001),</em> \n
+where: \n
+\em theShape1 First shape. \n
+\em  theShape2 Second shape. \n
+\em  theTolerance  If negative or zero value,  it will be possible to detect intersections 
+                   If non-zero positive value, it will be possible to detect gaps. \n
+\em  theDeflection  Linear deflection for shapes.
+                    If deflection <= 0, than use default deflection 0.001 \n
+
+See also a \ref tui_fast_intersection_page "TUI example".
+
+
+*/
