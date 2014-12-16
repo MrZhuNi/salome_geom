@@ -175,6 +175,7 @@ namespace GEOMOp {
     OpFuseEdges           = 4014,   // MENU REPAIR - FUSE COLLINEAR EDGES
     OpUnionFaces          = 4015,   // MENU REPAIR - UNION FACES
     OpRemoveWebs          = 4016,   // MENU REPAIR - REMOVE INTERNAL FACES
+    OpInspectObj		  = 4017,   // MENU REPAIR - INSPECT OBJECT
     // MeasureGUI ------------------//--------------------------------
     OpProperties          = 5000,   // MENU MEASURES - PROPERTIES
     OpCenterMass          = 5001,   // MENU MEASURES - CENTRE OF MASS

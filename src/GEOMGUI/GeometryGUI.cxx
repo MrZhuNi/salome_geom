@@ -621,6 +621,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpRemoveExtraEdges:   // MENU REPAIR - REMOVE EXTRA EDGES
   case GEOMOp::OpFuseEdges:          // MENU REPAIR - FUSE COLLINEAR EDGES
   case GEOMOp::OpUnionFaces:         // MENU REPAIR - UNION FACES
+  case GEOMOp::OpInspectObj:         // MENU REPAIR - INSPECT OBJECT
     libName = "RepairGUI";
     break;
   case GEOMOp::OpProperties:         // MENU MEASURE - PROPERTIES
@@ -997,6 +998,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpRemoveExtraEdges, "REMOVE_EXTRA_EDGES" );
   createGeomAction( GEOMOp::OpFuseEdges,        "FUSE_EDGES" );
   createGeomAction( GEOMOp::OpUnionFaces,       "UNION_FACES" );
+  createGeomAction( GEOMOp::OpInspectObj,       "INSPECT_OBJECT" );
 
   createGeomAction( GEOMOp::OpPointCoordinates, "POINT_COORDS" );
   createGeomAction( GEOMOp::OpProperties,       "BASIC_PROPS" );
@@ -1243,6 +1245,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpRemoveExtraEdges, repairId, -1 );
   createMenu( GEOMOp::OpFuseEdges,        repairId, -1 );
   createMenu( GEOMOp::OpUnionFaces,       repairId, -1 );
+  createMenu( GEOMOp::OpInspectObj,       repairId, -1 );
 
   int measurId = createMenu( tr( "MEN_MEASURES" ), -1, -1, 10 );
   createMenu( GEOMOp::OpPointCoordinates, measurId, -1 );

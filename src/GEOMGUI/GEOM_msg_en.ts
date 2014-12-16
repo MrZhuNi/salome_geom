@@ -4749,6 +4749,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Union faces</translation>
     </message>
     <message>
+        <source>TOP_INSPECT_OBJECT</source>
+        <translation>Inspect Object</translation>
+    </message>
+    <message>
+        <source>MEN_INSPECT_OBJECT</source>
+        <translation>Inspect Object</translation>
+    </message>
+    <message>
+        <source>STB_INSPECT_OBJECT</source>
+        <translation>Inspect Object</translation>
+    </message>
+    <message>
         <source>TOP_NORMALE</source>
         <translation>Normal to a face</translation>
     </message>
@@ -6979,6 +6991,45 @@ Do you want to create new material?</translation>
     <message>
         <source>UNION_FACES_NEW_OBJ_NAME</source>
         <translation>UnionFaces</translation>
+    </message>
+</context>
+<context>
+    <name>RepairGUI_InspectObjectDlg</name>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_TITLE</source>
+        <translation>Inspect object</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_MAIN_SHAPE</source>
+        <translation>Main shape</translation>
+    </message>
+    <message>
+    <source>GEOM_INSPECT_OBJECT_SHOW</source>
+        <translation>Show Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_SHOW_ONLY</source>
+        <translation>Show Only Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_HIDE</source>
+        <translation>Hide Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_PUBLISH</source>
+        <translation>Publish Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_NAME</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <source>RENAME_COMPONENT</source>
+        <translation>Change component name</translation>
+    </message>
+    <message>
+        <source>COMPONENT_NAME</source>
+        <translation>Name:</translation>
     </message>
 </context>
 <context>
