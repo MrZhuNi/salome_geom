@@ -6964,14 +6964,6 @@
         <source>GEOM_INSPECT_OBJECT_NAME</source>
         <translation type="unfinished">Name</translation>
     </message>
-    <message>
-      <source>RENAME_COMPONENT</source>
-      <translation>コンポーネントの名前変更</translation>
-    </message>
-    <message>
-      <source>COMPONENT_NAME</source>
-      <translation>コンポーネント名</translation>
-    </message>
   </context>
   <context>
     <name>GEOMGUI_CreationInfoWdg</name>

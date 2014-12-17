@@ -35,6 +35,8 @@ removes selected vertices from a given wire in case if adjacent edges
 are C1 continuous.</li>
 <li>\subpage union_faces_operation_page "Union faces" -
 unites on a given shape all faces sharing the same surface.</li>
+<li>\subpage inspect_object_operation_page "Inspect Object" -
+browses the contents of the selected shape.</li>
 </ul>
 
 */

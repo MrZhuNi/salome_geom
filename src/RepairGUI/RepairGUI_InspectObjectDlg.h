@@ -27,12 +27,14 @@
 #include <QDialog>
 #include <QTreeWidget>
 #include <QLabel>
+#include <QLineEdit>
 
 class RepairGUI_InspectObjectDlg : public QDialog, public GEOMBase_Helper
 { 
   Q_OBJECT
 
   class TreeWidgetItem;
+  class Delegate;
 
 public:
   RepairGUI_InspectObjectDlg( SUIT_Desktop* );
@@ -42,6 +44,7 @@ private slots:
   void                    onEditMainShape();
 
   void                    onItemClicked( QTreeWidgetItem*, int );
+  void                    onItemChanged( QTreeWidgetItem*, int );
   void                    onItemSelectionChanged();
   void                    onItemExpanded( QTreeWidgetItem* );
   void                    onHeaderClicked( int );

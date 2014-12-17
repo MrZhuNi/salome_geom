@@ -7023,14 +7023,6 @@ Do you want to create new material?</translation>
         <source>GEOM_INSPECT_OBJECT_NAME</source>
         <translation>Name</translation>
     </message>
-    <message>
-        <source>RENAME_COMPONENT</source>
-        <translation>Change component name</translation>
-    </message>
-    <message>
-        <source>COMPONENT_NAME</source>
-        <translation>Name:</translation>
-    </message>
 </context>
 <context>
     <name>GEOMGUI_CreationInfoWdg</name>

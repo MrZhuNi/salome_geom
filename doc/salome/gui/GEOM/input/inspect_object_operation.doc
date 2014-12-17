@@ -1,0 +1,24 @@
+/*!
+
+\page inspect_object_operation_page Inspect Object
+
+This operation browses the contents of the selected shape. 
+
+To <b>Inspect Object</b> in the <b>Main Menu</b> select <b>Repair - > Inspect Object</b>.
+
+\image html inspect_object.png
+
+In this dialog: 
+- Click on the "Arrow" button and select in the Object Browser or in the viewer a shape (compound or single solid);
+- Show/hide sub-shape in the 3D viewer, by pressing “eye” icon in the first column of the tree view;
+- Show all/hide all sub-shapes in the 3D viewer, by pressing “eye” icon in the first column of the tree header;
+- Specify name for selected item by double-clicking on the item;
+
+- Show all selected items in the 3D viewer, by pressing <b>Show Selected</b> button;
+- Show selected items in the 3D viewer and erase all currently shown objects, by pressing <b>Show Only Selected</b> button;
+- Hide selected items from the 3D viewer, by pressing <b>Hide Selected</b> button;
+- Publish selected shapes in the study, by pressing <b>Publish Selected</b> button;
+- Close dialog box, by pressing <b>Close</b> button;
+- Open context help page on this dialog box in the Help browser, by pressing <b>Help</b> button.
+
+*/

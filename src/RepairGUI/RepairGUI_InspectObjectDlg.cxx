@@ -23,6 +23,7 @@
 // GEOM includes
 #include <GEOMBase.h>
 #include <GEOM_Constants.h>
+#include <GeometryGUI.h>
 
 // GUI includes
 #include <SUIT_Session.h>
@@ -46,10 +47,10 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QHeaderView>
-#include <QInputDialog>
+#include <QItemDelegate>
 
 //=================================================================================
-// class    : RepairGUI_InspectObjectDlg
+// class    : RepairGUI_InspectObjectDlg::TreeWidgetItem
 // purpose  : class for "Inspect Object" tree item creation
 //=================================================================================
 class RepairGUI_InspectObjectDlg::TreeWidgetItem : public QTreeWidgetItem
@@ -88,6 +89,7 @@ RepairGUI_InspectObjectDlg::TreeWidgetItem::TreeWidgetItem( QTreeWidgetItem* par
   myShape( shape )
 {
   myIO = new SALOME_InteractiveObject( entry.toAscii(), "GEOM", "TEMP_IO" );
+  setFlags( flags() | Qt::ItemIsEditable );
 }
 
 RepairGUI_InspectObjectDlg::TreeWidgetItem::~TreeWidgetItem()
@@ -113,6 +115,46 @@ TopoDS_Shape RepairGUI_InspectObjectDlg::TreeWidgetItem::getShape() const
 Handle(SALOME_InteractiveObject) RepairGUI_InspectObjectDlg::TreeWidgetItem::getIO() const
 {
   return myIO;
+}
+
+//=================================================================================
+// class    : RepairGUI_InspectObjectDlg::Delegate
+// purpose  : class for "Inspect Object" tree item editing
+//=================================================================================
+class RepairGUI_InspectObjectDlg::Delegate : public QItemDelegate
+{
+public:
+  Delegate( QObject* = 0 );
+  ~Delegate();
+
+  void   setEditorData( QWidget*, const QModelIndex& ) const;
+  void   setModelData( QWidget*, QAbstractItemModel*, const QModelIndex& ) const;
+};
+
+RepairGUI_InspectObjectDlg::Delegate::Delegate( QObject* parent )
+: QItemDelegate( parent )
+{
+}
+
+RepairGUI_InspectObjectDlg::Delegate::~Delegate()
+{
+}
+
+void RepairGUI_InspectObjectDlg::Delegate::setEditorData( QWidget* editor,
+                                                          const QModelIndex& index ) const
+{
+  QItemDelegate::setEditorData( editor, index );
+  editor->setProperty( "___name___", editor->property( "text" ) );
+}
+
+void RepairGUI_InspectObjectDlg::Delegate::setModelData( QWidget* editor,
+                                                         QAbstractItemModel* model,
+                                                         const QModelIndex& index ) const
+{
+  QString aNewName = editor->property( "text" ).toString();
+  if( aNewName.trimmed().isEmpty() )
+    editor->setProperty( "text", editor->property( "___name___" ) );
+  QItemDelegate::setModelData( editor, model, index );
 }
 
 //=================================================================================
@@ -180,6 +222,9 @@ RepairGUI_InspectObjectDlg::RepairGUI_InspectObjectDlg( SUIT_Desktop* parent )
   myTreeObjects->header()->setMovable( false );
   myTreeObjects->header()->setResizeMode( 1, QHeaderView::ResizeToContents );
   myTreeObjects->setSelectionMode( QAbstractItemView::ExtendedSelection );
+  myTreeObjects->setEditTriggers( QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed );
+  // set custom item delegate
+  myTreeObjects->setItemDelegate( new Delegate( myTreeObjects ) );
 
   /**********************        Buttons        **********************/
 
@@ -217,8 +262,8 @@ RepairGUI_InspectObjectDlg::RepairGUI_InspectObjectDlg( SUIT_Desktop* parent )
 
   connect( myTreeObjects, SIGNAL( itemClicked( QTreeWidgetItem*, int ) ),
            this, SLOT( onItemClicked( QTreeWidgetItem*, int ) ) );
-  connect( myTreeObjects, SIGNAL( itemDoubleClicked( QTreeWidgetItem*, int ) ),
-           this, SLOT( onItemDoubleClicked( QTreeWidgetItem*, int ) ) );
+  connect( myTreeObjects, SIGNAL( itemChanged( QTreeWidgetItem*, int ) ),
+           this, SLOT( onItemChanged( QTreeWidgetItem*, int ) ) );
   connect( myTreeObjects, SIGNAL( itemExpanded ( QTreeWidgetItem* ) ),
            this, SLOT( onItemExpanded( QTreeWidgetItem* ) ) );
   connect( myTreeObjects, SIGNAL( itemSelectionChanged() ),
@@ -446,20 +491,22 @@ void RepairGUI_InspectObjectDlg::onItemClicked( QTreeWidgetItem* theItem, int th
 }
 
 //=================================================================================
-// function : onItemDoubleClicked()
-// purpose  : called when tree item was double clicked
+// function : onItemChanged()
+// purpose  : called when tree item was changed
 //=================================================================================
-void RepairGUI_InspectObjectDlg::onItemDoubleClicked( QTreeWidgetItem* theItem, int theColumn )
+void RepairGUI_InspectObjectDlg::onItemChanged( QTreeWidgetItem* theItem, int theColumn )
 {
-  if( theColumn!= 0 || !( theItem->flags() & Qt::ItemIsSelectable ) )
+  if( theColumn!= 0 || !( theItem->flags() & Qt::ItemIsEditable ) )
     return;
 
-  bool bOk;
-  QString label = QInputDialog::getText( this, RepairGUI_InspectObjectDlg::tr( "RENAME_COMPONENT" ),
-                                         RepairGUI_InspectObjectDlg::tr ( "COMPONENT_NAME" ), QLineEdit::Normal,
-                                         theItem->text(0), &bOk );
-  if ( bOk && !label.isEmpty() )
-    theItem->setText( 0, label );
+  // rename the same items in the tree
+  QTreeWidgetItemIterator it( myTreeObjects );
+  while(*it) {
+    TreeWidgetItem* anItem = dynamic_cast<TreeWidgetItem*>(*it);
+    if( anItem->getShape().IsSame( dynamic_cast<TreeWidgetItem*>( theItem )->getShape() ) )
+      anItem->setText( 0, theItem->text(0) );
+    ++it;
+  }
 }
 
 //=================================================================================
@@ -616,6 +663,39 @@ void RepairGUI_InspectObjectDlg::clickOnHide()
 //=================================================================================
 void RepairGUI_InspectObjectDlg::clickOnPublish()
 {
+  _PTR(Study) studyDS = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() )->studyDS();
+
+  // find main object
+  TreeWidgetItem* aMainItem = dynamic_cast<TreeWidgetItem*>( myTreeObjects->topLevelItem(0) );
+  GEOM::GEOM_Object_var aMainObject = GEOMBase::ConvertIOinGEOMObject( aMainItem->getIO() );
+
+  // find unique indices of selected objects
+  QList<QTreeWidgetItem*> selectedItems = myTreeObjects->selectedItems();
+  QMap< int, QString > anIndices;
+  GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
+  anArray->length( selectedItems.size() );
+  int j = 0;
+  for( int i = 0; i < selectedItems.size(); i++ ) {
+    TreeWidgetItem* anItem = dynamic_cast<TreeWidgetItem*>( selectedItems.at(i) );
+    int anIndex = GEOMBase::GetIndex( anItem->getShape(), aMainItem->getShape() );
+    if( anIndices.find( anIndex ) == anIndices.end() &&
+    	anItem != aMainItem ) {
+      anIndices[ anIndex ] = anItem->text(0);
+      anArray[j++] = anIndex;
+    }
+  }
+  anArray->length(j);
+
+  // get selected sub-shapes
+  GEOM::GEOM_IShapesOperations_var anOper = getGeomEngine()->GetIShapesOperations( getStudyId() );
+  GEOM::ListOfGO_var aList = anOper->MakeSubShapes( aMainObject, anArray );
+
+  // publish sub-shapes
+  for( int i = 0; i < aList->length(); i++ )
+    GeometryGUI::GetGeomGen()->AddInStudy( GeometryGUI::ClientStudyToStudy( studyDS ), aList[i],
+                                           anIndices.values().at(i).toStdString().c_str(), aMainObject );
+
+  updateObjBrowser();
 }
 
 //=================================================================================
@@ -624,5 +704,5 @@ void RepairGUI_InspectObjectDlg::clickOnPublish()
 //=================================================================================
 void RepairGUI_InspectObjectDlg::clickOnHelp()
 {
-  myApp->onHelpContextModule( "GEOM", "inspect_object_page.html" );
+  myApp->onHelpContextModule( "GEOM", "inspect_object_operation_page.html" );
 }

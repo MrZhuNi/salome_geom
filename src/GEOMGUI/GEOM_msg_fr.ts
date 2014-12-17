@@ -6987,14 +6987,6 @@ Voulez-vous en créer un nouveau ?</translation>
         <source>GEOM_INSPECT_OBJECT_NAME</source>
         <translation type="unfinished">Name</translation>
     </message>
-    <message>
-        <source>RENAME_COMPONENT</source>
-        <translation>Changer le nom de la composante</translation>
-    </message>
-    <message>
-        <source>COMPONENT_NAME</source>
-        <translation>Nom:</translation>
-    </message>
 </context>
 <context>
     <name>GEOMGUI_CreationInfoWdg</name>
