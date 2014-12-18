@@ -435,7 +435,7 @@ EntityGUI_FieldDlg::StepTable::StepTable (int stepID, int dataType,
       if ( vals->length() == nbRows * nbComps )
         for ( int iV = 0, iR = 0; iR < nbRows; ++iR )
           for ( int iC = 1; iC < nbColumns; ++iC )
-            setItem( iR, iC, new QTableWidgetItem( vals[ iV++ ].in() ));
+            setItem( iR, iC, new QTableWidgetItem( QString::fromUtf8( vals[ iV++ ].in() ) ) );
     }
     break;
   }
@@ -1012,13 +1012,13 @@ void EntityGUI_FieldDlg::Init()
     myIsCreation = false;
 
     CORBA::String_var fName = myField->GetName();
-    myMainFrame->ResultName->setText( fName.in() );
+    myMainFrame->ResultName->setText( QString::fromUtf8( fName.in() ) );
 
     myShape = myField->GetShape();
     CORBA::String_var sName;
     if ( !myShape->_is_nil() )
       sName = myShape->GetName();
-    myShapeName->setText( sName.in() ? sName.in() : "");
+    myShapeName->setText( QString::fromUtf8( sName.in() ? sName.in() : "" ) );
 
     myTypeCombo->setCurrentIndex( myField->GetDataType() );
 
@@ -1414,7 +1414,7 @@ void EntityGUI_FieldDlg::showCurStep()
       {
         GEOM::string_array_var compNames = myField->GetComponents();
         for ( int iC = 0; iC < compNames->length(); ++iC )
-          headers << compNames[ iC ].in();
+          headers << QString::fromUtf8( compNames[ iC ].in() );
       }
       else
       {

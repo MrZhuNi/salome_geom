@@ -1996,8 +1996,8 @@ void GeometryGUI::updateCreationInfo()
 	  
 	  QString plugin_name;
           for ( size_t i = 0; i < info->params.length(); ++i ) {
-            myCreationInfoWdg->addParam( info->params[i].name.in(),
-                                         info->params[i].value.in() );
+            myCreationInfoWdg->addParam( QString::fromUtf8( info->params[i].name.in() ),
+                                         QString::fromUtf8( info->params[i].value.in() ) );
             QString value = info->params[i].name.in();
 	    if( value == PLUGIN_NAME ) {
 	      plugin_name = info->params[i].value.in();

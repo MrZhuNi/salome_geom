@@ -2751,7 +2751,7 @@ void GEOM_Displayer::readFieldStepInfo( GEOM::GEOM_FieldStep_var theGeomFieldSte
     {
       GEOM::string_array_var aValues = aGeomStringFieldStep->GetValues();
       for( size_t i = 0, n = aValues->length(); i < n; i++ )
-        aFieldStepData << QString( aValues[i] );
+        aFieldStepData << QString::fromUtf8( aValues[i].in() );
     }
   }
 

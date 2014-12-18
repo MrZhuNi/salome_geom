@@ -241,7 +241,7 @@ void XAOPlugin_ExportDlg::processObject()
     {
       QListWidgetItem* item = new QListWidgetItem();
       item->setData(Qt::UserRole, QVariant(i));
-      item->setText(fields[i]->GetName());
+      item->setText(QString::fromUtf8(fields[i]->GetName()));
       item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
       item->setCheckState(Qt::Checked);
       lstFields->addItem(item);
@@ -450,7 +450,7 @@ bool XAOPlugin_ExportDlg::execute()
   // call engine function
   GEOM::IXAOOperations_var aXAOOp = GEOM::IXAOOperations::_narrow( getOperation() );
   res = aXAOOp->ExportXAO(m_mainObj, groups, fields,
-                          author.toStdString().c_str(),
-                          fileName.toStdString().c_str());
+                          author.toUtf8().data(),
+                          fileName.toUtf8().data());
   return res;
 }
