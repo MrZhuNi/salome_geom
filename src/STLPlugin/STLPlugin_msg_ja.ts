@@ -51,11 +51,11 @@
     </message>
     <message>
       <source>RELATIVE</source>
-      <translation>RELATIVE</translation>
+      <translation type="unfinished">Relative</translation>
     </message>
     <message>
       <source>DEFLECTION</source>
-      <translation>DEFLECTION</translation>
+      <translation type="unfinished">Deflection</translation>
     </message>
   </context>
 </TS>

@@ -5,40 +5,40 @@
     <name>DependencyTree_View</name>
     <message>
       <source>DEPENDENCY_TREE</source>
-      <translation>DEPENDENCY_TREE</translation>
+      <translation type="unfinished">Dependency Tree</translation>
     </message>
     <message>
       <source>MOVE_NODES</source>
-      <translation>MOVE_NODES</translation>
+      <translation type="unfinished">Move nodes</translation>
     </message>
     <message>
       <source>HIERARCHY_DEPTH</source>
-      <translation>HIERARCHY_DEPTH</translation>
+      <translation type="unfinished">Hierarchy depth  </translation>
     </message>
     <message>
       <source>DISPLAY_ASCENDANTS</source>
-      <translation>DISPLAY_ASCENDANTS</translation>
+      <translation type="unfinished">Display ascendants</translation>
     </message>
     <message>
       <source>DISPLAY_DESCENDANTS</source>
-      <translation>DISPLAY_DESCENDANTS</translation>
+      <translation type="unfinished">Display descendants</translation>
     </message>
     <message>
       <source>SHOW_ALL</source>
-      <translation>SHOW_ALL</translation>
+      <translation type="unfinished">Show all</translation>
     </message>
     <message>
       <source>UPDATE</source>
-      <translation>UPDATE</translation>
+      <translation type="unfinished">Update</translation>
     </message>
     <name>DependencyTree_ViewModel</name>
     <message>
       <source>MEN_REBUILD_THE_TREE</source>
-      <translation>MEN_REBUILD_THE_TREE</translation>
+      <translation type="unfinished">Rebuild the tree</translation>
     </message>
     <message>
       <source>MEN_REDUCE_STUDY</source>
-      <translation>MEN_REDUCE_STUDY</translation>
+      <translation type="unfinished">Reduce study</translation>
     </message>
   </context>
 </TS>

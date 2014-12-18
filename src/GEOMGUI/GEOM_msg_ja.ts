@@ -533,7 +533,7 @@
     </message>
     <message>
       <source>GEOM_CYLINDER_ANGLE_ERR</source>
-      <translation>GEOM_CYLINDER_ANGLE_ERR</translation>
+      <translation type="unfinished">Angle values 0 and 360 are unsafe to build proper volumes. Please uncheck the "Angle" box to use the regular cylinder constructor.</translation>
     </message>
     <message>
       <source>GEOM_D1</source>
@@ -2357,11 +2357,11 @@
     </message>
     <message>
       <source>TOP_CURVE_CREATOR</source>
-      <translation>TOP_CURVE_CREATOR</translation>
+      <translation type="unfinished">Create 2D polyline</translation>
     </message>
     <message>
       <source>STB_CURVE_CREATOR</source>
-      <translation>STB_CURVE_CREATOR</translation>
+      <translation type="unfinished">Create 2D polyline</translation>
     </message>
     <message>
       <source>MEN_ALL_SEL_ONLY</source>
@@ -2889,7 +2889,7 @@
     </message>
     <message>
       <source>MEN_POP_VERTICES</source>
-      <translation>MEN_POP_VERTICES</translation>
+      <translation type="unfinished">Show Vertices</translation>
     </message>
     <message>
       <source>MEN_PREFERENCES</source>
@@ -3065,11 +3065,11 @@
     </message>
     <message>
       <source>MEN_VERTICES_MODE_ON</source>
-      <translation>MEN_VERTICES_MODE_ON</translation>
+      <translation type="unfinished">Show Vertices</translation>
     </message>
     <message>
       <source>MEN_VERTICES_MODE_OFF</source>
-      <translation>MEN_VERTICES_MODE_OFF</translation>
+      <translation type="unfinished">Hide Vertices</translation>
     </message>
     <message>
       <source>MEN_WIREFRAME</source>
@@ -3761,7 +3761,7 @@
     </message>
     <message>
       <source>STB_POP_VERTICES</source>
-      <translation>STB_POP_VERTICES</translation>
+      <translation type="unfinished">Show Vertices</translation>
     </message>
     <message>
       <source>STB_POP_SETTEXTURE</source>
@@ -4709,11 +4709,11 @@
     </message>
     <message>
       <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
-      <translation>MEN_POP_SHOW_DEPENDENCY_TREE</translation>
+      <translation type="unfinished">Show dependency tree</translation>
     </message>
     <message>
       <source>MEN_POP_REDUCE_STUDY</source>
-      <translation>MEN_POP_REDUCE_STUDY</translation>
+      <translation type="unfinished">Reduce study</translation>
     </message>
     <message>
       <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
@@ -4981,63 +4981,63 @@
     </message>
     <message>
       <source>PREF_TAB_DEPENDENCY_VIEW</source>
-      <translation>PREF_TAB_DEPENDENCY_VIEW</translation>
+      <translation type="unfinished">Dependency Tree</translation>
     </message>
     <message>
       <source>PREF_HIERARCHY_TYPE</source>
-      <translation>PREF_HIERARCHY_TYPE</translation>
+      <translation type="unfinished">Hierarchy type</translation>
     </message>
     <message>
       <source>MEN_ONLY_ASCENDANTS</source>
-      <translation>MEN_ONLY_ASCENDANTS</translation>
+      <translation type="unfinished">Display only ascendants tree</translation>
     </message>
     <message>
       <source>MEN_ONLY_DESCENDANTS</source>
-      <translation>MEN_ONLY_DESCENDANTS</translation>
+      <translation type="unfinished">Display only descendants tree</translation>
     </message>
     <message>
       <source>MEN_BOTH_ASCENDANTS_DESCENDANTS</source>
-      <translation>MEN_BOTH_ASCENDANTS_DESCENDANTS</translation>
+      <translation type="unfinished">Display both ascendants and descendants trees</translation>
     </message>
     <message>
       <source>GEOM_MOVE_POSSIBILITY</source>
-      <translation>GEOM_MOVE_POSSIBILITY</translation>
+      <translation type="unfinished">Possibility to move nodes</translation>
     </message>
     <message>
       <source>PREF_GROUP_DEPENDENCY_VIEW_COLOR</source>
-      <translation>PREF_GROUP_DEPENDENCY_VIEW_COLOR</translation>
+      <translation type="unfinished">Color</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR</source>
-      <translation>PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR</translation>
+      <translation type="unfinished">Background color</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_NODE_COLOR</source>
-      <translation>PREF_DEPENDENCY_VIEW_NODE_COLOR</translation>
+      <translation type="unfinished">Default node color</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR</source>
-      <translation>PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR</translation>
+      <translation type="unfinished">Main node color</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR</source>
-      <translation>PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR</translation>
+      <translation type="unfinished">Unpublished node color</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</source>
-      <translation>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</translation>
+      <translation type="unfinished">Selected node color</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_ARROW_COLOR</source>
-      <translation>PREF_DEPENDENCY_VIEW_ARROW_COLOR</translation>
+      <translation type="unfinished">Default arrow color</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</source>
-      <translation>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</translation>
+      <translation type="unfinished">Highlighted arrow color</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR</source>
-      <translation>PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR</translation>
+      <translation type="unfinished">Selected arrow color</translation>
     </message>
     <message>
       <source>GEOM_ALL_IMPORT_FILES</source>
@@ -5104,71 +5104,71 @@
     <name>GeometryGUI</name>
     <message>
       <source>TOOL_BASIC</source>
-      <translation>TOOL_BASIC</translation>
+      <translation type="unfinished">Basic</translation>
     </message>
     <message>
       <source>TOOL_BLOCKS</source>
-      <translation>TOOL_BLOCKS</translation>
+      <translation type="unfinished">Blocks</translation>
     </message>
     <message>
       <source>TOOL_BOOLEAN</source>
-      <translation>TOOL_BOOLEAN</translation>
+      <translation type="unfinished">Boolean operations</translation>
     </message>
     <message>
       <source>TOOL_FEATURES</source>
-      <translation>TOOL_FEATURES</translation>
+      <translation type="unfinished">Modification</translation>
     </message>
     <message>
       <source>TOOL_GENERATION</source>
-      <translation>TOOL_GENERATION</translation>
+      <translation type="unfinished">Generation</translation>
     </message>
     <message>
       <source>TOOL_PRIMITIVES</source>
-      <translation>TOOL_PRIMITIVES</translation>
+      <translation type="unfinished">Primitives</translation>
     </message>
     <message>
       <source>TOOL_TRANSFORMATION</source>
-      <translation>TOOL_TRANSFORMATION</translation>
+      <translation type="unfinished">Transformation</translation>
     </message>
     <message>
       <source>TOOL_BUILD</source>
-      <translation>TOOL_BUILD</translation>
+      <translation type="unfinished">Build</translation>
     </message>
     <message>
       <source>TOOL_OPERATIONS</source>
-      <translation>TOOL_OPERATIONS</translation>
+      <translation type="unfinished">Operations</translation>
     </message>
     <message>
       <source>TOOL_PICTURES</source>
-      <translation>TOOL_PICTURES</translation>
+      <translation type="unfinished">Pictures</translation>
     </message>
     <message>
       <source>TOOL_ADVANCED</source>
-      <translation>TOOL_ADVANCED</translation>
+      <translation type="unfinished">Advanced</translation>
     </message>
     <message>
       <source>TOOL_MEASURES</source>
-      <translation>TOOL_MEASURES</translation>
+      <translation type="unfinished">Measures</translation>
     </message>
     <message>
       <source>TOOL_IMPORTEXPORT</source>
-      <translation>TOOL_IMPORTEXPORT</translation>
+      <translation type="unfinished">Import / Export XAO</translation>
     </message>
     <message>
       <source>TABLE_SECTION</source>
-      <translation>TABLE_SECTION</translation>
+      <translation type="unfinished">Section</translation>
     </message>
     <message>
       <source>TABLE_INDEX</source>
-      <translation>TABLE_INDEX</translation>
+      <translation type="unfinished">Index</translation>
     </message>
     <message>
       <source>TABLE_X</source>
-      <translation>TABLE_X</translation>
+      <translation type="unfinished">X</translation>
     </message>
     <message>
       <source>TABLE_Y</source>
-      <translation>TABLE_Y</translation>
+      <translation type="unfinished">Y</translation>
     </message>
   </context>
   <context>
@@ -5415,35 +5415,35 @@
     <name>CurveCreator_NewSectionDlg</name>
     <message>
       <source>SECTION_NAME</source>
-      <translation>SECTION_NAME</translation>
+      <translation type="unfinished">Name</translation>
     </message>
     <message>
       <source>SECTION_LINE_TYPE</source>
-      <translation>SECTION_LINE_TYPE</translation>
+      <translation type="unfinished">Type</translation>
     </message>
     <message>
       <source>SECTION_POLYLINE_TYPE</source>
-      <translation>SECTION_POLYLINE_TYPE</translation>
+      <translation type="unfinished">Polyline</translation>
     </message>
     <message>
       <source>SECTION_SPLINE_TYPE</source>
-      <translation>SECTION_SPLINE_TYPE</translation>
+      <translation type="unfinished">Spline</translation>
     </message>
     <message>
       <source>SECTION_LINE_CLOSED</source>
-      <translation>SECTION_LINE_CLOSED</translation>
+      <translation type="unfinished">Closed</translation>
     </message>
     <message>
       <source>SECTION_ADD_BTN</source>
-      <translation>SECTION_ADD_BTN</translation>
+      <translation type="unfinished">Add</translation>
     </message>
     <message>
       <source>SECTION_OK_BTN</source>
-      <translation>SECTION_OK_BTN</translation>
+      <translation type="unfinished">Ok</translation>
     </message>
     <message>
       <source>SECTION_CANCEL_BTN</source>
-      <translation>SECTION_CANCEL_BTN</translation>
+      <translation type="unfinished">Cancel</translation>
     </message>
     <message>
       <source>ADD_NEW_SECTION</source>
@@ -5458,18 +5458,18 @@
     <name>CurveCreator_TreeViewModel</name>
     <message>
       <source>X=%1, Y=%2</source>
-      <translation>X=%1, Y=%2</translation>
+      <translation type="unfinished">X=%1, Y=%2</translation>
     </message>
     <message>
       <source>X=%1, Y=%2, Z=%3</source>
-      <translation>X=%1, Y=%2, Z=%3</translation>
+      <translation type="unfinished">X=%1, Y=%2, Z=%3</translation>
     </message>
   </context>
   <context>
     <name>CurveCreator_Widget</name>
     <message>
       <source>SECTION_GROUP_TITLE</source>
-      <translation>SECTION_GROUP_TITLE</translation>
+      <translation type="unfinished">Sections</translation>
     </message>
     <message>
       <source>UNDO</source>
@@ -5588,27 +5588,27 @@
     <name>EntityGUI_PolylineDlg</name>
     <message>
       <source>POLYLINE_DLG_TITLE</source>
-      <translation>POLYLINE_DLG_TITLE</translation>
+      <translation type="unfinished">Polyline Construction</translation>
     </message>
     <message>
       <source>POLYLINE_TITLE</source>
-      <translation>POLYLINE_TITLE</translation>
+      <translation type="unfinished">Polyline</translation>
     </message>
     <message>
       <source>POLYLINE_NAME</source>
-      <translation>POLYLINE_NAME</translation>
+      <translation type="unfinished">Polyline</translation>
     </message>
     <message>
       <source>POLYLINE_IMPORT</source>
-      <translation>POLYLINE_IMPORT</translation>
+      <translation type="unfinished">Import polyline</translation>
     </message>
     <message>
       <source>POLYLINE_ADD_SECTION</source>
-      <translation>POLYLINE_ADD_SECTION</translation>
+      <translation type="unfinished">Add section</translation>
     </message>
     <message>
       <source>POLYLINE_EDIT_SECTION</source>
-      <translation>POLYLINE_EDIT_SECTION</translation>
+      <translation type="unfinished">Edit section</translation>
     </message>
   </context>
   <context>
@@ -6132,15 +6132,15 @@
     </message>
     <message>
       <source>X</source>
-      <translation>X</translation>
+      <translation type="unfinished">X</translation>
     </message>
     <message>
       <source>Y</source>
-      <translation>Y</translation>
+      <translation type="unfinished">Y</translation>
     </message>
     <message>
       <source>Z</source>
-      <translation>Z</translation>
+      <translation type="unfinished">Z</translation>
     </message>
   </context>
   <context>
@@ -6456,7 +6456,7 @@
     <name>OperationGUI_ChamferDlg</name>
     <message>
       <source>D</source>
-      <translation>D</translation>
+      <translation type="unfinished">D</translation>
     </message>
     <message>
       <source>FACE_1</source>
@@ -6784,55 +6784,55 @@
     <name>GEOMToolsGUI_ReduceStudyDlg</name>
     <message>
       <source>GEOM_REDUCE_STUDY_TITLE</source>
-      <translation>GEOM_REDUCE_STUDY_TITLE</translation>
+      <translation type="unfinished">Reduce study</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_KEPT_OBJECTS</source>
-      <translation>GEOM_REDUCE_STUDY_KEPT_OBJECTS</translation>
+      <translation type="unfinished">Objects to be kept</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_REMOVE_OBJECTS</source>
-      <translation>GEOM_REDUCE_STUDY_REMOVE_OBJECTS</translation>
+      <translation type="unfinished">Objects to be removed</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_NAME</source>
-      <translation>GEOM_REDUCE_STUDY_NAME</translation>
+      <translation type="unfinished">Name</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_OPTIONS</source>
-      <translation>GEOM_REDUCE_STUDY_OPTIONS</translation>
+      <translation type="unfinished">Options</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_INTERMEDIATES</source>
-      <translation>GEOM_REDUCE_STUDY_INTERMEDIATES</translation>
+      <translation type="unfinished">Intermediate objects</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_SUB_OBJECTS</source>
-      <translation>GEOM_REDUCE_STUDY_SUB_OBJECTS</translation>
+      <translation type="unfinished">Sub-objects</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_KEEP</source>
-      <translation>GEOM_REDUCE_STUDY_KEEP</translation>
+      <translation type="unfinished">Keep</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_UNPUBLISH</source>
-      <translation>GEOM_REDUCE_STUDY_UNPUBLISH</translation>
+      <translation type="unfinished">Unpublish</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_REMOVE</source>
-      <translation>GEOM_REDUCE_STUDY_REMOVE</translation>
+      <translation type="unfinished">Remove</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_REMOVE_EMPTY_FOLDER</source>
-      <translation>GEOM_REDUCE_STUDY_REMOVE_EMPTY_FOLDER</translation>
+      <translation type="unfinished">Remove empty folders</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_SOFT_REMOVAL</source>
-      <translation>GEOM_REDUCE_STUDY_SOFT_REMOVAL</translation>
+      <translation type="unfinished">Soft removal</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_WARNING_DELETE</source>
-      <translation>GEOM_REDUCE_STUDY_WARNING_DELETE</translation>
+      <translation type="unfinished">Do you really want to delete intermediate objects? After applying this operation study will be broken.</translation>
     </message>
   </context>
   <context>
