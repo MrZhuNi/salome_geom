@@ -175,20 +175,7 @@ RepairGUI_InspectObjectDlg::RepairGUI_InspectObjectDlg( SUIT_Desktop* parent )
   setAttribute( Qt::WA_DeleteOnClose );
 
   myApp = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( !myApp ) return;
-
-  SUIT_ViewWindow* aViewWindow = 0;
-  SUIT_Study* activeStudy = myApp->activeStudy();
-  if (activeStudy)
-    aViewWindow = myApp->desktop()->activeWindow();
-  if (aViewWindow == 0) return;
-  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
-  SUIT_ViewManager* aViewManager = aViewWindow->getViewManager();
-  if( aViewManager->getType() != OCCViewer_Viewer::Type() &&
-      aViewManager->getType() != SVTK_Viewer::Type())
-    return;
-
-  myGlobalId = aViewManager->getGlobalId();
+  myViewWindow = myApp->desktop()->activeWindow();
 
   QGridLayout* topLayout = new QGridLayout( this );
   topLayout->setMargin( 11 ); topLayout->setSpacing( 6 );
@@ -282,11 +269,20 @@ RepairGUI_InspectObjectDlg::RepairGUI_InspectObjectDlg( SUIT_Desktop* parent )
   connect( myApp->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( onViewSelectionChanged() ) );
 
+  connect( myApp->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
+           this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
+
+  if( myViewWindow )
+    connect( myViewWindow->getViewManager(), SIGNAL( deleteView( SUIT_ViewWindow* ) ),
+             this, SLOT( onCloseView( SUIT_ViewWindow* ) ), Qt::UniqueConnection );
+
   init();
 }
 
 RepairGUI_InspectObjectDlg::~RepairGUI_InspectObjectDlg()
 {
+  if( myViewWindow )
+    onEditMainShape();
   // restore initial parameters for viewer
   getDisplayer()->UnsetColor();
   getDisplayer()->UnsetWidth();
@@ -306,6 +302,13 @@ void RepairGUI_InspectObjectDlg::init()
   if( selected.Extent() != 1 )
     return;
 
+  if( !myViewWindow ) {
+    SUIT_ViewManager* occVm = myApp->getViewManager( OCCViewer_Viewer::Type(), true );
+    myViewWindow = occVm->getActiveView();
+    connect( occVm, SIGNAL( deleteView( SUIT_ViewWindow* ) ),
+             this, SLOT( onCloseView( SUIT_ViewWindow* ) ), Qt::UniqueConnection );
+  }
+
   TopoDS_Shape aShape = GEOMBase::GetTopoFromSelection( selected );
   if( aShape.IsNull() )
     return;
@@ -320,20 +323,19 @@ void RepairGUI_InspectObjectDlg::init()
 
   // remember initial transparency value
   SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
-  QVariant v = aStudy->getObjectProperty( myGlobalId, QString( anEntry.in() ),
+  QVariant v = aStudy->getObjectProperty( myViewWindow->getViewManager()->getGlobalId(),
+                                          QString( anEntry.in() ),
                                           GEOM::propertyName( GEOM::Transparency ), myTransparency );
   if( v.canConvert( QVariant::Double ) )
     myTransparency = v.toDouble();
-  aStudy->setObjectProperty( myGlobalId, QString( anEntry.in() ), GEOM::propertyName( GEOM::Transparency ), 0.5 );
-
-  if ( GEOM_Displayer::GetActiveView()->isVisible( anIO ) )
-    getDisplayer()->Redisplay( anIO, true );
 
   TreeWidgetItem* anItem = new TreeWidgetItem( myTreeObjects, QStringList() << aName, aShape, anIO );
   if( getDisplayer()->IsDisplayed( anEntry.in() ) )
     anItem->setVisible( true, myVisible );
   else
     anItem->setVisible( false, myInvisible );
+
+  setMainObjectTransparency( 0.5 );
 
   // add sub-objects in the tree
   addSubObjects( anItem );
@@ -423,46 +425,69 @@ void RepairGUI_InspectObjectDlg::setItemDisplayStatus( TreeWidgetItem* theItem, 
 }
 
 //=================================================================================
-// function : onEditMainShape()
-// purpose  : called when selection button was clicked
+// function : setMainObjectTransparency()
+// purpose  : set transparency for the inspected object
 //=================================================================================
-void RepairGUI_InspectObjectDlg::onEditMainShape()
+void RepairGUI_InspectObjectDlg::setMainObjectTransparency( double theTransparency )
 {
-  if( myEditMainShape->text().isEmpty() )
-    return;
+  SUIT_ViewManager* aViewMan = myViewWindow->getViewManager();
+  SALOME_View* aView = dynamic_cast<SALOME_View*>( aViewMan->getViewModel() );
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
 
+  TreeWidgetItem* aMainItem = dynamic_cast<TreeWidgetItem*>( myTreeObjects->topLevelItem(0) );
+  aStudy->setObjectProperty( myViewWindow->getViewManager()->getGlobalId(),
+                             QString( aMainItem->getIO()->getEntry() ),
+                             GEOM::propertyName( GEOM::Transparency ), theTransparency );
+
+  if ( aView->isVisible( aMainItem->getIO() ) )
+    getDisplayer()->Redisplay( aMainItem->getIO(), true, aView );
+}
+
+//=================================================================================
+// function : restoreParam()
+// purpose  : restore initial parameters of the dialog and the viewer
+//=================================================================================
+void RepairGUI_InspectObjectDlg::restoreParam()
+{
+  SUIT_ViewManager* aViewMan = myViewWindow->getViewManager();
+  SALOME_View* aView = dynamic_cast<SALOME_View*>( aViewMan->getViewModel() );
   GEOM_Displayer* aDisplayer = getDisplayer();
   // restore initial parameters for viewer
   aDisplayer->UnsetColor();
   aDisplayer->UnsetWidth();
 
   // restore transparency of main object
-  TreeWidgetItem* aMainItem = dynamic_cast<TreeWidgetItem*>( myTreeObjects->topLevelItem(0) );
-  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
-  aStudy->setObjectProperty( myGlobalId, QString(aMainItem->getIO()->getEntry()) ,
-                             GEOM::propertyName( GEOM::Transparency ), myTransparency );
-
-  if( GEOM_Displayer::GetActiveView()->isVisible( aMainItem->getIO() ) )
-    aDisplayer->Redisplay( aMainItem->getIO(), false );
+  setMainObjectTransparency( myTransparency );
 
   // erase sub-shapes
-  SALOME_ListIO aListOfIO;
+  TreeWidgetItem* aMainItem = dynamic_cast<TreeWidgetItem*>( myTreeObjects->topLevelItem(0) );
   QTreeWidgetItemIterator it( myTreeObjects );
   while(*it) {
     if( *it != aMainItem ) {
       TreeWidgetItem* anItem = dynamic_cast<TreeWidgetItem*>(*it);
-      aListOfIO.Append( anItem->getIO() );
+      aDisplayer->Erase( anItem->getIO(), false, false, aView );
+      anItem->setVisible( false, myInvisible );
     }
     ++it;
   }
-  aDisplayer->Erase( aListOfIO );
+}
+
+//=================================================================================
+// function : onEditMainShape()
+// purpose  : called when selection button was clicked
+//=================================================================================
+void RepairGUI_InspectObjectDlg::onEditMainShape()
+{
+  if( myEditMainShape->text().isEmpty() || !myViewWindow )
+    return;
+
+  restoreParam();
 
   // restore initial parameters for dialog box
   myEditMainShape->setEnabled( true );
   myEditMainShape->setText("");
   myEditMainShape->setFocus();
   myTreeObjects->clear();
-  myTreeObjects->update();
 }
 
 //=================================================================================
@@ -471,7 +496,7 @@ void RepairGUI_InspectObjectDlg::onEditMainShape()
 //=================================================================================
 void RepairGUI_InspectObjectDlg::onItemClicked( QTreeWidgetItem* theItem, int theColumn )
 {
-  if( theColumn!= 1 || !( theItem->flags() & Qt::ItemIsSelectable ) )
+  if( theColumn!= 1 || !( theItem->flags() & Qt::ItemIsSelectable ) || !myViewWindow )
     return;
 
   GEOM_Displayer* aDisplayer = getDisplayer();
@@ -538,6 +563,9 @@ void RepairGUI_InspectObjectDlg::onItemExpanded( QTreeWidgetItem* theItem )
 //=================================================================================
 void RepairGUI_InspectObjectDlg::onItemSelectionChanged()
 {
+  if( !myViewWindow )
+    return;
+
   QList<QTreeWidgetItem*> listItem = myTreeObjects->selectedItems();
   SALOME_ListIO aSelected;
   for( int i = 0; i < listItem.size(); i++ ) {
@@ -553,7 +581,7 @@ void RepairGUI_InspectObjectDlg::onItemSelectionChanged()
 //=================================================================================
 void RepairGUI_InspectObjectDlg::onHeaderClicked( int theColumn )
 {
-  if( theColumn != 1 )
+  if( theColumn != 1 || !myViewWindow )
     return;
 
   GEOM_Displayer* aDisplayer = getDisplayer();
@@ -601,11 +629,56 @@ void RepairGUI_InspectObjectDlg::onViewSelectionChanged()
 }
 
 //=================================================================================
+// function : onWindowActivated()
+// purpose  : called when other window was activated
+//=================================================================================
+void RepairGUI_InspectObjectDlg::onWindowActivated( SUIT_ViewWindow* theViewWindow )
+{
+  if( myViewWindow )
+    restoreParam();
+
+  connect( theViewWindow->getViewManager(), SIGNAL( deleteView( SUIT_ViewWindow* ) ),
+           this, SLOT( onCloseView( SUIT_ViewWindow* ) ), Qt::UniqueConnection );
+
+  if( theViewWindow->getViewManager()->getType() != OCCViewer_Viewer::Type() &&
+      theViewWindow->getViewManager()->getType() != SVTK_Viewer::Type() ) {
+    myViewWindow = 0;
+    return;
+  }
+  myViewWindow = theViewWindow;
+
+  if( myTreeObjects->topLevelItemCount() > 0 ) {
+    setMainObjectTransparency( 0.5 );
+    TreeWidgetItem* aMainItem = dynamic_cast<TreeWidgetItem*>( myTreeObjects->topLevelItem(0) );
+    if( getDisplayer()->IsDisplayed( aMainItem->getIO()->getEntry() ) )
+      aMainItem->setVisible( true, myVisible );
+    else
+      aMainItem->setVisible( false, myInvisible );
+  }
+  checkVisibleIcon();
+}
+
+//=================================================================================
+// function : onCloseView()
+// purpose  : called when last view was closed
+//=================================================================================
+void RepairGUI_InspectObjectDlg::onCloseView( SUIT_ViewWindow* )
+{
+  if( myApp->desktop()->windows().size() == 0 ) {
+    restoreParam();
+    myViewWindow = 0;
+  }
+}
+
+//=================================================================================
 // function : clickOnShow()
 // purpose  : called when "Show selected" button was clicked
 //=================================================================================
 void RepairGUI_InspectObjectDlg::clickOnShow()
 {
+  if( !myViewWindow )
+    return;
+
   QList<QTreeWidgetItem*> listItem = myTreeObjects->selectedItems();
   for( int i = 0; i < listItem.size(); i++ ) {
     TreeWidgetItem* anItem = dynamic_cast<TreeWidgetItem*>( listItem.at(i) );
@@ -624,6 +697,9 @@ void RepairGUI_InspectObjectDlg::clickOnShow()
 //=================================================================================
 void RepairGUI_InspectObjectDlg::clickOnShowOnly()
 {
+  if( !myViewWindow )
+    return;
+
   SALOME_ListIO aListOfIO;
   QTreeWidgetItemIterator it( myTreeObjects );
   while(*it) {
@@ -645,11 +721,14 @@ void RepairGUI_InspectObjectDlg::clickOnShowOnly()
 //=================================================================================
 void RepairGUI_InspectObjectDlg::clickOnHide()
 {
+  if( !myViewWindow )
+    return;
+
   QList<QTreeWidgetItem*> listItem = myTreeObjects->selectedItems();
   for( int i = 0; i < listItem.size(); i++ ) {
     TreeWidgetItem* anItem = dynamic_cast<TreeWidgetItem*>( listItem.at(i) );
     if( anItem->isVisible() ) {
-      getDisplayer()->Erase( anItem->getIO(), false, true );
+      getDisplayer()->Erase( anItem->getIO(), false, false );
       setItemDisplayStatus( anItem, false );
     }
   }

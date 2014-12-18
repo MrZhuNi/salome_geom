@@ -28,6 +28,7 @@
 #include <QTreeWidget>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPointer>
 
 class RepairGUI_InspectObjectDlg : public QDialog, public GEOMBase_Helper
 { 
@@ -52,6 +53,9 @@ private slots:
 
   void                    onViewSelectionChanged();
 
+  void                    onWindowActivated( SUIT_ViewWindow* );
+  void                    onCloseView( SUIT_ViewWindow* );
+
   void                    clickOnShow();
   void                    clickOnShowOnly();
   void                    clickOnHide();
@@ -64,18 +68,20 @@ private:
   void                    addSubObjects( TreeWidgetItem* );
   void                    displayItem( TreeWidgetItem* );
   void                    setItemDisplayStatus( TreeWidgetItem* theItem, bool theIsVisible );
+  void                    setMainObjectTransparency( double );
+  void                    restoreParam();
 
-  SalomeApp_Application*  myApp;
-  int                     myGlobalId;
+  SalomeApp_Application*     myApp;
+  QPointer<SUIT_ViewWindow>  myViewWindow;
 
-  QIcon                   myVisible;
-  QIcon                   myInvisible;
+  QIcon                      myVisible;
+  QIcon                      myInvisible;
 
-  QTreeWidget*            myTreeObjects;
-  QLineEdit*              myEditMainShape;
+  QTreeWidget*               myTreeObjects;
+  QLineEdit*                 myEditMainShape;
 
-  bool                    myIsSelectAll;
-  double                  myTransparency;
+  bool                       myIsSelectAll;
+  double                     myTransparency;
 
 };
 
