@@ -541,4 +541,13 @@ def TestAll (geompy, math):
   geompy.RestoreSubShapes(Partition, [Box])
   geompy.RestoreSubShapes(Partition1)
 
+  # GetSubShapeEdgeSorted
+  p1 = geompy.GetFirstVertex(Sketcher)
+  p2 = geompy.GetFirstVertex(Sketcher3d_1)
+  p3 = geompy.GetFirstVertex(Sketcher3d_2)
+  geompy.GetSubShapeEdgeSorted(Sketcher, p1, "OrderedEdges")
+  geompy.GetSubShapeEdgeSorted(Sketcher3d_1, p2, "OrderedEdges")
+  geompy.GetSubShapeEdgeSorted(Sketcher3d_2, p3, "OrderedEdges")
+
+
   print "DONE"
