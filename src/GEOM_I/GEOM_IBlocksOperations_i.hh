@@ -122,6 +122,7 @@ class GEOM_I_EXPORT GEOM_IBlocksOperations_i :
 		       const GEOM::GEOM_IBlocksOperations::BCErrors& theErrors);
 
   GEOM::GEOM_Object_ptr GetNonBlocks (GEOM::GEOM_Object_ptr theShape,
+                                      const CORBA::Double   theToleranceC1,
                                       GEOM::GEOM_Object_out theNonQuads);
 
   GEOM::GEOM_Object_ptr RemoveExtraEdges (GEOM::GEOM_Object_ptr theShape,

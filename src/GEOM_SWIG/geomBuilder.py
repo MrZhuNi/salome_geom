@@ -80,7 +80,7 @@
 ## # create and publish cylinder
 ## cyl = geompy.MakeCylinderRH(100, 100, "cylinder")
 ## # get non blocks from cylinder
-## g1, g2 = geompy.GetNonBlocks(cyl, "nonblock")
+## g1, g2 = geompy.GetNonBlocks(cyl, theName="nonblock")
 ## @endcode
 ##
 ## Above example will publish both result compounds (first with non-hexa solids and
@@ -88,7 +88,7 @@
 ## However, if second command is invoked as
 ##
 ## @code
-## g1, g2 = geompy.GetNonBlocks(cyl, ("nonhexa", "nonquad"))
+## g1, g2 = geompy.GetNonBlocks(cyl, theName=("nonhexa", "nonquad"))
 ## @endcode
 ##
 ## ... the first compound will be published with "nonhexa" name, and second will be named "nonquad".
@@ -11431,6 +11431,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Retrieve all non blocks solids and faces from \a theShape.
         #  @param theShape The shape to explore.
+        #  @param theIsUseC1 Flag to check if there are 4 bounds on a face
+        #         taking into account C1 continuity.
+        #  @param theAngTolerance the angular tolerance to check if two neighbor
+        #         edges are codirectional in the common vertex with this
+        #         tolerance. This parameter is used only if
+        #         <VAR>theIsUseC1</VAR> is set to True.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -11438,17 +11444,27 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return A tuple of two GEOM_Objects. The first object is a group of all
         #          non block solids (= not 6 faces, or with 6 faces, but with the
         #          presence of non-quadrangular faces). The second object is a
-        #          group of all non quadrangular faces.
+        #          group of all non quadrangular faces (= faces with more then
+        #          1 wire or, if <VAR>theIsUseC1</VAR> is set to True, faces
+        #          with 1 wire with not 4 edges that do not form 4 bounds of
+        #          C1 continuity).
         #
         #  @ref tui_measurement_tools_page "Example 1"
         #  \n @ref swig_GetNonBlocks "Example 2"
         @ManageTransactions("BlocksOp")
-        def GetNonBlocks (self, theShape, theName=None):
+        def GetNonBlocks (self, theShape, theIsUseC1 = False,
+                          theAngTolerance = 1.e-12, theName=None):
             """
             Retrieve all non blocks solids and faces from theShape.
 
             Parameters:
                 theShape The shape to explore.
+                theIsUseC1 Flag to check if there are 4 bounds on a face
+                           taking into account C1 continuity.
+                theAngTolerance the angular tolerance to check if two neighbor
+                           edges are codirectional in the common vertex with this
+                           tolerance. This parameter is used only if
+                           theIsUseC1 is set to True.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -11457,13 +11473,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 A tuple of two GEOM_Objects. The first object is a group of all
                 non block solids (= not 6 faces, or with 6 faces, but with the
                 presence of non-quadrangular faces). The second object is a
-                group of all non quadrangular faces.
+                group of all non quadrangular faces (= faces with more then
+                1 wire or, if <VAR>theIsUseC1</VAR> is set to True, faces
+                with 1 wire with not 4 edges that do not form 4 bounds of
+                C1 continuity).
 
             Usage:
                 (res_sols, res_faces) = geompy.GetNonBlocks(myShape1)
             """
             # Example: see GEOM_Spanner.py
-            aTuple = self.BlocksOp.GetNonBlocks(theShape)
+            aTolerance = -1.0
+            if theIsUseC1:
+                aTolerance = theAngTolerance
+            aTuple = self.BlocksOp.GetNonBlocks(theShape, aTolerance)
             RaiseIfFailed("GetNonBlocks", self.BlocksOp)
             self._autoPublish(aTuple, theName, ("groupNonHexas", "groupNonQuads"))
             return aTuple

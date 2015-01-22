@@ -749,6 +749,7 @@ char* GEOM_IBlocksOperations_i::PrintBCErrors
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetNonBlocks
                                       (GEOM::GEOM_Object_ptr theShape,
+                                       const CORBA::Double   theToleranceC1,
                                        GEOM::GEOM_Object_out theNonQuads)
 {
   GEOM::GEOM_Object_var aGEOMObject;
@@ -765,7 +766,8 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetNonBlocks
 
   //Get the result
   Handle(GEOM_Object) aFaces;
-  Handle(GEOM_Object) anObject = GetOperations()->GetNonBlocks(aShape, aFaces);
+  Handle(GEOM_Object) anObject =
+    GetOperations()->GetNonBlocks(aShape, theToleranceC1, aFaces);
   if (!GetOperations()->IsDone())
     return aGEOMObject._retn();
 
