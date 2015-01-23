@@ -614,6 +614,7 @@ CORBA::Boolean GEOM_IBlocksOperations_i::IsCompoundOfBlocks
 //=============================================================================
 CORBA::Boolean GEOM_IBlocksOperations_i::CheckCompoundOfBlocks
                                           (GEOM::GEOM_Object_ptr theCompound,
+                                           const CORBA::Double   theToleranceC1,
                                            GEOM::GEOM_IBlocksOperations::BCErrors_out theErrors)
 {
   CORBA::Boolean isComp = false;
@@ -627,7 +628,8 @@ CORBA::Boolean GEOM_IBlocksOperations_i::CheckCompoundOfBlocks
 
   //Check
   std::list<GEOMImpl_IBlocksOperations::BCError> errList;
-  isComp = GetOperations()->CheckCompoundOfBlocks(aCompound, errList);
+  isComp = GetOperations()->CheckCompoundOfBlocks
+    (aCompound, theToleranceC1, errList);
   if (!GetOperations()->IsDone())
     return isComp;
 

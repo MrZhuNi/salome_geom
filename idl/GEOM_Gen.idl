@@ -2761,10 +2761,14 @@ module GEOM
      *  - The glue between two quadrangle faces should be applied.
      *    \note Single block is also accepted as a valid compound of blocks.
      *  \param theCompound The compound to check.
+     *  \param theToleranceC1 the tolerance to check if two neighbor edges are
+     *         collinear in the common vertex with this tolerance. Negative
+     *         value means that C1 criterion is not used (old implementation).
      *  \param theErrors Structure, containing discovered errors and incriminated sub-shapes.
      *  \return TRUE, if the given shape is a compound of blocks.
      */
     boolean CheckCompoundOfBlocks (in GEOM_Object theCompound,
+                                   in double      theToleranceC1,
                                    out BCErrors   theErrors);
 
     /*!

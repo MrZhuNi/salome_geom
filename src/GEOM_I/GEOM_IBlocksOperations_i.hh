@@ -116,6 +116,7 @@ class GEOM_I_EXPORT GEOM_IBlocksOperations_i :
 				     CORBA::Long&          theNbBlocks);
 
   CORBA::Boolean CheckCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
+                                        const CORBA::Double   theToleranceC1,
 					GEOM::GEOM_IBlocksOperations::BCErrors_out theErrors);
 
   char* PrintBCErrors (GEOM::GEOM_Object_ptr theCompound,

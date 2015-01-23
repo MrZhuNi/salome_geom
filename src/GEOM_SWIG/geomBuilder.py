@@ -11393,36 +11393,62 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Check, if the compound of blocks is given.
         #  To be considered as a compound of blocks, the
         #  given shape must satisfy the following conditions:
-        #  - Each element of the compound should be a Block (6 faces and 12 edges).
+        #  - Each element of the compound should be a Block (6 faces).
+        #  - Each face should be a quadrangle, i.e. it should have only 1 wire
+        #       with 4 edges. If <VAR>theIsUseC1</VAR> is set to True and
+        #       there are more than 4 edges in the only wire of a face,
+        #       this face is considered to be quadrangle if it has 4 bounds
+        #       (1 or more edge) of C1 continuity.
         #  - A connection between two Blocks should be an entire quadrangle face or an entire edge.
         #  - The compound should be connexe.
         #  - The glue between two quadrangle faces should be applied.
         #  @param theCompound The compound to check.
+        #  @param theIsUseC1 Flag to check if there are 4 bounds on a face
+        #         taking into account C1 continuity.
+        #  @param theAngTolerance the angular tolerance to check if two neighbor
+        #         edges are codirectional in the common vertex with this
+        #         tolerance. This parameter is used only if
+        #         <VAR>theIsUseC1</VAR> is set to True.
         #  @return TRUE, if the given shape is a compound of blocks.
         #  If theCompound is not valid, prints all discovered errors.
         #
         #  @ref tui_measurement_tools_page "Example 1"
         #  \n @ref swig_CheckCompoundOfBlocks "Example 2"
         @ManageTransactions("BlocksOp")
-        def CheckCompoundOfBlocks(self,theCompound):
+        def CheckCompoundOfBlocks(self,theCompound, theIsUseC1 = False,
+                                  theAngTolerance = 1.e-12):
             """
             Check, if the compound of blocks is given.
             To be considered as a compound of blocks, the
             given shape must satisfy the following conditions:
-            - Each element of the compound should be a Block (6 faces and 12 edges).
+            - Each element of the compound should be a Block (6 faces).
+            - Each face should be a quadrangle, i.e. it should have only 1 wire
+                 with 4 edges. If theIsUseC1 is set to True and
+                 there are more than 4 edges in the only wire of a face,
+                 this face is considered to be quadrangle if it has 4 bounds
+                 (1 or more edge) of C1 continuity.
             - A connection between two Blocks should be an entire quadrangle face or an entire edge.
             - The compound should be connexe.
             - The glue between two quadrangle faces should be applied.
 
             Parameters:
                 theCompound The compound to check.
+                theIsUseC1 Flag to check if there are 4 bounds on a face
+                           taking into account C1 continuity.
+                theAngTolerance the angular tolerance to check if two neighbor
+                           edges are codirectional in the common vertex with this
+                           tolerance. This parameter is used only if
+                           theIsUseC1 is set to True.
 
             Returns:
                 TRUE, if the given shape is a compound of blocks.
                 If theCompound is not valid, prints all discovered errors.
             """
             # Example: see GEOM_Spanner.py
-            (IsValid, BCErrors) = self.BlocksOp.CheckCompoundOfBlocks(theCompound)
+            aTolerance = -1.0
+            if theIsUseC1:
+                aTolerance = theAngTolerance
+            (IsValid, BCErrors) = self.BlocksOp.CheckCompoundOfBlocks(theCompound, aTolerance)
             RaiseIfFailed("CheckCompoundOfBlocks", self.BlocksOp)
             if IsValid == 0:
                 Descr = self.BlocksOp.PrintBCErrors(theCompound, BCErrors)

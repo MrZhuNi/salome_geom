@@ -126,6 +126,7 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
   };
 
   Standard_EXPORT Standard_Boolean CheckCompoundOfBlocks (Handle(GEOM_Object) theCompound,
+                                                          const Standard_Real theToleranceC1,
                                                           std::list<BCError>& theErrors);
 
   Standard_EXPORT TCollection_AsciiString PrintBCErrors (Handle(GEOM_Object)       theCompound,

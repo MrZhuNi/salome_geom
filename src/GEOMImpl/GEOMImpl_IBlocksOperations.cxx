@@ -1808,6 +1808,7 @@ void GEOMImpl_IBlocksOperations::AddBlocksFrom (const TopoDS_Shape&   theShape,
       // Check, if there are seam or degenerated edges
       BlockFix_CheckTool aTool;
       aTool.SetShape(theShape);
+      aTool.SetAngTolerance(theToleranceC1);
       aTool.Perform();
       if (aTool.NbPossibleBlocks() > 0) {
         EXT.Append(theShape);
@@ -2139,6 +2140,7 @@ TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
 //=============================================================================
 Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
                                               (Handle(GEOM_Object) theCompound,
+                                               const Standard_Real theToleranceC1,
                                                std::list<BCError>& theErrors)
 {
   SetErrorCode(KO);
@@ -2157,7 +2159,7 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
   TopTools_ListOfShape EXT; // Hexahedral solids, having degenerated and/or seam edges
   TopTools_ListOfShape BLO; // All blocks from the given compound
   TopTools_ListOfShape NOQ; // All non-quadrangular faces
-  AddBlocksFrom(aBlockOrComp, BLO, NOT, EXT, NOQ, -1.);
+  AddBlocksFrom(aBlockOrComp, BLO, NOT, EXT, NOQ, theToleranceC1);
 
   // Report non-blocks
   if (NOT.Extent() > 0) {
