@@ -5,7 +5,7 @@
 
 This operation retrieves all non-block solids and non-quadrangular faces from the selected shape.
 
-A block solid is a solid that has 6 faces and 12 edges.
+A block solid is a solid that has 6 quadrangular faces.
 
 A quadrangular face is a face that has 1 wire with 4 edges. If there are
 more than 4 edges in a single wire and C1 continuity mode is switched on,
