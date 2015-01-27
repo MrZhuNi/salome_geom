@@ -276,6 +276,7 @@ bool GEOMImpl_IHealingOperations::GetParameters (const std::string theOperation,
     theParams.push_back( "DropSmallEdges.Tolerance3d" );
 
   } else if( theOperation == "DropSmallSolids" ) {
+    theParams.push_back( "DropSmallSolids.FixMode" );
     theParams.push_back( "DropSmallSolids.WidthFactorThreshold" );
     theParams.push_back( "DropSmallSolids.VolumeThreshold" );
     theParams.push_back( "DropSmallSolids.MergeSolids" );

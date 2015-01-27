@@ -18,6 +18,7 @@ ShapeProcess.FixFaceSize.Tolerance                   	: 0.05
 
 ShapeProcess.DropSmallEdges.Tolerance3d              	: 0.05
 
+ShapeProcess.DropSmallSolids.FixMode                    : 2
 ShapeProcess.DropSmallSolids.WidthFactorThreshold       : 1
 ShapeProcess.DropSmallSolids.VolumeThreshold            : 1000
 ShapeProcess.DropSmallSolids.MergeSolids                : 1

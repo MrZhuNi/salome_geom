@@ -77,6 +77,8 @@ private:
   QString                            getValue( QWidget* ) const; // retrieve value of the control in the proper way
   QString                            getText( QWidget* ) const; // retrieve text of the control (for spin-boxes only)
 
+  int                                getOptionalValues( );
+  QMap<QString,QStringList>          getMapWithoutOptionalParameters();
   //QDict<QString,QWidget*>            myCtrlMap;  // map of controls (values) of parameters
   void                               initParamsValues(); // initialize the data structures
   void                               initSelection();

@@ -48,7 +48,12 @@
 
 #include <QListWidget>
 #include <QStackedLayout>
-
+enum
+{
+  ALL_PARAMETERS,
+  ONLY_WIDTH_FACTOR_PARAMETER,
+  ONLY_VOLUME_PARAMETER
+};
 //=================================================================================
 // class    : RepairGUI_ShapeProcessDlg()
 // purpose  : Constructs a RepairGUI_ShapeProcessDlg  which is a child of 'parent', with the
@@ -169,10 +174,6 @@ void RepairGUI_ShapeProcessDlg::init()
       myDropSmallSolidsVolTol = new SalomeApp_DoubleSpinBox( w );
       initSpinBox( myDropSmallSolidsWidTol, 0., 1e3, 1., "len_tol_precision" );
       initSpinBox( myDropSmallSolidsVolTol, 0., 1e9, 1., "len_tol_precision" );
-      myDropSmallSolidsWidTol->setValue( 1 );
-      myDropSmallSolidsVolTol->setValue( 1e3 );
-      myDropSmallSolidsVolChk->setChecked( true );
-      myDropSmallSolidsWidTol->setEnabled( false );
       myDropSmallSolidsMergeChk = new QCheckBox( tr("TO_MERGE_SOLIDS"), w );
   
       aLay->addWidget( myDropSmallSolidsWidChk, 0, 0 );
@@ -367,6 +368,45 @@ void RepairGUI_ShapeProcessDlg::init()
 }
 
 //=================================================================================
+// function : getOptionalValues()
+// purpose  :
+//=================================================================================
+int RepairGUI_ShapeProcessDlg::getOptionalValues()
+{
+  bool anWidCheckState = myDropSmallSolidsWidChk->checkState() == Qt::Checked;
+  bool anVolCheckState = myDropSmallSolidsVolChk->checkState() == Qt::Checked;
+  if ( anWidCheckState && anVolCheckState )
+    return ALL_PARAMETERS;
+  else if (anWidCheckState)
+    return ONLY_WIDTH_FACTOR_PARAMETER;
+  else if (anVolCheckState)
+    return ONLY_VOLUME_PARAMETER;
+  return ALL_PARAMETERS;
+}
+//=================================================================================
+// function : getMapWithoutOptionalParameters()
+// purpose  :
+//=================================================================================
+QMap<QString,QStringList>  RepairGUI_ShapeProcessDlg::getMapWithoutOptionalParameters()
+{
+  int mode = getOptionalValues();
+  QMap<QString, QStringList> aValMap(myValMap);
+  if ( mode == ALL_PARAMETERS )
+    return aValMap;
+  QMap<QString, QStringList>::iterator it;
+  it = aValMap.find("DropSmallSolids");
+  if ( it != aValMap.end() ) {
+    if ( mode == ONLY_VOLUME_PARAMETER) {
+      it.value().removeOne("DropSmallSolids.WidthFactorThreshold");
+    }
+    else if ( mode== ONLY_WIDTH_FACTOR_PARAMETER) {
+      it.value().removeOne("DropSmallSolids.VolumeThreshold");
+    }
+  }
+  return aValMap;
+}
+
+//=================================================================================
 // function : onOk()
 // purpose  : Same than click on apply but close this dialog.
 //=================================================================================
@@ -538,10 +578,32 @@ void RepairGUI_ShapeProcessDlg::loadDefaults()
     // set default values of parameters
     if ( aParams->length() != aValues->length() )
       continue;
-
     for ( int j = 0; j < aParams->length(); j++ ) {
       QWidget* aCtrl = getControl( (const char*)aParams[j] );
-      setValue( aCtrl, set_convert( (const char*)aParams[j], aValues[j] ));
+      if (aCtrl) {
+        setValue( aCtrl, set_convert( (const char*)aParams[j], aValues[j] ));
+      }
+      else if (!strcmp( (const char*)aParams[j], "DropSmallSolids.FixMode" )) {
+        int aDropSmallSolidsFixMode = QString(aValues[j].in()).toInt();
+        if ( aDropSmallSolidsFixMode == ALL_PARAMETERS ) {
+          myDropSmallSolidsWidChk->setChecked( true );
+          myDropSmallSolidsWidTol->setEnabled( true );
+          myDropSmallSolidsVolChk->setChecked( true );
+          myDropSmallSolidsVolTol->setEnabled( true );
+        }
+        else if ( aDropSmallSolidsFixMode == ONLY_WIDTH_FACTOR_PARAMETER ) {
+          myDropSmallSolidsWidChk->setChecked( true );
+          myDropSmallSolidsWidTol->setEnabled( true );
+          myDropSmallSolidsVolChk->setChecked( false );
+          myDropSmallSolidsVolTol->setEnabled( false );
+        }
+        else if ( aDropSmallSolidsFixMode == ONLY_VOLUME_PARAMETER ) {
+          myDropSmallSolidsWidChk->setChecked( false );
+          myDropSmallSolidsWidTol->setEnabled( false );
+          myDropSmallSolidsVolChk->setChecked( true );
+          myDropSmallSolidsVolTol->setEnabled( true );
+        }
+      }
     }
   }
 }
@@ -572,11 +634,6 @@ QString RepairGUI_ShapeProcessDlg::getValue( QWidget* theControl ) const
 {
   if ( theControl ) {
     if ( qobject_cast<SalomeApp_DoubleSpinBox*>( theControl )) {
-      if ( ( theControl == myDropSmallSolidsWidTol || theControl == myDropSmallSolidsVolTol ) && !theControl->isEnabled() ) {
-        // VSR: stupid workaround about ShapeProcessAPI:
-        // specific processing for optional parameters of DropSmallSolids operator
-        return QString::number( Precision::Infinite() );
-      }
       return QString::number( qobject_cast<SalomeApp_DoubleSpinBox*>( theControl )->value() );
     }
     else if ( qobject_cast<SalomeApp_IntSpinBox*>( theControl )) {
@@ -631,7 +688,7 @@ bool RepairGUI_ShapeProcessDlg::isValid( QString& msg )
     while( aListIter.hasNext() ) {
       const QString& aParam = aListIter.next();
       QWidget* aControl = getControl( aParam );
-      if ( !aControl->isEnabled() ) continue;
+      if ( !aControl || !aControl->isEnabled() ) continue;
       if ( qobject_cast<SalomeApp_DoubleSpinBox*>( aControl ))
         ok = qobject_cast<SalomeApp_DoubleSpinBox*>( aControl )->isValid( msg, !IsPreview() ) && ok;
       else if ( qobject_cast<SalomeApp_IntSpinBox*>( aControl ))
@@ -663,7 +720,6 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
   GEOM::string_array_var anOperators = getActiveOperators();
   GEOM::string_array_var aParams = getParameters( anOperators );
   GEOM::string_array_var aValues = getValues( aParams );
-
   /*//-- check --
   int z;
         MESSAGE("Objects : ");
@@ -790,6 +846,7 @@ void RepairGUI_ShapeProcessDlg::initParamsValues()
   myValMap["DropSmallEdges"] << "DropSmallEdges.Tolerance3d";
 
   myOpLst << "DropSmallSolids";
+  myValMap["DropSmallSolids"] << "DropSmallSolids.FixMode";
   myValMap["DropSmallSolids"] << "DropSmallSolids.WidthFactorThreshold";
   myValMap["DropSmallSolids"] << "DropSmallSolids.VolumeThreshold";
   myValMap["DropSmallSolids"] << "DropSmallSolids.MergeSolids";
@@ -835,17 +892,17 @@ GEOM::string_array* RepairGUI_ShapeProcessDlg::getParameters( const GEOM::string
 {
   GEOM::string_array_var aParams = new GEOM::string_array();
   int i = 0, j = 0;
-
+  QMap<QString, QStringList> aValMap = getMapWithoutOptionalParameters();
   // calculate the length of parameters
   for ( i = 0, j = 0; i < theOperators.length(); i++ )
-    j += myValMap[ QString( theOperators[i].in() ) ].size();
+    j += aValMap[ QString( theOperators[i].in() ) ].size();
   
   // set the new length of paremeters
   aParams->length( j );
 
   // fill the parameters
   for ( i = 0, j = 0; i < theOperators.length(); i++ ) {
-    QStringList aParamLst = myValMap[ QString( theOperators[i].in() ) ];
+    QStringList aParamLst = aValMap[ QString( theOperators[i].in() ) ];
     foreach ( QString aParam, aParamLst ) {
       aParams[j++] = CORBA::string_dup( aParam.toLatin1().constData() );
     }
@@ -855,7 +912,6 @@ GEOM::string_array* RepairGUI_ShapeProcessDlg::getParameters( const GEOM::string
 
   return aParams._retn();
 }
-
 
 //=================================================================================
 // function : getValues
@@ -868,8 +924,12 @@ GEOM::string_array* RepairGUI_ShapeProcessDlg::getValues( const GEOM::string_arr
 
   for ( int i = 0; i < theParams.length(); i++ ) {
     QWidget* aCtrl = getControl( (const char*)theParams[i] );
-    if ( aCtrl )
+    if ( aCtrl ) {
       aValues[i] = get_convert( (const char*)theParams[i], getValue( aCtrl ));
+    }
+    else if( !strcmp( (const char*)theParams[i], "DropSmallSolids.FixMode" ) ) {
+      aValues[i] = QString::number(getOptionalValues()).toLatin1().constData();
+    }
   }
 
   return aValues._retn();
@@ -890,6 +950,9 @@ QStringList RepairGUI_ShapeProcessDlg::getTexts( const GEOM::string_array& thePa
       QString aText = getText( aCtrl );
       if( !aText.isNull() )
         aTexts.append( aText );
+    }
+    else if( !strcmp( (const char*)theParams[i], "DropSmallSolids.FixMode" ) ) {
+      aTexts.append( QString::number(getOptionalValues()) );
     }
   }
     
