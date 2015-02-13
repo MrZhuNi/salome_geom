@@ -117,7 +117,7 @@ TransformationGUI_ProjectionOnCylDlg::TransformationGUI_ProjectionOnCylDlg
 
   /***************************************************************/
 
-  setHelpFileName("project_on_cylinder_operation_page.html");
+  setHelpFileName("projection_on_cylinder_operation_page.html");
 
   Init();
 }

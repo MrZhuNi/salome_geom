@@ -8,11 +8,10 @@
 \n This operation makes a projection of a <b>Source planar wire or face</b> on
 a cylinder defined by its radius. The cylinder's coordinate system is
 the same as the global coordinate system. The result represents a wire or
-a face or a compound of faces that represents a projection of the source
-shape onto a cylinder.
+a face that represents a projection of the source shape onto a cylinder.
 
 To make a projection it is necessary to define:
-- \b Object to be rotated. It can be either a planar wire or a face;
+- \b Object to be projected. It can be either a planar wire or a face;
 - \b Radius of the cylinder;
 - <b>Starting angle</b> from the cylinder's X axis around Z axis. This is
 the angle of the projection starting.

@@ -9348,9 +9348,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
         ##
-        #  Compute a wire or a face or a compound of faces that represents
-        #  a projection of the source shape onto cylinder. The cylinder's
-        #  coordinate system is the same as the global coordinate system.
+        #  Compute a wire or a face that represents a projection of the source
+        #  shape onto cylinder. The cylinder's coordinate system is the same
+        #  as the global coordinate system.
         #
         #  @param theObject The object to be projected. It can be either
         #         a planar wire or a face.
@@ -9367,18 +9367,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         publication is switched on, default value is used for result name.
         #
         #  @return New GEOM.GEOM_Object, containing the result shape. The result
-        #         represents a wire or a face or a compound of faces that
-        #         represents a projection of the source shape onto a cylinder.
+        #         represents a wire or a face that represents a projection of
+        #         the source shape onto a cylinder.
         #
-        #  @ref tui_fillet "Example 1"
-        #  \n @ref swig_MakeFilletAll "Example 2"
+        #  @ref tui_projection "Example"
         def MakeProjectionOnCylinder (self, theObject, theRadius,
                                       theStartAngle=0.0, theAngleLength=-1.0,
                                       theName=None):
             """
-            Compute a wire or a face or a compound of faces that represents
-            a projection of the source shape onto cylinder. The cylinder's
-            coordinate system is the same as the global coordinate system.
+            Compute a wire or a face that represents a projection of the source
+            shape onto cylinder. The cylinder's coordinate system is the same
+            as the global coordinate system.
 
             Parameters:
                 theObject The object to be projected. It can be either
@@ -9396,13 +9395,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             Returns:
                 New GEOM.GEOM_Object, containing the result shape. The result
-                represents a wire or a face or a compound of faces that
-                represents a projection of the source shape onto a cylinder.
-
-            Example of usage:
-               filletall = geompy.MakeFilletAll(prism, 10.)
+                represents a wire or a face that represents a projection of
+                the source shape onto a cylinder.
             """
-            # Example: see GEOM_TestOthers.py
+            # Example: see GEOM_TestAll.py
             theRadius, theStartAngle, theAngleLength, Parameters = ParseParameters(
               theRadius, theStartAngle, theAngleLength)
             anObj = self.TrsfOp.MakeProjectionOnCylinder(theObject, theRadius,
