@@ -53,6 +53,15 @@
 #include <TColStd_HArray1OfReal.hxx>
 #include <TDataStd_Integer.hxx>
 
+namespace
+{
+  TCollection_AsciiString subShapeName( const Handle(GEOM_Object)& subObject )
+  {
+    TCollection_AsciiString name = subObject->GetName();
+    if ( name.IsEmpty() ) name = "[unnamed]";
+    return name;
+  }
+}
 
 XAO::Dimension shapeEnumToDimension(const TopAbs_ShapeEnum& shape)
 {
@@ -274,16 +283,16 @@ void XAOPlugin_IOperations::exportSubshapes( const Handle(GEOM_Object)& shape, X
       switch (subObject->GetValue().ShapeType())
       {
       case TopAbs_VERTEX:
-        geometry->changeVertexName(subIndex, subObject->GetName().ToCString());
+        geometry->changeVertexName(subIndex, subShapeName( subObject ).ToCString());
         break;
       case TopAbs_EDGE:
-        geometry->changeEdgeName(subIndex, subObject->GetName().ToCString());
+        geometry->changeEdgeName(subIndex, subShapeName( subObject ).ToCString());
         break;
       case TopAbs_FACE:
-        geometry->changeFaceName(subIndex, subObject->GetName().ToCString());
+        geometry->changeFaceName(subIndex, subShapeName( subObject ).ToCString());
         break;
       case TopAbs_SOLID:
-        geometry->changeSolidName(subIndex, subObject->GetName().ToCString());
+        geometry->changeSolidName(subIndex, subShapeName( subObject ).ToCString());
         break;
       }
     }
