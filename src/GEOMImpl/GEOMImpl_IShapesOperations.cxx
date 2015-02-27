@@ -51,10 +51,10 @@
 #include "GEOMUtils.hxx"
 
 #include "GEOMAlgo_ClsfBox.hxx"
+#include "GEOMAlgo_ClsfQuad.hxx"
 #include "GEOMAlgo_ClsfSolid.hxx"
+#include "GEOMAlgo_ClsfSurf.hxx"
 #include "GEOMAlgo_CoupleOfShapes.hxx"
-#include "GEOMAlgo_FinderShapeOn1.hxx"
-#include "GEOMAlgo_FinderShapeOnQuad.hxx"
 #include "GEOMAlgo_FinderShapeOn2.hxx"
 #include "GEOMAlgo_GetInPlace.hxx"
 #include "GEOMAlgo_GlueDetector.hxx"
@@ -2280,7 +2280,7 @@ Handle(TColStd_HSequenceOfInteger)
 
   // Interprete results
   Standard_Integer iErr = aFinder.ErrorStatus();
-  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {
     MESSAGE(" iErr : " << iErr);
     TCollection_AsciiString aMsg (" iErr : ");
@@ -2289,7 +2289,7 @@ Handle(TColStd_HSequenceOfInteger)
     return aSeqOfIDs;
   }
   Standard_Integer iWrn = aFinder.WarningStatus();
-  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iWrn) {
     MESSAGE(" *** iWrn : " << iWrn);
   }
@@ -2447,7 +2447,7 @@ Handle(TColStd_HSequenceOfInteger)
 
   // Interprete results
   Standard_Integer iErr = aFinder.ErrorStatus();
-  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {
     if (iErr == 41) {
       SetErrorCode("theCheckShape must be a solid");
@@ -2461,7 +2461,7 @@ Handle(TColStd_HSequenceOfInteger)
     return aSeqOfIDs;
   }
   Standard_Integer iWrn = aFinder.WarningStatus();
-  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iWrn) {
     MESSAGE(" *** iWrn : " << iWrn);
   }
@@ -2680,13 +2680,14 @@ Handle(TColStd_HSequenceOfInteger)
   // END: Mantis issue 0020961
 
   // Call algo
-  GEOMAlgo_FinderShapeOn1 aFinder;
-  //Standard_Real aTol = 0.0001; // default value
-  Standard_Real aTol = VertMax; // Mantis issue 0020961
+  GEOMAlgo_FinderShapeOn2   aFinder;
+  Handle(GEOMAlgo_ClsfSurf) aClsfSurf = new GEOMAlgo_ClsfSurf;
+  Standard_Real             aTol      = VertMax; // Mantis issue 0020961
 
+  aClsfSurf->SetSurface(theSurface);
   aFinder.SetShape(theShape);
   aFinder.SetTolerance(aTol);
-  aFinder.SetSurface(theSurface);
+  aFinder.SetClsf(aClsfSurf);
   aFinder.SetShapeType(theShapeType);
   aFinder.SetState(theState);
 
@@ -2704,7 +2705,7 @@ Handle(TColStd_HSequenceOfInteger)
 
   // Interprete results
   Standard_Integer iErr = aFinder.ErrorStatus();
-  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {
     MESSAGE(" iErr : " << iErr);
     TCollection_AsciiString aMsg (" iErr : ");
@@ -2713,7 +2714,7 @@ Handle(TColStd_HSequenceOfInteger)
     return aSeqOfIDs;
   }
   Standard_Integer iWrn = aFinder.WarningStatus();
-  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iWrn) {
     MESSAGE(" *** iWrn : " << iWrn);
   }
@@ -3445,12 +3446,15 @@ Handle(TColStd_HSequenceOfInteger)
   gp_Pnt aPntBL = BRep_Tool::Pnt(TopoDS::Vertex(aBL));
   gp_Pnt aPntBR = BRep_Tool::Pnt(TopoDS::Vertex(aBR));
 
-  GEOMAlgo_FinderShapeOnQuad aFinder( aPntTL, aPntTR, aPntBL, aPntBR );
+  GEOMAlgo_FinderShapeOn2  aFinder;
+  Handle(GEOMAlgo_ClsfQuad) aClsfQuad = new GEOMAlgo_ClsfQuad;
+
   Standard_Real aTol = 0.0001; // default value
 
+  aClsfQuad->SetCorners(aPntTL, aPntTR, aPntBL, aPntBR);
   aFinder.SetShape(aShape);
   aFinder.SetTolerance(aTol);
-  //aFinder.SetSurface(theSurface);
+  aFinder.SetClsf(aClsfQuad);
   aFinder.SetShapeType(aShapeType);
   aFinder.SetState(theState);
 
@@ -3468,7 +3472,7 @@ Handle(TColStd_HSequenceOfInteger)
 
   // Interprete results
   Standard_Integer iErr = aFinder.ErrorStatus();
-  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {
     MESSAGE(" iErr : " << iErr);
     TCollection_AsciiString aMsg (" iErr : ");
@@ -3477,7 +3481,7 @@ Handle(TColStd_HSequenceOfInteger)
     return aSeqOfIDs;
   }
   Standard_Integer iWrn = aFinder.WarningStatus();
-  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iWrn) {
     MESSAGE(" *** iWrn : " << iWrn);
   }
