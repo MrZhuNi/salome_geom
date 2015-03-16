@@ -242,6 +242,13 @@ def TestAll (geompy, math):
   Pipe             = geompy.MakePipe(Wire, Edge)               #(2 GEOM_Object)->GEOM_Object
   Sewing           = geompy.MakeSewing([Face, S], precision)   #(List Of GEOM_Object, Double)->GEOM_Object
   Copy             = geompy.MakeCopy(Box)                      #(GEOM_Object)->GEOM_Object
+  ThickSolid       = geompy.MakeCopy(Box)
+  faces            = geompy.SubShapeAllSortedCentres(Box, geompy.ShapeType["FACE"])
+  shell            = geompy.MakeShell([faces[0], faces[1], faces[2]])
+  faceIDs          = geompy.SubShapeAllSortedCentresIDs(
+                        ThickSolid, geompy.ShapeType["FACE"])
+  ThickShell       = geompy.MakeThickSolid(shell, 50)          #(GEOM_Object, Double)->GEOM_Object
+  geompy.Thicken(ThickSolid, 50, [faceIDs[0], faceIDs[1]])     #(GEOM_Object) modification
 
   #Transform objects
   Translation = geompy.MakeTranslationTwoPoints(Box, px, pz)    #(3 GEOM_Object)->GEOM_Object
@@ -437,6 +444,9 @@ def TestAll (geompy, math):
   id_Plane2   = geompy.addToStudy(Plane2,   "Plane on Face")
 
   id_Copy       = geompy.addToStudy(Copy,       "Copy")
+  id_ThickShell = geompy.addToStudy(ThickShell, "ThickShell")
+  id_ThickSolid = geompy.addToStudy(ThickSolid, "ThickSolid")
+
   id_Prism            = geompy.addToStudy(Prism,            "Prism")
   id_Prism2Ways       = geompy.addToStudy(Prism2Ways,       "Prism2Ways")
   id_PrismTwoPnt      = geompy.addToStudy(PrismTwoPnt,      "PrismTwoPnt")
