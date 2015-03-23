@@ -480,7 +480,7 @@ bool GenerationGUI_PipeDlg::isValid (QString&)
 //=================================================================================
 bool GenerationGUI_PipeDlg::execute (ObjectList& objects)
 {
-  GEOM::GEOM_Object_var anObj;
+  GEOM::ListOfGO_var aList;
 
   GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
   switch( getConstructorId() ) {
@@ -489,15 +489,15 @@ bool GenerationGUI_PipeDlg::execute (ObjectList& objects)
     for (int i = 0; i < myBaseObjects.count(); i++) {
       switch ( getConstructorId() ) {
       case 0 :
-	anObj = anOper->MakePipe(myBaseObjects[i].get(), myPath.get());
+	aList = anOper->MakePipe(myBaseObjects[i].get(), myPath.get(), false);
 	break;
       case 1 :
-	anObj = anOper->MakePipeBiNormalAlongVector(myBaseObjects[i].get(), myPath.get(), myVec.get());
+	aList = anOper->MakePipeBiNormalAlongVector(myBaseObjects[i].get(), myPath.get(), myVec.get(), false);
 	break;
       }
-    
-      if (!anObj->_is_nil())
-	objects.push_back(anObj._retn());
+
+      if (!aList[0]->_is_nil())
+	objects.push_back(aList[0]._retn());
     }
     break;
   case 2:
@@ -512,12 +512,12 @@ bool GenerationGUI_PipeDlg::execute (ObjectList& objects)
       for (int i = 0; i < myLocations.count(); i++) {
 	myLocationsGO[i] = myLocations[i].copy();
       }
-      
-      anObj = anOper->MakePipeWithDifferentSections(myBaseGO.in(), myLocationsGO.in(), myPath.get(), 
+
+      aList = anOper->MakePipeWithDifferentSections(myBaseGO.in(), myLocationsGO.in(), myPath.get(), 
 						    GroupMakePoints->CheckBox1->isChecked(), 
-						    GroupMakePoints->CheckBox2->isChecked());
-      if (!anObj->_is_nil())
-	objects.push_back(anObj._retn());
+						    GroupMakePoints->CheckBox2->isChecked(), false);
+      if (!aList[0]->_is_nil())
+	objects.push_back(aList[0]._retn());
     }
     break;
   default:
