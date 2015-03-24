@@ -61,6 +61,7 @@
 #include <GEOMImpl_IDisk.hxx>
 #include <GEOMImpl_ICylinder.hxx>
 #include <GEOMImpl_ICone.hxx>
+#include <GEOMImpl_IGroupOperations.hxx>
 #include <GEOMImpl_ISphere.hxx>
 #include <GEOMImpl_ITorus.hxx>
 #include <GEOMImpl_IPrism.hxx>
@@ -75,6 +76,8 @@
 #include <GEOMImpl_IPipePath.hxx>
 
 #include <Precision.hxx>
+#include <TopExp.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -88,6 +91,7 @@ GEOMImpl_I3DPrimOperations::GEOMImpl_I3DPrimOperations (GEOM_Engine* theEngine, 
 : GEOM_IOperations(theEngine, theDocID)
 {
   MESSAGE("GEOMImpl_I3DPrimOperations::GEOMImpl_I3DPrimOperations");
+  myGroupOperations = new GEOMImpl_IGroupOperations(GetEngine(), GetDocID());
 }
 
 //=============================================================================
@@ -98,6 +102,7 @@ GEOMImpl_I3DPrimOperations::GEOMImpl_I3DPrimOperations (GEOM_Engine* theEngine, 
 GEOMImpl_I3DPrimOperations::~GEOMImpl_I3DPrimOperations()
 {
   MESSAGE("GEOMImpl_I3DPrimOperations::~GEOMImpl_I3DPrimOperations");
+  delete myGroupOperations;
 }
 
 
@@ -1475,6 +1480,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_I3DPrimOperations::MakePipe
 
   aCI.SetBase(aRefBase);
   aCI.SetPath(aRefPath);
+  aCI.SetGenerateGroups(IsGenerateGroups);
 
   //Compute the Pipe value
   try {
@@ -1490,9 +1496,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_I3DPrimOperations::MakePipe
     return NULL;
   }
 
+  // Create the sequence of objects.
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
 
   aSeq->Append(aPipe);
+  createGroups(aPipe, &aCI, aSeq);
+
   //Make a Python command
   GEOM::TPythonDump pyDump(aFunction);
 
@@ -1885,6 +1894,7 @@ Handle(TColStd_HSequenceOfTransient)
   aCI.SetPath(aRefPath);
   aCI.SetWithContactMode(theWithContact);
   aCI.SetWithCorrectionMode(theWithCorrections);
+  aCI.SetGenerateGroups(IsGenerateGroups);
 
   //Compute the Pipe value
   try {
@@ -1900,9 +1910,12 @@ Handle(TColStd_HSequenceOfTransient)
     return NULL;
   }
 
+  // Create the sequence of objects.
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
 
   aSeq->Append(aPipeDS);
+  createGroups(aPipeDS, &aCI, aSeq);
+
   //Make a Python command
   GEOM::TPythonDump pyDump(aFunction);
 
@@ -2059,6 +2072,7 @@ Handle(TColStd_HSequenceOfTransient)
   aCI.SetPath(aRefPath);
   aCI.SetWithContactMode(theWithContact);
   aCI.SetWithCorrectionMode(theWithCorrections);
+  aCI.SetGenerateGroups(IsGenerateGroups);
 
   //Compute the Pipe value
   try {
@@ -2074,9 +2088,12 @@ Handle(TColStd_HSequenceOfTransient)
     return NULL;
   }
 
+  // Create the sequence of objects.
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
 
   aSeq->Append(aPipeDS);
+  createGroups(aPipeDS, &aCI, aSeq);
+
   //Make a Python command
   GEOM::TPythonDump pyDump(aFunction);
 
@@ -2221,6 +2238,7 @@ Handle(TColStd_HSequenceOfTransient)
 
   aCI.SetBases(aSeqBases);
   aCI.SetLocations(aSeqLocs);
+  aCI.SetGenerateGroups(IsGenerateGroups);
 
   //Compute the Pipe value
   try {
@@ -2236,9 +2254,12 @@ Handle(TColStd_HSequenceOfTransient)
     return NULL;
   }
 
+  // Create the sequence of objects.
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
 
   aSeq->Append(aPipeDS);
+  createGroups(aPipeDS, &aCI, aSeq);
+
   //Make a Python command
   GEOM::TPythonDump pyDump(aFunction);
 
@@ -2331,6 +2352,7 @@ Handle(TColStd_HSequenceOfTransient)
   aCI.SetBase(aRefBase);
   aCI.SetPath(aRefPath);
   aCI.SetVector(aRefVec);
+  aCI.SetGenerateGroups(IsGenerateGroups);
 
   //Compute the Pipe value
   try {
@@ -2346,9 +2368,11 @@ Handle(TColStd_HSequenceOfTransient)
     return NULL;
   }
 
+  // Create the sequence of objects.
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
 
   aSeq->Append(aPipe);
+  createGroups(aPipe, &aCI, aSeq);
 
   //Make a Python command
   GEOM::TPythonDump pyDump(aFunction);
@@ -2626,4 +2650,123 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::RestorePath
 
   SetErrorCode(OK);
   return aPath;
+}
+
+//=============================================================================
+/*!
+ *  createGroup
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::createGroup
+                  (const Handle(GEOM_Object)              &theBaseObject,
+                   const Handle(TColStd_HArray1OfInteger) &theGroupIDs,
+                   const TCollection_AsciiString          &theName,
+                   const TopTools_IndexedMapOfShape       &theIndices)
+{
+  if (theBaseObject.IsNull() || theGroupIDs.IsNull()) {
+    return NULL;
+  }
+
+  // Get the Shape type.
+  const Standard_Integer anID      = theGroupIDs->Value(theGroupIDs->Lower());
+  const Standard_Integer aNbShapes = theIndices.Extent();
+
+  if (anID < 1 || anID > aNbShapes) {
+    return NULL;
+  }
+
+  const TopoDS_Shape aSubShape = theIndices.FindKey(anID);
+
+  if (aSubShape.IsNull()) {
+    return NULL;
+  }
+
+  // Create a group.
+  const TopAbs_ShapeEnum aGroupType = aSubShape.ShapeType();
+  Handle(GEOM_Object)    aGroup     =
+    myGroupOperations->CreateGroup(theBaseObject, aGroupType);
+
+  if (aGroup.IsNull() == Standard_False) {
+    aGroup->GetLastFunction()->SetDescription("");
+    aGroup->SetName(theName.ToCString());
+
+    Handle(TColStd_HSequenceOfInteger) aSeqIDs = new TColStd_HSequenceOfInteger;
+    Standard_Integer                   i;
+
+    for (i = theGroupIDs->Lower(); i <= theGroupIDs->Upper(); ++i) {
+      // Get and check the index.
+      const Standard_Integer anIndex = theGroupIDs->Value(i);
+
+      if (anIndex < 1 || anIndex > aNbShapes) {
+        return NULL;
+      }
+
+      // Get and check the sub-shape.
+      const TopoDS_Shape aSubShape = theIndices.FindKey(anIndex);
+
+      if (aSubShape.IsNull()) {
+        return NULL;
+      }
+
+      // Check the shape type.
+      if (aSubShape.ShapeType() != aGroupType) {
+        return NULL;
+      }
+
+      aSeqIDs->Append(anIndex);
+    }
+
+    myGroupOperations->UnionIDs(aGroup, aSeqIDs);
+    aGroup->GetLastFunction()->SetDescription("");
+  }
+
+  return aGroup;
+}
+
+//=============================================================================
+/*!
+ *  createGroups
+ */
+//=============================================================================
+void GEOMImpl_I3DPrimOperations::createGroups
+                   (const Handle(GEOM_Object)                  &theBaseObject,
+                          GEOMImpl_IPipe                       *thePipe,
+                          Handle(TColStd_HSequenceOfTransient) &theSequence)
+{
+  if (theBaseObject.IsNull() || thePipe == NULL || theSequence.IsNull()) {
+    return;
+  }
+
+  TopoDS_Shape aShape = theBaseObject->GetValue();
+
+  if (aShape.IsNull()) {
+    return;
+  }
+
+  TopTools_IndexedMapOfShape       anIndices;
+  Handle(TColStd_HArray1OfInteger) aGroupIDs;
+  TopoDS_Shape                     aShapeType;
+  const Standard_Integer           aNbGroups = 5;
+  Handle(GEOM_Object)              aGrps[aNbGroups];
+  Standard_Integer                 i;
+
+  TopExp::MapShapes(aShape, anIndices);
+
+  // Create groups.
+  aGroupIDs = thePipe->GetGroupDown();
+  aGrps[0]  = createGroup(theBaseObject, aGroupIDs, "GROUP_DOWN", anIndices);
+  aGroupIDs = thePipe->GetGroupUp();
+  aGrps[1]  = createGroup(theBaseObject, aGroupIDs, "GROUP_UP", anIndices);
+  aGroupIDs = thePipe->GetGroupSide1();
+  aGrps[2]  = createGroup(theBaseObject, aGroupIDs, "GROUP_SIDE1", anIndices);
+  aGroupIDs = thePipe->GetGroupSide2();
+  aGrps[3]  = createGroup(theBaseObject, aGroupIDs, "GROUP_SIDE2", anIndices);
+  aGroupIDs = thePipe->GetGroupOther();
+  aGrps[4]  = createGroup(theBaseObject, aGroupIDs, "GROUP_OTHER", anIndices);
+
+  for (i = 0; i < aNbGroups; ++i) {
+    if (aGrps[i].IsNull() == Standard_False) {
+      theSequence->Append(aGrps[i]);
+    }
+  }
 }

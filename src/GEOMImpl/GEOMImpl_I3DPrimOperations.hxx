@@ -30,6 +30,11 @@
 #include <TDocStd_Document.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 
+class GEOMImpl_IGroupOperations;
+class GEOMImpl_IPipe;
+class TopTools_IndexedMapOfShape;
+
+
 class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
  public:
   Standard_EXPORT GEOMImpl_I3DPrimOperations(GEOM_Engine* theEngine, int theDocID);
@@ -165,6 +170,23 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) RestorePath (Handle(GEOM_Object) theShape,
                                                    const Handle(TColStd_HSequenceOfTransient)& theBase1,
                                                    const Handle(TColStd_HSequenceOfTransient)& theBase2);
+
+private:
+
+  Handle(GEOM_Object) createGroup
+                  (const Handle(GEOM_Object)              &theBaseObject,
+                   const Handle(TColStd_HArray1OfInteger) &theGroupIDs,
+                   const TCollection_AsciiString          &theName,
+                   const TopTools_IndexedMapOfShape       &theIndices);
+
+  void createGroups(const Handle(GEOM_Object)                  &theBaseObject,
+                          GEOMImpl_IPipe                       *thePipe,
+                          Handle(TColStd_HSequenceOfTransient) &theSequence);
+
+private:
+
+  GEOMImpl_IGroupOperations *myGroupOperations;
+
 };
 
 #endif
