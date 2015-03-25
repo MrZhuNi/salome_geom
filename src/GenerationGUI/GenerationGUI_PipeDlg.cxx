@@ -53,7 +53,13 @@
 //=================================================================================
 GenerationGUI_PipeDlg::GenerationGUI_PipeDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
                                               bool modal, Qt::WindowFlags fl)
-  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl)
+  : GEOMBase_Skeleton  (theGeometryGUI, parent, modal, fl),
+    myGenGroupCheckGP  (0),
+    myPrefixLblGP      (0),
+    myPrefixEditGP     (0),
+    myGenGroupCheckGMP (0),
+    myPrefixLblGMP     (0),
+    myPrefixEditGMP    (0)
 {
   QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_PIPE")));
   QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
@@ -81,6 +87,19 @@ GenerationGUI_PipeDlg::GenerationGUI_PipeDlg (GeometryGUI* theGeometryGUI, QWidg
   GroupPoints->PushButton3->setIcon(image1);
   GroupPoints->CheckButton1->setText(tr("GEOM_SELECT_UNPUBLISHED_EDGES"));
 
+  // Add widgets for group generation
+  QGridLayout *aLayoutGP = (QGridLayout *)GroupPoints->GroupBox1->layout();
+
+  myGenGroupCheckGP =
+    new QCheckBox(tr("GEOM_GENERATE_GROUPS"), GroupPoints->GroupBox1);
+  myPrefixLblGP     =
+    new QLabel (tr("GEOM_GROUP_NAME_PREFIX"), GroupPoints->GroupBox1);
+  myPrefixEditGP    = new QLineEdit(GroupPoints->GroupBox1);
+
+  aLayoutGP->addWidget(myGenGroupCheckGP, 4, 0, 1, 3);
+  aLayoutGP->addWidget(myPrefixLblGP,     5, 0, 1, 2);
+  aLayoutGP->addWidget(myPrefixEditGP,    5, 2);
+
   GroupMakePoints = new DlgRef_3Sel2Check3Spin(centralWidget());
 
   GroupMakePoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
@@ -92,12 +111,31 @@ GenerationGUI_PipeDlg::GenerationGUI_PipeDlg (GeometryGUI* theGeometryGUI, QWidg
   GroupMakePoints->PushButton3->setIcon(image1);
   GroupMakePoints->CheckBox1->setText(tr("GEOM_WITH_CONTACT"));
   GroupMakePoints->CheckBox2->setText(tr("GEOM_WITH_CORRECTION"));
+  GroupMakePoints->SpinBox1->setAttribute(Qt::WA_DeleteOnClose);
+  GroupMakePoints->SpinBox2->setAttribute(Qt::WA_DeleteOnClose);
+  GroupMakePoints->SpinBox3->setAttribute(Qt::WA_DeleteOnClose);
+  GroupMakePoints->TextLabel4->setAttribute(Qt::WA_DeleteOnClose);
+  GroupMakePoints->TextLabel5->setAttribute(Qt::WA_DeleteOnClose);
+  GroupMakePoints->TextLabel6->setAttribute(Qt::WA_DeleteOnClose);
   GroupMakePoints->SpinBox1->close();
   GroupMakePoints->SpinBox2->close();
   GroupMakePoints->SpinBox3->close();
   GroupMakePoints->TextLabel4->close();
   GroupMakePoints->TextLabel5->close();
   GroupMakePoints->TextLabel6->close();
+
+  // Add widgets for group generation
+  QGridLayout *aLayoutGMP = (QGridLayout *)GroupMakePoints->GroupBox1->layout();
+
+  myGenGroupCheckGMP =
+    new QCheckBox(tr("GEOM_GENERATE_GROUPS"), GroupMakePoints->GroupBox1);
+  myPrefixLblGMP     =
+    new QLabel (tr("GEOM_GROUP_NAME_PREFIX"), GroupMakePoints->GroupBox1);
+  myPrefixEditGMP    = new QLineEdit(GroupMakePoints->GroupBox1);
+
+  aLayoutGMP->addWidget(myGenGroupCheckGMP, 8, 0, 1, 3);
+  aLayoutGMP->addWidget(myPrefixLblGMP,     9, 0, 1, 2);
+  aLayoutGMP->addWidget(myPrefixEditGMP,    9, 2);
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -166,6 +204,8 @@ void GenerationGUI_PipeDlg::Init()
   connect(GroupMakePoints->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupMakePoints->CheckBox1, SIGNAL(clicked()), this, SLOT(processPreview()));
   connect(GroupMakePoints->CheckBox2, SIGNAL(clicked()), this, SLOT(processPreview()));
+  connect(myGenGroupCheckGP,  SIGNAL(toggled(bool)), this, SLOT(GenGroupClicked(bool)));
+  connect(myGenGroupCheckGMP, SIGNAL(toggled(bool)), this, SLOT(GenGroupClicked(bool)));
 
   initName(tr("GEOM_PIPE"));
   resize(100,100);
@@ -195,6 +235,8 @@ void GenerationGUI_PipeDlg::ConstructorsClicked( int constructorId )
     GroupPoints->PushButton3->hide();
     GroupPoints->LineEdit3->hide();
     GroupPoints->PushButton1->click();
+    myGenGroupCheckGP->setChecked(false);
+    resetGenGroup(myGenGroupCheckGP, false, true);
     break;
   case 1:
     GroupMakePoints->hide();
@@ -203,11 +245,15 @@ void GenerationGUI_PipeDlg::ConstructorsClicked( int constructorId )
     GroupPoints->PushButton3->show();
     GroupPoints->LineEdit3->show();
     GroupPoints->PushButton1->click();
+    myGenGroupCheckGP->setChecked(false);
+    resetGenGroup(myGenGroupCheckGP, false, true);
     break;
   case 2:
     GroupPoints->hide();
     GroupMakePoints->show();
     GroupMakePoints->PushButton1->click();
+    myGenGroupCheckGMP->setChecked(false);
+    resetGenGroup(myGenGroupCheckGMP, false, true);
     break;
   default:
     break;
@@ -483,21 +529,38 @@ bool GenerationGUI_PipeDlg::execute (ObjectList& objects)
   GEOM::ListOfGO_var aList;
 
   GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+  bool doGroups = !IsPreview();
+
+  myGroupObjectsMap.clear();
+
   switch( getConstructorId() ) {
   case 0:
   case 1:
+    if (doGroups) {
+      doGroups = myGenGroupCheckGP->isChecked();
+    }
+
     for (int i = 0; i < myBaseObjects.count(); i++) {
       switch ( getConstructorId() ) {
       case 0 :
-	aList = anOper->MakePipe(myBaseObjects[i].get(), myPath.get(), false);
-	break;
+        aList = anOper->MakePipe(myBaseObjects[i].get(),
+                                 myPath.get(), doGroups);
+        break;
       case 1 :
-	aList = anOper->MakePipeBiNormalAlongVector(myBaseObjects[i].get(), myPath.get(), myVec.get(), false);
-	break;
+        aList = anOper->MakePipeBiNormalAlongVector
+              (myBaseObjects[i].get(), myPath.get(), myVec.get(), doGroups);
+        break;
       }
 
-      if (!aList[0]->_is_nil())
-	objects.push_back(aList[0]._retn());
+      if (aList->length() > 0) {
+        if (!aList[0]->_is_nil()) {
+          objects.push_back(aList[0]._retn());
+        }
+
+        if (doGroups) {
+          addGroups(aList);
+        }
+      }
     }
     break;
   case 2:
@@ -507,17 +570,30 @@ bool GenerationGUI_PipeDlg::execute (ObjectList& objects)
       myBaseGO->length( myBaseObjects.count() );
       myLocationsGO->length( myLocations.count() );
       for (int i = 0; i < myBaseObjects.count(); i++) {
-	myBaseGO[i] = myBaseObjects[i].copy();
+        myBaseGO[i] = myBaseObjects[i].copy();
       }
       for (int i = 0; i < myLocations.count(); i++) {
-	myLocationsGO[i] = myLocations[i].copy();
+        myLocationsGO[i] = myLocations[i].copy();
       }
 
-      aList = anOper->MakePipeWithDifferentSections(myBaseGO.in(), myLocationsGO.in(), myPath.get(), 
-						    GroupMakePoints->CheckBox1->isChecked(), 
-						    GroupMakePoints->CheckBox2->isChecked(), false);
-      if (!aList[0]->_is_nil())
-	objects.push_back(aList[0]._retn());
+      if (doGroups) {
+        doGroups = myGenGroupCheckGMP->isChecked();
+      }
+
+      aList = anOper->MakePipeWithDifferentSections
+                          (myBaseGO.in(), myLocationsGO.in(), myPath.get(), 
+                           GroupMakePoints->CheckBox1->isChecked(), 
+                           GroupMakePoints->CheckBox2->isChecked(), doGroups);
+
+      if (aList->length() > 0) {
+        if (!aList[0]->_is_nil()) {
+          objects.push_back(aList[0]._retn());
+        }
+
+        if (doGroups) {
+          addGroups(aList);
+        }
+      }
     }
     break;
   default:
@@ -546,6 +622,75 @@ bool GenerationGUI_PipeDlg::extractPrefix() const
 }
 
 //=================================================================================
+// function : restoreSubShapes
+// purpose  : virtual method to restore tree of argument's sub-shapes under
+//            the resulting shape. Redefined from GEOMBase_Helper class.
+//=================================================================================
+void GenerationGUI_PipeDlg::restoreSubShapes
+              (SALOMEDS::Study_ptr theStudy, SALOMEDS::SObject_ptr theSObject)
+{
+  QCheckBox *aGenGroupCheck = NULL;
+  QLineEdit *aPrefixEdit    = NULL;
+
+
+  switch (getConstructorId()) {
+  case 0 :
+  case 1 :
+    aGenGroupCheck = myGenGroupCheckGP;
+    aPrefixEdit    = myPrefixEditGP;
+    break;
+  case 2 :
+    aGenGroupCheck = myGenGroupCheckGMP;
+    aPrefixEdit    = myPrefixEditGMP;
+    break;
+  default:
+    break;
+  }
+
+  if (aGenGroupCheck == NULL || !aGenGroupCheck->isChecked()) {
+    return;
+  }
+
+  SALOMEDS::GenericAttribute_var anAttr;
+
+  if (!theSObject->FindAttribute(anAttr, "AttributeIOR")) {
+    return;
+  }
+
+  SALOMEDS::AttributeIOR_var anAttrIOR =
+                             SALOMEDS::AttributeIOR::_narrow(anAttr);
+  CORBA::String_var anIORso = anAttrIOR->Value();
+
+  // get Object from SObject
+  GEOM::GEOM_Object_var aFather = GEOM::GEOM_Object::_narrow
+            (myGeomGUI->getApp()->orb()->string_to_object(anIORso));
+
+  if (CORBA::is_nil(aFather)) {
+    return;
+  }
+
+  ObjectMap::const_iterator anIter = myGroupObjectsMap.find(aFather);
+
+  if (anIter != myGroupObjectsMap.end()) {
+    ObjectList::const_iterator it = anIter->second.begin();
+    QString              aName    = aPrefixEdit->text();
+
+    if (!aName.isEmpty()) {
+      aName += "_";
+    }
+
+    for (; it != anIter->second.end(); it++) {
+      // Compose the name
+      QString aGrpName = tr((*it)->GetName());
+
+      aName += aGrpName;
+      getGeomEngine()->AddInStudy(theStudy, (*it),
+                                  aName.toStdString().c_str(), aFather);
+    }
+  }
+}
+
+//=================================================================================
 // function : getSourceObjects
 // purpose  : virtual method to get source objects
 //=================================================================================
@@ -556,4 +701,65 @@ QList<GEOM::GeomObjPtr> GenerationGUI_PipeDlg::getSourceObjects()
   for (int i = 0; i < myLocations.count(); i++)
     res << myLocations[i];
   return res;
+}
+
+//=================================================================================
+// function : GenGroupClicked
+// purpose  : Slot to treat checking "Generate groups" check box.
+//=================================================================================
+void GenerationGUI_PipeDlg::GenGroupClicked(bool isChecked)
+{
+  resetGenGroup((QCheckBox *)sender(), isChecked, false);
+}
+
+//=================================================================================
+// function : resetGenGroup
+// purpose  : Resets data of "Generate groups" widgets.
+//=================================================================================
+void GenerationGUI_PipeDlg::resetGenGroup(QCheckBox  *theGenGroup,
+                                          const bool  isChecked,
+                                          const bool  isClearPrefix)
+{
+  QLabel    *aPrefixLbl  = NULL;
+  QLineEdit *aPrefixEdit = NULL;
+
+  if (theGenGroup == myGenGroupCheckGP) {
+    aPrefixLbl  = myPrefixLblGP;
+    aPrefixEdit = myPrefixEditGP;
+  } else if (theGenGroup == myGenGroupCheckGMP) {
+    aPrefixLbl  = myPrefixLblGMP;
+    aPrefixEdit = myPrefixEditGMP;
+  }
+
+  if (aPrefixLbl != NULL) {
+    aPrefixLbl->setEnabled(isChecked);
+    aPrefixEdit->setEnabled(isChecked);
+
+    if (isClearPrefix) {
+      aPrefixEdit->setText("");
+    }
+  }
+}
+
+//=================================================================================
+// function : addGroups
+// purpose  : Add result groups to the list of groups.
+//=================================================================================
+void GenerationGUI_PipeDlg::addGroups(GEOM::ListOfGO_var &theResult)
+{
+  const int aNbObj = theResult->length();
+
+  if (aNbObj > 0) {
+    GEOM::GEOM_Object_ptr aKey = theResult[0]._retn();
+
+    if (!aKey->_is_nil()) {
+      int i;
+
+      for (i = 1; i < aNbObj; ++i) {
+        if (!theResult[i]->_is_nil()) {
+          myGroupObjectsMap[aKey].push_back(theResult[i]._retn());
+        }
+      }
+    }
+  }
 }

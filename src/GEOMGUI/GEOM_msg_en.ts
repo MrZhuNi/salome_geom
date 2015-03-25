@@ -1409,6 +1409,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Select unpublished edges</translation>
     </message>
     <message>
+        <source>GEOM_GENERATE_GROUPS</source>
+        <translation>Generate Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_GROUP_NAME_PREFIX</source>
+        <translation>Group Names Prefix</translation>
+    </message>
+    <message>
         <source>GEOM_PLANE</source>
         <translation>Plane</translation>
     </message>
