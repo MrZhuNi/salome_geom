@@ -29,19 +29,14 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
+#include <GEOMUtils.hxx>
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
-#include <BRep_Tool.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS.hxx>
-#include <TopExp.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
 #include <TColStd_MapOfInteger.hxx>
 
 #include <GEOMImpl_Types.hxx>
@@ -731,45 +726,8 @@ void GenerationGUI_PipeDlg::updateGenGroup()
     // Check if the path is closed.
     TopoDS_Shape aShapePath;
 
-    if (GEOMBase::GetShape(myPath.get(), aShapePath) &&
-        aShapePath.IsNull() == Standard_False) {
-      if (aShapePath.Closed()) {
-        // No groups should be generated if the path is closed.
-        isEnable = false;
-      } else {
-        const TopAbs_ShapeEnum aType = aShapePath.ShapeType();
-
-        if (aType == TopAbs_EDGE || aType == TopAbs_WIRE) {
-          // Check if path ends are coinsident.
-          TopoDS_Vertex aV[2];
-
-          if (aType == TopAbs_EDGE) {
-            // Edge
-            TopExp::Vertices(TopoDS::Edge(aShapePath), aV[0], aV[1]);
-          } else {
-            // Wire
-            TopExp::Vertices(TopoDS::Wire(aShapePath), aV[0], aV[1]);
-          }
-
-          if (aV[0].IsNull() == Standard_False &&
-              aV[1].IsNull() == Standard_False) {
-            if (aV[0].IsSame(aV[1])) {
-              // No groups should be generated if the path is closed.
-              isEnable = false;
-            } else {
-              const Standard_Real aTol1 = BRep_Tool::Tolerance(aV[0]);
-              const Standard_Real aTol2 = BRep_Tool::Tolerance(aV[1]);
-              const gp_Pnt        aPnt1 = BRep_Tool::Pnt(aV[0]);
-              const gp_Pnt        aPnt2 = BRep_Tool::Pnt(aV[1]);
-
-              if (aPnt1.Distance(aPnt2) <= aTol1 + aTol2) {
-                // No groups should be generated if the path is closed.
-                isEnable = false;
-              }
-            }
-          }
-        }
-      }
+    if (GEOMBase::GetShape(myPath.get(), aShapePath)) {
+      isEnable = GEOMUtils::IsOpenPath(aShapePath);
     }
   }
 
