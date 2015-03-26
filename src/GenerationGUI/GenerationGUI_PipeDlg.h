@@ -62,6 +62,7 @@ protected:
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
+  void                               updateGenGroup();
   void                               resetGenGroup
                                         (QCheckBox *theGenGroup,
                                          const bool isChecked,

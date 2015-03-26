@@ -35,7 +35,9 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
+#include <BRep_Tool.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TopoDS_Vertex.hxx>
 #include <TopoDS.hxx>
 #include <TopExp.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -217,6 +219,7 @@ void GenerationGUI_PipeDlg::Init()
 
   GroupPoints->PushButton1->click();
   SelectionIntoArgument();
+  updateGenGroup();
 }
 
 //=================================================================================
@@ -286,6 +289,7 @@ void GenerationGUI_PipeDlg::SelectionTypeButtonClicked()
   if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
     myEditCurrentArgument->setText("");
     myPath.nullify();
+    updateGenGroup();
   }
   processPreview();
 }
@@ -352,6 +356,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
       else if ( myBaseObjects.isEmpty() )
         GroupPoints->PushButton1->click();
     }
+    updateGenGroup();
   }
   else if (myEditCurrentArgument == GroupPoints->LineEdit3) {
     myVec = getSelected( TopAbs_EDGE );
@@ -391,6 +396,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
       QString aName = GEOMBase::GetName( myPath.get() );
       myEditCurrentArgument->setText( aName );
     }
+    updateGenGroup();
   }
 
   processPreview();
@@ -537,7 +543,8 @@ bool GenerationGUI_PipeDlg::execute (ObjectList& objects)
   case 0:
   case 1:
     if (doGroups) {
-      doGroups = myGenGroupCheckGP->isChecked();
+      doGroups = myGenGroupCheckGP->isEnabled() &&
+                 myGenGroupCheckGP->isChecked();
     }
 
     for (int i = 0; i < myBaseObjects.count(); i++) {
@@ -577,7 +584,8 @@ bool GenerationGUI_PipeDlg::execute (ObjectList& objects)
       }
 
       if (doGroups) {
-        doGroups = myGenGroupCheckGMP->isChecked();
+        doGroups = myGenGroupCheckGMP->isEnabled() &&
+                   myGenGroupCheckGMP->isChecked();
       }
 
       aList = anOper->MakePipeWithDifferentSections
@@ -631,7 +639,6 @@ void GenerationGUI_PipeDlg::restoreSubShapes
 {
   QCheckBox *aGenGroupCheck = NULL;
   QLineEdit *aPrefixEdit    = NULL;
-
 
   switch (getConstructorId()) {
   case 0 :
@@ -710,6 +717,82 @@ QList<GEOM::GeomObjPtr> GenerationGUI_PipeDlg::getSourceObjects()
 void GenerationGUI_PipeDlg::GenGroupClicked(bool isChecked)
 {
   resetGenGroup((QCheckBox *)sender(), isChecked, false);
+}
+
+//=================================================================================
+// function : updateGenGroup
+// purpose  : Update "Generate groups" widgets depending on the path.
+//=================================================================================
+void GenerationGUI_PipeDlg::updateGenGroup()
+{
+  bool isEnable = true;
+
+  if (myPath) {
+    // Check if the path is closed.
+    TopoDS_Shape aShapePath;
+
+    if (GEOMBase::GetShape(myPath.get(), aShapePath) &&
+        aShapePath.IsNull() == Standard_False) {
+      if (aShapePath.Closed()) {
+        // No groups should be generated if the path is closed.
+        isEnable = false;
+      } else {
+        const TopAbs_ShapeEnum aType = aShapePath.ShapeType();
+
+        if (aType == TopAbs_EDGE || aType == TopAbs_WIRE) {
+          // Check if path ends are coinsident.
+          TopoDS_Vertex aV[2];
+
+          if (aType == TopAbs_EDGE) {
+            // Edge
+            TopExp::Vertices(TopoDS::Edge(aShapePath), aV[0], aV[1]);
+          } else {
+            // Wire
+            TopExp::Vertices(TopoDS::Wire(aShapePath), aV[0], aV[1]);
+          }
+
+          if (aV[0].IsNull() == Standard_False &&
+              aV[1].IsNull() == Standard_False) {
+            if (aV[0].IsSame(aV[1])) {
+              // No groups should be generated if the path is closed.
+              isEnable = false;
+            } else {
+              const Standard_Real aTol1 = BRep_Tool::Tolerance(aV[0]);
+              const Standard_Real aTol2 = BRep_Tool::Tolerance(aV[1]);
+              const gp_Pnt        aPnt1 = BRep_Tool::Pnt(aV[0]);
+              const gp_Pnt        aPnt2 = BRep_Tool::Pnt(aV[1]);
+
+              if (aPnt1.Distance(aPnt2) <= aTol1 + aTol2) {
+                // No groups should be generated if the path is closed.
+                isEnable = false;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  QCheckBox *aGenGroupCheck = NULL;
+
+  switch (getConstructorId()) {
+  case 0 :
+  case 1 :
+    aGenGroupCheck = myGenGroupCheckGP;
+    break;
+  case 2 :
+    aGenGroupCheck = myGenGroupCheckGMP;
+    break;
+  default:
+    break;
+  }
+
+  if (aGenGroupCheck != NULL) {
+    const bool isChecked = aGenGroupCheck->isChecked();
+
+    aGenGroupCheck->setEnabled(isEnable);
+    resetGenGroup(aGenGroupCheck, isEnable && isChecked, false);
+  }
 }
 
 //=================================================================================
