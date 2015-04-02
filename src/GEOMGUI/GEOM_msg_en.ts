@@ -2425,6 +2425,26 @@ Please, select face, shell or solid and try again</translation>
         <translation>Shape %1 for solid creation is null</translation>
     </message>
     <message>
+        <source>GROUP_DOWN</source>
+        <translation>Down</translation>
+    </message>
+    <message>
+        <source>GROUP_UP</source>
+        <translation>Up</translation>
+    </message>
+    <message>
+        <source>GROUP_SIDE1</source>
+        <translation>Side1</translation>
+    </message>
+    <message>
+        <source>GROUP_SIDE2</source>
+        <translation>Side2</translation>
+    </message>
+    <message>
+        <source>GROUP_OTHER</source>
+        <translation>Other</translation>
+    </message>
+    <message>
         <source>GEOM_X</source>
         <translation>X :</translation>
     </message>

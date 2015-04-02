@@ -30,7 +30,7 @@
 #include "GEOMBase_Skeleton.h"
 #include "GEOM_GenericObjPtr.h"
 
-typedef std::map<GEOM::GEOM_Object_ptr, ObjectList> ObjectMap;
+typedef std::map<QString, QList<GEOM::GeomObjPtr> > ObjectMap;
 
 
 class DlgRef_3Sel1Check;

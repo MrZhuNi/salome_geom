@@ -555,12 +555,12 @@ bool GenerationGUI_PipeDlg::execute (ObjectList& objects)
       }
 
       if (aList->length() > 0) {
-        if (!aList[0]->_is_nil()) {
-          objects.push_back(aList[0]._retn());
-        }
-
         if (doGroups) {
           addGroups(aList);
+        }
+
+        if (!aList[0]->_is_nil()) {
+          objects.push_back(aList[0]._retn());
         }
       }
     }
@@ -589,12 +589,12 @@ bool GenerationGUI_PipeDlg::execute (ObjectList& objects)
                            GroupMakePoints->CheckBox2->isChecked(), doGroups);
 
       if (aList->length() > 0) {
-        if (!aList[0]->_is_nil()) {
-          objects.push_back(aList[0]._retn());
-        }
-
         if (doGroups) {
           addGroups(aList);
+        }
+
+        if (!aList[0]->_is_nil()) {
+          objects.push_back(aList[0]._retn());
         }
       }
     }
@@ -653,40 +653,32 @@ void GenerationGUI_PipeDlg::restoreSubShapes
     return;
   }
 
-  SALOMEDS::GenericAttribute_var anAttr;
-
-  if (!theSObject->FindAttribute(anAttr, "AttributeIOR")) {
-    return;
-  }
-
-  SALOMEDS::AttributeIOR_var anAttrIOR =
-                             SALOMEDS::AttributeIOR::_narrow(anAttr);
-  CORBA::String_var anIORso = anAttrIOR->Value();
-
   // get Object from SObject
   GEOM::GEOM_Object_var aFather = GEOM::GEOM_Object::_narrow
-            (myGeomGUI->getApp()->orb()->string_to_object(anIORso));
+            (theSObject->GetObject());
 
   if (CORBA::is_nil(aFather)) {
     return;
   }
 
-  ObjectMap::const_iterator anIter = myGroupObjectsMap.find(aFather);
+  ObjectMap::const_iterator anIter    =
+    myGroupObjectsMap.find(aFather->GetEntry());
+  QString                   aPrefix   = aPrefixEdit->text();
+  bool                      hasPrefix = !aPrefix.isEmpty();
 
   if (anIter != myGroupObjectsMap.end()) {
-    ObjectList::const_iterator it = anIter->second.begin();
-    QString              aName    = aPrefixEdit->text();
-
-    if (!aName.isEmpty()) {
-      aName += "_";
-    }
+    QList<GEOM::GeomObjPtr>::const_iterator it = anIter->second.begin();
 
     for (; it != anIter->second.end(); it++) {
       // Compose the name
-      QString aGrpName = tr((*it)->GetName());
+      QString aName;
 
-      aName += aGrpName;
-      getGeomEngine()->AddInStudy(theStudy, (*it),
+      if (hasPrefix) {
+        aName = aPrefix + "_";
+      }
+
+      aName += tr((*it)->GetName());
+      getGeomEngine()->AddInStudy(theStudy, (*it).get(),
                                   aName.toStdString().c_str(), aFather);
     }
   }
@@ -791,14 +783,13 @@ void GenerationGUI_PipeDlg::addGroups(GEOM::ListOfGO_var &theResult)
   const int aNbObj = theResult->length();
 
   if (aNbObj > 0) {
-    GEOM::GEOM_Object_ptr aKey = theResult[0]._retn();
-
-    if (!aKey->_is_nil()) {
-      int i;
+    if (!theResult[0]->_is_nil()) {
+      QString anEntry = theResult[0]->GetEntry();
+      int     i;
 
       for (i = 1; i < aNbObj; ++i) {
         if (!theResult[i]->_is_nil()) {
-          myGroupObjectsMap[aKey].push_back(theResult[i]._retn());
+          myGroupObjectsMap[anEntry].append(GEOM::GeomObjPtr(theResult[i]));
         }
       }
     }
