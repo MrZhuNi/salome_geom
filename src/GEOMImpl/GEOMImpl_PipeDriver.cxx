@@ -297,15 +297,6 @@ static bool FillCorrespondingEdges(const TopoDS_Shape& FS1,
   BuildPipeShell(aBuilder);
 
   TopoDS_Shape aShape = aBuilder.Shape();
-  /*
-  TopoDS_Compound C;
-  BRep_Builder B;
-  B.MakeCompound(C);
-  B.Add(C,aShape);
-  B.Add(C,FS1);
-  B.Add(C,FS2);
-  BRepTools::Write(C,"/dn02/users_Linux/skl/work/Bugs/14857/comp.brep");
-  */
   ShapeAnalysis_Edge sae;
   double tol = Max(BRep_Tool::Tolerance(TopoDS::Face(FS1)),
                     BRep_Tool::Tolerance(TopoDS::Face(FS2)));
@@ -2170,8 +2161,6 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
         B.Add(W,E2);
         B.Add(W,E3);
         B.Add(W,E4.Reversed());
-        //cout<<"      wire for edge "<<nbee<<" is created"<<endl;
-        //BRepTools::Write(W,"/dn02/users_Linux/skl/work/Bugs/14857/w.brep");
 
         // make surface
 
@@ -2213,13 +2202,6 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
           GeomConvert::CurveToBSplineCurve(C4,Convert_RationalC1);
         if (CE4->Degree()<3)
           CE4->IncreaseDegree(3);
-        //cout<<"CE1->Degree()="<<CE1->Degree()<<" CE2->Degree()="<<CE2->Degree()
-        //    <<" CE3->Degree()="<<CE3->Degree()<<" CE4->Degree()="<<CE4->Degree()<<endl;
-        //if (fic.open("/dn02/users_Linux/skl/work/Bugs/14857/ce1.brep",ios::out)) {
-        //  os<<"DrawTrSurf_BSplineCurve"<<endl;
-        //  GeomTools::Write(CE1,os);
-        //  fic.close();
-        //}
 
         Handle(Geom_Surface) BS;
         try {
@@ -2355,7 +2337,6 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
       aSewing->Perform();
       MESSAGE ("    shell for face "<<nbff<<" is created");
       const TopoDS_Shape aSewShape = aSewing->SewedShape();
-      //BRepTools::Write(aSewShape,"/dn02/users_Linux/skl/work/Bugs/14857/sew.brep");
       if (aSewShape.ShapeType() == TopAbs_SHELL) {
         aShell = TopoDS::Shell(aSewShape);
         GProp_GProps aSystem;
