@@ -1919,6 +1919,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
   Handle(TColStd_HSequenceOfTransient) aBasesObjs = aCIDS->GetBases();
   // vertex for recognition
   Handle(TColStd_HSequenceOfTransient) VObjs = aCIDS->GetLocations();
+  Standard_Boolean isGenerateGroups = aCIDS->GetGenerateGroups();
 
   Standard_Integer nbBases = aBasesObjs->Length(),
     nbv = (VObjs.IsNull() ? 0 :VObjs->Length());
@@ -1928,6 +1929,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
     Standard_ConstructionError::Raise("Number of shapes for recognition is invalid");
   }
 
+  TopTools_SequenceOfShape aGroups[5];
   TopTools_SequenceOfShape SecVs,Bases;
   for (i=1; i<=nbBases; i++) {
     // vertex
@@ -1979,8 +1981,23 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
     }
 
     TopTools_MapOfShape aFaces1,aFaces2;
+    TopTools_MapOfShape aBndEdges1;
+
     for (anExp.Init(aShBase1, TopAbs_FACE); anExp.More(); anExp.Next()) {
-      aFaces1.Add(anExp.Current());
+      const TopoDS_Shape &aBaseFace1 = anExp.Current();
+
+      if (aFaces1.Add(aBaseFace1)) {
+        // Get boundary edges.
+        TopExp_Explorer anExpE(aBaseFace1, TopAbs_EDGE);
+
+        for (; anExpE.More(); anExpE.Next()) {
+          const TopoDS_Shape &aBaseEdge1 = anExpE.Current();
+
+          if (!aBndEdges1.Add(aBaseEdge1)) {
+            aBndEdges1.Remove(aBaseEdge1);
+          }
+        }
+      }
     }
     for (anExp.Init(aShBase2, TopAbs_FACE); anExp.More(); anExp.Next()) {
       aFaces2.Add(anExp.Current());
@@ -2068,6 +2085,8 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 
       TopExp_Explorer anExpE(F1,TopAbs_EDGE);
       TopTools_SequenceOfShape aNewFs;
+      TopTools_SequenceOfShape aLocalGroups[5];
+
       //int nbee=0;
       for (; anExpE.More(); anExpE.Next()) {
         TopoDS_Edge E1 = TopoDS::Edge(anExpE.Current());
@@ -2295,8 +2314,13 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
         TopoDS_Face FixedFace = sff->Face();
         aNewFs.Append(FixedFace);
         VPE.Add(E1,FixedFace);
-        //cout<<"      face for edge "<<nbee<<" is created"<<endl;
-        //BRepTools::Write(FixedFace,"/dn02/users_Linux/skl/work/Bugs/14857/f.brep");
+
+        if (isGenerateGroups) {
+          if (aBndEdges1.Contains(E1)) {
+            // This is a boundary face.
+            aLocalGroups[GROUP_OTHER].Append(FixedFace);
+          }
+        }
       }
       // make shell
       TopoDS_Shell aShell;
@@ -2306,6 +2330,15 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
       }
       B.Add(aShell,F1);
       B.Add(aShell,F2);
+
+      // Create groups.
+      if (isGenerateGroups && i == 1) {
+        aLocalGroups[GROUP_DOWN].Append(F1);
+      }
+
+      if (isGenerateGroups && i == nbBases - 1) {
+        aLocalGroups[GROUP_UP].Append(F2);
+      }
 
       // make sewing for this shell
       Handle(BRepBuilderAPI_Sewing) aSewing = new BRepBuilderAPI_Sewing;
@@ -2344,32 +2377,48 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
         B.Add(aComp,aShell);
         MESSAGE ("    solid for face "<<nbff<<" is not created");
       }
-      //cout<<"    solid for face "<<nbff<<" is created"<<endl;
 
-      //Handle(ShapeFix_Shell) sfs = new ShapeFix_Shell(aShell);
-      //sfs->Perform();
-      //TopoDS_Shell FixedShell = sfs->Shell();
-      /*
-      GProp_GProps aSystem;
-      BRepGProp::VolumeProperties(FixedShell, aSystem);
-      if (aSystem.Mass()<0) {
-        //cout<<"aSewShape is reversed"<<endl;
-        FixedShell.Reverse();
+      if (isGenerateGroups) {
+        Standard_Integer iGrp;
+
+        for (iGrp = 0; iGrp < 5; ++iGrp) {
+          Standard_Integer j;
+
+          // For each sub-shape of pipe
+          for (j = 1; j <= aLocalGroups[iGrp].Length(); ++j) {
+            const TopoDS_Shape &aGrpShape = aLocalGroups[iGrp].Value(j);
+
+            if (aSewing->IsModifiedSubShape(aGrpShape)) {
+              // Use the shape modified by sewing.
+              const TopoDS_Shape &aModifGrpShape =
+                aSewing->ModifiedSubShape(aGrpShape);
+
+              aGroups[iGrp].Append(aModifGrpShape);
+            } else {
+              // Use the shape as it is.
+              aGroups[iGrp].Append(aGrpShape);
+            }
+          }
+        }
       }
-      if (BRep_Tool::IsClosed(FixedShell)) {
-        TopoDS_Solid aSolid;
-        B.MakeSolid(aSolid);
-        B.Add(aSolid,aShell);
-        B.Add(aComp,aSolid);
-      }
-      else {
-        B.Add(aComp,FixedShell);
-      }
-      */
     }
   }
 
-  //BRepTools::Write(aComp,"/dn02/users_Linux/skl/work/Bugs/14857/comp.brep");
+  if (isGenerateGroups) {
+    // Fill the groups.
+    Handle(TColStd_HArray1OfInteger) aGroupIds[5];
+    TopTools_IndexedMapOfShape       anIndices;
+
+    TopExp::MapShapes(aComp, anIndices);
+
+    if (!FillGroups(aGroups, anIndices, aGroupIds)) {
+      if (aCI) delete aCI;
+      Standard_ConstructionError::Raise("Generate groups failure");
+    }
+
+    StoreGroups(aCI, aGroupIds);
+  }
+
   return aComp;
 }
 
