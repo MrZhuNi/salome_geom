@@ -116,6 +116,9 @@ static void StoreGroups(GEOMImpl_IPipe                   *theCI,
 static bool DoGroups(BRepOffsetAPI_MakePipeShell &theSweep,
                      TopTools_SequenceOfShape    *theGroups);
 
+static bool CreateGroups(BRepOffsetAPI_MakePipeShell &theSweep,
+                         GEOMImpl_IPipe              *theCI);
+
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -2491,6 +2494,11 @@ static TopoDS_Shape CreatePipeBiNormalAlongVector(const TopoDS_Wire& aWirePath,
       PipeBuilder.MakeSolid();
   }
 
+  if (!CreateGroups(PipeBuilder, aCIBN)) {
+    if (aCIBN) delete aCIBN;
+    Standard_ConstructionError::Raise("Generate groups failure");
+  }
+
   return PipeBuilder.Shape();
 }
 
@@ -2719,8 +2727,8 @@ bool DoGroups(BRepOffsetAPI_MakePipeShell &theSweep,
 //function : CreateGroups
 //purpose  : auxilary for Execute()
 //=======================================================================
-static bool CreateGroups(BRepOffsetAPI_MakePipeShell      &theSweep,
-                         GEOMImpl_IPipe                   *theCI)
+bool CreateGroups(BRepOffsetAPI_MakePipeShell &theSweep,
+                  GEOMImpl_IPipe              *theCI)
 {
   if (!theCI->GetGenerateGroups()) {
     // Nothing to do.
