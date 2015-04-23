@@ -396,7 +396,7 @@ void EntityGUI_FeatureDetectorDlg::Init()
 //=================================================================================
 void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
 {
-  
+  MESSAGE("EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()")
   // TODO supprimer les lignes qui ne servent à rien le cas échéant
   SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
   std::map< std::string , std::vector<Handle(AIS_InteractiveObject)> >::iterator AISit;
@@ -428,6 +428,7 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
   GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
   TopoDS_Shape aShape;
   if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    MESSAGE("EntityGUI_FeatureDetectorDlg::SelectionIntoArgument() # REPERE 1")
     QString aName = GEOMBase::GetName( aSelectedObject.get() );
     myEditCurrentArgument->setText( aName );
     
@@ -445,12 +446,17 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
       else
         return ;
       
-      std::string theImgFileName = myAISShape->TextureFile();      
-      if ( theImgFileName == "" )
-        return ;
+      MESSAGE("EntityGUI_FeatureDetectorDlg::SelectionIntoArgument() # REPERE 2")
+      //std::string theImgFileName = myAISShape->TextureFile();  
+      Image_PixMap anImage = myAISShape->Image_PixMap();
+//       MESSAGE("theImgFileName = "<<theImgFileName)
+//       if ( theImgFileName == "" )
+//         return ;
 
       // Setting the image caracteristics
-      myDetector->SetPath( theImgFileName );
+//       MESSAGE("theImgFileName = "<<theImgFileName)
+//       myDetector->SetPath( theImgFileName );
+      myDetector->SetImage( anImage );
       height            =  myDetector->GetImgHeight();
       width             =  myDetector->GetImgWidth();
       pictureLeft       = -0.5 * width;              // X coordinate of the top left  corner of the background image in the view
@@ -677,8 +683,13 @@ void EntityGUI_FeatureDetectorDlg::setEndPnt(const gp_Pnt& theEndPnt)
 {
   myEndPnt = theEndPnt;
   MESSAGE("myEndPnt = ("<<theEndPnt.X()<<", "<<theEndPnt.Y()<<")")
+  bool test_1 = myDetector->GetImgHeight() > 0;
+  MESSAGE("REPERE 0 : setSelectionRect() = "<<setSelectionRect()<<"myDetector->GetImgHeight()"<<myDetector->GetImgHeight())
   if (setSelectionRect() && myDetector->GetImgHeight() > 0)
+  { 
+    MESSAGE("REPERE 1")
     showImageSample();
+  }
 }
 
 //=================================================================================
@@ -710,6 +721,7 @@ void EntityGUI_FeatureDetectorDlg::showImageSample()
   // Cropp the image to the selection rectangle given by the user
   myDetector->SetROI( myRect ); 
   std::string samplePicturePath = myDetector->CroppImage();
+  MESSAGE("samplePicturePath = "<<samplePicturePath)
   
   // Display the result
   QPixmap pixmap(QString(samplePicturePath.c_str()));

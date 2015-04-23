@@ -64,6 +64,17 @@ void ShapeRec_FeatureDetector::SetPath( const std::string& thePath )
   }
 }
 
+
+/*!
+  Sets the the image to be processed
+  \param theImage - QPixMap input image
+*/
+void ShapeRec_FeatureDetector::SetImage( const QPixmap& input_img )
+{
+  cv::Mat image = QPixmapToCvMat( input_img, false );
+}
+
+
 /*!
   Computes the corners of the image located at imagePath
 */
