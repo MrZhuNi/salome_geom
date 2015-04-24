@@ -47,14 +47,15 @@ namespace GEOMUtils
   std::list<TopoDS_Shape>::const_iterator it;
   for ( it = shapes.begin(); it != shapes.end(); ++it ) {
     double aMeasure;
+    TopTools_IndexedMapOfShape aSubShapesMap;
+    TopExp::MapShapes(*it, aSubShapesMap); // map of all global indices
     TopTools_IndexedMapOfShape aMx;
-    TopExp::MapShapes( *it, entity, aMx );
+    TopExp::MapShapes( *it, entity, aMx ); // map of current type sub-shape indices 
     int aNbS = aMx.Extent();
     int index = -1;
     for ( int i = 1; i <= aNbS; ++i ) {
       aMeasure = 0.0;
       const TopoDS_Shape& aSubShape = aMx( i );
-      index = aMx.FindIndex( aSubShape );
       //Get the measure: length, area or volume
       GProp_GProps LProps, SProps, VProps;
       if ( entity == TopAbs_EDGE ) {
@@ -76,6 +77,8 @@ namespace GEOMUtils
 	if ( aMeasure < range.min ) range.min = aMeasure;
 	if ( aMeasure > range.max ) range.max = aMeasure;
       }
+      // get global index of sub-shape
+      index = aSubShapesMap.FindIndex( aSubShape );
       // keep measures to distribute it
       measures[index] = aMeasure;
     }
@@ -137,18 +140,6 @@ Distribution ComputeDistribution( std::list<TopoDS_Shape> shapes,
   }
 
   return aDistr;
-}
-
-//=================================================================================
-// function : FilterSubShapes()
-// purpose  : gets list of sub-shapes IDs according to the specified range data (needed for groups creation function)
-//=================================================================================
-std::list<long> FilterSubShapes( TopoDS_Shape shape, 
-				 TopAbs_ShapeEnum entity, 
-				 Range range)
-{
-  std::list<long> idList;
-  return idList;
 }
 
 } //namespace GEOMUtils

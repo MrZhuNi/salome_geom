@@ -40,6 +40,7 @@
 #include <LightApp_SelectionMgr.h>
 
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Study.h>
 
 #include <Plot2d_Histogram.h>
 #include <Plot2d_ViewFrame.h>
@@ -58,6 +59,8 @@
 // OCC includes
 #include <TopoDS_Shape.hxx>
 
+#include <GEOMImpl_Types.hxx>
+
 //===========================================================================
 // class    : MeasureGUI_ShapeStatisticsDlg()
 //===========================================================================
@@ -67,7 +70,6 @@ MeasureGUI_ShapeStatisticsDlg::MeasureGUI_ShapeStatisticsDlg( QWidget* parent, T
     myHistogram ( 0 )
 {
   myShapes.push_back( aShape );
-  myMainObj = GEOM::GEOM_Object::_nil();
 
   QIcon iconSelect( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
@@ -75,7 +77,6 @@ MeasureGUI_ShapeStatisticsDlg::MeasureGUI_ShapeStatisticsDlg( QWidget* parent, T
   setAttribute( Qt::WA_DeleteOnClose );
 
   myApp = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  //myViewWindow = myApp->desktop()->activeWindow();
 
   QVBoxLayout* topLayout = new QVBoxLayout( this );
 
@@ -154,6 +155,7 @@ MeasureGUI_ShapeStatisticsDlg::MeasureGUI_ShapeStatisticsDlg( QWidget* parent, T
   /**********************   Buttons    **********************/
 
   myButtonPlot   = new QPushButton( tr( "GEOM_PLOT_DISTRIBUTION" ), this );
+  myButtonPlot->setDefault( true );
   myButtonCreateGr = new QPushButton( tr( "GEOM_SHAPE_STATISTICS_CREATE_GROUPS" ), this );
   QPushButton* buttonClose  = new QPushButton( tr( "GEOM_BUT_CLOSE" ), this );
   QPushButton* buttonHelp   = new QPushButton( tr( "GEOM_BUT_HELP" ), this );
@@ -199,6 +201,48 @@ MeasureGUI_ShapeStatisticsDlg::~MeasureGUI_ShapeStatisticsDlg()
 }
 
 //=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr MeasureGUI_ShapeStatisticsDlg::createOperation()
+{
+  return getGeomEngine()->GetIGroupOperations(getStudyId());
+}
+
+#define RETURN_WITH_MSG(a, b) \
+  if (!(a)) { \
+    theMessage += (b); \
+    return false; \
+  }
+
+//================================================================
+// Function : getFather
+// Purpose  : Get father object for object to be added in study
+//            (called with addInStudy method)
+//================================================================
+GEOM::GEOM_Object_ptr MeasureGUI_ShapeStatisticsDlg::getFather(GEOM::GEOM_Object_ptr theObj)
+{
+  GEOM::GEOM_Object_var aFatherObj;
+  if (theObj->GetType() == GEOM_GROUP) {
+    GEOM::GEOM_IGroupOperations_var anOper = GEOM::GEOM_IGroupOperations::_narrow(getOperation());
+    aFatherObj = anOper->GetMainShape(theObj);
+  }
+  return aFatherObj._retn();
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> MeasureGUI_ShapeStatisticsDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr1(myMainObj);
+  res << aGeomObjPtr1;
+  return res;
+}
+
+//=================================================================================
 // function : onEditMainShape()
 // purpose  : called when selection button was clicked
 //=================================================================================
@@ -216,8 +260,8 @@ void MeasureGUI_ShapeStatisticsDlg::onEditMainShape()
 
   if ( !selShapes.isEmpty() ) {
     if ( selShapes.count() == 1 )
-      myMainObj = selShapes[0].get();
-    QString aName = selShapes.count() > 1 ? QString( "%1_objects").arg( selShapes.count() ) : GEOMBase::GetName( myMainObj );
+      myMainObj = selShapes[0];
+    QString aName = selShapes.count() > 1 ? QString( "%1_objects").arg( selShapes.count() ) : GEOMBase::GetName( myMainObj.get() );
     myEditMainShape->setText( aName );
   }
 
@@ -304,19 +348,12 @@ TopAbs_ShapeEnum MeasureGUI_ShapeStatisticsDlg::currentType()
 // function : clickOnPlot()
 // purpose  : called when Plot button was clicked
 //=================================================================================
-bool MeasureGUI_ShapeStatisticsDlg::checkInput()
+bool MeasureGUI_ShapeStatisticsDlg::isValid(QString& theMessage)
 {
-  if ( myMin->text().isEmpty() ) {
-    showError( tr("GEOM_SHAPE_STATISTICS_MIN_ERROR") );
-    return false;
-  }
-  if ( myMax->text().isEmpty() ) {
-    showError( tr("GEOM_SHAPE_STATISTICS_MAX_ERROR" ) );
-    return false;
-  }
-  if (myMin->text().toDouble() > myMax->text().toDouble()) {
-    showError( tr("GEOM_SHAPE_STATISTICS_MIN_MAX_ERROR" ) );
-    return false;
+  if ( myScalarRangeBox->isChecked() ) {
+    RETURN_WITH_MSG( !myMin->text().isEmpty(), tr("GEOM_SHAPE_STATISTICS_MIN_ERROR") )
+    RETURN_WITH_MSG( !myMax->text().isEmpty(), tr("GEOM_SHAPE_STATISTICS_MAX_ERROR") )
+    RETURN_WITH_MSG( myMin->text().toDouble() <= myMax->text().toDouble(), tr("GEOM_SHAPE_STATISTICS_MIN_MAX_ERROR") )
   }
   return true;
 }
@@ -328,8 +365,11 @@ void MeasureGUI_ShapeStatisticsDlg::clickOnPlot()
 {
   GEOMUtils::Range aRange;
   if ( myScalarRangeBox->isChecked() ) {
-    if ( !checkInput() )
+    QString msg;
+    if ( !isValid( msg ) ) {
+      showError( msg );
       return;
+    }
     aRange.min = myMin->text().toDouble();
     aRange.max = myMax->text().toDouble();
   } else {
@@ -361,13 +401,10 @@ void MeasureGUI_ShapeStatisticsDlg::clickOnPlot()
   SUIT_ViewManager* aViewManager = myApp->getViewManager( Plot2d_Viewer::Type(), true ); // create if necessary
   if( !aViewManager )
     return;
-  Plot2d_Viewer* aView = dynamic_cast<Plot2d_Viewer*>(aViewManager->getViewModel());
-  if ( !aView )
-    return;
+  aViewManager->getActiveView()->setFocus();
   Plot2d_ViewWindow* aViewWnd = dynamic_cast<Plot2d_ViewWindow*>(aViewManager->getActiveView());
   if( !aViewWnd )
     return;
-  aViewWnd->setFocus();
   Plot2d_ViewFrame* aPlot = aViewWnd->getViewFrame();
   if ( !aPlot )
     return;
@@ -419,17 +456,36 @@ void MeasureGUI_ShapeStatisticsDlg::clickOnCompute()
 //=================================================================================
 void MeasureGUI_ShapeStatisticsDlg::clickOnCreateGroups()
 {
-  GEOM::GEOM_IGroupOperations_var anOper = GEOM::GEOM_IGroupOperations::_narrow(getOperation());
+  onAccept(false, false, false);
+}
+//=================================================================================
+// function : execute(ObjectList& objects)
+// purpose  : 
+//=================================================================================
+bool MeasureGUI_ShapeStatisticsDlg::execute(ObjectList& objects)
+{
+  if ( myMainObj.isNull() )
+    return false;
+  GEOM::GroupOpPtr anOper = GEOM::GEOM_IGroupOperations::_narrow(getOperation());
 
   GEOMUtils::Range aRange;
   if ( myScalarRangeBox->isChecked() ) {
-    if ( !checkInput() )
-      return;
+    QString msg;
+    if ( !isValid( msg ) ) {
+      showError( msg );
+      return false;
+    }
     aRange.min = myMin->text().toDouble();
     aRange.max = myMax->text().toDouble();
   } else {
     aRange.min = -1.0; // flag that range is empty
   }
+
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
+  QString aTypePrefix = myCBTypes->currentText().replace(' ', '_');
+  QString objIOR, aMin, aMax, aGroupName;
+  SalomeApp_Study* study = getStudy();
 
   GEOMUtils::Distribution aShapesDistr = 
     GEOMUtils::ComputeDistribution( myShapes, currentType(), myNbIntervals->value(), aRange );
@@ -448,31 +504,40 @@ void MeasureGUI_ShapeStatisticsDlg::clickOnCreateGroups()
 	ii++;
       }
 
-      if (CORBA::is_nil(myMainObj))
-	return;
-
+      // Create an empty group
       GEOM::GEOM_Object_var aGroup;
-      aGroup = anOper->CreateGroup( myMainObj, currentType() );
+      aGroup = anOper->CreateGroup( myMainObj.get(), currentType() );
 
       if (CORBA::is_nil(aGroup) || !anOper->IsDone())
-	return;
+	return false;
 
-      GEOM::ListOfLong_var aCurrList = anOper->GetObjects(aGroup);
-      if (!anOper->IsDone())
-	return;
-
-      if (aCurrList->length() > 0)
-	{
-	  anOper->DifferenceIDs(aGroup, aCurrList);
-	  if (!anOper->IsDone())
-	    return;
-	}
-
+      // Add sub-shapes into group
       anOper->UnionIDs(aGroup, aNewList);
       if (!anOper->IsDone())
-	return;
+	return false;
+
+      GEOMBase::PublishSubObject( aGroup );
+
+      // Set a correct group name
+      if (study) {
+	objIOR = GEOMBase::GetIORFromObject(aGroup);
+	if (objIOR != "") {
+	  _PTR(SObject) SO (study->studyDS()->FindObjectIOR(objIOR.toLatin1().constData()));
+	  if (SO) {
+	    aMin = DlgRef::PrintDoubleValue( (*it).min, aPrecision );
+	    aMax = DlgRef::PrintDoubleValue( (*it).max, aPrecision );
+	    aGroupName =  aTypePrefix + "_" + aMin + "_" + aMax;
+	    _PTR(StudyBuilder) aBuilder (study->studyDS()->NewBuilder());
+	    aBuilder->SetName(SO, aGroupName.toLatin1().constData());
+	  }
+	}
+      }
+      // add group to be published
+      objects.push_back(aGroup._retn());
     }
   }
+
+  return true;
 }
 
 //=================================================================================

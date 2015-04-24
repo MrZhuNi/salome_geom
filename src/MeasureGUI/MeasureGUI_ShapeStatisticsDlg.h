@@ -53,6 +53,14 @@ public:
   MeasureGUI_ShapeStatisticsDlg( QWidget*, TopoDS_Shape aShape = TopoDS_Shape(), TopAbs_ShapeEnum aSubShapeType = TopAbs_SHAPE );
   ~MeasureGUI_ShapeStatisticsDlg();
   
+protected:
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr  createOperation();
+  virtual bool                        isValid (QString&);
+  virtual bool                        execute (ObjectList&);
+  virtual GEOM::GEOM_Object_ptr       getFather (GEOM::GEOM_Object_ptr);
+  virtual QList<GEOM::GeomObjPtr>     getSourceObjects();
+
 private slots:
   void                    onEditMainShape();
   void                    clickOnCompute();
@@ -64,15 +72,13 @@ private:
   void                    fillTypes( bool, bool, bool );
   void                    updateTypes( QList<GEOM::GeomObjPtr> theShapes );
   TopAbs_ShapeEnum        currentType();
-  bool                    checkInput();
 
 private:
   SalomeApp_Application*     myApp;
-  QPointer<SUIT_ViewWindow>  myViewWindow;
   QLineEdit*                 myEditMainShape;
   QtxComboBox*               myCBTypes;
   std::list<TopoDS_Shape>    myShapes;
-  GEOM::GEOM_Object_var      myMainObj;
+  GEOM::GeomObjPtr           myMainObj;
   QtxIntSpinBox*             myNbIntervals;
   QGroupBox*                 myScalarRangeBox;
   QLineEdit*                 myMin;

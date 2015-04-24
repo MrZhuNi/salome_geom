@@ -56,12 +56,6 @@ namespace GEOMUtils
     int intervals, 
     Range range );
 
-  // function to get list of sub-shapes IDs according to the specified range data (needed for groups creation function).
-  Standard_EXPORT std::list<long> FilterSubShapes(
-    TopoDS_Shape shape, 
-    TopAbs_ShapeEnum entity, 
-    Range range );
-
 }
 
 #endif // _GEOMUtils_ShapeStatistics_HXX_
