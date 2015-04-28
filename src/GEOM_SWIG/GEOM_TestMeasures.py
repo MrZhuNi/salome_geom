@@ -58,10 +58,17 @@ def TestMeasureOperations (geompy, math):
   if geompy.CheckSelfIntersections(Compound_1) == True:
     raise RuntimeError, "Existing self-intersection is not detected"
 
+  ####### Detect Self-intersections fast #######
+
+  if salome_version.getXVersion() > "0x70700":
+    cylinder = geompy.MakeCylinderRH(100, 300)
+    Compound_2 = geompy.MakeCompound([box, cylinder])
+    if geompy.CheckSelfIntersectionsFast(Compound_2) == True:
+      raise RuntimeError, "Existing self-intersection is not detected"
+
   ####### Detect Fast intersection #######
 
   if salome_version.getXVersion() > "0x70501":
-    cylinder = geompy.MakeCylinderRH(100, 300)
     if geompy.FastIntersect(box, cylinder)[0] == False:
       raise RuntimeError, "Existing intersection is not detected"
 

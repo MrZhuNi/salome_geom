@@ -1582,6 +1582,61 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
 
 //=============================================================================
 /*!
+ *  CheckSelfIntersectionsFast
+ */
+//=============================================================================
+bool GEOMImpl_IMeasureOperations::CheckSelfIntersectionsFast
+                         (Handle(GEOM_Object)                 theShape,
+			  float theDeflection, double theTolerance,
+                          Handle(TColStd_HSequenceOfInteger)& theIntersections)
+{
+  SetErrorCode(KO);
+  bool isGood = false;
+
+  if (theIntersections.IsNull())
+    theIntersections = new TColStd_HSequenceOfInteger;
+  else
+    theIntersections->Clear();
+
+  if (theShape.IsNull())
+    return isGood;
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return isGood;
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if (aShape.IsNull()) return isGood;
+
+  // 0. Prepare data
+  TopoDS_Shape aScopy;
+  //
+  GEOMAlgo_AlgoTools::CopyShape(aShape, aScopy);
+  GEOMUtils::MeshShape(aScopy, theDeflection);
+  //
+  // Map sub-shapes and their indices
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aScopy, anIndices);
+  //
+  BRepExtrema_ShapeProximity aBSP; // checker of fast interferences
+  aBSP.LoadShape1(aScopy);
+  aBSP.SetTolerance((theTolerance <= 0.) ? 0.0 : theTolerance);
+
+  // 1. Launch the checker
+  aBSP.Perform();
+
+  // TODO theIntersections filling
+  //theIntersections = aBSP.Interferences(); // to be corrected!!!
+
+  isGood = theIntersections->IsEmpty();
+
+  if (aBSP.IsDone())
+    SetErrorCode(OK);
+
+  return isGood;
+}
+
+//=============================================================================
+/*!
  *  FastIntersect
  */
 //=============================================================================

@@ -17,6 +17,9 @@
 \until Detect Self-intersections
 
 \anchor swig_CheckSelfIntersections
+\until Detect Self-intersections fast
+
+\anchor swig_CheckSelfIntersectionsFast
 \until Detect Fast intersection
 
 \anchor swig_FastIntersection

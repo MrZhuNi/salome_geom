@@ -425,7 +425,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_CHECK_SELF_INTERSECTIONS</source>
-        <translation>Detect Self-intersections</translation>
+        <translation>Self-intersection Detection Type</translation>
     </message>
     <message>
         <source>GEOM_FAST_CHECK_INTERSECTIONS</source>
@@ -7322,6 +7322,14 @@ Do you want to create new material?</translation>
   <message>
     <source>GEOM_CHECK_INTE_ALL</source>
     <translation>Face to Face + all above</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INT_DEFLECT</source>
+    <translation>Deflection coefficient</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INT_DETECT_GAPS</source>
+    <translation>Detect gaps with tolerance</translation>
   </message>
 </context>
 <context>

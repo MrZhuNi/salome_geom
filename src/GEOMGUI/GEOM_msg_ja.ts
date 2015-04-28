@@ -409,7 +409,7 @@
     </message>
     <message>
       <source>GEOM_CHECK_SELF_INTERSECTIONS</source>
-      <translation>自己交差の検出</translation>
+      <translation type="unfinished">Self-intersection Detection Type</translation>
     </message>
     <message>
         <source>GEOM_FAST_CHECK_INTERSECTIONS</source>
@@ -7140,6 +7140,14 @@
   <message>
     <source>GEOM_CHECK_INTE_ALL</source>
     <translation type="unfinished">Face to Face + all above</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INT_DEFLECT</source>
+    <translation type="unfinished">Deflection coefficient</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INT_DETECT_GAPS</source>
+    <translation type="unfinished">Detect gaps with tolerance</translation>
   </message>
 </context>
 <context>
