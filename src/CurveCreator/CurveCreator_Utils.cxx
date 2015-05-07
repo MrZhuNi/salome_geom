@@ -582,7 +582,11 @@ void CurveCreator_Utils::setSelectedPoints( Handle(AIS_InteractiveContext) theCo
   for( aSelection->Init(); aSelection->More(); aSelection->Next() )
   {    
 #if OCC_VERSION_LARGE > 0x06080100
+#ifndef OCCT_690BETA_COMPAT // VSR: temporarily, to be removed later and replace below implementation
+    const Handle(SelectMgr_SensitiveEntity) aHSenEntity = aSelection->Sensitive();
+#else                       // #ifndef OCCT_690BETA_COMPAT / VSR: temporarily, to be removed later and replace below implementation
     const SelectMgr_HSensitiveEntity aHSenEntity = aSelection->Sensitive();
+#endif                      // #ifndef OCCT_690BETA_COMPAT / VSR: temporarily, to be removed later and replace below implementation
     if( aHSenEntity.IsNull() )
       continue;
     Handle_SelectBasics_SensitiveEntity aSenEntity = aHSenEntity->BaseSensitive();

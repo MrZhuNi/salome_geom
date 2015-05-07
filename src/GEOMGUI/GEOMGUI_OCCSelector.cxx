@@ -179,7 +179,11 @@ static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
 
     for ( sel->Init(); sel->More(); sel->Next() ) {
 #if OCC_VERSION_LARGE > 0x06080100
+#ifndef OCCT_690BETA_COMPAT // VSR: temporarily, to be removed later and replace below implementation
+      const Handle(SelectMgr_SensitiveEntity) aHSenEntity = sel->Sensitive();
+#else                       // #ifndef OCCT_690BETA_COMPAT / VSR: temporarily, to be removed later and replace below implementation
       const SelectMgr_HSensitiveEntity aHSenEntity = sel->Sensitive();
+#endif                      // #ifndef OCCT_690BETA_COMPAT / VSR: temporarily, to be removed later and replace below implementation
       if( aHSenEntity.IsNull() )
         continue;
 
