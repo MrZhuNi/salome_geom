@@ -70,5 +70,19 @@ used to create the selected object.
 - The table below lists \b Parameters used to create the
 selected object and their \b Values.
 
+\anchor dimensions_text_window
+<h2>Text Window</h2>
+Below Information window, there is \b Text
+window containing tree of geometric objects with created dimensions:
+
+\image html dimensions_tree_widget.png Text window
+
+As soon as some dimensions have been created and submitted using
+\ref managing_dimensions_page "Manage Dimensions tool", 
+they are shown in Text window tree as a child of corresponding parent shape.
+This tree provides a possibility to manage of dimensions visibility using <b>Show</b>/<b>Hide</b> context menu items or 
+by click on 'eye' icons in Text window.
+\note Hidden shapes and its dimensions are shown in Text tree, but disabled. Show/Hide operations are not applicable for these objects in such a case.
+
 */
 

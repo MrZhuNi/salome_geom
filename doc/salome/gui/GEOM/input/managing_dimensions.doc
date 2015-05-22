@@ -52,7 +52,7 @@ The following dimensions can be shown:
 
 <b>Modification of Dimension properties</b>
 
-The default properties of dimension text and line, such as font color, line width, measurement units, etc. can be defined from the \ref geometry_preferences_page "Geometry preferences".
+The default properties of dimension text and line, such as font color, line width, measurement units, etc. can be defined from the \ref dimensions_preferences "Geometry preferences".
 
 It is also possible to change the geometrical properties of the selected dimension interactively in the viewer. 
 
@@ -69,5 +69,6 @@ The following operations are possible:
 
 All modifications of the dimensions are temporary. The "Apply" and "Apply and Close" buttons save the changes.
 
+If created dimensions are saved, then they are displayed in \ref dimensions_text_window "Text window" as a children of corresponding shapes.
 
 */

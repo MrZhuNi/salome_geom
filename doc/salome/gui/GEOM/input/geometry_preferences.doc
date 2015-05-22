@@ -67,17 +67,26 @@ of values set in spin boxes.</li>
 </ul>
 </ul>
 
+\anchor dimensions_preferences
 <ul>
 <li><b>Dimensions (Measurements)</b> - a group of preferences controlling the presentation of dimensions.</li>
 <ul>
 <li><b>Color</b> - allows to define color for persistent dimension presentations.</li>
 <li><b>Line width</b> - allows to define pixel width of dimension lines.</li>
-<li><b>Font height</b> - allows to define height of dimension text.</li>
+<li><b>Font</b> - allows to define font family and height of dimension text. 
+By default Y14.5M-2009 font is set. It is a standard for the design language of geometric dimensioning. 
+But it is possible to select another font supported by OCCT. 
+Dimension's height is in pixels for 2D text and in model units for 3D text.</li>
 <li><b>Length of arrows</b> - allows to define length of dimension arrows.</li>
 <li><b>Length measurement units</b> - allows to define units of measurement for lengths dimensions.</li>
 <li><b>Angle measurement units</b> - allows to define units of measurement for angles dimensions.</li>
 <li><b>Show units of measurements</b> - when this option is on, the measurement units are added as prefix to value label of dimension.</li>
 <li><b>Default flyout length</b> - allows to define default flyout length used when creating the dimensions. The length can be interactively changed after creation by moving the flyouts.</li>
+<li><b>Use 3D text</b> - this option switches the dimension representation from default 2D to 3D: </li>
+<ul>
+<li>2D text is horizontal and parallel to the screen always.</li>
+<li>3D text takes place in plane of measurement and has constant orientation.</li>
+</ul>
 </ul>
 </ul>
 
