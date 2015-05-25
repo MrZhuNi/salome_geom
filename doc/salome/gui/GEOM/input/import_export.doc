@@ -25,7 +25,7 @@ Our <b>TUI Scripts</b> provide you with useful examples of the use of
 <em>To import geometrical objects from a BREP, IGES, STEP or STL file:</em>
 
 \par
-From the \b File menu choose <b>Import/\<FormatName\></b>, where <b>\<FormatName\></b> is a name
+From the \b File menu choose <b>Import\<FormatName\></b>, where <b>\<FormatName\></b> is a name
 of desirable format. In the <b>Import \<FormatName\></b> dialog box select the file to import
 and press \b Open. The file will be imported in the module and its contents (geometrical object)
 will be displayed in the <b>Object Browser</b>.
