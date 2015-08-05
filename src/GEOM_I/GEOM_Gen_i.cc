@@ -601,7 +601,11 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
   if (isMultiFile)
     aNameWithExt = TCollection_AsciiString((char*)(SALOMEDS_Tool::GetNameFromPath
                                                    (theComponent->GetStudy()->URL())).c_str());
+#if OCC_VERSION_LARGE > 0x06090000
+  aNameWithExt += TCollection_AsciiString("_GEOM.cbf");
+#else
   aNameWithExt += TCollection_AsciiString("_GEOM.sgd");
+#endif
   aSeq[0] = CORBA::string_dup(aNameWithExt.ToCString());
   // Build a full file name of temporary file
   TCollection_AsciiString aFullName = TCollection_AsciiString((char*)aTmpDir.c_str()) + aNameWithExt;
@@ -663,11 +667,32 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
   // Prepare a file name to open
   TCollection_AsciiString aNameWithExt("");
   SALOMEDS::Study_var study = theComponent->GetStudy();
+
+#if OCC_VERSION_LARGE > 0x06090000
+  // Get the file name.
+  int         i;
+  int         aLength  = aSeq->length();
+  const char *aGeomSgd = "_GEOM.sgd";
+  const char *aGeomcbf = "_GEOM.cbf";
+
+  for(i = 0; i < aLength; i++) {
+    std::string aName(aSeq[i]);
+
+    if (aName.rfind(aGeomSgd) != std::string::npos ||
+        aName.rfind(aGeomcbf) != std::string::npos) {
+      aNameWithExt = aName.c_str();
+      break;
+    }
+  }
+#else
   if (isMultiFile) {
     CORBA::String_var url = study->URL();
     aNameWithExt = (char*)SALOMEDS_Tool::GetNameFromPath(url.in()).c_str();
   }
+
   aNameWithExt += "_GEOM.sgd";
+#endif
+
   TCollection_AsciiString aFullName = (TCollection_AsciiString((char*)aTmpDir.c_str()) + aNameWithExt);
 
   // Open document
