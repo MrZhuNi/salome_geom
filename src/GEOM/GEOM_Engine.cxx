@@ -552,6 +552,13 @@ bool GEOM_Engine::Load(int theDocID, const char* theFileName)
     return false;
   }
 
+#if OCC_VERSION_LARGE > 0x06090000
+  // Replace old document format by the new one.
+  if (aDoc->StorageFormat().IsEqual("SALOME_GEOM")) {
+    aDoc->ChangeStorageFormat("BinOcaf");
+  }
+#endif
+
   aDoc->SetUndoLimit(_UndoLimit);
 
   if(_mapIDDocument.IsBound(theDocID)) _mapIDDocument.UnBind(theDocID);

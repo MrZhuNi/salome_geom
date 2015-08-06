@@ -1,0 +1,462 @@
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#
+
+# --- options ---
+
+# additional include directories
+INCLUDE_DIRECTORIES(
+  ${CAS_INCLUDE_DIRS}
+  ${PROJECT_SOURCE_DIR}/src/FromOCCT/TKPLCAF
+  ${PROJECT_SOURCE_DIR}/src/FromOCCT/TKShapeSchema
+  ${PROJECT_SOURCE_DIR}/src/FromOCCT/TKStdLSchema
+  ${PROJECT_SOURCE_DIR}/src/FromOCCT/TKPShape
+  ${PROJECT_SOURCE_DIR}/src/FromOCCT/TKPCAF
+  ${PROJECT_SOURCE_DIR}/src/FromOCCT/TKStdSchema
+  ${PROJECT_SOURCE_DIR}/src/FromOCCT/PTKernel
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+# additional preprocessor / compiler flags
+ADD_DEFINITIONS(
+  ${CAS_DEFINITIONS}
+  )
+
+# libraries to link to
+SET(_link_LIBRARIES
+  ${CAS_TKCDF} ${CAS_TKernel}
+  ${CAS_TKLCAF} ${CAS_TKMath} ${CAS_TKXCAF}
+  TKPLCAF
+  TKShapeSchema
+  TKStdLSchema
+  TKPShape
+  TKPCAF
+  TKStdSchema
+  PTKernel
+  )
+
+# --- headers ---
+
+SET(GEOM_HEADERS
+  Handle_MXCAFDoc_AreaRetrievalDriver.hxx                                                                                  
+  Handle_MXCAFDoc_AreaStorageDriver.hxx                                                                                    
+  Handle_MXCAFDoc_CentroidRetrievalDriver.hxx                                                                              
+  Handle_MXCAFDoc_CentroidStorageDriver.hxx                                                                                
+  Handle_MXCAFDoc_ColorRetrievalDriver.hxx                                                                                 
+  Handle_MXCAFDoc_ColorStorageDriver.hxx                                                                                   
+  Handle_MXCAFDoc_ColorToolRetrievalDriver.hxx                                                                             
+  Handle_MXCAFDoc_ColorToolStorageDriver.hxx                                                                               
+  Handle_MXCAFDoc_DatumRetrievalDriver.hxx                                                                                 
+  Handle_MXCAFDoc_DatumStorageDriver.hxx                                                                                   
+  Handle_MXCAFDoc_DimTolRetrievalDriver.hxx                                                                                
+  Handle_MXCAFDoc_DimTolStorageDriver.hxx                                                                                  
+  Handle_MXCAFDoc_DimTolToolRetrievalDriver.hxx                                                                            
+  Handle_MXCAFDoc_DimTolToolStorageDriver.hxx                                                                              
+  Handle_MXCAFDoc_DocumentToolRetrievalDriver.hxx                                                                          
+  Handle_MXCAFDoc_DocumentToolStorageDriver.hxx                                                                            
+  Handle_MXCAFDoc_GraphNodeRetrievalDriver.hxx                                                                             
+  Handle_MXCAFDoc_GraphNodeStorageDriver.hxx                                                                               
+  Handle_MXCAFDoc_LayerToolRetrievalDriver.hxx                                                                             
+  Handle_MXCAFDoc_LayerToolStorageDriver.hxx                                                                               
+  Handle_MXCAFDoc_LocationRetrievalDriver.hxx                                                                              
+  Handle_MXCAFDoc_LocationStorageDriver.hxx                                                                                
+  Handle_MXCAFDoc_MaterialRetrievalDriver.hxx                                                                              
+  Handle_MXCAFDoc_MaterialStorageDriver.hxx                                                                                
+  Handle_MXCAFDoc_MaterialToolRetrievalDriver.hxx                                                                          
+  Handle_MXCAFDoc_MaterialToolStorageDriver.hxx                                                                            
+  Handle_MXCAFDoc_ShapeToolRetrievalDriver.hxx                                                                             
+  Handle_MXCAFDoc_ShapeToolStorageDriver.hxx                                                                               
+  Handle_MXCAFDoc_VolumeRetrievalDriver.hxx                                                                                
+  Handle_MXCAFDoc_VolumeStorageDriver.hxx                                                                                  
+  Handle_PXCAFDoc_Area.hxx                                                                                                 
+  Handle_PXCAFDoc_Centroid.hxx                                                                                             
+  Handle_PXCAFDoc_Color.hxx                                                                                                
+  Handle_PXCAFDoc_ColorTool.hxx                                                                                            
+  Handle_PXCAFDoc_Datum.hxx                                                                                                
+  Handle_PXCAFDoc_DimTol.hxx                                                                                               
+  Handle_PXCAFDoc_DimTolTool.hxx                                                                                           
+  Handle_PXCAFDoc_DocumentTool.hxx                                                                                         
+  Handle_PXCAFDoc_GraphNode.hxx                                                                                            
+  Handle_PXCAFDoc_GraphNodeSequence.hxx                                                                                    
+  Handle_PXCAFDoc_LayerTool.hxx                                                                                            
+  Handle_PXCAFDoc_Location.hxx                                                                                             
+  Handle_PXCAFDoc_Material.hxx                                                                                             
+  Handle_PXCAFDoc_MaterialTool.hxx                                                                                         
+  Handle_PXCAFDoc_SeqNodeOfGraphNodeSequence.hxx                                                                           
+  Handle_PXCAFDoc_ShapeTool.hxx                                                                                            
+  Handle_PXCAFDoc_Volume.hxx                                                                                               
+  Handle_XCAFDrivers_DocumentRetrievalDriver.hxx                                                                           
+  Handle_XCAFDrivers_DocumentStorageDriver.hxx                                                                               MXCAFDoc_AreaRetrievalDriver.hxx                 
+  MXCAFDoc_AreaRetrievalDriver.ixx                 
+  MXCAFDoc_AreaRetrievalDriver.jxx                 
+  MXCAFDoc_AreaStorageDriver.hxx                   
+  MXCAFDoc_AreaStorageDriver.ixx                   
+  MXCAFDoc_AreaStorageDriver.jxx                   
+  MXCAFDoc_CentroidRetrievalDriver.hxx             
+  MXCAFDoc_CentroidRetrievalDriver.ixx             
+  MXCAFDoc_CentroidRetrievalDriver.jxx             
+  MXCAFDoc_CentroidStorageDriver.hxx               
+  MXCAFDoc_CentroidStorageDriver.ixx               
+  MXCAFDoc_CentroidStorageDriver.jxx               
+  MXCAFDoc_ColorRetrievalDriver.hxx                
+  MXCAFDoc_ColorRetrievalDriver.ixx                
+  MXCAFDoc_ColorRetrievalDriver.jxx                
+  MXCAFDoc_ColorStorageDriver.hxx                  
+  MXCAFDoc_ColorStorageDriver.ixx                  
+  MXCAFDoc_ColorStorageDriver.jxx                  
+  MXCAFDoc_ColorToolRetrievalDriver.hxx            
+  MXCAFDoc_ColorToolRetrievalDriver.ixx            
+  MXCAFDoc_ColorToolRetrievalDriver.jxx            
+  MXCAFDoc_ColorToolStorageDriver.hxx              
+  MXCAFDoc_ColorToolStorageDriver.ixx              
+  MXCAFDoc_ColorToolStorageDriver.jxx              
+  MXCAFDoc_DatumRetrievalDriver.hxx                
+  MXCAFDoc_DatumRetrievalDriver.ixx                
+  MXCAFDoc_DatumRetrievalDriver.jxx                
+  MXCAFDoc_DatumStorageDriver.hxx                  
+  MXCAFDoc_DatumStorageDriver.ixx                  
+  MXCAFDoc_DatumStorageDriver.jxx                  
+  MXCAFDoc_DimTolRetrievalDriver.hxx               
+  MXCAFDoc_DimTolRetrievalDriver.ixx               
+  MXCAFDoc_DimTolRetrievalDriver.jxx               
+  MXCAFDoc_DimTolStorageDriver.hxx                 
+  MXCAFDoc_DimTolStorageDriver.ixx                 
+  MXCAFDoc_DimTolStorageDriver.jxx                 
+  MXCAFDoc_DimTolToolRetrievalDriver.hxx           
+  MXCAFDoc_DimTolToolRetrievalDriver.ixx           
+  MXCAFDoc_DimTolToolRetrievalDriver.jxx           
+  MXCAFDoc_DimTolToolStorageDriver.hxx             
+  MXCAFDoc_DimTolToolStorageDriver.ixx             
+  MXCAFDoc_DimTolToolStorageDriver.jxx             
+  MXCAFDoc_DocumentToolRetrievalDriver.hxx         
+  MXCAFDoc_DocumentToolRetrievalDriver.ixx         
+  MXCAFDoc_DocumentToolRetrievalDriver.jxx         
+  MXCAFDoc_DocumentToolStorageDriver.hxx           
+  MXCAFDoc_DocumentToolStorageDriver.ixx           
+  MXCAFDoc_DocumentToolStorageDriver.jxx           
+  MXCAFDoc_GraphNodeRetrievalDriver.hxx            
+  MXCAFDoc_GraphNodeRetrievalDriver.ixx            
+  MXCAFDoc_GraphNodeRetrievalDriver.jxx            
+  MXCAFDoc_GraphNodeStorageDriver.hxx              
+  MXCAFDoc_GraphNodeStorageDriver.ixx              
+  MXCAFDoc_GraphNodeStorageDriver.jxx              
+  MXCAFDoc.hxx                                     
+  MXCAFDoc.ixx                                     
+  MXCAFDoc.jxx                                     
+  MXCAFDoc_LayerToolRetrievalDriver.hxx            
+  MXCAFDoc_LayerToolRetrievalDriver.ixx            
+  MXCAFDoc_LayerToolRetrievalDriver.jxx            
+  MXCAFDoc_LayerToolStorageDriver.hxx              
+  MXCAFDoc_LayerToolStorageDriver.ixx              
+  MXCAFDoc_LayerToolStorageDriver.jxx              
+  MXCAFDoc_LocationRetrievalDriver.hxx             
+  MXCAFDoc_LocationRetrievalDriver.ixx             
+  MXCAFDoc_LocationRetrievalDriver.jxx             
+  MXCAFDoc_LocationStorageDriver.hxx               
+  MXCAFDoc_LocationStorageDriver.ixx               
+  MXCAFDoc_LocationStorageDriver.jxx               
+  MXCAFDoc_MaterialRetrievalDriver.hxx             
+  MXCAFDoc_MaterialRetrievalDriver.ixx             
+  MXCAFDoc_MaterialRetrievalDriver.jxx             
+  MXCAFDoc_MaterialStorageDriver.hxx               
+  MXCAFDoc_MaterialStorageDriver.ixx               
+  MXCAFDoc_MaterialStorageDriver.jxx               
+  MXCAFDoc_MaterialToolRetrievalDriver.hxx         
+  MXCAFDoc_MaterialToolRetrievalDriver.ixx         
+  MXCAFDoc_MaterialToolRetrievalDriver.jxx         
+  MXCAFDoc_MaterialToolStorageDriver.hxx           
+  MXCAFDoc_MaterialToolStorageDriver.ixx           
+  MXCAFDoc_MaterialToolStorageDriver.jxx           
+  MXCAFDoc_ShapeToolRetrievalDriver.hxx            
+  MXCAFDoc_ShapeToolRetrievalDriver.ixx            
+  MXCAFDoc_ShapeToolRetrievalDriver.jxx            
+  MXCAFDoc_ShapeToolStorageDriver.hxx              
+  MXCAFDoc_ShapeToolStorageDriver.ixx              
+  MXCAFDoc_ShapeToolStorageDriver.jxx              
+  MXCAFDoc_VolumeRetrievalDriver.hxx               
+  MXCAFDoc_VolumeRetrievalDriver.ixx               
+  MXCAFDoc_VolumeRetrievalDriver.jxx               
+  MXCAFDoc_VolumeStorageDriver.hxx                 
+  MXCAFDoc_VolumeStorageDriver.ixx                 
+  MXCAFDoc_VolumeStorageDriver.jxx                 
+  PXCAFDoc_Area.hxx                                
+  PXCAFDoc_Area.ixx                                
+  PXCAFDoc_Area.jxx                                
+  PXCAFDoc_Centroid.hxx                            
+  PXCAFDoc_Centroid.ixx                            
+  PXCAFDoc_Centroid.jxx                            
+  PXCAFDoc_Color.hxx                               
+  PXCAFDoc_Color.ixx                               
+  PXCAFDoc_Color.jxx                               
+  PXCAFDoc_ColorTool.hxx                           
+  PXCAFDoc_ColorTool.ixx                           
+  PXCAFDoc_ColorTool.jxx                           
+  PXCAFDoc_Datum.hxx                               
+  PXCAFDoc_Datum.ixx                               
+  PXCAFDoc_Datum.jxx                               
+  PXCAFDoc_DimTol.hxx                              
+  PXCAFDoc_DimTol.ixx                              
+  PXCAFDoc_DimTol.jxx                              
+  PXCAFDoc_DimTolTool.hxx                          
+  PXCAFDoc_DimTolTool.ixx                          
+  PXCAFDoc_DimTolTool.jxx                          
+  PXCAFDoc_DocumentTool.hxx                        
+  PXCAFDoc_DocumentTool.ixx                        
+  PXCAFDoc_DocumentTool.jxx                        
+  PXCAFDoc_GraphNode.hxx                           
+  PXCAFDoc_GraphNode.ixx                           
+  PXCAFDoc_GraphNode.jxx                           
+  PXCAFDoc_GraphNodeSequence.hxx                   
+  PXCAFDoc_LayerTool.hxx                           
+  PXCAFDoc_LayerTool.ixx                           
+  PXCAFDoc_LayerTool.jxx                           
+  PXCAFDoc_Location.hxx                            
+  PXCAFDoc_Location.ixx                            
+  PXCAFDoc_Location.jxx                            
+  PXCAFDoc_Material.hxx                            
+  PXCAFDoc_Material.ixx                            
+  PXCAFDoc_Material.jxx                            
+  PXCAFDoc_MaterialTool.hxx                        
+  PXCAFDoc_MaterialTool.ixx                        
+  PXCAFDoc_MaterialTool.jxx                        
+  PXCAFDoc_SeqExplorerOfGraphNodeSequence.hxx      
+  PXCAFDoc_SeqNodeOfGraphNodeSequence.hxx          
+  PXCAFDoc_ShapeTool.hxx                           
+  PXCAFDoc_ShapeTool.ixx                           
+  PXCAFDoc_ShapeTool.jxx                           
+  PXCAFDoc_Volume.hxx                              
+  PXCAFDoc_Volume.ixx                              
+  PXCAFDoc_Volume.jxx                              
+  XCAFDrivers_DocumentRetrievalDriver.hxx          
+  XCAFDrivers_DocumentRetrievalDriver.ixx          
+  XCAFDrivers_DocumentRetrievalDriver.jxx          
+  XCAFDrivers_DocumentStorageDriver.hxx            
+  XCAFDrivers_DocumentStorageDriver.ixx            
+  XCAFDrivers_DocumentStorageDriver.jxx            
+  XCAFDrivers.hxx                                  
+  XCAFDrivers.ixx                                  
+  XCAFDrivers.jxx                                  
+  XCAFSchema_DBC_VArrayOfCharacter.hxx             
+  XCAFSchema_DBC_VArrayOfCharacter.ixx             
+  XCAFSchema_DBC_VArrayOfExtCharacter.hxx          
+  XCAFSchema_DBC_VArrayOfExtCharacter.ixx          
+  XCAFSchema_gp_Ax1.hxx                            
+  XCAFSchema_gp_Ax1.ixx                            
+  XCAFSchema_gp_Ax2d.hxx                           
+  XCAFSchema_gp_Ax2d.ixx                           
+  XCAFSchema_gp_Ax2.hxx                            
+  XCAFSchema_gp_Ax2.ixx                            
+  XCAFSchema_gp_Ax3.hxx                            
+  XCAFSchema_gp_Ax3.ixx                            
+  XCAFSchema_gp_Dir2d.hxx                          
+  XCAFSchema_gp_Dir2d.ixx                          
+  XCAFSchema_gp_Dir.hxx                            
+  XCAFSchema_gp_Dir.ixx                            
+  XCAFSchema_gp_Mat2d.hxx                          
+  XCAFSchema_gp_Mat2d.ixx                          
+  XCAFSchema_gp_Mat.hxx                            
+  XCAFSchema_gp_Mat.ixx                            
+  XCAFSchema_gp_Pnt2d.hxx                          
+  XCAFSchema_gp_Pnt2d.ixx                          
+  XCAFSchema_gp_Pnt.hxx                            
+  XCAFSchema_gp_Pnt.ixx                            
+  XCAFSchema_gp_Trsf2d.hxx                         
+  XCAFSchema_gp_Trsf2d.ixx                         
+  XCAFSchema_gp_Trsf.hxx                           
+  XCAFSchema_gp_Trsf.ixx                           
+  XCAFSchema_gp_Vec2d.hxx                          
+  XCAFSchema_gp_Vec2d.ixx                          
+  XCAFSchema_gp_Vec.hxx                            
+  XCAFSchema_gp_Vec.ixx                            
+  XCAFSchema_gp_XY.hxx                             
+  XCAFSchema_gp_XY.ixx                             
+  XCAFSchema_gp_XYZ.hxx                            
+  XCAFSchema_gp_XYZ.ixx                            
+  XCAFSchema.hxx                                   
+  XCAFSchema_PCollection_HAsciiString.hxx          
+  XCAFSchema_PCollection_HAsciiString.ixx          
+  XCAFSchema_PCollection_HExtendedString.hxx       
+  XCAFSchema_PCollection_HExtendedString.ixx       
+  XCAFSchema_PColStd_FieldOfHArray1OfReal.hxx      
+  XCAFSchema_PColStd_FieldOfHArray1OfReal.ixx      
+  XCAFSchema_PColStd_HArray1OfReal.hxx             
+  XCAFSchema_PColStd_HArray1OfReal.ixx             
+  XCAFSchema_PDF_Attribute.hxx                     
+  XCAFSchema_PDF_Attribute.ixx                     
+  XCAFSchema_PMMgt_PManaged.hxx                    
+  XCAFSchema_PMMgt_PManaged.ixx                    
+  XCAFSchema_PTopLoc_Datum3D.hxx                   
+  XCAFSchema_PTopLoc_Datum3D.ixx                   
+  XCAFSchema_PTopLoc_ItemLocation.hxx              
+  XCAFSchema_PTopLoc_ItemLocation.ixx              
+  XCAFSchema_PTopLoc_Location.hxx                  
+  XCAFSchema_PTopLoc_Location.ixx                  
+  XCAFSchema_PXCAFDoc_Area.hxx                     
+  XCAFSchema_PXCAFDoc_Area.ixx                     
+  XCAFSchema_PXCAFDoc_Centroid.hxx                 
+  XCAFSchema_PXCAFDoc_Centroid.ixx                 
+  XCAFSchema_PXCAFDoc_Color.hxx                    
+  XCAFSchema_PXCAFDoc_Color.ixx                    
+  XCAFSchema_PXCAFDoc_ColorTool.hxx
+  XCAFSchema_PXCAFDoc_ColorTool.ixx
+  XCAFSchema_PXCAFDoc_Datum.hxx
+  XCAFSchema_PXCAFDoc_Datum.ixx
+  XCAFSchema_PXCAFDoc_DimTol.hxx
+  XCAFSchema_PXCAFDoc_DimTol.ixx
+  XCAFSchema_PXCAFDoc_DimTolTool.hxx
+  XCAFSchema_PXCAFDoc_DimTolTool.ixx
+  XCAFSchema_PXCAFDoc_DocumentTool.hxx
+  XCAFSchema_PXCAFDoc_DocumentTool.ixx
+  XCAFSchema_PXCAFDoc_GraphNode.hxx
+  XCAFSchema_PXCAFDoc_GraphNode.ixx
+  XCAFSchema_PXCAFDoc_GraphNodeSequence.hxx
+  XCAFSchema_PXCAFDoc_GraphNodeSequence.ixx
+  XCAFSchema_PXCAFDoc_LayerTool.hxx
+  XCAFSchema_PXCAFDoc_LayerTool.ixx
+  XCAFSchema_PXCAFDoc_Location.hxx
+  XCAFSchema_PXCAFDoc_Location.ixx
+  XCAFSchema_PXCAFDoc_Material.hxx
+  XCAFSchema_PXCAFDoc_Material.ixx
+  XCAFSchema_PXCAFDoc_MaterialTool.hxx
+  XCAFSchema_PXCAFDoc_MaterialTool.ixx
+  XCAFSchema_PXCAFDoc_SeqNodeOfGraphNodeSequence.hxx
+  XCAFSchema_PXCAFDoc_SeqNodeOfGraphNodeSequence.ixx
+  XCAFSchema_PXCAFDoc_ShapeTool.hxx
+  XCAFSchema_PXCAFDoc_ShapeTool.ixx
+  XCAFSchema_PXCAFDoc_Volume.hxx
+  XCAFSchema_PXCAFDoc_Volume.ixx
+  XCAFSchema_Quantity_Color.hxx
+  XCAFSchema_Quantity_Color.ixx
+  XCAFSchema_Standard_GUID.hxx
+  XCAFSchema_Standard_GUID.ixx
+  XCAFSchema_Standard_Persistent.hxx
+  XCAFSchema_Standard_Persistent.ixx
+  )
+
+# --- sources ---
+
+SET(GEOM_SOURCES
+  MXCAFDoc_AreaRetrievalDriver.cxx                                                                                         
+  MXCAFDoc_AreaStorageDriver.cxx                                                                                           
+  MXCAFDoc_CentroidRetrievalDriver.cxx                                                                                     
+  MXCAFDoc_CentroidStorageDriver.cxx                                                                                       
+  MXCAFDoc_ColorRetrievalDriver.cxx                                                                                        
+  MXCAFDoc_ColorStorageDriver.cxx                                                                                          
+  MXCAFDoc_ColorToolRetrievalDriver.cxx                                                                                    
+  MXCAFDoc_ColorToolStorageDriver.cxx                                                                                      
+  MXCAFDoc.cxx                                                                                                             
+  MXCAFDoc_DatumRetrievalDriver.cxx                                                                                        
+  MXCAFDoc_DatumStorageDriver.cxx                                                                                          
+  MXCAFDoc_DimTolRetrievalDriver.cxx                                                                                       
+  MXCAFDoc_DimTolStorageDriver.cxx                                                                                         
+  MXCAFDoc_DimTolToolRetrievalDriver.cxx                                                                                   
+  MXCAFDoc_DimTolToolStorageDriver.cxx                                                                                     
+  MXCAFDoc_DocumentToolRetrievalDriver.cxx                                                                                 
+  MXCAFDoc_DocumentToolStorageDriver.cxx                                                                                   
+  MXCAFDoc_GraphNodeRetrievalDriver.cxx                                                                                    
+  MXCAFDoc_GraphNodeStorageDriver.cxx                                                                                      
+  MXCAFDoc_LayerToolRetrievalDriver.cxx                                                                                    
+  MXCAFDoc_LayerToolStorageDriver.cxx                                                                                      
+  MXCAFDoc_LocationRetrievalDriver.cxx                                                                                     
+  MXCAFDoc_LocationStorageDriver.cxx                                                                                       
+  MXCAFDoc_MaterialRetrievalDriver.cxx                                                                                     
+  MXCAFDoc_MaterialStorageDriver.cxx                                                                                       
+  MXCAFDoc_MaterialToolRetrievalDriver.cxx                                                                                 
+  MXCAFDoc_MaterialToolStorageDriver.cxx                                                                                   
+  MXCAFDoc_ShapeToolRetrievalDriver.cxx                                                                                    
+  MXCAFDoc_ShapeToolStorageDriver.cxx                                                                                      
+  MXCAFDoc_VolumeRetrievalDriver.cxx                                                                                       
+  MXCAFDoc_VolumeStorageDriver.cxx                                                                                         
+  PXCAFDoc_Area.cxx                                                                                                        
+  PXCAFDoc_Centroid.cxx                                                                                                    
+  PXCAFDoc_Color.cxx                                                                                                       
+  PXCAFDoc_ColorTool.cxx                                                                                                   
+  PXCAFDoc_Datum.cxx                                                                                                       
+  PXCAFDoc_DimTol.cxx                                                                                                      
+  PXCAFDoc_DimTolTool.cxx                                                                                                  
+  PXCAFDoc_DocumentTool.cxx                                                                                                
+  PXCAFDoc_GraphNode.cxx                                                                                                   
+  PXCAFDoc_GraphNodeSequence_0.cxx                                                                                         
+  PXCAFDoc_LayerTool.cxx                                                                                                   
+  PXCAFDoc_Location.cxx                                                                                                    
+  PXCAFDoc_Material.cxx                                                                                                    
+  PXCAFDoc_MaterialTool.cxx                                                                                                
+  PXCAFDoc_SeqExplorerOfGraphNodeSequence_0.cxx                                                                            
+  PXCAFDoc_SeqNodeOfGraphNodeSequence_0.cxx                                                                                
+  PXCAFDoc_ShapeTool.cxx                                                                                                   
+  PXCAFDoc_Volume.cxx                                                                                                      
+  XCAFDrivers.cxx                                                                                                          
+  XCAFDrivers_DocumentRetrievalDriver.cxx                                                                                  
+  XCAFDrivers_DocumentStorageDriver.cxx                                                                                    
+  XCAFSchema.cxx                                                                                                           
+  XCAFSchema_DBC_VArrayOfCharacter.cxx                                                                                     
+  XCAFSchema_DBC_VArrayOfExtCharacter.cxx                                                                                  
+  XCAFSchema_gp_Ax1.cxx                                                                                                    
+  XCAFSchema_gp_Ax2.cxx                                                                                                    
+  XCAFSchema_gp_Ax2d.cxx                                                                                                   
+  XCAFSchema_gp_Ax3.cxx                                                                                                    
+  XCAFSchema_gp_Dir2d.cxx                                                                                                  
+  XCAFSchema_gp_Dir.cxx                                                                                                    
+  XCAFSchema_gp_Mat2d.cxx                                                                                                  
+  XCAFSchema_gp_Mat.cxx                                                                                                    
+  XCAFSchema_gp_Pnt2d.cxx                                                                                                  
+  XCAFSchema_gp_Pnt.cxx                                                                                                    
+  XCAFSchema_gp_Trsf2d.cxx
+  XCAFSchema_gp_Trsf.cxx
+  XCAFSchema_gp_Vec2d.cxx
+  XCAFSchema_gp_Vec.cxx
+  XCAFSchema_gp_XY.cxx
+  XCAFSchema_gp_XYZ.cxx
+  XCAFSchema_PCollection_HAsciiString.cxx
+  XCAFSchema_PCollection_HExtendedString.cxx
+  XCAFSchema_PColStd_FieldOfHArray1OfReal.cxx
+  XCAFSchema_PColStd_HArray1OfReal.cxx
+  XCAFSchema_PDF_Attribute.cxx
+  XCAFSchema_PMMgt_PManaged.cxx
+  XCAFSchema_PTopLoc_Datum3D.cxx
+  XCAFSchema_PTopLoc_ItemLocation.cxx
+  XCAFSchema_PTopLoc_Location.cxx
+  XCAFSchema_PXCAFDoc_Area.cxx
+  XCAFSchema_PXCAFDoc_Centroid.cxx
+  XCAFSchema_PXCAFDoc_Color.cxx
+  XCAFSchema_PXCAFDoc_ColorTool.cxx
+  XCAFSchema_PXCAFDoc_Datum.cxx
+  XCAFSchema_PXCAFDoc_DimTol.cxx
+  XCAFSchema_PXCAFDoc_DimTolTool.cxx
+  XCAFSchema_PXCAFDoc_DocumentTool.cxx
+  XCAFSchema_PXCAFDoc_GraphNode.cxx
+  XCAFSchema_PXCAFDoc_GraphNodeSequence.cxx
+  XCAFSchema_PXCAFDoc_LayerTool.cxx
+  XCAFSchema_PXCAFDoc_Location.cxx
+  XCAFSchema_PXCAFDoc_Material.cxx
+  XCAFSchema_PXCAFDoc_MaterialTool.cxx
+  XCAFSchema_PXCAFDoc_SeqNodeOfGraphNodeSequence.cxx
+  XCAFSchema_PXCAFDoc_ShapeTool.cxx
+  XCAFSchema_PXCAFDoc_Volume.cxx
+  XCAFSchema_Quantity_Color.cxx
+  XCAFSchema_Standard_GUID.cxx
+  XCAFSchema_Standard_Persistent.cxx
+  )
+
+# --- rules ---
+
+ADD_LIBRARY(TKXCAFSchema ${GEOM_SOURCES})
+TARGET_LINK_LIBRARIES(TKXCAFSchema ${_link_LIBRARIES})
+INSTALL(TARGETS TKXCAFSchema EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${SALOME_INSTALL_LIBS})
+
+INSTALL(FILES ${GEOM_HEADERS} DESTINATION ${SALOME_INSTALL_HEADERS})
