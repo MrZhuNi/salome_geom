@@ -5,6 +5,8 @@
 
 #include <PTopoDS_FieldOfHArray1OfShape1.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_NegativeValue.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_DimensionMismatch.hxx>
@@ -12,6 +14,14 @@
 #include <PTopoDS_Shape1.hxx>
 #include <PTopoDS_VArrayNodeOfFieldOfHArray1OfShape1.hxx>
 #include <PTopoDS_VArrayTNodeOfFieldOfHArray1OfShape1.hxx>
+
+IMPLEMENT_STANDARD_TYPE(PTopoDS_FieldOfHArray1OfShape1)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(DBC_BaseArray),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PTopoDS_FieldOfHArray1OfShape1)
+ 
 
 #define Item PTopoDS_Shape1
 #define Item_hxx <PTopoDS_Shape1.hxx>

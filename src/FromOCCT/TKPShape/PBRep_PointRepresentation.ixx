@@ -5,6 +5,20 @@
 
 #include <PBRep_PointRepresentation.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PBRep_PointRepresentation)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PBRep_PointRepresentation)
+
+
 IMPLEMENT_DOWNCAST(PBRep_PointRepresentation,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PBRep_PointRepresentation)
 

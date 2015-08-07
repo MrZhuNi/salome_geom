@@ -5,6 +5,8 @@
 
 #include <PDF_FieldOfHAttributeArray1.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_NegativeValue.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_DimensionMismatch.hxx>
@@ -12,6 +14,14 @@
 #include <PDF_Attribute.hxx>
 #include <PDF_VArrayNodeOfFieldOfHAttributeArray1.hxx>
 #include <PDF_VArrayTNodeOfFieldOfHAttributeArray1.hxx>
+
+IMPLEMENT_STANDARD_TYPE(PDF_FieldOfHAttributeArray1)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(DBC_BaseArray),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDF_FieldOfHAttributeArray1)
+ 
 
 #define Item Handle(PDF_Attribute)
 #define Item_hxx <PDF_Attribute.hxx>

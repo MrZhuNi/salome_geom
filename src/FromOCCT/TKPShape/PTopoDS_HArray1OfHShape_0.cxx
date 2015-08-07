@@ -5,6 +5,8 @@
 
 #include <PTopoDS_HArray1OfHShape.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PTopoDS_HShape.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_RangeError.hxx>
@@ -13,6 +15,14 @@
 #include <PTopoDS_VArrayTNodeOfFieldOfHArray1OfHShape.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PTopoDS_HArray1OfHShape)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PTopoDS_HArray1OfHShape)
 
 
 IMPLEMENT_DOWNCAST(PTopoDS_HArray1OfHShape,Standard_Persistent)

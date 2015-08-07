@@ -5,6 +5,8 @@
 
 #include <PDataStd_FieldOfHArray1OfHArray1OfReal.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_NegativeValue.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_DimensionMismatch.hxx>
@@ -12,6 +14,14 @@
 #include <PColStd_HArray1OfReal.hxx>
 #include <PDataStd_VArrayNodeOfFieldOfHArray1OfHArray1OfReal.hxx>
 #include <PDataStd_VArrayTNodeOfFieldOfHArray1OfHArray1OfReal.hxx>
+
+IMPLEMENT_STANDARD_TYPE(PDataStd_FieldOfHArray1OfHArray1OfReal)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(DBC_BaseArray),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDataStd_FieldOfHArray1OfHArray1OfReal)
+ 
 
 #define Item Handle(PColStd_HArray1OfReal)
 #define Item_hxx <PColStd_HArray1OfReal.hxx>

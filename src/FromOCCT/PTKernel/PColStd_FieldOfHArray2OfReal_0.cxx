@@ -5,12 +5,22 @@
 
 #include <PColStd_FieldOfHArray2OfReal.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_NegativeValue.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_DimensionMismatch.hxx>
 #include <Standard_NullObject.hxx>
 #include <PColStd_VArrayNodeOfFieldOfHArray2OfReal.hxx>
 #include <PColStd_VArrayTNodeOfFieldOfHArray2OfReal.hxx>
+
+IMPLEMENT_STANDARD_TYPE(PColStd_FieldOfHArray2OfReal)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(DBC_BaseArray),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColStd_FieldOfHArray2OfReal)
+ 
 
 #define Item Standard_Real
 #define Item_hxx <Standard_Real.hxx>

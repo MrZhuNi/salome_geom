@@ -5,6 +5,8 @@
 
 #include <PDataStd_FieldOfHArray1OfHAsciiString.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_NegativeValue.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_DimensionMismatch.hxx>
@@ -12,6 +14,14 @@
 #include <PCollection_HAsciiString.hxx>
 #include <PDataStd_VArrayNodeOfFieldOfHArray1OfHAsciiString.hxx>
 #include <PDataStd_VArrayTNodeOfFieldOfHArray1OfHAsciiString.hxx>
+
+IMPLEMENT_STANDARD_TYPE(PDataStd_FieldOfHArray1OfHAsciiString)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(DBC_BaseArray),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDataStd_FieldOfHArray1OfHAsciiString)
+ 
 
 #define Item Handle(PCollection_HAsciiString)
 #define Item_hxx <PCollection_HAsciiString.hxx>

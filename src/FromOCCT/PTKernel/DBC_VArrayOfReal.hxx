@@ -14,6 +14,7 @@
 #include <Standard_Real.hxx>
 #include <Handle_DBC_VArrayNodeOfVArrayOfReal.hxx>
 #include <Standard_Integer.hxx>
+#include <Standard_PrimitiveTypes.hxx>
 class Standard_NegativeValue;
 class Standard_OutOfRange;
 class Standard_DimensionMismatch;
@@ -23,8 +24,12 @@ class DBC_VArrayTNodeOfVArrayOfReal;
 
 
 
+Standard_EXPORT const Handle(Standard_Type)& STANDARD_TYPE(DBC_VArrayOfReal);
+
+
 class DBC_VArrayOfReal  : public DBC_BaseArray
 {
+
 public:
 
   DEFINE_STANDARD_ALLOC
@@ -60,16 +65,17 @@ public:
 
 
 
-
 protected:
 
 
 
 
+private: 
 
-private:
-
-
+#ifdef CSFDB
+// DBC_VArray : field
+//
+#endif
 
 
 

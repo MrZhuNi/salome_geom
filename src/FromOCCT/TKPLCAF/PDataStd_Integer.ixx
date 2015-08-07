@@ -5,6 +5,21 @@
 
 #include <PDataStd_Integer.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PDataStd_Integer)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDataStd_Integer)
+
+
 IMPLEMENT_DOWNCAST(PDataStd_Integer,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PDataStd_Integer)
 

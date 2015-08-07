@@ -5,6 +5,22 @@
 
 #include <PTopoDS_Compound.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PTopoDS_Compound)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PTopoDS_HShape),
+  STANDARD_TYPE(ObjMgt_ExternShareable),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PTopoDS_Compound)
+
+
 IMPLEMENT_DOWNCAST(PTopoDS_Compound,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PTopoDS_Compound)
 

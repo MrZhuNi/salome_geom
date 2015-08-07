@@ -60,7 +60,6 @@ class Handle(PDocStd_Document);
 class Handle(PDocStd_XLink);
 class Handle(PCDM_Document);
 class Handle(Standard_Persistent);
-class Standard_Storable;
 class Handle(PColStd_HArray1OfInteger);
 class Handle(PCollection_HAsciiString);
 class Handle(PCollection_HExtendedString);

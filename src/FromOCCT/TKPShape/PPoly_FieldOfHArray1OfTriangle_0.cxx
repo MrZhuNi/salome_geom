@@ -5,6 +5,8 @@
 
 #include <PPoly_FieldOfHArray1OfTriangle.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_NegativeValue.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_DimensionMismatch.hxx>
@@ -12,6 +14,14 @@
 #include <PPoly_Triangle.hxx>
 #include <PPoly_VArrayNodeOfFieldOfHArray1OfTriangle.hxx>
 #include <PPoly_VArrayTNodeOfFieldOfHArray1OfTriangle.hxx>
+
+IMPLEMENT_STANDARD_TYPE(PPoly_FieldOfHArray1OfTriangle)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(DBC_BaseArray),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PPoly_FieldOfHArray1OfTriangle)
+ 
 
 #define Item PPoly_Triangle
 #define Item_hxx <PPoly_Triangle.hxx>

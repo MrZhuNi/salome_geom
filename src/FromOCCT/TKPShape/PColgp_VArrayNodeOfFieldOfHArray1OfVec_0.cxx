@@ -5,11 +5,22 @@
 
 #include <PColgp_VArrayNodeOfFieldOfHArray1OfVec.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <gp_Vec.hxx>
 #include <PColgp_FieldOfHArray1OfVec.hxx>
 #include <PColgp_VArrayTNodeOfFieldOfHArray1OfVec.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColgp_VArrayNodeOfFieldOfHArray1OfVec)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColgp_VArrayNodeOfFieldOfHArray1OfVec)
 
 
 IMPLEMENT_DOWNCAST(PColgp_VArrayNodeOfFieldOfHArray1OfVec,Standard_Persistent)

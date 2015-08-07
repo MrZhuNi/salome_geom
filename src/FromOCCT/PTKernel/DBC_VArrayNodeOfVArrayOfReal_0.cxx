@@ -5,10 +5,21 @@
 
 #include <DBC_VArrayNodeOfVArrayOfReal.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <DBC_VArrayOfReal.hxx>
 #include <DBC_VArrayTNodeOfVArrayOfReal.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(DBC_VArrayNodeOfVArrayOfReal)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(DBC_VArrayNodeOfVArrayOfReal)
 
 
 IMPLEMENT_DOWNCAST(DBC_VArrayNodeOfVArrayOfReal,Standard_Persistent)

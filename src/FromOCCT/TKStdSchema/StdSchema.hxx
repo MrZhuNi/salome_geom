@@ -32,7 +32,6 @@ class Handle(PPrsStd_AISPresentation);
 class Handle(PPrsStd_AISPresentation_1);
 class Handle(PDF_Attribute);
 class Handle(Standard_Persistent);
-class Standard_Storable;
 class gp_Pnt;
 class Handle(PDataStd_Real);
 class Handle(PDF_HAttributeArray1);

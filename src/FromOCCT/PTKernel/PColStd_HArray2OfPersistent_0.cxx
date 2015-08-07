@@ -5,6 +5,8 @@
 
 #include <PColStd_HArray2OfPersistent.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_Persistent.hxx>
 #include <Standard_RangeError.hxx>
 #include <Standard_OutOfRange.hxx>
@@ -13,6 +15,14 @@
 #include <PColStd_VArrayTNodeOfFieldOfHArray2OfPersistent.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColStd_HArray2OfPersistent)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColStd_HArray2OfPersistent)
 
 
 IMPLEMENT_DOWNCAST(PColStd_HArray2OfPersistent,Standard_Persistent)

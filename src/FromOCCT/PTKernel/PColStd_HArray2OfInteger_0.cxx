@@ -5,6 +5,8 @@
 
 #include <PColStd_HArray2OfInteger.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_RangeError.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <PColStd_FieldOfHArray2OfInteger.hxx>
@@ -12,6 +14,14 @@
 #include <PColStd_VArrayTNodeOfFieldOfHArray2OfInteger.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColStd_HArray2OfInteger)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColStd_HArray2OfInteger)
 
 
 IMPLEMENT_DOWNCAST(PColStd_HArray2OfInteger,Standard_Persistent)

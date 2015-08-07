@@ -5,3 +5,14 @@
 
 #include <PPoly_Triangle.jxx>
 
+#include <Standard_Type.hxx>
+
+
+IMPLEMENT_STANDARD_TYPE(PPoly_Triangle)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PPoly_Triangle)
+ 
+
+

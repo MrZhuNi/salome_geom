@@ -185,7 +185,6 @@ class Handle(PBRep_TEdge1);
 class Handle(PBRep_TVertex1);
 class Handle(PCDMShape_Document);
 class Handle(Standard_Persistent);
-class Standard_Storable;
 class Handle(PCollection_HAsciiString);
 class Handle(PMMgt_PManaged);
 class gp_Trsf;

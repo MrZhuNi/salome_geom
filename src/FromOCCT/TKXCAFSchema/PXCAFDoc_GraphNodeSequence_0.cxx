@@ -5,6 +5,8 @@
 
 #include <PXCAFDoc_GraphNodeSequence.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PXCAFDoc_GraphNode.hxx>
 #include <PXCAFDoc_GraphNodeSequence.hxx>
 #include <PXCAFDoc_SeqNodeOfGraphNodeSequence.hxx>
@@ -12,6 +14,14 @@
 #include <Standard_OutOfRange.hxx>
 #include <PXCAFDoc_SeqExplorerOfGraphNodeSequence.hxx>
  
+
+
+IMPLEMENT_STANDARD_TYPE(PXCAFDoc_GraphNodeSequence)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PXCAFDoc_GraphNodeSequence)
 
 
 IMPLEMENT_DOWNCAST(PXCAFDoc_GraphNodeSequence,Standard_Persistent)

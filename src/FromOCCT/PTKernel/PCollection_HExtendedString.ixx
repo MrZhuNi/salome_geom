@@ -5,6 +5,20 @@
 
 #include <PCollection_HExtendedString.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PCollection_HExtendedString)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PCollection_HExtendedString)
+
+
 IMPLEMENT_DOWNCAST(PCollection_HExtendedString,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PCollection_HExtendedString)
 

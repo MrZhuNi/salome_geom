@@ -5,6 +5,8 @@
 
 #include <ObjMgt_PSeqOfExtRef.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <ObjMgt_ExternRef.hxx>
 #include <ObjMgt_PSeqOfExtRef.hxx>
 #include <ObjMgt_SeqNodeOfPSeqOfExtRef.hxx>
@@ -12,6 +14,14 @@
 #include <Standard_OutOfRange.hxx>
 #include <ObjMgt_SeqExplorerOfPSeqOfExtRef.hxx>
  
+
+
+IMPLEMENT_STANDARD_TYPE(ObjMgt_PSeqOfExtRef)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(ObjMgt_PSeqOfExtRef)
 
 
 IMPLEMENT_DOWNCAST(ObjMgt_PSeqOfExtRef,Standard_Persistent)

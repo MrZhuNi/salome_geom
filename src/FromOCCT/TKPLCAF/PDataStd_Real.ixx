@@ -5,6 +5,21 @@
 
 #include <PDataStd_Real.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PDataStd_Real)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDataStd_Real)
+
+
 IMPLEMENT_DOWNCAST(PDataStd_Real,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PDataStd_Real)
 

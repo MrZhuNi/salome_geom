@@ -5,6 +5,21 @@
 
 #include <PXCAFDoc_DocumentTool.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PXCAFDoc_DocumentTool)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PXCAFDoc_DocumentTool)
+
+
 IMPLEMENT_DOWNCAST(PXCAFDoc_DocumentTool,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PXCAFDoc_DocumentTool)
 

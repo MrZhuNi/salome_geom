@@ -5,12 +5,23 @@
 
 #include <PColgp_SeqNodeOfHSequenceOfDir.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PColgp_SeqNodeOfHSequenceOfDir.hxx>
 #include <PColgp_HSequenceOfDir.hxx>
 #include <PColgp_SeqExplorerOfHSequenceOfDir.hxx>
 #include <gp_Dir.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColgp_SeqNodeOfHSequenceOfDir)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PMMgt_PManaged),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColgp_SeqNodeOfHSequenceOfDir)
 
 
 IMPLEMENT_DOWNCAST(PColgp_SeqNodeOfHSequenceOfDir,Standard_Persistent)

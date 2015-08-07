@@ -5,6 +5,21 @@
 
 #include <PDataStd_IntPackedMap.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PDataStd_IntPackedMap)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDataStd_IntPackedMap)
+
+
 IMPLEMENT_DOWNCAST(PDataStd_IntPackedMap,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PDataStd_IntPackedMap)
 

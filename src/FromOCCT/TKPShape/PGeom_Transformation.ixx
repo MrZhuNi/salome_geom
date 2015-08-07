@@ -5,6 +5,20 @@
 
 #include <PGeom_Transformation.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PGeom_Transformation)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PGeom_Transformation)
+
+
 IMPLEMENT_DOWNCAST(PGeom_Transformation,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PGeom_Transformation)
 

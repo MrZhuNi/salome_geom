@@ -5,6 +5,20 @@
 
 #include <PPoly_Triangulation.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PPoly_Triangulation)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PPoly_Triangulation)
+
+
 IMPLEMENT_DOWNCAST(PPoly_Triangulation,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PPoly_Triangulation)
 

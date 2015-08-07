@@ -5,6 +5,20 @@
 
 #include <PTopoDS_TShape.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PTopoDS_TShape)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PTopoDS_TShape)
+
+
 IMPLEMENT_DOWNCAST(PTopoDS_TShape,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PTopoDS_TShape)
 

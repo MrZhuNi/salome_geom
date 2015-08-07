@@ -5,3 +5,14 @@
 
 #include <PTopLoc_Location.jxx>
 
+#include <Standard_Type.hxx>
+
+
+IMPLEMENT_STANDARD_TYPE(PTopLoc_Location)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PTopLoc_Location)
+ 
+
+

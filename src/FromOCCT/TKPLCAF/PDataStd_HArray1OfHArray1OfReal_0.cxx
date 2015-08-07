@@ -5,6 +5,8 @@
 
 #include <PDataStd_HArray1OfHArray1OfReal.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PColStd_HArray1OfReal.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_RangeError.hxx>
@@ -13,6 +15,14 @@
 #include <PDataStd_VArrayTNodeOfFieldOfHArray1OfHArray1OfReal.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PDataStd_HArray1OfHArray1OfReal)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDataStd_HArray1OfHArray1OfReal)
 
 
 IMPLEMENT_DOWNCAST(PDataStd_HArray1OfHArray1OfReal,Standard_Persistent)

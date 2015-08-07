@@ -5,6 +5,20 @@
 
 #include <ObjMgt_ExternRef.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(ObjMgt_ExternRef)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(ObjMgt_ExternRef)
+
+
 IMPLEMENT_DOWNCAST(ObjMgt_ExternRef,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(ObjMgt_ExternRef)
 

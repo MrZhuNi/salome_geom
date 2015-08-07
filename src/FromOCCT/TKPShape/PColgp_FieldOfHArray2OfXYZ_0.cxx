@@ -5,6 +5,8 @@
 
 #include <PColgp_FieldOfHArray2OfXYZ.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_NegativeValue.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_DimensionMismatch.hxx>
@@ -12,6 +14,14 @@
 #include <gp_XYZ.hxx>
 #include <PColgp_VArrayNodeOfFieldOfHArray2OfXYZ.hxx>
 #include <PColgp_VArrayTNodeOfFieldOfHArray2OfXYZ.hxx>
+
+IMPLEMENT_STANDARD_TYPE(PColgp_FieldOfHArray2OfXYZ)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(DBC_BaseArray),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColgp_FieldOfHArray2OfXYZ)
+ 
 
 #define Item gp_XYZ
 #define Item_hxx <gp_XYZ.hxx>

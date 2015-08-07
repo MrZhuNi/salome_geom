@@ -5,6 +5,21 @@
 
 #include <PDataStd_Expression.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PDataStd_Expression)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDataStd_Expression)
+
+
 IMPLEMENT_DOWNCAST(PDataStd_Expression,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PDataStd_Expression)
 

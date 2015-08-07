@@ -5,6 +5,22 @@
 
 #include <PTopoDS_Edge.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PTopoDS_Edge)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PTopoDS_HShape),
+  STANDARD_TYPE(ObjMgt_ExternShareable),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PTopoDS_Edge)
+
+
 IMPLEMENT_DOWNCAST(PTopoDS_Edge,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PTopoDS_Edge)
 

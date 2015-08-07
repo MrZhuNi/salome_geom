@@ -5,12 +5,22 @@
 
 #include <PShort_HSequenceOfShortReal.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PShort_HSequenceOfShortReal.hxx>
 #include <PShort_SeqNodeOfHSequenceOfShortReal.hxx>
 #include <Standard_NoSuchObject.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <PShort_SeqExplorerOfHSequenceOfShortReal.hxx>
  
+
+
+IMPLEMENT_STANDARD_TYPE(PShort_HSequenceOfShortReal)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PShort_HSequenceOfShortReal)
 
 
 IMPLEMENT_DOWNCAST(PShort_HSequenceOfShortReal,Standard_Persistent)

@@ -5,6 +5,20 @@
 
 #include <PStandard_ArrayNode.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PStandard_ArrayNode)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PStandard_ArrayNode)
+
+
 IMPLEMENT_DOWNCAST(PStandard_ArrayNode,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PStandard_ArrayNode)
 

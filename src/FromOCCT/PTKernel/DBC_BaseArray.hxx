@@ -13,14 +13,18 @@
 #include <Standard_Integer.hxx>
 #include <DBC_DBVArray.hxx>
 #include <Standard_Address.hxx>
+#include <Standard_PrimitiveTypes.hxx>
 class Standard_NullObject;
 class Standard_NegativeValue;
 class Standard_DimensionMismatch;
 
 
+Standard_EXPORT const Handle(Standard_Type)& STANDARD_TYPE(DBC_BaseArray);
+
 
 class DBC_BaseArray 
 {
+
 public:
 
   DEFINE_STANDARD_ALLOC
@@ -49,20 +53,21 @@ public:
   
   //! unlocks the array <me> from memory
   Standard_EXPORT   void Unlock()  const;
-
+    Standard_Integer _CSFDB_GetDBC_BaseArraymySize() const { return mySize; }
+    void _CSFDB_SetDBC_BaseArraymySize(const Standard_Integer p) { mySize = p; }
+    DBC_DBVArray _CSFDB_GetDBC_BaseArraymyData() const { return myData; }
+    void _CSFDB_SetDBC_BaseArraymyData(const DBC_DBVArray p) { myData = p; }
 
 
 
 protected:
 
 
-
   Standard_Integer mySize;
   DBC_DBVArray myData;
 
 
-private:
-
+private: 
 
 
 

@@ -5,6 +5,20 @@
 
 #include <PPoly_Polygon3D.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PPoly_Polygon3D)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PPoly_Polygon3D)
+
+
 IMPLEMENT_DOWNCAST(PPoly_Polygon3D,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PPoly_Polygon3D)
 

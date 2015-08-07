@@ -5,6 +5,22 @@
 
 #include <PGeom_Axis2Placement.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PGeom_Axis2Placement)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PGeom_AxisPlacement),
+  STANDARD_TYPE(PGeom_Geometry),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PGeom_Axis2Placement)
+
+
 IMPLEMENT_DOWNCAST(PGeom_Axis2Placement,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PGeom_Axis2Placement)
 

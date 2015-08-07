@@ -5,6 +5,8 @@
 
 #include <PColgp_HArray2OfXYZ.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_RangeError.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <gp_XYZ.hxx>
@@ -13,6 +15,14 @@
 #include <PColgp_VArrayTNodeOfFieldOfHArray2OfXYZ.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColgp_HArray2OfXYZ)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColgp_HArray2OfXYZ)
 
 
 IMPLEMENT_DOWNCAST(PColgp_HArray2OfXYZ,Standard_Persistent)

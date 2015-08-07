@@ -5,12 +5,21 @@
 
 #include <DBC_VArrayOfCharacter.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_NegativeValue.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_DimensionMismatch.hxx>
 #include <Standard_NullObject.hxx>
 #include <DBC_VArrayNodeOfVArrayOfCharacter.hxx>
 #include <DBC_VArrayTNodeOfVArrayOfCharacter.hxx>
+
+IMPLEMENT_STANDARD_TYPE(DBC_VArrayOfCharacter)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(DBC_BaseArray),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(DBC_VArrayOfCharacter)
  
 
 #define Item Standard_Character

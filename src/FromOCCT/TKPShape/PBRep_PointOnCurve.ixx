@@ -5,6 +5,21 @@
 
 #include <PBRep_PointOnCurve.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PBRep_PointOnCurve)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PBRep_PointRepresentation),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PBRep_PointOnCurve)
+
+
 IMPLEMENT_DOWNCAST(PBRep_PointOnCurve,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PBRep_PointOnCurve)
 

@@ -5,6 +5,21 @@
 
 #include <PTopoDS_TVertex.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PTopoDS_TVertex)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PTopoDS_TShape),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PTopoDS_TVertex)
+
+
 IMPLEMENT_DOWNCAST(PTopoDS_TVertex,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PTopoDS_TVertex)
 

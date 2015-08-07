@@ -5,10 +5,21 @@
 
 #include <PDataStd_VArrayNodeOfFieldOfHArray1OfByte.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PDataStd_FieldOfHArray1OfByte.hxx>
 #include <PDataStd_VArrayTNodeOfFieldOfHArray1OfByte.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PDataStd_VArrayNodeOfFieldOfHArray1OfByte)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDataStd_VArrayNodeOfFieldOfHArray1OfByte)
 
 
 IMPLEMENT_DOWNCAST(PDataStd_VArrayNodeOfFieldOfHArray1OfByte,Standard_Persistent)

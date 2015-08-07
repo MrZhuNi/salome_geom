@@ -5,6 +5,23 @@
 
 #include <PGeom_BSplineSurface.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PGeom_BSplineSurface)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PGeom_BoundedSurface),
+  STANDARD_TYPE(PGeom_Surface),
+  STANDARD_TYPE(PGeom_Geometry),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PGeom_BSplineSurface)
+
+
 IMPLEMENT_DOWNCAST(PGeom_BSplineSurface,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PGeom_BSplineSurface)
 

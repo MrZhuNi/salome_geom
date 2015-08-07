@@ -5,11 +5,22 @@
 
 #include <PDataStd_VArrayNodeOfFieldOfHArray1OfHAsciiString.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PCollection_HAsciiString.hxx>
 #include <PDataStd_FieldOfHArray1OfHAsciiString.hxx>
 #include <PDataStd_VArrayTNodeOfFieldOfHArray1OfHAsciiString.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PDataStd_VArrayNodeOfFieldOfHArray1OfHAsciiString)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDataStd_VArrayNodeOfFieldOfHArray1OfHAsciiString)
 
 
 IMPLEMENT_DOWNCAST(PDataStd_VArrayNodeOfFieldOfHArray1OfHAsciiString,Standard_Persistent)

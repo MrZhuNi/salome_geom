@@ -5,6 +5,8 @@
 
 #include <PColStd_HArray2OfReal.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_RangeError.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <PColStd_FieldOfHArray2OfReal.hxx>
@@ -12,6 +14,14 @@
 #include <PColStd_VArrayTNodeOfFieldOfHArray2OfReal.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColStd_HArray2OfReal)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColStd_HArray2OfReal)
 
 
 IMPLEMENT_DOWNCAST(PColStd_HArray2OfReal,Standard_Persistent)

@@ -5,12 +5,23 @@
 
 #include <PColgp_SeqNodeOfHSequenceOfXYZ.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PColgp_SeqNodeOfHSequenceOfXYZ.hxx>
 #include <PColgp_HSequenceOfXYZ.hxx>
 #include <PColgp_SeqExplorerOfHSequenceOfXYZ.hxx>
 #include <gp_XYZ.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColgp_SeqNodeOfHSequenceOfXYZ)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PMMgt_PManaged),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColgp_SeqNodeOfHSequenceOfXYZ)
 
 
 IMPLEMENT_DOWNCAST(PColgp_SeqNodeOfHSequenceOfXYZ,Standard_Persistent)

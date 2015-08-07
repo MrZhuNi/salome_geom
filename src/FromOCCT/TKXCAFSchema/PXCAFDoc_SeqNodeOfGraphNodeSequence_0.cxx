@@ -5,12 +5,23 @@
 
 #include <PXCAFDoc_SeqNodeOfGraphNodeSequence.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PXCAFDoc_GraphNode.hxx>
 #include <PXCAFDoc_SeqNodeOfGraphNodeSequence.hxx>
 #include <PXCAFDoc_GraphNodeSequence.hxx>
 #include <PXCAFDoc_SeqExplorerOfGraphNodeSequence.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PXCAFDoc_SeqNodeOfGraphNodeSequence)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PMMgt_PManaged),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PXCAFDoc_SeqNodeOfGraphNodeSequence)
 
 
 IMPLEMENT_DOWNCAST(PXCAFDoc_SeqNodeOfGraphNodeSequence,Standard_Persistent)

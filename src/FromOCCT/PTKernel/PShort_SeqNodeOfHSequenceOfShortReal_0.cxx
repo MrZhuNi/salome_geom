@@ -5,11 +5,22 @@
 
 #include <PShort_SeqNodeOfHSequenceOfShortReal.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PShort_SeqNodeOfHSequenceOfShortReal.hxx>
 #include <PShort_HSequenceOfShortReal.hxx>
 #include <PShort_SeqExplorerOfHSequenceOfShortReal.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PShort_SeqNodeOfHSequenceOfShortReal)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PMMgt_PManaged),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PShort_SeqNodeOfHSequenceOfShortReal)
 
 
 IMPLEMENT_DOWNCAST(PShort_SeqNodeOfHSequenceOfShortReal,Standard_Persistent)

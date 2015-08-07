@@ -5,6 +5,23 @@
 
 #include <PGeom_SurfaceOfLinearExtrusion.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PGeom_SurfaceOfLinearExtrusion)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PGeom_SweptSurface),
+  STANDARD_TYPE(PGeom_Surface),
+  STANDARD_TYPE(PGeom_Geometry),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PGeom_SurfaceOfLinearExtrusion)
+
+
 IMPLEMENT_DOWNCAST(PGeom_SurfaceOfLinearExtrusion,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PGeom_SurfaceOfLinearExtrusion)
 

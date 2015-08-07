@@ -5,6 +5,20 @@
 
 #include <ObjMgt_ExternShareable.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(ObjMgt_ExternShareable)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(ObjMgt_ExternShareable)
+
+
 IMPLEMENT_DOWNCAST(ObjMgt_ExternShareable,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(ObjMgt_ExternShareable)
 

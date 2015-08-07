@@ -5,6 +5,23 @@
 
 #include <PGeom_CylindricalSurface.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PGeom_CylindricalSurface)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PGeom_ElementarySurface),
+  STANDARD_TYPE(PGeom_Surface),
+  STANDARD_TYPE(PGeom_Geometry),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PGeom_CylindricalSurface)
+
+
 IMPLEMENT_DOWNCAST(PGeom_CylindricalSurface,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PGeom_CylindricalSurface)
 

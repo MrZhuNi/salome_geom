@@ -5,6 +5,21 @@
 
 #include <PDataStd_Variable.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PDataStd_Variable)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDataStd_Variable)
+
+
 IMPLEMENT_DOWNCAST(PDataStd_Variable,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PDataStd_Variable)
 

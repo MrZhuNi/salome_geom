@@ -5,6 +5,22 @@
 
 #include <PGeom_VectorWithMagnitude.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PGeom_VectorWithMagnitude)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PGeom_Vector),
+  STANDARD_TYPE(PGeom_Geometry),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PGeom_VectorWithMagnitude)
+
+
 IMPLEMENT_DOWNCAST(PGeom_VectorWithMagnitude,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PGeom_VectorWithMagnitude)
 

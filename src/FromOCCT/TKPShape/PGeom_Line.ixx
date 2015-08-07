@@ -5,6 +5,22 @@
 
 #include <PGeom_Line.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PGeom_Line)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PGeom_Curve),
+  STANDARD_TYPE(PGeom_Geometry),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PGeom_Line)
+
+
 IMPLEMENT_DOWNCAST(PGeom_Line,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PGeom_Line)
 

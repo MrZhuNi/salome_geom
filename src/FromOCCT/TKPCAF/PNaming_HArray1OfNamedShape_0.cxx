@@ -5,6 +5,8 @@
 
 #include <PNaming_HArray1OfNamedShape.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PNaming_NamedShape.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_RangeError.hxx>
@@ -13,6 +15,14 @@
 #include <PNaming_VArrayTNodeOfFieldOfHArray1OfNamedShape.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PNaming_HArray1OfNamedShape)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PNaming_HArray1OfNamedShape)
 
 
 IMPLEMENT_DOWNCAST(PNaming_HArray1OfNamedShape,Standard_Persistent)

@@ -5,6 +5,20 @@
 
 #include <PDF_Attribute.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PDF_Attribute)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDF_Attribute)
+
+
 IMPLEMENT_DOWNCAST(PDF_Attribute,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PDF_Attribute)
 

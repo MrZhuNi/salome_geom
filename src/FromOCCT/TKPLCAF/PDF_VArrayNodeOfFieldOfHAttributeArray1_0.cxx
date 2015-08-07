@@ -5,11 +5,22 @@
 
 #include <PDF_VArrayNodeOfFieldOfHAttributeArray1.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PDF_Attribute.hxx>
 #include <PDF_FieldOfHAttributeArray1.hxx>
 #include <PDF_VArrayTNodeOfFieldOfHAttributeArray1.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PDF_VArrayNodeOfFieldOfHAttributeArray1)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDF_VArrayNodeOfFieldOfHAttributeArray1)
 
 
 IMPLEMENT_DOWNCAST(PDF_VArrayNodeOfFieldOfHAttributeArray1,Standard_Persistent)

@@ -5,11 +5,22 @@
 
 #include <PTopoDS_VArrayNodeOfFieldOfHArray1OfShape1.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PTopoDS_Shape1.hxx>
 #include <PTopoDS_FieldOfHArray1OfShape1.hxx>
 #include <PTopoDS_VArrayTNodeOfFieldOfHArray1OfShape1.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PTopoDS_VArrayNodeOfFieldOfHArray1OfShape1)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PTopoDS_VArrayNodeOfFieldOfHArray1OfShape1)
 
 
 IMPLEMENT_DOWNCAST(PTopoDS_VArrayNodeOfFieldOfHArray1OfShape1,Standard_Persistent)

@@ -5,6 +5,20 @@
 
 #include <PGeom2d_Geometry.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PGeom2d_Geometry)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PGeom2d_Geometry)
+
+
 IMPLEMENT_DOWNCAST(PGeom2d_Geometry,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PGeom2d_Geometry)
 

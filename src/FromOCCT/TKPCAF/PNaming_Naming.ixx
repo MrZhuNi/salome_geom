@@ -5,6 +5,21 @@
 
 #include <PNaming_Naming.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PNaming_Naming)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PNaming_Naming)
+
+
 IMPLEMENT_DOWNCAST(PNaming_Naming,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PNaming_Naming)
 

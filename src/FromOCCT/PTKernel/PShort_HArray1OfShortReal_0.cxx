@@ -5,6 +5,8 @@
 
 #include <PShort_HArray1OfShortReal.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_OutOfRange.hxx>
 #include <Standard_RangeError.hxx>
 #include <PShort_FieldOfHArray1OfShortReal.hxx>
@@ -12,6 +14,14 @@
 #include <PShort_VArrayTNodeOfFieldOfHArray1OfShortReal.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PShort_HArray1OfShortReal)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PShort_HArray1OfShortReal)
 
 
 IMPLEMENT_DOWNCAST(PShort_HArray1OfShortReal,Standard_Persistent)

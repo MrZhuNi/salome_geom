@@ -5,11 +5,22 @@
 
 #include <PNaming_VArrayNodeOfFieldOfHArray1OfNamedShape.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PNaming_NamedShape.hxx>
 #include <PNaming_FieldOfHArray1OfNamedShape.hxx>
 #include <PNaming_VArrayTNodeOfFieldOfHArray1OfNamedShape.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PNaming_VArrayNodeOfFieldOfHArray1OfNamedShape)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PNaming_VArrayNodeOfFieldOfHArray1OfNamedShape)
 
 
 IMPLEMENT_DOWNCAST(PNaming_VArrayNodeOfFieldOfHArray1OfNamedShape,Standard_Persistent)

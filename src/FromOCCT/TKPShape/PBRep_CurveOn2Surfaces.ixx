@@ -5,6 +5,21 @@
 
 #include <PBRep_CurveOn2Surfaces.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PBRep_CurveOn2Surfaces)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PBRep_CurveRepresentation),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PBRep_CurveOn2Surfaces)
+
+
 IMPLEMENT_DOWNCAST(PBRep_CurveOn2Surfaces,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PBRep_CurveOn2Surfaces)
 

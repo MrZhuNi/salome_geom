@@ -5,6 +5,8 @@
 
 #include <PColgp_HArray1OfPnt2d.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_OutOfRange.hxx>
 #include <Standard_RangeError.hxx>
 #include <gp_Pnt2d.hxx>
@@ -13,6 +15,14 @@
 #include <PColgp_VArrayTNodeOfFieldOfHArray1OfPnt2d.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColgp_HArray1OfPnt2d)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColgp_HArray1OfPnt2d)
 
 
 IMPLEMENT_DOWNCAST(PColgp_HArray1OfPnt2d,Standard_Persistent)

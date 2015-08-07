@@ -5,11 +5,22 @@
 
 #include <PColgp_VArrayNodeOfFieldOfHArray2OfLin2d.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <gp_Lin2d.hxx>
 #include <PColgp_FieldOfHArray2OfLin2d.hxx>
 #include <PColgp_VArrayTNodeOfFieldOfHArray2OfLin2d.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColgp_VArrayNodeOfFieldOfHArray2OfLin2d)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColgp_VArrayNodeOfFieldOfHArray2OfLin2d)
 
 
 IMPLEMENT_DOWNCAST(PColgp_VArrayNodeOfFieldOfHArray2OfLin2d,Standard_Persistent)

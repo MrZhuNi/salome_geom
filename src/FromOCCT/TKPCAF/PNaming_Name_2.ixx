@@ -5,6 +5,20 @@
 
 #include <PNaming_Name_2.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PNaming_Name_2)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PNaming_Name_2)
+
+
 IMPLEMENT_DOWNCAST(PNaming_Name_2,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PNaming_Name_2)
 

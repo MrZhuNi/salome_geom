@@ -5,6 +5,21 @@
 
 #include <PDataStd_Relation.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PDataStd_Relation)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDataStd_Relation)
+
+
 IMPLEMENT_DOWNCAST(PDataStd_Relation,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PDataStd_Relation)
 

@@ -5,11 +5,22 @@
 
 #include <PColgp_VArrayNodeOfFieldOfHArray1OfPnt.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <gp_Pnt.hxx>
 #include <PColgp_FieldOfHArray1OfPnt.hxx>
 #include <PColgp_VArrayTNodeOfFieldOfHArray1OfPnt.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColgp_VArrayNodeOfFieldOfHArray1OfPnt)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColgp_VArrayNodeOfFieldOfHArray1OfPnt)
 
 
 IMPLEMENT_DOWNCAST(PColgp_VArrayNodeOfFieldOfHArray1OfPnt,Standard_Persistent)

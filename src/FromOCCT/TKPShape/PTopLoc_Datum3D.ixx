@@ -5,6 +5,20 @@
 
 #include <PTopLoc_Datum3D.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PTopLoc_Datum3D)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PTopLoc_Datum3D)
+
+
 IMPLEMENT_DOWNCAST(PTopLoc_Datum3D,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PTopLoc_Datum3D)
 

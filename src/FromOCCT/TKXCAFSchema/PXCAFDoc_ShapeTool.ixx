@@ -5,6 +5,21 @@
 
 #include <PXCAFDoc_ShapeTool.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PXCAFDoc_ShapeTool)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PXCAFDoc_ShapeTool)
+
+
 IMPLEMENT_DOWNCAST(PXCAFDoc_ShapeTool,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PXCAFDoc_ShapeTool)
 

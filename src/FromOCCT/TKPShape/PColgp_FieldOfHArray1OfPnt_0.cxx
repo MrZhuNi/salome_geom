@@ -5,6 +5,8 @@
 
 #include <PColgp_FieldOfHArray1OfPnt.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_NegativeValue.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_DimensionMismatch.hxx>
@@ -12,6 +14,14 @@
 #include <gp_Pnt.hxx>
 #include <PColgp_VArrayNodeOfFieldOfHArray1OfPnt.hxx>
 #include <PColgp_VArrayTNodeOfFieldOfHArray1OfPnt.hxx>
+
+IMPLEMENT_STANDARD_TYPE(PColgp_FieldOfHArray1OfPnt)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(DBC_BaseArray),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColgp_FieldOfHArray1OfPnt)
+ 
 
 #define Item gp_Pnt
 #define Item_hxx <gp_Pnt.hxx>

@@ -5,6 +5,23 @@
 
 #include <PGeom_BSplineCurve.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PGeom_BSplineCurve)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PGeom_BoundedCurve),
+  STANDARD_TYPE(PGeom_Curve),
+  STANDARD_TYPE(PGeom_Geometry),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PGeom_BSplineCurve)
+
+
 IMPLEMENT_DOWNCAST(PGeom_BSplineCurve,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PGeom_BSplineCurve)
 

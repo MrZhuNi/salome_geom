@@ -5,6 +5,8 @@
 
 #include <PColgp_FieldOfHArray1OfLin2d.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_NegativeValue.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_DimensionMismatch.hxx>
@@ -12,6 +14,14 @@
 #include <gp_Lin2d.hxx>
 #include <PColgp_VArrayNodeOfFieldOfHArray1OfLin2d.hxx>
 #include <PColgp_VArrayTNodeOfFieldOfHArray1OfLin2d.hxx>
+
+IMPLEMENT_STANDARD_TYPE(PColgp_FieldOfHArray1OfLin2d)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(DBC_BaseArray),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColgp_FieldOfHArray1OfLin2d)
+ 
 
 #define Item gp_Lin2d
 #define Item_hxx <gp_Lin2d.hxx>

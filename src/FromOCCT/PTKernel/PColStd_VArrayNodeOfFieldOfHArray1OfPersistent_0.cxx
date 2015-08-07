@@ -5,11 +5,22 @@
 
 #include <PColStd_VArrayNodeOfFieldOfHArray1OfPersistent.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_Persistent.hxx>
 #include <PColStd_FieldOfHArray1OfPersistent.hxx>
 #include <PColStd_VArrayTNodeOfFieldOfHArray1OfPersistent.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColStd_VArrayNodeOfFieldOfHArray1OfPersistent)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColStd_VArrayNodeOfFieldOfHArray1OfPersistent)
 
 
 IMPLEMENT_DOWNCAST(PColStd_VArrayNodeOfFieldOfHArray1OfPersistent,Standard_Persistent)

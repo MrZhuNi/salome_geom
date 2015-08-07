@@ -14,6 +14,7 @@
 #include <Standard_ExtCharacter.hxx>
 #include <Handle_DBC_VArrayNodeOfVArrayOfExtCharacter.hxx>
 #include <Standard_Integer.hxx>
+#include <Standard_PrimitiveTypes.hxx>
 class Standard_NegativeValue;
 class Standard_OutOfRange;
 class Standard_DimensionMismatch;
@@ -23,8 +24,12 @@ class DBC_VArrayTNodeOfVArrayOfExtCharacter;
 
 
 
+Standard_EXPORT const Handle(Standard_Type)& STANDARD_TYPE(DBC_VArrayOfExtCharacter);
+
+
 class DBC_VArrayOfExtCharacter  : public DBC_BaseArray
 {
+
 public:
 
   DEFINE_STANDARD_ALLOC
@@ -60,16 +65,17 @@ public:
 
 
 
-
 protected:
 
 
 
 
+private: 
 
-private:
-
-
+#ifdef CSFDB
+// DBC_VArray : field
+//
+#endif
 
 
 

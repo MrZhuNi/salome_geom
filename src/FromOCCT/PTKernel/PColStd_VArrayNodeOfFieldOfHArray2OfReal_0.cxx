@@ -5,10 +5,21 @@
 
 #include <PColStd_VArrayNodeOfFieldOfHArray2OfReal.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PColStd_FieldOfHArray2OfReal.hxx>
 #include <PColStd_VArrayTNodeOfFieldOfHArray2OfReal.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColStd_VArrayNodeOfFieldOfHArray2OfReal)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColStd_VArrayNodeOfFieldOfHArray2OfReal)
 
 
 IMPLEMENT_DOWNCAST(PColStd_VArrayNodeOfFieldOfHArray2OfReal,Standard_Persistent)

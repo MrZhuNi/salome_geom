@@ -5,6 +5,8 @@
 
 #include <PColgp_HSequenceOfVec.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PColgp_HSequenceOfVec.hxx>
 #include <PColgp_SeqNodeOfHSequenceOfVec.hxx>
 #include <Standard_NoSuchObject.hxx>
@@ -12,6 +14,14 @@
 #include <PColgp_SeqExplorerOfHSequenceOfVec.hxx>
 #include <gp_Vec.hxx>
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColgp_HSequenceOfVec)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColgp_HSequenceOfVec)
 
 
 IMPLEMENT_DOWNCAST(PColgp_HSequenceOfVec,Standard_Persistent)

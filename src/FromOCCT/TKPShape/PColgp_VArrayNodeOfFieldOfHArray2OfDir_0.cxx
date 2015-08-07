@@ -5,11 +5,22 @@
 
 #include <PColgp_VArrayNodeOfFieldOfHArray2OfDir.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <gp_Dir.hxx>
 #include <PColgp_FieldOfHArray2OfDir.hxx>
 #include <PColgp_VArrayTNodeOfFieldOfHArray2OfDir.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColgp_VArrayNodeOfFieldOfHArray2OfDir)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColgp_VArrayNodeOfFieldOfHArray2OfDir)
 
 
 IMPLEMENT_DOWNCAST(PColgp_VArrayNodeOfFieldOfHArray2OfDir,Standard_Persistent)

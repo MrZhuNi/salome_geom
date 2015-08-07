@@ -5,6 +5,8 @@
 
 #include <PColStd_FieldOfHArray1OfExtendedString.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_NegativeValue.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_DimensionMismatch.hxx>
@@ -12,6 +14,14 @@
 #include <PCollection_HExtendedString.hxx>
 #include <PColStd_VArrayNodeOfFieldOfHArray1OfExtendedString.hxx>
 #include <PColStd_VArrayTNodeOfFieldOfHArray1OfExtendedString.hxx>
+
+IMPLEMENT_STANDARD_TYPE(PColStd_FieldOfHArray1OfExtendedString)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(DBC_BaseArray),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColStd_FieldOfHArray1OfExtendedString)
+ 
 
 #define Item Handle(PCollection_HExtendedString)
 #define Item_hxx <PCollection_HExtendedString.hxx>

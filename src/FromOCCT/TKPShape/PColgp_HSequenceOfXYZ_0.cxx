@@ -5,6 +5,8 @@
 
 #include <PColgp_HSequenceOfXYZ.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PColgp_HSequenceOfXYZ.hxx>
 #include <PColgp_SeqNodeOfHSequenceOfXYZ.hxx>
 #include <Standard_NoSuchObject.hxx>
@@ -12,6 +14,14 @@
 #include <PColgp_SeqExplorerOfHSequenceOfXYZ.hxx>
 #include <gp_XYZ.hxx>
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColgp_HSequenceOfXYZ)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColgp_HSequenceOfXYZ)
 
 
 IMPLEMENT_DOWNCAST(PColgp_HSequenceOfXYZ,Standard_Persistent)

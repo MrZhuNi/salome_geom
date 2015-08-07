@@ -5,10 +5,21 @@
 
 #include <DBC_VArrayNodeOfVArrayOfExtCharacter.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <DBC_VArrayOfExtCharacter.hxx>
 #include <DBC_VArrayTNodeOfVArrayOfExtCharacter.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(DBC_VArrayNodeOfVArrayOfExtCharacter)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(DBC_VArrayNodeOfVArrayOfExtCharacter)
 
 
 IMPLEMENT_DOWNCAST(DBC_VArrayNodeOfVArrayOfExtCharacter,Standard_Persistent)

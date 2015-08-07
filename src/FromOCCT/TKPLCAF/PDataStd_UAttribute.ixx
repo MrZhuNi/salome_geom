@@ -5,6 +5,21 @@
 
 #include <PDataStd_UAttribute.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PDataStd_UAttribute)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDataStd_UAttribute)
+
+
 IMPLEMENT_DOWNCAST(PDataStd_UAttribute,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PDataStd_UAttribute)
 

@@ -5,12 +5,22 @@
 
 #include <PColStd_FieldOfHArray2OfInteger.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_NegativeValue.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_DimensionMismatch.hxx>
 #include <Standard_NullObject.hxx>
 #include <PColStd_VArrayNodeOfFieldOfHArray2OfInteger.hxx>
 #include <PColStd_VArrayTNodeOfFieldOfHArray2OfInteger.hxx>
+
+IMPLEMENT_STANDARD_TYPE(PColStd_FieldOfHArray2OfInteger)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(DBC_BaseArray),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColStd_FieldOfHArray2OfInteger)
+ 
 
 #define Item Standard_Integer
 #define Item_hxx <Standard_Integer.hxx>

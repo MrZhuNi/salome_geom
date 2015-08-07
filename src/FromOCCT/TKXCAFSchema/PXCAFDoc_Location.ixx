@@ -5,6 +5,21 @@
 
 #include <PXCAFDoc_Location.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PXCAFDoc_Location)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PXCAFDoc_Location)
+
+
 IMPLEMENT_DOWNCAST(PXCAFDoc_Location,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PXCAFDoc_Location)
 

@@ -5,6 +5,8 @@
 
 #include <PDF_HAttributeArray1.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PDF_Attribute.hxx>
 #include <Standard_OutOfRange.hxx>
 #include <Standard_RangeError.hxx>
@@ -13,6 +15,14 @@
 #include <PDF_VArrayTNodeOfFieldOfHAttributeArray1.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PDF_HAttributeArray1)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDF_HAttributeArray1)
 
 
 IMPLEMENT_DOWNCAST(PDF_HAttributeArray1,Standard_Persistent)

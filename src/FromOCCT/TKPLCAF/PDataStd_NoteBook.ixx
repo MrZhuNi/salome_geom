@@ -5,6 +5,21 @@
 
 #include <PDataStd_NoteBook.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PDataStd_NoteBook)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDataStd_NoteBook)
+
+
 IMPLEMENT_DOWNCAST(PDataStd_NoteBook,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PDataStd_NoteBook)
 

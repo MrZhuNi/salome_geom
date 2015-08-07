@@ -5,6 +5,8 @@
 
 #include <PPoly_HArray1OfTriangle.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <Standard_OutOfRange.hxx>
 #include <Standard_RangeError.hxx>
 #include <PPoly_Triangle.hxx>
@@ -13,6 +15,14 @@
 #include <PPoly_VArrayTNodeOfFieldOfHArray1OfTriangle.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PPoly_HArray1OfTriangle)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PPoly_HArray1OfTriangle)
 
 
 IMPLEMENT_DOWNCAST(PPoly_HArray1OfTriangle,Standard_Persistent)

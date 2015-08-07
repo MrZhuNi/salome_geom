@@ -5,6 +5,21 @@
 
 #include <PDataXtd_Plane.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PDataXtd_Plane)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDataXtd_Plane)
+
+
 IMPLEMENT_DOWNCAST(PDataXtd_Plane,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PDataXtd_Plane)
 

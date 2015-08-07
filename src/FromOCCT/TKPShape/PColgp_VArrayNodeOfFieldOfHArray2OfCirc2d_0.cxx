@@ -5,11 +5,22 @@
 
 #include <PColgp_VArrayNodeOfFieldOfHArray2OfCirc2d.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <gp_Circ2d.hxx>
 #include <PColgp_FieldOfHArray2OfCirc2d.hxx>
 #include <PColgp_VArrayTNodeOfFieldOfHArray2OfCirc2d.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PColgp_VArrayNodeOfFieldOfHArray2OfCirc2d)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PColgp_VArrayNodeOfFieldOfHArray2OfCirc2d)
 
 
 IMPLEMENT_DOWNCAST(PColgp_VArrayNodeOfFieldOfHArray2OfCirc2d,Standard_Persistent)

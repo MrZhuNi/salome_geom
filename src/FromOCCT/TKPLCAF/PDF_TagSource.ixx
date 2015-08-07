@@ -5,6 +5,21 @@
 
 #include <PDF_TagSource.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PDF_TagSource)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PDF_TagSource)
+
+
 IMPLEMENT_DOWNCAST(PDF_TagSource,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PDF_TagSource)
 

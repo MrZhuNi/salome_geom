@@ -5,10 +5,21 @@
 
 #include <PShort_VArrayNodeOfFieldOfHArray2OfShortReal.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PShort_FieldOfHArray2OfShortReal.hxx>
 #include <PShort_VArrayTNodeOfFieldOfHArray2OfShortReal.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PShort_VArrayNodeOfFieldOfHArray2OfShortReal)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PShort_VArrayNodeOfFieldOfHArray2OfShortReal)
 
 
 IMPLEMENT_DOWNCAST(PShort_VArrayNodeOfFieldOfHArray2OfShortReal,Standard_Persistent)

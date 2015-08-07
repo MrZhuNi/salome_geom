@@ -5,11 +5,22 @@
 
 #include <PPoly_VArrayNodeOfFieldOfHArray1OfTriangle.hxx>
 
+#include <Standard_Type.hxx>
+
 #include <PPoly_Triangle.hxx>
 #include <PPoly_FieldOfHArray1OfTriangle.hxx>
 #include <PPoly_VArrayTNodeOfFieldOfHArray1OfTriangle.hxx>
 
  
+
+
+IMPLEMENT_STANDARD_TYPE(PPoly_VArrayNodeOfFieldOfHArray1OfTriangle)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PStandard_ArrayNode),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PPoly_VArrayNodeOfFieldOfHArray1OfTriangle)
 
 
 IMPLEMENT_DOWNCAST(PPoly_VArrayNodeOfFieldOfHArray1OfTriangle,Standard_Persistent)

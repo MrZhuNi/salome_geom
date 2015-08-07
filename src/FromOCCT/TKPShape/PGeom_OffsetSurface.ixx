@@ -5,6 +5,22 @@
 
 #include <PGeom_OffsetSurface.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PGeom_OffsetSurface)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PGeom_Surface),
+  STANDARD_TYPE(PGeom_Geometry),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PGeom_OffsetSurface)
+
+
 IMPLEMENT_DOWNCAST(PGeom_OffsetSurface,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PGeom_OffsetSurface)
 

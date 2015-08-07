@@ -5,6 +5,21 @@
 
 #include <PNaming_NamedShape.jxx>
 
+#include <Standard_Type.hxx>
+
+
+ 
+
+
+IMPLEMENT_STANDARD_TYPE(PNaming_NamedShape)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(PDF_Attribute),
+  STANDARD_TYPE(Standard_Persistent),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(PNaming_NamedShape)
+
+
 IMPLEMENT_DOWNCAST(PNaming_NamedShape,Standard_Persistent)
 IMPLEMENT_STANDARD_RTTI(PNaming_NamedShape)
 
