@@ -3162,6 +3162,23 @@ Handle(TColStd_HSequenceOfTransient)
   return aSeq;
 }
 
+//=============================================================================
+/*!
+ *  MakeExtraction
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeExtraction
+                     (const Handle(GEOM_Object)              &theShape,
+                      const Handle(TColStd_HArray1OfInteger) &theSubShapeIDs,
+                      std::list<ExtractionStat>              &theStats)
+{
+  theStats.clear();
+
+  SetErrorCode(OK);
+
+  return theShape;
+}
+
 //=======================================================================
 //function : getShapesOnSurfaceIDs
   /*!

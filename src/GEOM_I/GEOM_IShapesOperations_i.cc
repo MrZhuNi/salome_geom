@@ -2230,3 +2230,97 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetSubShapesWithTolerance
 
   return aSeq._retn();
 }
+
+//=============================================================================
+/*!
+ *  MakeExtraction
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeExtraction
+         (GEOM::GEOM_Object_ptr                              theShape,
+          const GEOM::ListOfLong                            &theSubShapeIDs,
+          GEOM::GEOM_IShapesOperations::ExtractionStats_out  theStats)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference object
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+
+  if (aShape.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  const int                        aNbIDs  = theSubShapeIDs.length();
+  int                              i;
+  Handle(TColStd_HArray1OfInteger) anArray =
+    new TColStd_HArray1OfInteger (1, aNbIDs);
+
+  for (i = 0; i < aNbIDs; i++) {
+    anArray->SetValue(i + 1, theSubShapeIDs[i]);
+  }
+
+  //Get Shapes in place of aShapeWhat
+  std::list<GEOMImpl_IShapesOperations::ExtractionStat> aStats;
+  Handle(GEOM_Object)                                   aResult =
+          GetOperations()->MakeExtraction(aShape, anArray, aStats);
+
+  if (!GetOperations()->IsDone() || aResult.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  // Convert statistics.
+  GEOM::GEOM_IShapesOperations::ExtractionStats_var aResStats =
+                       new GEOM::GEOM_IShapesOperations::ExtractionStats;
+  const int                                         aNbStats  = aStats.size();
+
+  aResStats->length(aNbStats);
+
+  // fill the local CORBA array with values from lists
+  std::list<GEOMImpl_IShapesOperations::ExtractionStat>::const_iterator
+    anIt = aStats.begin();
+
+  for (i = 0; anIt != aStats.end(); i++, anIt++) {
+    GEOM::GEOM_IShapesOperations::ExtractionStat_var aResStat =
+      new GEOM::GEOM_IShapesOperations::ExtractionStat;
+
+    // Copy type
+    switch (anIt->type) {
+    case GEOMImpl_IShapesOperations::EST_Removed:
+      aResStat->type = GEOM::GEOM_IShapesOperations::EST_Removed;
+      break;
+    case GEOMImpl_IShapesOperations::EST_Modified:
+      aResStat->type = GEOM::GEOM_IShapesOperations::EST_Modified;
+      break;
+    case GEOMImpl_IShapesOperations::EST_Added:
+      aResStat->type = GEOM::GEOM_IShapesOperations::EST_Added;
+      break;
+    default:
+      break;
+    }
+
+    // Copy the list of IDs
+    std::list<Standard_Integer> aIDList    = anIt->indices;
+    GEOM::ListOfLong_var        aResIDList = new GEOM::ListOfLong;
+
+    aResIDList->length(aIDList.size());
+
+    std::list<Standard_Integer>::iterator anIDIt = aIDList.begin();
+    int j = 0;
+
+    for (; anIDIt != aIDList.end(); j++, anIDIt++) {
+      aResIDList[j] = *anIDIt;
+    }
+
+    aResStat->indices = aResIDList;
+
+    aResStats[i] = aResStat;
+  }
+
+  // initialize out-parameter with local array
+  theStats = aResStats._retn();
+
+  return GetObject(aResult);
+}
