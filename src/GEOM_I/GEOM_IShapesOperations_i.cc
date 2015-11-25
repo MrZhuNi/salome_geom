@@ -2244,6 +2244,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeExtraction
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
+  theStats = new GEOM::GEOM_IShapesOperations::ExtractionStats;
   GetOperations()->SetNotDone();
 
   //Get the reference object
@@ -2253,7 +2254,12 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeExtraction
     return aGEOMObject._retn();
   }
 
-  const int                        aNbIDs  = theSubShapeIDs.length();
+  const int aNbIDs = theSubShapeIDs.length();
+
+  if (aNbIDs == 0) {
+    return aGEOMObject._retn();
+  }
+
   int                              i;
   Handle(TColStd_HArray1OfInteger) anArray =
     new TColStd_HArray1OfInteger (1, aNbIDs);
@@ -2272,11 +2278,9 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeExtraction
   }
 
   // Convert statistics.
-  GEOM::GEOM_IShapesOperations::ExtractionStats_var aResStats =
-                       new GEOM::GEOM_IShapesOperations::ExtractionStats;
-  const int                                         aNbStats  = aStats.size();
+  const int aNbStats = aStats.size();
 
-  aResStats->length(aNbStats);
+  theStats->length(aNbStats);
 
   // fill the local CORBA array with values from lists
   std::list<GEOMImpl_IShapesOperations::ExtractionStat>::const_iterator
@@ -2316,11 +2320,8 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeExtraction
 
     aResStat->indices = aResIDList;
 
-    aResStats[i] = aResStat;
+    theStats[i] = aResStat;
   }
-
-  // initialize out-parameter with local array
-  theStats = aResStats._retn();
 
   return GetObject(aResult);
 }

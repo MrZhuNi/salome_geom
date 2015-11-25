@@ -841,10 +841,21 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
     if (!anIDs.IsNull()) {
       const int anUpperID = anIDs->Upper();
+      const int aNbShapes = anIndices.Extent();
 
       for (i = anIDs->Lower(); i <= anUpperID; ++i) {
-        const Standard_Integer  anIndex   = anIDs->Value(i);
-        const TopoDS_Shape     &aSubShape = anIndices.FindKey(anIndex);
+        const Standard_Integer anIndex = anIDs->Value(i);
+
+        if (anIndex < 1 || anIndex > aNbShapes) {
+          TCollection_AsciiString aMsg(" Invalid index: ");
+
+          aMsg += TCollection_AsciiString(anIndex);
+          StdFail_NotDone::Raise(aMsg.ToCString());
+          return 0;
+        }
+
+        const TopoDS_Shape &aSubShape = anIndices.FindKey(anIndex);
+
         aListSubShapes.Append(aSubShape);
       }
     }

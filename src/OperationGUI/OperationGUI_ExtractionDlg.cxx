@@ -319,6 +319,8 @@ OperationGUI_ExtractionDlg::OperationGUI_ExtractionDlg
   /***************************************************************/
   myHelpFileName = "extract_and_rebuild_page.html";
 
+  resize(525, 600);
+
   /* Initialisation */
   Init();
 }
@@ -1005,7 +1007,7 @@ void OperationGUI_ExtractionDlg::onRebuild()
 
     QStringList aStrList;
 
-    for (j = 1; j < 8; ++j) {
+    for (j = 0; j < 8; ++j) {
       if (aNbShapes[j] >= 1) {
         const char *aShapeType = aNbShapes[j] == 1 ?
           SINGLE_SHAPE_TYPE_TR_CODES[j] : PLURAL_SHAPE_TYPE_TR_CODES[j];
