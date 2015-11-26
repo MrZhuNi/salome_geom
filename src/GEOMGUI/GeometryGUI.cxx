@@ -1734,7 +1734,7 @@ void GeometryGUI::addPluginActions()
                     icon,
                     tr( actionName.toLatin1().constData() ),
                     tr( actionStat.toLatin1().constData() ),
-                    QKeySequence( tr( adata.accel.c_str() ) )[0],
+                    QKeySequence( tr( adata.accel.c_str() ) ),
                     application()->desktop(),
                     false /*toggle*/,
                     this, SLOT( OnGUIEvent() ),
