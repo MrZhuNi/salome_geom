@@ -6665,7 +6665,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the shape without
         #          extracted sub-shapes.
         #
-        #  @ref tui_multi_transformation "Example"
+        #  @ref swig_MakeExtraction "Example"
         @ManageTransactions("ShapesOp")
         def MakeExtraction(self, theShape, theListOfID, theName=None):
             """
