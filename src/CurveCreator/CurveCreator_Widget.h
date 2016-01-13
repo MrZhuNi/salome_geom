@@ -1,9 +1,9 @@
-// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -100,7 +100,6 @@ signals:
   void selectionChanged();
   void subOperationStarted( QWidget*, bool );
   void subOperationFinished( QWidget* );
-  void curveModified();
 
 public slots:
 
@@ -205,6 +204,11 @@ private:
   bool contains( const CurveCreator_ICurve::SectionToPointList& theList,
                  const CurveCreator_ICurve::SectionToPoint& theValue ) const;
 
+protected:
+  // Boundary points of mouse to select the points
+  QPoint myStartPoint;
+  QPoint myEndPoint;
+
 private:
   QMap<ActionId, QAction*>    myActionMap;
   CurveCreator_ICurve*        myCurve;
@@ -223,8 +227,6 @@ private:
   QMap<CurveCreator_ICurve::SectionToPoint, CurveCreator::Coordinates> myInitialDragPointsCoords;
   bool                        myDragged;
   QByteArray                  myGuiState;
-  int                         myPressedX;
-  int                         myPressedY;
   OCCViewer_ViewWindow::Mode2dType myOld2DMode;
 };
 

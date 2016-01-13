@@ -1,9 +1,9 @@
-// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013-2015  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,6 +21,8 @@
 #include "CurveCreator.hxx"
 #include "CurveCreator_Curve.hxx"
 #include "CurveCreator_UtilsICurve.hxx"
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <GEOMUtils.hxx>
 
@@ -578,8 +580,16 @@ void CurveCreator_Utils::setSelectedPoints( Handle(AIS_InteractiveContext) theCo
 
   Handle_SelectMgr_Selection aSelection = anAISShape->Selection( AIS_Shape::SelectionMode( TopAbs_VERTEX ) );
   for( aSelection->Init(); aSelection->More(); aSelection->Next() )
-  {
+  {    
+#if OCC_VERSION_LARGE > 0x06080100
+    const Handle(SelectMgr_SensitiveEntity) aHSenEntity = aSelection->Sensitive();
+    if( aHSenEntity.IsNull() )
+      continue;
+    Handle_SelectBasics_SensitiveEntity aSenEntity = aHSenEntity->BaseSensitive();
+#else
     Handle_SelectBasics_SensitiveEntity aSenEntity = aSelection->Sensitive();
+#endif
+
     Handle_Select3D_SensitivePoint aSenPnt = Handle_Select3D_SensitivePoint::DownCast( aSenEntity );
 
     gp_Pnt anOwnerPnt = aSenPnt->Point();
@@ -841,7 +851,8 @@ Handle(TColgp_HArray1OfPnt) CurveCreator_Utils::getPoints
 
   anExp.Next();
 
-  if (IsBSpline) {
+  if (IsBSpline)
+  {
     // There should be a single BSpline curve in the wire.
     if (anExp.More()) {
       return aResult;
@@ -869,16 +880,20 @@ Handle(TColgp_HArray1OfPnt) CurveCreator_Utils::getPoints
 
     IsClosed = aV[0].IsSame(aV[1]) ? true : false;
     
-    const Standard_Integer aNbPoints = aBSplCurve->NbKnots();
-    TColStd_Array1OfReal   aKnots(1, aNbPoints);
-
+    Standard_Integer aNbPoints = aBSplCurve->NbKnots();
+    TColStd_Array1OfReal aKnots(1, aNbPoints);
     aBSplCurve->Knots(aKnots);
-    aResult = new TColgp_HArray1OfPnt(1, aBSplCurve->NbKnots());
 
-    for (i = aKnots.Lower(); i <= aKnots.Upper(); ++i) {
-      aResult->SetValue(i, aBSplCurve->Value(aKnots.Value(i)));
-    }
-  } else {
+    // Don't consider the last point as it coincides with the first
+    if (IsClosed)
+      --aNbPoints;
+
+    aResult = new TColgp_HArray1OfPnt(1, aNbPoints);
+    for (i = 1; i <= aNbPoints; ++i)
+      aResult->SetValue(i, aBSplCurve->Value( aKnots.Value(i) ));
+  }
+  else
+  {
     // This is a polyline.
     TopTools_ListOfShape aVertices;
     Standard_Integer     aNbVtx = 1;
@@ -909,6 +924,13 @@ Handle(TColgp_HArray1OfPnt) CurveCreator_Utils::getPoints
     TopoDS_Vertex aLastVtx = TopExp::LastVertex(anEdge, Standard_True);
 
     IsClosed = aFirstVtx.IsSame(aLastVtx) ? true : false;
+
+    // Store a last vertex
+    if (!IsClosed)
+    {
+      aVertices.Append(aLastVtx);
+      aNbVtx++;
+    }
 
     // Fill the array of points.
     aResult = new TColgp_HArray1OfPnt(1, aNbVtx);
