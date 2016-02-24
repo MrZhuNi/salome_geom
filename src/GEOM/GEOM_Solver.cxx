@@ -63,8 +63,12 @@ bool GEOM_Solver::ComputeFunction(Handle(GEOM_Function) theFunction)
   if(!TFunction_DriverTable::Get()->FindDriver(aGUID, aDriver)) return false;
           
   aDriver->Init(theFunction->GetEntry());
-            
+
+#if OCC_VERSION_MAJOR < 7
   TFunction_Logbook aLog;
+#else
+  Handle(TFunction_Logbook) aLog = TFunction_Logbook::Set( aDriver->Label() );
+#endif
   if(aDriver->Execute(aLog) == 0) return false;
                 
   return true;     

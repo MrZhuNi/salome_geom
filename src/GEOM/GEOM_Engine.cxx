@@ -62,7 +62,6 @@
 #include <TColStd_MapOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 
-#include <TColStd_HArray1OfByte.hxx>
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerTransient.hxx>
 
 #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>

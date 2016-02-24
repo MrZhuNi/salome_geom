@@ -76,7 +76,6 @@
 #include <Geom_Surface.hxx>
 #include <Geom_TrimmedCurve.hxx>
 #include <Precision.hxx>
-#include <TColStd_HArray1OfInteger.hxx>
 #include <TDF_Tool.hxx>
 #include <TDataStd_Integer.hxx>
 #include <TDataStd_ListIteratorOfListOfExtendedString.hxx>
@@ -89,6 +88,7 @@
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_SequenceOfShape.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_TShape.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
@@ -4652,7 +4652,6 @@ static bool isSameEdge(const TopoDS_Edge& theEdge1, const TopoDS_Edge& theEdge2)
   return true;
 }
 
-#include <TopoDS_TShape.hxx>
 //=======================================================================
 //function : isSameFace
 //purpose  : Returns True if two faces coincide
