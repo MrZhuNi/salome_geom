@@ -112,7 +112,7 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(LOGBOOK& log) const
       if (aType == CIRC_ARC_THREE_PNT)
       {
         GC_MakeArcOfCircle arc (aP1, aP2, aP3);
-        aShape = BRepBuilderAPI_MakeEdge(arc).Edge();
+        aShape = BRepBuilderAPI_MakeEdge(arc.Value()).Edge();
       } else if ( aType == CIRC_ARC_CENTER ) { // CIRC_ARC_CENTER
         Standard_Boolean sense = aCI.GetSense();
 
@@ -128,7 +128,7 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(LOGBOOK& log) const
         Handle(Geom_Circle) aGeomCirc = circ.Value();
 
         GC_MakeArcOfCircle arc (aGeomCirc->Circ(), aP2, aP3, Standard_True);
-        aShape = BRepBuilderAPI_MakeEdge(arc).Edge();
+        aShape = BRepBuilderAPI_MakeEdge(arc.Value()).Edge();
       } else if ( aType == ELLIPSE_ARC_CENTER_TWO_PNT ) { // ELLIPSE_ARC_CENTER_TWO_PNT
         if ( aP1.Distance(aP2) <= aP1.Distance(aP3) ) {
           // Standard_ConstructionError::Raise("Arc creation aborted: the distance from Center Point to Point 1 needs to be bigger than the distance from Center Point to Point 2");      
@@ -146,7 +146,7 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(LOGBOOK& log) const
 //         double alpha = fabs(aV1.Angle(aV2));
         
         GC_MakeArcOfEllipse arc (aGeomEllipse->Elips(), aP2, aP3, Standard_True);
-        aShape = BRepBuilderAPI_MakeEdge(arc).Edge();
+        aShape = BRepBuilderAPI_MakeEdge(arc.Value()).Edge();
       }
     }
   }

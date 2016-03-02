@@ -127,7 +127,8 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(LOGBOOK& log) const
     if (gp_Vec(aP1, aP2).IsParallel(gp_Vec(aP1, aP3), Precision::Angular()))
       Standard_ConstructionError::Raise("Plane creation aborted: points lay on one line");
     GC_MakePlane aMakePlane (aP1, aP2, aP3);
-    aShape = BRepBuilderAPI_MakeFace(aMakePlane, -aSize, +aSize, -aSize, +aSize,
+    aShape = BRepBuilderAPI_MakeFace(aMakePlane.Value(),
+                                     -aSize, +aSize, -aSize, +aSize,
                                      Precision::Confusion()).Shape();
   } else if (aType == PLANE_FACE) {
     Handle(GEOM_Function) aRef = aPI.GetFace();
