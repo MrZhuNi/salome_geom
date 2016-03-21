@@ -1534,7 +1534,7 @@ void EntityGUI_3DSketcherDlg::displayAngle (double theAngle,
                                                                  P0, 
                                                                  P1, 
                                                                  P2);
-  if (anAngleIO == NULL)
+  if (anAngleIO.IsNull())
     return;
   
   if (store)

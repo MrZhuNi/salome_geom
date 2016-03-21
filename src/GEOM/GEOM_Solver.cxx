@@ -56,7 +56,7 @@ bool GEOM_Solver::UpdateObject(Handle(GEOM_Object) theObject, TDF_LabelSequence&
 //=============================================================================  
 bool GEOM_Solver::ComputeFunction(Handle(GEOM_Function) theFunction)
 {
-  if(theFunction == NULL) return false;
+  if(theFunction.IsNull()) return false;
   Standard_GUID aGUID = theFunction->GetDriverGUID();
       
   Handle(TFunction_Driver) aDriver;
