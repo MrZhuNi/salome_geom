@@ -50,6 +50,9 @@ GEOM_Application::~GEOM_Application()
 void GEOM_Application::Formats(TColStd_SequenceOfExtendedString& Formats) 
 {  
   Formats.Append(TCollection_ExtendedString ("SALOME_GEOM"));
+#if OCC_VERSION_MAJOR > 6
+  Formats.Append(TCollection_ExtendedString ("BinOcaf"));
+#endif
 }
 
 
