@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -34,6 +34,35 @@
 #include <TopAbs.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
+
+/**
+ * This function converts GEOM::comparison_condition type into
+ * GEOMUtils::ComparisonCondition type.
+ *
+ * \param theCondition the condition of GEOM::comparison_condition type
+ * \return the condition of GEOMUtils::ComparisonCondition type.
+ */
+static GEOMUtils::ComparisonCondition ComparisonCondition
+                    (const GEOM::comparison_condition theCondition)
+{
+  GEOMUtils::ComparisonCondition aResult = GEOMUtils::CC_GT;
+
+  switch (theCondition) {
+  case GEOM::CC_GE:
+    aResult = GEOMUtils::CC_GE;
+    break;
+  case GEOM::CC_LT:
+    aResult = GEOMUtils::CC_LT;
+    break;
+  case GEOM::CC_LE:
+    aResult = GEOMUtils::CC_LE;
+    break;
+  default:
+    break;
+  }
+
+  return aResult;
+}
 
 //=============================================================================
 /*!
@@ -2155,4 +2184,144 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetSubShapeEdgeSorted
   }
 
   return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetSubShapesWithTolerance
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetSubShapesWithTolerance
+                     (GEOM::GEOM_Object_ptr      theShape,
+                      CORBA::Short               theShapeType,
+                      GEOM::comparison_condition theCondition,
+                      CORBA::Double              theTolerance)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+
+  if (aShape.IsNull()) {
+    return aSeq._retn();
+  }
+
+  //Get Shapes On Shape
+  const GEOMUtils::ComparisonCondition aCondition =
+                ComparisonCondition(theCondition);
+  Handle(TColStd_HSequenceOfTransient) aHSeq      =
+      GetOperations()->GetSubShapesWithTolerance
+                (aShape, theShapeType, aCondition, theTolerance);
+
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  const Standard_Integer aLength = aHSeq->Length();
+  Standard_Integer       i;
+
+  aSeq->length(aLength);
+
+  for (i = 1; i <= aLength; i++) {
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+  }
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  MakeExtraction
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeExtraction
+         (GEOM::GEOM_Object_ptr                              theShape,
+          const GEOM::ListOfLong                            &theSubShapeIDs,
+          GEOM::GEOM_IShapesOperations::ExtractionStats_out  theStats)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  theStats = new GEOM::GEOM_IShapesOperations::ExtractionStats;
+  GetOperations()->SetNotDone();
+
+  //Get the reference object
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+
+  if (aShape.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  const int aNbIDs = theSubShapeIDs.length();
+
+  if (aNbIDs == 0) {
+    return aGEOMObject._retn();
+  }
+
+  int                              i;
+  Handle(TColStd_HArray1OfInteger) anArray =
+    new TColStd_HArray1OfInteger (1, aNbIDs);
+
+  for (i = 0; i < aNbIDs; i++) {
+    anArray->SetValue(i + 1, theSubShapeIDs[i]);
+  }
+
+  //Get Shapes in place of aShapeWhat
+  std::list<GEOMImpl_IShapesOperations::ExtractionStat> aStats;
+  Handle(GEOM_Object)                                   aResult =
+          GetOperations()->MakeExtraction(aShape, anArray, aStats);
+
+  if (!GetOperations()->IsDone() || aResult.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  // Convert statistics.
+  const int aNbStats = aStats.size();
+
+  theStats->length(aNbStats);
+
+  // fill the local CORBA array with values from lists
+  std::list<GEOMImpl_IShapesOperations::ExtractionStat>::const_iterator
+    anIt = aStats.begin();
+
+  for (i = 0; anIt != aStats.end(); i++, anIt++) {
+    GEOM::GEOM_IShapesOperations::ExtractionStat_var aResStat =
+      new GEOM::GEOM_IShapesOperations::ExtractionStat;
+
+    // Copy type
+    switch (anIt->type) {
+    case GEOMImpl_IShapesOperations::EST_Removed:
+      aResStat->type = GEOM::GEOM_IShapesOperations::EST_Removed;
+      break;
+    case GEOMImpl_IShapesOperations::EST_Modified:
+      aResStat->type = GEOM::GEOM_IShapesOperations::EST_Modified;
+      break;
+    case GEOMImpl_IShapesOperations::EST_Added:
+      aResStat->type = GEOM::GEOM_IShapesOperations::EST_Added;
+      break;
+    default:
+      break;
+    }
+
+    // Copy the list of IDs
+    std::list<Standard_Integer> aIDList    = anIt->indices;
+    GEOM::ListOfLong_var        aResIDList = new GEOM::ListOfLong;
+
+    aResIDList->length(aIDList.size());
+
+    std::list<Standard_Integer>::iterator anIDIt = aIDList.begin();
+    int j = 0;
+
+    for (; anIDIt != aIDList.end(); j++, anIDIt++) {
+      aResIDList[j] = *anIDIt;
+    }
+
+    aResStat->indices = aResIDList;
+
+    theStats[(_CORBA_ULong)i] = aResStat;
+  }
+
+  return GetObject(aResult);
 }

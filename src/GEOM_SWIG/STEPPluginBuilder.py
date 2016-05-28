@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2014-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 #
 
 from GEOM import ISTEPOperations
+import GEOM
 
 # Engine Library Name
 __libraryName__ = "STEPPluginEngine"
@@ -30,17 +31,19 @@ def GetSTEPPluginOperations(self):
 ## Export the given shape into a file with given name in STEP format.
 #  @param theObject Shape to be stored in the file.
 #  @param theFileName Name of the file to store the given shape in.
+#  @param theUnit the length unit (see GEOM::length_unit). In meters by default.
 #  @ingroup l2_import_export
-def ExportSTEP(self, theObject, theFileName):
+def ExportSTEP(self, theObject, theFileName, theUnit=GEOM.LU_METER):
     """
     Export the given shape into a file with given name in STEP format.
 
     Parameters: 
         theObject Shape to be stored in the file.
         theFileName Name of the file to store the given shape in.
+        theUnit the length unit (see GEOM::length_unit). In meters by default.
     """
     anOp = GetSTEPPluginOperations(self)
-    anOp.ExportSTEP(theObject, theFileName)
+    anOp.ExportSTEP(theObject, theFileName, theUnit)
     if anOp.IsDone() == 0:
         raise RuntimeError,  "Export : " + anOp.GetErrorCode()
         pass
@@ -51,6 +54,9 @@ def ExportSTEP(self, theObject, theFileName):
 #  @param theIsIgnoreUnits If True, file length units will be ignored (set to 'meter')
 #         and result model will be scaled, if its units are not meters.
 #         If False (default), file length units will be taken into account.
+#  @param IsCreateAssemblies If True, for each assembly compound is created in
+#         the result. If False Compounds that contain a single shape
+#         are eliminated from the result.
 #  @param theName Object name; when specified, this parameter is used
 #         for result publication in the study. Otherwise, if automatic
 #         publication is switched on, default value is used for result name.
@@ -64,7 +70,8 @@ def ExportSTEP(self, theObject, theFileName):
 #
 #  @ref swig_Import_Export "Example"
 #  @ingroup l2_import_export
-def ImportSTEP(self, theFileName, theIsIgnoreUnits = False, theName=None):
+def ImportSTEP(self, theFileName, theIsIgnoreUnits = False,
+               IsCreateAssemblies = False, theName=None):
     """
     Import a shape from the STEP file with given name.
 
@@ -73,6 +80,9 @@ def ImportSTEP(self, theFileName, theIsIgnoreUnits = False, theName=None):
         ignoreUnits If True, file length units will be ignored (set to 'meter')
                     and result model will be scaled, if its units are not meters.
                     If False (default), file length units will be taken into account.
+        IsCreateAssemblies If True, for each assembly compound is created in
+                    the result. If False Compounds that contain a single shape
+                    are eliminated from the result.
         theName Object name; when specified, this parameter is used
                 for result publication in the study. Otherwise, if automatic
                 publication is switched on, default value is used for result name.
@@ -91,13 +101,18 @@ def ImportSTEP(self, theFileName, theIsIgnoreUnits = False, theName=None):
     anOp = GetSTEPPluginOperations(self)
     
     anIsIgnoreUnits = theIsIgnoreUnits
+    anIsCreateAssemblies = IsCreateAssemblies;
     aName = theName
     if isinstance( theIsIgnoreUnits, basestring ):
         anIsIgnoreUnits = False
         aName = theIsIgnoreUnits
         pass
+    elif isinstance( IsCreateAssemblies, basestring ):
+        anIsCreateAssemblies = False
+        aName = IsCreateAssemblies
+        pass
 
-    aListObj = anOp.ImportSTEP(theFileName,anIsIgnoreUnits)
+    aListObj = anOp.ImportSTEP(theFileName,anIsIgnoreUnits,anIsCreateAssemblies)
     RaiseIfFailed("ImportSTEP", anOp)
     aNbObj = len(aListObj)
     if aNbObj > 0:

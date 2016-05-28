@@ -1,4 +1,4 @@
-# Copyright (C) 2015  CEA/DEN, EDF R&D
+# Copyright (C) 2015-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -130,6 +130,7 @@ SET(GOOD_TESTS
   working_with_groups_ex04
   working_with_groups_ex05
   working_with_groups_ex06
+  GEOM_Field
 )
 # CAS_VERSION > "6.8.0"
 LIST(APPEND GOOD_TESTS fast_intersection)

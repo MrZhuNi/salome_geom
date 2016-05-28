@@ -472,6 +472,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>CompSolid</translation>
     </message>
     <message>
+        <source>GEOM_COMPSOLIDS</source>
+        <translation>CompSolids</translation>
+    </message>
+    <message>
         <source>GEOM_COMPOUND_TITLE</source>
         <translation>Create A Compound</translation>
     </message>
@@ -606,6 +610,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_EDGE</source>
         <translation>Edge</translation>
+    </message>
+    <message>
+        <source>GEOM_EDGES</source>
+        <translation>Edges</translation>
     </message>
     <message>
         <source>GEOM_EDGE_TITLE</source>
@@ -2023,6 +2031,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_SOLID</source>
         <translation>Solid</translation>
+    </message>
+    <message>
+        <source>GEOM_SOLIDS</source>
+        <translation>Solids</translation>
     </message>
     <message>
         <source>GEOM_SOLID_TITLE</source>
@@ -4961,7 +4973,15 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show dependency tree</translation>
     </message>
     <message>
+        <source>STB_POP_SHOW_DEPENDENCY_TREE</source>
+        <translation>Show dependency tree</translation>
+    </message>
+    <message>
         <source>MEN_POP_REDUCE_STUDY</source>
+        <translation>Reduce study</translation>
+    </message>
+    <message>
+        <source>STB_POP_REDUCE_STUDY</source>
         <translation>Reduce study</translation>
     </message>
     <message>
@@ -5229,6 +5249,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Transfer Data</translation>
     </message>
     <message>
+        <source>TOP_EXTRACTION</source>
+        <translation>Extract and Rebuild</translation>
+    </message>
+    <message>
+        <source>MEN_EXTRACTION</source>
+        <translation>Extract and Rebuild</translation>
+    </message>
+    <message>
+        <source>STB_EXTRACTION</source>
+        <translation>Extract and Rebuild</translation>
+    </message>
+    <message>
         <source>TOP_EXTENSION</source>
         <translation>Extend Edge or Face</translation>
     </message>
@@ -5350,7 +5382,7 @@ shells and solids on the other hand.</translation>
     </message>
     <message>
         <source>GEOM_PLUGINS_OTHER</source>
-        <translation>Other</translation>
+        <translation>Python Plugins</translation>
     </message>
     <message>
         <source>SHOW_ONLY_SELECTED</source>
@@ -5439,6 +5471,14 @@ shells and solids on the other hand.</translation>
     <message>
         <source>GEOM_DIM_AXES</source>
         <translation>Dimensions along local axes</translation>
+    </message>
+    <message>
+        <source>SHOW_ALL_BTN</source>
+        <translation>Show all</translation>
+    </message>
+    <message>
+        <source>HIDE_ALL_BTN</source>
+        <translation>Hide all</translation>
     </message>
 </context>
 <context>
@@ -6520,14 +6560,6 @@ Number of sketch points too small</translation>
         <translation>Remove</translation>
     </message>
     <message>
-        <source>SHOW_ALL_BTN</source>
-        <translation>Show all</translation>
-    </message>
-    <message>
-        <source>HIDE_ALL_BTN</source>
-        <translation>Hide all</translation>
-    </message>
-    <message>
         <source>DISTANCE_ITEM</source>
         <translation>Distance</translation>
     </message>
@@ -7243,7 +7275,19 @@ Do you want to create new material?</translation>
         <translation>Main shape</translation>
     </message>
     <message>
-        <source>GEOM_INSPECT_OBJECT_SHOW</source>
+      <source>GEOM_INSPECT_TOLERANCE_FILTER</source>
+      <translation>Tolerance filter</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_RESET_MIN</source>
+      <translation>Min value</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_RESET_MAX</source>
+      <translation>Max value</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_OBJECT_SHOW</source>
         <translation>Show Selected</translation>
     </message>
     <message>
@@ -7619,6 +7663,57 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_PROJ_ON_CYL_ROTATION_ANGLE</source>
         <translation>Rotation angle</translation>
+    </message>
+</context>
+<context>
+    <name>OperationGUI_ExtractionDlg</name>
+    <message>
+        <source>GEOM_EXTRACT_TITLE</source>
+        <translation>Extract and Rebuild</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_TYPE</source>
+        <translation>Extraction type</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_INPUT_PARAMS</source>
+        <translation>Input parameters</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_STATISTICS</source>
+        <translation>Statistics</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_SUB_SHAPE_TYPE</source>
+        <translation>Sub-shape type</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_FILTERED_SHAPES</source>
+        <translation>Filtered shapes</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_SHAPES_TO_EXTRACT</source>
+        <translation>Shapes to extract</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_REBUILD</source>
+        <translation>Rebuild</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_REMOVED</source>
+        <translation>Removed</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_MODIFIED</source>
+        <translation>Modified</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_ADDED</source>
+        <translation>Added</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRACT_NAME</source>
+        <translation>Extraction</translation>
     </message>
 </context>
 </TS>

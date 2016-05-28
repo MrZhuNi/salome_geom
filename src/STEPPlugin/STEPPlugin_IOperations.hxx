@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -29,15 +29,37 @@
 
 class STEPPLUGINENGINE_EXPORT STEPPlugin_IOperations: public GEOMImpl_IBaseIEOperations
 {
+
+public:
+
+  /*!
+   *  \brief Units of length
+   */
+  enum LengthUnit
+  {
+    LengthUnit_Inch,
+    LengthUnit_Millimeter,
+    LengthUnit_Foot,
+    LengthUnit_Mile,
+    LengthUnit_Meter,
+    LengthUnit_Kilometer,
+    LengthUnit_Milliinch,
+    LengthUnit_Micrometer,
+    LengthUnit_Centimeter,
+    LengthUnit_Microinch
+  };
+
+
 public:
   STEPPlugin_IOperations( GEOM_Engine*, int );
   ~STEPPlugin_IOperations();
 
   void ExportSTEP( const Handle(GEOM_Object),
-		   const TCollection_AsciiString& );
+		   const TCollection_AsciiString&, const LengthUnit );
   
-  Handle(TColStd_HSequenceOfTransient) ImportSTEP( const TCollection_AsciiString&,
-						   const bool );
+  Handle(TColStd_HSequenceOfTransient) ImportSTEP(const TCollection_AsciiString&,
+                                                  const bool,
+                                                  const bool);
   
   TCollection_AsciiString ReadValue( const TCollection_AsciiString&,
 				     const TCollection_AsciiString& );

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -995,13 +995,13 @@ void BasicGUI_PointDlg::updateParamCoord(bool theIsUpdate)
     }
   }
   else if (id == GEOM_POINT_SURF) {
-    GroupOnSurface->TextLabel2->setShown(isParam);
-    GroupOnSurface->TextLabel3->setShown(isParam);
-    GroupOnSurface->SpinBox_DX->setShown(isParam);
-    GroupOnSurface->SpinBox_DY->setShown(isParam);
+    GroupOnSurface->TextLabel2->setVisible(isParam);
+    GroupOnSurface->TextLabel3->setVisible(isParam);
+    GroupOnSurface->SpinBox_DX->setVisible(isParam);
+    GroupOnSurface->SpinBox_DY->setVisible(isParam);
   }
 
-  GroupXYZ->setShown(!isParam && !isLength);
+  GroupXYZ->setVisible(!isParam && !isLength);
 
   if (theIsUpdate)
     QTimer::singleShot(50, this, SLOT(updateSize()));

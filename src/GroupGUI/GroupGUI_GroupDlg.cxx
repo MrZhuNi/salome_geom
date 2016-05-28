@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -88,7 +88,8 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
     myBusy(false),
     myIsShapeType(false),
     myIsHiddenMain(false),
-    myWasHiddenMain(true)
+    myWasHiddenMain(true),
+    myIsAccept(false)
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 
@@ -235,10 +236,10 @@ GroupGUI_GroupDlg::~GroupGUI_GroupDlg()
   GEOM_Displayer* aDisplayer = getDisplayer();
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   bool isHideObjects = resMgr->booleanValue( "Geometry", "hide_input_object", true);
-  if (myWasHiddenMain) {
+  if (myWasHiddenMain || ( isHideObjects && myIsAccept ) ) {
     myIsHiddenMain = true;
   }
-  else if (!isHideObjects) {
+  else {
     aDisplayer->Display(myMainObj);
     myIsHiddenMain = false;
   }
@@ -395,7 +396,8 @@ bool GroupGUI_GroupDlg::ClickOnApply()
     setIsDisplayResult( false );
   }
     
-  if (!onAccept(myMode == CreateGroup, true, isApplyAndClose()))
+  myIsAccept = onAccept(myMode == CreateGroup, true, isApplyAndClose());
+  if (!myIsAccept)
     return false;
 
   if(!isApplyAndClose()) {
@@ -879,6 +881,12 @@ int GroupGUI_GroupDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMap
         TopoDS_Shape aShape;
         if (GEOMBase::GetShape(aGeomObj, aShape)) {
           if (aGeomObj->GetType() == GEOM_GROUP || aShape.ShapeType() == getShapeType()) {
+            if (subSelectionWay() != ALL_SUBSHAPES &&
+                GEOMBase::GetName(aGeomObj) == myShape2Name->text()) {
+              // Skip selected in place object.
+              continue;
+            }
+
             TopTools_IndexedMapOfShape aMainMap;
             TopoDS_Shape aMainShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myMainObj);
             TopExp::MapShapes(aMainShape, aMainMap);
@@ -1090,7 +1098,7 @@ void GroupGUI_GroupDlg::activateSelection()
           int index = aSubShapesMap.FindIndex(aSubShape);
           QString anEntry = QString( "TEMP_" ) + anEntryBase + QString("_%1").arg(index);
           Handle(SALOME_InteractiveObject) io =
-            new SALOME_InteractiveObject(anEntry.toAscii(), "GEOM", "TEMP_IO");
+            new SALOME_InteractiveObject(anEntry.toLatin1(), "GEOM", "TEMP_IO");
           if ( myGroupIdList.contains( index ) ) {
             aDisplayer->SetColor( aCol );
           }

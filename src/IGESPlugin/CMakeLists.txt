@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2014-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@
 
 IF(SALOME_BUILD_GUI)
   INCLUDE(UseQt4Ext)
-  INCLUDE(${QT_USE_FILE})
 ENDIF()
 
 # --- options ---

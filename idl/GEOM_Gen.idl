@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -209,6 +209,17 @@ module GEOM
     SI_ALL      // all interferences
   };
 
+  /**
+   * This enumeration represents comparison conditions.
+   */
+  enum comparison_condition
+  {
+    CC_GT, ///< Greater then
+    CC_GE, ///< Greater then or equal to
+    CC_LT, ///< Less then
+    CC_LE  ///< Less then or equal to
+  };
+
  /*!
    * \brief Object creation parameters
    *
@@ -288,7 +299,9 @@ module GEOM
     long GetStudyID();
 
     /*!
-     *  \brief Get internal type of the object (POINT, BOX, CYLINDER, EXTRUSION...).
+     *  \brief Get internal type of operation created this object (POINT, BOX, CYLINDER, EXTRUSION...).
+     *  \note To get topological information on the object, use \ref GEOM_IMeasureOperations::WhatIs() "WhatIs()"
+     * or \ref GEOM_IMeasureOperations::KindOfShape() "KindOfShape()" operation.
      */
     long GetType();
 
@@ -2643,7 +2656,8 @@ module GEOM
      *  coincident with \a theShapeWhat or could be a part of it.
      *  \param theShapeWhere Shape to find sub-shapes of.
      *  \param theShapeWhat Shape, specifying what to find.
-     *  \return Group of all found sub-shapes or a single found sub-shape.
+     *  \return Compound which includes all found sub-shapes if they have different types; 
+     *          or group of all found shapes of the equal type; or a single found sub-shape.
      */
     GEOM_Object GetInPlace (in GEOM_Object theShapeWhere,
                             in GEOM_Object theShapeWhat);
@@ -2666,7 +2680,8 @@ module GEOM
      *
      *  \param theShapeWhere Shape to find sub-shapes of.
      *  \param theShapeWhat Shape, specifying what to find.
-     *  \return Group of all found sub-shapes or a single found sub-shape.
+     *  \return Compound which includes all found sub-shapes if they have different types; 
+     *          or group of all found shapes of the equal type; or a single found sub-shape.
      */
     GEOM_Object GetInPlaceByHistory (in GEOM_Object theShapeWhere,
                                      in GEOM_Object theShapeWhat);
@@ -2746,6 +2761,63 @@ module GEOM
      */
     ListOfGO GetSubShapeEdgeSorted (in GEOM_Object theShape,
                                     in GEOM_Object theStartPoint);
+
+    /*!
+     * \brief Return the list of subshapes that satisfies a certain tolerance
+     * criterion. The user defines the type of shapes to be returned, the
+     * condition and the tolerance value. The operation is defined for
+     * faces, edges and vertices only. E.g. for theShapeType FACE, theCondition
+     * CC_GT and theTolerance 1.e-7 this method returns all faces of theShape
+     * that have tolerances greater then 1.e7.
+     *
+     * \param theShape the shape to be exploded
+     * \param theShapeType the type of shapes to be returned. Can have the
+     *        values FACE, EDGE and VERTEX only.
+     * \param theCondition the condition type.
+     * \param theTolerance the tolerance filter.
+     * \return the list of shapes that satisfy the conditions.
+     */
+    ListOfGO GetSubShapesWithTolerance(in GEOM_Object          theShape,
+                                       in short                theShapeType,
+                                       in comparison_condition theCondition,
+                                       in double               theTolerance);
+
+    /**
+     * This enumeration represents an extraction statistics type. It is used in
+     * the interface GEOM_IShapesOperations::MakeExtraction.
+     */
+    enum ExtractionStatType
+    {
+      EST_Removed,  ///< Removed sub-shapes
+      EST_Modified, ///< Modified sub-shapes
+      EST_Added     ///< Newly created sub-shapes
+    };
+
+    /*!
+     * This structure defines a format of extraction statistics. It is used in
+     * the interface GEOM_IShapesOperations::MakeExtraction.
+     */
+    struct ExtractionStat
+    {
+      ExtractionStatType type;    ///< Type of extraction statistics.
+      ListOfLong         indices; ///< Shape indices touched by this type of modification.
+    };
+
+    typedef sequence<ExtractionStat> ExtractionStats;
+
+    /*!
+     * \brief Return the shape that is constructed from theShape without
+     * extracted sub-shapes from the input list.
+     *
+     * \param theShape the original shape.
+     * \param theSubShapeIDs the list of sub-shape IDs to be extracted from
+     *        the original shape.
+     * \param theStats the operation statistics. Output parameter.
+     * \return the shape without extracted sub-shapes.
+     */
+    GEOM_Object MakeExtraction(in GEOM_Object      theShape,
+                               in ListOfLong       theSubShapeIDs,
+                               out ExtractionStats theStats);
 
   };
 

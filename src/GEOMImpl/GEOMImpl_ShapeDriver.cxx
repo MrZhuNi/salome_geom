@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -22,6 +22,7 @@
 
 #include <GEOMImpl_ShapeDriver.hxx>
 
+#include <GEOMImpl_IExtract.hxx>
 #include <GEOMImpl_IIsoline.hxx>
 #include <GEOMImpl_IShapes.hxx>
 #include <GEOMImpl_IShapeExtend.hxx>
@@ -32,6 +33,7 @@
 #include <GEOM_Function.hxx>
 #include <GEOMUtils_Hatcher.hxx>
 #include <GEOMAlgo_State.hxx>
+#include <GEOMAlgo_Extractor.hxx>
 
 // OCCT Includes
 #include <ShapeFix_Wire.hxx>
@@ -73,6 +75,8 @@
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
 
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_HSequenceOfShape.hxx>
 
@@ -106,6 +110,39 @@
 #include <BOPAlgo_MakerVolume.hxx>
 
 #include <list>
+
+/**
+ * \brief This static function converts the list of shapes into an array
+ *  of their IDs. If the input list is empty, null handle will be returned.
+ *  this method doesn't check if a shape presents in theIndices map.
+ *
+ * \param theListOfShapes the list of shapes.
+ * \param theIndices the indexed map of shapes.
+ * \return the array of shape IDs.
+ */
+static Handle(TColStd_HArray1OfInteger) GetShapeIDs
+                  (const TopTools_ListOfShape       &theListOfShapes,
+                   const TopTools_IndexedMapOfShape &theIndices)
+{
+  Handle(TColStd_HArray1OfInteger) aResult;
+
+  if (!theListOfShapes.IsEmpty()) {
+    const Standard_Integer             aNbShapes = theListOfShapes.Extent();
+    TopTools_ListIteratorOfListOfShape anIter(theListOfShapes);
+    Standard_Integer                   i;
+
+    aResult = new TColStd_HArray1OfInteger(1, aNbShapes);
+
+    for (i = 1; anIter.More(); anIter.Next(), ++i) {
+      const TopoDS_Shape     &aShape  = anIter.Value();
+      const Standard_Integer  anIndex = theIndices.FindIndex(aShape);
+
+      aResult->SetValue(i, anIndex);
+    }
+  }
+
+  return aResult;
+}
 
 namespace
 {
@@ -161,6 +198,185 @@ namespace
 
     return result;
   }
+
+  /**
+   * This function adds faces from the input shape into the list of faces. If
+   * the input shape is a face, it is added itself. If it is a shell, its
+   * sub-shapes (faces) are added. If it is a compound, its sub-shapes
+   * (faces or shells) are added in the list. For null shapes and for other
+   * types of shapes an exception is thrown.
+   *
+   * @param theShape the shape to be added. Either face or shell or a compound
+   *        of faces and/or shells.
+   * @param theListFaces the list of faces that is modified on output.
+   * @param theMapFence the map that protects from adding the same faces in
+   *        the list.
+   */
+  void addFaces(const TopoDS_Shape         &theShape,
+                      TopTools_ListOfShape &theListFaces,
+                      TopTools_MapOfShape  &theMapFence)
+  {
+    if (theShape.IsNull()) {
+      Standard_NullObject::Raise("Face for shell construction is null");
+    }
+
+    // Append the shape is the mapFence
+    if (theMapFence.Add(theShape)) {
+      // Shape type
+      const TopAbs_ShapeEnum aType = theShape.ShapeType();
+
+      if (aType == TopAbs_FACE) {
+        theListFaces.Append(theShape);
+      } else if (aType == TopAbs_SHELL || aType == TopAbs_COMPOUND) {
+        TopoDS_Iterator anIter(theShape);
+
+        for (; anIter.More(); anIter.Next()) {
+          // Add sub-shapes: faces for shell or faces/shells for compound.
+          const TopoDS_Shape &aSubShape = anIter.Value();
+
+          addFaces(aSubShape, theListFaces, theMapFence);
+        }
+      } else {
+        Standard_TypeMismatch::Raise
+          ("Shape for shell construction is neither a shell nor a face");
+      }
+    }
+  }
+
+  /**
+   * This function constructs a shell or a compound of shells
+   * from a set of faces and/or shells.
+   *
+   * @param theShapes is a set of faces, shells and/or
+   *        compounds of faces/shells.
+   * @return a shell or a compound of shells.
+   */
+  TopoDS_Shape makeShellFromFaces
+        (const Handle(TColStd_HSequenceOfTransient) &theShapes)
+  {
+    const Standard_Integer aNbShapes = theShapes->Length();
+    Standard_Integer       i;
+    TopTools_ListOfShape   aListFaces;
+    TopTools_MapOfShape    aMapFence;
+    BRep_Builder           aBuilder;
+
+    // Fill the list of unique faces
+    for (i = 1; i <= aNbShapes; ++i) {
+      // Function
+      const Handle(GEOM_Function) aRefShape =
+        Handle(GEOM_Function)::DownCast(theShapes->Value(i));
+
+      if (aRefShape.IsNull()) {
+        Standard_NullObject::Raise("Face for shell construction is null");
+      }
+
+      // Shape
+      const TopoDS_Shape aShape = aRefShape->GetValue();
+
+      addFaces(aShape, aListFaces, aMapFence);
+    }
+
+    // Perform computation of shells.
+    TopTools_ListOfShape               aListShells;
+    TopTools_ListIteratorOfListOfShape anIter;
+
+    while (!aListFaces.IsEmpty()) {
+      // Perform sewing
+      BRepBuilderAPI_Sewing aSewing(Precision::Confusion()*10.0);
+
+      for (anIter.Initialize(aListFaces); anIter.More(); anIter.Next()) {
+        aSewing.Add(anIter.Value());
+      }
+
+      aSewing.Perform();
+
+      // Fill list of shells.
+      const TopoDS_Shape &aSewed = aSewing.SewedShape();
+      TopExp_Explorer     anExp(aSewed, TopAbs_SHELL);
+      Standard_Boolean    isNewShells = Standard_False;
+
+      // Append shells
+      for (; anExp.More(); anExp.Next()) {
+        aListShells.Append(anExp.Current());
+        isNewShells = Standard_True;
+      }
+
+      // Append single faces.
+      anExp.Init(aSewed, TopAbs_FACE, TopAbs_SHELL);
+
+      for (; anExp.More(); anExp.Next()) {
+        TopoDS_Shell aShell;
+
+        aBuilder.MakeShell(aShell);
+        aBuilder.Add(aShell, anExp.Current());
+        aListShells.Append(aShell);
+        isNewShells = Standard_True;
+      }
+
+      if (!isNewShells) {
+        // There are no more shell can be obtained. Break the loop.
+        break;
+      }
+
+      // Remove faces that are in the result from the list.
+      TopTools_IndexedMapOfShape aMapFaces;
+
+      TopExp::MapShapes(aSewed, TopAbs_FACE, aMapFaces);
+
+      // Add deleted faces to the map
+      const Standard_Integer aNbDelFaces = aSewing.NbDeletedFaces();
+
+      for (i = 1; i <= aNbDelFaces; ++i) {
+        aMapFaces.Add(aSewing.DeletedFace(i));
+      }
+
+      for (anIter.Initialize(aListFaces); anIter.More();) {
+        const TopoDS_Shape &aFace      = anIter.Value();
+        Standard_Boolean    isFaceUsed = Standard_False;
+
+        if (aMapFaces.Contains(aFace) || aSewing.IsModified(aFace)) {
+          // Remove face from the list.
+          aListFaces.Remove(anIter);
+        } else {
+          // Go to the next face.
+          anIter.Next();
+        }
+      }
+    }
+
+    // If there are faces not used in shells create a shell for each face.
+    for (anIter.Initialize(aListFaces); anIter.More(); anIter.Next()) {
+      TopoDS_Shell aShell;
+
+      aBuilder.MakeShell(aShell);
+      aBuilder.Add(aShell, anIter.Value());
+      aListShells.Append(aShell);
+    }
+
+    // Construct the result that can be either a shell or a compound of shells
+    TopoDS_Shape aResult;
+
+    if (!aListShells.IsEmpty()) {
+      if (aListShells.Extent() == 1) {
+        aResult = aListShells.First();
+      } else {
+        // There are more then one shell.
+        TopoDS_Compound aCompound;
+
+        aBuilder.MakeCompound(aCompound);
+
+        for (anIter.Initialize(aListShells); anIter.More(); anIter.Next()) {
+          aBuilder.Add(aCompound, anIter.Value());
+        }
+
+        aResult = aCompound;
+      }
+    }
+
+    return aResult;
+  }
+
+  // End of namespace
 }
 
 //modified by NIZNHY-PKV Wed Dec 28 13:48:20 2011f
@@ -432,60 +648,13 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     allowCompound = true;
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
-    unsigned int ind, nbshapes = aShapes->Length();
 
-    // add faces
-    BRepBuilderAPI_Sewing aSewing (Precision::Confusion()*10.0);
-    for (ind = 1; ind <= nbshapes; ind++) {
-      Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
-      TopoDS_Shape aShape_i = aRefShape->GetValue();
-      if (aShape_i.IsNull()) {
-        Standard_NullObject::Raise("Face for shell construction is null");
-      }
-      aSewing.Add(aShape_i);
+    if (aShapes.IsNull()) {
+      Standard_NullObject::Raise("Argument Shapes is null");
     }
 
-    aSewing.Perform();
-
-    TopoDS_Shape sh = aSewing.SewedShape();
-
-    if (sh.ShapeType()==TopAbs_FACE && nbshapes==1) {
-      // case for creation of shell from one face - PAL12722 (skl 26.06.2006)
-      TopoDS_Shell ss;
-      B.MakeShell(ss);
-      B.Add(ss,sh);
-      aShape = ss;
-    }
-    else {
-      //TopExp_Explorer exp (aSewing.SewedShape(), TopAbs_SHELL);
-      TopExp_Explorer exp (sh, TopAbs_SHELL);
-      Standard_Integer ish = 0;
-      for (; exp.More(); exp.Next()) {
-        aShape = exp.Current();
-        ish++;
-      }
-
-      if (ish != 1) {
-        // try the case of one face (Mantis issue 0021809)
-        TopExp_Explorer expF (sh, TopAbs_FACE);
-        Standard_Integer ifa = 0;
-        for (; expF.More(); expF.Next()) {
-          aShape = expF.Current();
-          ifa++;
-        }
-
-        if (ifa == 1) {
-          TopoDS_Shell ss;
-          B.MakeShell(ss);
-          B.Add(ss,aShape);
-          aShape = ss;
-        }
-        else {
-          aShape = aSewing.SewedShape();
-        }
-      }
-    }
-
+    // Compute a shell or a compound of shells.
+    aShape = makeShellFromFaces(aShapes);
   }
   else if (aType == SOLID_SHELLS) {
     // result may be only a solid or a compound of solids
@@ -783,6 +952,97 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
           aShape = aMF.Shape();
         }
       }
+    }
+  } else if (aType == EXTRACTION) {
+    allowCompound = true;
+
+    GEOMImpl_IExtract     aCI(aFunction);
+    Handle(GEOM_Function) aRefShape  = aCI.GetShape();
+    TopoDS_Shape          aShapeBase = aRefShape->GetValue();
+
+    if (aShapeBase.IsNull()) {
+      Standard_NullObject::Raise("Argument Shape is null");
+      return 0;
+    }
+
+    Handle(TColStd_HArray1OfInteger) anIDs = aCI.GetSubShapeIDs();
+    TopTools_ListOfShape             aListSubShapes;
+    TopTools_IndexedMapOfShape       anIndices;
+    int                              i;
+
+    TopExp::MapShapes(aShapeBase, anIndices);
+
+    if (!anIDs.IsNull()) {
+      const int anUpperID = anIDs->Upper();
+      const int aNbShapes = anIndices.Extent();
+
+      for (i = anIDs->Lower(); i <= anUpperID; ++i) {
+        const Standard_Integer anIndex = anIDs->Value(i);
+
+        if (anIndex < 1 || anIndex > aNbShapes) {
+          TCollection_AsciiString aMsg(" Invalid index: ");
+
+          aMsg += TCollection_AsciiString(anIndex);
+          StdFail_NotDone::Raise(aMsg.ToCString());
+          return 0;
+        }
+
+        const TopoDS_Shape &aSubShape = anIndices.FindKey(anIndex);
+
+        aListSubShapes.Append(aSubShape);
+      }
+    }
+
+    // Compute extraction.
+    GEOMAlgo_Extractor anExtractor;
+
+    anExtractor.SetShape(aShapeBase);
+    anExtractor.SetShapesToRemove(aListSubShapes);
+
+    anExtractor.Perform();
+
+    // Interprete results
+    Standard_Integer iErr = anExtractor.ErrorStatus();
+
+    // The detailed description of error codes is in GEOMAlgo_Extractor.cxx
+    if (iErr) {
+      TCollection_AsciiString aMsg(" iErr : ");
+
+      aMsg += TCollection_AsciiString(iErr);
+      StdFail_NotDone::Raise(aMsg.ToCString());
+      return 0;
+    }
+
+    aShape = anExtractor.GetResult();
+
+    // Get statistics.
+    const TopTools_ListOfShape       &aRemoved    = anExtractor.GetRemoved();
+    const TopTools_ListOfShape       &aModified   = anExtractor.GetModified();
+    const TopTools_ListOfShape       &aNew        = anExtractor.GetNew();
+    Handle(TColStd_HArray1OfInteger) aRemovedIDs  =
+                          GetShapeIDs(aRemoved, anIndices);
+    Handle(TColStd_HArray1OfInteger) aModifiedIDs =
+                          GetShapeIDs(aModified, anIndices);
+    Handle(TColStd_HArray1OfInteger) aNewIDs;
+
+    if (!aShape.IsNull()) {
+      // Get newly created sub-shapes
+      TopTools_IndexedMapOfShape aNewIndices;
+
+      TopExp::MapShapes(aShape, aNewIndices);
+      aNewIDs = GetShapeIDs(aNew, aNewIndices);
+    }
+
+    if (!aRemovedIDs.IsNull()) {
+      aCI.SetRemovedIDs(aRemovedIDs);
+    }
+
+    if (!aModifiedIDs.IsNull()) {
+      aCI.SetModifiedIDs(aModifiedIDs);
+    }
+
+    if (!aNewIDs.IsNull()) {
+      aCI.SetAddedIDs(aNewIDs);
     }
   }
   else {
@@ -1744,6 +2004,15 @@ GetCreationInformation(std::string&             theOperationName,
 
     theOperationName = "SURFACE_FROM_FACE";
     AddParam(theParams, "Face", aSE.GetShape());
+    break;
+  }
+  case EXTRACTION:
+  {
+    GEOMImpl_IExtract aCI (function);
+
+    theOperationName = "EXTRACTION";
+    AddParam(theParams, "Main Shape", aCI.GetShape());
+    AddParam(theParams, "Sub-shape IDs", aCI.GetSubShapeIDs());
     break;
   }
   default:

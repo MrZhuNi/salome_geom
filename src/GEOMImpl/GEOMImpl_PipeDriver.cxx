@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -108,6 +108,8 @@
 #define GROUP_SIDE2 3
 #define GROUP_OTHER 4
 
+static const Standard_Real TolPipeSurf = 5.e-4;
+
 static bool FillGroups(const TopTools_SequenceOfShape         *theGroups,
                        const TopTools_IndexedMapOfShape       &theIndices,
                              Handle(TColStd_HArray1OfInteger) *theGroupIds);
@@ -178,11 +180,14 @@ static GeomFill_Trihedron EvaluateBestSweepMode(const TopoDS_Shape& Spine)
 //=======================================================================
 static Standard_Boolean BuildPipeShell(BRepOffsetAPI_MakePipeShell &theBuilder)
 {
+  theBuilder.SetForceApproxC1(Standard_True);
+
   theBuilder.Build();
 
   Standard_Boolean isDone = theBuilder.IsDone();
 
-  if (!isDone) {
+  if (!isDone ||
+      theBuilder.ErrorOnSurface() > TolPipeSurf) {
     // Try to use Descrete Trihedron mode.
     theBuilder.SetDiscreteMode();
     theBuilder.Build();
@@ -3122,9 +3127,10 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
     else
     {
       GeomFill_Trihedron theBestMode = EvaluateBestSweepMode(aWirePath);
-      BRepOffsetAPI_MakePipe aMkPipe(aWirePath, aShapeBase, theBestMode);
+      BRepOffsetAPI_MakePipe aMkPipe
+        (aWirePath, aShapeBase, theBestMode, Standard_True);
 
-      if (aMkPipe.IsDone()) {
+      if (aMkPipe.IsDone() && aMkPipe.ErrorOnSurface() <= TolPipeSurf) {
         aShape = aMkPipe.Shape();
 
         if (!CreateGroups(aShapeBase, aWirePath, aMkPipe, aCI)) {
@@ -3134,7 +3140,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
       } else if (theBestMode != GeomFill_IsDiscreteTrihedron) {
         // Try to use Descrete Trihedron mode.
         BRepOffsetAPI_MakePipe aMkPipeDescrete
-          (aWirePath, aShapeBase, GeomFill_IsDiscreteTrihedron);
+          (aWirePath, aShapeBase, GeomFill_IsDiscreteTrihedron, Standard_True);
 
         if (aMkPipeDescrete.IsDone()) {
           aShape = aMkPipeDescrete.Shape();

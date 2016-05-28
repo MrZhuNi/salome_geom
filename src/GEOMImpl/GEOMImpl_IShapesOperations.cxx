@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -36,6 +36,7 @@
 #include "GEOMImpl_GlueDriver.hxx"
 #include "GEOMImpl_FillingDriver.hxx"
 
+#include "GEOMImpl_IExtract.hxx"
 #include "GEOMImpl_IVector.hxx"
 #include "GEOMImpl_IShapes.hxx"
 #include "GEOMImpl_IShapeExtend.hxx"
@@ -74,6 +75,7 @@
 #include <Geom_Plane.hxx>
 #include <Geom_SphericalSurface.hxx>
 #include <Geom_Surface.hxx>
+#include <Geom_TrimmedCurve.hxx>
 #include <Precision.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TDF_Tool.hxx>
@@ -3062,6 +3064,207 @@ Handle(TColStd_HSequenceOfTransient)
   return aSeq;
 }
 
+//=============================================================================
+/*!
+ *  GetSubShapesWithTolerance
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient)
+    GEOMImpl_IShapesOperations::GetSubShapesWithTolerance
+                     (const Handle(GEOM_Object)            &theShape,
+                      const Standard_Integer                theShapeType,
+                      const GEOMUtils::ComparisonCondition  theCondition,
+                      const Standard_Real                   theTolerance)
+{
+  if (theShape.IsNull()) {
+    SetErrorCode("NULL GEOM object");
+    return NULL;
+  }
+
+  TopoDS_Shape aShape = theShape->GetValue();
+
+  if (aShape.IsNull()) {
+    SetErrorCode("NULL Shape");
+    return NULL;
+  }
+
+  if (theShapeType != TopAbs_FACE && theShapeType != TopAbs_EDGE &&
+      theShapeType != TopAbs_VERTEX && aShape.ShapeType() >= theShapeType) {
+    SetErrorCode("Invalid shape type");
+    return NULL;
+  }
+
+  TopTools_IndexedMapOfShape         anIndices;
+  TopTools_MapOfShape                aMapFence;
+  TopExp_Explorer                    anExp(aShape,
+                                           (TopAbs_ShapeEnum) theShapeType);
+  Handle(TColStd_HSequenceOfInteger) anIDs = new TColStd_HSequenceOfInteger;
+
+  TopExp::MapShapes(aShape, anIndices);
+
+  for (; anExp.More(); anExp.Next()) {
+    const TopoDS_Shape &aSubShape = anExp.Current();
+
+    if (aMapFence.Add(aSubShape)) {
+      // Compute tolerance
+      Standard_Real aTolerance = -1.;
+
+      switch (aSubShape.ShapeType()) {
+        case TopAbs_FACE:
+          aTolerance = BRep_Tool::Tolerance(TopoDS::Face(aSubShape));
+          break;
+        case TopAbs_EDGE:
+          aTolerance = BRep_Tool::Tolerance(TopoDS::Edge(aSubShape));
+          break;
+        case TopAbs_VERTEX:
+          aTolerance = BRep_Tool::Tolerance(TopoDS::Vertex(aSubShape));
+          break;
+        default:
+          break;
+      }
+
+      if (aTolerance < 0.) {
+        continue;
+      }
+
+      // Compare the tolerance with reference value.
+      if (GEOMUtils::IsFitCondition (theCondition, aTolerance, theTolerance)) {
+        anIDs->Append(anIndices.FindIndex(aSubShape));
+      }
+    }
+  }
+
+  if (anIDs->IsEmpty()) {
+    SetErrorCode("Empty sequence of sub-shapes");
+    return NULL;
+  }
+
+  // Get objects by indices.
+  TCollection_AsciiString              anAsciiList;
+  Handle(TColStd_HSequenceOfTransient) aSeq =
+    getObjectsShapesOn(theShape, anIDs, anAsciiList);
+
+  if (aSeq.IsNull() || aSeq->IsEmpty()) {
+    SetErrorCode("Empty sequence of edges");
+    return NULL;
+  }
+
+  // Make a Python command
+  Handle(GEOM_Object)   anObj     =
+    Handle(GEOM_Object)::DownCast(aSeq->Value(1));
+  Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
+
+  GEOM::TPythonDump(aFunction)
+    << "[" << anAsciiList.ToCString() << "] = geompy.GetSubShapesWithTolerance("
+    << theShape << ", " << theShapeType << ", " << theCondition << ", "
+    << theTolerance << ")";
+
+  SetErrorCode(OK);
+
+  return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  MakeExtraction
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeExtraction
+                     (const Handle(GEOM_Object)              &theShape,
+                      const Handle(TColStd_HArray1OfInteger) &theSubShapeIDs,
+                      std::list<ExtractionStat>              &theStats)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) {
+    return NULL;
+  }
+
+  //Add a new Result object
+  Handle(GEOM_Object) aResult =
+              GetEngine()->AddObject(GetDocID(), GEOM_EXTRACTION);
+
+  //Add a new Extraction function
+  Handle(GEOM_Function) aFunction =
+    aResult->AddFunction(GEOMImpl_ShapeDriver::GetID(), EXTRACTION);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) {
+    return NULL;
+  }
+
+  Handle(GEOM_Function) aShape = theShape->GetLastFunction();
+
+  if (aShape.IsNull()) {
+    return NULL;
+  }
+
+  GEOMImpl_IExtract aCI (aFunction);
+
+  aCI.SetShape(aShape);
+  aCI.SetSubShapeIDs(theSubShapeIDs);
+
+  //Compute the Edge value
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed");
+
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+
+    return NULL;
+  }
+
+  // Fill in statistics.
+  theStats.clear();
+
+  Handle(TColStd_HArray1OfInteger) aStatIDsArray[3] = 
+    { aCI.GetRemovedIDs(), aCI.GetModifiedIDs(), aCI.GetAddedIDs() };
+  int                              i;
+  int                              j;
+
+  for (j = 0; j < 3; ++j) {
+    if (!aStatIDsArray[j].IsNull()) {
+      const int      anUpperID = aStatIDsArray[j]->Upper();
+      ExtractionStat aStat;
+
+      for (i = aStatIDsArray[j]->Lower(); i <= anUpperID; ++i) {
+        aStat.indices.push_back(aStatIDsArray[j]->Value(i));
+      }
+
+      aStat.type = (ExtractionStatType) j;
+      theStats.push_back(aStat);
+    }
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd(aFunction);
+
+  pd << aResult  << " = geompy.MakeExtraction(" << theShape << ", [";
+
+  if (!theSubShapeIDs.IsNull()) {
+    const int aNbIDs = theSubShapeIDs->Upper();
+
+    for (i = theSubShapeIDs->Lower(); i < aNbIDs; ++i) {
+      pd << theSubShapeIDs->Value(i) << ", ";
+    }
+
+    // Dump the last value without a comma.
+    pd << theSubShapeIDs->Value(i);
+  }
+
+  pd << "])";
+
+  SetErrorCode(OK);
+
+  return aResult;
+}
+
 //=======================================================================
 //function : getShapesOnSurfaceIDs
   /*!
@@ -4535,6 +4738,8 @@ static bool isSameEdge(const TopoDS_Edge& theEdge1, const TopoDS_Edge& theEdge2)
   gp_Pnt P1 = C1->Value(U);     //Compute a point on one third of the edge's length
   U = U11+range*2.0/3.0;
   gp_Pnt P2 = C1->Value(U);     //Compute a point on two thirds of the edge's length
+
+  C2 = new Geom_TrimmedCurve(C2, U21, U22);
 
   if(!GeomLib_Tool::Parameter(C2, P1, MAX_TOLERANCE, U) ||  U < U21 || U > U22)
     return false;

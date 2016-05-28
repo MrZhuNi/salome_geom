@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -127,13 +127,13 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg( GeometryGUI* theGeometryGUI, Q
 //=======================================================================
 void RepairGUI_DivideEdgeDlg::ConstructorsClicked( int constructorId )
 {
-  myIsParameterGr->button( 0 )->setShown( constructorId == BY_PARAM );
-  myIsParameterGr->button( 1 )->setShown( constructorId == BY_PARAM );
-  myValEdt                    ->setShown( constructorId == BY_PARAM );
-  myValLbl                    ->setShown( constructorId == BY_PARAM );
-  GroupPoints->TextLabel2     ->setShown( constructorId == BY_POINT_PROJ );
-  GroupPoints->PushButton2    ->setShown( constructorId == BY_POINT_PROJ );
-  GroupPoints->LineEdit2      ->setShown( constructorId == BY_POINT_PROJ );
+  myIsParameterGr->button( 0 )->setVisible( constructorId == BY_PARAM );
+  myIsParameterGr->button( 1 )->setVisible( constructorId == BY_PARAM );
+  myValEdt                    ->setVisible( constructorId == BY_PARAM );
+  myValLbl                    ->setVisible( constructorId == BY_PARAM );
+  GroupPoints->TextLabel2     ->setVisible( constructorId == BY_POINT_PROJ );
+  GroupPoints->PushButton2    ->setVisible( constructorId == BY_POINT_PROJ );
+  GroupPoints->LineEdit2      ->setVisible( constructorId == BY_POINT_PROJ );
 
   initSelection();
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -131,6 +131,7 @@ SET(GOOD_TESTS
   working_with_groups_ex04.py
   working_with_groups_ex05.py
   working_with_groups_ex06.py
+  GEOM_Field.py
 )
 IF(CAS_VERSION_STR VERSION_GREATER "6.9.0")
   LIST(APPEND GOOD_TESTS

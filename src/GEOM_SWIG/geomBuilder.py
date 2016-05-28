@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -295,7 +295,7 @@ def ManageTransactions(theOpeName):
 ## Raise an Error, containing the Method_name, if Operation is Failed
 ## @ingroup l1_geomBuilder_auxiliary
 def RaiseIfFailed (Method_name, Operation):
-    if Operation.IsDone() == 0 and Operation.GetErrorCode() != "NOT_FOUND_ANY":
+    if not Operation.IsDone() and Operation.GetErrorCode() != "NOT_FOUND_ANY":
         raise RuntimeError, Method_name + " : " + Operation.GetErrorCode()
 
 ## Return list of variables value from salome notebook
@@ -2414,7 +2414,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
               anObj = self.CurvesOp.MakeCurveParametricNew(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)
             else:
               anObj = self.CurvesOp.MakeCurveParametric(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)
-            RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
+            RaiseIfFailed("MakeCurveParametric", self.CurvesOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "curve")
             return anObj
@@ -4834,8 +4834,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "face")
             return anObj
 
-        ## Create a shell from the set of faces and shells.
-        #  @param theFacesAndShells List of faces and/or shells.
+        ## Create a shell from the set of faces, shells and/or compounds of faces.
+        #  @param theFacesAndShells List of faces, shells and/or compounds of faces.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -5866,7 +5866,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return Group of all found sub-shapes or a single found sub-shape.
+        #  @return Compound which includes all found sub-shapes if they have different types; 
+        #          or group of all found shapes of the equal type; or a single found sub-shape.
         #
         #  @note This function has a restriction on argument shapes.
         #        If \a theShapeWhere has curved parts with significantly
@@ -5891,7 +5892,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                Group of all found sub-shapes or a single found sub-shape.
+                Compound which includes all found sub-shapes if they have different types; 
+                or group of all found shapes of the equal type; or a single found sub-shape.
 
 
             Note:
@@ -5927,7 +5929,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return Group of all found sub-shapes or a single found sub-shape.
+        #  @return Compound which includes all found sub-shapes if they have different types; 
+        #          or group of all found shapes of the equal type; or a single found sub-shape.
         #
         #  @ref swig_GetInPlace "Example"
         @ManageTransactions("ShapesOp")
@@ -5948,7 +5951,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                Group of all found sub-shapes or a single found sub-shape.
+                Compound which includes all found sub-shapes if they have different types; 
+                or group of all found shapes of the equal type; or a single found sub-shape.
             """
             # Example: see GEOM_TestOthers.py
             anObj = self.ShapesOp.GetInPlaceByHistory(theShapeWhere, theShapeWhat)
@@ -6574,6 +6578,57 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(ListObj, theName, "SortedEdges")
             return ListObj
 
+        ##
+        # Return the list of subshapes that satisfies a certain tolerance
+        # criterion. The user defines the type of shapes to be returned, the
+        # condition and the tolerance value. The operation is defined for
+        # faces, edges and vertices only. E.g. for theShapeType FACE,
+        # theCondition GEOM::CC_GT and theTolerance 1.e-7 this method returns
+        # all faces of theShape that have tolerances greater then 1.e7.
+        #
+        #  @param theShape the shape to be exploded
+        #  @param theShapeType the type of sub-shapes to be returned (see
+        #         ShapeType()). Can have the values FACE, EDGE and VERTEX only.
+        #  @param theCondition the condition type (see GEOM::comparison_condition).
+        #  @param theTolerance the tolerance filter.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #  @return the list of shapes that satisfy the conditions.
+        #
+        #  @ref swig_GetSubShapesWithTolerance "Example"
+        @ManageTransactions("ShapesOp")
+        def GetSubShapesWithTolerance(self, theShape, theShapeType,
+                                      theCondition, theTolerance, theName=None):
+            """
+            Return the list of subshapes that satisfies a certain tolerance
+            criterion. The user defines the type of shapes to be returned, the
+            condition and the tolerance value. The operation is defined for
+            faces, edges and vertices only. E.g. for theShapeType FACE,
+            theCondition GEOM::CC_GT and theTolerance 1.e-7 this method returns
+            all faces of theShape that have tolerances greater then 1.e7.
+            
+            Parameters:
+                theShape the shape to be exploded
+                theShapeType the type of sub-shapes to be returned (see
+                             ShapeType()). Can have the values FACE,
+                             EDGE and VERTEX only.
+                theCondition the condition type (see GEOM::comparison_condition).
+                theTolerance the tolerance filter.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                The list of shapes that satisfy the conditions.
+            """
+            # Example: see GEOM_TestAll.py
+            ListObj = self.ShapesOp.GetSubShapesWithTolerance(theShape, EnumToLong(theShapeType),
+                                                              theCondition, theTolerance)
+            RaiseIfFailed("GetSubShapesWithTolerance", self.ShapesOp)
+            self._autoPublish(ListObj, theName, "SubShapeWithTolerance")
+            return ListObj
+
         ## Check if the object is a sub-object of another GEOM object.
         #  @param aSubObject Checked sub-object (or its parent object, in case if
         #         \a theSubObjectIndex is non-zero).
@@ -6605,6 +6660,35 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             IsOk = self.ShapesOp.IsSubShapeBelongsTo(aSubObject, aSubObjectIndex, anObject, anObjectIndex)
             RaiseIfFailed("IsSubShapeBelongsTo", self.ShapesOp)
             return IsOk
+
+        ## Perform extraction of sub-shapes from the main shape.
+        #
+        #  @param theShape the main shape
+        #  @param theListOfID the list of sub-shape IDs to be extracted from
+        #         the main shape.
+        #  @return New GEOM.GEOM_Object, containing the shape without
+        #          extracted sub-shapes.
+        #
+        #  @ref swig_MakeExtraction "Example"
+        @ManageTransactions("ShapesOp")
+        def MakeExtraction(self, theShape, theListOfID, theName=None):
+            """
+            Perform extraction of sub-shapes from the main shape.
+
+            Parameters:
+                theShape the main shape
+                theListOfID the list of sub-shape IDs to be extracted from
+                            the main shape.
+
+            Returns
+                New GEOM.GEOM_Object, containing the shape without
+                extracted sub-shapes.
+            """
+            # Example: see GEOM_TestAll.py
+            (anObj, aStat) = self.ShapesOp.MakeExtraction(theShape, theListOfID)
+            RaiseIfFailed("MakeExtraction", self.ShapesOp)
+            self._autoPublish(anObj, theName, "Extraction")
+            return anObj
 
         # end of l4_decompose
         ## @}

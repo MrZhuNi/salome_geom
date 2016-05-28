@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -3563,7 +3563,10 @@ void GEOM_Superv_i::ExportSTEP( GEOM::GEOM_Object_ptr theObject,
   beginService( " GEOM_Superv_i::ExportSTEP" );
   MESSAGE("GEOM_Superv_i::ExportSTEP");
   getSTEPPluginOp();
-  mySTEPOp->ExportSTEP( theObject, theFileName );
+
+  const GEOM::length_unit aUnit = GEOM::LU_METER;
+
+  mySTEPOp->ExportSTEP( theObject, theFileName, aUnit );
   endService( " GEOM_Superv_i::ExportSTEP" );
 }
 
@@ -3576,7 +3579,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportSTEP( const char* theFileName,
   beginService( " GEOM_Superv_i::ImportSTEP" );
   MESSAGE("GEOM_Superv_i::ImportSTEP");
   getSTEPPluginOp();
-  GEOM::ListOfGO* aSeq = mySTEPOp->ImportSTEP(theFileName, theIsIgnoreUnits );
+  GEOM::ListOfGO* aSeq = mySTEPOp->ImportSTEP(theFileName, theIsIgnoreUnits, false );
   GEOM::GEOM_Object_ptr anObj;
 
   if (aSeq->length() > 0) {

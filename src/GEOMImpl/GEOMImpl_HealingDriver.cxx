@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -1048,7 +1048,7 @@ GetCreationInformation(std::string&             theOperationName,
       AddParam( theParams, "Operation", op );
       for ( int iP = aParams->Lower(), nbP = aParams->Upper(); iP <= nbP; ++iP )
       {
-        const TCollection_ExtendedString& par = aParams->Value(i);
+        const TCollection_ExtendedString& par = aParams->Value(iP);
         TCollection_AsciiString parAscii( par );
         if ( par.Search( op ) == 1 && parAscii.Value( op.Length() + 1 ) == '.' )
         {

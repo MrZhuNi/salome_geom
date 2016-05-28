@@ -102,6 +102,12 @@
 \until geompy.RestoreSubShapes(Partition1)
 
 \anchor swig_GetSubShapeEdgeSorted
+\until geompy.GetSubShapeEdgeSorted(Sketcher3d_2, p3, "OrderedEdges")
+
+\anchor swig_GetSubShapesWithTolerance
+\until geompy.GetSubShapesWithTolerance(Box, GEOM.FACE, GEOM.CC_LE, 1.e-7, "le")
+
+\anchor swig_MakeExtraction
 \until print "DONE"
 
 */

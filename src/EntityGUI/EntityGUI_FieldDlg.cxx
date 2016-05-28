@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -1695,7 +1695,7 @@ void EntityGUI_FieldDlg::activateSelection()
         TopoDS_Shape aSubShape = myShapeMap( index );
         QString anEntry = QString( "TEMP_" ) + aMainEntry.in() + QString("_%1").arg(index);
         Handle(SALOME_InteractiveObject) io =
-          new SALOME_InteractiveObject(anEntry.toAscii(), "GEOM", "TEMP_IO");
+          new SALOME_InteractiveObject(anEntry.toLatin1(), "GEOM", "TEMP_IO");
         aDisplayer->SetColor( aCol );
         SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
         if (aPrs) {

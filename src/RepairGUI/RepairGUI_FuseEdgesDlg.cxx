@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -69,8 +69,8 @@ RepairGUI_FuseEdgesDlg::RepairGUI_FuseEdgesDlg (GeometryGUI* theGeometryGUI,
   GroupVertexes->LineEdit1->setReadOnly(true);
   GroupVertexes->LineEdit2->setReadOnly(true);
 
-  GroupVertexes->TextLabel3->setShown(false);
-  GroupVertexes->SpinBox_DX->setShown(false);
+  GroupVertexes->TextLabel3->setVisible(false);
+  GroupVertexes->SpinBox_DX->setVisible(false);
 
   QVBoxLayout* layout = new QVBoxLayout (centralWidget());
   layout->setMargin(0);

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -98,7 +98,7 @@ bool RepairGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpRemoveExtraEdges: aDlg = new RepairGUI_RemoveExtraEdgesDlg  (getGeometryGUI(), parent); break;
   case GEOMOp::OpFuseEdges:        aDlg = new RepairGUI_FuseEdgesDlg         (getGeometryGUI(), parent); break;
   case GEOMOp::OpUnionFaces:       aDlg = new RepairGUI_UnionFacesDlg        (getGeometryGUI(), parent); break;
-  case GEOMOp::OpInspectObj:       aDlg = new RepairGUI_InspectObjectDlg     (parent); break;
+  case GEOMOp::OpInspectObj:       aDlg = new RepairGUI_InspectObjectDlg     (getGeometryGUI(), parent); break;
   default:
     app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
     break;

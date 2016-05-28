@@ -1392,6 +1392,10 @@
             <translation>transfer_data.png</translation>
         </message>
         <message>
+            <source>ICO_EXTRACTION</source>
+            <translation>extract.png</translation>
+        </message>
+        <message>
             <source>ICO_IMPORT_SHAPE</source>
             <translation>import.png</translation>
         </message>
@@ -1410,6 +1414,10 @@
         <message>
             <source>ICON_DLG_TRANSFER_DATA</source>
             <translation>transfer_data.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_EXTRACTION</source>
+            <translation>extract.png</translation>
         </message>
         <message>
             <source>ICON_DLG_SCALE_ALONG_AXES</source>

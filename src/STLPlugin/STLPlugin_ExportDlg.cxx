@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2015  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2014-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -175,7 +175,7 @@ QString STLPlugin_ExportDlg::getFileName( const Handle(SALOME_InteractiveObject)
 
   STLPlugin_ExportDlg fd( io, parent );
   fd.setFileMode( AnyFile );
-  fd.setFilters( fls );
+  fd.setNameFilters( fls );
   fd.setWindowTitle( caption );
   if ( !tmpfilename.isEmpty() )
     fd.processPath( tmpfilename );
