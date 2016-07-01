@@ -234,11 +234,11 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::RestoreShape (std::istringstream
   aFunction->SetValue(aShape);
 
   //Special dump to avoid restored shapes publication.
-  //See correcponding code in GEOM_Engine.cxx (method ProcessFunction)
-  //GEOM::TPythonDump(aFunction) << "#";
+  //See corresponding code in GEOM_Engine.cxx (method ProcessFunction)
+  GEOM::TPythonDump(aFunction) << "#";
 
-  GEOM::TPythonDump(aFunction) << result
-    << " = geompy.RestoreShape(\"\") # the shape string has not been dump for performance reason";
+//  GEOM::TPythonDump(aFunction) << result
+//    << " = geompy.RestoreShape(\"\") # the shape string has not been dump for performance reason";
 
   SetErrorCode(OK);
 
