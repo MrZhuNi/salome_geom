@@ -353,6 +353,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     if ( myPath ) {
       QString aName = GEOMBase::GetName( myPath.get() );
       myEditCurrentArgument->setText( aName );
+      GroupMakePoints->LineEdit3->setText( aName );
       if ( getConstructorId() == 1 && !myVec )
         GroupPoints->PushButton3->click();
       else if ( myBaseObjects.isEmpty() )
@@ -397,6 +398,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     if ( myPath ) {
       QString aName = GEOMBase::GetName( myPath.get() );
       myEditCurrentArgument->setText( aName );
+      GroupPoints->LineEdit2->setText( aName );
     }
     updateGenGroup();
   }
