@@ -1361,6 +1361,106 @@ void GEOM_Displayer::updateDimensions( const Handle(SALOME_InteractiveObject)& t
 
 //=================================================================
 /*!
+ *  GEOM_Displayer::updateShapeAnnotations
+ *  Creates or renews shape annotation presentation for the IO.
+ */
+//=================================================================
+void GEOM_Displayer::updateShapeAnnotations( const Handle(SALOME_InteractiveObject)& theIO,
+                                             SALOME_OCCPrs* thePrs,
+                                             const gp_Ax3& theShapeLCS )
+{
+  SalomeApp_Study* aStudy = getStudy();
+  if ( !aStudy )
+  {
+    return;
+  }
+
+  if ( theIO.IsNull() )
+  {
+    return;
+  }
+
+  SOCC_Prs* anOccPrs = dynamic_cast<SOCC_Prs*>( thePrs );
+  AIS_ListOfInteractive aListOfIO;
+  anOccPrs->GetObjects( aListOfIO );
+  AIS_ListIteratorOfListOfInteractive aIterateIO( aListOfIO );
+
+  // remove existing presentations of shape annotations
+  for ( ; aIterateIO.More(); aIterateIO.Next() )
+  {
+    const Handle(AIS_InteractiveObject)& anIO = aIterateIO.Value();
+    if ( !anIO->IsKind( STANDARD_TYPE( GEOM_Annotation ) ) )
+      continue;
+
+    aListOfIO.Remove( aIterateIO );
+    if ( !aIterateIO.More() )
+      break;
+  }
+
+  // read annotation preferences
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+
+  QColor  aQColor       = aResMgr->colorValue  ( "Geometry", "shape_annotation_color", QColor( 0, 0, 0 ) );
+  int     aLineWidth    = aResMgr->integerValue( "Geometry", "shape_annotation_line_width", 1 );
+  QFont   aFont         = aResMgr->fontValue   ( "Geometry", "shape_annotation_font", QFont("Arial", 14) );
+  bool    aAutoHide     = aResMgr->fontValue   ( "Geometry", "shape_annotation_autohide", true );
+
+  // create shape annotations using data from the attribute of a study
+  QVariant aProperty = aStudy->getObjectProperty( GEOM::sharedPropertiesId(),
+                                                  theIO->getEntry(),
+                                                  GEOM::propertyName( GEOM::ShapeAnnotations ),
+                                                  QVariant() );
+
+  GEOMGUI_ShapeAnnotationProperty aStudyAnnotations;
+
+  if ( aProperty.isValid() && aProperty.canConvert<GEOMGUI_DimensionProperty>() )
+  {
+    aStudyAnnotations = aProperty.value<GEOMGUI_ShapeAnnotationProperty>();
+  }
+  else
+  {
+    aStudyAnnotations.LoadFromAttribute( getStudy(), theIO->getEntry() );
+  }
+
+  // create up-to-date shape annotation presentations
+  for ( int aPrsIt = 0; aPrsIt < aStudyAnnotations.GetNumber(); ++aPrsIt )
+  {
+    if ( !aStudyAnnotations.IsVisible( aPrsIt ) )
+    {
+      continue;
+    }
+
+    Handle(GEOM_Annotation) aPrs = new GEOM_Annotation();
+
+    aStudyAnnotations.GetRecord( aPrsIt )->Update( aPrs );
+
+    gp_Trsf aToLCS;
+    aToLCS.SetTransformation( theLCS, gp_Ax3() );
+    aPrs->SetLocalTransformation( aToLCS );
+    aPrs->SetOwner( theIO );
+
+    Quantity_Color aColor( aQColor.redF(), aQColor.greenF(), aQColor.blueF(), Quantity_TOC_RGB );
+
+    Standard_Real aFontHeight = aFont.pixelSize() != -1 ? aFont.pixelSize() : aFont.pointSize();
+    aPrs->SetColor( aColor );
+    aPrs->SetTextHeight( aFontHeight );
+    aPrs->SetFont( aFont.family().toLatin1().data() );
+    aPrs->SetLineWidth( aLineWidth );
+
+    aListOfIO.Append( aPrs );
+  }
+
+  // update presentation
+  anOccPrs->Clear();
+
+  for ( aIterateIO.Initialize( aListOfIO ); aIterateIO.More(); aIterateIO.Next() )
+  {
+    anOccPrs->AddObject( aIterateIO.Value() );
+  }
+}
+
+//=================================================================
+/*!
  *  GEOM_Displayer::Erase
  *  Calls Erase() method for each object in the given list
  */
@@ -1549,6 +1649,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
     }
 
     updateDimensions( myIO, occPrs, gp_Ax3().Transformed( myShape.Location().Transformation() ) );
+    updateAnnotations( myIO, occPrs, gp_Ax3().Transformed( myShape.Location().Transformation() ) );
   }
 }
 

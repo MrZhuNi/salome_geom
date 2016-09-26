@@ -1,0 +1,226 @@
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D, OPEN CASCADE
+//
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+
+//  GEOM OBJECT : interactive object for Geometry entities visualization
+//  File   : GEOM_Annotation.hxx
+//  Module : GEOM
+//
+#ifndef GEOM_Annotation_HeaderFile
+#define GEOM_Annotation_HeaderFile
+
+#include <AIS_InteractiveObject.hxx>
+#include <Bnd_Box.hxx>
+#include <Font_FontAspect.hxx>
+#include <gp_Pnt.hxx>
+#include <NCollection_Handle.hxx>
+#include <NCollection_String.hxx>
+#include <OpenGl_Element.hxx>
+#include <OpenGl_PrimitiveArray.hxx>
+#include <OpenGl_Text.hxx>
+#include <OpenGl_TextParam.hxx>
+#include <Prs3d_Presentation.hxx>
+#include <Prs3d_LineAspect.hxx>
+#include <Prs3d_TextAspect.hxx>
+#include <PrsMgr_PresentationManager3d.hxx>
+#include <SelectMgr_EntityOwner.hxx>
+#include <TCollection_ExtendedString.hxx>
+
+/*!
+ * \class GEOM_Annotation
+ * \brief Interactive object, representating annotation entity
+ */
+class GEOM_Annotation : public AIS_InteractiveObject
+{
+public:
+
+  DEFINE_STANDARD_RTTIEXT (GEOM_Annotation, AIS_InteractiveObject)
+
+  //! Enumerates supported highlighting modes.
+  //! - HighlightAll   : all elements of the annotation are highlighted.
+  //! - HighlightLabel : only annotation label is highlighted.
+  enum HighlightMode
+  {
+    HighlightAll   = 0,
+    HighlightLabel = 1
+  };
+
+public:
+
+  //! Constructor.
+  Standard_EXPORT GEOM_Annotation();
+
+  //! Destructor.
+  virtual ~GEOM_Annotation() {}
+
+  //! Sets annotation text string.
+  //! \param theText [in] the string displayed in annotation label.
+  Standard_EXPORT void SetText (const TCollection_ExtendedString& theText);
+
+  //! Returns annotation text string.
+  const TCollection_ExtendedString& GetText() const { return myText; }
+
+  //! Sets position of the annotation text label.
+  //! \param thePosition [in] the cartesian point defining the position of lower left
+  //!        corner of the text label. When displayed in fixed screen position mode
+  //!        (\sa SetScreenFixed) the position is defined as {x,y} pixel coordinate
+  //!        of window space, otherwise 3D point defined in world's coordinate system
+  //!        is used.
+  Standard_EXPORT void SetPosition (const gp_Pnt& thePosition);
+
+  //! Returns position of the annotation text label.
+  const gp_Pnt& GetPosition() const { return myPosition; }
+
+  //! Sets or disables "2D screen fixed" positioning mode. In this mode the annotation
+  //! is fixed at predefined pixel location in the window coordinate space. Other mode
+  //! is "3D screen aligned" positioning, when the label is aligned in plane of the
+  //! screen, while its position is a 3D point defined in world's coordinate system.
+  Standard_EXPORT void SetScreenFixed (const Standard_Boolean theIsFixed);
+
+  //! Retuns value of "screen fixed" positioning mode.
+  Standard_Boolean GetIsScreenFixed() const { return myIsScreenFixed; }
+
+  //! Sets attachment point of extension line.
+  //! \param thePoint [in] the 3D cartesian point defined in world's coordinate system
+  //!        (a point on annotated geometry).
+  Standard_EXPORT void SetAttachPoint (const gp_Pnt& thePoint);
+
+  //! Returns attachment point of extension line.
+  const gp_Pnt& GetAttachPoint() const { return myAttach; }
+
+public:
+
+  //! Sets color for the presentation.
+  Standard_EXPORT virtual void SetColor (const Quantity_Color& theColor) Standard_OVERRIDE;
+
+  //! Returns color for the text's label.
+  Quantity_Color GetColor() const { return myDrawer->TextAspect()->Aspect()->Color(); }
+
+  //! Sets text height in pixels.
+  Standard_EXPORT void SetTextHeight (const Standard_Real theHeight);
+
+  //! Returns text's height in pixels.
+  Standard_Real GetTextHeight() const { return myDrawer->TextAspect()->Height(); }
+
+  //! Sets font aspect for label.
+  Standard_EXPORT void SetFontAspect (const Font_FontAspect theFontAspect);
+
+  //! Returns label's font aspect.
+  Font_FontAspect GetFontAspect() const { return myDrawer->TextAspect()->Aspect()->GetTextFontAspect(); }
+
+  //! Sets font used for drawing the label.
+  Standard_EXPORT void SetFont (const TCollection_AsciiString& theFont);
+
+  //! Returns font used for drawing the label.
+  TCollection_AsciiString GetFont() const { return myDrawer->TextAspect()->Aspect()->Font(); }
+
+  //! Sets line width to be used for drawing the annotation's extension line and underline.
+  Standard_EXPORT void SetLineWidth (const Standard_Real theLineWidth);
+
+  //! Returns line width for drawing the annotation's extension line and underline.
+  Standard_Real LineWidth() const { return myDrawer->LineAspect()->Aspect()->Width(); }
+
+  //! Sets annotation auto-hiding option.
+  //! \param theIsEnable [in] the option flag. If passed true, the annotation 
+  //!        will be automatically hidden in the view if the attachment point
+  //!        goes outside of the view.
+  void SetAutoHide (const Standard_Boolean theIsEnable) { myIsAutoHide = theIsEnable; }
+
+  //! Returns current state of the auto-hiding option.
+  Standard_Boolean GetAutoHide() const { return myIsAutoHide; }
+
+  //! Sets highlight mode used for display of presentation.
+  //! \param theMode [in] the one of the supported highlight modes.
+  void SetHighlightMode (const HighlightMode theMode) { myHilightMode = theMode; }
+
+  //! Returns highlight mode
+  HighlightMode GetHilightMode() const { return myHilightMode; }
+
+private:
+
+  Standard_EXPORT virtual void Compute (const Handle(PrsMgr_PresentationManager3d)& thePresentationManager,
+                                        const Handle(Prs3d_Presentation)& thePresentation,
+                                        const Standard_Integer theMode = 0) Standard_OVERRIDE;
+
+  Standard_EXPORT virtual void ComputeSelection (const Handle(SelectMgr_Selection)& theSelection,
+                                                 const Standard_Integer theMode) Standard_OVERRIDE;
+
+  virtual void SetLocalTransformation (const gp_Trsf& theTransformation) Standard_OVERRIDE {}
+
+  virtual void SetTransformPersistence (const Graphic3d_TransModeFlags& theFlag,
+    const gp_Pnt& thePoint = gp_Pnt (0.0, 0.0, 0.0)) Standard_OVERRIDE {}
+
+  NCollection_Handle<Bnd_Box> TextBoundingBox() const;
+
+private:
+
+  gp_Pnt myAttach; //!< Attachment point of extension line.
+  gp_Pnt myPosition; //!< Position of text label.
+  Standard_Boolean myIsScreenFixed; //!< Flag indicating whether "screen fixed" positioning mode is turned on or off.
+  Standard_Boolean myIsAutoHide; //!< Flag indicating whether "auto-hiding" option is turned on.
+  HighlightMode myHilightMode; //!< Highlight mode for presentation.
+  TCollection_ExtendedString myText; //!< Text string of the label presentation.
+
+private:
+
+  //! Custom element implementing dynamic rendering of 3D annotation
+  //! and invoking dynamic callback in presentation class.
+  class OpenGl_Annotation : public OpenGl_Element
+  {
+  public:
+
+    //! Constructor. Some of the input properties are assigned by reference for dynamic draw
+    //! (it is not likely that GL element will ever outlive the interactive object).
+    //! \param theAnnotation [in] the instance of interactive presentation class.
+    //! \param theTextHeight [in] the height of the text label.
+    //! \param theDriver [in] the instance of graphical driver required for initialization.
+    OpenGl_Annotation (GEOM_Annotation* theAnnotation,
+                       const Standard_Integer theTextHeight,
+                       const OpenGl_GraphicDriver* theDriver);
+
+    //! Destructor. Releases GL resources with NULL context.
+    virtual ~OpenGl_Annotation();
+
+    //! Releases GL resources with the given GL context.
+    virtual void Release (OpenGl_Context* theCtx) Standard_OVERRIDE;
+
+    //! Renders the annotation graphical elements.
+    virtual void Render (const Handle(OpenGl_Workspace)& theWorkspace) const Standard_OVERRIDE;
+
+  private:
+
+    GEOM_Annotation* myAISObject;           //!< Instance of presentation class.
+    NCollection_String myText;              //!< Text string of annotation label.
+    OpenGl_TextParam myTextParams;          //!< Text draw parameters.
+    OpenGl_Text* myTextDraw;                //!< Text draw element.
+    OpenGl_PrimitiveArray* myTextLineDraw;  //!< Text underline draw element.
+    OpenGl_PrimitiveArray* myExtLineDraw;   //!< Extension line draw element.
+    OpenGl_PrimitiveArray* myExtMarkerDraw; //!< Extension marker draw element.
+    mutable float myTextLineY;              //!< Text's underlines relative position.
+    mutable unsigned int myTextDPI;         //!< Text's DPI scale used for last rendering.
+  };
+
+  friend class OpenGl_Annotation; // allow opengl element to get private data and invoke callback methods
+};
+
+DEFINE_STANDARD_HANDLE (GEOM_Annotation, AIS_InteractiveObject)
+
+#endif
