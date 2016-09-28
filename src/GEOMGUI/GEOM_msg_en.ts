@@ -3501,6 +3501,50 @@ Please, select face, shell or solid and try again</translation>
         <translation>Use 3D text</translation>
     </message>
     <message>
+         <source>PREF_SHAPE_ANNOTATIONS</source>
+         <translation>Shape annotations</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_FONT</source>
+        <translation>Font</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_FONT_COLOR</source>
+        <translation>Font color</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINE_COLOR</source>
+        <translation>Line color</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINE_WIDTH</source>
+        <translation>Line width</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINE_STYLE</source>
+        <translation>Line style</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_AUTOHIDE</source>
+        <translation>Hide when attachment is invisible</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_SOLID</source>
+        <translation>Solid</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DASH</source>
+        <translation>Dashed</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOT</source>
+        <translation>Dotted</translation>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOTDASH</source>
+        <translation>Mixed</translation>
+    </message>
+    <message>
         <source>PREF_HIDE_INPUT_OBJECT</source>
         <translation>Hide input objects from the viewer</translation>
     </message>

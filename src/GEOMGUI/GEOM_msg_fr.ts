@@ -3493,6 +3493,39 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Utiliser du texte 3D</translation>
     </message>
     <message>
+         <source>PREF_SHAPE_ANNOTATIONS</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_FONT</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_FONT_COLOR</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINE_COLOR</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINE_WIDTH</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINE_STYLE</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_AUTOHIDE</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_SOLID</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DASH</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOT</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOTDASH</source>
+    </message>
+    <message>
         <source>PREF_HIDE_INPUT_OBJECT</source>
         <translation>Cacher dans la vue les objets en entrée</translation>
     </message>

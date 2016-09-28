@@ -25,7 +25,6 @@
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 
 #include "GEOM_Displayer.h"
-#include "GEOMGUI_DimensionProperty.h"
 #include "GeometryGUI.h"
 
 #include <GEOM_Constants.h>
@@ -39,11 +38,15 @@
 
 #include <GEOM_Actor.h>
 #include <GEOM_AISDimension.hxx>
+#include <GEOM_Annotation.hxx>
 #include <GEOM_TopWireframeShape.hxx>
 #include <GEOM_AISVector.hxx>
 #include <GEOM_AISTrihedron.hxx>
 #include <GEOM_VTKTrihedron.hxx>
 #include <GEOM_VTKPropertyMaterial.hxx>
+
+#include <GEOMGUI_DimensionProperty.h>
+#include <GEOMGUI_ShapeAnnotations.h>
 
 #include <GEOMUtils.hxx>
 
@@ -1386,6 +1389,7 @@ void GEOM_Displayer::updateShapeAnnotations( const Handle(SALOME_InteractiveObje
   AIS_ListIteratorOfListOfInteractive aIterateIO( aListOfIO );
 
   // remove existing presentations of shape annotations
+  bool isAnyRemoved = false;
   for ( ; aIterateIO.More(); aIterateIO.Next() )
   {
     const Handle(AIS_InteractiveObject)& anIO = aIterateIO.Value();
@@ -1393,64 +1397,63 @@ void GEOM_Displayer::updateShapeAnnotations( const Handle(SALOME_InteractiveObje
       continue;
 
     aListOfIO.Remove( aIterateIO );
+    isAnyRemoved = true;
     if ( !aIterateIO.More() )
       break;
   }
 
-  // read annotation preferences
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
 
-  QColor  aQColor       = aResMgr->colorValue  ( "Geometry", "shape_annotation_color", QColor( 0, 0, 0 ) );
-  int     aLineWidth    = aResMgr->integerValue( "Geometry", "shape_annotation_line_width", 1 );
-  QFont   aFont         = aResMgr->fontValue   ( "Geometry", "shape_annotation_font", QFont("Arial", 14) );
-  bool    aAutoHide     = aResMgr->fontValue   ( "Geometry", "shape_annotation_autohide", true );
+  const QFont  aFont      = aResMgr->fontValue( "Geometry", "shape_annotation_font", QFont( "Arial", 14 ) );
+  const QColor aFontColor = aResMgr->colorValue( "Geometry", "shape_annotation_font_color", QColor( 255, 255, 255 ) );
+  const QColor aLineColor = aResMgr->colorValue( "Geometry", "shape_annotation_line_color", QColor( 255, 255, 255 ) );
+  const double aLineWidth = aResMgr->doubleValue( "Geometry", "shape_annotation_line_width", 1.0 );
+  const int aLineStyle    = aResMgr->integerValue( "Geometry", "shape_annotation_line_style", 0 );
+  const bool isAutoHide   = aResMgr->booleanValue( "Geometry", "shape_annotation_autohide", false );
 
-  // create shape annotations using data from the attribute of a study
   QVariant aProperty = aStudy->getObjectProperty( GEOM::sharedPropertiesId(),
                                                   theIO->getEntry(),
                                                   GEOM::propertyName( GEOM::ShapeAnnotations ),
                                                   QVariant() );
 
-  GEOMGUI_ShapeAnnotationProperty aStudyAnnotations;
+  GEOMGUI_ShapeAnnotations aAnnotationList;
 
-  if ( aProperty.isValid() && aProperty.canConvert<GEOMGUI_DimensionProperty>() )
+  if ( aProperty.isValid() && aProperty.canConvert<GEOMGUI_ShapeAnnotations>() )
   {
-    aStudyAnnotations = aProperty.value<GEOMGUI_ShapeAnnotationProperty>();
-  }
-  else
-  {
-    aStudyAnnotations.LoadFromAttribute( getStudy(), theIO->getEntry() );
-  }
+    aAnnotationList = aProperty.value<GEOMGUI_ShapeAnnotations>();
 
-  // create up-to-date shape annotation presentations
-  for ( int aPrsIt = 0; aPrsIt < aStudyAnnotations.GetNumber(); ++aPrsIt )
-  {
-    if ( !aStudyAnnotations.IsVisible( aPrsIt ) )
+    for ( int anI = 0; anI < aAnnotationList.Count(); ++anI )
     {
-      continue;
+      if ( !aAnnotationList.Get( anI ).IsVisible )
+      {
+        continue;
+      }
+
+      Handle(GEOM_Annotation) aPresentation = new GEOM_Annotation();
+
+      aAnnotationList.ToPresentation ( anI, aPresentation, theShapeLCS );
+
+      aPresentation->SetOwner( theIO );
+
+      const Quantity_Color aOcctFontColor( aFontColor.redF(), aFontColor.greenF(), aFontColor.blueF(), Quantity_TOC_RGB );
+      const Quantity_Color aOcctLineColor( aLineColor.redF(), aLineColor.greenF(), aLineColor.blueF(), Quantity_TOC_RGB );
+      const Standard_Real aFontHeight = aFont.pixelSize() != -1 ? aFont.pixelSize() : aFont.pointSize();
+
+      aPresentation->SetTextHeight( aFont.pixelSize() != -1 ? aFont.pixelSize() : aFont.pointSize() );
+      aPresentation->SetTextColor( Quantity_Color( aFontColor.redF(), aFontColor.greenF(), aFontColor.blueF(), Quantity_TOC_RGB ) );
+      aPresentation->SetLineColor( Quantity_Color( aLineColor.redF(), aLineColor.greenF(), aLineColor.blueF(), Quantity_TOC_RGB ) );
+      aPresentation->SetLineWidth( aLineWidth );
+      aPresentation->SetLineStyle( static_cast<Aspect_TypeOfLine>( aLineStyle ) );
+      aPresentation->SetAutoHide( isAutoHide ? Standard_True : Standard_False );
+
+      aListOfIO.Append( aPresentation );
     }
-
-    Handle(GEOM_Annotation) aPrs = new GEOM_Annotation();
-
-    aStudyAnnotations.GetRecord( aPrsIt )->Update( aPrs );
-
-    gp_Trsf aToLCS;
-    aToLCS.SetTransformation( theLCS, gp_Ax3() );
-    aPrs->SetLocalTransformation( aToLCS );
-    aPrs->SetOwner( theIO );
-
-    Quantity_Color aColor( aQColor.redF(), aQColor.greenF(), aQColor.blueF(), Quantity_TOC_RGB );
-
-    Standard_Real aFontHeight = aFont.pixelSize() != -1 ? aFont.pixelSize() : aFont.pointSize();
-    aPrs->SetColor( aColor );
-    aPrs->SetTextHeight( aFontHeight );
-    aPrs->SetFont( aFont.family().toLatin1().data() );
-    aPrs->SetLineWidth( aLineWidth );
-
-    aListOfIO.Append( aPrs );
+  }
+  else if ( !isAnyRemoved )
+  {
+    return;
   }
 
-  // update presentation
   anOccPrs->Clear();
 
   for ( aIterateIO.Initialize( aListOfIO ); aIterateIO.More(); aIterateIO.Next() )
@@ -1649,7 +1652,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
     }
 
     updateDimensions( myIO, occPrs, gp_Ax3().Transformed( myShape.Location().Transformation() ) );
-    updateAnnotations( myIO, occPrs, gp_Ax3().Transformed( myShape.Location().Transformation() ) );
+    updateShapeAnnotations( myIO, occPrs, gp_Ax3().Transformed( myShape.Location().Transformation() ) );
   }
 }
 

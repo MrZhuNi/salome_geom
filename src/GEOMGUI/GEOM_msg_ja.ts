@@ -3496,6 +3496,39 @@
       <translation>3Dテキストの使用</translation>
     </message>
     <message>
+         <source>PREF_SHAPE_ANNOTATIONS</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_FONT</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_FONT_COLOR</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINE_COLOR</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINE_WIDTH</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINE_STYLE</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_AUTOHIDE</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_SOLID</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DASH</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOT</source>
+    </message>
+    <message>
+        <source>PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOTDASH</source>
+    </message>
+    <message>
       <source>PREF_HIDE_INPUT_OBJECT</source>
       <translation>ビューワから入力したオブジェクトの非表示</translation>
     </message>

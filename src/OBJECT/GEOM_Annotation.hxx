@@ -34,8 +34,6 @@
 #include <NCollection_Handle.hxx>
 #include <NCollection_String.hxx>
 #include <OpenGl_Element.hxx>
-#include <OpenGl_PrimitiveArray.hxx>
-#include <OpenGl_Text.hxx>
 #include <OpenGl_TextParam.hxx>
 #include <Prs3d_Presentation.hxx>
 #include <Prs3d_LineAspect.hxx>
@@ -43,6 +41,10 @@
 #include <PrsMgr_PresentationManager3d.hxx>
 #include <SelectMgr_EntityOwner.hxx>
 #include <TCollection_ExtendedString.hxx>
+
+class OpenGl_GraphicDriver;
+class OpenGl_PrimitiveArray;
+class OpenGl_Text;
 
 /*!
  * \class GEOM_Annotation
@@ -52,7 +54,7 @@ class GEOM_Annotation : public AIS_InteractiveObject
 {
 public:
 
-  DEFINE_STANDARD_RTTIEXT (GEOM_Annotation, AIS_InteractiveObject)
+  DEFINE_STANDARD_RTTIEXT( GEOM_Annotation, AIS_InteractiveObject )
 
   //! Enumerates supported highlighting modes.
   //! - HighlightAll   : all elements of the annotation are highlighted.
@@ -73,7 +75,7 @@ public:
 
   //! Sets annotation text string.
   //! \param theText [in] the string displayed in annotation label.
-  Standard_EXPORT void SetText (const TCollection_ExtendedString& theText);
+  Standard_EXPORT void SetText( const TCollection_ExtendedString& theText );
 
   //! Returns annotation text string.
   const TCollection_ExtendedString& GetText() const { return myText; }
@@ -84,7 +86,7 @@ public:
   //!        (\sa SetScreenFixed) the position is defined as {x,y} pixel coordinate
   //!        of window space, otherwise 3D point defined in world's coordinate system
   //!        is used.
-  Standard_EXPORT void SetPosition (const gp_Pnt& thePosition);
+  Standard_EXPORT void SetPosition( const gp_Pnt& thePosition );
 
   //! Returns position of the annotation text label.
   const gp_Pnt& GetPosition() const { return myPosition; }
@@ -93,7 +95,7 @@ public:
   //! is fixed at predefined pixel location in the window coordinate space. Other mode
   //! is "3D screen aligned" positioning, when the label is aligned in plane of the
   //! screen, while its position is a 3D point defined in world's coordinate system.
-  Standard_EXPORT void SetScreenFixed (const Standard_Boolean theIsFixed);
+  Standard_EXPORT void SetScreenFixed( const Standard_Boolean theIsFixed );
 
   //! Retuns value of "screen fixed" positioning mode.
   Standard_Boolean GetIsScreenFixed() const { return myIsScreenFixed; }
@@ -101,7 +103,7 @@ public:
   //! Sets attachment point of extension line.
   //! \param thePoint [in] the 3D cartesian point defined in world's coordinate system
   //!        (a point on annotated geometry).
-  Standard_EXPORT void SetAttachPoint (const gp_Pnt& thePoint);
+  Standard_EXPORT void SetAttachPoint( const gp_Pnt& thePoint );
 
   //! Returns attachment point of extension line.
   const gp_Pnt& GetAttachPoint() const { return myAttach; }
@@ -109,64 +111,81 @@ public:
 public:
 
   //! Sets color for the presentation.
-  Standard_EXPORT virtual void SetColor (const Quantity_Color& theColor) Standard_OVERRIDE;
+  Standard_EXPORT virtual void SetColor( const Quantity_Color& theColor ) Standard_OVERRIDE;
+
+  //! Sets text color.
+  Standard_EXPORT void SetTextColor( const Quantity_Color& theColor );
 
   //! Returns color for the text's label.
-  Quantity_Color GetColor() const { return myDrawer->TextAspect()->Aspect()->Color(); }
+  Quantity_Color GetTextColor() const { return myDrawer->TextAspect()->Aspect()->Color(); }
+
+  //! Sets line's color.
+  Standard_EXPORT void SetLineColor( const Quantity_Color& theColor);
+
+   //! Returns color for the connection line.
+  Quantity_Color GetLineColor() const { return myDrawer->LineAspect()->Aspect()->Color(); }
 
   //! Sets text height in pixels.
-  Standard_EXPORT void SetTextHeight (const Standard_Real theHeight);
+  Standard_EXPORT void SetTextHeight( const Standard_Real theHeight );
 
   //! Returns text's height in pixels.
   Standard_Real GetTextHeight() const { return myDrawer->TextAspect()->Height(); }
 
   //! Sets font aspect for label.
-  Standard_EXPORT void SetFontAspect (const Font_FontAspect theFontAspect);
+  Standard_EXPORT void SetFontAspect( const Font_FontAspect theFontAspect );
 
   //! Returns label's font aspect.
   Font_FontAspect GetFontAspect() const { return myDrawer->TextAspect()->Aspect()->GetTextFontAspect(); }
 
   //! Sets font used for drawing the label.
-  Standard_EXPORT void SetFont (const TCollection_AsciiString& theFont);
+  Standard_EXPORT void SetFont( const TCollection_AsciiString& theFont );
 
   //! Returns font used for drawing the label.
   TCollection_AsciiString GetFont() const { return myDrawer->TextAspect()->Aspect()->Font(); }
 
   //! Sets line width to be used for drawing the annotation's extension line and underline.
-  Standard_EXPORT void SetLineWidth (const Standard_Real theLineWidth);
+  Standard_EXPORT void SetLineWidth( const Standard_Real theLineWidth );
 
   //! Returns line width for drawing the annotation's extension line and underline.
-  Standard_Real LineWidth() const { return myDrawer->LineAspect()->Aspect()->Width(); }
+  Standard_Real GetLineWidth() const { return myDrawer->LineAspect()->Aspect()->Width(); }
+
+  //! Sets style of connection line.
+  Standard_EXPORT void SetLineStyle( const Aspect_TypeOfLine theStyle );
+
+  //! Retusn style of connection line.
+  Aspect_TypeOfLine GetLineStyle() const { return myDrawer->LineAspect()->Aspect()->Type(); }
 
   //! Sets annotation auto-hiding option.
   //! \param theIsEnable [in] the option flag. If passed true, the annotation 
   //!        will be automatically hidden in the view if the attachment point
   //!        goes outside of the view.
-  void SetAutoHide (const Standard_Boolean theIsEnable) { myIsAutoHide = theIsEnable; }
+  void SetAutoHide( const Standard_Boolean theIsEnable ) { myIsAutoHide = theIsEnable; }
 
   //! Returns current state of the auto-hiding option.
   Standard_Boolean GetAutoHide() const { return myIsAutoHide; }
 
   //! Sets highlight mode used for display of presentation.
   //! \param theMode [in] the one of the supported highlight modes.
-  void SetHighlightMode (const HighlightMode theMode) { myHilightMode = theMode; }
+  void SetHighlightMode( const HighlightMode theMode ) { myHilightMode = theMode; }
 
   //! Returns highlight mode
   HighlightMode GetHilightMode() const { return myHilightMode; }
 
 private:
 
-  Standard_EXPORT virtual void Compute (const Handle(PrsMgr_PresentationManager3d)& thePresentationManager,
-                                        const Handle(Prs3d_Presentation)& thePresentation,
-                                        const Standard_Integer theMode = 0) Standard_OVERRIDE;
+  void UpdatePersistence();
 
-  Standard_EXPORT virtual void ComputeSelection (const Handle(SelectMgr_Selection)& theSelection,
-                                                 const Standard_Integer theMode) Standard_OVERRIDE;
+  virtual void Compute( const Handle(PrsMgr_PresentationManager3d)& thePresentationManager,
+                        const Handle(Prs3d_Presentation)& thePresentation,
+                        const Standard_Integer theMode = 0 ) Standard_OVERRIDE;
 
-  virtual void SetLocalTransformation (const gp_Trsf& theTransformation) Standard_OVERRIDE {}
+  virtual void ComputeSelection( const Handle(SelectMgr_Selection)& theSelection,
+                                 const Standard_Integer theMode ) Standard_OVERRIDE;
 
-  virtual void SetTransformPersistence (const Graphic3d_TransModeFlags& theFlag,
-    const gp_Pnt& thePoint = gp_Pnt (0.0, 0.0, 0.0)) Standard_OVERRIDE {}
+  virtual void SetLocalTransformation( const gp_Trsf& theTransformation ) Standard_OVERRIDE {}
+
+  virtual void SetTransformPersistence( const Graphic3d_TransModeFlags& theFlag,
+                                        const gp_Pnt& thePoint = gp_Pnt (0.0, 0.0, 0.0) ) Standard_OVERRIDE {}
 
   NCollection_Handle<Bnd_Box> TextBoundingBox() const;
 
@@ -192,18 +211,18 @@ private:
     //! \param theAnnotation [in] the instance of interactive presentation class.
     //! \param theTextHeight [in] the height of the text label.
     //! \param theDriver [in] the instance of graphical driver required for initialization.
-    OpenGl_Annotation (GEOM_Annotation* theAnnotation,
+    OpenGl_Annotation( GEOM_Annotation* theAnnotation,
                        const Standard_Integer theTextHeight,
-                       const OpenGl_GraphicDriver* theDriver);
+                       const OpenGl_GraphicDriver* theDriver );
 
     //! Destructor. Releases GL resources with NULL context.
     virtual ~OpenGl_Annotation();
 
     //! Releases GL resources with the given GL context.
-    virtual void Release (OpenGl_Context* theCtx) Standard_OVERRIDE;
+    virtual void Release( OpenGl_Context* theCtx ) Standard_OVERRIDE;
 
     //! Renders the annotation graphical elements.
-    virtual void Render (const Handle(OpenGl_Workspace)& theWorkspace) const Standard_OVERRIDE;
+    virtual void Render( const Handle(OpenGl_Workspace)& theWorkspace ) const Standard_OVERRIDE;
 
   private:
 
@@ -221,6 +240,6 @@ private:
   friend class OpenGl_Annotation; // allow opengl element to get private data and invoke callback methods
 };
 
-DEFINE_STANDARD_HANDLE (GEOM_Annotation, AIS_InteractiveObject)
+DEFINE_STANDARD_HANDLE( GEOM_Annotation, AIS_InteractiveObject )
 
 #endif

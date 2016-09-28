@@ -2355,6 +2355,10 @@ void GeometryGUI::createPreferences()
   addPreference( tr( "PREF_AUTO_BRING_TO_FRONT" ), genGroup,
                  LightApp_Preferences::Bool, "Geometry", "auto_bring_to_front" );
 
+  // --------------------------------------------------------------------------
+  // Dimensions (Measurements) preferences
+  // --------------------------------------------------------------------------
+
   int aDimGroupId = addPreference( tr( "PREF_DIMENSIONS" ), tabId );
   setPreferenceProperty( aDimGroupId, "columns", 2 );
 
@@ -2437,6 +2441,53 @@ void GeometryGUI::createPreferences()
 
   addPreference( tr( "PREF_DIMENSIONS_USE_TEXT3D" ), aDimGroupId,
                  LightApp_Preferences::Bool, "Geometry", "dimensions_use_text3d" );
+
+  // --------------------------------------------------------------------------
+  // Shape annotation preferences
+  // --------------------------------------------------------------------------
+
+  const int aShapeAnnGroupId = addPreference( tr( "PREF_SHAPE_ANNOTATIONS" ), tabId );
+  setPreferenceProperty( aShapeAnnGroupId, "columns", 2 );
+
+  addPreference( tr( "PREF_SHAPE_ANNOTATIONS_FONT_COLOR" ), aShapeAnnGroupId, LightApp_Preferences::Color, "Geometry", "shape_annotation_font_color" );
+  addPreference( tr( "PREF_SHAPE_ANNOTATIONS_LINE_COLOR" ), aShapeAnnGroupId, LightApp_Preferences::Color, "Geometry", "shape_annotation_line_color" );
+  const int aShapeAnnFont = 
+    addPreference( tr( "PREF_SHAPE_ANNOTATIONS_FONT" ), aShapeAnnGroupId, LightApp_Preferences::Font, "Geometry", "shape_annotation_font" );
+
+  int aShapeAnnFontFeatures = QtxFontEdit::Family | QtxFontEdit::Size | QtxFontEdit::Bold | QtxFontEdit::Italic;
+  setPreferenceProperty( aShapeAnnFont, "features", aShapeAnnFontFeatures );
+  setPreferenceProperty( aShapeAnnFont, "mode", QtxFontEdit::Custom );
+  setPreferenceProperty( aShapeAnnFont, "fonts", anOCCFonts );
+
+  const int aShapeAnnLineWidth = 
+    addPreference( tr( "PREF_SHAPE_ANNOTATIONS_LINE_WIDTH" ), aShapeAnnGroupId, LightApp_Preferences::IntSpin, "Geometry", "shape_annotation_line_width" );
+
+  setPreferenceProperty( aShapeAnnLineWidth, "min", 1 );
+  setPreferenceProperty( aShapeAnnLineWidth, "max", 5 );
+
+  addPreference( tr( "PREF_SHAPE_ANNOTATIONS_AUTOHIDE" ), aShapeAnnGroupId, LightApp_Preferences::Bool, "Geometry", "shape_annotation_autohide" );
+
+  const int aShapeAnnLineStyle =
+    addPreference( tr( "PREF_SHAPE_ANNOTATIONS_LINE_STYLE" ), aShapeAnnGroupId, LightApp_Preferences::Selector, "Geometry", "shape_annotation_line_style" );
+
+  QStringList aLineStyleList;
+  aLineStyleList.append( tr("PREF_SHAPE_ANNOTATIONS_LINESTYLE_SOLID") );
+  aLineStyleList.append( tr("PREF_SHAPE_ANNOTATIONS_LINESTYLE_DASH") );
+  aLineStyleList.append( tr("PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOT") );
+  aLineStyleList.append( tr("PREF_SHAPE_ANNOTATIONS_LINESTYLE_DOTDASH") );
+
+  QList<QVariant> aLineStyleIds;
+  aLineStyleIds.append(0);
+  aLineStyleIds.append(1);
+  aLineStyleIds.append(2);
+  aLineStyleIds.append(3);
+
+  setPreferenceProperty( aShapeAnnLineStyle, "strings", aLineStyleList );
+  setPreferenceProperty( aShapeAnnLineStyle, "indexes", aLineStyleIds );
+
+  // --------------------------------------------------------------------------
+  // Isoline drawing preferences
+  // --------------------------------------------------------------------------
 
   int isoGroup = addPreference( tr( "PREF_ISOS" ), tabId );
   setPreferenceProperty( isoGroup, "columns", 2 );
