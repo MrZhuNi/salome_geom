@@ -38,6 +38,7 @@
 #include <list>
 
 class SalomeApp_Study;
+class GEOM_Annotation;
 
 /*!
  * \brief Algorithms to translate and manitain list of shape annotation properties.
@@ -55,11 +56,29 @@ public:
    */
   struct ShapeAnnotation
   {
-    QString Text;
-    bool IsVisible;
-    bool IsScreenFixed;
-    gp_Pnt Position;
-    gp_Pnt Attach;
+    QString Text; // annotation text label
+    bool    IsVisible; // visibility of annotation
+    bool    IsScreenFixed; // fixed screen mode flag
+    gp_Pnt  Position; // position of the annotation
+    gp_Pnt  Attach; // attachment point of the annotation
+    int     ShapeIndex; // index of the annotated subshape
+    int     ShapeType; // type of the annotated subshape
+    
+    bool operator == (const ShapeAnnotation& theOther) const
+    {
+      return Text == theOther.Text
+      && IsVisible == theOther.IsVisible
+      && IsScreenFixed == theOther.IsScreenFixed
+      && Position.IsEqual (theOther.Position, 0.0)
+      && Attach.IsEqual (theOther.Attach, 0.0)
+      && ShapeIndex == theOther.ShapeIndex
+      && ShapeType == theOther.ShapeType;
+    }
+    
+    bool operator != (const ShapeAnnotation& theOther) const
+    {
+      return !(operator == (theOther));
+    }
   };
 
 public:

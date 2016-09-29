@@ -38,26 +38,30 @@
 // ENTRY: { text[string] : visibility[bool] : screen fixed[bool] : position[xyz] : attach[xyz] }
 namespace
 {
-  static const QString PATTERN_ITEM_GROUP = "\\{ (Text=(?::{2,}|.)*:(?!:)Visible=.*:Screen=.*:Position=\\{(.*):(.*):(.*)\\}:Attach=\\{(.*):(.*):(.*)\\}) \\}";
-  static const QString PATTERN_ITEM = "Text=((?::{2,}|.)*):(?!:)Visible=(\\d{1}):Screen=(\\d{1}):Position=\\{(.*):(.*):(.*)\\}:Attach=\\{(.*):(.*):(.*)\\}";
+  static const QString PATTERN_ITEM_GROUP = "\\{ (Text=(?::{2,}|.)*:(?!:)Visible=.*:Screen=.*:Position=\\{(.*):(.*):(.*)\\}:Attach=\\{(.*):(.*):(.*)\\}:ShapeIdx=.*:ShapeType=.*) \\}";
+  static const QString PATTERN_ITEM = "Text=((?::{2,}|.)*):(?!:)Visible=(\\d{1}):Screen=(\\d{1}):Position=\\{(.*):(.*):(.*)\\}:Attach=\\{(.*):(.*):(.*)\\}:ShapeIdx=(\\d{1,*}):ShapeType=(\\d{1})";
   static QString toPattern (const QString& theText,
                             const bool theIsVisible,
                             const bool theIsFixed,
                             const gp_Pnt& thePosition,
-                            const gp_Pnt& theAttach)
+                            const gp_Pnt& theAttach,
+                            const int theShapeIndex,
+                            const int theShapeType)
   {
-    return QString("{ Text=") + theText +
-           QString(":") + QString("Visible=") + QString::number( theIsVisible ? 1 : 0 ) +
-           QString(":") + QString("Screen=") + QString::number( theIsFixed ? 1 : 0 ) +
-           QString(":") + QString("Position={") +
-             QString::number( thePosition.X() ) + QString(":") + 
-             QString::number( thePosition.Y() ) + QString(":") + 
-             QString::number( thePosition.Z() ) + QString("}") + 
-           QString(":") + QString("Attach={") +
-             QString::number( theAttach.X() ) + QString(":") + 
-             QString::number( theAttach.Y() ) + QString(":") + 
-             QString::number( theAttach.Z() ) + QString("}") +
-           QString(" }");
+    return QString( "{ Text=" ) + theText +
+           QString( ":" ) + QString( "Visible=" ) + QString::number( theIsVisible ? 1 : 0 ) +
+           QString( ":" ) + QString( "Screen=" ) + QString::number( theIsFixed ? 1 : 0 ) +
+           QString( ":" ) + QString( "Position={" ) +
+             QString::number( thePosition.X() ) + QString( ":" ) + 
+             QString::number( thePosition.Y() ) + QString( ":" ) + 
+             QString::number( thePosition.Z() ) + QString( "}" ) + 
+           QString( ":" ) + QString( "Attach={" ) +
+             QString::number( theAttach.X() ) + QString( ":" ) + 
+             QString::number( theAttach.Y() ) + QString( ":" ) + 
+             QString::number( theAttach.Z() ) + QString( "}" ) +
+           QString( ":" ) + QString( "ShapeIdx=" ) + QString::number( theShapeIndex ) +
+           QString( ":" ) + QString( "ShapeType=" ) + QString::number( theShapeType ) +
+           QString( " }" );
   }
 };
 
@@ -110,15 +114,17 @@ GEOMGUI_ShapeAnnotations::GEOMGUI_ShapeAnnotations( const QString& theProperty )
       continue;
     }
 
-    QString aStrText    = aRegExpItem.cap( 1 );
-    QString aStrVisible = aRegExpItem.cap( 2 );
-    QString aStrFixed   = aRegExpItem.cap( 3 );
-    QString aStrPosX    = aRegExpItem.cap( 4 );
-    QString aStrPosY    = aRegExpItem.cap( 5 );
-    QString aStrPosZ    = aRegExpItem.cap( 6 );
-    QString aStrAttX    = aRegExpItem.cap( 7 );
-    QString aStrAttY    = aRegExpItem.cap( 8 );
-    QString aStrAttZ    = aRegExpItem.cap( 9 );
+    QString aStrText       = aRegExpItem.cap( 1 );
+    QString aStrVisible    = aRegExpItem.cap( 2 );
+    QString aStrFixed      = aRegExpItem.cap( 3 );
+    QString aStrPosX       = aRegExpItem.cap( 4 );
+    QString aStrPosY       = aRegExpItem.cap( 5 );
+    QString aStrPosZ       = aRegExpItem.cap( 6 );
+    QString aStrAttX       = aRegExpItem.cap( 7 );
+    QString aStrAttY       = aRegExpItem.cap( 8 );
+    QString aStrAttZ       = aRegExpItem.cap( 9 );
+    QString aStrShapeIdx   = aRegExpItem.cap( 10 );
+    QString aStrShapeType  = aRegExpItem.cap( 11 );
     aStrText.replace( "::", ":" );
 
     ShapeAnnotation aEntry;
@@ -131,6 +137,8 @@ GEOMGUI_ShapeAnnotations::GEOMGUI_ShapeAnnotations( const QString& theProperty )
     aEntry.Attach.SetX( aStrAttX.toDouble() );
     aEntry.Attach.SetY( aStrAttY.toDouble() );
     aEntry.Attach.SetZ( aStrAttZ.toDouble() );
+    aEntry.ShapeIndex = aStrShapeIdx.toInt();
+    aEntry.ShapeType = aStrShapeType.toInt();
 
     myAnnotations.append( aEntry );
   }
@@ -167,7 +175,13 @@ GEOMGUI_ShapeAnnotations::operator QString() const
   {
     const ShapeAnnotation& aEntry = myAnnotations[i];
     //
-    anItems.append (toPattern (aEntry.Text, aEntry.IsVisible, aEntry.IsScreenFixed, aEntry.Position, aEntry.Attach));
+    anItems.append( toPattern( aEntry.Text,
+                               aEntry.IsVisible,
+                               aEntry.IsScreenFixed,
+                               aEntry.Position,
+                               aEntry.Attach,
+                               aEntry.ShapeIndex,
+                               aEntry.ShapeType ) );
   }
 
   return anItems.join( ":" );
@@ -179,12 +193,12 @@ GEOMGUI_ShapeAnnotations::operator QString() const
 //=================================================================================
 bool GEOMGUI_ShapeAnnotations::operator == (const GEOMGUI_ShapeAnnotations& theOther) const
 {
-  if ( myAnnotation.size() != theOther.myAnnotations.size() )
+  if ( myAnnotations.size() != theOther.myAnnotations.size() )
   {
     return false;
   }
 
-  for ( int i = 0; i < myAnnotation.size(); ++i )
+  for ( int i = 0; i < myAnnotations.size(); ++i )
   {
     if ( myAnnotations[i] != theOther.myAnnotations[i] )
     {
@@ -219,7 +233,7 @@ void GEOMGUI_ShapeAnnotations::FromPresentation( const int theIndex,
   //
   ShapeAnnotation& aChangeEntry = myAnnotations[theIndex];
   aChangeEntry.IsScreenFixed = theShapeAnnotation->GetIsScreenFixed();
-  aChangeEntry.Text          = QString( theShapeAnnotation->GetText().ToExtString() );
+  aChangeEntry.Text          = QString( (QChar*) theShapeAnnotation->GetText().ToExtString(), theShapeAnnotation->GetText().Length() );
   aChangeEntry.Attach        = theShapeAnnotation->GetAttachPoint().Transformed( aFromLCS );
   aChangeEntry.Position      = theShapeAnnotation->GetPosition();
 }
@@ -236,8 +250,13 @@ void GEOMGUI_ShapeAnnotations::ToPresentation( const int theIndex,
   aToLCS.SetTransformation( theLCS, gp_Ax3() );
   //
   const ShapeAnnotation& aEntry = myAnnotations[theIndex];
+  //
+  TCollection_ExtendedString aText;
+  for (int i = 0; i < (int)aEntry.Text.length(); i++ )
+    aText.Insert( i + 1, aEntry.Text[ i ].unicode() );
+  //
   theShapeAnnotation->SetScreenFixed( aEntry.IsScreenFixed );
-  theShapeAnnotation->SetText( aEntry.Text );
+  theShapeAnnotation->SetText( aText );
   theShapeAnnotation->SetPosition( aEntry.Position );
   theShapeAnnotation->SetAttachPoint( aEntry.Attach.Transformed( aToLCS ) );
 }
@@ -273,7 +292,7 @@ void GEOMGUI_ShapeAnnotations::LoadFromAttribute( SalomeApp_Study* theStudy, con
     std::vector<double> aPropertyArray = aDataAtt->GetColumn( i );
 
     ShapeAnnotation aEntry;
-    aEntry.Text = QString( aDataAtt->GetColumnTitle( i ).c_str() );
+    aEntry.Text = aDataAtt->GetColumnTitle( i ).c_str();
     aEntry.IsVisible = static_cast<bool>( aPropertyArray[i++] );
     aEntry.IsScreenFixed = static_cast<bool>( aPropertyArray[i++] );
     aEntry.Position.SetX( static_cast<double>( aPropertyArray[i++] ) );
@@ -282,6 +301,8 @@ void GEOMGUI_ShapeAnnotations::LoadFromAttribute( SalomeApp_Study* theStudy, con
     aEntry.Attach.SetX( static_cast<double>( aPropertyArray[i++] ) );
     aEntry.Attach.SetY( static_cast<double>( aPropertyArray[i++] ) );
     aEntry.Attach.SetZ( static_cast<double>( aPropertyArray[i++] ) );
+    aEntry.ShapeIndex = static_cast<int>( aPropertyArray[i++] );
+    aEntry.ShapeType = static_cast<int>( aPropertyArray[i++] );
 
     myAnnotations.append( aEntry );
   }
@@ -319,6 +340,8 @@ void GEOMGUI_ShapeAnnotations::SaveToAttribute( SalomeApp_Study *theStudy, const
     aPropertyArray.push_back( aEntry.Attach.X() );
     aPropertyArray.push_back( aEntry.Attach.Y() );
     aPropertyArray.push_back( aEntry.Attach.Z() );
+    aPropertyArray.push_back( static_cast<double>( aEntry.ShapeIndex ) );
+    aPropertyArray.push_back( static_cast<double>( aEntry.ShapeType ) );
 
     aDataAtt->AddColumn( aPropertyArray );
     aDataAtt->SetColumnTitle( i + 1, aEntry.Text.toStdString() );

@@ -76,6 +76,7 @@ SET(GEOMGUI_HEADERS
   GEOMGUI_CreationInfoWdg.h
   GEOMGUI_TextTreeWdg.h
   GEOMGUI_DimensionProperty.h
+  GEOMGUI_ShapeAnnotations.h
   )
 
 # header files / to be processed by moc
@@ -116,6 +117,7 @@ SET(GEOMGUI_SOURCES
   GEOMGUI_CreationInfoWdg.cxx
   GEOMGUI_TextTreeWdg.cxx
   GEOMGUI_DimensionProperty.cxx
+  GEOMGUI_ShapeAnnotations.cxx
   ${_moc_SOURCES}
   ${_rcc_SOURCES}
   )
