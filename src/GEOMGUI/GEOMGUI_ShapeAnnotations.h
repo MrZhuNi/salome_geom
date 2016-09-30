@@ -63,6 +63,13 @@ public:
     gp_Pnt  Attach; // attachment point of the annotation
     int     ShapeIndex; // index of the annotated subshape
     int     ShapeType; // type of the annotated subshape
+
+    /*!
+     * \brief Update presentation properties using the annotation record definition.
+     * \param theShapeAnnotation [in] the explicit definition of the annotation.
+     */
+    void ToPresentation( const Handle(GEOM_Annotation)& theShapeAnnotation,
+                         const gp_Ax3& theLCS ) const;
     
     bool operator == (const ShapeAnnotation& theOther) const
     {

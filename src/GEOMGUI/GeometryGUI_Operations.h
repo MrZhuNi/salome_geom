@@ -207,6 +207,8 @@ namespace GEOMOp {
 #ifndef DISABLE_PLOT2DVIEWER
     OpShapeStatistics	  = 5019,   // MENU MEASURES - SHAPE STATISTICS
 #endif
+    OpAnnotation          = 5020,   // MENU MEASURES - ANNOTATION
+    OpEditAnnotation      = 5021,   // POPUP MENU - EDIT ANNOTATION
     // GroupGUI --------------------//--------------------------------
     OpGroupCreate         = 6000,   // MENU GROUP - CREATE
     OpGroupEdit           = 6001,   // MENU GROUP - EDIT

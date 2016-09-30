@@ -44,6 +44,7 @@
 #include "MeasureGUI_BndBoxDlg.h"                 // Method BNDBOX
 #include "MeasureGUI_DistanceDlg.h"               // Method DISTANCE
 #include "MeasureGUI_AngleDlg.h"                  // Method ANGLE
+#include "MeasureGUI_AnnotationDlg.h"             // Method ANNOTATION
 #include "MeasureGUI_MaxToleranceDlg.h"           // Method MAXTOLERANCE
 #include "MeasureGUI_WhatisDlg.h"                 // Method WHATIS
 #include "MeasureGUI_CheckShapeDlg.h"             // Method CHECKSHAPE
@@ -111,6 +112,14 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpAngle: 
     dlg = new MeasureGUI_AngleDlg( getGeometryGUI(), parent );
     break; // ANGLE
+  case GEOMOp::OpAnnotation: {
+	dlg = new MeasureGUI_AnnotationDlg( getGeometryGUI(), true, parent );
+    } // ANNOTATION
+    break;
+  case GEOMOp::OpEditAnnotation: {
+    dlg = new MeasureGUI_AnnotationDlg( getGeometryGUI(), false, parent );
+	} // ANNOTATION
+	break;
   case GEOMOp::OpTolerance: 
     dlg = new MeasureGUI_MaxToleranceDlg( getGeometryGUI(), parent );
     break; // MAXTOLERANCE

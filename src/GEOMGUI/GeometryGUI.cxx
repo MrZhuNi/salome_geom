@@ -661,6 +661,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpCheckSelfInters:    // MENU MEASURE - CHECK SELF INTERSECTIONS
   case GEOMOp::OpFastCheckInters:    // MENU MEASURE - FAST CHECK INTERSECTIONS
   case GEOMOp::OpManageDimensions:   // MENU MEASURE - MANAGE DIMENSIONS
+  case GEOMOp::OpAnnotation:         // MENU MEASURE - ANNOTATION
 #ifndef DISABLE_PLOT2DVIEWER
   case GEOMOp::OpShapeStatistics:    // MENU MEASURE - SHAPE STATISTICS
 #endif
@@ -1042,6 +1043,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpMinDistance,      "MIN_DIST" );
   createGeomAction( GEOMOp::OpAngle,            "MEASURE_ANGLE" );
   createGeomAction( GEOMOp::OpManageDimensions, "MANAGE_DIMENSIONS" );
+  createGeomAction( GEOMOp::OpAnnotation,       "ANNOTATION" );
 
   createGeomAction( GEOMOp::OpTolerance,        "TOLERANCE" );
   createGeomAction( GEOMOp::OpWhatIs,           "WHAT_IS" );
@@ -1310,6 +1312,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpAngle,            dimId, -1 );
   createMenu( GEOMOp::OpManageDimensions, dimId, -1 );
 
+  createMenu( GEOMOp::OpAnnotation,       measurId, -1 );
+
   createMenu( separator(),               measurId, -1 );
   createMenu( GEOMOp::OpTolerance,       measurId, -1 );
   createMenu( separator(),               measurId, -1 );
@@ -1466,6 +1470,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpBoundingBox,      measureTbId );
   createTool( GEOMOp::OpMinDistance,      measureTbId );
   createTool( GEOMOp::OpAngle,            measureTbId );
+  createTool( GEOMOp::OpAnnotation,       measureTbId );
   createTool( GEOMOp::OpTolerance  ,      measureTbId );
   createTool( separator(),                measureTbId );
   createTool( GEOMOp::OpFreeBoundaries,   measureTbId );

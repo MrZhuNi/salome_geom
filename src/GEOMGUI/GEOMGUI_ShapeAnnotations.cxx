@@ -66,6 +66,29 @@ namespace
 };
 
 //=================================================================================
+// function : ToPresentation
+// purpose  :
+//=================================================================================
+void GEOMGUI_ShapeAnnotations::ShapeAnnotation::ToPresentation(
+                                               const Handle(GEOM_Annotation)& theShapeAnnotation,
+                                               const gp_Ax3& theLCS ) const
+{
+  gp_Trsf aToLCS;
+  aToLCS.SetTransformation( theLCS, gp_Ax3() );
+
+  //
+  TCollection_ExtendedString aText;
+  for (int i = 0; i < (int)Text.length(); i++ )
+    aText.Insert( i + 1, Text[ i ].unicode() );
+  //
+  theShapeAnnotation->SetScreenFixed( IsScreenFixed );
+  theShapeAnnotation->SetText( aText );
+  theShapeAnnotation->SetPosition( Position );
+  theShapeAnnotation->SetAttachPoint( Attach.Transformed( aToLCS ) );
+}
+
+
+//=================================================================================
 // function : Constructor
 // purpose  : 
 //=================================================================================
@@ -246,19 +269,20 @@ void GEOMGUI_ShapeAnnotations::ToPresentation( const int theIndex,
                                                const Handle(GEOM_Annotation)& theShapeAnnotation,
                                                const gp_Ax3& theLCS )
 {
-  gp_Trsf aToLCS;
-  aToLCS.SetTransformation( theLCS, gp_Ax3() );
+  //gp_Trsf aToLCS;
+  //aToLCS.SetTransformation( theLCS, gp_Ax3() );
   //
   const ShapeAnnotation& aEntry = myAnnotations[theIndex];
-  //
-  TCollection_ExtendedString aText;
-  for (int i = 0; i < (int)aEntry.Text.length(); i++ )
-    aText.Insert( i + 1, aEntry.Text[ i ].unicode() );
-  //
-  theShapeAnnotation->SetScreenFixed( aEntry.IsScreenFixed );
-  theShapeAnnotation->SetText( aText );
-  theShapeAnnotation->SetPosition( aEntry.Position );
-  theShapeAnnotation->SetAttachPoint( aEntry.Attach.Transformed( aToLCS ) );
+  aEntry.ToPresentation(theShapeAnnotation, theLCS);
+  ////
+  //TCollection_ExtendedString aText;
+  //for (int i = 0; i < (int)aEntry.Text.length(); i++ )
+  //  aText.Insert( i + 1, aEntry.Text[ i ].unicode() );
+  ////
+  //theShapeAnnotation->SetScreenFixed( aEntry.IsScreenFixed );
+  //theShapeAnnotation->SetText( aText );
+  //theShapeAnnotation->SetPosition( aEntry.Position );
+  //theShapeAnnotation->SetAttachPoint( aEntry.Attach.Transformed( aToLCS ) );
 }
 
 //=================================================================================
