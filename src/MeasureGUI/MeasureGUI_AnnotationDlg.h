@@ -28,19 +28,18 @@
 
 #include <GEOMBase_Skeleton.h>
 
-//#include <GEOM_Annotation.hxx>
 #include <GEOM_Constants.h>
 #include <GEOMGUI_ShapeAnnotations.h>
 
 #include <TopAbs_ShapeEnum.hxx>
-#include <TColStd_DataMapOfIntegerInteger.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
+//#include <TColStd_DataMapOfIntegerInteger.hxx>
+//#include <TColStd_IndexedMapOfInteger.hxx>
+//#include <TopTools_IndexedMapOfShape.hxx>
 
-#include <QMap>
-#include <QSet>
-#include <QVector>
-#include <QTableWidget>
+//#include <QMap>
+//#include <QSet>
+//#include <QVector>
+//#include <QTableWidget>
 
 class QGroupBox;
 class QLineEdit;
@@ -56,12 +55,6 @@ class MeasureGUI_AnnotationDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 
-  /*class StepTable;
-  class IntSpinItem;
-  class DoubleSpinItem;
-  class CheckItem;
-  class Delegate;*/
-
 public:
   MeasureGUI_AnnotationDlg (GeometryGUI* theGeometryGUI,
                             const bool theIsCreate,
@@ -71,66 +64,34 @@ public:
 
 protected:
   // redefined from GEOMBase_Helper
-  //virtual GEOM::GEOM_IOperations_ptr  createOperation();
   virtual bool                        isValid (QString&);
   virtual bool                        execute ();
-  //virtual QList<GEOM::GeomObjPtr>     getSourceObjects();
+
+  SALOME_Prs*                         buildPrs();
+  void                                redisplayPreview();
 
 private slots:
   void                                ClickOnOk();
   bool                                ClickOnApply();
-  //void                                ActivateThisDialog();
   void                                SelectionIntoArgument();
   void                                SetEditCurrentArgument();
 
-/*void                                onPrevStep();
-  void                                onNextStep();
-  void                                onAddStep();
-  void                                onRmStep();
-  void                                onStampChange();
-  void                                onDimChange();*/
   void                                onTextChange();
   void                                onTypeChange();
   void                                onSubShapeTypeChange();
 
-/*void                                onNbCompsChange();
-  void                                showCurStep();
-  void                                highlightSubShapes();
-*/
 private:
-  bool                                isCreateOperation() const;
-
   void                                Init();
-  //void                                enterEvent (QEvent*);
-  //void                                activateSelection();
 
   TopAbs_ShapeEnum                    getShapeType() const;
-/*  int                                 getDim() const;
-  int                                 getDataType() const;
-  int                                 getCurStepID() const;
-  int                                 getNbComps() const;
-  void                                updateShapeIDs();
-  void                                updateDims(int curDim=-1);
-  int                                 getSelectedSubshapes (TColStd_IndexedMapOfInteger& map);
-*/
+  gp_Pnt                              getAttachPoint(const TopoDS_Shape& theShape);
+
 private:
   QList<TopAbs_ShapeEnum>             mySelectionModes;
   GEOMGUI_ShapeAnnotations::ShapeAnnotation myAnnotationProperties;
   /// an index of edited annotation in the list shape annotations, -1 in create operation
   bool                                myIsCreation;
   GEOM::GeomObjPtr                    myShape;
-  /*QVector< int >                    myShapeIDs;
-  TopTools_IndexedMapOfShape          myShapeMap;
-
-  int                                 myCurStepID;
-  StepTable*                          myCurStepTable;
-  QMap< int, StepTable* >             myStepTables;
-  QSet< int >                         myRemovedSteps;
-
-  int                                 myDmMode;*/
-  //bool                                myIsHiddenMain;
-
- // QList<int>                          myHiddenFieldStepIds;
 
   QLineEdit*                          myTextEdit;
 
@@ -142,72 +103,6 @@ private:
 
   QPushButton*                        mySubShapeSelBtn;
   QLineEdit*                          mySubShapeName;
-
-  /*
-  QComboBox*                          myDimCombo;
-  QPushButton*                        myPrevStepBtn;
-  QPushButton*                        myNextStepBtn;
-  QPushButton*                        myRmStepBtn;
-
-  SalomeApp_IntSpinBox*               myNbCompsSpin;
-  QWidget*                            mySwitchTableWdg;
-  QComboBox*                          myStepsCombo;
-  QLineEdit*                          myStepEdit;
-  SalomeApp_IntSpinBox*               myStampSpin;
-*/
 };
-
-/*
-  Class       : MeasureGUI_AnnotationDlg::StepTable
-  Description : Table widget
-*/
-
-/*class MeasureGUI_AnnotationDlg::StepTable : public QTableWidget
-{
-  Q_OBJECT
-
-  int                      myDataType;
-  int                      myStepID;
-  int                      myStamp;
-  GEOM::GEOM_FieldStep_var myStep;
-  bool                     myIsChanged;
-
-  QTableWidgetItem * newDefaultItem();
-
-public:
-  StepTable( int stepID, int dataType, int nbRows, int nbColumns,
-             QString shapeName, QStringList headers,
-             GEOM::GEOM_FieldStep_ptr stepVar, QWidget* = 0 );
-  virtual ~StepTable();
-
-  QSize                    minimumSizeHint() const;
-
-  void                     setEditable( bool, int, int );
-  bool                     isEditable( int, int ) const;
-
-  void                     setReadOnly( bool );
-  bool                     isReadOnly() const;
-
-  void                     insertRows( int, int = 1 );
-  QString                  text( int, int );
-
-  QList<int>               selectedRows();
-  void                     selectRows(const QList<int>& rows);
-
-  void                     setDim( int nbRows, QString shapeName, bool setDefault=true );
-  void                     setNbComps( int nbComps );
-  void                     setDataType( int dataType );
-  void                     setStamp( int stamp ) { myStamp = stamp; }
-  int                      getStamp() { return myStamp; }
-  int                      getStepID() { return myStepID; }
-  QStringList              getHeaders();
-  void                     setHeaders(const QStringList& headers);
-  GEOM::GEOM_FieldStep_var getStep() { return myStep; }
-  void                     setValues(GEOM::GEOM_FieldStep_var& step);
-
-public slots:
-  void                     setIsChanged() { myIsChanged = true; }
-  void                     headerDblClicked( int );
-};*/
 
 #endif

@@ -5001,6 +5001,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Manage measurement dimensions of an object</translation>
     </message>
     <message>
+        <source>TOP_ANNOTATION</source>
+        <translation>Annotation</translation>
+    </message>
+    <message>
+        <source>MEN_ANNOTATION</source>
+        <translation>Annotation</translation>
+    </message>
+    <message>
+        <source>STB_ANNOTATION</source>
+        <translation>Annotation</translation>
+    </message>
+    <message>
         <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
         <translation>Show dependency tree</translation>
     </message>
@@ -6705,6 +6717,53 @@ Do you want to continue?</translation>
         <source>WARNING_MSG_INVALID_ARGUMENTS</source>
         <translation>The dimension can not be created for the specified arguments.
 Please specify suitable arguments.</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_AnnotationDlg</name>
+    <message>
+        <source>CREATE_ANNOTATION_TITLE</source>
+        <translation>Create annotation</translation>
+    </message>
+    <message>
+        <source>EDIT_ANNOTATION_TITLE</source>
+        <translation>Edit annotation</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_PREFIX</source>
+        <translation>Annotation</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_NAME</source>
+        <translation>Annotation name</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_PROPERTIES</source>
+        <translation>Properties</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_TEXT</source>
+        <translation>Text</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_SHAPE</source>
+        <translation>Shape</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_TYPE</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_SUB_SHAPE</source>
+        <translation>Sub-shape type</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_STYLE</source>
+        <translation>Style</translation>
+    </message>
+    <message>
+        <source>ANNOTATION_FONT</source>
+        <translation>Font</translation>
     </message>
 </context>
 <context>
