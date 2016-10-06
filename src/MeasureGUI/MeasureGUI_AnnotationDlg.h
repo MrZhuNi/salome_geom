@@ -68,6 +68,7 @@ protected:
   virtual bool                        execute ();
 
   SALOME_Prs*                         buildPrs();
+  void                                updateSubShapeEnableState();
   void                                redisplayPreview();
 
 private slots:
@@ -83,6 +84,7 @@ private slots:
 private:
   void                                Init();
 
+  void                                activateSelectionArgument(QPushButton* theSelectionButton);
   void                                activateSelection();
   TopAbs_ShapeEnum                    getShapeType() const;
   gp_Pnt                              getAttachPoint(const TopoDS_Shape& theShape);
