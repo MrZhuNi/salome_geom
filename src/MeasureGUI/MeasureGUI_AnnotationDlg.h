@@ -83,11 +83,12 @@ private slots:
 private:
   void                                Init();
 
+  void                                activateSelection();
   TopAbs_ShapeEnum                    getShapeType() const;
   gp_Pnt                              getAttachPoint(const TopoDS_Shape& theShape);
 
 private:
-  QList<TopAbs_ShapeEnum>             mySelectionModes;
+  TopAbs_ShapeEnum                    mySelectionMode;
   GEOMGUI_ShapeAnnotations::ShapeAnnotation myAnnotationProperties;
   /// an index of edited annotation in the list shape annotations, -1 in create operation
   bool                                myIsCreation;

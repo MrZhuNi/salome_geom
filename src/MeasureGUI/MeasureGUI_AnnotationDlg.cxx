@@ -148,16 +148,11 @@ MeasureGUI_AnnotationDlg::MeasureGUI_AnnotationDlg(GeometryGUI* theGeometryGUI,
 
   QLabel* shapeTypeLabel = new QLabel(tr("ANNOTATION_SUB_SHAPE"), propGroup);
   mySubShapeTypeCombo = new QComboBox(propGroup);
-  QMap<QString, TopAbs_ShapeEnum> aShapeTypes;
-  aShapeTypes[tr("WHOLE_SHAPE")] = TopAbs_SHAPE;
-  aShapeTypes[tr("GEOM_VERTEX")] = TopAbs_VERTEX;
-  aShapeTypes[tr("GEOM_EDGE")] = TopAbs_EDGE;
-  aShapeTypes[tr("GEOM_FACE")] = TopAbs_FACE;
-  aShapeTypes[tr("GEOM_SOLID")] = TopAbs_SOLID;
-  QMap<QString, TopAbs_ShapeEnum>::const_iterator anIt = aShapeTypes.begin(),
-                                                  aLast = aShapeTypes.end();
-  for (; anIt != aLast; anIt++)
-    mySubShapeTypeCombo->addItem(anIt.key(), anIt.value());
+  mySubShapeTypeCombo->addItem(tr("WHOLE_SHAPE"), TopAbs_SHAPE);
+  mySubShapeTypeCombo->addItem(tr("GEOM_VERTEX"), TopAbs_VERTEX);
+  mySubShapeTypeCombo->addItem(tr("GEOM_EDGE"), TopAbs_EDGE);
+  mySubShapeTypeCombo->addItem(tr("GEOM_FACE"), TopAbs_FACE);
+  mySubShapeTypeCombo->addItem(tr("GEOM_SOLID"), TopAbs_SOLID);
   mySubShapeTypeCombo->setCurrentIndex(0); // VERTEX
 
   propLayout->addWidget(shapeTypeLabel, 3, 0);
@@ -224,17 +219,16 @@ void MeasureGUI_AnnotationDlg::Init()
 
     // default presentation values
     myAnnotationProperties.Position = gp_Pnt(50, 50, 50);
-    myAnnotationProperties.Text = "Text";
+    myAnnotationProperties.Text = tr("ANNOTATION_PREFIX");
     myAnnotationProperties.IsVisible = true;
-    myAnnotationProperties.IsScreenFixed = true;
-    myAnnotationProperties.Attach = gp_Pnt(0, 0, 0);;
-    myAnnotationProperties.ShapeIndex = 1;
-    myAnnotationProperties.ShapeType = 1;
+    myAnnotationProperties.IsScreenFixed = false;
+    myAnnotationProperties.Attach = gp_Pnt(0, 0, 0);
+    myAnnotationProperties.ShapeIndex = -1;
+    myAnnotationProperties.ShapeType = (int)TopAbs_SHAPE;
 
     SelectionIntoArgument();
 
-    mySelectionModes.clear();
-    mySelectionModes.append(TopAbs_SHAPE);
+    mySelectionMode = TopAbs_SHAPE;
 
     connect(myShapeSelBtn, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
     connect(mySubShapeSelBtn, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
@@ -244,11 +238,24 @@ void MeasureGUI_AnnotationDlg::Init()
     connect(mySubShapeTypeCombo,   SIGNAL(currentIndexChanged(int)),
             this, SLOT(onSubShapeTypeChange()));
 
+    SelectionIntoArgument();
   }
   else { // edition
 
   }
   redisplayPreview();
+}
+
+//=================================================================================
+// function : activateSelection
+// purpose  : Activate local selection
+//=================================================================================
+void MeasureGUI_AnnotationDlg::activateSelection()
+{
+  globalSelection(GEOM_ALLSHAPES);
+  if (!myShape->_is_nil() && mySelectionMode != TopAbs_SHAPE) {
+    localSelection(myShape.get(), mySelectionMode);
+  }
 }
 
 //=================================================================================
@@ -288,6 +295,7 @@ bool MeasureGUI_AnnotationDlg::ClickOnApply()
         showError(msg);
         return false;
     }
+
     SUIT_OverrideCursor wc;
     SUIT_Session::session()->activeApplication()->putInfo("");
 
@@ -345,6 +353,8 @@ void MeasureGUI_AnnotationDlg::SetEditCurrentArgument()
   if (myEditCurrentArgument)
     myEditCurrentArgument->setFocus();
 
+  aSelectButton->setDown(true);
+
   if (aSelectButton->isChecked())
     anOtherButton->setDown(false);
 
@@ -359,28 +369,39 @@ void MeasureGUI_AnnotationDlg::SetEditCurrentArgument()
 void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
 {
   if (myIsCreation && myEditCurrentArgument) {
-    GEOM::GeomObjPtr anObj = getSelected(mySelectionModes);
+    GEOM::GeomObjPtr anObj = getSelected(mySelectionMode);
 
     QString aName = GEOMBase::GetName(anObj.get());
-    myEditCurrentArgument->setText(aName);
 
-    gp_Pnt anAttachPoint;
+    gp_Pnt anAttachPoint(0, 0, 0);
     int aSubShapeIndex = -1;
     if (myEditCurrentArgument == myShapeName) { // Selection of a shape is active
-      if (myShape->_is_nil())
-        myShape = GEOM::GEOM_Object::_nil();
-      else
-        myShape = anObj;
+      if (mySelectionMode == TopAbs_SHAPE) {
+        myEditCurrentArgument->setText(aName);
 
-      if (!myShape->_is_nil()) {
-        TopoDS_Shape aShape;
-        GEOMBase::GetShape(myShape.get(), aShape);
+        if (anObj->_is_nil())
+          myShape = GEOM::GEOM_Object::_nil();
+        else
+          myShape = anObj;
 
-        anAttachPoint = getAttachPoint(aShape);
+        bool aNullShape = myShape->_is_nil();
+        mySubShapeTypeCombo->setEnabled(!aNullShape);
+        mySubShapeSelBtn->setEnabled(!aNullShape);
+        mySubShapeName->setEnabled(!aNullShape);
+        activateSelection();
+
+
+        if (!myShape->_is_nil()) {
+          TopoDS_Shape aShape;
+          GEOMBase::GetShape(myShape.get(), aShape);
+          anAttachPoint = getAttachPoint(aShape);
+        }
       }
     }
-    else if (myEditCurrentArgument == myShapeName) {
+    else if (myEditCurrentArgument == mySubShapeName) {
       if (!myShape->_is_nil()) {
+        myEditCurrentArgument->setText(aName);
+
         TopTools_IndexedMapOfShape aMainMap;
         TopoDS_Shape aMainShape;
         GEOMBase::GetShape(myShape.get(), aMainShape);
@@ -431,9 +452,11 @@ void MeasureGUI_AnnotationDlg::onTypeChange()
 //=======================================================================
 void MeasureGUI_AnnotationDlg::onSubShapeTypeChange()
 {
-  //TopAbs_ShapeEnum aShapeType = getShapeType();
-  //myAnnotationProperties.ShapeType = aShapeType;
+  TopAbs_ShapeEnum aShapeType = getShapeType();
+  myAnnotationProperties.ShapeType = aShapeType;
 
+  mySelectionMode = getShapeType();
+  activateSelection();
   redisplayPreview();
 }
 
@@ -455,7 +478,7 @@ bool MeasureGUI_AnnotationDlg::isValid(QString& theMessage)
                   tr("GEOM_STUDY_LOCKED"))
 
   if (myIsCreation) {
-    //RETURN_WITH_MSG(CORBA::is_nil(myShape), tr("NO_SHAPE"))
+    RETURN_WITH_MSG(myShape->_is_nil(), tr("NO_SHAPE"))
   }
   else {
     //RETURN_WITH_MSG(CORBA::is_nil(myShape), tr("NO_FIELD"))
@@ -463,7 +486,7 @@ bool MeasureGUI_AnnotationDlg::isValid(QString& theMessage)
 
   if (getShapeType() != TopAbs_SHAPE) {
     if (myIsCreation) {
-      //RETURN_WITH_MSG(myAnnotationProperties.SubShapeId >= 0, tr("NO_SUB_SHAPE"))
+      RETURN_WITH_MSG(myAnnotationProperties.ShapeIndex < 0, tr("NO_SUB_SHAPE"))
     }
     else {
       //RETURN_WITH_MSG(CORBA::is_nil(myShape), tr("NO_FIELD"))

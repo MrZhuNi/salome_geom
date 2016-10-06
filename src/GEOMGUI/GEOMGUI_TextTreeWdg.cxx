@@ -84,6 +84,12 @@ GEOMGUI_TextTreeWdg::GEOMGUI_TextTreeWdg( SalomeApp_Application* app )
   myDimensionsItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );
   addTopLevelItem( myDimensionsItem );
 
+  rootNames.clear();
+  rootNames << tr("GEOM_ANNOTATIONS") << "";
+  myAnnotationsItem = new QTreeWidgetItem( this, rootNames );
+  myAnnotationsItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );
+  addTopLevelItem( myAnnotationsItem );
+
   // get a free dockable window id
   myWindowID = 11;
   while( app->dockWindow( myWindowID ))

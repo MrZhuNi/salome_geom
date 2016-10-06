@@ -81,6 +81,7 @@ private slots:
   QHash<QString, QTreeWidgetItem*> myObjects;
   SalomeApp_Study*              myStudy;
   QTreeWidgetItem*              myDimensionsItem;
+  QTreeWidgetItem*              myAnnotationsItem;
   GEOM_Displayer                myDisplayer;
 
   QMap<int, QAction*>           myActions;   //!< menu actions list

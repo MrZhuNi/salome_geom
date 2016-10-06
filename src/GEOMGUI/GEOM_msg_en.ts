@@ -576,6 +576,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Dimensions</translation>
     </message>
     <message>
+        <source>GEOM_ANNOTATIONS</source>
+        <translation>Annotations</translation>
+    </message>
+    <message>
         <source>GEOM_SKETCHER_DIST</source>
         <translation>Distance</translation>
     </message>
@@ -6756,6 +6760,10 @@ Please specify suitable arguments.</translation>
     <message>
         <source>ANNOTATION_SUB_SHAPE</source>
         <translation>Sub-shape type</translation>
+    </message>
+    <message>
+        <source>WHOLE_SHAPE</source>
+        <translation>Whole shape</translation>
     </message>
     <message>
         <source>ANNOTATION_STYLE</source>
