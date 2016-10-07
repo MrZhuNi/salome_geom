@@ -43,11 +43,13 @@
 #include <OpenGl_Text.hxx>
 #include <OpenGl_View.hxx>
 #include <OpenGl_Workspace.hxx>
+#include <Prs3d_PointAspect.hxx>
 #include <Prs3d_Root.hxx>
 #include <Prs3d_Text.hxx>
 #include <Select3D_SensitiveBox.hxx>
 #include <SelectMgr_EntityOwner.hxx>
 #include <V3d_Viewer.hxx>
+#include <V3d_View.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT( GEOM_Annotation, AIS_InteractiveObject )
 
@@ -64,6 +66,7 @@ GEOM_Annotation::GEOM_Annotation() : AIS_InteractiveObject()
   SetZLayer( Graphic3d_ZLayerId_Top );
   SetAutoHide( Standard_True );
   SetHilightMode( HighlightAll );
+  SetMutable( Standard_True );
 
   Handle(Prs3d_TextAspect) aTextAspect = new Prs3d_TextAspect();
   aTextAspect->SetHeight( 20.0 );
@@ -73,6 +76,10 @@ GEOM_Annotation::GEOM_Annotation() : AIS_InteractiveObject()
   Handle(Prs3d_LineAspect) aLineAspect =
     new Prs3d_LineAspect( Quantity_NOC_WHITE, Aspect_TOL_SOLID, 1.0 );
   myDrawer->SetLineAspect( aLineAspect );
+
+  Handle(Prs3d_PointAspect) aPointAspect =
+    new Prs3d_PointAspect( Aspect_TOM_POINT, Quantity_NOC_WHITE, 4.0 );
+  myDrawer->SetPointAspect( aPointAspect );
 }
 
 // =======================================================================
@@ -95,9 +102,29 @@ void GEOM_Annotation::SetText( const TCollection_ExtendedString& theText )
 // =======================================================================
 void GEOM_Annotation::SetPosition( const gp_Pnt& thePosition )
 {
+  SetPosition( thePosition, Standard_True );
+}
+
+// =======================================================================
+// function : SetPosition
+// purpose  :
+// =======================================================================
+void GEOM_Annotation::SetPosition( const gp_Pnt& thePosition, const Standard_Boolean theUpdateSelection )
+{
   myPosition = thePosition;
 
-  UpdatePersistence();
+  Handle(Graphic3d_TransformPers) aPersistence;
+  if ( !myIsScreenFixed )
+  {
+    AIS_InteractiveObject::SetTransformPersistence( Graphic3d_TMF_ZoomPers | Graphic3d_TMF_RotatePers, thePosition );
+  }
+
+  SetToUpdate();
+
+  if( theUpdateSelection )
+  {
+    UpdateSelection();
+  }
 }
 
 // =======================================================================
@@ -108,7 +135,20 @@ void GEOM_Annotation::SetScreenFixed( const Standard_Boolean theIsFixed )
 {
   myIsScreenFixed = theIsFixed;
 
-  UpdatePersistence();
+  if (!myIsScreenFixed)
+  {
+    AIS_InteractiveObject::SetTransformPersistence( Graphic3d_TMF_ZoomPers | Graphic3d_TMF_RotatePers, myPosition );
+  }
+  else
+  {
+    AIS_InteractiveObject::SetTransformPersistence( Graphic3d_TMF_2d );
+  }
+
+  SetZLayer( myIsScreenFixed ? Graphic3d_ZLayerId_Topmost : Graphic3d_ZLayerId_Top );
+
+  SetToUpdate();
+
+  UpdateSelection();
 }
 
 // =======================================================================
@@ -148,6 +188,7 @@ void GEOM_Annotation::SetTextColor( const Quantity_Color& theColor )
 void GEOM_Annotation::SetLineColor( const Quantity_Color& theColor )
 {
   myDrawer->LineAspect()->SetColor( theColor );
+  myDrawer->PointAspect()->SetColor( theColor );
 
   SetToUpdate();
 }
@@ -223,22 +264,6 @@ void GEOM_Annotation::SetLineStyle( const Aspect_TypeOfLine theStyle )
 }
 
 // =======================================================================
-// function : UpdatePersistence
-// purpose  :
-// =======================================================================
-void GEOM_Annotation::UpdatePersistence()
-{
-  if (!myIsScreenFixed)
-  {
-    AIS_InteractiveObject::SetTransformPersistence( Graphic3d_TMF_ZoomPers | Graphic3d_TMF_RotatePers, myPosition );
-  }
-  else
-  {
-    AIS_InteractiveObject::SetTransformPersistence( Graphic3d_TMF_2d, gp_Pnt( 0.0, 0.0, 0.0 ) );
-  }
-}
-
-// =======================================================================
 // function : Compute
 // purpose  :
 // =======================================================================
@@ -267,10 +292,18 @@ void GEOM_Annotation::Compute( const Handle(PrsMgr_PresentationManager3d)& /*the
   aGroup->AddElement( aAnnotationDraw );
   aGroup->SetGroupPrimitivesAspect( myDrawer->TextAspect()->Aspect() );
   aGroup->SetGroupPrimitivesAspect( myDrawer->LineAspect()->Aspect() );
+  aGroup->SetGroupPrimitivesAspect( myDrawer->PointAspect()->Aspect() );
 
-  const NCollection_Handle<Bnd_Box> aBoundingBox = TextBoundingBox();
-  const gp_Pnt aBoxMin = aBoundingBox->CornerMin();
-  const gp_Pnt aBoxMax = aBoundingBox->CornerMax();
+  Bnd_Box aBox = TextBoundingBox();
+  if ( myIsScreenFixed )
+  {
+    gp_Trsf aOffset2d;
+    aOffset2d.SetTranslation( gp_Vec( myPosition.X(), myPosition.Y(), 0.0 ) );
+    aBox = aBox.Transformed( aOffset2d );
+  }
+
+  const gp_Pnt aBoxMin = aBox.CornerMin();
+  const gp_Pnt aBoxMax = aBox.CornerMax();
   aGroup->ChangeBoundingBox() = Graphic3d_BndBox4f (
     Graphic3d_Vec4( static_cast<Standard_ShortReal>( aBoxMin.X() ),
                     static_cast<Standard_ShortReal>( aBoxMin.Y() ),
@@ -287,16 +320,23 @@ void GEOM_Annotation::Compute( const Handle(PrsMgr_PresentationManager3d)& /*the
 void GEOM_Annotation::ComputeSelection( const Handle(SelectMgr_Selection)& theSelection,
                                         const Standard_Integer             theMode )
 {
-  if (theMode != 0)
+  if (theMode != GlobalSelectionMode())
   {
     return;
   }
 
   theSelection->Clear();
 
-  const NCollection_Handle<Bnd_Box> aBoundingBox = TextBoundingBox();
-  const Handle(SelectMgr_EntityOwner) anEntityOwner = new SelectMgr_EntityOwner( this, 10 );
-  const Handle(Select3D_SensitiveBox) aSensitive = new Select3D_SensitiveBox( anEntityOwner, *aBoundingBox.get() );
+  Bnd_Box aBox = TextBoundingBox();
+  if ( myIsScreenFixed )
+  {
+    gp_Trsf aOffset2d;
+    aOffset2d.SetTranslation( gp_Vec( myPosition.X(), myPosition.Y(), 0.0 ) );
+    aBox = aBox.Transformed( aOffset2d );
+  }
+
+  const Handle(GEOM_AnnotationOwner) anEntityOwner = new GEOM_AnnotationOwner( this, 10 );
+  const Handle(Select3D_SensitiveBox) aSensitive = new Select3D_SensitiveBox( anEntityOwner, aBox );
   theSelection->Add( aSensitive );
 }
 
@@ -304,10 +344,9 @@ void GEOM_Annotation::ComputeSelection( const Handle(SelectMgr_Selection)& theSe
 // function : TextBoundingBox
 // purpose  :
 // =======================================================================
-NCollection_Handle<Bnd_Box> GEOM_Annotation::TextBoundingBox() const
+Bnd_Box GEOM_Annotation::TextBoundingBox() const
 {
   Handle(Prs3d_TextAspect) anAsp = myDrawer->TextAspect();
-  Bnd_Box aBox;
   Font_FTFont aFont;
   unsigned int aResolution = GetContext()->CurrentViewer()->DefaultRenderingParams().Resolution;
   if ( aFont.Init( anAsp->Aspect()->Font().ToCString(),
@@ -317,13 +356,66 @@ NCollection_Handle<Bnd_Box> GEOM_Annotation::TextBoundingBox() const
   {
     const NCollection_String aText( (Standard_Utf16Char* )myText.ToExtString() );
     const Font_Rect aFontRect = aFont.BoundingBox( aText, Graphic3d_HTA_LEFT, Graphic3d_VTA_BOTTOM );
-    NCollection_Handle<Bnd_Box> aBox = new Bnd_Box();
-    aBox->Add( gp_Pnt( 0.0, 0.0, 0.0 ) );
-    aBox->Add( gp_Pnt( aFontRect.Width(), aFontRect.Height(), 0.0 ) );
+    Bnd_Box aBox;
+    aBox.Add( gp_Pnt( 0.0, 0.0, 0.0 ) );
+    aBox.Add( gp_Pnt( aFontRect.Width(), aFontRect.Height(), 0.0 ) );
     return aBox;
   }
 
-  return NCollection_Handle<Bnd_Box>();
+  return Bnd_Box();
+}
+
+// =======================================================================
+// function : BeginDrag
+// purpose  :
+// =======================================================================
+void GEOM_Annotation::BeginDrag()
+{
+  myStartPosition = myPosition;
+}
+
+// =======================================================================
+// function : Drag
+// purpose  :
+// =======================================================================
+void GEOM_Annotation::Drag( const Standard_Integer theDx,
+                            const Standard_Integer theDy,
+                            const Handle(V3d_View)& theView )
+{
+  if (myIsScreenFixed)
+  {
+    SetPosition( myStartPosition.Translated( gp_Vec( theDx, theDy, 0.0 ) ), Standard_False );
+  }
+  else
+  {
+    Standard_Integer aWidth, aHeight;
+    theView->Window()->Size( aWidth, aHeight );
+    gp_Pnt aNormalized = theView->Camera()->Project( myStartPosition );
+    gp_Pnt aNormalizedDrag =
+      aNormalized.Translated( gp_Vec( static_cast<Standard_Real>(theDx) * 2.0 / aWidth,
+                                      static_cast<Standard_Real>(theDy) * 2.0 / aHeight,
+                                      0.0 ) );
+
+    SetPosition( theView->Camera()->UnProject( aNormalizedDrag ), Standard_False );
+  }
+}
+
+// =======================================================================
+// function : EndDrag
+// purpose  :
+// =======================================================================
+void GEOM_Annotation::EndDrag()
+{
+  UpdateSelection();
+}
+
+// =======================================================================
+// function : UndoDrag
+// purpose  :
+// =======================================================================
+void GEOM_Annotation::UndoDrag()
+{
+  SetPosition( myStartPosition, Standard_True );
 }
 
 // =======================================================================
@@ -404,21 +496,25 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
   // ---------------------------------------------------------------------
   // initialize text's font and configure some properties when DPI changes
   // ---------------------------------------------------------------------
+
   const unsigned int aDPI = theWorkspace->View()->RenderingParams().Resolution;
   if (myTextDPI != aDPI)
   {
     const OpenGl_AspectText* anAspect = theWorkspace->AspectText();
 
     // getting string size will also initialize font library
-    Standard_ShortReal aWidth, aHeight, aDescent;
-    myTextDraw->StringSize( aContext, myText, *anAspect, myTextParams, aDPI, aWidth, aHeight, aDescent );
+    myTextDraw->StringSize( aContext,
+      myText, *anAspect, myTextParams, aDPI,
+      myTextSize.x(), myTextSize.y(), myTextSize.z() );
+
     myTextDPI = aDPI;
-    myTextLineY = ceil( aHeight * -0.2f );
+    myTextUnderline.x() = 0.f;
+    myTextUnderline.y() = ceil( myTextSize.y() * -0.2f );
 
     Handle(Graphic3d_ArrayOfSegments)
     aVertexArray = new Graphic3d_ArrayOfSegments( 2 );
-    aVertexArray->AddVertex( 0.0f, myTextLineY, 0.0f );
-    aVertexArray->AddVertex( aWidth, myTextLineY, 0.0f );
+    aVertexArray->AddVertex( 0.0f, myTextUnderline.y(), 0.0f );
+    aVertexArray->AddVertex( myTextSize.x(), myTextUnderline.y(), 0.0f );
     myTextLineDraw->InitBuffers( aContext, Graphic3d_TOPA_SEGMENTS,
       aVertexArray->Indices(), aVertexArray->Attributes(), aVertexArray->Bounds() );
   }
@@ -426,6 +522,7 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
   // ---------------------------------------------
   // perform view culling test by attachment point
   // ---------------------------------------------
+
   const OpenGl_Vec4 aAttach( static_cast<float>( myAISObject->myAttach.X() ),
                              static_cast<float>( myAISObject->myAttach.Y() ),
                              static_cast<float>( myAISObject->myAttach.Z() ), 1.F );
@@ -437,35 +534,72 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
   if (myAISObject->myIsAutoHide)
   {
     const OpenGl_Vec4 aAttachClip = aCameraProjMat * aAttachView;
-    if (abs( aAttachClip.x() ) > aAttachClip.w()
-     || abs( aAttachClip.y() ) > aAttachClip.w()
-     || abs( aAttachClip.z() ) > aAttachClip.w())
+    if (Abs( aAttachClip.x() ) > aAttachClip.w()
+     || Abs( aAttachClip.y() ) > aAttachClip.w()
+     || Abs( aAttachClip.z() ) > aAttachClip.w())
     {
       return;
     }
   }
 
-  // -------------------------------------------------------------
-  // render text label in current persistence matrix and underline
-  // -------------------------------------------------------------
-  myTextDraw->Render( theWorkspace );
-
-  // ----------------------------------------------
-  // render underline in current persistence matrix
-  // ----------------------------------------------
   const bool toHighlight = theWorkspace->ToHighlight();
+
   if (toHighlight && myAISObject->myHilightMode == HighlightLabel)
   {
     theWorkspace->SetHighlight( false );
     theWorkspace->ApplyAspectLine();
   }
+
+  // -------------------------------------------------------------
+  // render text label in current persistence matrix and underline
+  // -------------------------------------------------------------
+
+  if ( myAISObject->myIsScreenFixed )
+  {
+    myTextDraw->SetPosition( OpenGl_Vec3( static_cast<float>( myAISObject->myPosition.X() ),
+                                          static_cast<float>( myAISObject->myPosition.Y() ),
+                                          static_cast<float>( myAISObject->myPosition.Z() ) ) );
+  }
+
+  myTextDraw->Render( theWorkspace );
+
+  // ------------------------------------------------------------
+  // render annotation text's underline
+  // ------------------------------------------------------------
+
+  if ( myAISObject->myIsScreenFixed )
+  {
+    // setup local transformation (in 2D persistence reference)
+    // to represent position of annotation label on screen
+    const OpenGl_Mat4& aViewMat = aContext->WorldViewState.Current();
+    OpenGl_Mat4 aPositionMat;
+    aPositionMat.SetValue( 0, 3, static_cast<float>( myAISObject->myPosition.X() ) );
+    aPositionMat.SetValue( 1, 3, static_cast<float>( myAISObject->myPosition.Y() ) );
+    aPositionMat.SetValue( 2, 3, static_cast<float>( myAISObject->myPosition.Z() ) );
+    OpenGl_Mat4 aPosViewMat = aViewMat * aPositionMat;
+    aContext->WorldViewState.Push();
+    aContext->WorldViewState.SetCurrent( aPosViewMat );
+    aContext->ApplyModelViewMatrix();
+  }
+
   myTextLineDraw->Render( theWorkspace );
 
   // ------------------------------------------------------------
   // render dynamic extension line using synthetic transformation
   // ------------------------------------------------------------
+
+  // compute label's center in view coordinate space
   const OpenGl_Mat4& aViewMat = aContext->WorldViewState.Current();
-  const OpenGl_Vec4  aHingeView = aViewMat * OpenGl_Vec4( 0.0f, myTextLineY, 0.0f, 1.0f );
+  const OpenGl_Vec4 aCenterView =
+    aViewMat * OpenGl_Vec4( myTextSize.x() / 2.0f, myTextSize.y() / 2.0f, 0.0f, 1.0f );
+
+  // the value below defines whether the extension line should be hanging
+  // on the left side of the label or on the right
+  const bool isLeftHanded = aAttachView.x() < aCenterView.x();
+
+  // compute extension line point at the text label in view coordinate space
+  const OpenGl_Vec4 aHingeView = aViewMat * OpenGl_Vec4(
+    ( isLeftHanded ? myTextUnderline.x() : myTextUnderline.x() + myTextSize.x() ), myTextUnderline.y(), 0.0f, 1.0f );
 
   // prepare matrix to specify geometry of extension line in view space
   // by multiplication of unit z coordinate vector on given matrix.
@@ -473,6 +607,7 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
   aExtGeometryMat.SetColumn( 2, aAttachView - aHingeView );
   aExtGeometryMat.SetColumn( 3, aHingeView );
 
+  // setup and draw
   aContext->ModelWorldState.Push();
   aContext->ModelWorldState.SetIdentity();
   aContext->WorldViewState.Push();
@@ -482,8 +617,18 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
   myExtLineDraw->Render( theWorkspace );
   myExtMarkerDraw->Render( theWorkspace );
 
+  // ------------------------------------------------------------
+  // restore original state
+  // ------------------------------------------------------------
+
   aContext->ModelWorldState.Pop();
   aContext->WorldViewState.Pop();
+
+  if (myAISObject->myIsScreenFixed)
+  {
+    aContext->WorldViewState.Pop();
+  }
+
   aContext->ApplyModelViewMatrix();
 
   if (toHighlight != theWorkspace->ToHighlight())
@@ -492,3 +637,14 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
   }
 }
 
+// =======================================================================
+// subclass : GEOM_AnnotationOwner
+// function : HilightWithColor
+// purpose  : Perform highlighting of the presentation.
+// =======================================================================
+void GEOM_Annotation::GEOM_AnnotationOwner::HilightWithColor( const Handle(PrsMgr_PresentationManager3d)& thePresentationMgr,
+                                                              const Quantity_NameOfColor theColor,
+                                                              const Standard_Integer theMode )
+{
+  thePresentationMgr->Color( Selectable(), theColor, theMode, NULL, Selectable()->ZLayer() );
+}

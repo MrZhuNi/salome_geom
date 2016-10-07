@@ -24,6 +24,7 @@
 
 #include "MeasureGUI.h"
 #include "MeasureGUI_AnnotationDlg.h"
+#include "MeasureGUI_AnnotationInteractor.h"
 
 #include <DlgRef.h>
 #include <GEOMBase.h>
@@ -191,6 +192,9 @@ MeasureGUI_AnnotationDlg::MeasureGUI_AnnotationDlg(GeometryGUI* theGeometryGUI,
           SLOT(SelectionIntoArgument()));
   connect(buttonOk(), SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+
+  myInteractor = new MeasureGUI_AnnotationInteractor( theGeometryGUI, parent );
+  myInteractor->Enable();
 
   Init();
   //updateState();
@@ -518,6 +522,26 @@ bool MeasureGUI_AnnotationDlg::execute()
 SALOME_Prs* MeasureGUI_AnnotationDlg::buildPrs()
 {
   Handle (GEOM_Annotation) aPresentation = new GEOM_Annotation();
+
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+  const QFont  aFont      = aResMgr->fontValue( "Geometry", "shape_annotation_font", QFont( "Y14.5M-2009", 24 ) );
+  const QColor aFontColor = aResMgr->colorValue( "Geometry", "shape_annotation_font_color", QColor( 255, 255, 255 ) );
+  const QColor aLineColor = aResMgr->colorValue( "Geometry", "shape_annotation_line_color", QColor( 255, 255, 255 ) );
+  const double aLineWidth = aResMgr->doubleValue( "Geometry", "shape_annotation_line_width", 1.0 );
+  const int aLineStyle    = aResMgr->integerValue( "Geometry", "shape_annotation_line_style", 0 );
+  const bool isAutoHide   = aResMgr->booleanValue( "Geometry", "shape_annotation_autohide", false );
+
+  const Quantity_Color aOcctFontColor( aFontColor.redF(), aFontColor.greenF(), aFontColor.blueF(), Quantity_TOC_RGB );
+  const Quantity_Color aOcctLineColor( aLineColor.redF(), aLineColor.greenF(), aLineColor.blueF(), Quantity_TOC_RGB );
+  const Standard_Real aFontHeight = aFont.pixelSize() != -1 ? aFont.pixelSize() : aFont.pointSize();
+
+  aPresentation->SetFont( TCollection_AsciiString( aFont.family().toLatin1().data() ) );
+  aPresentation->SetTextHeight( aFontHeight );
+  aPresentation->SetTextColor( Quantity_Color( aFontColor.redF(), aFontColor.greenF(), aFontColor.blueF(), Quantity_TOC_RGB ) );
+  aPresentation->SetLineColor( Quantity_Color( aLineColor.redF(), aLineColor.greenF(), aLineColor.blueF(), Quantity_TOC_RGB ) );
+  aPresentation->SetLineWidth( aLineWidth );
+  aPresentation->SetLineStyle( static_cast<Aspect_TypeOfLine>( aLineStyle ) );
+  aPresentation->SetAutoHide( isAutoHide ? Standard_True : Standard_False );
 
   TopoDS_Shape aShape;
   GEOMBase::GetShape(myShape.get(), aShape);

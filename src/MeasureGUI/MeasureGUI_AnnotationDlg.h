@@ -46,6 +46,7 @@ class QLineEdit;
 class QPushButton;
 class QComboBox;
 class SalomeApp_IntSpinBox;
+class MeasureGUI_AnnotationInteractor;
 
 //=================================================================================
 // class    : MeasureGUI_AnnotationDlg
@@ -106,6 +107,8 @@ private:
 
   QPushButton*                        mySubShapeSelBtn;
   QLineEdit*                          mySubShapeName;
+
+  MeasureGUI_AnnotationInteractor*    myInteractor;
 };
 
 #endif

@@ -1404,7 +1404,7 @@ void GEOM_Displayer::updateShapeAnnotations( const Handle(SALOME_InteractiveObje
 
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
 
-  const QFont  aFont      = aResMgr->fontValue( "Geometry", "shape_annotation_font", QFont( "Arial", 14 ) );
+  const QFont  aFont      = aResMgr->fontValue( "Geometry", "shape_annotation_font", QFont( "Y14.5M-2009", 24 ) );
   const QColor aFontColor = aResMgr->colorValue( "Geometry", "shape_annotation_font_color", QColor( 255, 255, 255 ) );
   const QColor aLineColor = aResMgr->colorValue( "Geometry", "shape_annotation_line_color", QColor( 255, 255, 255 ) );
   const double aLineWidth = aResMgr->doubleValue( "Geometry", "shape_annotation_line_width", 1.0 );
@@ -1439,7 +1439,8 @@ void GEOM_Displayer::updateShapeAnnotations( const Handle(SALOME_InteractiveObje
       const Quantity_Color aOcctLineColor( aLineColor.redF(), aLineColor.greenF(), aLineColor.blueF(), Quantity_TOC_RGB );
       const Standard_Real aFontHeight = aFont.pixelSize() != -1 ? aFont.pixelSize() : aFont.pointSize();
 
-      aPresentation->SetTextHeight( aFont.pixelSize() != -1 ? aFont.pixelSize() : aFont.pointSize() );
+      aPresentation->SetFont( TCollection_AsciiString( aFont.family().toLatin1().data() ) );
+      aPresentation->SetTextHeight( aFontHeight );
       aPresentation->SetTextColor( Quantity_Color( aFontColor.redF(), aFontColor.greenF(), aFontColor.blueF(), Quantity_TOC_RGB ) );
       aPresentation->SetLineColor( Quantity_Color( aLineColor.redF(), aLineColor.greenF(), aLineColor.blueF(), Quantity_TOC_RGB ) );
       aPresentation->SetLineWidth( aLineWidth );

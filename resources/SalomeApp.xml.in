@@ -102,7 +102,7 @@
 
     <!-- Shape annotation presentation properties -->
     <parameter name="shape_annotation_font_color" value="#ffffff" />
-    <parameter name="shape_annotation_font"       value="Y14.5M-2009,14" />
+    <parameter name="shape_annotation_font"       value="Courier 10 Pitch,24" />
     <parameter name="shape_annotation_line_color" value="#ffffff" />
     <parameter name="shape_annotation_line_width" value="1.0" />
     <parameter name="shape_annotation_line_style" value="0" />

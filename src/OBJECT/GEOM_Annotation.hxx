@@ -45,6 +45,7 @@
 class OpenGl_GraphicDriver;
 class OpenGl_PrimitiveArray;
 class OpenGl_Text;
+class V3d_View;
 
 /*!
  * \class GEOM_Annotation
@@ -171,9 +172,26 @@ public:
   //! Returns highlight mode
   HighlightMode GetHilightMode() const { return myHilightMode; }
 
-private:
+// Interactive dragging:
+public:
 
-  void UpdatePersistence();
+  //! Prepares necessary data to perform dragging.
+  Standard_EXPORT void BeginDrag();
+
+  //! Drags annotation presentation in the screen plane using the given pixel delta.
+  //! \param theDx, theDy [in] the drag offset in pixels (from beginning of dragging).
+  //! \param theView [in] the current view for evaluating drag with 3D position mode.
+  Standard_EXPORT void Drag( const Standard_Integer theDx,
+                             const Standard_Integer theDy,
+                             const Handle(V3d_View)& theView );
+
+  //! Perform necessary update when dragging is finished.
+  Standard_EXPORT void EndDrag();
+
+  //! Perform necessary update when dragging need undo.
+  Standard_EXPORT void UndoDrag();
+
+private:
 
   virtual void Compute( const Handle(PrsMgr_PresentationManager3d)& thePresentationManager,
                         const Handle(Prs3d_Presentation)& thePresentation,
@@ -182,17 +200,20 @@ private:
   virtual void ComputeSelection( const Handle(SelectMgr_Selection)& theSelection,
                                  const Standard_Integer theMode ) Standard_OVERRIDE;
 
-  virtual void SetLocalTransformation( const gp_Trsf& theTransformation ) Standard_OVERRIDE {}
+  virtual void SetLocalTransformation( const gp_Trsf& /*theTransformation*/ ) Standard_OVERRIDE {}
 
-  virtual void SetTransformPersistence( const Graphic3d_TransModeFlags& theFlag,
-                                        const gp_Pnt& thePoint = gp_Pnt (0.0, 0.0, 0.0) ) Standard_OVERRIDE {}
+  virtual void SetTransformPersistence( const Graphic3d_TransModeFlags& /*theFlag*/,
+                                        const gp_Pnt& /*thePoint*/ ) Standard_OVERRIDE {}
 
-  NCollection_Handle<Bnd_Box> TextBoundingBox() const;
+  Bnd_Box TextBoundingBox() const;
+
+  void SetPosition( const gp_Pnt& thePosition, const Standard_Boolean theUpdateSelection );
 
 private:
 
   gp_Pnt myAttach; //!< Attachment point of extension line.
   gp_Pnt myPosition; //!< Position of text label.
+  gp_Pnt myStartPosition; //!< Position before starting dragging operation.
   Standard_Boolean myIsScreenFixed; //!< Flag indicating whether "screen fixed" positioning mode is turned on or off.
   Standard_Boolean myIsAutoHide; //!< Flag indicating whether "auto-hiding" option is turned on.
   HighlightMode myHilightMode; //!< Highlight mode for presentation.
@@ -234,10 +255,34 @@ private:
     OpenGl_PrimitiveArray* myExtLineDraw;   //!< Extension line draw element.
     OpenGl_PrimitiveArray* myExtMarkerDraw; //!< Extension marker draw element.
     mutable float myTextLineY;              //!< Text's underlines relative position.
+    mutable Graphic3d_Vec3 myTextSize;      //!< Text's width, height and descent.
+    mutable Graphic3d_Vec2 myTextUnderline; //!< Text's underline position.
     mutable unsigned int myTextDPI;         //!< Text's DPI scale used for last rendering.
   };
 
   friend class OpenGl_Annotation; // allow opengl element to get private data and invoke callback methods
+
+private:
+
+  //! Custom entity owner implementing correct highlight for topmost mode.
+  class GEOM_AnnotationOwner : public SelectMgr_EntityOwner
+  {
+  public:
+
+    //! Constructor.
+    GEOM_AnnotationOwner( const Handle(SelectMgr_SelectableObject)& theSelectable,
+                          const Standard_Integer thePriority = 0 )
+      : SelectMgr_EntityOwner( theSelectable, thePriority ) {}
+
+    //! Perform highlighting of the presentation.
+    //! \param thePresentationMgr [in] the presentation manager.
+    //! \param theColor [in] the highlighting color.
+    //! \param theMode [in] the display mode.
+    virtual void
+      HilightWithColor( const Handle(PrsMgr_PresentationManager3d)& thePresentationMgr,
+                        const Quantity_NameOfColor theColor,
+                        const Standard_Integer theMode = 0 ) Standard_OVERRIDE;
+  };
 };
 
 DEFINE_STANDARD_HANDLE( GEOM_Annotation, AIS_InteractiveObject )
