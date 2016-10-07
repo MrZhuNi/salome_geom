@@ -100,11 +100,8 @@ bool VTKPlugin_GUI::exportVTK( SUIT_Desktop* parent )
 {
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return false;
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
-  if ( !study ) return false;
 
-  SALOMEDS::Study_var dsStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
-  GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "VTKPluginEngine" );
+  GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( "VTKPluginEngine" );
   VTKOpPtr vtkOp = GEOM::IVTKOperations::_narrow( op );
   if ( vtkOp.isNull() ) return false;
 

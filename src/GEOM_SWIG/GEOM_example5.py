@@ -33,7 +33,7 @@ from salome.geom import geomBuilder
 geompy = geomBuilder.New(salome.myStudy)
 
 #Create Points
-BasicOp = geompy.GetIBasicOperations(salome.myStudyId)
+BasicOp = geompy.GetIBasicOperations()
 Vertex1 = BasicOp.MakePointXYZ(0., 0., 0.)
 Vertex2 = BasicOp.MakePointXYZ(100., 20., 30.)
 Vertex3 = BasicOp.MakePointXYZ(150., 100., -25.)

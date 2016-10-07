@@ -137,7 +137,7 @@ extern "C" {
   }
 }
 
-GeometryGUI::StudyTextureMap GeometryGUI::myTextureMap;
+GeometryGUI::TextureMap GeometryGUI::myTextureMap;
 
 GEOM::GEOM_Gen_var GeometryGUI::myComponentGeom = GEOM::GEOM_Gen::_nil();
 
@@ -177,17 +177,15 @@ CORBA::Object_var GeometryGUI::ClientSObjectToObject (_PTR(SObject) theSObject)
 }
 
 //=======================================================================
-// function : ClientStudyToStudy
+// function : GetStudy
 // purpose  :
 //=======================================================================
-SALOMEDS::Study_var GeometryGUI::ClientStudyToStudy (_PTR(Study) theStudy)
+SALOMEDS::Study_var GeometryGUI::GetStudy()
 {
   SALOME_NamingService *aNamingService = SalomeApp_Application::namingService();
-  CORBA::Object_var aSMObject = aNamingService->Resolve("/myStudyManager");
-  SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow(aSMObject);
-  int aStudyID = theStudy->StudyId();
-  SALOMEDS::Study_var aDSStudy = aStudyManager->GetStudyByID(aStudyID);
-  return aDSStudy._retn();
+  CORBA::Object_var aStudyObject = aNamingService->Resolve("/Study");
+  SALOMEDS::Study_var aStudy = SALOMEDS::Study::_narrow(aStudyObject);
+  return aStudy._retn();
 }
 
 void GeometryGUI::Modified (bool theIsUpdateActions)
@@ -882,9 +880,8 @@ void GeometryGUI::createOriginAndBaseVectors()
     return;
   }
   if ( appStudy ) {
-    _PTR(Study) studyDS = appStudy->studyDS();
-    if ( studyDS && !CORBA::is_nil( GetGeomGen() ) ) {
-      GEOM::GEOM_IBasicOperations_var aBasicOperations = GetGeomGen()->GetIBasicOperations( studyDS->StudyId() );
+    if ( !CORBA::is_nil( GetGeomGen() ) ) {
+      GEOM::GEOM_IBasicOperations_var aBasicOperations = GetGeomGen()->GetIBasicOperations();
       if ( !aBasicOperations->_is_nil() ) {
         SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
         double aLength = aResourceMgr->doubleValue( "Geometry", "base_vectors_length", 1.0 );
@@ -893,11 +890,10 @@ void GeometryGUI::createOriginAndBaseVectors()
         GEOM::GEOM_Object_var anOY = aBasicOperations->MakeVectorDXDYDZ( 0.0, aLength, 0.0 );
         GEOM::GEOM_Object_var anOZ = aBasicOperations->MakeVectorDXDYDZ( 0.0, 0.0, aLength );
 
-        SALOMEDS::Study_var aDSStudy = ClientStudyToStudy( studyDS );
-        GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOrigin, "O" );
-        GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOX, "OX" );
-        GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOY, "OY" );
-        GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOZ, "OZ" );
+        GetGeomGen()->PublishInStudy( SALOMEDS::SObject::_nil(), anOrigin, "O" );
+        GetGeomGen()->PublishInStudy( SALOMEDS::SObject::_nil(), anOX, "OX" );
+        GetGeomGen()->PublishInStudy( SALOMEDS::SObject::_nil(), anOY, "OY" );
+        GetGeomGen()->PublishInStudy( SALOMEDS::SObject::_nil(), anOZ, "OZ" );
         anOrigin->UnRegister();
         anOX->UnRegister();
         anOY->UnRegister();
@@ -2155,31 +2151,27 @@ QString GeometryGUI::engineIOR() const
   return "";
 }
 
-Handle(TColStd_HArray1OfByte) GeometryGUI::getTexture
-      (SalomeApp_Study* theStudy, int theId, int& theWidth, int& theHeight)
+Handle(TColStd_HArray1OfByte) GeometryGUI::getTexture (int theId, int& theWidth, int& theHeight)
 {
   theWidth = theHeight = 0;
 
   Handle(TColStd_HArray1OfByte) aTexture;
 
-  if (theStudy) {
-    TextureMap aTextureMap = myTextureMap[ theStudy->studyDS()->StudyId() ];
-    aTexture = aTextureMap[ theId ];
-    if ( aTexture.IsNull() ) {
-      GEOM::GEOM_IInsertOperations_var aInsOp = GeometryGUI::GetGeomGen()->GetIInsertOperations( theStudy->studyDS()->StudyId() );
-      if ( !aInsOp->_is_nil() ) {
-        CORBA::Long aWidth, aHeight;
-        SALOMEDS::TMPFile_var aStream = aInsOp->GetTexture( theId, aWidth, aHeight );
-        if ( aWidth > 0 && aHeight > 0 && aStream->length() > 0 ) {
-          theWidth  = aWidth;
-          theHeight = aHeight;
+  aTexture = myTextureMap[ theId ];
+  if ( aTexture.IsNull() ) {
+    GEOM::GEOM_IInsertOperations_var aInsOp = GeometryGUI::GetGeomGen()->GetIInsertOperations();
+    if ( !aInsOp->_is_nil() ) {
+      CORBA::Long aWidth, aHeight;
+      SALOMEDS::TMPFile_var aStream = aInsOp->GetTexture( theId, aWidth, aHeight );
+      if ( aWidth > 0 && aHeight > 0 && aStream->length() > 0 ) {
+        theWidth  = aWidth;
+        theHeight = aHeight;
 
-          aTexture  = new TColStd_HArray1OfByte (1, aStream->length());
+        aTexture  = new TColStd_HArray1OfByte (1, aStream->length());
 
-          for (int i = 0; i < aStream->length(); i++)
-            aTexture->SetValue( i+1, (Standard_Byte)aStream[i] );
-          aTextureMap[ theId ] = aTexture;
-        }
+        for (int i = 0; i < aStream->length(); i++)
+          aTexture->SetValue( i+1, (Standard_Byte)aStream[i] );
+        myTextureMap[ theId ] = aTexture;
       }
     }
   }
@@ -3246,12 +3238,11 @@ void GeometryGUI::ClearShapeBuffer( GEOM::GEOM_Object_ptr theObj )
   TCollection_AsciiString asciiIOR( (char *)IOR.in() );
   GEOM_Client::get_client().RemoveShapeFromBuffer( asciiIOR );
 
-  SALOMEDSClient_StudyManager *aManager = SalomeApp_Application::studyMgr();
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
+  if ( !appStudy )
+	  return;
 
-  if (!aManager)
-    return;
-
-  _PTR(Study) aStudy = aManager->GetStudyByID(theObj->GetStudyID());
+   _PTR(Study) aStudy = appStudy->studyDS();
 
   if ( !aStudy )
     return;

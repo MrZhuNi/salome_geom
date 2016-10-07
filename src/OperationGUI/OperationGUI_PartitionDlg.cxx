@@ -330,7 +330,7 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
     if ( !myListTools.length() )
       return;
     else if ( myListTools.length() == 1 && getConstructorId() == 1 ) {
-      GEOM::GEOM_IMeasureOperations_var mOp = getGeomEngine()->GetIMeasureOperations( getStudyId() );
+      GEOM::GEOM_IMeasureOperations_var mOp = getGeomEngine()->GetIMeasureOperations();
       GEOM::ListOfLong_var   intList;
       GEOM::ListOfDouble_var dblList;
       GEOM::GEOM_IKindOfShape::shape_kind kind = mOp->KindOfShape( myListTools[0].in(), intList.out(), dblList.out() );
@@ -428,7 +428,7 @@ void OperationGUI_PartitionDlg::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr OperationGUI_PartitionDlg::createOperation()
 {
-  return getGeomEngine()->GetIBooleanOperations( getStudyId() );
+  return getGeomEngine()->GetIBooleanOperations();
 }
 
 

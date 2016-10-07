@@ -263,7 +263,7 @@ void RepairGUI_UnionFacesDlg::activateSelection()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_UnionFacesDlg::createOperation()
 {
-  return getGeomEngine()->GetIBlocksOperations( getStudyId() );
+  return getGeomEngine()->GetIBlocksOperations();
 }
 
 //=================================================================================

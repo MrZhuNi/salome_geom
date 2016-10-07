@@ -267,7 +267,7 @@ void RepairGUI_RemoveExtraEdgesDlg::activateSelection()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_RemoveExtraEdgesDlg::createOperation()
 {
-  return getGeomEngine()->GetIBlocksOperations( getStudyId() );
+  return getGeomEngine()->GetIBlocksOperations();
 }
 
 //=================================================================================

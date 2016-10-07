@@ -555,7 +555,7 @@ void AdvancedGUI_PipeTShapeDlg::SelectionIntoArgument()
 
           if (aFindedObject->_is_nil()) { // Object not found in study
             GEOM::GEOM_IShapesOperations_var aShapesOp =
-              getGeomEngine()->GetIShapesOperations(getStudyId());
+              getGeomEngine()->GetIShapesOperations();
             aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
           }
           else {
@@ -847,7 +847,7 @@ void AdvancedGUI_PipeTShapeDlg::DisplayPreview (const bool activate, const bool 
 //=================================================================================
 GEOM::GEOM_IOperations_ptr AdvancedGUI_PipeTShapeDlg::createOperation()
 {
-  return getGeomEngine()->GetPluginOperations(getStudyId(), "AdvancedEngine");
+  return getGeomEngine()->GetPluginOperations("AdvancedEngine");
 }
 
 //=================================================================================

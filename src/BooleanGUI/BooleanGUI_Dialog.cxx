@@ -378,7 +378,7 @@ void BooleanGUI_Dialog::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BooleanGUI_Dialog::createOperation()
 {
-  return getGeomEngine()->GetIBooleanOperations(getStudyId());
+  return getGeomEngine()->GetIBooleanOperations();
 }
 
 //=================================================================================

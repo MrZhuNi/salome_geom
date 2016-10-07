@@ -236,7 +236,7 @@ void RepairGUI_RemoveWebsDlg::activateSelection()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_RemoveWebsDlg::createOperation()
 {
-  return getGeomEngine()->GetIHealingOperations(getStudyId());
+  return getGeomEngine()->GetIHealingOperations();
 }
 
 //=================================================================================

@@ -31,8 +31,6 @@
 // OCCT includes
 #include <TFunction_DriverTable.hxx>
 
-std::map <int, XAOPlugin_IOperations*> XAOPlugin_OperationsCreator::_mapOfOperations;
-
 XAOPlugin_OperationsCreator::XAOPlugin_OperationsCreator()
 {
   // Register drivers
@@ -48,19 +46,11 @@ XAOPlugin_OperationsCreator::~XAOPlugin_OperationsCreator()
 }
 
 GEOM_IOperations_i* XAOPlugin_OperationsCreator::Create( PortableServer::POA_ptr thePOA,
-                                                         int                     theStudyId,
                                                          GEOM::GEOM_Gen_ptr      theEngine,
                                                          ::GEOMImpl_Gen*         theGenImpl )
 {
   Unexpect aCatch( SALOME_SalomeException );
   MESSAGE( "XAOPlugin_OperationsCreator::Create" );
-  return new XAOPlugin_IOperations_i( thePOA, theEngine, get( theGenImpl, theStudyId ) );
-}
-
-XAOPlugin_IOperations* XAOPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl,
-							 int             theStudyId )
-{
-  if (_mapOfOperations.find( theStudyId ) == _mapOfOperations.end() )
-    _mapOfOperations[theStudyId] = new XAOPlugin_IOperations( theGenImpl, theStudyId );
-  return _mapOfOperations[theStudyId];
+  XAOPlugin_IOperations* anOperation = new XAOPlugin_IOperations( theGenImpl );
+  return new XAOPlugin_IOperations_i( thePOA, theEngine, anOperation );
 }

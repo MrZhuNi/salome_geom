@@ -392,7 +392,7 @@ void TransformationGUI_ScaleDlg::SetDoubleSpinBoxStep(double step)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr TransformationGUI_ScaleDlg::createOperation()
 {
-  return getGeomEngine()->GetITransformOperations(getStudyId());
+  return getGeomEngine()->GetITransformOperations();
 }
 
 //=================================================================================

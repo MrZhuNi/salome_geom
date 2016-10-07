@@ -250,7 +250,7 @@ void RepairGUI_FreeFacesDlg::activateSelection()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_FreeFacesDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================

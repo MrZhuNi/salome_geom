@@ -248,7 +248,7 @@ int GEOM_Swig::getIndexTopology( const char* theSubIOR, const char* theMainIOR )
   if ( !CORBA::is_nil( aGeomGen ) && !CORBA::is_nil( aMainShape ) && !CORBA::is_nil( aSubShape ) ) {
     // get shapes operations interface
     GEOM::GEOM_IShapesOperations_var anIShapesOperations =
-      aGeomGen->GetIShapesOperations( aMainShape->GetStudyID() );
+      aGeomGen->GetIShapesOperations();
     if ( !CORBA::is_nil( anIShapesOperations ) )
       index = anIShapesOperations->GetTopologyIndex( aMainShape, aSubShape );
   }
@@ -275,7 +275,7 @@ const char* GEOM_Swig::getShapeTypeString( const char* theIOR )
   if ( !CORBA::is_nil( aGeomGen ) && !CORBA::is_nil( aShape ) ) {
     // get shapes operations interface
     GEOM::GEOM_IShapesOperations_var anIShapesOperations =
-      aGeomGen->GetIShapesOperations( aShape->GetStudyID() );
+      aGeomGen->GetIShapesOperations();
     if ( !CORBA::is_nil( anIShapesOperations ) )
       aTypeName = anIShapesOperations->GetShapeTypeString( aShape );
   }

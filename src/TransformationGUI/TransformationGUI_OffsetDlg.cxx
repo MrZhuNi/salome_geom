@@ -240,7 +240,7 @@ void TransformationGUI_OffsetDlg::ValueChangedInSpinBox()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr TransformationGUI_OffsetDlg::createOperation()
 {
-  return getGeomEngine()->GetITransformOperations( getStudyId() );
+  return getGeomEngine()->GetITransformOperations();
 }
 
 //=================================================================================

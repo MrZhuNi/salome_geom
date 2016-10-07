@@ -268,7 +268,7 @@ void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
       myBase = aSelectedObject;
 
       // recompute myAng and myStep (Mantis issue 0021718)
-      GEOM::GEOM_IMeasureOperations_var anOper = getGeomEngine()->GetIMeasureOperations(getStudyId());
+      GEOM::GEOM_IMeasureOperations_var anOper = getGeomEngine()->GetIMeasureOperations();
       double Xmin, Xmax, Ymin, Ymax, Zmin, Zmax;
       anOper->GetBoundingBox(myBase.get(), true, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
       if (anOper->IsDone()) {
@@ -449,7 +449,7 @@ void TransformationGUI_MultiRotationDlg::CheckAngleStep (bool isOn)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr TransformationGUI_MultiRotationDlg::createOperation()
 {
-  return getGeomEngine()->GetITransformOperations(getStudyId());
+  return getGeomEngine()->GetITransformOperations();
 }
 
 //=================================================================================

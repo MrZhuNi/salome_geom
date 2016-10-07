@@ -652,7 +652,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
               GEOM._objref_GEOM_Gen.__init__(self)
               self.myMaxNbSubShapesAllowed = 0 # auto-publishing is disabled by default
               self.myBuilder = None
-              self.myStudyId = 0
               self.father    = None
 
               self.BasicOp  = None
@@ -755,7 +754,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## @{
         def init_geom(self,theStudy):
             self.myStudy = theStudy
-            self.myStudyId = self.myStudy._get_StudyId()
             self.myBuilder = self.myStudy.NewBuilder()
             self.father = self.myStudy.FindComponent("GEOM")
             notebook.myStudy = theStudy
@@ -769,19 +767,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 aPixmap.SetPixMap("ICON_OBJBROWSER_Geometry")
                 self.myBuilder.DefineComponentInstance(self.father,self)
                 pass
-            self.BasicOp  = self.GetIBasicOperations    (self.myStudyId)
-            self.CurvesOp = self.GetICurvesOperations   (self.myStudyId)
-            self.PrimOp   = self.GetI3DPrimOperations   (self.myStudyId)
-            self.ShapesOp = self.GetIShapesOperations   (self.myStudyId)
-            self.HealOp   = self.GetIHealingOperations  (self.myStudyId)
-            self.InsertOp = self.GetIInsertOperations   (self.myStudyId)
-            self.BoolOp   = self.GetIBooleanOperations  (self.myStudyId)
-            self.TrsfOp   = self.GetITransformOperations(self.myStudyId)
-            self.LocalOp  = self.GetILocalOperations    (self.myStudyId)
-            self.MeasuOp  = self.GetIMeasureOperations  (self.myStudyId)
-            self.BlocksOp = self.GetIBlocksOperations   (self.myStudyId)
-            self.GroupOp  = self.GetIGroupOperations    (self.myStudyId)
-            self.FieldOp  = self.GetIFieldOperations    (self.myStudyId)
+            self.BasicOp  = self.GetIBasicOperations    ()
+            self.CurvesOp = self.GetICurvesOperations   ()
+            self.PrimOp   = self.GetI3DPrimOperations   ()
+            self.ShapesOp = self.GetIShapesOperations   ()
+            self.HealOp   = self.GetIHealingOperations  ()
+            self.InsertOp = self.GetIInsertOperations   ()
+            self.BoolOp   = self.GetIBooleanOperations  ()
+            self.TrsfOp   = self.GetITransformOperations()
+            self.LocalOp  = self.GetILocalOperations    ()
+            self.MeasuOp  = self.GetIMeasureOperations  ()
+            self.BlocksOp = self.GetIBlocksOperations   ()
+            self.GroupOp  = self.GetIGroupOperations    ()
+            self.FieldOp  = self.GetIFieldOperations    ()
 
             # set GEOM as root in the use case tree
             self.myUseCaseBuilder = self.myStudy.GetUseCaseBuilder()
@@ -792,8 +790,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self.myBuilder.LoadWith(self.father, self)
             pass
 
-        def GetPluginOperations(self, studyID, libraryName):
-            op = GEOM._objref_GEOM_Gen.GetPluginOperations(self, studyID, libraryName)
+        def GetPluginOperations(self, libraryName):
+            op = GEOM._objref_GEOM_Gen.GetPluginOperations(self, libraryName)
             return op
 
         ## Enable / disable results auto-publishing

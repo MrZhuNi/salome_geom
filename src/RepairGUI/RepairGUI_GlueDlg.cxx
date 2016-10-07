@@ -408,7 +408,7 @@ void RepairGUI_GlueDlg::enterEvent(QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_GlueDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations(getStudyId());
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================

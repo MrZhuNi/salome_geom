@@ -207,7 +207,7 @@ void BuildGUI_CompoundDlg::enterEvent(QEvent* e)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BuildGUI_CompoundDlg::createOperation()
 {
-  return getGeomEngine()->GetIShapesOperations( getStudyId() );
+  return getGeomEngine()->GetIShapesOperations();
 }
 
 //=================================================================================

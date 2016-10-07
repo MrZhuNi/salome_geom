@@ -352,7 +352,7 @@ void RepairGUI_SuppressFacesDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_SuppressFacesDlg::createOperation()
 {
-  return getGeomEngine()->GetIHealingOperations(getStudyId());
+  return getGeomEngine()->GetIHealingOperations();
 }
 
 //=================================================================================

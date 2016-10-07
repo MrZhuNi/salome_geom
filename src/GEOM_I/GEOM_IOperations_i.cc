@@ -90,16 +90,6 @@ char* GEOM_IOperations_i::GetErrorCode()
 
 //=============================================================================
 /*!
- *  GetStudyID
- */
-//=============================================================================
-CORBA::Long GEOM_IOperations_i::GetStudyID()
-{
-  return _impl->GetDocID();
-}
-
-//=============================================================================
-/*!
  *  StartOperation
  */
 //=============================================================================
@@ -156,7 +146,7 @@ GEOM_IOperations_i::GetBaseObjectImpl(GEOM::GEOM_BaseObject_ptr theObject)
   HANDLE_NAMESPACE(GEOM_BaseObject) anImpl;
   if (!CORBA::is_nil(theObject)) {
     CORBA::String_var anEntry = theObject->GetEntry();
-    anImpl = GetImpl()->GetEngine()->GetObject( theObject->GetStudyID(), anEntry );
+    anImpl = GetImpl()->GetEngine()->GetObject( anEntry );
   }
   return anImpl;
 }

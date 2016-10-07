@@ -41,16 +41,9 @@ public:
   ~STEPPlugin_OperationsCreator();
 
   GEOM_IOperations_i* Create( PortableServer::POA_ptr thePOA,
-			      int                     theStudyId,
-			      GEOM::GEOM_Gen_ptr      theEngine,
-			      ::GEOMImpl_Gen*         theGenImpl );
+                              GEOM::GEOM_Gen_ptr      theEngine,
+                              ::GEOMImpl_Gen*         theGenImpl );
 
-private:
-  static STEPPlugin_IOperations* get( ::GEOMImpl_Gen*         theGenImpl,
-				      int                     theStudyId );
-
-private:
-  static std::map <int, STEPPlugin_IOperations*>  _mapOfOperations;
 
   friend class STEPPlugin_IECallBack;
 };

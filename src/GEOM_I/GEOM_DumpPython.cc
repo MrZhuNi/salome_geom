@@ -151,7 +151,7 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
   }
   
   TCollection_AsciiString aScript;
-  aScript += _impl->DumpPython(aStudy->StudyId(), objectDataVec, aVariableMap, isPublished, isMultiFile, isValidScript);
+  aScript += _impl->DumpPython(objectDataVec, aVariableMap, isPublished, isMultiFile, isValidScript);
 
   if (isPublished)
   {

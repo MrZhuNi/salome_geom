@@ -373,7 +373,7 @@ GEOM_Displayer* MeasureGUI_Skeleton::getDisplayer()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr MeasureGUI_Skeleton::createOperation()
 {
-  return getGeomEngine()->GetIMeasureOperations( getStudyId() );
+  return getGeomEngine()->GetIMeasureOperations();
 }
 
 //=================================================================================
