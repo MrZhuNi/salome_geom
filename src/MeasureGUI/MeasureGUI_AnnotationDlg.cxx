@@ -222,7 +222,7 @@ void MeasureGUI_AnnotationDlg::Init()
     myEditCurrentArgument = myShapeName;
 
     // default presentation values
-    myAnnotationProperties.Position = gp_Pnt(50, 50, 50);
+    myAnnotationProperties.Position = gp_Pnt(250, 250, 250);
     myAnnotationProperties.Text = tr("ANNOTATION_PREFIX");
     myAnnotationProperties.IsVisible = true;
     myAnnotationProperties.IsScreenFixed = false;
@@ -242,7 +242,7 @@ void MeasureGUI_AnnotationDlg::Init()
     connect(mySubShapeTypeCombo,   SIGNAL(currentIndexChanged(int)),
             this, SLOT(onSubShapeTypeChange()));
 
-    SelectionIntoArgument();
+    //SelectionIntoArgument();
   }
   else { // edition
 
@@ -256,10 +256,10 @@ void MeasureGUI_AnnotationDlg::Init()
 //=================================================================================
 void MeasureGUI_AnnotationDlg::activateSelection()
 {
-  globalSelection(GEOM_ALLSHAPES);
-  if (!myShape->_is_nil() && mySelectionMode != TopAbs_SHAPE) {
-    localSelection(myShape.get(), mySelectionMode);
-  }
+  //globalSelection(GEOM_ALLSHAPES);
+  //if (!myShape->_is_nil() && mySelectionMode != TopAbs_SHAPE) {
+  //  localSelection(myShape.get(), mySelectionMode);
+  //}
 }
 
 //=================================================================================
@@ -597,7 +597,7 @@ void MeasureGUI_AnnotationDlg::redisplayPreview()
 //=================================================================================
 gp_Pnt MeasureGUI_AnnotationDlg::getAttachPoint(const TopoDS_Shape& theShape)
 {
-  gp_Pnt aPoint = gp_Pnt(300, 300, 300);
+  gp_Pnt aPoint = gp_Pnt(0, 0, 0);
 
   return aPoint;
 }
