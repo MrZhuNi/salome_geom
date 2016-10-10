@@ -56,11 +56,12 @@ GEOM_IOperations_i* AdvancedEngine_OperationsCreator::Create (PortableServer::PO
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "AdvancedEngine_OperationsCreator::Create" );
-  _operation = new AdvancedEngine_IOperations( theGenImpl );
-  return new AdvancedEngine_IOperations_i( thePOA, theEngine, _operation );
+  return new AdvancedEngine_IOperations_i( thePOA, theEngine, get( theGenImpl ) );
 }
 
-AdvancedEngine_IOperations* AdvancedEngine_OperationsCreator::get()
+AdvancedEngine_IOperations* AdvancedEngine_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl )
 {
+  if( !_operation )
+    _operation = new AdvancedEngine_IOperations( theGenImpl );
   return _operation;
 }

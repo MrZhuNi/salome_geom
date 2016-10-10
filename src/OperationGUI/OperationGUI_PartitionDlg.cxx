@@ -505,12 +505,11 @@ bool OperationGUI_PartitionDlg::execute (ObjectList& objects)
 // function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void OperationGUI_PartitionDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
-                                                  SALOMEDS::SObject_ptr theSObject )
+void OperationGUI_PartitionDlg::restoreSubShapes( SALOMEDS::SObject_ptr theSObject )
 {
   if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
     // empty list of arguments means that all arguments should be restored
-    getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
+    getGeomEngine()->RestoreSubShapesSO( theSObject, GEOM::ListOfGO(),
                                          /*theFindMethod=*/GEOM::FSM_GetInPlaceByHistory,
                                          /*theInheritFirstArg=*/myListShapes.length() == 1 && myListTools.length() == 0,
                                          mainFrame()->CheckBoxAddPrefix->isChecked() ); // ? false

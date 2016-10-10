@@ -704,7 +704,7 @@ QString GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
 GEOM_Displayer* GEOMBase_Helper::getDisplayer()
 {
   if ( !myDisplayer )
-    myDisplayer = new GEOM_Displayer( getStudy() );
+    myDisplayer = new GEOM_Displayer();
   return myDisplayer;
 }
 

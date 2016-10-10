@@ -45,9 +45,9 @@ public:
 			                  ::GEOMImpl_Gen*         theGenImpl);
 
 private:
-  static AdvancedEngine_IOperations* get();
+  static AdvancedEngine_IOperations* get(::GEOMImpl_Gen* theGenImpl);
 private:
-  static AdvancedEngine_IOperations*_operation;
+  static AdvancedEngine_IOperations* _operation;
 };
 
 #endif

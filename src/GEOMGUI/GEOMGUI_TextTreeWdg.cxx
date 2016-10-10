@@ -50,10 +50,9 @@
 #include <QHash>
 
 GEOMGUI_TextTreeWdg::GEOMGUI_TextTreeWdg( SalomeApp_Application* app )
-  : myDisplayer(NULL)
 {
   myStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  myDisplayer = GEOM_Displayer( myStudy );
+  myDisplayer = GEOM_Displayer();
 
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   myVisibleIcon = QIcon( resMgr->loadPixmap( "SUIT", tr( "ICON_DATAOBJ_VISIBLE" ) ) );

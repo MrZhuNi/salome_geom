@@ -111,8 +111,6 @@ bool STEPPlugin_GUI::importSTEP( SUIT_Desktop* parent )
 {
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return false;
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
-  if ( !study ) return false;
 
   GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( "STEPPluginEngine" );
   STEPOpPtr stepOp = GEOM::ISTEPOperations::_narrow( op );
@@ -193,7 +191,7 @@ bool STEPPlugin_GUI::importSTEP( SUIT_Desktop* parent )
 	    GeometryGUI::GetGeomGen()->AddInStudy( group, grpName.in(), main );
 	  }
 	  transaction.commit();
-	  GEOM_Displayer( study ).Display( main.in() );
+	  GEOM_Displayer().Display( main.in() );
           main->UnRegister();
 	}
 	else

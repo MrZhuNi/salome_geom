@@ -56,11 +56,12 @@ GEOM_IOperations_i* BREPPlugin_OperationsCreator::Create( PortableServer::POA_pt
 {
   Unexpect aCatch( SALOME_SalomeException );
   MESSAGE( "BREPPlugin_OperationsCreator::Create" );
-  _operation = new BREPPlugin_IOperations( theGenImpl );
-  return new BREPPlugin_IOperations_i( thePOA, theEngine, _operation );
+  return new BREPPlugin_IOperations_i( thePOA, theEngine, get( theGenImpl ) );
 }
 
-BREPPlugin_IOperations* BREPPlugin_OperationsCreator::get()
+BREPPlugin_IOperations* BREPPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl )
 {
+  if( !_operation )
+    _operation = new BREPPlugin_IOperations( theGenImpl );
   return _operation;
 }

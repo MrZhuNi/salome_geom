@@ -32,6 +32,8 @@
 // OCCT includes
 #include <TFunction_DriverTable.hxx>
 
+STLPlugin_IOperations* STLPlugin_OperationsCreator::_operation;
+
 STLPlugin_OperationsCreator::STLPlugin_OperationsCreator()
 {
   // Register drivers
@@ -56,6 +58,12 @@ GEOM_IOperations_i* STLPlugin_OperationsCreator::Create( PortableServer::POA_ptr
 {
   Unexpect aCatch( SALOME_SalomeException );
   MESSAGE( "STLPlugin_OperationsCreator::Create" );
-  STLPlugin_IOperations* anOperation = new STLPlugin_IOperations( theGenImpl );
-  return new STLPlugin_IOperations_i( thePOA, theEngine, anOperation );
+  return new STLPlugin_IOperations_i( thePOA, theEngine, get( theGenImpl ) );
+}
+
+STLPlugin_IOperations* STLPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl )
+{
+  if( !_operation )
+    _operation = new STLPlugin_IOperations( theGenImpl );
+  return _operation;
 }

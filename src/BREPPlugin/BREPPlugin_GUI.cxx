@@ -143,7 +143,7 @@ bool BREPPlugin_GUI::importBREP( SUIT_Desktop* parent )
 	  
           entryList.append( so->GetID() );
           transaction.commit();
-          GEOM_Displayer( study ).Display( main.in() );
+          GEOM_Displayer().Display( main.in() );
           main->UnRegister();
         }
         else

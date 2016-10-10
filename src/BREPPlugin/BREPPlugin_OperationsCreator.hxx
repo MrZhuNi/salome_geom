@@ -44,10 +44,10 @@ public:
 			                  GEOM::GEOM_Gen_ptr      theEngine,
 			                  ::GEOMImpl_Gen*         theGenImpl );
 private:
-  static BREPPlugin_IOperations* get();
+  static BREPPlugin_IOperations* get(::GEOMImpl_Gen* theGenImpl);
 
 private:
-  static BREPPlugin_IOperations*  _operation;
+  static BREPPlugin_IOperations* _operation;
 
   friend class BREPPlugin_IECallBack;
 };

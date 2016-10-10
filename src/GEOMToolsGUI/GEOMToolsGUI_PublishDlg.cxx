@@ -141,22 +141,22 @@ GEOMToolsGUI_PublishDlg::~GEOMToolsGUI_PublishDlg()
     if ( appStudy ) {
       _PTR(Study) aStudy = appStudy->studyDS();
       if ( aStudy ) {
-	GEOM_Displayer displayer ( appStudy );
-	QTreeWidgetItemIterator it( myTreeWidget );
-	while ( *it ) {
-	  QString entry = myEntryToItem.key( *it );
-	  _PTR(SObject) SO ( aStudy->FindObjectID( qPrintable( entry ) ) );
-	  if ( SO ) {
-	    GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( SO ) );
-	    if ( CORBA::is_nil( aGeomObject ) ) continue;
-	    if ( displayer.IsDisplayed( aGeomObject->GetStudyEntry() ) ) {
-	      Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( aGeomObject->GetStudyEntry(), "GEOM", "" );
-	      displayer.Erase( io );
+        GEOM_Displayer displayer;
+	    QTreeWidgetItemIterator it( myTreeWidget );
+	    while ( *it ) {
+	      QString entry = myEntryToItem.key( *it );
+	      _PTR(SObject) SO ( aStudy->FindObjectID( qPrintable( entry ) ) );
+	      if ( SO ) {
+	        GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( SO ) );
+	        if ( CORBA::is_nil( aGeomObject ) ) continue;
+	        if ( displayer.IsDisplayed( aGeomObject->GetStudyEntry() ) ) {
+	          Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( aGeomObject->GetStudyEntry(), "GEOM", "" );
+	          displayer.Erase( io );
+	        }
+	      }
+	      ++it;
 	    }
-	  }
-	  ++it;
-	}
-	displayer.UpdateViewer();
+	    displayer.UpdateViewer();
       }
     }
   }
@@ -458,7 +458,7 @@ void GEOMToolsGUI_PublishDlg::onItemClicked(QTreeWidgetItem* theItem, int theCol
     if ( !SO ) return;
     GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( SO ) );
     if ( CORBA::is_nil( aGeomObject ) ) return;
-    GEOM_Displayer displayer ( appStudy );
+    GEOM_Displayer displayer;
     SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
     Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( aGeomObject->GetStudyEntry(), "GEOM", "" );
     if ( displayer.IsDisplayed( aGeomObject->GetStudyEntry() ) ) {

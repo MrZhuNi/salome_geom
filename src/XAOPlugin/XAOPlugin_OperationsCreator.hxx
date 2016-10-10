@@ -43,6 +43,11 @@ public:
   GEOM_IOperations_i* Create( PortableServer::POA_ptr thePOA,
                               GEOM::GEOM_Gen_ptr      theEngine,
                               ::GEOMImpl_Gen*         theGenImpl );
+private:
+  static XAOPlugin_IOperations* get(::GEOMImpl_Gen* theGenImpl);
+
+private:
+  static XAOPlugin_IOperations* _operation;
 
   friend class XAOPlugin_IECallBack;
 };

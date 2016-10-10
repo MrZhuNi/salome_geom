@@ -2094,7 +2094,7 @@ void GeometryGUI::onAutoBringToFront()
   SalomeApp_Study* appStudy = dynamic_cast< SalomeApp_Study* >( getApp()->activeStudy() );
   if (!appStudy) return;
 
-  GEOM_Displayer displayer( appStudy );
+  GEOM_Displayer displayer;
   
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;
@@ -2137,11 +2137,8 @@ void GeometryGUI::onAutoBringToFront()
 
 void GeometryGUI::updateFieldColorScale()
 {
-  if( SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( getApp()->activeStudy() ) )
-  {
-    GEOM_Displayer aDisplayer( aStudy );
-    aDisplayer.UpdateColorScale();
-  }
+  GEOM_Displayer aDisplayer;
+  aDisplayer.UpdateColorScale();
 }
 
 QString GeometryGUI::engineIOR() const
@@ -2688,12 +2685,9 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
              param == QString("scalar_bar_height") ||
              param == QString("scalar_bar_text_height") ||
              param == QString("scalar_bar_nb_intervals")) {
-      if( SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( getApp()->activeStudy() ) )
-      {
-        GEOM_Displayer aDisplayer( aStudy );
-        bool anIsRedisplayFieldSteps = param == QString("scalar_bar_nb_intervals");
-        aDisplayer.UpdateColorScale( anIsRedisplayFieldSteps, true );
-      }
+      GEOM_Displayer aDisplayer;
+      bool anIsRedisplayFieldSteps = param == QString("scalar_bar_nb_intervals");
+      aDisplayer.UpdateColorScale( anIsRedisplayFieldSteps, true );
     }
     else if ( param == QString("dimensions_color")        ||
               param == QString("dimensions_line_width")   ||
@@ -2711,13 +2705,7 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
         return;
       }
 
-      SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( anApp->activeStudy() );
-      if ( !aStudy )
-      {
-        return;
-      }
-
-      GEOM_Displayer aDisplayer( aStudy );
+      GEOM_Displayer aDisplayer;
 
       ViewManagerList aVMs;
       anApp->viewManagers( OCCViewer_Viewer::Type(), aVMs );
@@ -2760,7 +2748,7 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
 LightApp_Displayer* GeometryGUI::displayer()
 {
   if ( !myDisplayer )
-    myDisplayer = new GEOM_Displayer( dynamic_cast<SalomeApp_Study*>( getApp()->activeStudy() ) );
+    myDisplayer = new GEOM_Displayer();
   return myDisplayer;
 }
 
@@ -3135,7 +3123,7 @@ void UpdateNameMode( SalomeApp_Application* app )
   bool isMode = false;
   SalomeApp_Study* aStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
   SUIT_ViewWindow* viewWindow = app->desktop()->activeWindow();
-  GEOM_Displayer displayer( aStudy );
+  GEOM_Displayer displayer;
   int aMgrId = viewWindow->getViewManager()->getGlobalId();
 
   SALOME_View* window = displayer.GetActiveView();
@@ -3238,11 +3226,14 @@ void GeometryGUI::ClearShapeBuffer( GEOM::GEOM_Object_ptr theObj )
   TCollection_AsciiString asciiIOR( (char *)IOR.in() );
   GEOM_Client::get_client().RemoveShapeFromBuffer( asciiIOR );
 
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
-  if ( !appStudy )
-	  return;
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication());
+  SalomeApp_Study* appStudy = app ? dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) : 0;
 
-   _PTR(Study) aStudy = appStudy->studyDS();
+  if (!appStudy)
+    return;
+
+  _PTR(Study) aStudy = appStudy->studyDS();
 
   if ( !aStudy )
     return;

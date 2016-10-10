@@ -457,7 +457,7 @@ void GEOMToolsGUI::OnEditDelete()
   }
 
   _PTR(StudyBuilder) aStudyBuilder (aStudy->NewBuilder());
-  GEOM_Displayer* disp = new GEOM_Displayer( appStudy );
+  GEOM_Displayer* disp = new GEOM_Displayer();
 
   if ( isComponentSelected ) {
     // GEOM component is selected: delete all objects recursively
@@ -572,8 +572,7 @@ void GEOMToolsGUI::deactivate()
 {
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( app ) {
-    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-    GEOM_Displayer aDisp (appStudy);
+    GEOM_Displayer aDisp;
     aDisp.GlobalSelection();
     getGeometryGUI()->setLocalSelectionMode(GEOM_ALLOBJECTS);
   }

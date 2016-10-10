@@ -168,7 +168,7 @@ void GEOMToolsGUI::OnAutoColor()
 
   QList<SALOMEDS::Color> aReservedColors;
 
-  GEOM_Displayer displayer ( appStudy );
+  GEOM_Displayer displayer;
 
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;
@@ -256,7 +256,7 @@ void GEOMToolsGUI::OnColor()
   aSelMgr->selectedObjects( selected );
   if ( selected.IsEmpty() ) return;
 
-  GEOM_Displayer displayer( appStudy );
+  GEOM_Displayer displayer;
 
   // get active view
   SALOME_View* window = displayer.GetActiveView();
@@ -308,7 +308,7 @@ void GEOMToolsGUI::OnTexture()
   aSelMgr->selectedObjects( selected );
   if ( selected.IsEmpty() ) return;
 
-  GEOM_Displayer displayer( appStudy );
+  GEOM_Displayer displayer;
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;
 
@@ -351,7 +351,7 @@ void GEOMToolsGUI::OnChangeTransparency( bool increase )
   aSelMgr->selectedObjects( selected );
   if ( selected.IsEmpty() ) return;
 
-  GEOM_Displayer displayer( appStudy );
+  GEOM_Displayer displayer;
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;
 
@@ -396,7 +396,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
   aSelMgr->selectedObjects( selected );
   if ( selected.IsEmpty() ) return;
 
-  GEOM_Displayer displayer( appStudy );
+  GEOM_Displayer displayer;
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;
  
@@ -466,7 +466,7 @@ void GEOMToolsGUI::OnDeflection()
   aSelMgr->selectedObjects( selected );
   if ( selected.IsEmpty() ) return;
 
-  GEOM_Displayer displayer( appStudy );
+  GEOM_Displayer displayer;
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;
 
@@ -496,8 +496,7 @@ void GEOMToolsGUI::OnSelectOnly(int mode)
 {
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( app ) {
-    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-    GEOM_Displayer aDisp (appStudy);
+    GEOM_Displayer aDisp;
     aDisp.GlobalSelection(mode);
     getGeometryGUI()->setLocalSelectionMode(mode);
   }
@@ -665,7 +664,7 @@ void GEOMToolsGUI::OnEdgeWidth()
   aSelMgr->selectedObjects( selected );
   if ( selected.IsEmpty() ) return;
 
-  GEOM_Displayer displayer( appStudy );
+  GEOM_Displayer displayer;
 
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;
@@ -708,7 +707,7 @@ void GEOMToolsGUI::OnIsosWidth() {
   aSelMgr->selectedObjects( selected );
   if ( selected.IsEmpty() ) return;
 
-  GEOM_Displayer displayer( appStudy );
+  GEOM_Displayer displayer;
 
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;
@@ -750,7 +749,7 @@ void GEOMToolsGUI::OnBringToFront() {
   aSelMgr->selectedObjects( selected );
   if ( selected.IsEmpty() ) return;
 
-  GEOM_Displayer displayer( appStudy );
+  GEOM_Displayer displayer;
 
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;
@@ -776,7 +775,7 @@ void GEOMToolsGUI::OnClsBringToFront() {
   SalomeApp_Study* appStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
   if ( !appStudy ) return;
 
-  GEOM_Displayer displayer( appStudy );
+  GEOM_Displayer displayer;
 
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;
@@ -815,7 +814,7 @@ void GEOMToolsGUI::OnSetMaterial( const QVariant& theParam )
 
   if ( selected.IsEmpty() ) return;
   
-  GEOM_Displayer displayer( study );
+  GEOM_Displayer displayer;
 
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;

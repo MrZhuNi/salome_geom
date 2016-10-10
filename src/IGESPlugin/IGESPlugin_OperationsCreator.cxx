@@ -59,11 +59,12 @@ GEOM_IOperations_i* IGESPlugin_OperationsCreator::Create( PortableServer::POA_pt
 {
   Unexpect aCatch( SALOME_SalomeException );
   MESSAGE( "IGESPlugin_OperationsCreator::Create" );
-  _operation = new IGESPlugin_IOperations( theGenImpl );
-  return new IGESPlugin_IOperations_i( thePOA, theEngine, _operation );
+  return new IGESPlugin_IOperations_i( thePOA, theEngine, get( theGenImpl ) );
 }
 
-IGESPlugin_IOperations* IGESPlugin_OperationsCreator::get()
+IGESPlugin_IOperations* IGESPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl )
 {
+  if( !_operation )
+    _operation = new IGESPlugin_IOperations( theGenImpl );
   return _operation;
 }

@@ -31,6 +31,8 @@
 // OCCT includes
 #include <TFunction_DriverTable.hxx>
 
+VTKPlugin_IOperations* VTKPlugin_OperationsCreator::_operation;
+
 VTKPlugin_OperationsCreator::VTKPlugin_OperationsCreator()
 {
   // Register drivers
@@ -52,6 +54,12 @@ GEOM_IOperations_i* VTKPlugin_OperationsCreator::Create( PortableServer::POA_ptr
 {
   Unexpect aCatch( SALOME_SalomeException );
   MESSAGE( "VTKPlugin_OperationsCreator::Create" );
-  VTKPlugin_IOperations* anOperation = new VTKPlugin_IOperations( theGenImpl );
-  return new VTKPlugin_IOperations_i( thePOA, theEngine, anOperation );
+  return new VTKPlugin_IOperations_i( thePOA, theEngine, get( theGenImpl ) );
+}
+
+VTKPlugin_IOperations* VTKPlugin_OperationsCreator::get( ::GEOMImpl_Gen* theGenImpl )
+{
+  if( !_operation )
+    _operation = new VTKPlugin_IOperations( theGenImpl );
+  return _operation;
 }

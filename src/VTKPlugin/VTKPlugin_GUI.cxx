@@ -34,7 +34,6 @@
 #include "GeometryGUI.h"
 #include "GEOM_Operation.h"
 #include "GEOMBase.h"
-#include "GEOM_Displayer.h"
 #include "GEOM_GenericObjPtr.h"
 
 #include <SALOMEconfig.h>

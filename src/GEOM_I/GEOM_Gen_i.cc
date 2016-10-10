@@ -171,7 +171,8 @@ char* GEOM_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
 //          : Used when a study is loaded
 //          : The IOR (IORName) of object created is returned
 //============================================================================
-char* GEOM_Gen_i::LocalPersistentIDToIOR(const char* aLocalPersistentID,
+char* GEOM_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
+                                         const char* aLocalPersistentID,
                                          CORBA::Boolean isMultiFile,
                                          CORBA::Boolean isASCII)
 {
@@ -181,7 +182,7 @@ char* GEOM_Gen_i::LocalPersistentIDToIOR(const char* aLocalPersistentID,
   {
     TCollection_AsciiString anEntry;
     TDF_Tool::Entry(anObject->GetEntry(), anEntry);
-    GEOM::GEOM_BaseObject_var obj = GetObject(anObject->GetDocID(), anEntry.ToCString());
+    GEOM::GEOM_BaseObject_var obj = GetObject(anEntry.ToCString());
 
     CORBA::String_var aPersRefString = _orb->object_to_string(obj);
     return CORBA::string_dup(aPersRefString);
@@ -419,7 +420,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::SObject_ptr theSObjec
   //Set NoteBook variables used in the object creation
   TCollection_AsciiString aVars;
   CORBA::String_var aString=aBaseObj->GetParameters();
-  SALOMEDS::ListOfListOfStrings_var aSections = theStudy->ParseVariables(aString);
+  SALOMEDS::ListOfListOfStrings_var aSections = aStudy->ParseVariables(aString);
   for(int i = 0, n = aSections->length(); i < n; i++) {
     SALOMEDS::ListOfStrings aListOfVars = aSections[i];
     for(int j = 0, m = aListOfVars.length(); j < m; j++) {
@@ -474,7 +475,7 @@ void GEOM_Gen_i::CreateAndPublishGroup(GEOM::GEOM_Object_var theMainShape,
       Standard_Integer anIndex = anIndices.FindIndex(aValue);
       //anArray->SetValue(1, anIndex);
       GOp->AddObject(GrObj,anIndex);
-      //anObj = GEOM_Engine::GetEngine()->AddObject(aMainShape->GetDocID(), GEOM_SUBSHAPE);
+      //anObj = GEOM_Engine::GetEngine()->AddObject(GEOM_SUBSHAPE);
       //if (anObj.IsNull()) continue;
       //HANDLE_NAMESPACE(GEOM_Function) aFunction = anObj->AddFunction(GEOM_Object::GetSubShapeID(), 1);
       //if (aFunction.IsNull()) continue;
@@ -486,8 +487,8 @@ void GEOM_Gen_i::CreateAndPublishGroup(GEOM::GEOM_Object_var theMainShape,
       //SALOMEDS::SObject_var aResultSO;
       //TCollection_AsciiString anEntry;
       //TDF_Tool::Entry(anObj->GetEntry(),anEntry);
-      //GEOM::GEOM_Object_var aGObj = GetObject(anObj->GetDocID(), anEntry.ToCString());
-      //AddInStudy(theStudy, aGObj._retn(), SeqN.Value(i).ToCString(), GrObj);
+      //GEOM::GEOM_Object_var aGObj = GetObject(anEntry.ToCString());
+      //AddInStudy(aGObj._retn(), SeqN.Value(i).ToCString(), GrObj);
     }
   }
 }
@@ -730,7 +731,7 @@ CORBA::Boolean GEOM_Gen_i::LoadASCII(SALOMEDS::SComponent_ptr theComponent,
 // function : Close()
 // purpose  :
 //============================================================================
-void GEOM_Gen_i::Close()
+void GEOM_Gen_i::Close(SALOMEDS::SComponent_ptr theComponent)
 {
   _impl->Close();
 }
@@ -826,7 +827,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
 
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-  GEOM::GEOM_BaseObject_var obj = GetObject(anObj->GetDocID(), anEntry.ToCString());
+  GEOM::GEOM_BaseObject_var obj = GetObject(anEntry.ToCString());
 
   //Set the study entry of the published GEOM_Object
   obj->SetStudyEntry(aNewSO->GetID());
@@ -865,7 +866,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (GEOM::GEOM_BaseObject_ptr theObjec
 {
   SALOMEDS::SObject_var aResultSO;
   SALOMEDS::Study_var aStudy = GetStudy();
-  if(theObject->_is_nil() || theStudy->_is_nil()) return aResultSO;
+  if(theObject->_is_nil() || aStudy->_is_nil()) return aResultSO;
 
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
   CORBA::String_var IOR;
@@ -951,7 +952,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapesO (GEOM::GEOM_Object_ptr   theO
 
   // find SObject in the study if it is already published
   CORBA::String_var anIORo = _orb->object_to_string(theObject);
-  SALOMEDS::SObject_var aSO = theStudy->FindObjectIOR(anIORo.in());
+  SALOMEDS::SObject_var aSO = GetStudy()->FindObjectIOR(anIORo.in());
   //PTv, IMP 0020001, The salome object <aSO>
   // is not obligatory in case of invokation from script
   // if (CORBA::is_nil(aSO))
@@ -2567,7 +2568,7 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape (GEOM::GEOM_Object_ptr   theMainSh
 
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(anObject->GetEntry(), anEntry);
-  return GEOM::GEOM_Object::_narrow( GetObject(anObject->GetDocID(), anEntry.ToCString()));
+  return GEOM::GEOM_Object::_narrow( GetObject(anEntry.ToCString()));
 }
 
 //=============================================================================

@@ -178,8 +178,8 @@ void MeasureGUI::ChangeDimensionsVisibility( const bool theIsVisible )
     return;
   }
 
-  SalomeApp_Study* anActiveStudy = dynamic_cast<SalomeApp_Study*>( anApp->activeStudy() );
-  if ( !anActiveStudy )
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( anApp->activeStudy() );
+  if ( !aStudy )
   {
     return;
   }
@@ -205,16 +205,16 @@ void MeasureGUI::ChangeDimensionsVisibility( const bool theIsVisible )
 
   SUIT_OverrideCursor wc;
 
-  GEOMGUI_DimensionProperty aDimensions( anActiveStudy, anIObject->getEntry() );
+  GEOMGUI_DimensionProperty aDimensions( aStudy, anIObject->getEntry() );
 
   for ( int anIt = 0; anIt < aDimensions.GetNumber(); ++anIt )
   {
     aDimensions.SetVisible( anIt, theIsVisible );
   }
 
-  aDimensions.SaveToAttribute( anActiveStudy, anIObject->getEntry() );
+  aDimensions.SaveToAttribute( aStudy, anIObject->getEntry() );
 
-  GEOM_Displayer( anActiveStudy ).Redisplay( anIObject, true );
+  GEOM_Displayer().Redisplay( anIObject, true );
 }
 
 //=======================================================================

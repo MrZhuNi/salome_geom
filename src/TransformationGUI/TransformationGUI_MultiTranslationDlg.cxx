@@ -728,8 +728,7 @@ QList<GEOM::GeomObjPtr> TransformationGUI_MultiTranslationDlg::getSourceObjects(
 // function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void TransformationGUI_MultiTranslationDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
-                                                              SALOMEDS::SObject_ptr theSObject)
+void TransformationGUI_MultiTranslationDlg::restoreSubShapes (SALOMEDS::SObject_ptr theSObject)
 {
   if (mainFrame()->CheckBoxRestoreSS->isChecked()) {
     // we pass here the first operation argument (object) through the list of arguments
@@ -738,7 +737,7 @@ void TransformationGUI_MultiTranslationDlg::restoreSubShapes (SALOMEDS::Study_pt
     GEOM::ListOfGO_var anArgs = new GEOM::ListOfGO;
     anArgs->length(1);
     anArgs[0] = myBase.copy();
-    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
+    getGeomEngine()->RestoreSubShapesSO(theSObject, anArgs,
                                         /*theFindMethod=*/GEOM::FSM_MultiTransformed,
                                         /*theInheritFirstArg=*/true,
                                         mainFrame()->CheckBoxAddPrefix->isChecked());

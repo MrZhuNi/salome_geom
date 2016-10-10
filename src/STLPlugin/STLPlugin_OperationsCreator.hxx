@@ -44,6 +44,12 @@ public:
                               GEOM::GEOM_Gen_ptr      theEngine,
                               ::GEOMImpl_Gen*         theGenImpl );
 
+private:
+  static STLPlugin_IOperations* get(::GEOMImpl_Gen* theGenImpl);
+
+private:
+  static STLPlugin_IOperations* _operation;
+
   friend class STLPlugin_IECallBack;
 };
 

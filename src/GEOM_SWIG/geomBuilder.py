@@ -891,10 +891,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestAll.py
             try:
-                aSObject = self.AddInStudy(self.myStudy, aShape, aName, None)
+                aSObject = self.AddInStudy(aShape, aName, None)
                 if aSObject and aName: aSObject.SetAttrString("AttributeName", aName)
                 if doRestoreSubShapes:
-                    self.RestoreSubShapesSO(self.myStudy, aSObject, theArgs,
+                    self.RestoreSubShapesSO(aSObject, theArgs,
                                             theFindMethod, theInheritFirstArg, True )
             except:
                 print "addToStudy() failed"
@@ -1010,7 +1010,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 list of published sub-shapes
             """
             # Example: see GEOM_TestAll.py
-            return self.RestoreSubShapesO(self.myStudy, theObject, theArgs,
+            return self.RestoreSubShapesO(theObject, theArgs,
                                           theFindMethod, theInheritFirstArg, theAddPrefix)
 
         ## Publish sub-shapes, standing for arguments and sub-shapes of arguments

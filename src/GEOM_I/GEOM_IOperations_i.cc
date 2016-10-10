@@ -131,7 +131,7 @@ GEOM_IOperations_i::GetBaseObject(HANDLE_NAMESPACE(GEOM_BaseObject) theObject)
   if (theObject.IsNull()) return GO._retn();
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  GO = _engine->GetObject(theObject->GetDocID(), (char*) anEntry.ToCString());
+  GO = _engine->GetObject((char*) anEntry.ToCString());
   return GO._retn();
 }
 

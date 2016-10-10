@@ -178,7 +178,7 @@ char* GEOM_Object_i::GetSubShapeName(CORBA::Long subID)
   {
     TCollection_AsciiString anEntry = anIt.Value();
     HANDLE_NAMESPACE(GEOM_BaseObject) anObj =
-      GEOM_Engine::GetEngine()->GetObject( _impl->GetDocID(), anEntry.ToCString(), false );
+      GEOM_Engine::GetEngine()->GetObject( anEntry.ToCString(), false );
     if ( anObj.IsNull() ) continue;
 
     TCollection_AsciiString aSubName = anObj->GetName();

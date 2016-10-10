@@ -42,8 +42,7 @@
 #include <QMessageBox>
 
 GEOMToolsGUI_ReduceStudyDlg::GEOMToolsGUI_ReduceStudyDlg( QWidget* parent )
-:QDialog( parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint ),
-myDisplayer(NULL)
+:QDialog( parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint )
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   myVisible = QIcon( resMgr->loadPixmap( "SUIT", tr( "ICON_DATAOBJ_VISIBLE" ) ) );
@@ -53,7 +52,7 @@ myDisplayer(NULL)
   if ( !myApp ) return;
   SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
   myStudy = study->studyDS();
-  myDisplayer = GEOM_Displayer( study );
+  myDisplayer = GEOM_Displayer();
 
   setWindowTitle( tr( "GEOM_REDUCE_STUDY_TITLE" ) );
   setAttribute(Qt::WA_DeleteOnClose);

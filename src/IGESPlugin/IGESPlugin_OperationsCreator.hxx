@@ -44,10 +44,10 @@ public:
 			                  GEOM::GEOM_Gen_ptr      theEngine,
 			                  ::GEOMImpl_Gen*         theGenImpl );
 private:
-  static IGESPlugin_IOperations* get();
+  static IGESPlugin_IOperations* get(::GEOMImpl_Gen* theGenImpl);
 
 private:
-  IGESPlugin_IOperations*  _operation;
+  static IGESPlugin_IOperations* _operation;
 
   friend class IGESPlugin_IECallBack;
 };

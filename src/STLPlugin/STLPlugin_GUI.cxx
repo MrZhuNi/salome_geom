@@ -107,8 +107,6 @@ bool STLPlugin_GUI::importSTL( SUIT_Desktop* parent )
 {
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return false;
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
-  if ( !study ) return false;
 
   GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( "STLPluginEngine" );
   STLOpPtr stlOp = GEOM::ISTLOperations::_narrow( op );
@@ -143,7 +141,7 @@ bool STLPlugin_GUI::importSTL( SUIT_Desktop* parent )
 	  
 	  entryList.append( so->GetID() );
 	  transaction.commit();
-	  GEOM_Displayer( study ).Display( main.in() );
+	  GEOM_Displayer().Display( main.in() );
           main->UnRegister();
 	}
 	else

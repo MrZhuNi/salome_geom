@@ -124,14 +124,9 @@ void GEOM_Swig::createAndDisplayGO( const char* theEntry, bool theUpdateViewer )
     {}
     virtual void Execute()
     {
-      SUIT_Application* app = SUIT_Session::session()->activeApplication();
-      if ( !app ) return;
-      SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-      if ( !study ) return;
-
       Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( myEntry.c_str(), "GEOM", "" );
 
-      GEOM_Displayer( study ).Display( io, myUpdateViewer );
+      GEOM_Displayer().Display( io, myUpdateViewer );
     }
   };
 
@@ -186,14 +181,9 @@ void GEOM_Swig::eraseGO( const char* theEntry, bool theUpdateViewer )
     {}
     virtual void Execute()
     {
-      SUIT_Application* app = SUIT_Session::session()->activeApplication();
-      if ( !app ) return;
-      SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-      if ( !study ) return;
-
       Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( myEntry.c_str(), "GEOM", "" );
 
-      GEOM_Displayer( study ).Erase( io, true, myUpdateViewer );
+      GEOM_Displayer().Erase( io, true, myUpdateViewer );
     }
   };
 
@@ -212,13 +202,7 @@ void GEOM_Swig::UpdateViewer()
     {}
     virtual void Execute()
     {
-      SUIT_Application* app = SUIT_Session::session()->activeApplication();
-      if ( !app ) return;
-
-      SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-      if ( !study ) return;
-      
-      GEOM_Displayer( study ).UpdateViewer();
+      GEOM_Displayer().UpdateViewer();
     }
   };
   
@@ -354,7 +338,7 @@ void TSetPropertyEvent::Execute()
   SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
   if ( !study ) return;
   
-  GEOM_Displayer displayer( study );
+  GEOM_Displayer displayer;
   
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;
