@@ -233,17 +233,6 @@ bool GEOMGUI_ShapeAnnotations::operator == (const GEOMGUI_ShapeAnnotations& theO
 }
 
 //=================================================================================
-// function : Add
-// purpose  : 
-//=================================================================================
-void GEOMGUI_ShapeAnnotations::Add( const Handle(GEOM_Annotation)& theShapeAnnotation, const gp_Ax3& theLCS )
-{
-  Add( ShapeAnnotation() );
-  //
-  FromPresentation( Count() - 1, theShapeAnnotation, theLCS );
-}
-
-//=================================================================================
 // function : FromPresentation
 // purpose  : 
 //=================================================================================
@@ -283,6 +272,26 @@ void GEOMGUI_ShapeAnnotations::ToPresentation( const int theIndex,
   //theShapeAnnotation->SetText( aText );
   //theShapeAnnotation->SetPosition( aEntry.Position );
   //theShapeAnnotation->SetAttachPoint( aEntry.Attach.Transformed( aToLCS ) );
+}
+
+bool GEOMGUI_ShapeAnnotations::IsVisible( const int theIndex ) const
+{
+  return myAnnotations[theIndex].IsVisible;
+}
+
+void GEOMGUI_ShapeAnnotations::SetVisible( const int theIndex, const bool theIsVisible )
+{
+  ShapeAnnotation& aChangeEntry = myAnnotations[theIndex];
+  aChangeEntry.IsVisible = theIsVisible;
+}
+
+QString GEOMGUI_ShapeAnnotations::GetName( const int theIndex ) const
+{
+  return "Name";
+}
+
+void GEOMGUI_ShapeAnnotations::SetName( const int theIndex, const QString& theName )
+{
 }
 
 //=================================================================================

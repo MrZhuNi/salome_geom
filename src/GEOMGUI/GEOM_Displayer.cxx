@@ -1422,7 +1422,7 @@ void GEOM_Displayer::updateShapeAnnotations( const Handle(SALOME_InteractiveObje
   {
     aAnnotationList = aProperty.value<GEOMGUI_ShapeAnnotations>();
 
-    for ( int anI = 0; anI < aAnnotationList.Count(); ++anI )
+    for ( int anI = 0; anI < aAnnotationList.GetNumber(); ++anI )
     {
       if ( !aAnnotationList.Get( anI ).IsVisible )
       {

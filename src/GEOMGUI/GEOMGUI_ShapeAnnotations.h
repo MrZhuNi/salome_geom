@@ -27,6 +27,8 @@
 #ifndef GEOMGUI_SHAPEANNOTATIONS_H
 #define GEOMGUI_SHAPEANNOTATIONS_H
 
+#include <GEOMGUI_VisualProperties.h>
+
 // OCCT includes
 #include <gp_Ax3.hxx>
 #include <QVariant>
@@ -40,6 +42,9 @@
 class SalomeApp_Study;
 class GEOM_Annotation;
 
+class GEOMGUI_ShapeAnnotations;
+typedef QSharedPointer<GEOMGUI_ShapeAnnotations> ShapeAnnotationsPtr;
+
 /*!
  * \brief Algorithms to translate and manitain list of shape annotation properties.
  *
@@ -47,7 +52,7 @@ class GEOM_Annotation;
  * To ensure that dimension is bound to the equal shape irrespectively of its location
  * transformation.
  */
-class Standard_EXPORT GEOMGUI_ShapeAnnotations
+class Standard_EXPORT GEOMGUI_ShapeAnnotations : public GEOMGUI_VisualProperties
 {
 public:
 
@@ -143,18 +148,12 @@ public:
   /*!
    * \brief Adds new shape annotation entry using explicit definition.
    * \param theShapeAnnotation [in] the explicit definition of the annotation.
+   * \param theLCS [in] the local coordinate system of parent object.
    */
   void Add( const ShapeAnnotation& theShapeAnnotation )
   {
     myAnnotations.append( theShapeAnnotation );
   }
-
-  /*!
-   * \brief Adds new entry using data of the interactive presentation given.
-   * \param theShapeAnnotation [in] the interactive shape annotation holding properties.
-   * \param theLCS [in] the local coordinate system of parent object.
-   */
-  void Add( const Handle(GEOM_Annotation)& theShapeAnnotation, const gp_Ax3& theLCS );
 
   /*!
    * \brief Update entry data using the explicit definition.
@@ -211,7 +210,37 @@ public:
   /*!
    * \brief Returns number of shape annotation records.
    */
-  int Count() const { return myAnnotations.size(); }
+  virtual int GetNumber() const { return myAnnotations.size(); };
+
+  /*!
+   * \brief Returns visibility state of dimension record by its index.
+   *
+   * \param theIndex [in] the index of the dimension record.
+   */
+  virtual bool IsVisible( const int theIndex ) const;
+
+  /*!
+   * \brief Changes visibility state of the dimension record.
+   *
+   * \param theIndex [in] the index of the dimension record.
+   * \param theIsVisible [in] the new visibility state.
+   */
+  virtual void SetVisible( const int theIndex, const bool theIsVisible );
+
+  /*!
+   * \brief Returns name of dimension record by its index.
+   *
+   * \param theIndex [in] the index of the dimension record.
+   */
+  virtual QString GetName( const int theIndex ) const;
+
+  /*!
+   * \brief Changes name of dimension record.
+   *
+   * \param theIndex [in] the index of the dimension record.
+   * \param theName [in] the new name.
+   */
+  virtual void SetName( const int theIndex, const QString& theName );
 
 public:
 
@@ -220,14 +249,14 @@ public:
    * \param theStudy [in] the study.
    * \param theEntry [in] the entry of GEOM object to operate with.
    */
-  void LoadFromAttribute( SalomeApp_Study* theStudy, const std::string& theEntry );
+  virtual void LoadFromAttribute( SalomeApp_Study* theStudy, const std::string& theEntry );
 
   /*!
    * \brief Saves properties data to attribute.
    * \param theStudy [in] the study.
    * \param theEntry [in] the entry of GEOM object to operate with.
    */
-  void SaveToAttribute( SalomeApp_Study* theStudy, const std::string& theEntry );
+  virtual void SaveToAttribute( SalomeApp_Study* theStudy, const std::string& theEntry );
 
 private:
 

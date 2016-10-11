@@ -28,6 +28,8 @@
 #define GEOMGUI_DIMENSIONPROPERTY_H
 
 // OCCT includes
+#include <GEOMGUI_VisualProperties.h>
+
 #include <AIS_DiameterDimension.hxx>
 #include <AIS_LengthDimension.hxx>
 #include <AIS_AngleDimension.hxx>
@@ -41,6 +43,9 @@
 #include <list>
 
 class SalomeApp_Study;
+
+class GEOMGUI_DimensionProperty;
+typedef QSharedPointer<GEOMGUI_DimensionProperty> DimensionPropertyPtr;
 
 /*!
  * \brief Utility class to unpack/pack dimension presentations as object property of study.
@@ -57,7 +62,7 @@ class SalomeApp_Study;
  * Diam:   (plane)[0-3] (flyout)[4] (text flags)[5-6] (arrow flag)[7] (circle loc, xdir, ydir, rad)[8-17]
  * Angle:               (flyout)[0] (text flags)[1-2] (arrow flag)[3] (p1)[4-6] (p2)[7-9] (center)[10-12]
  */
-class Standard_EXPORT GEOMGUI_DimensionProperty
+class Standard_EXPORT GEOMGUI_DimensionProperty : public GEOMGUI_VisualProperties
 {
 public:
 

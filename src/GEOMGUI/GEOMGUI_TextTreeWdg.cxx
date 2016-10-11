@@ -22,6 +22,7 @@
 #include "GEOMGUI_TextTreeWdg.h"
 
 #include "GEOMGUI_DimensionProperty.h"
+#include "GEOMGUI_ShapeAnnotations.h"
 #include "GeometryGUI.h"
 #include "GeometryGUI_Operations.h"
 #include <GEOM_Constants.h>
@@ -99,15 +100,15 @@ GEOMGUI_TextTreeWdg::GEOMGUI_TextTreeWdg( SalomeApp_Application* app )
   createActions();
   setContextMenuPolicy( Qt::CustomContextMenu );
   connect( this, SIGNAL( customContextMenuRequested(const QPoint&) ),
-	   this, SLOT( showContextMenu(const QPoint&) ) );
+           this, SLOT( showContextMenu(const QPoint&) ) );
 
   connect( myStudy, SIGNAL( objVisibilityChanged( QString, Qtx::VisibilityState ) ), 
-	   this, SLOT( updateVisibilityColumn( QString, Qtx::VisibilityState ) ) );
+           this, SLOT( updateVisibilityColumn( QString, Qtx::VisibilityState ) ) );
   connect( app->objectBrowser(), SIGNAL( updated() ), this, SLOT( updateTree() ) );
   GeometryGUI* aGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
   connect( aGeomGUI, SIGNAL( DimensionsUpdated( const QString& ) ), this, SLOT( updateBranch( const QString& ) ) );
   connect( this, SIGNAL( itemClicked( QTreeWidgetItem*, int) ), 
-	   this, SLOT( onItemClicked( QTreeWidgetItem*, int ) ) );
+           this, SLOT( onItemClicked( QTreeWidgetItem*, int ) ) );
 
 }
 
@@ -144,20 +145,25 @@ void GEOMGUI_TextTreeWdg::updateTree()
     if ( SC ) {
       _PTR(ChildIterator) anIter ( aDSStudy->NewChildIterator( SC ) );
       anIter->InitEx( true );
-      QList<QString> objEntries = myObjects.keys();
+      QList<QString> aGeomObjEntries = getObjects( Geometry ).keys();
+      QList<QString> anAnnotationObjEntries = getObjects( AnnotationShape ).keys();
       while( anIter->More() ) {
-	_PTR(SObject) valSO ( anIter->Value() );
-	_PTR(SObject) refSO;
-	if ( !valSO->ReferencedObject( refSO ) ) {
-	  // update tree of object's dimensions
-	  QString anEntry = valSO->GetID().c_str();
-	  updateBranch( anEntry );
-	  objEntries.removeAll( anEntry );
-	}
-	anIter->Next();
+        _PTR(SObject) valSO ( anIter->Value() );
+        _PTR(SObject) refSO;
+        if ( !valSO->ReferencedObject( refSO ) ) {
+          // update tree of object's dimensions
+          QString anEntry = valSO->GetID().c_str();
+          updateBranch( anEntry );
+          aGeomObjEntries.removeAll( anEntry );
+          anAnnotationObjEntries.removeAll( anEntry );
+        }
+        anIter->Next();
       }
-      foreach (QString entry, objEntries) {
-	removeBranch( entry, true );
+      foreach (QString entry, aGeomObjEntries) {
+        removeBranch( Geometry, entry, true );
+      }
+      foreach (QString entry, anAnnotationObjEntries) {
+        removeBranch( AnnotationShape, entry, true );
       }
     }
   }
@@ -169,66 +175,104 @@ void GEOMGUI_TextTreeWdg::updateTree()
 //=================================================================================
 void GEOMGUI_TextTreeWdg::updateBranch( const QString& theEntry )
 {
+  /// dimension property branch
+  fillBranch( Geometry, theEntry );
+
+  // annotation property branch
+  fillBranch(AnnotationShape, theEntry);
+}
+
+void GEOMGUI_TextTreeWdg::fillBranch( const BranchType& theBranchType, const QString& theEntry )
+{
   myStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
-  if ( myStudy ) {
+
+  if ( myStudy && !theEntry.isEmpty() ) {
+    VisualPropertiesPtr aProp = getVisualProperty( theBranchType );
+    int aNumber = aProp->GetNumber();
+    const std::string anEntry = theEntry.toStdString();
+
+    aProp->LoadFromAttribute( myStudy, theEntry.toStdString() );
+
+    if (!aProp)
+      return;
+
     _PTR(Study) aStudyDS = myStudy->studyDS();
     if ( aStudyDS ) {
       _PTR(SObject) obj( aStudyDS->FindObjectID( theEntry.toStdString() ) );
       QString aName = obj->GetName().c_str();
   
-      GEOMGUI_DimensionProperty aProp;
-      aProp.LoadFromAttribute( myStudy, theEntry.toStdString() );
-      int nbProps = aProp.GetNumber();
+      int nbProps = aProp->GetNumber();
 
-      QTreeWidgetItem* objectItem = itemFromEntry( theEntry );
+      QTreeWidgetItem* objectItem = itemFromEntry( theBranchType, theEntry );
       if ( objectItem ) {
-	removeBranch( theEntry, nbProps > 0 ? false : true );
+        removeBranch( theBranchType, theEntry, nbProps > 0 ? false : true );
       }
       QStringList itemName;
       if ( nbProps > 0 ) {
-	itemName << aName << "";
-	if ( !objectItem ) {
-	  objectItem = new QTreeWidgetItem( myDimensionsItem, itemName );
-	  objectItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );
-	  objectItem->setData( 1, Qt::UserRole, theEntry );
-	  myDimensionsItem->addChild( objectItem );
-	  myObjects.insert( theEntry, objectItem );
-	  if ( myDimensionsItem->childCount() == 1 )
-	    myDimensionsItem->setExpanded( true );
-	}
-	bool isDisplayed = myDisplayer.IsDisplayed( theEntry );
-	// read dimension records from property
-	for ( int anIt = 0; anIt < aProp.GetNumber(); ++anIt )
-	  {
-	    QString aName  = aProp.GetName( anIt );
-	    bool isVisible = aProp.IsVisible( anIt );
+        itemName << aName << "";
+        if ( !objectItem ) {
+          QTreeWidgetItem* aPropRootItem = getPropertyRootItem(theBranchType);
 
-	    QTreeWidgetItem* anItem = new QTreeWidgetItem;
-	    anItem->setText( 0, aName );
-	    //	if ( isDisplayed )
-	    anItem->setIcon( 1, isVisible ? myVisibleIcon : myInvisibleIcon );
-	    anItem->setData( 0, Qt::UserRole, anIt );
-	    anItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );
-	    objectItem->addChild( anItem ); 
-	  }
+          objectItem = new QTreeWidgetItem( aPropRootItem, itemName );
+          objectItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );
+          objectItem->setData( 1, Qt::UserRole, theEntry );
+          aPropRootItem->addChild( objectItem );
+          getObjects( theBranchType ).insert( theEntry, objectItem );
+          if ( aPropRootItem->childCount() == 1 )
+            aPropRootItem->setExpanded( true );
+        }
+        bool isDisplayed = myDisplayer.IsDisplayed( theEntry );
+        // read dimension records from property
+        for ( int anIt = 0; anIt < aProp->GetNumber(); ++anIt ) {
+          QString aName  = aProp->GetName( anIt );
+          bool isVisible = aProp->IsVisible( anIt );
+
+          QTreeWidgetItem* anItem = new QTreeWidgetItem;
+          anItem->setText( 0, aName );
+          //    if ( isDisplayed )
+          anItem->setIcon( 1, isVisible ? myVisibleIcon : myInvisibleIcon );
+          anItem->setData( 0, Qt::UserRole, anIt );
+          anItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );
+          objectItem->addChild( anItem );
+        }
       }
     }
   }
 }
 
 //=================================================================================
+// function : getVisualProperty
+// purpose  :
+//=================================================================================
+VisualPropertiesPtr GEOMGUI_TextTreeWdg::getVisualProperty( const BranchType& theBranchType )
+{
+  VisualPropertiesPtr aProp;
+
+  if ( theBranchType == Geometry ) {
+    aProp = QSharedPointer<GEOMGUI_DimensionProperty>( new GEOMGUI_DimensionProperty() );
+  }
+  else {
+    aProp = QSharedPointer<GEOMGUI_ShapeAnnotations>( new GEOMGUI_ShapeAnnotations() );
+  }
+
+return aProp;
+}
+
+//=================================================================================
 // function : removeBranch
 // purpose  :
 //=================================================================================
-void GEOMGUI_TextTreeWdg::removeBranch( const QString& theEntry, bool force )
+void GEOMGUI_TextTreeWdg::removeBranch( const BranchType& theBranchType, const QString& theEntry,
+                                        bool force )
 {
-  QTreeWidgetItem* objectItem = itemFromEntry( theEntry );
+  QTreeWidgetItem* objectItem = itemFromEntry( theBranchType, theEntry );
   if ( !objectItem )
     return;
   qDeleteAll( objectItem->takeChildren() );
   if ( force ) {
-    myDimensionsItem->removeChild( objectItem );
-    myObjects.remove( theEntry );
+    QTreeWidgetItem* aPropRootItem = getPropertyRootItem( theBranchType );
+    aPropRootItem->removeChild( objectItem );
+    getObjects( theBranchType ).remove( theEntry );
   }
 }
 
@@ -242,17 +286,21 @@ void GEOMGUI_TextTreeWdg::onItemClicked( QTreeWidgetItem* theItem, int theColumn
     return;
   
   std::string anEntry = entryFromItem( theItem->parent() ).toStdString();
+  BranchType aBranchType = branchTypeFromItem( theItem );
+
   int aDimIndex = idFromItem( theItem );
-  GEOMGUI_DimensionProperty aProp;
-  aProp.LoadFromAttribute( myStudy, anEntry );
-  if ( aProp.IsVisible( aDimIndex ) ) {
-    aProp.SetVisible( aDimIndex, false );
+
+  VisualPropertiesPtr aProp = getVisualProperty( aBranchType );
+  aProp->LoadFromAttribute( myStudy, anEntry );
+  if ( aProp->IsVisible( aDimIndex ) ) {
+    aProp->SetVisible( aDimIndex, false );
     theItem->setIcon( 1, myInvisibleIcon );
   } else {
-    aProp.SetVisible( aDimIndex, true );
+    aProp->SetVisible( aDimIndex, true );
     theItem->setIcon( 1, myVisibleIcon );
   }
-  aProp.SaveToAttribute( myStudy, anEntry );
+  aProp->SaveToAttribute( myStudy, anEntry );
+
   redisplay( anEntry.c_str() );
 }
 
@@ -287,33 +335,48 @@ QString GEOMGUI_TextTreeWdg::entryFromItem( QTreeWidgetItem* theShapeItem )
 // function : itemFromEntry
 // purpose  :
 //=================================================================================
-QTreeWidgetItem* GEOMGUI_TextTreeWdg::itemFromEntry( QString theEntry )
+QTreeWidgetItem* GEOMGUI_TextTreeWdg::itemFromEntry( const BranchType& theBranchType, QString theEntry )
 {
   if ( theEntry.isEmpty() )
     return 0;
 
-  return myObjects.value( theEntry, 0 );
+  return getObjects(theBranchType).value( theEntry, 0 );
+}
+
+//=================================================================================
+// function : updateVisibilityColumn
+// purpose  : Update visible state of icons of entry items.
+//=================================================================================
+void GEOMGUI_TextTreeWdg::updateVisibilityColumn( QString theEntry, Qtx::VisibilityState theState )
+{
+  //BranchType theBranchType,
+  updateVisibilityColumn( Geometry, theEntry, theState );
+  updateVisibilityColumn( AnnotationShape, theEntry, theState );
 }
 
 //=================================================================================
 // function : updateVisibilityColumn
 // purpose  : Update icons of dimension items.
 //=================================================================================
-void GEOMGUI_TextTreeWdg::updateVisibilityColumn( QString theEntry, Qtx::VisibilityState theState )
+void GEOMGUI_TextTreeWdg::updateVisibilityColumn( const BranchType& theBranchType, QString theEntry,
+                                                  Qtx::VisibilityState theState )
 {
-  QTreeWidgetItem* anItem = itemFromEntry( theEntry );
+  QTreeWidgetItem* anItem = itemFromEntry( theBranchType, theEntry );
   if ( !anItem )
     return;
   anItem->setDisabled( theState != Qtx::ShownState );
   QTreeWidgetItem* aChildItem;
-  GEOMGUI_DimensionProperty aProp;
+
+  VisualPropertiesPtr aProp = getVisualProperty( theBranchType );
+
   for ( int i=0; i < anItem->childCount(); i++ ) {
     aChildItem = anItem->child( i );
     if ( theState == Qtx::ShownState ) {
-      aProp.LoadFromAttribute( myStudy, theEntry.toStdString() );
-      if ( aProp.GetNumber() == 0 )
-	continue;
-      aChildItem->setIcon( 1, aProp.IsVisible( idFromItem( aChildItem ) ) ? myVisibleIcon : myInvisibleIcon );
+      aProp->LoadFromAttribute( myStudy, theEntry.toStdString() );
+      if ( aProp->GetNumber() == 0 )
+        continue;
+      aChildItem->setIcon( 1, aProp->IsVisible( idFromItem( aChildItem ) ) ? myVisibleIcon
+                                                                           : myInvisibleIcon );
       aChildItem->setDisabled( false );
     } else {
       aChildItem->setIcon( 1, QIcon() );
@@ -333,56 +396,65 @@ void GEOMGUI_TextTreeWdg::showContextMenu( const QPoint& pos )
   QMenu aMenu;
   aMenu.addAction( myActions[GEOMOp::OpShow] );
   aMenu.addAction( myActions[GEOMOp::OpHide] );
+
   if ( selectedItems().count() == 1 ) {
     QTreeWidgetItem* anItem = selectedItems().first();
     QString anEntry = entryFromItem( anItem->parent() );
     if ( !anEntry.isEmpty() ) {
-      GEOMGUI_DimensionProperty aProp;
-      aProp.LoadFromAttribute( myStudy, anEntry.toStdString() );
-      if ( aProp.GetNumber() == 0 )
-	return;
+      BranchType aBranchType = branchTypeFromItem( anItem );
+      VisualPropertiesPtr aProp = getVisualProperty( aBranchType );
+
+      aProp->LoadFromAttribute( myStudy, anEntry.toStdString() );
+      if ( aProp->GetNumber() == 0 )
+        return;
       aMenu.clear();
-      if ( aProp.IsVisible( idFromItem( anItem ) ) )
-	aMenu.addAction( myActions[GEOMOp::OpHide] );
+      if ( aProp->IsVisible( idFromItem( anItem ) ) )
+        aMenu.addAction( myActions[GEOMOp::OpHide] );
       else
-	aMenu.addAction( myActions[GEOMOp::OpShow] );
+        aMenu.addAction( myActions[GEOMOp::OpShow] );
     }
   }
   QAction* selPopupItem = aMenu.exec( viewport()->mapToGlobal(pos) );
-  if ( selPopupItem == myActions[GEOMOp::OpShow] )
-    setVisibility( true );
-  else if ( selPopupItem == myActions[GEOMOp::OpHide] )
-    setVisibility( false );
+
+  if ( selPopupItem == myActions[GEOMOp::OpShow] ||
+       selPopupItem == myActions[GEOMOp::OpHide] ) {
+    bool isVisible = selPopupItem == myActions[GEOMOp::OpShow];
+    foreach ( QTreeWidgetItem* anItem, selectedItems() ) {
+      setVisibility( anItem, isVisible );
+    }
+  }
 }
 
 //=================================================================================
 // function : setVisibility
-// purpose  : 
+// purpose  : set item visible
 //=================================================================================
-void GEOMGUI_TextTreeWdg::setVisibility( bool theVisibility )
+void GEOMGUI_TextTreeWdg::setVisibility( QTreeWidgetItem* theItem, bool theVisibility )
 {
-  if ( myDimensionsItem->isSelected() ) {
+  BranchType aBranchType = branchTypeFromItem( theItem );
+  if ( theItem == myDimensionsItem ||
+       theItem == myAnnotationsItem ) {
     // set visibility for all dimensions
     QTreeWidgetItem* anItem;
-    foreach ( QString entry, myObjects.keys() ) {
-      anItem = itemFromEntry( entry );
+    foreach ( QString entry, getObjects( aBranchType ).keys() ) {
+      anItem = itemFromEntry( aBranchType, entry );
       if ( !anItem->isDisabled() )
-	setShapeDimensionsVisibility( entry, theVisibility );
+        setShapeDimensionsVisibility( aBranchType, entry, theVisibility );
     }
     return;
   }
-  foreach ( QTreeWidgetItem* item, selectedItems() ) {
-    if ( item->isDisabled() || item->parent()->isSelected() )
-      continue;
-    QString anEntry = entryFromItem( item );
-    if ( !anEntry.isEmpty() ) {
-      // it is a shape item
-      setShapeDimensionsVisibility( anEntry, theVisibility );
-    } else {
-      // it is a dimension item
-      anEntry = entryFromItem( item->parent() );
-      setDimensionVisibility( anEntry, item, theVisibility );
-    }
+  else {
+    if ( !theItem->isDisabled() && !theItem->parent()->isSelected() ) {
+      QString anEntry = entryFromItem( theItem );
+      if ( !anEntry.isEmpty() ) {
+        // it is a shape item
+        setShapeDimensionsVisibility( aBranchType, anEntry, theVisibility );
+      } else {
+        // it is a dimension item
+        anEntry = entryFromItem( theItem->parent() );
+        setDimensionVisibility( aBranchType, anEntry, theItem, theVisibility );
+      }
+      }
   }
 }
 
@@ -390,13 +462,14 @@ void GEOMGUI_TextTreeWdg::setVisibility( bool theVisibility )
 // function : setShapeDimensionsVisibility
 // purpose  : 
 //=================================================================================
-void GEOMGUI_TextTreeWdg::setShapeDimensionsVisibility( QString theEntry, bool theVisibility )
+void GEOMGUI_TextTreeWdg::setShapeDimensionsVisibility( const BranchType& theBranchType,
+                                                        QString theEntry, bool theVisibility )
 {
-  QTreeWidgetItem* anItem = itemFromEntry( theEntry );
+  QTreeWidgetItem* anItem = itemFromEntry( theBranchType, theEntry );
   QTreeWidgetItem* aChildItem;
   for ( int i=0; i < anItem->childCount(); i++ ) {
     aChildItem = anItem->child( i );
-    setDimensionVisibility( theEntry, aChildItem, theVisibility );
+    setDimensionVisibility( theBranchType, theEntry, aChildItem, theVisibility );
   }
   redisplay( theEntry );
 }
@@ -405,15 +478,17 @@ void GEOMGUI_TextTreeWdg::setShapeDimensionsVisibility( QString theEntry, bool t
 // function : setDimensionVisibility
 // purpose  : 
 //=================================================================================
-void GEOMGUI_TextTreeWdg::setDimensionVisibility( QString theEntry, QTreeWidgetItem* theDimItem, bool theVisibility )
+void GEOMGUI_TextTreeWdg::setDimensionVisibility( const BranchType& theBranchType, QString theEntry,
+                                                  QTreeWidgetItem* theDimItem, bool theVisibility )
 {
-  GEOMGUI_DimensionProperty aProp;
-  aProp.LoadFromAttribute( myStudy, theEntry.toStdString() );
+  VisualPropertiesPtr aProp = getVisualProperty( theBranchType );
+
+  aProp->LoadFromAttribute( myStudy, theEntry.toStdString() );
   int aDimIndex = idFromItem( theDimItem );
-  if ( aProp.GetNumber() == 0  || aProp.IsVisible( aDimIndex ) == theVisibility )
+  if ( aProp->GetNumber() == 0  || aProp->IsVisible( aDimIndex ) == theVisibility )
     return;;
-  aProp.SetVisible( aDimIndex, theVisibility );
-  aProp.SaveToAttribute( myStudy, theEntry.toStdString() );
+  aProp->SetVisible( aDimIndex, theVisibility );
+  aProp->SaveToAttribute( myStudy, theEntry.toStdString() );
 
   theDimItem->setIcon( 1, theVisibility ? myVisibleIcon : myInvisibleIcon );
   redisplay( theEntry );
@@ -428,3 +503,46 @@ void GEOMGUI_TextTreeWdg::redisplay( QString theEntry )
   Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( theEntry.toLatin1().constData(), "GEOM", "TEMP_IO" );
   myDisplayer.Redisplay( io );
 }
+
+//=================================================================================
+// function : getPropertyRootItem
+// purpose  :
+//=================================================================================
+QTreeWidgetItem* GEOMGUI_TextTreeWdg::getPropertyRootItem( const BranchType& theBranchType )
+{
+  return theBranchType == Geometry ? myDimensionsItem : myAnnotationsItem;
+}
+
+//=================================================================================
+// function : getObjects
+// purpose  :
+//=================================================================================
+QHash<QString, QTreeWidgetItem*>& GEOMGUI_TextTreeWdg::getObjects( const BranchType& theBranchType )
+{
+  return theBranchType == Geometry ? myObjects : myAnnotationObjects;
+}
+
+//=================================================================================
+// function : branchTypeFromItem
+// purpose  :
+//=================================================================================
+GEOMGUI_TextTreeWdg::BranchType GEOMGUI_TextTreeWdg::branchTypeFromItem( QTreeWidgetItem* theItem )
+{
+  BranchType aBranchType = Geometry;
+
+  bool aBranchTypeFound = false;
+  QTreeWidgetItem* anItem = theItem;
+  while( !aBranchTypeFound && anItem ) {
+    if ( anItem == myDimensionsItem ||
+         anItem == myAnnotationsItem) {
+      aBranchTypeFound = true;
+      aBranchType = anItem == myDimensionsItem ? Geometry : AnnotationShape;
+    }
+    else {
+      anItem = anItem->parent();
+    }
+  }
+
+  return aBranchType;
+}
+

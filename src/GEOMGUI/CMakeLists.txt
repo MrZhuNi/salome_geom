@@ -75,6 +75,7 @@ SET(GEOMGUI_HEADERS
   GEOM_GEOMGUI.hxx
   GEOMGUI_CreationInfoWdg.h
   GEOMGUI_TextTreeWdg.h
+  GEOMGUI_VisualProperties.h
   GEOMGUI_DimensionProperty.h
   GEOMGUI_ShapeAnnotations.h
   )
