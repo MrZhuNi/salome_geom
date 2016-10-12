@@ -232,6 +232,11 @@ bool MeasureGUI_AnnotationInteractor::eventFilter( QObject* theObject, QEvent* t
         mySelection.Append( anAISContext->SelectedOwner() );
       }
 
+      if ( anAISContext->IsHilighted( myActiveIO ) )
+      {
+        anAISContext->Unhilight( myActiveIO, Standard_False );
+      }
+
       anAISContext->ClearSelected( Standard_False );
       anAISContext->AddOrRemoveSelected( aDetected );
 
@@ -253,6 +258,12 @@ bool MeasureGUI_AnnotationInteractor::eventFilter( QObject* theObject, QEvent* t
       if ( !myActiveIO.IsNull() )
       {
         const Handle(AIS_InteractiveContext) anAISContext = myViewer->getAISContext();
+
+        if ( anAISContext->IsHilighted( myActiveIO ) )
+        {
+          anAISContext->Unhilight( myActiveIO, Standard_False );
+        }
+
         const QPoint aDelta = aMouseEv->pos() - myStartPoint;
         myActiveIO->Drag( aDelta.x(), (-aDelta.y()), aView3d );
         anAISContext->Update( myActiveIO, Standard_False );
