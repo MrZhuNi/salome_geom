@@ -65,6 +65,7 @@ public:
 
 protected:
   // redefined from GEOMBase_Helper
+  virtual                             GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                        isValid (QString&);
   virtual bool                        execute ();
 

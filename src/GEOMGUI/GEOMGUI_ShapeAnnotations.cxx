@@ -137,6 +137,7 @@ GEOMGUI_ShapeAnnotations::GEOMGUI_ShapeAnnotations( const QString& theProperty )
       continue;
     }
 
+    QString aStrName       = "Annotation_X"; // TODO
     QString aStrText       = aRegExpItem.cap( 1 );
     QString aStrVisible    = aRegExpItem.cap( 2 );
     QString aStrFixed      = aRegExpItem.cap( 3 );
@@ -151,6 +152,7 @@ GEOMGUI_ShapeAnnotations::GEOMGUI_ShapeAnnotations( const QString& theProperty )
     aStrText.replace( "::", ":" );
 
     ShapeAnnotation aEntry;
+    aEntry.Name = aStrName;
     aEntry.Text = aStrText;
     aEntry.IsVisible = aStrVisible.toInt() != 0;
     aEntry.IsScreenFixed = aStrFixed.toInt() != 0;
@@ -245,6 +247,7 @@ void GEOMGUI_ShapeAnnotations::FromPresentation( const int theIndex,
   //
   ShapeAnnotation& aChangeEntry = myAnnotations[theIndex];
   aChangeEntry.IsScreenFixed = theShapeAnnotation->GetIsScreenFixed();
+  aChangeEntry.Name          = "Annotation_X"; /// TODO
   aChangeEntry.Text          = QString( (QChar*) theShapeAnnotation->GetText().ToExtString(), theShapeAnnotation->GetText().Length() );
   aChangeEntry.Attach        = theShapeAnnotation->GetAttachPoint().Transformed( aFromLCS );
   aChangeEntry.Position      = theShapeAnnotation->GetPosition();
@@ -258,40 +261,7 @@ void GEOMGUI_ShapeAnnotations::ToPresentation( const int theIndex,
                                                const Handle(GEOM_Annotation)& theShapeAnnotation,
                                                const gp_Ax3& theLCS )
 {
-  //gp_Trsf aToLCS;
-  //aToLCS.SetTransformation( theLCS, gp_Ax3() );
-  //
-  const ShapeAnnotation& aEntry = myAnnotations[theIndex];
-  aEntry.ToPresentation(theShapeAnnotation, theLCS);
-  ////
-  //TCollection_ExtendedString aText;
-  //for (int i = 0; i < (int)aEntry.Text.length(); i++ )
-  //  aText.Insert( i + 1, aEntry.Text[ i ].unicode() );
-  ////
-  //theShapeAnnotation->SetScreenFixed( aEntry.IsScreenFixed );
-  //theShapeAnnotation->SetText( aText );
-  //theShapeAnnotation->SetPosition( aEntry.Position );
-  //theShapeAnnotation->SetAttachPoint( aEntry.Attach.Transformed( aToLCS ) );
-}
-
-bool GEOMGUI_ShapeAnnotations::IsVisible( const int theIndex ) const
-{
-  return myAnnotations[theIndex].IsVisible;
-}
-
-void GEOMGUI_ShapeAnnotations::SetVisible( const int theIndex, const bool theIsVisible )
-{
-  ShapeAnnotation& aChangeEntry = myAnnotations[theIndex];
-  aChangeEntry.IsVisible = theIsVisible;
-}
-
-QString GEOMGUI_ShapeAnnotations::GetName( const int theIndex ) const
-{
-  return "Name";
-}
-
-void GEOMGUI_ShapeAnnotations::SetName( const int theIndex, const QString& theName )
-{
+  myAnnotations[theIndex].ToPresentation(theShapeAnnotation, theLCS);
 }
 
 //=================================================================================

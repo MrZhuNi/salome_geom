@@ -217,9 +217,10 @@ void MeasureGUI_AnnotationDlg::Init() {
     initName(tr("ANNOTATION_PREFIX"));
 
     // default presentation values
+    myAnnotationProperties.Name = getNewObjectName();
     myAnnotationProperties.Position = gp_Pnt(250, 250, 250);
     myAnnotationProperties.Text = tr("ANNOTATION_PREFIX");
-    myAnnotationProperties.IsVisible = true;
+    myAnnotationProperties.IsVisible = false;
     myAnnotationProperties.IsScreenFixed = false;
     myAnnotationProperties.Attach = gp_Pnt(0, 0, 0);
     myAnnotationProperties.ShapeIndex = -1;
@@ -486,6 +487,15 @@ void MeasureGUI_AnnotationDlg::onSubShapeTypeChange() {
   }
 
 //=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr MeasureGUI_AnnotationDlg::createOperation()
+{
+  return getGeomEngine()->GetILocalOperations(getStudyId());
+}
+
+//=================================================================================
 // function : isValid()
 // purpose  : Verify validity of input data
 //=================================================================================
@@ -522,8 +532,6 @@ bool MeasureGUI_AnnotationDlg::execute()
     return false;
 
   if (myIsCreation) {
-    QString aName = getNewObjectName();
-
     SalomeApp_Study* aStudy = getStudy();
     GEOMGUI_ShapeAnnotations aProp =
         aStudy->getObjectProperty( GEOM::sharedPropertiesId(),
@@ -533,14 +541,16 @@ bool MeasureGUI_AnnotationDlg::execute()
                                    .value<GEOMGUI_ShapeAnnotations>();
 
      // append new dimension record to data
+     int aPropId = aProp.GetNumber() - 1;
+     myAnnotationProperties.Name = getNewObjectName(); // update here as we do not listen name modification
+     myAnnotationProperties.IsVisible = true; // initially created annotation is hidden
      aProp.Add( myAnnotationProperties );
-     aProp.SetName( aProp.GetNumber() - 1, aName );
-     aProp.SetVisible( aProp.GetNumber() - 1, true );
 
     // store modified property data
     aStudy->setObjectProperty( GEOM::sharedPropertiesId(),
                                myShape->GetStudyEntry(), GEOM::propertyName(GEOM::ShapeAnnotations),
                                aProp);
+    aProp.SaveToAttribute( aStudy, myShape->GetStudyEntry() );
     myGeomGUI->emitDimensionsUpdated( QString( myShape->GetStudyEntry() ) );
   }
   else {
@@ -624,17 +634,17 @@ void MeasureGUI_AnnotationDlg::redisplayPreview() {
     return;
   }
 
-  erasePreview(false);
+  erasePreview( false );
 
   try {
     //SUIT_OverrideCursor wc;
     //getDisplayer()->SetColor(Quantity_NOC_VIOLET);
     //getDisplayer()->SetToActivate(false);
 
-    if (SALOME_Prs* aPrs = buildPrs())
+    if ( SALOME_Prs* aPrs = buildPrs() )
       displayPreview(aPrs);
-  } catch (const SALOME::SALOME_Exception& e) {
-    SalomeApp_Tools::QtCatchCorbaException(e);
+  } catch ( const SALOME::SALOME_Exception& e ) {
+    SalomeApp_Tools::QtCatchCorbaException( e );
   } catch (...) {
   }
 }
@@ -643,8 +653,9 @@ void MeasureGUI_AnnotationDlg::redisplayPreview() {
 // function : getAttachPoint
 // purpose  : finds a point on shape to attach annotation object
 //=================================================================================
-gp_Pnt MeasureGUI_AnnotationDlg::getAttachPoint(const TopoDS_Shape& theShape) {
-  gp_Pnt aPoint = gp_Pnt(0, 0, 0);
+gp_Pnt MeasureGUI_AnnotationDlg::getAttachPoint(const TopoDS_Shape& theShape)
+{
+  gp_Pnt aPoint = gp_Pnt( 0, 0, 0 );
 
   return aPoint;
 }

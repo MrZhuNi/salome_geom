@@ -61,6 +61,7 @@ public:
    */
   struct ShapeAnnotation
   {
+    QString Name; // annotation name label
     QString Text; // annotation text label
     bool    IsVisible; // visibility of annotation
     bool    IsScreenFixed; // fixed screen mode flag
@@ -78,7 +79,8 @@ public:
     
     bool operator == (const ShapeAnnotation& theOther) const
     {
-      return Text == theOther.Text
+      return Name == theOther.Name
+      && Text == theOther.Text
       && IsVisible == theOther.IsVisible
       && IsScreenFixed == theOther.IsScreenFixed
       && Position.IsEqual (theOther.Position, 0.0)
@@ -217,7 +219,10 @@ public:
    *
    * \param theIndex [in] the index of the dimension record.
    */
-  virtual bool IsVisible( const int theIndex ) const;
+  virtual bool IsVisible( const int theIndex ) const
+  {
+    return myAnnotations[theIndex].IsVisible;
+  }
 
   /*!
    * \brief Changes visibility state of the dimension record.
@@ -225,14 +230,20 @@ public:
    * \param theIndex [in] the index of the dimension record.
    * \param theIsVisible [in] the new visibility state.
    */
-  virtual void SetVisible( const int theIndex, const bool theIsVisible );
+  virtual void SetVisible( const int theIndex, const bool theIsVisible )
+  {
+    myAnnotations[theIndex].IsVisible = theIsVisible;
+  }
 
   /*!
    * \brief Returns name of dimension record by its index.
    *
    * \param theIndex [in] the index of the dimension record.
    */
-  virtual QString GetName( const int theIndex ) const;
+  virtual QString GetName( const int theIndex ) const
+  {
+    return myAnnotations[theIndex].Name;
+  }
 
   /*!
    * \brief Changes name of dimension record.
@@ -240,7 +251,10 @@ public:
    * \param theIndex [in] the index of the dimension record.
    * \param theName [in] the new name.
    */
-  virtual void SetName( const int theIndex, const QString& theName );
+  virtual void SetName( const int theIndex, const QString& theName )
+  {
+    myAnnotations[theIndex].Name = theName;
+  }
 
 public:
 
