@@ -46,6 +46,7 @@
 
 #include <OCCViewer_ViewModel.h>
 #include <OCCViewer_ViewManager.h>
+#include <OCCViewer_ViewWindow.h>
 #include <SVTK_ViewModel.h>
 #include <SALOME_Prs.h>
 #include <SALOME_ListIO.hxx>
@@ -66,18 +67,32 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QStack>
 #include <QTableWidget>
 #include <QVBoxLayout>
 
+#include <AIS_InteractiveContext.hxx>
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 
+#include <Bnd_Box.hxx>
+#include <BRepAdaptor_CompCurve.hxx>
+#include <BRepAdaptor_Curve.hxx>
+#include <BRepAdaptor_Surface.hxx>
+#include <BRepBndLib.hxx>
+#include <BRep_Tool.hxx>
+
+#include <SelectMgr_ViewerSelector.hxx>
+
+#include <TopoDS.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerInteger.hxx>
+
+#include <NCollection_Handle.hxx>
 
 #include <limits>
 
@@ -420,9 +435,12 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
       activateSelection();
 
       if ( !myShape->_is_nil() ) {
-        TopoDS_Shape aShape;
-        GEOMBase::GetShape( myShape.get(), aShape );
-        anAttachPoint = getAttachPoint( aShape );
+        if ( !getPickedPoint( anAttachPoint ) )
+        {
+          TopoDS_Shape aShape;
+          GEOMBase::GetShape( myShape.get(), aShape );
+          anAttachPoint = getAttachPoint( aShape );
+        }
       }
     } else if ( myEditCurrentArgument == mySubShapeName ) {
       if ( !myShape->_is_nil() ) {
@@ -446,7 +464,12 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
             aSubShape = aCurrentSubShape;
           }
         }
-        anAttachPoint = getAttachPoint( aSubShape );
+
+        if ( !getPickedPoint( anAttachPoint ) )
+        {
+          anAttachPoint = getAttachPoint( aSubShape );
+        }
+
         myAnnotationProperties.ShapeIndex = aSubShapeIndex;
       }
     }
@@ -672,13 +695,112 @@ void MeasureGUI_AnnotationDlg::redisplayPreview()
 }
 
 //=================================================================================
+// function : getPickedPoint
+// purpose  : finds picked point in active viewer on the selected shape
+//=================================================================================
+bool MeasureGUI_AnnotationDlg::getPickedPoint( gp_Pnt& thePnt )
+{
+  const SUIT_ViewWindow* anActiveView = GEOMBase_Helper::getActiveView();
+  if ( !anActiveView )
+    return false;
+
+  const OCCViewer_ViewWindow* anOccView = qobject_cast<const OCCViewer_ViewWindow*>( anActiveView );
+  if ( !anOccView )
+    return false;
+
+  OCCViewer_ViewManager* aVM = ( OCCViewer_ViewManager* )anOccView->getViewManager();
+  OCCViewer_Viewer* aViewer = aVM->getOCCViewer();
+
+  Handle(AIS_InteractiveContext) anAISContext = aViewer->getAISContext();
+  Handle(SelectMgr_ViewerSelector) aSelector;
+  if ( anAISContext->HasOpenedContext() )
+    aSelector = anAISContext->LocalSelector();
+  else
+    aSelector = anAISContext->MainSelector();
+
+  if ( aSelector->NbPicked() < 1 )
+    return false;
+
+  thePnt = aSelector->PickedPoint( 1 );
+  return true;
+}
+
+//=================================================================================
 // function : getAttachPoint
-// purpose  : finds a point on shape to attach annotation object
+// purpose  : computes default attachment point on the shape
 //=================================================================================
 gp_Pnt MeasureGUI_AnnotationDlg::getAttachPoint( const TopoDS_Shape& theShape )
 {
-  gp_Pnt aPoint = gp_Pnt( 0, 0, 0 );
+  TopoDS_Shape aAttachShape;
+  if ( theShape.ShapeType() == TopAbs_COMPOUND )
+  {
+    QStack< NCollection_Handle<TopoDS_Iterator> > aItStack;
+    aItStack.push( NCollection_Handle<TopoDS_Iterator>( new TopoDS_Iterator( theShape ) ) );
+    while ( aAttachShape.IsNull() && !aItStack.empty() )
+    {
+      NCollection_Handle<TopoDS_Iterator> anIt = aItStack.top();
+      if ( !anIt->More() )
+      {
+        aItStack.pop();
+      }
+      else
+      {
+        const TopoDS_Shape& aShape = anIt->Value();
+        if ( aShape.ShapeType() != TopAbs_COMPSOLID )
+        {
+          aAttachShape = aShape;
+        }
+        else
+        {
+          aItStack.push( NCollection_Handle<TopoDS_Iterator>( new TopoDS_Iterator( aShape ) ) );
+        }
+      }
+    }
+  }
+  else
+  {
+    aAttachShape = theShape;
+  }
 
-  return aPoint;
+  if ( aAttachShape.ShapeType() == TopAbs_COMPSOLID
+    || aAttachShape.ShapeType() == TopAbs_SOLID
+    || aAttachShape.ShapeType() == TopAbs_SHELL )
+  {
+    Bnd_Box aBox;
+    BRepBndLib::Add( aAttachShape, aBox );
+    const gp_Pnt aMin = aBox.CornerMin();
+    const gp_Pnt aMax = aBox.CornerMax();
+    return gp_Pnt( aMin.X() + aMax.X() / 2.0,
+                   aMin.Y() + aMax.Y() / 2.0,
+                   aMin.Z() + aMax.Z() / 2.0 );
+  }
+  else if ( aAttachShape.ShapeType() == TopAbs_FACE )
+  {
+    BRepAdaptor_Surface aFace( TopoDS::Face( aAttachShape ) );
+    const Standard_Real aU1 = aFace.FirstUParameter();
+    const Standard_Real aU2 = aFace.LastUParameter();
+    const Standard_Real aV1 = aFace.FirstVParameter();
+    const Standard_Real aV2 = aFace.LastVParameter();
+    return aFace.Value( ( aU1 + aU2 ) / 2.0, ( aV1 + aV2 ) / 2.0 );
+  }
+  else if ( aAttachShape.ShapeType() == TopAbs_WIRE )
+  {
+    BRepAdaptor_CompCurve aWire( TopoDS::Wire( aAttachShape ) );
+    const Standard_Real aP1 = aWire.FirstParameter();
+    const Standard_Real aP2 = aWire.LastParameter();
+    return aWire.Value( ( aP1 + aP2 ) / 2.0 );
+  }
+  else if ( aAttachShape.ShapeType() == TopAbs_EDGE )
+  {
+    BRepAdaptor_Curve aEdge( TopoDS::Edge( aAttachShape ) );
+    const Standard_Real aP1 = aEdge.FirstParameter();
+    const Standard_Real aP2 = aEdge.LastParameter();
+    return aEdge.Value( ( aP1 + aP2 ) / 2.0 );
+  }
+  else if ( aAttachShape.ShapeType() == TopAbs_VERTEX )
+  {
+    return BRep_Tool::Pnt( TopoDS::Vertex( aAttachShape ) );
+  }
+
+  return gp_Pnt( 0.0, 0.0, 0.0 );
 }
-

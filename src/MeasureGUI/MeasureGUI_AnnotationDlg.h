@@ -89,6 +89,7 @@ private:
   void                                activateSelectionArgument( QPushButton* theSelectionButton );
   void                                activateSelection();
   TopAbs_ShapeEnum                    getShapeType() const;
+  bool                                getPickedPoint(gp_Pnt& thePnt);
   gp_Pnt                              getAttachPoint( const TopoDS_Shape& theShape );
 
 private:
