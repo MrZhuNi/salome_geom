@@ -57,16 +57,16 @@ class MeasureGUI_AnnotationDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  MeasureGUI_AnnotationDlg (GeometryGUI* theGeometryGUI,
-                            const bool theIsCreate,
-		  		            QWidget* parent=0,
-                            bool modal=false, Qt::WindowFlags fl=0);
+  MeasureGUI_AnnotationDlg ( GeometryGUI* theGeometryGUI,
+                             const bool theIsCreate,
+                             QWidget* parent=0,
+                             bool modal=false, Qt::WindowFlags fl=0 );
   ~MeasureGUI_AnnotationDlg();
 
 protected:
   // redefined from GEOMBase_Helper
   virtual                             GEOM::GEOM_IOperations_ptr createOperation();
-  virtual bool                        isValid (QString&);
+  virtual bool                        isValid ( QString& );
   virtual bool                        execute ();
 
   SALOME_Prs*                         buildPrs();
@@ -86,10 +86,10 @@ private slots:
 private:
   void                                Init();
 
-  void                                activateSelectionArgument(QPushButton* theSelectionButton);
+  void                                activateSelectionArgument( QPushButton* theSelectionButton );
   void                                activateSelection();
   TopAbs_ShapeEnum                    getShapeType() const;
-  gp_Pnt                              getAttachPoint(const TopoDS_Shape& theShape);
+  gp_Pnt                              getAttachPoint( const TopoDS_Shape& theShape );
 
 private:
   TopAbs_ShapeEnum                    mySelectionMode;
@@ -101,6 +101,8 @@ private:
   QLineEdit*                          myTextEdit;
 
   QPushButton*                        myShapeSelBtn;
+  // update shape name by shape selection if it has not been manually modified yet
+  bool                                myShapeNameModified;
   QLineEdit*                          myShapeName;
   QComboBox*                          myTypeCombo;
 
