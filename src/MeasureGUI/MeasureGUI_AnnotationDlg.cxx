@@ -149,8 +149,8 @@ MeasureGUI_AnnotationDlg::MeasureGUI_AnnotationDlg( GeometryGUI* theGeometryGUI,
   // data type
   QLabel* typeLabel = new QLabel( tr( "ANNOTATION_TYPE" ), propGroup );
   myTypeCombo = new QComboBox( propGroup );
-  myTypeCombo->insertItem( 0, tr( "3D" ) );
-  myTypeCombo->insertItem( 1, tr( "2D" ) );
+  myTypeCombo->addItem( tr( "3D" ), 0 );
+  myTypeCombo->addItem( tr( "2D" ), 1 );
   myTypeCombo->setCurrentIndex( 0 ); // 3D, not fixed
 
   propLayout->addWidget( shapeLabel, 1, 0 );
@@ -211,7 +211,6 @@ MeasureGUI_AnnotationDlg::MeasureGUI_AnnotationDlg( GeometryGUI* theGeometryGUI,
   myInteractor->Enable();
 
   Init();
-  //updateState();
 }
 
 //=======================================================================
@@ -246,7 +245,7 @@ void MeasureGUI_AnnotationDlg::Init()
     activateSelectionArgument( myShapeSelBtn );
     myTextEdit->setText( myAnnotationProperties.Text );
     myShapeNameModified = false;
-    myTypeCombo->setCurrentIndex( !myAnnotationProperties.IsScreenFixed );
+    myTypeCombo->setCurrentIndex( 0 );
 
     int aSubShapeTypeIndex = -1;
     int aTypesCount = aTypesCount = mySubShapeTypeCombo->count();
@@ -285,10 +284,10 @@ void MeasureGUI_AnnotationDlg::Init()
 //=================================================================================
 void MeasureGUI_AnnotationDlg::activateSelection()
 {
-  //globalSelection( GEOM_ALLSHAPES );
-  //if ( !myShape->_is_nil() && mySelectionMode != TopAbs_SHAPE ) {
-  //  localSelection( myShape.get(), mySelectionMode );
-  //}
+  globalSelection( GEOM_ALLOBJECTS );
+  if ( !myShape->_is_nil() && mySelectionMode != TopAbs_SHAPE ) {
+    localSelection( myShape.get(), mySelectionMode );
+  }
 }
 
 //=================================================================================
@@ -424,7 +423,7 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
         myEditCurrentArgument->setText( aName );
         if ( !myShapeNameModified ) {
           myTextEdit->setText( aName );
-          myShapeNameModified = false;
+          onTextChange();
         }
       }
 
@@ -434,7 +433,7 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
 
       activateSelection();
 
-      if ( !myShape->_is_nil() ) {
+      if ( !aNullShape ) {
         if ( !getPickedPoint( anAttachPoint ) )
         {
           TopoDS_Shape aShape;
@@ -444,34 +443,36 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
       }
     } else if ( myEditCurrentArgument == mySubShapeName ) {
       if ( !myShape->_is_nil() ) {
-        QString aName = GEOMBase::GetName( anObj.get() );
-        myEditCurrentArgument->setText( aName );
 
-        TopTools_IndexedMapOfShape aMainMap;
-        TopoDS_Shape aMainShape;
-        GEOMBase::GetShape( myShape.get(), aMainShape );
-        TopExp::MapShapes( aMainShape, aMainMap );
+        if ( anObj->_is_nil() ) {
+          myEditCurrentArgument->setText( QString() );
+        }
+        else {
 
-        TopExp_Explorer anExp( aMainShape, getShapeType() );
-        bool isShowWarning = true;
+          QString aName = GEOMBase::GetName( anObj.get() );
+          myEditCurrentArgument->setText( aName );
 
-        TopoDS_Shape aSubShape;
-        for ( ; anExp.More() && aSubShapeIndex < 0; anExp.Next() ) {
-          TopoDS_Shape aCurrentSubShape = anExp.Current();
-          int anIndex = aMainMap.FindIndex( aCurrentSubShape );
-          if ( anIndex >= 0 ) {
-            aSubShapeIndex = anIndex;
-            aSubShape = aCurrentSubShape;
+          TopTools_IndexedMapOfShape aMainMap;
+          TopoDS_Shape aMainShape;
+          TopoDS_Shape aSubShape;
+          GEOMBase::GetShape( myShape.get(), aMainShape );
+          GEOMBase::GetShape( anObj.get(), aSubShape );
+          TopExp::MapShapes( aMainShape, getShapeType(), aMainMap );
+
+          if ( aMainMap.Contains( aSubShape ) ) {
+            aSubShapeIndex = aMainMap.FindIndex( aSubShape );
+          }
+
+          if ( !aSubShape.IsNull() )
+          {
+            if ( !getPickedPoint( anAttachPoint ) )
+            {
+              anAttachPoint = getAttachPoint( aSubShape );
+            }
           }
         }
-
-        if ( !getPickedPoint( anAttachPoint ) )
-        {
-          anAttachPoint = getAttachPoint( aSubShape );
-        }
-
-        myAnnotationProperties.ShapeIndex = aSubShapeIndex;
       }
+      myAnnotationProperties.ShapeIndex = aSubShapeIndex;
     }
     myAnnotationProperties.Attach = anAttachPoint;
   }
@@ -507,10 +508,12 @@ void MeasureGUI_AnnotationDlg::onTypeChange()
 //=======================================================================
 void MeasureGUI_AnnotationDlg::onSubShapeTypeChange()
 {
-  activateSelectionArgument( mySubShapeSelBtn );
+  const TopAbs_ShapeEnum aShapeType = getShapeType();
+  
+  activateSelectionArgument( aShapeType == TopAbs_SHAPE ? myShapeSelBtn : mySubShapeSelBtn );
 
-  TopAbs_ShapeEnum aShapeType = getShapeType();
   myAnnotationProperties.ShapeType = aShapeType;
+
   if ( aShapeType != mySelectionMode ) {
     mySubShapeName->setText( "" );
     myAnnotationProperties.ShapeIndex = -1;
@@ -636,7 +639,8 @@ SALOME_Prs* MeasureGUI_AnnotationDlg::buildPrs()
   aPresentation->SetLineWidth( aLineWidth );
   aPresentation->SetLineStyle( static_cast<Aspect_TypeOfLine>( aLineStyle ) );
   aPresentation->SetAutoHide( isAutoHide ? Standard_True : Standard_False );
-
+  aPresentation->SetScreenFixed( myAnnotationProperties.IsScreenFixed );
+  
   TopoDS_Shape aShape;
   GEOMBase::GetShape( myShape.get(), aShape );
   gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
@@ -682,9 +686,8 @@ void MeasureGUI_AnnotationDlg::redisplayPreview()
   erasePreview( false );
 
   try {
-    //SUIT_OverrideCursor wc;
-    //getDisplayer()->SetColor( Quantity_NOC_VIOLET );
-    //getDisplayer()->SetToActivate( false );
+    SUIT_OverrideCursor wc;
+    getDisplayer()->SetToActivate( true );
 
     if ( SALOME_Prs* aPrs = buildPrs() )
       displayPreview( aPrs );
@@ -705,7 +708,7 @@ bool MeasureGUI_AnnotationDlg::getPickedPoint( gp_Pnt& thePnt )
     return false;
 
   const OCCViewer_ViewWindow* anOccView = qobject_cast<const OCCViewer_ViewWindow*>( anActiveView );
-  if ( !anOccView )
+  if ( !anOccView || !anOccView->underMouse() )
     return false;
 
   OCCViewer_ViewManager* aVM = ( OCCViewer_ViewManager* )anOccView->getViewManager();
