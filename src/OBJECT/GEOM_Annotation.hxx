@@ -247,6 +247,13 @@ private:
 
   private:
 
+    struct TextSize {
+      float x; // width
+      float y; // height
+      float a; // ascent
+      float d; // descent
+    };
+
     GEOM_Annotation* myAISObject;           //!< Instance of presentation class.
     NCollection_String myText;              //!< Text string of annotation label.
     OpenGl_TextParam myTextParams;          //!< Text draw parameters.
@@ -255,7 +262,7 @@ private:
     OpenGl_PrimitiveArray* myExtLineDraw;   //!< Extension line draw element.
     OpenGl_PrimitiveArray* myExtMarkerDraw; //!< Extension marker draw element.
     mutable float myTextLineY;              //!< Text's underlines relative position.
-    mutable Graphic3d_Vec3 myTextSize;      //!< Text's width, height and descent.
+    mutable TextSize myTextSize;            //!< Text's size parameters
     mutable Graphic3d_Vec2 myTextUnderline; //!< Text's underline position.
     mutable unsigned int myTextDPI;         //!< Text's DPI scale used for last rendering.
   };

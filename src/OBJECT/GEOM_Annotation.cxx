@@ -355,10 +355,10 @@ Bnd_Box GEOM_Annotation::TextBoundingBox() const
                   aResolution ) )
   {
     const NCollection_String aText( (Standard_Utf16Char* )myText.ToExtString() );
-    const Font_Rect aFontRect = aFont.BoundingBox( aText, Graphic3d_HTA_LEFT, Graphic3d_VTA_BOTTOM );
+    const Font_Rect aFontRect = aFont.BoundingBox( aText, Graphic3d_HTA_CENTER, Graphic3d_VTA_CENTER );
     Bnd_Box aBox;
-    aBox.Add( gp_Pnt( 0.0, 0.0, 0.0 ) );
-    aBox.Add( gp_Pnt( aFontRect.Width(), aFontRect.Height(), 0.0 ) );
+    aBox.Add( gp_Pnt( aFontRect.Left, aFontRect.Bottom, 0.0 ) );
+    aBox.Add( gp_Pnt( aFontRect.Right, aFontRect.Top, 0.0 ) );
     return aBox;
   }
 
@@ -434,8 +434,8 @@ GEOM_Annotation::OpenGl_Annotation::OpenGl_Annotation( GEOM_Annotation* theAnnot
 {
   // graphical resources for drawing text and underline
   myTextParams.Height = theTextHeight;
-  myTextParams.HAlign = Graphic3d_HTA_LEFT;
-  myTextParams.VAlign = Graphic3d_VTA_BOTTOM;
+  myTextParams.HAlign = Graphic3d_HTA_CENTER;
+  myTextParams.VAlign = Graphic3d_VTA_CENTER;
   myTextDraw = new OpenGl_Text( myText.ToCString(), OpenGl_Vec3(), myTextParams );
   myTextLineDraw = new OpenGl_PrimitiveArray( theDriver );
 
@@ -505,16 +505,32 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
     // getting string size will also initialize font library
     myTextDraw->StringSize( aContext,
       myText, *anAspect, myTextParams, aDPI,
-      myTextSize.x(), myTextSize.y(), myTextSize.z() );
+      myTextSize.x, myTextSize.a, myTextSize.d );
 
     myTextDPI = aDPI;
-    myTextUnderline.x() = 0.f;
-    myTextUnderline.y() = ceil( myTextSize.y() * -0.2f );
+    myTextSize.y = myTextSize.a - myTextSize.d;
+    switch (myTextParams.HAlign)
+    {
+      case Graphic3d_HTA_LEFT:   myTextUnderline.x() = 0.f; break;
+      case Graphic3d_HTA_CENTER: myTextUnderline.x() = -myTextSize.x / 2.f; break;
+      case Graphic3d_HTA_RIGHT:  myTextUnderline.x() = -myTextSize.x; break;
+      default:
+        break;
+    }
+    switch (myTextParams.VAlign)
+    {
+      case Graphic3d_VTA_TOPFIRSTLINE:
+      case Graphic3d_VTA_TOP:    myTextUnderline.y() = -myTextSize.y; break;
+      case Graphic3d_VTA_CENTER: myTextUnderline.y() = -myTextSize.y / 2.f; break;
+      case Graphic3d_VTA_BOTTOM: myTextUnderline.y() = myTextSize.d; break;
+      default:
+        break;
+    }
 
     Handle(Graphic3d_ArrayOfSegments)
     aVertexArray = new Graphic3d_ArrayOfSegments( 2 );
-    aVertexArray->AddVertex( 0.0f, myTextUnderline.y(), 0.0f );
-    aVertexArray->AddVertex( myTextSize.x(), myTextUnderline.y(), 0.0f );
+    aVertexArray->AddVertex( myTextUnderline.x(), myTextUnderline.y(), 0.0f );
+    aVertexArray->AddVertex( myTextUnderline.x() + myTextSize.x, myTextUnderline.y(), 0.0f );
     myTextLineDraw->InitBuffers( aContext, Graphic3d_TOPA_SEGMENTS,
       aVertexArray->Indices(), aVertexArray->Attributes(), aVertexArray->Bounds() );
   }
@@ -556,6 +572,8 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
 
   if ( myAISObject->myIsScreenFixed )
   {
+    // use text position property instead of matrix setup 
+    // to avoid jittering when dragging text
     myTextDraw->SetPosition( OpenGl_Vec3( static_cast<float>( myAISObject->myPosition.X() ),
                                           static_cast<float>( myAISObject->myPosition.Y() ),
                                           static_cast<float>( myAISObject->myPosition.Z() ) ) );
@@ -588,10 +606,26 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
   // render dynamic extension line using synthetic transformation
   // ------------------------------------------------------------
 
+  OpenGl_Vec4 aCenter (0.f, 0.f, 0.f, 1.f);
+  switch (myTextParams.HAlign)
+  {
+    case Graphic3d_HTA_LEFT:   aCenter.x() =  myTextSize.x / 2.f; break;
+    case Graphic3d_HTA_CENTER: aCenter.x() = 0.f; break;
+    case Graphic3d_HTA_RIGHT:  aCenter.x() = -myTextSize.x / 2.f; break;
+    default: break;
+  }
+  switch (myTextParams.VAlign)
+  {
+    case Graphic3d_VTA_TOPFIRSTLINE:
+    case Graphic3d_VTA_TOP:    aCenter.y() = -myTextSize.y / 2.f; break;
+    case Graphic3d_VTA_CENTER: aCenter.y() = 0.f; break;
+    case Graphic3d_VTA_BOTTOM: aCenter.y() =  myTextSize.y / 2.f; break;
+    default: break;
+  }
+
   // compute label's center in view coordinate space
   const OpenGl_Mat4& aViewMat = aContext->WorldViewState.Current();
-  const OpenGl_Vec4 aCenterView =
-    aViewMat * OpenGl_Vec4( myTextSize.x() / 2.0f, myTextSize.y() / 2.0f, 0.0f, 1.0f );
+  const OpenGl_Vec4 aCenterView = aViewMat * aCenter;
 
   // the value below defines whether the extension line should be hanging
   // on the left side of the label or on the right
@@ -599,7 +633,7 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
 
   // compute extension line point at the text label in view coordinate space
   const OpenGl_Vec4 aHingeView = aViewMat * OpenGl_Vec4(
-    ( isLeftHanded ? myTextUnderline.x() : myTextUnderline.x() + myTextSize.x() ), myTextUnderline.y(), 0.0f, 1.0f );
+    ( isLeftHanded ? myTextUnderline.x() : myTextUnderline.x() + myTextSize.x ), myTextUnderline.y(), 0.0f, 1.0f );
 
   // prepare matrix to specify geometry of extension line in view space
   // by multiplication of unit z coordinate vector on given matrix.
