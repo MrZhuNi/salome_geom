@@ -351,12 +351,16 @@ bool MeasureGUI_AnnotationDlg::ClickOnApply()
     setIsDisplayResult( true );
   }
 
-  /*if ( myIsCreation )
-   {
-   myAnnotation = GEOM::GEOM_Field::_nil();
+  if ( !myShape->_is_nil() ) {
+    redisplay( myShape.get() );
+  }
+
+  if ( myIsCreation ) {
+
    if ( !isApplyAndClose() )
-   Init();
-   }*/
+     Init();
+  }
+
   return true;
 }
 
@@ -579,26 +583,20 @@ bool MeasureGUI_AnnotationDlg::execute()
     return false;
 
   if ( myIsCreation ) {
+
     SalomeApp_Study* aStudy = getStudy();
-    GEOMGUI_ShapeAnnotations aProp =
-        aStudy->getObjectProperty( GEOM::sharedPropertiesId(),
-                                   myShape->GetStudyEntry(),
-                                   GEOM::propertyName( GEOM::ShapeAnnotations ),
-                                   QVariant() )
-                                   .value<GEOMGUI_ShapeAnnotations>();
 
-     // append new dimension record to data
-     int aPropId = aProp.GetNumber() - 1;
-     myAnnotationProperties.Name = getNewObjectName(); // update here as we do not listen name modification
-     myAnnotationProperties.IsVisible = true; // initially created annotation is hidden
-     aProp.Add( myAnnotationProperties );
+    _PTR(SObject) aSObj = aStudy->studyDS()->FindObjectID( myShape->GetStudyEntry() );
 
-    // store modified property data
-    aStudy->setObjectProperty( GEOM::sharedPropertiesId(),
-                               myShape->GetStudyEntry(), GEOM::propertyName( GEOM::ShapeAnnotations ),
-                               aProp );
-    aProp.SaveToAttribute( aStudy, myShape->GetStudyEntry() );
-    myGeomGUI->emitDimensionsUpdated( QString( myShape->GetStudyEntry() ) );
+    Handle(GEOMGUI_AnnotationAttrs) aShapeAnnotations =
+      GEOMGUI_AnnotationAttrs::FindOrCreateAttributes( aSObj, aStudy );
+
+    myAnnotationProperties.Name = getNewObjectName(); // update here as we do not listen name modification
+    myAnnotationProperties.IsVisible = true; // initially created annotation is hidden
+
+    aShapeAnnotations->Append( myAnnotationProperties );
+
+    /* myGeomGUI->emitDimensionsUpdated( QString( myShape->GetStudyEntry() ) ); */
   }
   else {
     /*SalomeApp_Study* aStudy = getStudy();
@@ -644,7 +642,7 @@ SALOME_Prs* MeasureGUI_AnnotationDlg::buildPrs()
   TopoDS_Shape aShape;
   GEOMBase::GetShape( myShape.get(), aShape );
   gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
-  myAnnotationProperties.ToPresentation( aPresentation, aShapeLCS );
+  GEOMGUI_AnnotationAttrs::SetupPresentation( aPresentation, myAnnotationProperties, aShapeLCS );
 
   // add Prs to preview
   SUIT_ViewWindow* vw =
@@ -672,7 +670,7 @@ void MeasureGUI_AnnotationDlg::updateSubShapeEnableState()
 }
 
 //=================================================================================
-// function : buildPrs
+// function : redisplayPreview
 // purpose  : creates annotation presentation object and corresponded SALOME presentation
 //=================================================================================
 void MeasureGUI_AnnotationDlg::redisplayPreview()

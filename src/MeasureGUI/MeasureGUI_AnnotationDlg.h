@@ -29,7 +29,7 @@
 #include <GEOMBase_Skeleton.h>
 
 #include <GEOM_Constants.h>
-#include <GEOMGUI_ShapeAnnotations.h>
+#include <GEOMGUI_AnnotationAttrs.h>
 
 #include <TopAbs_ShapeEnum.hxx>
 //#include <TColStd_DataMapOfIntegerInteger.hxx>
@@ -94,7 +94,7 @@ private:
 
 private:
   TopAbs_ShapeEnum                    mySelectionMode;
-  GEOMGUI_ShapeAnnotations::ShapeAnnotation myAnnotationProperties;
+  GEOMGUI_AnnotationAttrs::Properties myAnnotationProperties;
   /// an index of edited annotation in the list shape annotations, -1 in create operation
   bool                                myIsCreation;
   GEOM::GeomObjPtr                    myShape;

@@ -46,7 +46,7 @@
 #include <GEOM_VTKPropertyMaterial.hxx>
 
 #include <GEOMGUI_DimensionProperty.h>
-#include <GEOMGUI_ShapeAnnotations.h>
+#include <GEOMGUI_AnnotationAttrs.h>
 
 #include <GEOMUtils.hxx>
 
@@ -1411,27 +1411,25 @@ void GEOM_Displayer::updateShapeAnnotations( const Handle(SALOME_InteractiveObje
   const int aLineStyle    = aResMgr->integerValue( "Geometry", "shape_annotation_line_style", 0 );
   const bool isAutoHide   = aResMgr->booleanValue( "Geometry", "shape_annotation_autohide", false );
 
-  QVariant aProperty = aStudy->getObjectProperty( GEOM::sharedPropertiesId(),
-                                                  theIO->getEntry(),
-                                                  GEOM::propertyName( GEOM::ShapeAnnotations ),
-                                                  QVariant() );
+  _PTR(SObject) aSObj = aStudy->studyDS()->FindObjectID( theIO->getEntry() );
 
-  GEOMGUI_ShapeAnnotations aAnnotationList;
+  const Handle(GEOMGUI_AnnotationAttrs) aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
 
-  if ( aProperty.isValid() && aProperty.canConvert<GEOMGUI_ShapeAnnotations>() )
+  if ( !aShapeAnnotations.IsNull() )
   {
-    aAnnotationList = aProperty.value<GEOMGUI_ShapeAnnotations>();
+    gp_Trsf aToLCS;
+    aToLCS.SetTransformation( theShapeLCS, gp_Ax3() );
 
-    for ( int anI = 0; anI < aAnnotationList.GetNumber(); ++anI )
+    for ( int anI = 0; anI < aShapeAnnotations->GetCount(); ++anI )
     {
-      if ( !aAnnotationList.Get( anI ).IsVisible )
+      if ( !aShapeAnnotations->GetIsVisible( anI ) )
       {
         continue;
       }
 
       Handle(GEOM_Annotation) aPresentation = new GEOM_Annotation();
 
-      aAnnotationList.ToPresentation ( anI, aPresentation, theShapeLCS );
+      aShapeAnnotations->SetupPresentation( aPresentation, anI, theShapeLCS );
 
       aPresentation->SetOwner( theIO );
 

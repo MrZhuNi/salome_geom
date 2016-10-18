@@ -22,7 +22,7 @@
 #include "GEOMGUI_TextTreeWdg.h"
 
 #include "GEOMGUI_DimensionProperty.h"
-#include "GEOMGUI_ShapeAnnotations.h"
+//#include "GEOMGUI_ShapeAnnotations.h"
 #include "GeometryGUI.h"
 #include "GeometryGUI_Operations.h"
 #include <GEOM_Constants.h>
@@ -179,7 +179,7 @@ void GEOMGUI_TextTreeWdg::updateBranch( const QString& theEntry )
   fillBranch( Geometry, theEntry );
 
   // annotation property branch
-  fillBranch(AnnotationShape, theEntry);
+  // fillBranch(AnnotationShape, theEntry);
 }
 
 void GEOMGUI_TextTreeWdg::fillBranch( const BranchType& theBranchType, const QString& theEntry )
@@ -252,7 +252,7 @@ VisualPropertiesPtr GEOMGUI_TextTreeWdg::getVisualProperty( const BranchType& th
     aProp = QSharedPointer<GEOMGUI_DimensionProperty>( new GEOMGUI_DimensionProperty() );
   }
   else {
-    aProp = QSharedPointer<GEOMGUI_ShapeAnnotations>( new GEOMGUI_ShapeAnnotations() );
+    //aProp = QSharedPointer<GEOMGUI_ShapeAnnotations>( new GEOMGUI_ShapeAnnotations() );
   }
 
 return aProp;
