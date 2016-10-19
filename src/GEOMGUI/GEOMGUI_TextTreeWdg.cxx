@@ -124,6 +124,11 @@ namespace
 // ----------------------------------------------------------------------------
 // Text tree widget implementation
 // ----------------------------------------------------------------------------
+
+//=================================================================================
+// function : Constructor
+// purpose  :
+//=================================================================================
 GEOMGUI_TextTreeWdg::GEOMGUI_TextTreeWdg( SalomeApp_Application* app )
   : myDisplayer(NULL)
 {
@@ -181,12 +186,19 @@ GEOMGUI_TextTreeWdg::GEOMGUI_TextTreeWdg( SalomeApp_Application* app )
   connect( app->objectBrowser(), SIGNAL( updated() ), this, SLOT( updateTree() ) );
 
   GeometryGUI* aGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
-  connect( aGeomGUI, SIGNAL( DimensionsUpdated( const QString& ) ), this, SLOT( updateBranch( const QString& ) ) );
+  connect( aGeomGUI, SIGNAL( DimensionsUpdated( const QString& ) ),
+           this, SLOT( updateDimensionBranch( const QString& ) ) );
+  connect( aGeomGUI, SIGNAL( SignalAnnotationsUpdated( const QString& ) ),
+           this, SLOT( updateAnnotationBranch( const QString& ) ) );
   connect( this, SIGNAL( itemClicked( QTreeWidgetItem*, int) ), 
            this, SLOT( onItemClicked( QTreeWidgetItem*, int ) ) );
 
 }
 
+//=================================================================================
+// function : Destructor
+// purpose  :
+//=================================================================================
 GEOMGUI_TextTreeWdg::~GEOMGUI_TextTreeWdg()
 {
   //std::cout<<"~GEOMGUI_TextTreeWdg"<<std::endl;
@@ -228,7 +240,7 @@ void GEOMGUI_TextTreeWdg::updateTree()
         if ( !valSO->ReferencedObject( refSO ) ) {
           // update tree of object's dimensions
           QString anEntry = valSO->GetID().c_str();
-          updateBranch( anEntry );
+          updateBranches( anEntry );
           aDimensionObjEntries.removeAll( anEntry );
           anAnnotationObjEntries.removeAll( anEntry );
         }
@@ -245,15 +257,30 @@ void GEOMGUI_TextTreeWdg::updateTree()
 }
 
 //=================================================================================
-// function : updateBranch
+// function : updateBranches
 // purpose  :
 //=================================================================================
-void GEOMGUI_TextTreeWdg::updateBranch( const QString& theEntry )
+void GEOMGUI_TextTreeWdg::updateBranches( const QString& theEntry )
 {
-  // dimension property branch
-  fillBranch( DimensionShape, theEntry );
+  updateDimensionBranch( theEntry );
+  updateAnnotationBranch( theEntry );
+}
 
-  // annotation property branch
+//=================================================================================
+// function : updateDimensionBranch
+// purpose  :
+//=================================================================================
+void GEOMGUI_TextTreeWdg::updateDimensionBranch( const QString& theEntry )
+{
+  fillBranch( DimensionShape, theEntry );
+}
+
+//=================================================================================
+// function : updateAnnotationBranch
+// purpose  :
+//=================================================================================
+void GEOMGUI_TextTreeWdg::updateAnnotationBranch( const QString& theEntry )
+{
   fillBranch( AnnotationShape, theEntry );
 }
 

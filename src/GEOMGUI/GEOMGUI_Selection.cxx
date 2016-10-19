@@ -25,6 +25,7 @@
 
 #include "GEOMGUI_Selection.h"
 #include <GEOMGUI_DimensionProperty.h>
+#include <GEOMGUI_AnnotationAttrs.h>
 
 #include "GeometryGUI.h"
 #include "GEOM_Displayer.h"
@@ -198,6 +199,10 @@ QVariant GEOMGUI_Selection::parameter( const int idx, const QString& p ) const
     v = hasHiddenDimensions(idx);
   else if ( p == "hasVisibleDimensions" )
     v = hasVisibleDimensions(idx);
+  else if ( p == "hasHiddenAnnotations" )
+    v = hasHiddenAnnotations(idx);
+  else if ( p == "hasVisibleAnnotations" )
+    v = hasVisibleAnnotations(idx);
   else
     v = LightApp_Selection::parameter( idx, p );
 
@@ -853,3 +858,58 @@ bool GEOMGUI_Selection::hasVisibleDimensions( const int theIndex ) const
   return isAnyVisible;
 }
 
+bool GEOMGUI_Selection::hasAnnotations( const int theIndex, bool& theHidden, bool& theVisible ) const
+{
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( study() );
+  if ( !appStudy )
+    return false;
+
+  QString anEntry = entry( theIndex );
+  _PTR(Study) aStudy = appStudy->studyDS();
+  if ( !aStudy || anEntry.isNull() )
+    return false;
+
+  _PTR(SObject) aSObj = appStudy->studyDS()->FindObjectID( anEntry.toStdString() );
+
+  const Handle(GEOMGUI_AnnotationAttrs)
+    aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
+
+  if ( aShapeAnnotations.IsNull() )
+    return false;
+
+  theHidden  = false;
+  theVisible = false;
+
+  const int aCount = aShapeAnnotations->GetNbAnnotation();
+  for ( int anI = 0; anI < aCount; ++anI )
+  {
+    if ( aShapeAnnotations->GetIsVisible( anI ) )
+      theVisible = true;
+    else
+      theHidden = true;
+  }
+
+  return aCount > 0;
+}
+
+bool GEOMGUI_Selection::hasHiddenAnnotations( const int theIndex ) const
+{
+  bool isAnyVisible, isAnyHidden = false;
+  if ( !hasAnnotations( theIndex, isAnyHidden, isAnyVisible ) )
+  {
+    return false;
+  }
+
+  return isAnyHidden;
+}
+
+bool GEOMGUI_Selection::hasVisibleAnnotations( const int theIndex ) const
+{
+  bool isAnyVisible, isAnyHidden = false;
+  if ( !hasAnnotations( theIndex, isAnyHidden, isAnyVisible ) )
+  {
+    return false;
+  }
+
+  return isAnyVisible;
+}

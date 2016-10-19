@@ -667,6 +667,8 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
 #endif
   case GEOMOp::OpShowAllDimensions:  // POPUP MENU - SHOW ALL DIMENSIONS
   case GEOMOp::OpHideAllDimensions:  // POPUP MENU - HIDE ALL DIMENSIONS
+  case GEOMOp::OpShowAllAnnotations: // POPUP MENU - SHOW ALL ANNOTATIONS
+  case GEOMOp::OpHideAllAnnotations: // POPUP MENU - HIDE ALL ANNOTATIONS
     libName = "MeasureGUI";
     break;
   case GEOMOp::OpGroupCreate:        // MENU GROUP - CREATE
@@ -1117,9 +1119,11 @@ void GeometryGUI::initialize( CAM_Application* app )
 #ifndef DISABLE_GRAPHICSVIEW
   createGeomAction( GEOMOp::OpShowDependencyTree, "POP_SHOW_DEPENDENCY_TREE" );
 #endif
-  createGeomAction( GEOMOp::OpReduceStudy,       "POP_REDUCE_STUDY" );
-  createGeomAction( GEOMOp::OpShowAllDimensions, "POP_SHOW_ALL_DIMENSIONS" );
-  createGeomAction( GEOMOp::OpHideAllDimensions, "POP_HIDE_ALL_DIMENSIONS" );
+  createGeomAction( GEOMOp::OpReduceStudy,        "POP_REDUCE_STUDY" );
+  createGeomAction( GEOMOp::OpShowAllDimensions,  "POP_SHOW_ALL_DIMENSIONS" );
+  createGeomAction( GEOMOp::OpHideAllDimensions,  "POP_HIDE_ALL_DIMENSIONS" );
+  createGeomAction( GEOMOp::OpShowAllAnnotations, "POP_SHOW_ALL_ANNOTATIONS" );
+  createGeomAction( GEOMOp::OpHideAllAnnotations, "POP_HIDE_ALL_ANNOTATIONS" );
 
   // Create actions for increase/decrease transparency shortcuts
   createGeomAction( GEOMOp::OpIncrTransparency, "", "", 0, false,
@@ -1645,6 +1649,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( GEOMOp::OpShowAllDimensions ), aDimensionRule.arg( "hasHiddenDimensions" ), QtxPopupMgr::VisibleRule );
   mgr->insert( action( GEOMOp::OpHideAllDimensions ), -1, -1 ); // hide all dimensions
   mgr->setRule( action( GEOMOp::OpHideAllDimensions ), aDimensionRule.arg( "hasVisibleDimensions" ), QtxPopupMgr::VisibleRule );
+  mgr->insert( action( GEOMOp::OpShowAllAnnotations ), -1, -1 ); // show all annotations
+  mgr->setRule( action( GEOMOp::OpShowAllAnnotations ), aDimensionRule.arg( "hasHiddenAnnotations" ), QtxPopupMgr::VisibleRule );
+  mgr->insert( action( GEOMOp::OpHideAllAnnotations ), -1, -1 ); // hide all annotations
+  mgr->setRule( action( GEOMOp::OpHideAllAnnotations ), aDimensionRule.arg( "hasVisibleAnnotations" ), QtxPopupMgr::VisibleRule );
 
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpUnpublishObject ), -1, -1 ); // Unpublish object
@@ -2759,14 +2767,21 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
         aDisplayer.UpdateColorScale( anIsRedisplayFieldSteps, true );
       }
     }
-    else if ( param == QString("dimensions_color")        ||
-              param == QString("dimensions_line_width")   ||
-              param == QString("dimensions_font")         ||
-              param == QString("dimensions_arrow_length") ||
-              param == QString("dimensions_show_units")   ||
-              param == QString("dimensions_length_units") ||
-              param == QString("dimensions_angle_units")  ||
-              param == QString("dimensions_use_text3d")  ||
+    else if ( param == QString("dimensions_color")            ||
+              param == QString("dimensions_line_width")       ||
+              param == QString("dimensions_font")             ||
+              param == QString("dimensions_arrow_length")     ||
+              param == QString("dimensions_show_units")       ||
+              param == QString("dimensions_length_units")     ||
+              param == QString("dimensions_angle_units")      ||
+              param == QString("dimensions_use_text3d")       ||
+              param == QString("shape_annotation_font_color") ||
+              param == QString("shape_annotation_line_color") ||
+              param == QString("shape_annotation_font")       ||
+              param == QString("shape_annotation_line_width") ||
+              param == QString("shape_annotation_autohide")   ||
+              param == QString("shape_annotation_line_style") ||
+              param == QString("shape_annotation_line_style") ||
               param == QString("label_color") )
     {
       SalomeApp_Application* anApp = getApp();
@@ -3589,4 +3604,9 @@ void GeometryGUI::dropObjects( const DataObjectList& what, SUIT_DataObject* wher
 void GeometryGUI::emitDimensionsUpdated( QString entry )
 {
   emit DimensionsUpdated( entry );
+}
+
+void GeometryGUI::emitAnnotationsUpdated( QString entry )
+{
+  emit SignalAnnotationsUpdated( entry );
 }

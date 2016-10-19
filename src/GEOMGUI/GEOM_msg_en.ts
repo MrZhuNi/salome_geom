@@ -5057,6 +5057,30 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show all visible measures (dimension) created for the object</translation>
     </message>
     <message>
+      <source>MEN_POP_SHOW_ALL_ANNOTATIONS</source>
+      <translation>Show all annotations</translation>
+    </message>
+    <message>
+      <source>STB_POP_SHOW_ALL_ANNOTATIONS</source>
+      <translation>Show all shape annotations for the object</translation>
+    </message>
+    <message>
+      <source>TOP_POP_SHOW_ALL_ANNOTATIONS</source>
+      <translation>Show all shape annotations for the object</translation>
+    </message>
+    <message>
+      <source>MEN_POP_HIDE_ALL_ANNOTATIONS</source>
+      <translation>Hide all annotations</translation>
+    </message>
+    <message>
+      <source>STB_POP_HIDE_ALL_ANNOTATIONS</source>
+      <translation>Hide all shape annotations for the object</translation>
+    </message>
+    <message>
+      <source>TOP_POP_HIDE_ALL_ANNOTATIONS</source>
+      <translation>Hide all shape annotations for the object</translation>
+    </message>
+    <message>
         <source>TOP_POP_AUTO_COLOR</source>
         <translation>Auto color</translation>
     </message>

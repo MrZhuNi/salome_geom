@@ -209,6 +209,8 @@ namespace GEOMOp {
 #endif
     OpAnnotation          = 5020,   // MENU MEASURES - ANNOTATION
     OpEditAnnotation      = 5021,   // POPUP MENU - EDIT ANNOTATION
+    OpShowAllAnnotations  = 5022,   // POPUP MENU - SHOW ALL ANNOTATIONS
+    OpHideAllAnnotations  = 5023,   // POPUP MENU - HIDE ALL ANNOTATIONS
     // GroupGUI --------------------//--------------------------------
     OpGroupCreate         = 6000,   // MENU GROUP - CREATE
     OpGroupEdit           = 6001,   // MENU GROUP - EDIT

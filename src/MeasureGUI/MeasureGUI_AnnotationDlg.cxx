@@ -596,7 +596,7 @@ bool MeasureGUI_AnnotationDlg::execute()
 
     aShapeAnnotations->Append( myAnnotationProperties );
 
-    /* myGeomGUI->emitDimensionsUpdated( QString( myShape->GetStudyEntry() ) ); */
+    myGeomGUI->emitAnnotationsUpdated( QString( myShape->GetStudyEntry() ) );
   }
   else {
     /*SalomeApp_Study* aStudy = getStudy();

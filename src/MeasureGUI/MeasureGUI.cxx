@@ -30,6 +30,7 @@
 #include "GeometryGUI_Operations.h"
 
 #include <GEOMGUI_DimensionProperty.h>
+#include <GEOMGUI_AnnotationAttrs.h>
 
 #include <LightApp_SelectionMgr.h>
 #include <SUIT_OverrideCursor.h>
@@ -163,6 +164,12 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpHideAllDimensions:
     ChangeDimensionsVisibility( false );
     break; // HIDE ALL DIMENSIONS
+  case GEOMOp::OpShowAllAnnotations:
+    ChangeAnnotationsVisibility( true );
+    break; // SHOW ALL ANNOTATIONS
+  case GEOMOp::OpHideAllAnnotations:
+    ChangeAnnotationsVisibility( false );
+    break; // HIDE ALL ANNOTATIONS
   default: 
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
     break;
@@ -182,48 +189,96 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 void MeasureGUI::ChangeDimensionsVisibility( const bool theIsVisible )
 {
   SalomeApp_Application* anApp = getGeometryGUI()->getApp();
-  if (!anApp)
-  {
+  if ( !anApp )
     return;
-  }
 
   SalomeApp_Study* anActiveStudy = dynamic_cast<SalomeApp_Study*>( anApp->activeStudy() );
   if ( !anActiveStudy )
-  {
     return;
-  }
 
-  LightApp_SelectionMgr* aSelMgr = anApp->selectionMgr();
-  if ( !aSelMgr )
-  {
+  Handle(SALOME_InteractiveObject) anIObject = getSingleSelectedIO();
+  if ( anIObject.IsNull()
+   || !anIObject->hasEntry() )
     return;
-  }
-
-  SALOME_ListIO aListIO;
-  aSelMgr->selectedObjects( aListIO );
-  if ( aListIO.Extent() != 1 )
-  {
-    return;
-  }
-
-  Handle(SALOME_InteractiveObject) anIObject = aListIO.First();
-  if ( !anIObject->hasEntry() )
-  {
-    return;
-  }
 
   SUIT_OverrideCursor wc;
 
   GEOMGUI_DimensionProperty aDimensions( anActiveStudy, anIObject->getEntry() );
 
-  for ( int anIt = 0; anIt < aDimensions.GetNumber(); ++anIt )
-  {
+  for ( int anIt = 0; anIt < aDimensions.GetNumber(); ++anIt ) {
     aDimensions.SetVisible( anIt, theIsVisible );
   }
 
   aDimensions.SaveToAttribute( anActiveStudy, anIObject->getEntry() );
 
   GEOM_Displayer( anActiveStudy ).Redisplay( anIObject, true );
+}
+
+//=======================================================================
+// function : ChangeAnnotationsVisibility
+// purpose  : 
+//=======================================================================
+void MeasureGUI::ChangeAnnotationsVisibility( const bool theIsVisible )
+{
+  SalomeApp_Application* anApp = getGeometryGUI()->getApp();
+  if ( !anApp )
+    return;
+
+  SalomeApp_Study* anActiveStudy = dynamic_cast<SalomeApp_Study*>( anApp->activeStudy() );
+  if ( !anActiveStudy )
+    return;
+
+  Handle(SALOME_InteractiveObject) anIObject = getSingleSelectedIO();
+  if ( anIObject.IsNull()
+   || !anIObject->hasEntry() )
+    return;
+
+  _PTR(SObject) aSObj = anActiveStudy->studyDS()->FindObjectID( anIObject->getEntry() );
+
+  const Handle(GEOMGUI_AnnotationAttrs)
+    aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
+
+  if ( aShapeAnnotations.IsNull() )
+    return;
+
+  const int aCount = aShapeAnnotations->GetNbAnnotation();
+
+  if ( aCount > 0 ) {
+
+    SUIT_OverrideCursor wc;
+
+    for ( int anI = 0; anI <= aCount; ++anI ) {
+
+      aShapeAnnotations->SetIsVisible( anI, theIsVisible );
+    }
+
+    GEOM_Displayer( anActiveStudy ).Redisplay( anIObject, true );
+  }
+}
+
+//=======================================================================
+// function : getSingleSelectedIO
+// purpose  : returns selected interactive object for single selection.
+//=======================================================================
+Handle(SALOME_InteractiveObject) MeasureGUI::getSingleSelectedIO()
+{
+  SalomeApp_Application* anApp = getGeometryGUI()->getApp();
+  if ( !anApp ) {
+    return Handle(SALOME_InteractiveObject)();
+  }
+
+  LightApp_SelectionMgr* aSelMgr = anApp->selectionMgr();
+  if ( !aSelMgr ) {
+    return Handle(SALOME_InteractiveObject)();
+  }
+
+  SALOME_ListIO aListIO;
+  aSelMgr->selectedObjects( aListIO );
+  if ( aListIO.Extent() != 1 ) {
+    return Handle(SALOME_InteractiveObject)();
+  }
+
+  return aListIO.First();
 }
 
 //=======================================================================

@@ -27,7 +27,11 @@
 #ifndef MEASUREGUI_H
 #define MEASUREGUI_H
 
+// GEOM includes
 #include <GEOMGUI.h>
+
+// GUI includes
+#include <SALOME_InteractiveObject.hxx>
 
 class QDialog;
 
@@ -52,6 +56,14 @@ public:
 
   // Show/hide all dimension created for object
   void ChangeDimensionsVisibility( const bool theIsVisible );
+
+  // Show/hide all shape annotations created for GEOM object
+  void ChangeAnnotationsVisibility( const bool theIsVisible );
+
+private:
+  // Returns selected interactive object for single selection
+  Handle(SALOME_InteractiveObject) getSingleSelectedIO();
+
 private:
   QDialog* myManageDimensionDlg;
 private slots:

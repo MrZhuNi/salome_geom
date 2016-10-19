@@ -72,7 +72,9 @@ protected:
 
 public slots:
   void                          updateTree();
-  void                          updateBranch( const QString& theEntry );
+  void                          updateBranches( const QString& theEntry );
+  void                          updateDimensionBranch( const QString& theEntry );
+  void                          updateAnnotationBranch( const QString& theEntry );
 
 private slots:
   void                          onItemClicked(QTreeWidgetItem*, int );

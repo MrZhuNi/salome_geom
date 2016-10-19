@@ -150,6 +150,7 @@ public:
                                            const int row, Qt::DropAction action );
 
   void                        emitDimensionsUpdated( QString entry );
+  void                        emitAnnotationsUpdated( QString entry );
 
 public slots:
   virtual bool                deactivateModule( SUIT_Study* );
@@ -179,6 +180,7 @@ signals :
   void                        SignalDefaultStepValueChanged( double newVal );
   void                        SignalDependencyTreeParamChanged( const QString&, const QString& );
   void                        SignalDependencyTreeRenameObject( const QString& );
+  void                        SignalAnnotationsUpdated( const QString& );
   void                        DimensionsUpdated( const QString& );
 
 protected:
