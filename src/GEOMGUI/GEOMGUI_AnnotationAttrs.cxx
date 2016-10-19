@@ -147,12 +147,12 @@ void GEOMGUI_AnnotationAttrs::Remove( const _PTR(SObject)& theObject )
 }
 
 //=================================================================================
-// function : SetCount
+// function : SetNbAnnotation
 // purpose  : 
 //=================================================================================
-void GEOMGUI_AnnotationAttrs::SetCount( const int theCount ) const
+void GEOMGUI_AnnotationAttrs::SetNbAnnotation( const int theCount ) const
 {
-  const int aCount = this->GetCount();
+  const int aCount = this->GetNbAnnotation();
 
   if ( aCount < theCount )
   {
@@ -187,10 +187,10 @@ void GEOMGUI_AnnotationAttrs::SetCount( const int theCount ) const
 }
 
 //=================================================================================
-// function : GetCount
+// function : GetNbAnnotation
 // purpose  : 
 //=================================================================================
-int GEOMGUI_AnnotationAttrs::GetCount() const
+int GEOMGUI_AnnotationAttrs::GetNbAnnotation() const
 {
   return myParameterMap->GetInt( PARAMETER_COUNT );
 }
@@ -354,8 +354,8 @@ void GEOMGUI_AnnotationAttrs::GetShapeSel( const int theIndex, int& theShapeType
 //=================================================================================
 void GEOMGUI_AnnotationAttrs::Append( const Properties& theProps )
 {
-  const int aCount = this->GetCount();
-  this->SetCount( aCount + 1 );
+  const int aCount = this->GetNbAnnotation();
+  this->SetNbAnnotation( aCount + 1 );
   this->SetProperties( aCount, theProps );
 }
 

@@ -1420,7 +1420,7 @@ void GEOM_Displayer::updateShapeAnnotations( const Handle(SALOME_InteractiveObje
     gp_Trsf aToLCS;
     aToLCS.SetTransformation( theShapeLCS, gp_Ax3() );
 
-    for ( int anI = 0; anI < aShapeAnnotations->GetCount(); ++anI )
+    for ( int anI = 0; anI < aShapeAnnotations->GetNbAnnotation(); ++anI )
     {
       if ( !aShapeAnnotations->GetIsVisible( anI ) )
       {

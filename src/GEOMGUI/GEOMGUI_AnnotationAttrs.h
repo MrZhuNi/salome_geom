@@ -28,6 +28,7 @@
 #define GEOMGUI_ANNOTATIONATTRS_H
 
 // SALOME GUI includes
+#include <GEOMGUI.h>
 #include <SalomeApp_Study.h>
 
 // OCCT includes
@@ -50,14 +51,14 @@ public:
   DEFINE_STANDARD_RTTIEXT( GEOMGUI_AnnotationAttrs, Standard_Transient )
 
   //! Find annotation data defined for an object.
-  Standard_EXPORT static Handle(GEOMGUI_AnnotationAttrs) FindAttributes( const _PTR(SObject)& theObject );
+  GEOMGUI_EXPORT static Handle(GEOMGUI_AnnotationAttrs) FindAttributes( const _PTR(SObject)& theObject );
 
   //! Find or create annotation data fields for an object.
-  Standard_EXPORT static Handle(GEOMGUI_AnnotationAttrs) FindOrCreateAttributes( const _PTR(SObject)& theObject,
-                                                                                 SalomeApp_Study* theStudy );
+  GEOMGUI_EXPORT static Handle(GEOMGUI_AnnotationAttrs) FindOrCreateAttributes( const _PTR(SObject)& theObject,
+                                                                                SalomeApp_Study* theStudy );
 
   //! Remove annotation data fields for an object.
-  Standard_EXPORT static void Remove( const _PTR(SObject)& theObject );
+  GEOMGUI_EXPORT static void Remove( const _PTR(SObject)& theObject );
 
 public:
 
@@ -80,17 +81,17 @@ public:
   //! @param thePresentation [in] the presentation to setup.
   //! @param theProps [in] the set of properties.
   //! @param theLCS [in] the local coordinate system of the shape.
-  Standard_EXPORT static void SetupPresentation( const Handle(GEOM_Annotation)& thePresentation,
-                                                 const Properties& theProps,
-                                                 const gp_Ax3& theLCS );
+  GEOMGUI_EXPORT static void SetupPresentation( const Handle(GEOM_Annotation)& thePresentation,
+                                                const Properties& theProps,
+                                                const gp_Ax3& theLCS );
 
   //! Setup parameters of the annotation presentation with the properties of a definition.
   //! @param thePresentation [in] the presentation to setup.
   //! @param theIndex [in] the index of the annotation definition.
   //! @param theLCS [in] the local coordinate system of the shape.
-  Standard_EXPORT void SetupPresentation( const Handle(GEOM_Annotation)& thePresentation,
-                                          const int theIndex,
-                                          const gp_Ax3& theLCS );
+  GEOMGUI_EXPORT void SetupPresentation( const Handle(GEOM_Annotation)& thePresentation,
+                                         const int theIndex,
+                                         const gp_Ax3& theLCS );
 
 public:
 
@@ -98,84 +99,84 @@ public:
   //! If the count is decreased the extra annotation definitions are
   //! cleared out from the attribute.
   //! @param theNumber [in] the new number of annotation definitions.
-  Standard_EXPORT void SetCount( const int theCount ) const;
+  GEOMGUI_EXPORT void SetNbAnnotation( const int theCount ) const;
 
   //! Returns number of annotation definitions stored on the object.
-  Standard_EXPORT int GetCount() const;
+  GEOMGUI_EXPORT int GetNbAnnotation() const;
 
   //! Sets application name property of an annotation definition.
   //! @param theIndex [in] the index of the annotation definition.
   //! @param theName [in] the new application name.
-  Standard_EXPORT void SetName( const int theIndex, const QString& theName );
+  GEOMGUI_EXPORT void SetName( const int theIndex, const QString& theName );
 
   //! Returns application name of an annotation definition.
   //! @param theIndex [in] the index of the annotation definition.
-  Standard_EXPORT QString GetName( const int theIndex ) const;
+  GEOMGUI_EXPORT QString GetName( const int theIndex ) const;
 
   //! Sets application visibility state of an annotation definition.
   //! @param theIndex [in] the index of the annotation definition.
   //! @param theIsVisible [in] the visibility state.
-  Standard_EXPORT void SetIsVisible( const int theIndex, const bool theIsVisible );
+  GEOMGUI_EXPORT void SetIsVisible( const int theIndex, const bool theIsVisible );
 
   //! Returns applicationb visibility state of an annotaion definition.
-  Standard_EXPORT bool GetIsVisible( const int theIndex ) const;
+  GEOMGUI_EXPORT bool GetIsVisible( const int theIndex ) const;
 
   //! Sets annotation label's text.
   //! @param theIndex [in] the index of the annotation definition.
   //! @param theText [in] the text string.
-  Standard_EXPORT void SetText( const int theIndex, const QString& theText );
+  GEOMGUI_EXPORT void SetText( const int theIndex, const QString& theText );
 
   //! Returns annotation label's text.
-  Standard_EXPORT QString GetText( const int theIndex ) const;
+  GEOMGUI_EXPORT QString GetText( const int theIndex ) const;
 
   //! Sets screen fixed flag of the annotation definition.
   //! @param theIndex [in] the index of the annotation definition.
   //! @param theIsScreenFixed [in] the presentation flag.
-  Standard_EXPORT void SetIsScreenFixed( const int theIndex, const bool theIsScreenFixed );
+  GEOMGUI_EXPORT void SetIsScreenFixed( const int theIndex, const bool theIsScreenFixed );
 
   //! Returns screen fixed flag of the annotation definition.
-  Standard_EXPORT bool GetIsScreenFixed( const int theIndex ) const;
+  GEOMGUI_EXPORT bool GetIsScreenFixed( const int theIndex ) const;
 
   //! Sets position of the annotation definition.
   //! @param theIndex [in] the index of the annotation definition.
   //! @param thePosition [in] the position of the annotation label.
-  Standard_EXPORT void SetPosition( const int theIndex, const gp_Pnt& thePosition );
+  GEOMGUI_EXPORT void SetPosition( const int theIndex, const gp_Pnt& thePosition );
 
   //! Returns position of the annotation definition.
-  Standard_EXPORT gp_Pnt GetPosition( const int theIndex ) const;
+  GEOMGUI_EXPORT gp_Pnt GetPosition( const int theIndex ) const;
 
   //! Sets attach point of the annotation definition.
   //! @param theIndex [in] the index of the annotation definition.
   //! @param theAttach [in] the attach point of the annotation.
-  Standard_EXPORT void SetAttach( const int theIndex, const gp_Pnt& theAttach );
+  GEOMGUI_EXPORT void SetAttach( const int theIndex, const gp_Pnt& theAttach );
 
   //! Returns attach point of the annotation definition.
-  Standard_EXPORT gp_Pnt GetAttach( const int theIndex ) const;
+  GEOMGUI_EXPORT gp_Pnt GetAttach( const int theIndex ) const;
 
   //! Sets shape selection arguments.
   //! @param theIndex [in] the index of the annotation definition.
   //! @param theShapeType, theSubIdx [in] the type of the selected shape and the sub-shape index.
-  Standard_EXPORT void SetShapeSel( const int theIndex, const int theShapeType, const int theSubIdx );
+  GEOMGUI_EXPORT void SetShapeSel( const int theIndex, const int theShapeType, const int theSubIdx );
 
   //! Returns shape selection arguments.
   //! @param theIndex [in] the index of the annotation definition.
   //! @param theShapeType, theSubIdx [out] the type of the selected shape and the sub-shape index.
-  Standard_EXPORT void GetShapeSel( const int theIndex, int& theShapeType, int& theSubIdx ) const;
+  GEOMGUI_EXPORT void GetShapeSel( const int theIndex, int& theShapeType, int& theSubIdx ) const;
 
 public:
 
   //! Appends new annotation definition with the given properties.
-  Standard_EXPORT void Append( const Properties& theProps );
+  GEOMGUI_EXPORT void Append( const Properties& theProps );
 
   //! Sets complete properties of an annotation definition.
   //! @param theIndex [in] the index of the annotation definition.
   //! @param theProps [in] the structure containing the properties.
-  Standard_EXPORT void SetProperties( const int theIndex, const Properties& theProps );
+  GEOMGUI_EXPORT void SetProperties( const int theIndex, const Properties& theProps );
 
   //! Returns complete properties of an annotation definition.
   //! @param theIndex [in] the index of the annotation definition.
   //! @param theProps [out] the structure containing the properties.
-  Standard_EXPORT void GetProperties( const int theIndex, Properties& theProps ) const;
+  GEOMGUI_EXPORT void GetProperties( const int theIndex, Properties& theProps ) const;
 
 private:
 
