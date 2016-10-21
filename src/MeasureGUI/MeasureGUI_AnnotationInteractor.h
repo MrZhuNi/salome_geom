@@ -78,6 +78,14 @@ protected:
   //! Disconnect interactor's event handler from the view window given.
   void DisconnectView( SUIT_ViewWindow* theWindow );
 
+signals:
+
+  //! Emitted when interactor begins modification of the interactive object.
+  void SignalInteractionStarted( Handle_GEOM_Annotation theIO );
+
+  //! Emitted when interactor finished modification of the interactive object.
+  void SignalInteractionFinished( Handle_GEOM_Annotation theIO );
+
 protected slots:
 
   //! Handler for signal coming from GUI layer.

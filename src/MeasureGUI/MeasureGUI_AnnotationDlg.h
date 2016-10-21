@@ -28,6 +28,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
+#include <GEOM_Annotation.hxx>
 #include <GEOM_Constants.h>
 #include <GEOMGUI_AnnotationAttrs.h>
 
@@ -73,6 +74,8 @@ protected:
   void                                updateSubShapeEnableState();
   void                                redisplayPreview();
 
+  void                                closeEvent( QCloseEvent* theEv );
+
 private slots:
   void                                ClickOnOk();
   bool                                ClickOnApply();
@@ -82,6 +85,8 @@ private slots:
   void                                onTextChange();
   void                                onTypeChange();
   void                                onSubShapeTypeChange();
+
+  void                                onDragged( Handle_GEOM_Annotation theAnnotation );
 
 private:
   void                                Init();

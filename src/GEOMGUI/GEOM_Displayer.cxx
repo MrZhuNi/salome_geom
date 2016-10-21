@@ -1444,6 +1444,7 @@ void GEOM_Displayer::updateShapeAnnotations( const Handle(SALOME_InteractiveObje
       aPresentation->SetLineWidth( aLineWidth );
       aPresentation->SetLineStyle( static_cast<Aspect_TypeOfLine>( aLineStyle ) );
       aPresentation->SetAutoHide( isAutoHide ? Standard_True : Standard_False );
+      aPresentation->SetDepthCulling( Standard_True );
 
       aListOfIO.Append( aPresentation );
     }

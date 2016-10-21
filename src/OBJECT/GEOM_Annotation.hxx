@@ -126,6 +126,24 @@ public:
    //! Returns color for the connection line.
   Quantity_Color GetLineColor() const { return myDrawer->LineAspect()->Aspect()->Color(); }
 
+  //! Sets line width to be used for drawing the annotation's extension line and underline.
+  Standard_EXPORT void SetLineWidth( const Standard_Real theLineWidth );
+
+  //! Returns line width for drawing the annotation's extension line and underline.
+  Standard_Real GetLineWidth() const { return myDrawer->LineAspect()->Aspect()->Width(); }
+
+  //! Sets style of connection line.
+  Standard_EXPORT void SetLineStyle( const Aspect_TypeOfLine theStyle );
+
+  //! Retusn style of connection line.
+  Aspect_TypeOfLine GetLineStyle() const { return myDrawer->LineAspect()->Aspect()->Type(); }
+
+  //! Sets style of hidden connection line.
+  Standard_EXPORT void SetHiddenLineStyle( const Aspect_TypeOfLine theStyle );
+
+  //! Retusn style of hidden connection line.
+  Aspect_TypeOfLine GetHiddenLineStyle() const { return myDrawer->HiddenLineAspect()->Aspect()->Type(); }
+
   //! Sets text height in pixels.
   Standard_EXPORT void SetTextHeight( const Standard_Real theHeight );
 
@@ -144,18 +162,6 @@ public:
   //! Returns font used for drawing the label.
   TCollection_AsciiString GetFont() const { return myDrawer->TextAspect()->Aspect()->Font(); }
 
-  //! Sets line width to be used for drawing the annotation's extension line and underline.
-  Standard_EXPORT void SetLineWidth( const Standard_Real theLineWidth );
-
-  //! Returns line width for drawing the annotation's extension line and underline.
-  Standard_Real GetLineWidth() const { return myDrawer->LineAspect()->Aspect()->Width(); }
-
-  //! Sets style of connection line.
-  Standard_EXPORT void SetLineStyle( const Aspect_TypeOfLine theStyle );
-
-  //! Retusn style of connection line.
-  Aspect_TypeOfLine GetLineStyle() const { return myDrawer->LineAspect()->Aspect()->Type(); }
-
   //! Sets annotation auto-hiding option.
   //! \param theIsEnable [in] the option flag. If passed true, the annotation 
   //!        will be automatically hidden in the view if the attachment point
@@ -171,6 +177,16 @@ public:
 
   //! Returns highlight mode
   HighlightMode GetHilightMode() const { return myHilightMode; }
+
+  //! Sets special flag that allows disabling depth testing when rendering
+  //! the graphical presentation. When disable the hidden parts such as
+  //! lines and text become visible and a rendered with another drawing
+  //! aspect. This mode should be explicitly used with setting top layer
+  //! for the presentation. Otherwise the behavior is undefined.
+  Standard_EXPORT void SetDepthCulling (const Standard_Boolean theToEnable);
+
+  //! Returns depth culling state.
+  Standard_Boolean GetDepthCulling() const { return myIsDepthCulling; }
 
 // Interactive dragging:
 public:
@@ -216,6 +232,7 @@ private:
   gp_Pnt myStartPosition; //!< Position before starting dragging operation.
   Standard_Boolean myIsScreenFixed; //!< Flag indicating whether "screen fixed" positioning mode is turned on or off.
   Standard_Boolean myIsAutoHide; //!< Flag indicating whether "auto-hiding" option is turned on.
+  Standard_Boolean myIsDepthCulling; //!< Flag indiciating whether the "depth culling" is turned on.
   HighlightMode myHilightMode; //!< Highlight mode for presentation.
   TCollection_ExtendedString myText; //!< Text string of the label presentation.
 
@@ -245,6 +262,8 @@ private:
     //! Renders the annotation graphical elements.
     virtual void Render( const Handle(OpenGl_Workspace)& theWorkspace ) const Standard_OVERRIDE;
 
+    void SetDepthMode( const int theMode ) { myDepthMode = theMode; }
+
   private:
 
     struct TextSize {
@@ -261,6 +280,7 @@ private:
     OpenGl_PrimitiveArray* myTextLineDraw;  //!< Text underline draw element.
     OpenGl_PrimitiveArray* myExtLineDraw;   //!< Extension line draw element.
     OpenGl_PrimitiveArray* myExtMarkerDraw; //!< Extension marker draw element.
+    int myDepthMode;                        //!< Depth mode for drawing hidden line presentation.
     mutable float myTextLineY;              //!< Text's underlines relative position.
     mutable TextSize myTextSize;            //!< Text's size parameters
     mutable Graphic3d_Vec2 myTextUnderline; //!< Text's underline position.

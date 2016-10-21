@@ -29,9 +29,6 @@
 #include <GEOM_Annotation.hxx>
 #include <SALOMEDSImpl_AttributeParameter.hxx>
 
-// OCCT includes
-#include <gp_Ax3.hxx>
-
 // STL includes
 #include <string>
 #include <vector>
@@ -354,9 +351,18 @@ void GEOMGUI_AnnotationAttrs::GetShapeSel( const int theIndex, int& theShapeType
 //=================================================================================
 void GEOMGUI_AnnotationAttrs::Append( const Properties& theProps )
 {
+  this->Append( theProps, gp_Ax3() );
+}
+
+//=================================================================================
+// function : Append
+// purpose  : 
+//=================================================================================
+void GEOMGUI_AnnotationAttrs::Append( const Properties& theProps, const gp_Ax3& theShapeLCS )
+{
   const int aCount = this->GetNbAnnotation();
   this->SetNbAnnotation( aCount + 1 );
-  this->SetProperties( aCount, theProps );
+  this->SetProperties( aCount, theProps, theShapeLCS );
 }
 
 //=================================================================================
@@ -365,13 +371,27 @@ void GEOMGUI_AnnotationAttrs::Append( const Properties& theProps )
 //=================================================================================
 void GEOMGUI_AnnotationAttrs::SetProperties( const int theIndex, const Properties& theProps )
 {
+  this->SetProperties( theIndex, theProps, gp_Ax3() );
+}
+
+//=================================================================================
+// function : SetProperties
+// purpose  : 
+//=================================================================================
+void GEOMGUI_AnnotationAttrs::SetProperties( const int theIndex, const Properties& theProps,
+                                             const gp_Ax3& theShapeLCS )
+{
+  gp_Trsf aToShapeLCS;
+  aToShapeLCS.SetTransformation( gp_Ax3(), theShapeLCS );
+
   this->SetName( theIndex, theProps.Name );
   this->SetText( theIndex, theProps.Text );
   this->SetIsVisible( theIndex, theProps.IsVisible );
   this->SetIsScreenFixed( theIndex, theProps.IsScreenFixed );
-  this->SetPosition( theIndex, theProps.Position );
-  this->SetAttach( theIndex, theProps.Attach );
   this->SetShapeSel( theIndex, theProps.ShapeType, theProps.ShapeIndex );
+  this->SetAttach( theIndex, theProps.Attach.Transformed( aToShapeLCS ) );
+  this->SetPosition( theIndex, (theProps.IsScreenFixed) ? 
+    theProps.Position : theProps.Position.Transformed( aToShapeLCS ) );
 }
 
 //=================================================================================
@@ -396,19 +416,20 @@ void GEOMGUI_AnnotationAttrs::GetProperties( const int theIndex, Properties& the
 //=================================================================================
 void GEOMGUI_AnnotationAttrs::SetupPresentation( const Handle(GEOM_Annotation)& thePresentation,
                                                  const Properties& theProps,
-                                                 const gp_Ax3& theLCS )
+                                                 const gp_Ax3& theShapeLCS )
 {
-  gp_Trsf aToLCS;
-  aToLCS.SetTransformation( theLCS, gp_Ax3() );
+  gp_Trsf aFromShapeLCS;
+  aFromShapeLCS.SetTransformation( theShapeLCS, gp_Ax3() );
 
   TCollection_ExtendedString aText;
   for (int i = 0; i < (int)theProps.Text.length(); i++ )
     aText.Insert( i + 1, theProps.Text[ i ].unicode() );
-  //
+
   thePresentation->SetText( aText );
   thePresentation->SetScreenFixed( theProps.IsScreenFixed );
-  thePresentation->SetPosition( theProps.Position );
-  thePresentation->SetAttachPoint( theProps.Attach.Transformed( aToLCS ) );
+  thePresentation->SetAttachPoint( theProps.Attach.Transformed( aFromShapeLCS ) );
+  thePresentation->SetPosition( (theProps.IsScreenFixed) ? 
+    theProps.Position : theProps.Position.Transformed( aFromShapeLCS ) );
 }
 
 //=================================================================================
@@ -417,9 +438,9 @@ void GEOMGUI_AnnotationAttrs::SetupPresentation( const Handle(GEOM_Annotation)& 
 //=================================================================================
 void GEOMGUI_AnnotationAttrs::SetupPresentation( const Handle(GEOM_Annotation)& thePresentation,
                                                  const int theIndex,
-                                                 const gp_Ax3& theLCS )
+                                                 const gp_Ax3& theShapeLCS )
 {
   Properties aProps;
   this->GetProperties( theIndex, aProps );
-  this->SetupPresentation( thePresentation, aProps, theLCS );
+  this->SetupPresentation( thePresentation, aProps, theShapeLCS );
 }

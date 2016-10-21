@@ -67,6 +67,7 @@ GEOM_Annotation::GEOM_Annotation() : AIS_InteractiveObject()
   SetAutoHide( Standard_True );
   SetHilightMode( HighlightAll );
   SetMutable( Standard_True );
+  SetDepthCulling( Standard_True );
 
   Handle(Prs3d_TextAspect) aTextAspect = new Prs3d_TextAspect();
   aTextAspect->SetHeight( 20.0 );
@@ -76,6 +77,10 @@ GEOM_Annotation::GEOM_Annotation() : AIS_InteractiveObject()
   Handle(Prs3d_LineAspect) aLineAspect =
     new Prs3d_LineAspect( Quantity_NOC_WHITE, Aspect_TOL_SOLID, 1.0 );
   myDrawer->SetLineAspect( aLineAspect );
+
+  Handle(Prs3d_LineAspect) aHiddenLineAspect =
+    new Prs3d_LineAspect( Quantity_NOC_WHITE, Aspect_TOL_DOT, 1.0 );
+  myDrawer->SetHiddenLineAspect( aHiddenLineAspect );
 
   Handle(Prs3d_PointAspect) aPointAspect =
     new Prs3d_PointAspect( Aspect_TOM_POINT, Quantity_NOC_WHITE, 4.0 );
@@ -188,9 +193,53 @@ void GEOM_Annotation::SetTextColor( const Quantity_Color& theColor )
 void GEOM_Annotation::SetLineColor( const Quantity_Color& theColor )
 {
   myDrawer->LineAspect()->SetColor( theColor );
+  myDrawer->HiddenLineAspect()->SetColor( theColor );
   myDrawer->PointAspect()->SetColor( theColor );
 
   SetToUpdate();
+}
+
+// =======================================================================
+// function : SetLineWidth
+// purpose  :
+// =======================================================================
+void GEOM_Annotation::SetLineWidth( const Standard_Real theLineWidth )
+{
+  if ( GetLineWidth() != theLineWidth )
+  {
+    myDrawer->LineAspect()->SetWidth( theLineWidth );
+    myDrawer->HiddenLineAspect()->SetWidth( theLineWidth );
+
+    SetToUpdate();
+  }
+}
+
+// =======================================================================
+// function : SetLineStyle
+// purpose  :
+// =======================================================================
+void GEOM_Annotation::SetLineStyle( const Aspect_TypeOfLine theStyle )
+{
+  if ( GetLineStyle() != theStyle )
+  {
+    myDrawer->LineAspect()->SetTypeOfLine( theStyle );
+
+    SetToUpdate();
+  }
+}
+
+// =======================================================================
+// function : SetHiddenLineStyle
+// purpose  :
+// =======================================================================
+void GEOM_Annotation::SetHiddenLineStyle( const Aspect_TypeOfLine theStyle )
+{
+  if ( GetHiddenLineStyle() != theStyle )
+  {
+    myDrawer->HiddenLineAspect()->SetTypeOfLine( theStyle );
+
+    SetToUpdate();
+  }
 }
 
 // =======================================================================
@@ -199,11 +248,11 @@ void GEOM_Annotation::SetLineColor( const Quantity_Color& theColor )
 // =======================================================================
 void GEOM_Annotation::SetTextHeight( const Standard_Real theHeight )
 {
-  if (GetTextHeight() != theHeight)
+  if ( GetTextHeight() != theHeight )
   {
     myDrawer->TextAspect()->SetHeight( theHeight );
 
-    SetToUpdate ();
+    SetToUpdate();
   }
 }
 
@@ -213,7 +262,7 @@ void GEOM_Annotation::SetTextHeight( const Standard_Real theHeight )
 // =======================================================================
 void GEOM_Annotation::SetFontAspect( const Font_FontAspect theFontAspect )
 {
-  if (GetFontAspect() != theFontAspect)
+  if ( GetFontAspect() != theFontAspect )
   {
     myDrawer->TextAspect()->Aspect()->SetTextFontAspect( theFontAspect );
 
@@ -227,7 +276,7 @@ void GEOM_Annotation::SetFontAspect( const Font_FontAspect theFontAspect )
 // =======================================================================
 void GEOM_Annotation::SetFont( const TCollection_AsciiString& theFont )
 {
-  if (GetFont() != theFont)
+  if ( GetFont() != theFont )
   {
     myDrawer->TextAspect()->Aspect()->SetFont( theFont );
 
@@ -236,28 +285,14 @@ void GEOM_Annotation::SetFont( const TCollection_AsciiString& theFont )
 }
 
 // =======================================================================
-// function : SetLineWidth
+// function : SetDepthCulling
 // purpose  :
 // =======================================================================
-void GEOM_Annotation::SetLineWidth( const Standard_Real theLineWidth )
+void GEOM_Annotation::SetDepthCulling( const Standard_Boolean theToEnable )
 {
-  if (GetLineWidth() != theLineWidth)
+  if ( GetDepthCulling() != theToEnable )
   {
-    myDrawer->LineAspect()->SetWidth( theLineWidth );
-
-    SetToUpdate();
-  }
-}
-
-// =======================================================================
-// function : SetLineStyle
-// purpose  :
-// =======================================================================
-void GEOM_Annotation::SetLineStyle( const Aspect_TypeOfLine theStyle )
-{
-  if (GetLineStyle() != theStyle)
-  {
-    myDrawer->LineAspect()->SetTypeOfLine( theStyle );
+    myIsDepthCulling = theToEnable;
 
     SetToUpdate();
   }
@@ -289,10 +324,23 @@ void GEOM_Annotation::Compute( const Handle(PrsMgr_PresentationManager3d)& /*the
   OpenGl_Annotation* aAnnotationDraw =
     new OpenGl_Annotation( this, static_cast<Standard_Integer>( anAsp->Height() ), aGroup->GlStruct()->GlDriver() );
 
-  aGroup->AddElement( aAnnotationDraw );
+  aAnnotationDraw->SetDepthMode( 0 );
   aGroup->SetGroupPrimitivesAspect( myDrawer->TextAspect()->Aspect() );
   aGroup->SetGroupPrimitivesAspect( myDrawer->LineAspect()->Aspect() );
   aGroup->SetGroupPrimitivesAspect( myDrawer->PointAspect()->Aspect() );
+  aGroup->AddElement( aAnnotationDraw );
+
+  if ( !myIsDepthCulling )
+  {
+    OpenGl_Annotation* aAnnotationDraw =
+      new OpenGl_Annotation( this, static_cast<Standard_Integer>( anAsp->Height() ), aGroup->GlStruct()->GlDriver() );
+
+    aAnnotationDraw->SetDepthMode( GL_GREATER );
+    aGroup->SetPrimitivesAspect( myDrawer->TextAspect()->Aspect() );
+    aGroup->SetPrimitivesAspect( myDrawer->HiddenLineAspect()->Aspect() );
+    aGroup->SetPrimitivesAspect( myDrawer->PointAspect()->Aspect() );
+    aGroup->AddElement( aAnnotationDraw );
+  }
 
   Bnd_Box aBox = TextBoundingBox();
   if ( myIsScreenFixed )
@@ -427,6 +475,7 @@ GEOM_Annotation::OpenGl_Annotation::OpenGl_Annotation( GEOM_Annotation* theAnnot
                                                        const Standard_Integer theTextHeight,
                                                        const OpenGl_GraphicDriver* theDriver )
 : OpenGl_Element(),
+  myDepthMode( 0 ),
   myAISObject( theAnnotation ),
   myText( theAnnotation->myText.ToExtString() ),
   myTextLineY( 0.f ),
@@ -566,6 +615,14 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
     theWorkspace->ApplyAspectLine();
   }
 
+  GLint myOldDepthMode = 0;
+
+  if ( myDepthMode )
+  {
+    aContext->core11fwd->glGetIntegerv( GL_DEPTH_FUNC, &myOldDepthMode );
+    aContext->core11fwd->glDepthFunc( myDepthMode );
+  }
+
   // -------------------------------------------------------------
   // render text label in current persistence matrix and underline
   // -------------------------------------------------------------
@@ -658,14 +715,19 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
   aContext->ModelWorldState.Pop();
   aContext->WorldViewState.Pop();
 
-  if (myAISObject->myIsScreenFixed)
+  if ( myOldDepthMode )
+  {
+    aContext->core11fwd->glDepthFunc( myOldDepthMode );
+  }
+
+  if ( myAISObject->myIsScreenFixed )
   {
     aContext->WorldViewState.Pop();
   }
 
   aContext->ApplyModelViewMatrix();
 
-  if (toHighlight != theWorkspace->ToHighlight())
+  if ( toHighlight != theWorkspace->ToHighlight() )
   {
     theWorkspace->SetHighlight( toHighlight );
   }

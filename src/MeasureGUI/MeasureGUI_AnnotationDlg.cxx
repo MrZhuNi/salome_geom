@@ -31,7 +31,6 @@
 #include <GEOMBase_Skeleton.h>
 #include <GEOM_Displayer.h>
 #include <GeometryGUI.h>
-#include <GEOM_Annotation.hxx>
 
 #include <SOCC_Prs.h>
 #include <SOCC_ViewModel.h>
@@ -209,6 +208,9 @@ MeasureGUI_AnnotationDlg::MeasureGUI_AnnotationDlg( GeometryGUI* theGeometryGUI,
 
   myInteractor = new MeasureGUI_AnnotationInteractor( theGeometryGUI, parent );
   myInteractor->Enable();
+
+  connect( myInteractor, SIGNAL( SignalInteractionFinished( Handle_GEOM_Annotation ) ),
+           this, SLOT( onDragged( Handle_GEOM_Annotation ) ) );
 
   Init();
 }
@@ -438,12 +440,19 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
       activateSelection();
 
       if ( !aNullShape ) {
-        if ( !getPickedPoint( anAttachPoint ) )
-        {
-          TopoDS_Shape aShape;
-          GEOMBase::GetShape( myShape.get(), aShape );
+
+        TopoDS_Shape aShape;
+        GEOMBase::GetShape( myShape.get(), aShape );
+
+        if ( !getPickedPoint( anAttachPoint ) ) {
+
           anAttachPoint = getAttachPoint( aShape );
         }
+
+        gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
+        gp_Trsf aToShapeLCS;
+        aToShapeLCS.SetTransformation( gp_Ax3(), aShapeLCS );
+        anAttachPoint.Transform( aToShapeLCS );
       }
     } else if ( myEditCurrentArgument == mySubShapeName ) {
       if ( !myShape->_is_nil() ) {
@@ -467,12 +476,20 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
             aSubShapeIndex = aMainMap.FindIndex( aSubShape );
           }
 
-          if ( !aSubShape.IsNull() )
-          {
-            if ( !getPickedPoint( anAttachPoint ) )
-            {
+          if ( !aSubShape.IsNull() ) {
+
+            TopoDS_Shape aShape;
+            GEOMBase::GetShape( myShape.get(), aShape );
+
+            if ( !getPickedPoint( anAttachPoint ) ) {
+
               anAttachPoint = getAttachPoint( aSubShape );
             }
+
+            gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
+            gp_Trsf aToShapeLCS;
+            aToShapeLCS.SetTransformation( gp_Ax3(), aShapeLCS );
+            anAttachPoint.Transform( aToShapeLCS );
           }
         }
       }
@@ -481,6 +498,18 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
     myAnnotationProperties.Attach = anAttachPoint;
   }
   redisplayPreview();
+}
+
+//=======================================================================
+//function : closeEvent
+//purpose  :
+//=======================================================================
+void MeasureGUI_AnnotationDlg::closeEvent( QCloseEvent* theEv )
+{
+  if ( myInteractor ) {
+    myInteractor->Disable();
+  }
+  GEOMBase_Skeleton::closeEvent( theEv );
 }
 
 //=======================================================================
@@ -528,6 +557,42 @@ void MeasureGUI_AnnotationDlg::onSubShapeTypeChange()
 
   activateSelection();
   redisplayPreview();
+}
+
+//=================================================================================
+// function : onDragged
+// purpose  :
+//=================================================================================
+void MeasureGUI_AnnotationDlg::onDragged( Handle_GEOM_Annotation theAnnotation )
+{
+  const PrsList& aPreview = getPreview();
+  PrsList::const_iterator anIt = aPreview.cbegin();
+  for ( ; anIt != aPreview.cend(); ++anIt ) {
+
+    AIS_ListOfInteractive aIObjects;
+    ((SOCC_Prs*)(*anIt))->GetObjects( aIObjects );
+    AIS_ListOfInteractive::Iterator aIOIt( aIObjects );
+    for ( ; aIOIt.More(); aIOIt.Next() ) {
+
+      if ( aIOIt.Value() == theAnnotation ) {
+
+        TopoDS_Shape aShape;
+        GEOMBase::GetShape( myShape.get(), aShape );
+        gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
+        gp_Trsf aToShapeLCS;
+        aToShapeLCS.SetTransformation( gp_Ax3(), aShapeLCS );
+
+        if ( !myAnnotationProperties.IsScreenFixed ) {
+          myAnnotationProperties.Position = theAnnotation->GetPosition().Transformed( aToShapeLCS );
+        }
+        else {
+          myAnnotationProperties.Position = theAnnotation->GetPosition();
+        }
+
+        return;
+      }
+    }
+  }
 }
 
 #define RETURN_WITH_MSG( a, b ) \
@@ -638,7 +703,8 @@ SALOME_Prs* MeasureGUI_AnnotationDlg::buildPrs()
   aPresentation->SetLineStyle( static_cast<Aspect_TypeOfLine>( aLineStyle ) );
   aPresentation->SetAutoHide( isAutoHide ? Standard_True : Standard_False );
   aPresentation->SetScreenFixed( myAnnotationProperties.IsScreenFixed );
-  
+  aPresentation->SetDepthCulling( Standard_False );
+
   TopoDS_Shape aShape;
   GEOMBase::GetShape( myShape.get(), aShape );
   gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
@@ -771,9 +837,9 @@ gp_Pnt MeasureGUI_AnnotationDlg::getAttachPoint( const TopoDS_Shape& theShape )
     BRepBndLib::Add( aAttachShape, aBox );
     const gp_Pnt aMin = aBox.CornerMin();
     const gp_Pnt aMax = aBox.CornerMax();
-    return gp_Pnt( aMin.X() + aMax.X() / 2.0,
-                   aMin.Y() + aMax.Y() / 2.0,
-                   aMin.Z() + aMax.Z() / 2.0 );
+    return gp_Pnt( (aMin.X() + aMax.X()) / 2.0,
+                   (aMin.Y() + aMax.Y()) / 2.0,
+                   (aMin.Z() + aMax.Z()) / 2.0 );
   }
   else if ( aAttachShape.ShapeType() == TopAbs_FACE )
   {

@@ -32,6 +32,7 @@
 #include <SalomeApp_Study.h>
 
 // OCCT includes
+#include <gp_Ax3.hxx>
 #include <gp_Pnt.hxx>
 #include <Standard_Transient.hxx>
 
@@ -80,18 +81,18 @@ public:
   //! Setup parameters of the annotation presentation with the properties given.
   //! @param thePresentation [in] the presentation to setup.
   //! @param theProps [in] the set of properties.
-  //! @param theLCS [in] the local coordinate system of the shape.
+  //! @param theShapeLCS [in] the local coordinate system of the shape.
   GEOMGUI_EXPORT static void SetupPresentation( const Handle(GEOM_Annotation)& thePresentation,
                                                 const Properties& theProps,
-                                                const gp_Ax3& theLCS );
+                                                const gp_Ax3& theShapeLCS );
 
   //! Setup parameters of the annotation presentation with the properties of a definition.
   //! @param thePresentation [in] the presentation to setup.
   //! @param theIndex [in] the index of the annotation definition.
-  //! @param theLCS [in] the local coordinate system of the shape.
+  //! @param theShapeLCS [in] the local coordinate system of the shape.
   GEOMGUI_EXPORT void SetupPresentation( const Handle(GEOM_Annotation)& thePresentation,
                                          const int theIndex,
-                                         const gp_Ax3& theLCS );
+                                         const gp_Ax3& theShapeLCS );
 
 public:
 
@@ -168,10 +169,25 @@ public:
   //! Appends new annotation definition with the given properties.
   GEOMGUI_EXPORT void Append( const Properties& theProps );
 
+  //! Appends new annotation definition with the given properties and converts
+  //! position and attachment points to the given shape's local frame of reference.
+  //! @param theShapeLCS [in] the position of shape's local frame of reference with respect
+  //!        to the world frame of reference.
+  GEOMGUI_EXPORT void Append( const Properties& theProps, const gp_Ax3& theShapeLCS );
+
   //! Sets complete properties of an annotation definition.
   //! @param theIndex [in] the index of the annotation definition.
   //! @param theProps [in] the structure containing the properties.
   GEOMGUI_EXPORT void SetProperties( const int theIndex, const Properties& theProps );
+
+  //! Sets complete properties of an annotation definition with converting
+  //! position and attachment points to the given shape's local frame
+  //! of reference.
+  //! @param theIndex [in] the index of the annotation definition.
+  //! @param theProps [in] the structure containing the properties.
+  //! @param theShapeLCS [in] the position of shape's local frame of reference with respect
+  //!        to the world frame of reference.
+  GEOMGUI_EXPORT void SetProperties( const int theIndex, const Properties& theProps, const gp_Ax3& theShapeLCS );
 
   //! Returns complete properties of an annotation definition.
   //! @param theIndex [in] the index of the annotation definition.

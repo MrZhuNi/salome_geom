@@ -137,7 +137,11 @@ void MeasureGUI_AnnotationInteractor::Disable()
     myActiveViewPort = NULL;
   }
 
-  myActiveIO.Nullify();
+  if ( !myActiveIO.IsNull() )
+  {
+    emit SignalInteractionFinished( myActiveIO );
+    myActiveIO.Nullify();
+  }
 }
 
 //=================================================================================
@@ -245,6 +249,8 @@ bool MeasureGUI_AnnotationInteractor::eventFilter( QObject* theObject, QEvent* t
       myActiveIO = aAnnotation;
       myActiveIO->BeginDrag();
 
+      emit SignalInteractionStarted( myActiveIO );
+
       return true;
     }
 
@@ -303,6 +309,8 @@ bool MeasureGUI_AnnotationInteractor::eventFilter( QObject* theObject, QEvent* t
         anAISContext->Update( myActiveIO, Standard_False );
         anAISContext->UpdateCurrentViewer();
         anAISContext->MoveTo( aMouseEv->pos().x(), aMouseEv->pos().y(), aView3d );
+
+        emit SignalInteractionFinished( myActiveIO );
 
         mySelection.Clear();
         myActiveIO.Nullify();
