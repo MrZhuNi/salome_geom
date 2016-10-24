@@ -39,6 +39,7 @@
 #include "GEOM_Displayer.h"
 #include "GEOM_AISShape.hxx"
 #include "GEOMUtils_XmlHandler.hxx"
+#include "GEOMGUI_AnnotationMgr.h"
 
 #include "GEOM_Actor.h"
 
@@ -227,6 +228,7 @@ GeometryGUI::GeometryGUI() :
 
   myCreationInfoWdg = 0;
   myTextTreeWdg = 0;
+  myAnnotationMgr = 0;
 
   connect( Material_ResourceMgr::resourceMgr(), SIGNAL( changed() ), this, SLOT( updateMaterials() ) );
 
@@ -371,6 +373,17 @@ void GeometryGUI::ActiveWorkingPlane()
       vw->onFitAll();
     }
   }
+}
+
+//=======================================================================
+// function : GeometryGUI::SetActiveDialogBox()
+// purpose  : Set active dialog box
+//=======================================================================
+GEOMGUI_AnnotationMgr* GeometryGUI::GetAnnotationMgr()
+{
+  if ( !myAnnotationMgr )
+    myAnnotationMgr = new GEOMGUI_AnnotationMgr( getApp() );
+  return myAnnotationMgr;
 }
 
 //=======================================================================
@@ -1836,6 +1849,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   if ( !myTextTreeWdg )
     myTextTreeWdg = new GEOMGUI_TextTreeWdg( getApp() );
+
   getApp()->insertDockWindow( myTextTreeWdg->getWinID(), myTextTreeWdg );
   getApp()->placeDockWindow( myTextTreeWdg->getWinID(), Qt::LeftDockWidgetArea );
 
@@ -3025,6 +3039,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
     std::string aStudyEntry = (*aEntryIt).toLatin1().data();
     std::string aStoreEntry = ip->encodeEntry( aStudyEntry, componentName);
 
+    // store dimension parameters
     GEOMGUI_DimensionProperty aDimensions( appStudy, aStudyEntry );
 
     if ( aDimensions.GetNumber() == 0 )
@@ -3033,6 +3048,10 @@ void GeometryGUI::storeVisualParameters (int savePoint)
     }
 
     ip->setParameter( aStoreEntry, aDimensionParam.toStdString(), ((QString)aDimensions).toLatin1().data() );
+
+    // store annotation parameters
+    //GetAnnotationMgr()->storeVisualParameters(ip, aStudyEntry);
+    //_PTR(IParameters) ip = ClientFactory::getIParameters(ap);
   }
 }
 

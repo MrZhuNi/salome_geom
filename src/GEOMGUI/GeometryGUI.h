@@ -65,6 +65,7 @@ class SUIT_ViewManager;
 class SalomeApp_Study;
 class GEOMGUI_CreationInfoWdg;
 class GEOMGUI_TextTreeWdg;
+class GEOMGUI_AnnotationMgr;
 
 //=================================================================================
 // class    : GeometryGUI
@@ -97,6 +98,8 @@ public:
   static void                 Modified( bool = true );
 
   GEOM_Client&                GetShapeReader()    { static SHAPE_READER(myShapeReader);return myShapeReader; }
+
+  GEOMGUI_AnnotationMgr*      GetAnnotationMgr();
 
   // Get active dialog box
   QDialog*                    GetActiveDialogBox(){ return myActiveDialogBox; }
@@ -231,6 +234,7 @@ private:
   GEOMGUI_CreationInfoWdg*    myCreationInfoWdg;
   
   GEOMGUI_TextTreeWdg*       myTextTreeWdg;
+  GEOMGUI_AnnotationMgr*     myAnnotationMgr;
   
   SALOME_ListIO               myTopLevelIOList;               
 

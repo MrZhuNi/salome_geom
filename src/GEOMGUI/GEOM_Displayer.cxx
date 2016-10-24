@@ -1372,6 +1372,7 @@ void GEOM_Displayer::updateShapeAnnotations( const Handle(SALOME_InteractiveObje
                                              SALOME_OCCPrs* thePrs,
                                              const gp_Ax3& theShapeLCS )
 {
+  return;
   SalomeApp_Study* aStudy = getStudy();
   if ( !aStudy )
   {

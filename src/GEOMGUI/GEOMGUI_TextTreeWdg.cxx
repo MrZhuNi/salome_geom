@@ -23,6 +23,7 @@
 
 #include "GEOMGUI_DimensionProperty.h"
 #include "GEOMGUI_AnnotationAttrs.h"
+#include "GEOMGUI_AnnotationMgr.h"
 #include "GeometryGUI.h"
 #include "GeometryGUI_Operations.h"
 #include <GEOM_Constants.h>
@@ -93,6 +94,8 @@ namespace
   public:
 
     AnnotationsProperty( SalomeApp_Study* theStudy, const std::string& theEntry ) {
+      myEntry = theEntry.c_str();
+      myStudy = theStudy;
       _PTR(SObject) aSObj = theStudy->studyDS()->FindObjectID( theEntry );
       myAttr = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
     }
@@ -103,21 +106,35 @@ namespace
       return !myAttr.IsNull() ? myAttr->GetName( theIndex ) : QString();
     }
     virtual bool GetIsVisible( const int theIndex ) Standard_OVERRIDE {
-      return !myAttr.IsNull() ? myAttr->GetIsVisible( theIndex ) : false;
+      return annotationMgr()->IsDisplayed(myEntry, theIndex);
+      //return !myAttr.IsNull() ? myAttr->GetIsVisible( theIndex ) : false;
     }
     virtual void SetIsVisible( const int theIndex, const bool theIsVisible ) Standard_OVERRIDE {
-      if ( !myAttr.IsNull() ) {
+      if (theIsVisible)
+        annotationMgr()->Display(myEntry, theIndex);
+      else
+        annotationMgr()->Erase(myEntry, theIndex);
+      /*if ( !myAttr.IsNull() ) {
         myAttr->SetIsVisible( theIndex, theIsVisible );
-      }
+      }*/
     }
     virtual void Save() Standard_OVERRIDE {
       /* every change is automatically saved */
     }
     Handle(GEOMGUI_AnnotationAttrs) Attr() { return myAttr; }
 
-  private:
+protected:
+    GEOMGUI_AnnotationMgr* annotationMgr() const
+    {
+      CAM_Application* anApp = dynamic_cast<CAM_Application*>(myStudy->application());
+      GeometryGUI* aModule = dynamic_cast<GeometryGUI*>(anApp->activeModule());
+      return aModule->GetAnnotationMgr();
+    }
 
+private:
+    QString myEntry;
     Handle(GEOMGUI_AnnotationAttrs) myAttr;
+    SalomeApp_Study* myStudy;
   };
 }
 

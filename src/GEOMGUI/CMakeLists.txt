@@ -66,6 +66,7 @@ SET(_link_LIBRARIES
 
 SET(GEOMGUI_HEADERS
   GeometryGUI.h
+  GEOMGUI_AnnotationMgr.h
   GeometryGUI_Operations.h
   GEOMGUI.h
   GEOMPluginGUI.h
@@ -81,6 +82,7 @@ SET(GEOMGUI_HEADERS
 
 # header files / to be processed by moc
 SET(_moc_HEADERS 
+  GEOMGUI_AnnotationMgr.h
   GEOMGUI_CreationInfoWdg.h
   GEOMGUI_TextTreeWdg.h
   GeometryGUI.h
@@ -109,6 +111,7 @@ QT_ADD_RESOURCES(_rcc_SOURCES ${_rcc_RESOURCES})
 
 SET(GEOMGUI_SOURCES
   GeometryGUI.cxx
+  GEOMGUI_AnnotationMgr.cxx
   GEOMGUI.cxx
   GEOMPluginGUI.cxx
   GEOM_Displayer.cxx

@@ -31,6 +31,7 @@
 #include <GEOMBase_Skeleton.h>
 #include <GEOM_Displayer.h>
 #include <GeometryGUI.h>
+#include <GEOMGUI_AnnotationMgr.h>
 
 #include <SOCC_Prs.h>
 #include <SOCC_ViewModel.h>
@@ -662,6 +663,9 @@ bool MeasureGUI_AnnotationDlg::execute()
     aShapeAnnotations->Append( myAnnotationProperties );
 
     myGeomGUI->emitAnnotationsUpdated( QString( myShape->GetStudyEntry() ) );
+
+    erasePreview( true );
+    myGeomGUI->GetAnnotationMgr()->Display( myShape->GetStudyEntry(), aShapeAnnotations->GetNbAnnotation()-1 );
   }
   else {
     /*SalomeApp_Study* aStudy = getStudy();
@@ -681,6 +685,8 @@ bool MeasureGUI_AnnotationDlg::execute()
 //=================================================================================
 SALOME_Prs* MeasureGUI_AnnotationDlg::buildPrs()
 {
+  SALOME_Prs* aPrs = myGeomGUI->GetAnnotationMgr()->CreatePresentation( myAnnotationProperties, myShape.get() );
+  /*
   Handle ( GEOM_Annotation ) aPresentation = new GEOM_Annotation();
 
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
@@ -719,7 +725,7 @@ SALOME_Prs* MeasureGUI_AnnotationDlg::buildPrs()
 
   if ( aPrs )
     aPrs->AddObject( aPresentation );
-
+  */
   return aPrs;
 }
 
