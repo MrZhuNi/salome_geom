@@ -199,7 +199,7 @@ GEOMGUI_TextTreeWdg::GEOMGUI_TextTreeWdg( SalomeApp_Application* app )
            this, SLOT( showContextMenu(const QPoint&) ) );
 
   connect( myStudy, SIGNAL( objVisibilityChanged( QString, Qtx::VisibilityState ) ),
-           this, SLOT( updateVisibilityColumn( QString, Qtx::VisibilityState ) ) );
+           this, SLOT( onUpdateVisibilityColumn( QString, Qtx::VisibilityState ) ) );
   connect( app->objectBrowser(), SIGNAL( updated() ), this, SLOT( updateTree() ) );
 
   GeometryGUI* aGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
@@ -459,10 +459,10 @@ QTreeWidgetItem* GEOMGUI_TextTreeWdg::itemFromEntry( const BranchType& theBranch
 }
 
 //=================================================================================
-// function : updateVisibilityColumn
+// function : onUpdateVisibilityColumn
 // purpose  : Update visible state of icons of entry items.
 //=================================================================================
-void GEOMGUI_TextTreeWdg::updateVisibilityColumn( QString theEntry, Qtx::VisibilityState theState )
+void GEOMGUI_TextTreeWdg::onUpdateVisibilityColumn( QString theEntry, Qtx::VisibilityState theState )
 {
   // dimension property branch
   updateVisibilityColumn( DimensionShape, theEntry, theState );
@@ -618,6 +618,32 @@ void GEOMGUI_TextTreeWdg::setShapeItemVisibility( const BranchType& theBranchTyp
 //=================================================================================
 // function : setShapeItemVisibility
 // purpose  : 
+//=================================================================================
+void GEOMGUI_TextTreeWdg::updateVisibility( SALOME_View* theView )
+{
+  //QList<QString> aDimensionObjEntries = getObjects( DimensionShape ).keys();
+  BranchType aBranchType = AnnotationShape;
+
+  QList<QString> anAnnotationObjEntries = getObjects( aBranchType ).keys();
+
+  QTreeWidgetItem* anItem;
+  foreach ( QString anEntry, getObjects( aBranchType ).keys() )
+  {
+    anItem = itemFromEntry( aBranchType, anEntry );
+
+    int aDimIndex = idFromItem( anItem );
+    QSharedPointer<VisualProperty> aProp = getVisualProperty( aBranchType, myStudy,
+                                                              anEntry.toStdString() );
+    bool isItemVisible = aProp->GetIsVisible( aDimIndex );
+    anItem->setIcon( 1, isItemVisible ? myVisibleIcon : myInvisibleIcon );
+
+    redisplay( anEntry );
+  }
+}
+
+//=================================================================================
+// function : setShapeItemVisibility
+// purpose  :
 //=================================================================================
 bool GEOMGUI_TextTreeWdg::setShapeItemVisibility( QSharedPointer<VisualProperty>& theProps,
                                                   QTreeWidgetItem* theWidgetItem,

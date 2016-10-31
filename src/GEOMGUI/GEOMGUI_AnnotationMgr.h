@@ -47,24 +47,34 @@ public:
   GEOMGUI_AnnotationMgr( SalomeApp_Application* theApplication );
   ~GEOMGUI_AnnotationMgr() {}
 
-  SALOME_Prs* CreatePresentation(const GEOMGUI_AnnotationAttrs::Properties& theProperty,
-                                 GEOM::GEOM_Object_ptr theObject);
+  SALOME_Prs* CreatePresentation( const GEOMGUI_AnnotationAttrs::Properties& theProperty,
+                                  GEOM::GEOM_Object_ptr theObject );
 
-  //void DisplayPresentation(SALOME_Prs* thePresentation);
-  //void erasePresentation(SALOME_Prs* thePresentation);
+  bool IsDisplayed( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 ) const;
+  void Display( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 );
+  void Erase( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 );
 
-  bool IsDisplayed(const QString& theEntry, const int theIndex);
-  void Display(const QString& theEntry, const int theIndex);
-  void Erase(const QString& theEntry, const int theIndex);
+  void DisplayVisibleAnnotations( const QString& theEntry, SALOME_View* theView );
+  void EraseVisibleAnnotations( const QString& theEntry, SALOME_View* theView );
+
+  void RemoveView( SALOME_View* theView);
+
+  QString getDisplayedIndicesInfo( const QString& theEntry, SALOME_View* theView ) const;
+
+  void setDisplayedIndicesInfo( const QString& theEntry, SALOME_View* theView, const QString theIndicesInfo );
 
 protected:
   SalomeApp_Application* getApplication() const { return myApplication; }
 
   GEOM_Displayer* getDisplayer() const;
 
+  SALOME_View* viewOrActiveView(SALOME_View* theView) const;
+
   void getObject( const QString& theEntry, const int theIndex,
                   GEOM::GEOM_Object_ptr& anObject,
                   GEOMGUI_AnnotationAttrs::Properties& aProperty );
+
+  void storeVisibleState( const QString& theEntry, SALOME_View* theView );
 
 private:
   SalomeApp_Application* myApplication;

@@ -1972,6 +1972,12 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
   action( GEOMOp::OpEditField )->setEnabled( ViewOCC ); // Edit Field
 
   action( GEOMOp::OpMultiTransform )->setEnabled( ViewOCC ); // MENU BLOCKS - MULTI-TRANSFORMATION
+
+  if ( ViewOCC )
+  {
+    SUIT_ViewModel* vmodel = win->getViewManager()->getViewModel();
+    myTextTreeWdg->updateVisibility(dynamic_cast<SALOME_View*>(vmodel));
+  }
 }
 
 void GeometryGUI::windows( QMap<int, int>& mappa ) const
@@ -2055,6 +2061,7 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
           break;
         }
   }
+  GetAnnotationMgr()->RemoveView(dynamic_cast<SALOME_View*>(viewer));
 }
 
 //================================================================================
@@ -2904,6 +2911,9 @@ void GeometryGUI::storeVisualParameters (int savePoint)
   for (it = lst.begin(); it != lst.end(); it++) {
     SUIT_ViewManager* vman = *it;
     QString vType = vman->getType();
+    SUIT_ViewModel* vmodel = vman->getViewModel();
+    SALOME_View* aView = dynamic_cast<SALOME_View*>(vmodel);
+
     int aMgrId = vman->getGlobalId();
     // saving VTK actors properties
     QVector<SUIT_ViewWindow*> views = vman->getViews();
@@ -3025,6 +3035,13 @@ void GeometryGUI::storeVisualParameters (int savePoint)
           param = occParam + GEOM::propertyName( GEOM::IsosWidth );
           ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::IsosWidth )).toString().toStdString());
         }
+
+        std::string anAnnotationInfo = GetAnnotationMgr()->getDisplayedIndicesInfo(entry.c_str(), aView).toStdString();
+        if (!anAnnotationInfo.empty()) {
+          param = occParam + "AttributeParameter";
+          ip->setParameter(entry, param.toStdString(), anAnnotationInfo);
+        }
+
       } // object iterator
     } // for (views)
   } // for (viewManagers)
@@ -3189,7 +3206,10 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::LineWidth ), val.toInt());
       } else if (paramNameStr == GEOM::propertyName( GEOM::IsosWidth )) {
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::IsosWidth ), val.toInt());
+      } else if (paramNameStr == "AttributeParameter") {
+        aListOfMap[viewIndex].insert( "AttributeParameter", val);
       }
+
     } // for names/parameters iterator
 
     QList<SUIT_ViewManager*> lst = getApp()->viewManagers();
@@ -3201,7 +3221,12 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
       if (aListOfMap[index].value(GEOM::propertyName( GEOM::Visibility )) == 1) {
         SUIT_ViewManager* vman = lst.at(index);
         SUIT_ViewModel* vmodel = vman->getViewModel();
-        displayer()->Display(entry, true, dynamic_cast<SALOME_View*>(vmodel));
+        SALOME_View* aView = dynamic_cast<SALOME_View*>(vmodel);
+        displayer()->Display(entry, true, aView);
+
+        PropMap aProps = aListOfMap[index];
+        if ( aProps.contains( "AttributeParameter" ) )
+          GetAnnotationMgr()->setDisplayedIndicesInfo( entry, aView, aProps["AttributeParameter"].toString() );
       }
     }
   } // for entries iterator

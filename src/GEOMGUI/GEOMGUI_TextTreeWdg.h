@@ -66,6 +66,8 @@ public:
                                                         const QString& theEntry,
                                                         QTreeWidgetItem* theWidgetItem,
                                                         const bool theVisibility );
+  void                          updateVisibility( SALOME_View* theView );
+
 protected:
   void                          createActions();
   void                          redisplay( QString theEntry );
@@ -78,7 +80,7 @@ public slots:
 
 private slots:
   void                          onItemClicked(QTreeWidgetItem*, int );
-  void                          updateVisibilityColumn( QString theEntry, Qtx::VisibilityState theState );
+  void                          onUpdateVisibilityColumn( QString theEntry, Qtx::VisibilityState theState );
   void                          setVisibility( QTreeWidgetItem* theItem, bool visibility );
   void                          showContextMenu( const QPoint& pos );
 

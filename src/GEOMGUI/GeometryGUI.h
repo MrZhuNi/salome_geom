@@ -233,8 +233,8 @@ private:
 
   GEOMGUI_CreationInfoWdg*    myCreationInfoWdg;
   
-  GEOMGUI_TextTreeWdg*       myTextTreeWdg;
-  GEOMGUI_AnnotationMgr*     myAnnotationMgr;
+  GEOMGUI_TextTreeWdg*        myTextTreeWdg;
+  GEOMGUI_AnnotationMgr*      myAnnotationMgr;
   
   SALOME_ListIO               myTopLevelIOList;               
 
