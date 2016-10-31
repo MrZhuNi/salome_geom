@@ -2179,11 +2179,11 @@ void GEOM_Displayer::AfterErase( SALOME_View* v, const SALOME_OCCPrs* p )
   UpdateColorScale(false,false);
 
   // hide annotations for erased presentation
-  SUIT_Session* session = SUIT_Session::session();
-  SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
-  GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
-  if ( aModule )
-    aModule->GetAnnotationMgr()->EraseVisibleAnnotations(QString(p->GetEntry()), v);
+  //SUIT_Session* session = SUIT_Session::session();
+  //SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+  //GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
+  //if ( aModule )
+  //  aModule->GetAnnotationMgr()->EraseVisibleAnnotations(QString(p->GetEntry()), v);
 }
 
 //=================================================================

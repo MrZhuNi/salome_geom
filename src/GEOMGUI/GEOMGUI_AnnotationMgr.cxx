@@ -270,7 +270,7 @@ void GEOMGUI_AnnotationMgr::setDisplayedIndicesInfo( const QString& theEntry, SA
 
   QStringList anIndices = theIndicesInfo.split( ";" );
   for ( int i = 0, aCount = anIndices.size(); i < aCount; i++ ) {
-    Display( theEntry, anIndices[i], theView );
+    Display( theEntry, anIndices[i].toInt(), theView );
   }
 }
 
