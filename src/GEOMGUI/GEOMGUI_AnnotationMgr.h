@@ -54,8 +54,8 @@ public:
   void Display( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 );
   void Erase( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 );
 
-  void DisplayVisibleAnnotations( const QString& theEntry, SALOME_View* theView );
-  void EraseVisibleAnnotations( const QString& theEntry, SALOME_View* theView );
+  void DisplayVisibleAnnotations( const QString& theEntry, SALOME_View* theView = 0 );
+  void EraseVisibleAnnotations( const QString& theEntry, SALOME_View* theView = 0 );
 
   void RemoveView( SALOME_View* theView);
 

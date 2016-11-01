@@ -36,6 +36,7 @@
 #include <GEOM_Client.hxx>
 #include <SALOME_InteractiveObject.hxx>
 #include <SALOMEDSClient.hxx>
+#include <Qtx.h>
 
 #include "GEOMGUI.h"
 #include "GEOMPluginGUI.h"
@@ -170,6 +171,9 @@ protected slots:
 private slots:
   void                        OnGUIEvent();
   void                        onWindowActivated( SUIT_ViewWindow* );
+  void                        onUpdateVisibilityColumn( QString theEntry,
+                                                        Qtx::VisibilityState theState );
+
   void                        onViewAboutToShow();
   void                        OnSetMaterial( const QString& );
   void                        updateMaterials();

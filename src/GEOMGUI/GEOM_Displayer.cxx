@@ -2159,12 +2159,6 @@ void GEOM_Displayer::BeforeDisplay( SALOME_View* v, const SALOME_OCCPrs* )
 void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
 {
   UpdateColorScale(false,false);
-  // visualize annotations for displayed presentation
-  SUIT_Session* session = SUIT_Session::session();
-  SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
-  GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
-  if ( aModule )
-    aModule->GetAnnotationMgr()->DisplayVisibleAnnotations(QString(p->GetEntry()), v);
 }
 
 void GEOM_Displayer::BeforeErase( SALOME_View* v, const SALOME_OCCPrs* p )
@@ -2177,13 +2171,6 @@ void GEOM_Displayer::AfterErase( SALOME_View* v, const SALOME_OCCPrs* p )
 {
   LightApp_Displayer::AfterErase( v, p );
   UpdateColorScale(false,false);
-
-  // hide annotations for erased presentation
-  //SUIT_Session* session = SUIT_Session::session();
-  //SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
-  //GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
-  //if ( aModule )
-  //  aModule->GetAnnotationMgr()->EraseVisibleAnnotations(QString(p->GetEntry()), v);
 }
 
 //=================================================================
