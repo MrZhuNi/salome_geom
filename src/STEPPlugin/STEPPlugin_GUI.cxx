@@ -206,7 +206,7 @@ bool STEPPlugin_GUI::importSTEP( SUIT_Desktop* parent )
       }
     }
 
-    getGeometryGUI()->updateObjBrowser( true );
+    getGeometryGUI()->updateObjBrowser();
     app->browseObjects( entryList );
           
     if ( errors.count() > 0 )

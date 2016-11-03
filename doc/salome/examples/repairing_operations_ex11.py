@@ -49,4 +49,4 @@ for wire in wires:
     ii = ii + 1
     pass
 
-salome.sg.updateObjBrowser(True) 
+salome.sg.updateObjBrowser() 

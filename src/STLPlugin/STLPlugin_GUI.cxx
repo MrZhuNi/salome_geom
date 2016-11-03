@@ -155,7 +155,7 @@ bool STLPlugin_GUI::importSTL( SUIT_Desktop* parent )
 	transaction.abort();
       }
     }
-    getGeometryGUI()->updateObjBrowser( true );
+    getGeometryGUI()->updateObjBrowser();
     app->browseObjects( entryList );
     
     if ( errors.count() > 0 )

@@ -323,7 +323,7 @@ def TEST_createBox():
     box = geompy.MakeBoxDXDYDZ(200, 200, 200)
     geompy.addToStudy( box, 'box' )    
     if salome.sg.hasDesktop():
-        salome.sg.updateObjBrowser(True)
+        salome.sg.updateObjBrowser()
 
 
 def TEST_getGeomObjectSelected():

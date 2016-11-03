@@ -169,6 +169,20 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
    SetEngine(this);
+
+   _BasicOperations = new GEOMImpl_IBasicOperations( this );
+   _TransformOperations = new GEOMImpl_ITransformOperations( this );
+   _3DPrimOperations = new GEOMImpl_I3DPrimOperations( this );
+   _ShapesOperations = new GEOMImpl_IShapesOperations( this );
+   _BlocksOperations = new GEOMImpl_IBlocksOperations( this );
+   _BooleanOperations = new GEOMImpl_IBooleanOperations( this );
+   _HealingOperations = new GEOMImpl_IHealingOperations( this );
+   _CurvesOperations = new GEOMImpl_ICurvesOperations( this );
+   _LocalOperations = new GEOMImpl_ILocalOperations( this );
+   _InsertOperations = new GEOMImpl_IInsertOperations( this );
+   _MeasureOperations = new GEOMImpl_IMeasureOperations( this );
+   _GroupOperations = new GEOMImpl_IGroupOperations( this );
+   _FieldOperations = new GEOMImpl_IFieldOperations( this );
 }
 
 //=============================================================================

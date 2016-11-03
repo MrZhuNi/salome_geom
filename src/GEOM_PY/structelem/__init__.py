@@ -50,7 +50,7 @@
 #  structElemManager = StructuralElementManager()
 #  elem = structElemManager.createElement(commandList)
 #  elem.display()
-#  salome.sg.updateObjBrowser(True)
+#  salome.sg.updateObjBrowser()
 #  \endcode
 #
 #  \defgroup orientation
@@ -90,7 +90,7 @@ Example::
     structElemManager = StructuralElementManager()
     elem = structElemManager.createElement(commandList)
     elem.display()
-    salome.sg.updateObjBrowser(True)
+    salome.sg.updateObjBrowser()
 
 """
 
@@ -560,7 +560,7 @@ def TEST_StructuralElement():
     elem = structElemManager.createElement(liste_commandes)
     if salome.hasDesktop():
         elem.display()
-        salome.sg.updateObjBrowser(True)
+        salome.sg.updateObjBrowser()
 
 
 # Main function only used to test the module

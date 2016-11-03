@@ -48,7 +48,7 @@
 #  geompy.addToStudy( Sketch_1, 'Sketch_1' )
 #
 #  # update object browser
-#  salome.sg.updateObjBrowser(True)
+#  salome.sg.updateObjBrowser()
 #  @endcode
 #  @n Additionnal examples can be found as unit tests in the source code.
 #  @}

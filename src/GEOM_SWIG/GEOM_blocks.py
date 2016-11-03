@@ -42,4 +42,4 @@ smesh = None
 
 GEOM_Spanner.MakeSpanner(geompy, math, isBlocksTest, isMeshTest, smesh)
 
-salome.sg.updateObjBrowser(True);
+salome.sg.updateObjBrowser();

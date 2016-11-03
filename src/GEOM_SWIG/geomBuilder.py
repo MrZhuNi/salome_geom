@@ -13406,7 +13406,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self.addToStudyInFather(shape, group_edges, "Group of edges with " + `min_length`
                                     + left_str + "length" + right_str + `max_length`)
 
-            sg.updateObjBrowser(True)
+            sg.updateObjBrowser()
 
             return group_edges
 

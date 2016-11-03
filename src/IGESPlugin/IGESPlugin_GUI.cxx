@@ -195,7 +195,7 @@ bool IGESPlugin_GUI::importIGES( SUIT_Desktop* parent )
       }
     }
 
-    getGeometryGUI()->updateObjBrowser( true );
+    getGeometryGUI()->updateObjBrowser();
     app->browseObjects( entryList );
           
     if ( errors.count() > 0 )

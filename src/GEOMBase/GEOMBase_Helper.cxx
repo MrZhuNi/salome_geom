@@ -640,7 +640,7 @@ void GEOMBase_Helper::updateObjBrowser() const
     CAM_Module* module = app->module( "Geometry" );
     SalomeApp_Module* appMod = dynamic_cast<SalomeApp_Module*>( module );
     if ( appMod ) {
-      appMod->updateObjBrowser( true );
+      appMod->updateObjBrowser();
     }
   }
 }

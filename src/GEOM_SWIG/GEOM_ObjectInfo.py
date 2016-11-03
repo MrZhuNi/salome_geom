@@ -55,4 +55,4 @@ if hasInfo == True:
     print "Information about fourth object: ", geompy.getObjectInfo(obj4_entry)
     print "Information about fifth  object: ", geompy.getObjectInfo(obj5_entry)
 
-salome.sg.updateObjBrowser(True)
+salome.sg.updateObjBrowser()

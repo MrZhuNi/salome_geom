@@ -157,7 +157,7 @@ bool BREPPlugin_GUI::importBREP( SUIT_Desktop* parent )
         transaction.abort();
       }
     }
-    getGeometryGUI()->updateObjBrowser( true );
+    getGeometryGUI()->updateObjBrowser();
     app->browseObjects( entryList );
     
     if ( errors.count() > 0 )
