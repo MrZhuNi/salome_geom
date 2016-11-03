@@ -171,9 +171,6 @@ protected slots:
 private slots:
   void                        OnGUIEvent();
   void                        onWindowActivated( SUIT_ViewWindow* );
-  void                        onUpdateVisibilityColumn( QString theEntry,
-                                                        Qtx::VisibilityState theState );
-
   void                        onViewAboutToShow();
   void                        OnSetMaterial( const QString& );
   void                        updateMaterials();

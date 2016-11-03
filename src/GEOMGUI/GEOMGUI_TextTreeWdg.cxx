@@ -207,7 +207,8 @@ GEOMGUI_TextTreeWdg::GEOMGUI_TextTreeWdg( SalomeApp_Application* app )
            this, SLOT( updateAnnotationBranch( const QString& ) ) );
   connect( this, SIGNAL( itemClicked( QTreeWidgetItem*, int) ), 
            this, SLOT( onItemClicked( QTreeWidgetItem*, int ) ) );
-
+  connect( myStudy, SIGNAL( objVisibilityChanged( QString, Qtx::VisibilityState ) ),
+         this, SLOT( onUpdateVisibilityColumn( QString, Qtx::VisibilityState ) ) );
 }
 
 //=================================================================================
@@ -405,15 +406,16 @@ void GEOMGUI_TextTreeWdg::onItemClicked( QTreeWidgetItem* theItem, int theColumn
 
   QSharedPointer<VisualProperty> aProp = getVisualProperty( aBranchType, myStudy, anEntry );
 
+  CAM_Application* anApp = dynamic_cast<CAM_Application*>(myStudy->application());
+  GeometryGUI* aModule = dynamic_cast<GeometryGUI*>(anApp->activeModule());
   if ( aProp->GetIsVisible( aDimIndex ) ) {
-    aProp->SetIsVisible( aDimIndex, false );
+    aModule->GetAnnotationMgr()->Erase(anEntry.c_str(), aDimIndex);
     theItem->setIcon( 1, myInvisibleIcon );
   } else {
-    aProp->SetIsVisible( aDimIndex, true );
+    aModule->GetAnnotationMgr()->Display(anEntry.c_str(), aDimIndex);
+
     theItem->setIcon( 1, myVisibleIcon );
   }
-  aProp->Save();
-
   redisplay( anEntry.c_str() );
 }
 
@@ -460,7 +462,7 @@ QTreeWidgetItem* GEOMGUI_TextTreeWdg::itemFromEntry( const BranchType& theBranch
 // function : onUpdateVisibilityColumn
 // purpose  : Update visible state of icons of entry items.
 //=================================================================================
-void GEOMGUI_TextTreeWdg::updateVisibilityColumn( QString theEntry, Qtx::VisibilityState theState )
+void GEOMGUI_TextTreeWdg::onUpdateVisibilityColumn( QString theEntry, Qtx::VisibilityState theState )
 {
   // dimension property branch
   updateVisibilityColumn( DimensionShape, theEntry, theState );

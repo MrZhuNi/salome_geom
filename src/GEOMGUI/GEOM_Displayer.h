@@ -318,6 +318,7 @@ protected:
   Aspect_TypeOfMarker              myTypeOfMarker;
   double                           myScaleOfMarker;
   double                           myTransparency;
+  bool                             myIsRedisplayed;
 
 private:
   SalomeApp_Application* myApp;

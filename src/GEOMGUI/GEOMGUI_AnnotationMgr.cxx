@@ -208,10 +208,11 @@ void GEOMGUI_AnnotationMgr::DisplayVisibleAnnotations( const QString& theEntry, 
 
 void GEOMGUI_AnnotationMgr::EraseVisibleAnnotations( const QString& theEntry, SALOME_View* theView )
 {
-  if ( !myVisualized.contains( theView ) )
+  SALOME_View* aView = viewOrActiveView( theView );
+  if ( !myVisualized.contains( aView ) )
     return;
 
-  EntryToAnnotations anEntryToAnnotation = myVisualized[theView];
+  EntryToAnnotations anEntryToAnnotation = myVisualized[aView];
   if ( !anEntryToAnnotation.contains( theEntry ) )
     return;
   AnnotationToPrs anAnnotationToPrs = anEntryToAnnotation[theEntry];
@@ -228,11 +229,11 @@ void GEOMGUI_AnnotationMgr::EraseVisibleAnnotations( const QString& theEntry, SA
 
     // erase presentation from the viewer
     SALOME_Prs* aPrs = anAnnotationToPrs[anIndex];
-    theView->Erase( getDisplayer(), aPrs );
+    aView->Erase( getDisplayer(), aPrs );
   }
   getDisplayer()->UpdateViewer();
   anEntryToAnnotation.remove( theEntry );
-  myVisualized[theView] = anEntryToAnnotation;
+  myVisualized[aView] = anEntryToAnnotation;
 }
 
 void GEOMGUI_AnnotationMgr::RemoveView( SALOME_View* theView )
@@ -282,11 +283,14 @@ GEOM_Displayer* GEOMGUI_AnnotationMgr::getDisplayer() const
 
 SALOME_View* GEOMGUI_AnnotationMgr::viewOrActiveView(SALOME_View* theView) const
 {
-  if ( !theView ) {
+  SALOME_View* aView = theView;
+  if ( !aView ) {
     SalomeApp_Application* anApp = getApplication();
     SUIT_ViewWindow* anActiveWindow = anApp->desktop()->activeWindow();
-    theView = dynamic_cast<SALOME_View*>(anActiveWindow->getViewManager()->getViewModel());
+    if (anActiveWindow)
+      aView = dynamic_cast<SALOME_View*>(anActiveWindow->getViewManager()->getViewModel());
   }
+  return aView;
 }
 
 void GEOMGUI_AnnotationMgr::getObject( const QString& theEntry, const int theIndex,

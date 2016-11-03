@@ -1828,11 +1828,6 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   connect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
           this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
-  if ( appStudy )
-    connect( appStudy, SIGNAL( objVisibilityChanged( QString, Qtx::VisibilityState ) ),
-           this, SLOT( onUpdateVisibilityColumn( QString, Qtx::VisibilityState ) ) );
-
 
   // Reset actions accelerator keys
   action(GEOMOp::OpDelete)->setEnabled( true ); // Delete: Key_Delete
@@ -1885,6 +1880,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   // 0020836 (Basic vectors and origin)
   SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
   if ( aResourceMgr->booleanValue( "Geometry", "auto_create_base_objects", false ) ) {
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
     if ( appStudy ) {
       _PTR(Study) studyDS = appStudy->studyDS();
       if ( studyDS ) {
@@ -1914,10 +1910,6 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
 
   disconnect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
              this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
-  if ( appStudy )
-    disconnect( appStudy, SIGNAL( objVisibilityChanged( QString, Qtx::VisibilityState ) ),
-                this, SLOT( onUpdateVisibilityColumn( QString, Qtx::VisibilityState ) ) );
 
   LightApp_SelectionMgr* selMrg = getApp()->selectionMgr();
 
@@ -1986,18 +1978,6 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
     SUIT_ViewModel* vmodel = win->getViewManager()->getViewModel();
     myTextTreeWdg->updateVisibility(dynamic_cast<SALOME_View*>(vmodel));
   }
-}
-
-void GeometryGUI::onUpdateVisibilityColumn( QString theEntry,
-                                            Qtx::VisibilityState theState )
-{
-  if ( myTextTreeWdg )
-    myTextTreeWdg->updateVisibilityColumn( theEntry, theState );
-
-  if ( theState == Qtx::ShownState )
-    GetAnnotationMgr()->DisplayVisibleAnnotations( theEntry );
-  else
-    GetAnnotationMgr()->EraseVisibleAnnotations( theEntry );
 }
 
 void GeometryGUI::windows( QMap<int, int>& mappa ) const
