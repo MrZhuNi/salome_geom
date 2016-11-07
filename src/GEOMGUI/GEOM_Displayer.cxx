@@ -1382,108 +1382,6 @@ void GEOM_Displayer::updateDimensions( const Handle(SALOME_InteractiveObject)& t
 
 //=================================================================
 /*!
- *  GEOM_Displayer::updateShapeAnnotations
- *  Creates or renews shape annotation presentation for the IO.
- */
-//=================================================================
-void GEOM_Displayer::updateShapeAnnotations( const Handle(SALOME_InteractiveObject)& theIO,
-                                             SALOME_OCCPrs* thePrs,
-                                             const gp_Ax3& theShapeLCS )
-{
-  return;
-  /*
-  SalomeApp_Study* aStudy = getStudy();
-  if ( !aStudy )
-  {
-    return;
-  }
-
-  if ( theIO.IsNull() )
-  {
-    return;
-  }
-
-  SOCC_Prs* anOccPrs = dynamic_cast<SOCC_Prs*>( thePrs );
-  AIS_ListOfInteractive aListOfIO;
-  anOccPrs->GetObjects( aListOfIO );
-  AIS_ListIteratorOfListOfInteractive aIterateIO( aListOfIO );
-
-  // remove existing presentations of shape annotations
-  bool isAnyRemoved = false;
-  for ( ; aIterateIO.More(); aIterateIO.Next() )
-  {
-    const Handle(AIS_InteractiveObject)& anIO = aIterateIO.Value();
-    if ( !anIO->IsKind( STANDARD_TYPE( GEOM_Annotation ) ) )
-      continue;
-
-    aListOfIO.Remove( aIterateIO );
-    isAnyRemoved = true;
-    if ( !aIterateIO.More() )
-      break;
-  }
-
-  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
-
-  const QFont  aFont      = aResMgr->fontValue( "Geometry", "shape_annotation_font", QFont( "Y14.5M-2009", 24 ) );
-  const QColor aFontColor = aResMgr->colorValue( "Geometry", "shape_annotation_font_color", QColor( 255, 255, 255 ) );
-  const QColor aLineColor = aResMgr->colorValue( "Geometry", "shape_annotation_line_color", QColor( 255, 255, 255 ) );
-  const double aLineWidth = aResMgr->doubleValue( "Geometry", "shape_annotation_line_width", 1.0 );
-  const int aLineStyle    = aResMgr->integerValue( "Geometry", "shape_annotation_line_style", 0 );
-  const bool isAutoHide   = aResMgr->booleanValue( "Geometry", "shape_annotation_autohide", false );
-
-  _PTR(SObject) aSObj = aStudy->studyDS()->FindObjectID( theIO->getEntry() );
-
-  const Handle(GEOMGUI_AnnotationAttrs) aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
-
-  if ( !aShapeAnnotations.IsNull() )
-  {
-    gp_Trsf aToLCS;
-    aToLCS.SetTransformation( theShapeLCS, gp_Ax3() );
-
-    for ( int anI = 0; anI < aShapeAnnotations->GetNbAnnotation(); ++anI )
-    {
-      if ( !aShapeAnnotations->GetIsVisible( anI ) )
-      {
-        continue;
-      }
-
-      Handle(GEOM_Annotation) aPresentation = new GEOM_Annotation();
-
-      aShapeAnnotations->SetupPresentation( aPresentation, anI, theShapeLCS );
-
-      aPresentation->SetOwner( theIO );
-
-      const Quantity_Color aOcctFontColor( aFontColor.redF(), aFontColor.greenF(), aFontColor.blueF(), Quantity_TOC_RGB );
-      const Quantity_Color aOcctLineColor( aLineColor.redF(), aLineColor.greenF(), aLineColor.blueF(), Quantity_TOC_RGB );
-      const Standard_Real aFontHeight = aFont.pixelSize() != -1 ? aFont.pixelSize() : aFont.pointSize();
-
-      aPresentation->SetFont( TCollection_AsciiString( aFont.family().toLatin1().data() ) );
-      aPresentation->SetTextHeight( aFontHeight );
-      aPresentation->SetTextColor( Quantity_Color( aFontColor.redF(), aFontColor.greenF(), aFontColor.blueF(), Quantity_TOC_RGB ) );
-      aPresentation->SetLineColor( Quantity_Color( aLineColor.redF(), aLineColor.greenF(), aLineColor.blueF(), Quantity_TOC_RGB ) );
-      aPresentation->SetLineWidth( aLineWidth );
-      aPresentation->SetLineStyle( static_cast<Aspect_TypeOfLine>( aLineStyle ) );
-      aPresentation->SetAutoHide( isAutoHide ? Standard_True : Standard_False );
-      aPresentation->SetDepthCulling( Standard_True );
-
-      aListOfIO.Append( aPresentation );
-    }
-  }
-  else if ( !isAnyRemoved )
-  {
-    return;
-  }
-
-  anOccPrs->Clear();
-
-  for ( aIterateIO.Initialize( aListOfIO ); aIterateIO.More(); aIterateIO.Next() )
-  {
-    anOccPrs->AddObject( aIterateIO.Value() );
-  }*/
-}
-
-//=================================================================
-/*!
  *  GEOM_Displayer::Erase
  *  Calls Erase() method for each object in the given list
  */
@@ -1672,7 +1570,6 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
     }
 
     updateDimensions( myIO, occPrs, gp_Ax3().Transformed( myShape.Location().Transformation() ) );
-    updateShapeAnnotations( myIO, occPrs, gp_Ax3().Transformed( myShape.Location().Transformation() ) );
   }
 }
 

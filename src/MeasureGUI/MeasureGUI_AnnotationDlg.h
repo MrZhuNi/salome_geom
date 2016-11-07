@@ -94,12 +94,15 @@ private:
   void                                activateSelectionArgument( QPushButton* theSelectionButton );
   void                                activateSelection();
   TopAbs_ShapeEnum                    getShapeType() const;
-  bool                                getPickedPoint(gp_Pnt& thePnt);
+
+  bool                                getPickedPoint( gp_Pnt& thePnt, const TopoDS_Shape& theShape );
   gp_Pnt                              getAttachPoint( const TopoDS_Shape& theShape );
+  gp_Pnt                              getDefaultPosition( const gp_Pnt& theAttach );
 
 private:
   TopAbs_ShapeEnum                    mySelectionMode;
   GEOMGUI_AnnotationAttrs::Properties myAnnotationProperties;
+  bool                                myIsPositionDefined;
   /// an index of edited annotation in the list shape annotations, -1 in create operation
   bool                                myIsCreation;
   GEOM::GeomObjPtr                    myShape;

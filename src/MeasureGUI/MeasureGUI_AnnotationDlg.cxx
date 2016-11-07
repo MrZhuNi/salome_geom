@@ -47,6 +47,7 @@
 #include <OCCViewer_ViewModel.h>
 #include <OCCViewer_ViewManager.h>
 #include <OCCViewer_ViewWindow.h>
+#include <OCCViewer_ViewPort3d.h>
 #include <SVTK_ViewModel.h>
 #include <SALOME_Prs.h>
 #include <SALOME_ListIO.hxx>
@@ -121,10 +122,8 @@ MeasureGUI_AnnotationDlg::MeasureGUI_AnnotationDlg( GeometryGUI* theGeometryGUI,
   setWindowTitle( myIsCreation ? tr( "CREATE_ANNOTATION_TITLE" ) : tr( "EDIT_ANNOTATION_TITLE" ) );
 
   // Shape type button group
+  mainFrame()->GroupBoxName->hide();
   mainFrame()->GroupConstructors->hide();
-
-  // Field name
-  mainFrame()->GroupBoxName->setTitle( tr( "ANNOTATION_NAME" ) );
 
   // Field properties
   QGroupBox* propGroup = new QGroupBox( tr( "ANNOTATION_PROPERTIES" ), centralWidget() );
@@ -183,21 +182,10 @@ MeasureGUI_AnnotationDlg::MeasureGUI_AnnotationDlg( GeometryGUI* theGeometryGUI,
   propLayout->addWidget( mySubShapeSelBtn, 4, 1 );
   propLayout->addWidget( mySubShapeName, 4, 2 );
 
-  // Field properties
-  QGroupBox* styleGroup = new QGroupBox( tr( "ANNOTATION_STYLE" ),
-      centralWidget() );
-  QGridLayout* styleLayout = new QGridLayout( styleGroup );
-  styleLayout->setMargin( 9 );
-  styleLayout->setSpacing( 6 );
-
-  QLabel* fontLabel = new QLabel( tr( "ANNOTATION_FONT" ), styleGroup );
-  styleLayout->addWidget( fontLabel, 0, 0 );
-
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 );
   layout->setSpacing( 6 );
   layout->addWidget( propGroup );
-  layout->addWidget( styleGroup );
 
   setHelpFileName( "annotation_page.html" );
 
@@ -232,11 +220,10 @@ MeasureGUI_AnnotationDlg::~MeasureGUI_AnnotationDlg() {
 void MeasureGUI_AnnotationDlg::Init()
 {
   if ( myIsCreation ) {
-    initName( tr( "ANNOTATION_PREFIX" ) );
 
     // default presentation values
+    myIsPositionDefined = false;
     myAnnotationProperties.Name = getNewObjectName();
-    myAnnotationProperties.Position = gp_Pnt( 250, 250, 250 );
     myAnnotationProperties.Text = tr( "ANNOTATION_PREFIX" );
     myAnnotationProperties.IsVisible = false;
     myAnnotationProperties.IsScreenFixed = false;
@@ -419,6 +406,7 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
 
     GEOM::GeomObjPtr anObj = getSelected( mySelectionMode );
 
+    bool hasAttachPoint = false;
     gp_Pnt anAttachPoint( 0, 0, 0 );
     int aSubShapeIndex = -1;
     if ( myEditCurrentArgument == myShapeName ) { // Selection of a shape is active
@@ -445,15 +433,16 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
         TopoDS_Shape aShape;
         GEOMBase::GetShape( myShape.get(), aShape );
 
-        if ( !getPickedPoint( anAttachPoint ) ) {
+        if ( !getPickedPoint( anAttachPoint, aShape ) ) {
 
           anAttachPoint = getAttachPoint( aShape );
         }
 
-        gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
-        gp_Trsf aToShapeLCS;
-        aToShapeLCS.SetTransformation( gp_Ax3(), aShapeLCS );
-        anAttachPoint.Transform( aToShapeLCS );
+        hasAttachPoint = true;
+      }
+      else {
+
+        myIsPositionDefined = false;
       }
     } else if ( myEditCurrentArgument == mySubShapeName ) {
       if ( !myShape->_is_nil() ) {
@@ -482,21 +471,42 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
             TopoDS_Shape aShape;
             GEOMBase::GetShape( myShape.get(), aShape );
 
-            if ( !getPickedPoint( anAttachPoint ) ) {
+            if ( !getPickedPoint( anAttachPoint, aSubShape ) ) {
 
               anAttachPoint = getAttachPoint( aSubShape );
             }
 
-            gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
-            gp_Trsf aToShapeLCS;
-            aToShapeLCS.SetTransformation( gp_Ax3(), aShapeLCS );
-            anAttachPoint.Transform( aToShapeLCS );
+            hasAttachPoint = true;
+          }
+          else {
+
+            myIsPositionDefined = false;
           }
         }
       }
       myAnnotationProperties.ShapeIndex = aSubShapeIndex;
     }
-    myAnnotationProperties.Attach = anAttachPoint;
+
+    gp_Trsf aToShapeLCS;
+    if ( !myShape->_is_nil() ) {
+
+      TopoDS_Shape aShape;
+      GEOMBase::GetShape( myShape.get(), aShape );
+      gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
+      aToShapeLCS.SetTransformation( gp_Ax3(), aShapeLCS );
+    }
+
+    myAnnotationProperties.Attach = anAttachPoint.Transformed( aToShapeLCS );
+
+    if ( hasAttachPoint && !myIsPositionDefined ) {
+
+      gp_Pnt aPosition = getDefaultPosition( anAttachPoint );
+
+      myAnnotationProperties.Position = ( !myAnnotationProperties.IsScreenFixed ) ?
+        aPosition.Transformed( aToShapeLCS ) : aPosition;
+
+      myIsPositionDefined = true;
+    }
   }
   redisplayPreview();
 }
@@ -532,7 +542,48 @@ void MeasureGUI_AnnotationDlg::onTextChange()
 //=======================================================================
 void MeasureGUI_AnnotationDlg::onTypeChange()
 {
+  const bool isScreenFixedBefore = myAnnotationProperties.IsScreenFixed;
+
   myAnnotationProperties.IsScreenFixed = myTypeCombo->currentIndex() == 1;
+
+  // convert point position from screen space to 3D space
+  if ( myIsPositionDefined ) {
+
+    SUIT_ViewWindow* anActiveView = GEOMBase_Helper::getActiveView();
+    OCCViewer_ViewWindow* anOccView = NULL;
+    if ( anActiveView ) {
+
+      anOccView = qobject_cast<OCCViewer_ViewWindow*>( anActiveView );
+    }
+
+    if ( anOccView ) {
+
+      TopoDS_Shape aShape;
+      GEOMBase::GetShape( myShape.get(), aShape );
+      const gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
+
+      gp_Trsf aToShapeLCS, aFrShapeLCS;
+      aFrShapeLCS.SetTransformation( aShapeLCS, gp_Ax3() );
+      aToShapeLCS.SetTransformation( gp_Ax3(), aShapeLCS );
+
+      const Handle(V3d_View) aView3d = anOccView->getViewPort()->getView();
+      const gp_Pnt aPosition = myAnnotationProperties.Position;
+      const gp_Pnt aAttach3d = myAnnotationProperties.Attach.Transformed( aFrShapeLCS );
+      if ( !isScreenFixedBefore ) {
+
+        gp_Pnt aPosition3d = aPosition.Transformed( aFrShapeLCS );
+        gp_Pnt aPosition2d = GEOM_Annotation::ConvertPosition2d( aPosition3d, aAttach3d, aView3d );
+        myAnnotationProperties.Position = aPosition2d;
+      }
+      else {
+
+        gp_Pnt aPosition3d = GEOM_Annotation::ConvertPosition3d( aPosition, aAttach3d, aView3d );
+        aPosition3d = aPosition3d.Transformed( aToShapeLCS );
+        myAnnotationProperties.Position = aPosition3d;
+      }
+    }
+  }
+
   redisplayPreview();
 }
 
@@ -665,6 +716,7 @@ bool MeasureGUI_AnnotationDlg::execute()
     myGeomGUI->emitAnnotationsUpdated( QString( myShape->GetStudyEntry() ) );
 
     erasePreview( true );
+
     myGeomGUI->GetAnnotationMgr()->Display( myShape->GetStudyEntry(), aShapeAnnotations->GetNbAnnotation()-1 );
   }
   else {
@@ -686,46 +738,19 @@ bool MeasureGUI_AnnotationDlg::execute()
 SALOME_Prs* MeasureGUI_AnnotationDlg::buildPrs()
 {
   SALOME_Prs* aPrs = myGeomGUI->GetAnnotationMgr()->CreatePresentation( myAnnotationProperties, myShape.get() );
-  /*
-  Handle ( GEOM_Annotation ) aPresentation = new GEOM_Annotation();
 
-  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
-  const QFont  aFont      = aResMgr->fontValue( "Geometry", "shape_annotation_font", QFont( "Y14.5M-2009", 24 ) );
-  const QColor aFontColor = aResMgr->colorValue( "Geometry", "shape_annotation_font_color", QColor( 255, 255, 255 ) );
-  const QColor aLineColor = aResMgr->colorValue( "Geometry", "shape_annotation_line_color", QColor( 255, 255, 255 ) );
-  const double aLineWidth = aResMgr->doubleValue( "Geometry", "shape_annotation_line_width", 1.0 );
-  const int aLineStyle    = aResMgr->integerValue( "Geometry", "shape_annotation_line_style", 0 );
-  const bool isAutoHide   = aResMgr->booleanValue( "Geometry", "shape_annotation_autohide", false );
+  // set preview style for the created presentation
+  AIS_ListOfInteractive aIObjects;
+  ((SOCC_Prs*)aPrs)->GetObjects( aIObjects );
+  AIS_ListOfInteractive::Iterator aIOIt( aIObjects );
+  for ( ; aIOIt.More(); aIOIt.Next() ) {
 
-  const Quantity_Color aOcctFontColor( aFontColor.redF(), aFontColor.greenF(), aFontColor.blueF(), Quantity_TOC_RGB );
-  const Quantity_Color aOcctLineColor( aLineColor.redF(), aLineColor.greenF(), aLineColor.blueF(), Quantity_TOC_RGB );
-  const Standard_Real aFontHeight = aFont.pixelSize() != -1 ? aFont.pixelSize() : aFont.pointSize();
+    Handle( GEOM_Annotation ) aPresentation = Handle( GEOM_Annotation )::DownCast( aIOIt.Value() );
+    aPresentation->SetTextColor( Quantity_NOC_VIOLET );
+    aPresentation->SetLineColor( Quantity_NOC_VIOLET );
+    aPresentation->SetDepthCulling( Standard_False );
+  }
 
-  aPresentation->SetFont( TCollection_AsciiString( aFont.family().toLatin1().data() ) );
-  aPresentation->SetTextHeight( aFontHeight );
-  aPresentation->SetTextColor( Quantity_Color( aFontColor.redF(), aFontColor.greenF(), aFontColor.blueF(), Quantity_TOC_RGB ) );
-  aPresentation->SetLineColor( Quantity_Color( aLineColor.redF(), aLineColor.greenF(), aLineColor.blueF(), Quantity_TOC_RGB ) );
-  aPresentation->SetLineWidth( aLineWidth );
-  aPresentation->SetLineStyle( static_cast<Aspect_TypeOfLine>( aLineStyle ) );
-  aPresentation->SetAutoHide( isAutoHide ? Standard_True : Standard_False );
-  aPresentation->SetScreenFixed( myAnnotationProperties.IsScreenFixed );
-  aPresentation->SetDepthCulling( Standard_False );
-
-  TopoDS_Shape aShape;
-  GEOMBase::GetShape( myShape.get(), aShape );
-  gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
-  GEOMGUI_AnnotationAttrs::SetupPresentation( aPresentation, myAnnotationProperties, aShapeLCS );
-
-  // add Prs to preview
-  SUIT_ViewWindow* vw =
-      SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
-  SOCC_Prs* aPrs =
-      dynamic_cast<SOCC_Prs*>( ( ( SOCC_Viewer* ) ( vw->getViewManager()->getViewModel() ) )->CreatePrs(
-          0 ) );
-
-  if ( aPrs )
-    aPrs->AddObject( aPresentation );
-  */
   return aPrs;
 }
 
@@ -771,8 +796,14 @@ void MeasureGUI_AnnotationDlg::redisplayPreview()
 // function : getPickedPoint
 // purpose  : finds picked point in active viewer on the selected shape
 //=================================================================================
-bool MeasureGUI_AnnotationDlg::getPickedPoint( gp_Pnt& thePnt )
+bool MeasureGUI_AnnotationDlg::getPickedPoint( gp_Pnt& thePnt, const TopoDS_Shape& theShape )
 {
+  if ( theShape.ShapeType() == TopAbs_VERTEX )
+  {
+    thePnt = getAttachPoint( theShape );
+    return true;
+  }
+
   const SUIT_ViewWindow* anActiveView = GEOMBase_Helper::getActiveView();
   if ( !anActiveView )
     return false;
@@ -876,4 +907,36 @@ gp_Pnt MeasureGUI_AnnotationDlg::getAttachPoint( const TopoDS_Shape& theShape )
   }
 
   return gp_Pnt( 0.0, 0.0, 0.0 );
+}
+
+//=================================================================================
+// function : getDefaultPosition
+// purpose  : computes default position for the given attachment point
+//=================================================================================
+gp_Pnt MeasureGUI_AnnotationDlg::getDefaultPosition( const gp_Pnt& theAttach )
+{
+  SUIT_ViewWindow* anActiveView = GEOMBase_Helper::getActiveView();
+  if ( !anActiveView ) {
+
+    return myAnnotationProperties.IsScreenFixed ? gp::Origin() : theAttach;
+  }
+
+  OCCViewer_ViewWindow* anOccView = qobject_cast<OCCViewer_ViewWindow*>( anActiveView );
+  if ( !anOccView ) {
+
+    return myAnnotationProperties.IsScreenFixed ? gp::Origin() : theAttach;
+  }
+
+  OCCViewer_ViewPort3d* aViewPort = anOccView->getViewPort();
+
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+
+  const QFont aFont = aResMgr->fontValue( "Geometry", "shape_annotation_font", QFont( "Y14.5M-2009", 24 ) );
+
+  const Handle(V3d_View) aView3d = aViewPort->getView();
+
+  const Standard_Real aFontHeight =( aFont.pixelSize() != -1 ) ? aFont.pixelSize() : aFont.pointSize();
+
+  return GEOM_Annotation::GetDefaultPosition( myAnnotationProperties.IsScreenFixed,
+    theAttach, aFontHeight * 1.5, aView3d );
 }

@@ -103,7 +103,7 @@ namespace
       return !myAttr.IsNull() ? myAttr->GetNbAnnotation() : 0;
     }
     virtual QString GetName( const int theIndex ) Standard_OVERRIDE {
-      return !myAttr.IsNull() ? myAttr->GetName( theIndex ) : QString();
+      return !myAttr.IsNull() ? myAttr->GetText( theIndex ) : QString();
     }
     virtual bool GetIsVisible( const int theIndex ) Standard_OVERRIDE {
       return annotationMgr()->IsDisplayed(myEntry, theIndex);

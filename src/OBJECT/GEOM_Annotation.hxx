@@ -39,6 +39,7 @@
 #include <Prs3d_LineAspect.hxx>
 #include <Prs3d_TextAspect.hxx>
 #include <PrsMgr_PresentationManager3d.hxx>
+#include <Select3D_SensitiveBox.hxx>
 #include <SelectMgr_EntityOwner.hxx>
 #include <TCollection_ExtendedString.hxx>
 
@@ -96,10 +97,21 @@ public:
   //! is fixed at predefined pixel location in the window coordinate space. Other mode
   //! is "3D screen aligned" positioning, when the label is aligned in plane of the
   //! screen, while its position is a 3D point defined in world's coordinate system.
-  Standard_EXPORT void SetScreenFixed( const Standard_Boolean theIsFixed );
+  Standard_EXPORT void SetIsScreenFixed( const Standard_Boolean theIsFixed );
 
   //! Retuns value of "screen fixed" positioning mode.
   Standard_Boolean GetIsScreenFixed() const { return myIsScreenFixed; }
+
+  //! Converts annotation position to screen fixed coordinates and
+  //! modifies its "2D screen fixed" flag correspondingly.
+  //! @param theView [in] the view to perform projection of coordinates.
+  Standard_EXPORT void Set2dPosition( const Handle(V3d_View)& theView );
+
+  //! Converts annotation position from screen fixed coordinates
+  //! to 3D position and modifies its "2D screen fixed" flag
+  //! correspondingly.
+  //! @param theView [in] the view to perform projection of coordinates.
+  Standard_EXPORT void Set3dPosition( const Handle(V3d_View)& theView );
 
   //! Sets attachment point of extension line.
   //! \param thePoint [in] the 3D cartesian point defined in world's coordinate system
@@ -183,10 +195,40 @@ public:
   //! lines and text become visible and a rendered with another drawing
   //! aspect. This mode should be explicitly used with setting top layer
   //! for the presentation. Otherwise the behavior is undefined.
-  Standard_EXPORT void SetDepthCulling (const Standard_Boolean theToEnable);
+  Standard_EXPORT void SetDepthCulling( const Standard_Boolean theToEnable );
 
   //! Returns depth culling state.
   Standard_Boolean GetDepthCulling() const { return myIsDepthCulling; }
+
+// Helper tools:
+public:
+
+  //! Returns default position for placing annotation when its attachment point
+  //! has been determined.
+  //! @param theIsScreenFixed [in] the state of annotation's "2D screen fixed" mode.
+  //! @param theAttachPnt [in] the attachment point.
+  //! @param theOffset [in] the offset value for placing the position relative to attachment.s
+  //! @param theView [in] the view for projecting coordinates.
+  Standard_EXPORT static gp_Pnt GetDefaultPosition( const Standard_Boolean theIsScreenFixed,
+                                                    const gp_Pnt& theAttachPnt,
+                                                    const Standard_Real theOffset,
+                                                    const Handle(V3d_View)& theView );
+
+  //! Converts 3d position to 2d on screen point.
+  //! @param thePosition [in] the 3d position.
+  //! @param theAttach [in] the attachment point.
+  //! @param theView [in] the view for projecting coordinates.
+  Standard_EXPORT static gp_Pnt ConvertPosition2d( const gp_Pnt& thePosition,
+                                                   const gp_Pnt& theAttach,
+                                                   const Handle(V3d_View)& theView );
+
+  //! Converts 2d position to 3d point.
+  //! @param thePosition [in] the 2d position.
+  //! @param theAttach [in] the attachment point.
+  //! @param theView [in] the view for projecting coordinates.
+  Standard_EXPORT static gp_Pnt ConvertPosition3d( const gp_Pnt& thePosition,
+                                                   const gp_Pnt& theAttach,
+                                                   const Handle(V3d_View)& theView );
 
 // Interactive dragging:
 public:
@@ -309,6 +351,36 @@ private:
       HilightWithColor( const Handle(PrsMgr_PresentationManager3d)& thePresentationMgr,
                         const Quantity_NameOfColor theColor,
                         const Standard_Integer theMode = 0 ) Standard_OVERRIDE;
+  };
+
+  //! Custom sensitive entity with implementing option to support selection
+  //! with depth culling flag turned off.
+  class GEOM_AnnotationSensEntity : public Select3D_SensitiveBox
+  {
+  public:
+
+    //! Constructor.
+    GEOM_AnnotationSensEntity( const Handle(SelectMgr_EntityOwner)& theOwner,
+                               const Bnd_Box& theBox,
+                               const Standard_Boolean theIsDepthCulling )
+      : Select3D_SensitiveBox( theOwner, theBox ),
+        myIsDepthCulling( theIsDepthCulling ) {}
+
+    //! Checks whether the box overlaps current selecting volume.
+    virtual Standard_Boolean Matches( SelectBasics_SelectingVolumeManager& theMgr,
+                                      SelectBasics_PickResult& thePickResult ) Standard_OVERRIDE
+    {
+      const Standard_Boolean isMatches = Select3D_SensitiveBox::Matches( theMgr, thePickResult );
+      if ( !myIsDepthCulling )
+      {
+        thePickResult = SelectBasics_PickResult( -DBL_MAX, thePickResult.DistToGeomCenter() );
+      }
+      return isMatches;
+    }
+
+  private:
+
+    Standard_Boolean myIsDepthCulling;
   };
 };
 

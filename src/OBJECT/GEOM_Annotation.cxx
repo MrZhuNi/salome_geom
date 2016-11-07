@@ -60,7 +60,7 @@ IMPLEMENT_STANDARD_RTTIEXT( GEOM_Annotation, AIS_InteractiveObject )
 GEOM_Annotation::GEOM_Annotation() : AIS_InteractiveObject()
 {
   SetPosition( gp_Pnt( 0.0, 0.0, 0.0 ) );
-  SetScreenFixed( Standard_False );
+  SetIsScreenFixed( Standard_False );
   SetAttachPoint( gp_Pnt( 0.0, 0.0, 0.0 ) );
   SetDisplayMode( 0 );
   SetZLayer( Graphic3d_ZLayerId_Top );
@@ -133,10 +133,10 @@ void GEOM_Annotation::SetPosition( const gp_Pnt& thePosition, const Standard_Boo
 }
 
 // =======================================================================
-// function : SetScreenFixed
+// function : SetIsScreenFixed
 // purpose  :
 // =======================================================================
-void GEOM_Annotation::SetScreenFixed( const Standard_Boolean theIsFixed )
+void GEOM_Annotation::SetIsScreenFixed( const Standard_Boolean theIsFixed )
 {
   myIsScreenFixed = theIsFixed;
 
@@ -154,6 +154,42 @@ void GEOM_Annotation::SetScreenFixed( const Standard_Boolean theIsFixed )
   SetToUpdate();
 
   UpdateSelection();
+}
+
+// =======================================================================
+// function : Set2dPosition
+// purpose  :
+// =======================================================================
+void GEOM_Annotation::Set2dPosition( const Handle(V3d_View)& theView )
+{
+  if ( myIsScreenFixed )
+  {
+    return;
+  }
+
+  gp_Pnt aPosition2d = ConvertPosition2d( myPosition, myAttach, theView );
+
+  SetIsScreenFixed( Standard_True );
+
+  SetPosition( aPosition2d );
+}
+
+// =======================================================================
+// function : Set3dPosition
+// purpose  :
+// =======================================================================
+void GEOM_Annotation::Set3dPosition( const Handle(V3d_View)& theView )
+{
+  if ( !myIsScreenFixed )
+  {
+    return;
+  }
+
+  gp_Pnt aPosition3d = ConvertPosition3d( myPosition, myAttach, theView );
+
+  SetIsScreenFixed( Standard_False );
+
+  SetPosition( aPosition3d );
 }
 
 // =======================================================================
@@ -299,6 +335,75 @@ void GEOM_Annotation::SetDepthCulling( const Standard_Boolean theToEnable )
 }
 
 // =======================================================================
+// function : GetDefaultPosition
+// purpose  :
+// =======================================================================
+gp_Pnt GEOM_Annotation::GetDefaultPosition( const Standard_Boolean theIsScreenFixed,
+                                            const gp_Pnt& theAttachPnt,
+                                            const Standard_Real theOffset,
+                                            const Handle(V3d_View)& theView )
+{
+  Standard_Integer aWinWidth = 0;
+  Standard_Integer aWinHeight = 0;
+  theView->Window()->Size( aWinWidth, aWinHeight );
+
+  gp_Pnt aPositionProj = theView->Camera()->Project( theAttachPnt );
+  aPositionProj.SetX( (aPositionProj.X() / 2.) * aWinWidth  + theOffset );
+  aPositionProj.SetY( (aPositionProj.Y() / 2.) * aWinHeight + theOffset );
+  aPositionProj.SetZ( 0.0 );
+
+  if ( theIsScreenFixed )
+  {
+    return aPositionProj;
+  }
+
+  gp_Pnt aAttachProj = theView->Camera()->Project ( theAttachPnt );
+  gp_Pnt aPosition3d = theView->Camera()->UnProject ( gp_Pnt ( aPositionProj.X() / aWinWidth * 2.,
+                                                               aPositionProj.Y() / aWinHeight * 2., 
+                                                               aAttachProj.Z() ));
+
+  return aPosition3d;
+}
+
+// =======================================================================
+// function : ConvertPosition2d
+// purpose  :
+// =======================================================================
+gp_Pnt GEOM_Annotation::ConvertPosition2d( const gp_Pnt& thePosition,
+                                           const gp_Pnt& /*theAttach*/,
+                                           const Handle(V3d_View)& theView )
+{
+  Standard_Integer aWinWidth = 0;
+  Standard_Integer aWinHeight = 0;
+  theView->Window()->Size( aWinWidth, aWinHeight );
+
+  gp_Pnt aPositionProj = theView->Camera()->Project( thePosition );
+  aPositionProj.SetX( (aPositionProj.X() / 2.) * aWinWidth );
+  aPositionProj.SetY( (aPositionProj.Y() / 2.) * aWinHeight );
+  aPositionProj.SetZ( 0.0 );
+  return aPositionProj;
+}
+
+// =======================================================================
+// function : ConvertPosition3d
+// purpose  :
+// =======================================================================
+gp_Pnt GEOM_Annotation::ConvertPosition3d( const gp_Pnt& thePosition,
+                                           const gp_Pnt& theAttach,
+                                           const Handle(V3d_View)& theView )
+{
+  Standard_Integer aWinWidth = 0;
+  Standard_Integer aWinHeight = 0;
+  theView->Window()->Size( aWinWidth, aWinHeight );
+
+  gp_Pnt aAttachProj = theView->Camera()->Project( theAttach );
+  gp_Pnt aPosition3d =  theView->Camera()->UnProject(
+    gp_Pnt ( thePosition.X() / aWinWidth * 2., thePosition.Y() / aWinHeight * 2., aAttachProj.Z() ) );
+
+  return aPosition3d;
+}
+
+// =======================================================================
 // function : Compute
 // purpose  :
 // =======================================================================
@@ -384,7 +489,9 @@ void GEOM_Annotation::ComputeSelection( const Handle(SelectMgr_Selection)& theSe
   }
 
   const Handle(GEOM_AnnotationOwner) anEntityOwner = new GEOM_AnnotationOwner( this, 10 );
-  const Handle(Select3D_SensitiveBox) aSensitive = new Select3D_SensitiveBox( anEntityOwner, aBox );
+  const Handle(GEOM_AnnotationSensEntity) aSensitive =
+    new GEOM_AnnotationSensEntity( anEntityOwner, aBox, myIsDepthCulling );
+
   theSelection->Add( aSensitive );
 }
 

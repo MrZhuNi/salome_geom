@@ -426,7 +426,7 @@ void GEOMGUI_AnnotationAttrs::SetupPresentation( const Handle(GEOM_Annotation)& 
     aText.Insert( i + 1, theProps.Text[ i ].unicode() );
 
   thePresentation->SetText( aText );
-  thePresentation->SetScreenFixed( theProps.IsScreenFixed );
+  thePresentation->SetIsScreenFixed( theProps.IsScreenFixed );
   thePresentation->SetAttachPoint( theProps.Attach.Transformed( aFromShapeLCS ) );
   thePresentation->SetPosition( (theProps.IsScreenFixed) ? 
     theProps.Position : theProps.Position.Transformed( aFromShapeLCS ) );
