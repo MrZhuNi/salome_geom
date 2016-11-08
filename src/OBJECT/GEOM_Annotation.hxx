@@ -331,7 +331,7 @@ private:
 
   friend class OpenGl_Annotation; // allow opengl element to get private data and invoke callback methods
 
-private:
+public:
 
   //! Custom entity owner implementing correct highlight for topmost mode.
   class GEOM_AnnotationOwner : public SelectMgr_EntityOwner
