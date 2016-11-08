@@ -22,7 +22,9 @@
 #include <GEOMGUI_AnnotationAttrs.h>
 #include <GEOM_Annotation.hxx>
 #include <GEOM_Client.hxx>
+#include <GEOM_Constants.h>
 #include <GEOM_Displayer.h>
+
 #include <GeometryGUI.h>
 
 #include <SalomeApp_Application.h>
@@ -65,6 +67,7 @@ QString GEOMGUI_AnnotationMgr::GetEntrySeparator()
 //================================================================
 SALOME_Prs* GEOMGUI_AnnotationMgr::CreatePresentation( const GEOMGUI_AnnotationAttrs::Properties& theProperty,
                                                        GEOM::GEOM_Object_ptr theObject,
+                                                       SALOME_View* theView,
                                                        const QString& theEntry )
 {
   Handle ( GEOM_Annotation ) aPresentation = new GEOM_Annotation();
@@ -103,6 +106,19 @@ SALOME_Prs* GEOMGUI_AnnotationMgr::CreatePresentation( const GEOMGUI_AnnotationA
   //GEOMBase::GetShape( theObject.get(), aShape );
   gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
   GEOMGUI_AnnotationAttrs::SetupPresentation( aPresentation, theProperty, aShapeLCS );
+
+  SALOME_View* aView = viewOrActiveView( theView );
+  if ( aView ) {
+
+    // set top-level flag correspondingly
+    SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( getApplication()->activeStudy() );
+    int aMgrId = dynamic_cast< SUIT_ViewModel* >( aView )->getViewManager()->getGlobalId();
+    QVariant aVal = aStudy->getObjectProperty( aMgrId, QString( getEntry( theObject ).c_str() ), GEOM::propertyName( GEOM::TopLevel ), QVariant() );
+    bool isBringToFront = aVal.isValid() ? aVal.toBool() : false;
+    if( isBringToFront ) {
+      aPresentation->SetZLayer( Graphic3d_ZLayerId_Topmost );
+    }
+  }
 
   // add Prs to preview
   SUIT_ViewWindow* vw = getApplication()->desktop()->activeWindow();
@@ -153,7 +169,7 @@ void GEOMGUI_AnnotationMgr::Display( const QString& theEntry, const int theIndex
 
   // display presentation in the viewer
   QString anEntry = QString("%1%2%3").arg(theEntry).arg(GetEntrySeparator()).arg(theIndex);
-  SALOME_Prs* aPrs = CreatePresentation( aProperty, anObject, anEntry );
+  SALOME_Prs* aPrs = CreatePresentation( aProperty, anObject, aView, anEntry );
   aView->Display( getDisplayer(), aPrs );
   getDisplayer()->UpdateViewer();
 
@@ -170,7 +186,7 @@ void GEOMGUI_AnnotationMgr::Display( const QString& theEntry, const int theIndex
   myVisualized[aView] = anEntryToMap;
 
   // change persistent for the entry: set visible state in true for indices which presentations are shown
-  storeVisibleState( theEntry, theView, theIndex );
+  storeVisibleState( theEntry, theView );
 }
 
 void GEOMGUI_AnnotationMgr::Erase( const QString& theEntry, const int theIndex, SALOME_View* theView )
@@ -207,7 +223,7 @@ void GEOMGUI_AnnotationMgr::Erase( const QString& theEntry, const int theIndex, 
   myVisualized[aView] = anEntryToAnnotation;
 
   // change persistent for the entry: set visible state in true for indices which presentations are shown
-  storeVisibleState( theEntry, theView, theIndex );
+  storeVisibleState( theEntry, theView );
 }
 
 void GEOMGUI_AnnotationMgr::DisplayVisibleAnnotations( const QString& theEntry, SALOME_View* theView )
@@ -217,9 +233,14 @@ void GEOMGUI_AnnotationMgr::DisplayVisibleAnnotations( const QString& theEntry, 
   const Handle(GEOMGUI_AnnotationAttrs) aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
   if ( !aShapeAnnotations.IsNull() ) {
     const int aCount = aShapeAnnotations->GetNbAnnotation();
+    std::vector<bool> isVisible( aCount );
     for ( int anIndex = 0; anIndex < aCount; ++anIndex )
     {
-      if ( aShapeAnnotations->GetIsVisible( anIndex ) )
+      isVisible[anIndex] = aShapeAnnotations->GetIsVisible( anIndex );
+    }
+    for ( int anIndex = 0; anIndex < aCount; ++anIndex )
+    {
+      if ( isVisible[anIndex] )
         Display( theEntry, anIndex, theView );
     }
   }
@@ -409,7 +430,7 @@ void GEOMGUI_AnnotationMgr::getObject( const QString& theEntry, const int theInd
   }
 }
 
-void GEOMGUI_AnnotationMgr::storeVisibleState( const QString& theEntry, SALOME_View* theView, const int theIndex )
+void GEOMGUI_AnnotationMgr::storeVisibleState( const QString& theEntry, SALOME_View* theView )
 {
   SALOME_View* aView = viewOrActiveView( theView );
   if ( !aView || !myVisualized.contains( aView ) )
@@ -425,12 +446,13 @@ void GEOMGUI_AnnotationMgr::storeVisibleState( const QString& theEntry, SALOME_V
   _PTR(SObject) aSObj = aStudy->studyDS()->FindObjectID( theEntry.toStdString() );
   const Handle(GEOMGUI_AnnotationAttrs) aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
   if ( !aShapeAnnotations.IsNull() ) {
-    
-    bool aVisible = anAnnotationToPrs.contains( theIndex );
-    aShapeAnnotations->SetIsVisible( theIndex, aVisible );
+    const int aCount = aShapeAnnotations->GetNbAnnotation();
+    for ( int anIndex = 0; anIndex < aCount; ++anIndex ) {
+      bool aVisible = anAnnotationToPrs.contains( anIndex );
+      aShapeAnnotations->SetIsVisible( anIndex, aVisible );
+    }
   }
 }
-
 
 //=======================================================================
 // function : GEOMGUI_AnnotationMgr::getEntry

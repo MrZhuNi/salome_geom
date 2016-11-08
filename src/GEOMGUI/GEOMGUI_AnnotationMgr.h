@@ -32,7 +32,6 @@
 #include <SALOME_InteractiveObject.hxx>
 
 class SalomeApp_Application;
-class GEOM_Annotation;
 class GEOM_Displayer;
 
 /*!
@@ -52,7 +51,9 @@ public:
   static QString GetEntrySeparator();
 
   SALOME_Prs* CreatePresentation( const GEOMGUI_AnnotationAttrs::Properties& theProperty,
-                                  GEOM::GEOM_Object_ptr theObject, const QString& theEntry = QString() );
+                                  GEOM::GEOM_Object_ptr theObject,
+                                  SALOME_View* theView = 0,
+                                  const QString& theEntry = QString() );
 
   bool IsDisplayed( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 ) const;
   void Display( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 );
@@ -85,15 +86,11 @@ protected:
                   GEOM::GEOM_Object_ptr& anObject,
                   GEOMGUI_AnnotationAttrs::Properties& aProperty );
 
-  void storeVisibleState( const QString& theEntry, SALOME_View* theView, const int theIndex );
+  void storeVisibleState( const QString& theEntry, SALOME_View* theView );
 
   std::string getEntry( const GEOM::GEOM_Object_ptr theObject );
 
   std::string getName( const GEOM::GEOM_Object_ptr theObject );
-
-  void setAISProperties( const Handle(GEOM_Annotation)& thePresentation,
-                         const GEOMGUI_AnnotationAttrs::Properties& theProperty,
-                         const gp_Ax3& theLCS );
 
 private:
   SalomeApp_Application* myApplication;

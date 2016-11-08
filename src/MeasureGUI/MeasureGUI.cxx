@@ -31,6 +31,7 @@
 
 #include <GEOMGUI_DimensionProperty.h>
 #include <GEOMGUI_AnnotationAttrs.h>
+#include <GEOMGUI_AnnotationMgr.h>
 
 #include <LightApp_SelectionMgr.h>
 #include <SUIT_OverrideCursor.h>
@@ -231,13 +232,16 @@ void MeasureGUI::ChangeAnnotationsVisibility( const bool theIsVisible )
    || !anIObject->hasEntry() )
     return;
 
-  _PTR(SObject) aSObj = anActiveStudy->studyDS()->FindObjectID( anIObject->getEntry() );
+  const QString aEntry = anIObject->getEntry(),c_str();
+
+  _PTR(SObject) aSObj = anActiveStudy->studyDS()->FindObjectID( aEntry.toStdString() );
 
   const Handle(GEOMGUI_AnnotationAttrs)
     aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
 
-  if ( aShapeAnnotations.IsNull() )
+  if ( aShapeAnnotations.IsNull() ) {
     return;
+  }
 
   const int aCount = aShapeAnnotations->GetNbAnnotation();
 
@@ -247,10 +251,13 @@ void MeasureGUI::ChangeAnnotationsVisibility( const bool theIsVisible )
 
     for ( int anI = 0; anI <= aCount; ++anI ) {
 
-      aShapeAnnotations->SetIsVisible( anI, theIsVisible );
+      if ( !theIsVisible ) {
+        getGeometryGUI()->GetAnnotationMgr()->Erase( aEntry, anI );
+      }
+      else {
+        getGeometryGUI()->GetAnnotationMgr()->Display( aEntry , anI );
+      }
     }
-
-    GEOM_Displayer( anActiveStudy ).Redisplay( anIObject, true );
   }
 }
 

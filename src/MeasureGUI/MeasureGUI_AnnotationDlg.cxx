@@ -439,10 +439,6 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
 
         hasAttachPoint = true;
       }
-      else {
-
-        myIsPositionDefined = false;
-      }
     } else if ( myEditCurrentArgument == mySubShapeName ) {
       if ( !myShape->_is_nil() ) {
 
@@ -474,12 +470,7 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
 
               anAttachPoint = getAttachPoint( aSubShape );
             }
-
             hasAttachPoint = true;
-          }
-          else {
-
-            myIsPositionDefined = false;
           }
         }
       }
@@ -505,6 +496,10 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
         aPosition.Transformed( aToShapeLCS ) : aPosition;
 
       myIsPositionDefined = true;
+    }
+    else if ( !hasAttachPoint ) {
+
+      myIsPositionDefined = false;
     }
   }
   redisplayPreview();
