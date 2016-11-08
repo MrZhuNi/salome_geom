@@ -40,6 +40,7 @@
 #include "GEOM_AISShape.hxx"
 #include "GEOMUtils_XmlHandler.hxx"
 #include "GEOMGUI_AnnotationMgr.h"
+#include "GEOMGUI_TextTreeSelector.h"
 
 #include "GEOM_Actor.h"
 
@@ -1847,8 +1848,10 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   getApp()->insertDockWindow( myCreationInfoWdg->getWinID(), myCreationInfoWdg );
   getApp()->placeDockWindow( myCreationInfoWdg->getWinID(), Qt::LeftDockWidgetArea );
 
-  if ( !myTextTreeWdg )
+  if ( !myTextTreeWdg ) {
     myTextTreeWdg = new GEOMGUI_TextTreeWdg( getApp() );
+    new GEOMGUI_TextTreeSelector( myTextTreeWdg, GetAnnotationMgr(), getApp()->selectionMgr() );
+  }
 
   getApp()->insertDockWindow( myTextTreeWdg->getWinID(), myTextTreeWdg );
   getApp()->placeDockWindow( myTextTreeWdg->getWinID(), Qt::LeftDockWidgetArea );

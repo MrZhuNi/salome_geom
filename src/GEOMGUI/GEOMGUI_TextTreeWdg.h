@@ -24,6 +24,8 @@
 #include "GEOM_Displayer.h"
 
 #include <QHash>
+#include <QMap>
+#include <QList>
 #include <QSharedPointer>
 #include <QTreeWidget>
 
@@ -67,6 +69,9 @@ public:
                                                         QTreeWidgetItem* theWidgetItem,
                                                         const bool theVisibility );
   void                          updateVisibility( SALOME_View* theView );
+
+  void                          getSelected( QMap<QString, QList<int> >& theAnnotations );
+  void                          setSelected( const QMap<QString, QList<int> >& theAnnotations );
 
 protected:
   void                          createActions();

@@ -626,18 +626,83 @@ void GEOMGUI_TextTreeWdg::updateVisibility( SALOME_View* theView )
 
   QList<QString> anAnnotationObjEntries = getObjects( aBranchType ).keys();
 
-  QTreeWidgetItem* anItem;
+  QTreeWidgetItem* anEntryItem;
   foreach ( QString anEntry, getObjects( aBranchType ).keys() )
   {
-    anItem = itemFromEntry( aBranchType, anEntry );
+    anEntryItem = itemFromEntry( aBranchType, anEntry );
 
-    int aDimIndex = idFromItem( anItem );
-    QSharedPointer<VisualProperty> aProp = getVisualProperty( aBranchType, myStudy,
-                                                              anEntry.toStdString() );
-    bool isItemVisible = aProp->GetIsVisible( aDimIndex );
-    anItem->setIcon( 1, isItemVisible ? myVisibleIcon : myInvisibleIcon );
+    QTreeWidgetItem* anItem;
+    for ( int i = 0; i < anEntryItem->childCount(); i++ ) {
+      anItem = anEntryItem->child( i );
+      int aDimIndex = idFromItem( anItem );
+      QSharedPointer<VisualProperty> aProp = getVisualProperty( aBranchType, myStudy,
+                                                                anEntry.toStdString() );
+      bool isItemVisible = aProp->GetIsVisible( aDimIndex );
+      anItem->setIcon( 1, isItemVisible ? myVisibleIcon : myInvisibleIcon );
+    }
 
     redisplay( anEntry );
+  }
+}
+
+//=================================================================================
+// function : getSelected
+// purpose  :
+//=================================================================================
+void GEOMGUI_TextTreeWdg::getSelected( QMap<QString, QList<int> >& theAnnotations )
+{
+  theAnnotations.clear();
+
+  QItemSelectionModel* aSelectionModel = selectionModel();
+  QModelIndexList aSelectedIndices = aSelectionModel->selectedIndexes();
+
+  for (int i = 0, aNbItems = aSelectedIndices.size(); i < aNbItems; i++) {
+    QTreeWidgetItem* anItem = itemFromIndex( aSelectedIndices[i] );
+    if ( !anItem )
+      continue;
+    QString anEntry = entryFromItem( anItem->parent() );
+    int aDimIndex = idFromItem( anItem );
+    if ( aDimIndex < 0 )
+      continue;
+
+    if ( theAnnotations.contains( anEntry ) )
+      theAnnotations[anEntry].append( aDimIndex );
+    else {
+      QList<int> anIndices;
+      anIndices.append( aDimIndex );
+      theAnnotations[anEntry] = anIndices;
+    }
+  }
+}
+
+//=================================================================================
+// function : setSelected
+// purpose  :
+//=================================================================================
+void GEOMGUI_TextTreeWdg::setSelected( const QMap<QString, QList<int> >& theAnnotations )
+{
+  QItemSelectionModel* aSelectionModel = selectionModel();
+  aSelectionModel->clearSelection();
+
+  QMap<QString, QList<int> >::const_iterator anIt = theAnnotations.begin(),
+                                             aLast = theAnnotations.end();
+  BranchType aBranchType = AnnotationShape;
+  for ( ; anIt != aLast; anIt++ ) {
+    QString anEntry = anIt.key();
+    QTreeWidgetItem* anEntryItem = itemFromEntry( aBranchType, anEntry );
+    if ( !anEntryItem )
+      continue;
+
+    QList<int> anAnnotationIds = anIt.value();
+    QTreeWidgetItem* anItem;
+    for ( int i = 0; i < anEntryItem->childCount(); i++ ) {
+      anItem = anEntryItem->child( i );
+      int aDimIndex = idFromItem( anItem );
+      if ( anAnnotationIds.contains( aDimIndex ) ) {
+        QModelIndex anIndex = indexFromItem( anItem );
+        aSelectionModel->select( anIndex, QItemSelectionModel::Select );
+      }
+    }
   }
 }
 

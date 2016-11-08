@@ -697,13 +697,15 @@ void GEOM_Displayer::Redisplay( const Handle(SALOME_InteractiveObject)& theIO,
   Erase( theIO, true, false, theViewFrame );
   Display( theIO, theUpdateViewer, theViewFrame );
   myIsRedisplayed = aRedisplayed;
-  if ( !theViewFrame->isVisible( theIO ) ) {
-    // hide annotations for erased presentation
-    SUIT_Session* session = SUIT_Session::session();
-    SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
-    GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
-    if ( aModule )
+  // hide annotations for erased presentation
+  SUIT_Session* session = SUIT_Session::session();
+  SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+  GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
+  if ( aModule ) {
+    if ( !theViewFrame->isVisible( theIO ) )
       aModule->GetAnnotationMgr()->EraseVisibleAnnotations(QString(theIO->getEntry()), theViewFrame);
+    else
+      aModule->GetAnnotationMgr()->DisplayVisibleAnnotations(QString(theIO->getEntry()), theViewFrame);
   }
 }
 

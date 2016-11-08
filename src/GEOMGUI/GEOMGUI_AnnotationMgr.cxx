@@ -43,6 +43,7 @@
 
 #include <TopoDS_Shape.hxx>
 #include <gp_Ax3.hxx>
+#include <AIS_ListIteratorOfListOfInteractive.hxx>
 
 #include <QFont>
 #include <QColor>
@@ -53,10 +54,22 @@ GEOMGUI_AnnotationMgr::GEOMGUI_AnnotationMgr( SalomeApp_Application* theApplicat
 {
 }
 
+QString GEOMGUI_AnnotationMgr::GetEntrySeparator()
+{
+  return "_annotation:";
+}
+
 SALOME_Prs* GEOMGUI_AnnotationMgr::CreatePresentation( const GEOMGUI_AnnotationAttrs::Properties& theProperty,
-                                                       GEOM::GEOM_Object_ptr theObject )
+                                                       GEOM::GEOM_Object_ptr theObject,
+                                                       const QString& theEntry )
 {
   Handle ( GEOM_Annotation ) aPresentation = new GEOM_Annotation();
+  if ( !theEntry.isEmpty() ) {
+    // owner should be set to provide selection mechanizm
+    Handle( SALOME_InteractiveObject ) anIO = new SALOME_InteractiveObject();
+    anIO->setEntry( theEntry.toLatin1().constData() );
+    aPresentation->SetOwner( anIO );
+  }
 
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   const QFont  aFont      = aResMgr->fontValue( "Geometry", "shape_annotation_font", QFont( "Y14.5M-2009", 24 ) );
@@ -133,7 +146,8 @@ void GEOMGUI_AnnotationMgr::Display( const QString& theEntry, const int theIndex
   getObject( theEntry, theIndex, anObject, aProperty );
 
   // display presentation in the viewer
-  SALOME_Prs* aPrs = CreatePresentation( aProperty, anObject );
+  QString anEntry = QString("%1%2%3").arg(theEntry).arg(GetEntrySeparator()).arg(theIndex);
+  SALOME_Prs* aPrs = CreatePresentation( aProperty, anObject, anEntry );
   aView->Display( getDisplayer(), aPrs );
   getDisplayer()->UpdateViewer();
 
@@ -234,6 +248,81 @@ void GEOMGUI_AnnotationMgr::EraseVisibleAnnotations( const QString& theEntry, SA
   getDisplayer()->UpdateViewer();
   anEntryToAnnotation.remove( theEntry );
   myVisualized[aView] = anEntryToAnnotation;
+}
+
+Handle(SALOME_InteractiveObject) GEOMGUI_AnnotationMgr::FindInteractiveObject( const QString& theEntry,
+                                                                               const int theIndex,
+                                                                               SALOME_View* theView ) const
+{
+  Handle(SALOME_InteractiveObject) anIO;
+
+  SALOME_View* aView = viewOrActiveView( theView );
+  if ( !myVisualized.contains( aView ) )
+    return anIO;
+
+  EntryToAnnotations anEntryToAnnotation = myVisualized[aView];
+  if ( !anEntryToAnnotation.contains( theEntry ) )
+    return anIO;
+
+  AnnotationToPrs anAnnotationToPrs = anEntryToAnnotation[theEntry];
+  if ( !anAnnotationToPrs.contains(theIndex) )
+    return anIO;
+
+  SALOME_Prs* aPrs = anAnnotationToPrs[theIndex];
+  SOCC_Prs* anOCCPrs = dynamic_cast<SOCC_Prs*>( aPrs );
+  if ( !anOCCPrs )
+    return anIO;
+
+  AIS_ListOfInteractive anIOs;
+  anOCCPrs->GetObjects( anIOs );
+  AIS_ListIteratorOfListOfInteractive anIter( anIOs );
+  for ( ; anIter.More() && anIO.IsNull(); anIter.Next() ) {
+    Handle(AIS_InteractiveObject) aPrs = anIter.Value();
+    if ( aPrs->GetOwner() )
+      anIO = Handle(SALOME_InteractiveObject)::DownCast(aPrs->GetOwner());
+  }
+  return anIO;
+}
+
+int GEOMGUI_AnnotationMgr::FindAnnotationIndex( Handle(SALOME_InteractiveObject) theIO,
+                                                SALOME_View* theView )
+{
+  int anIndex = -1;
+
+  SALOME_View* aView = viewOrActiveView( theView );
+  if ( !myVisualized.contains( aView ) )
+    return anIndex;
+
+  QString anEntry = theIO->getEntry();
+
+  EntryToAnnotations anEntryToAnnotation = myVisualized[aView];
+  if ( !anEntryToAnnotation.contains( anEntry ) )
+    return anIndex;
+
+  AnnotationToPrs anAnnotationToPrs = anEntryToAnnotation[anEntry];
+  //typedef QMap<int, SALOME_Prs*> AnnotationToPrs;
+  AnnotationToPrs::const_iterator anIt = anAnnotationToPrs.begin(),
+                                  aLast = anAnnotationToPrs.end();
+  for (; anIt != aLast && anIndex < 0; anIt++) {
+    SALOME_Prs* aPrs = anIt.value();
+    SOCC_Prs* anOCCPrs = dynamic_cast<SOCC_Prs*>( aPrs );
+    if ( !anOCCPrs )
+      continue;
+
+    AIS_ListOfInteractive anIOs;
+    anOCCPrs->GetObjects( anIOs );
+    AIS_ListIteratorOfListOfInteractive anIter( anIOs );
+    for ( ; anIter.More() && anIndex < 0; anIter.Next() ) {
+      Handle(AIS_InteractiveObject) aPrs = anIter.Value();
+      if ( aPrs->GetOwner() ) {
+        Handle(SALOME_InteractiveObject) aPrsOwner = Handle(SALOME_InteractiveObject)::DownCast(aPrs->GetOwner());
+        if ( aPrsOwner == theIO )
+          anIndex = anIt.key();
+      }
+    }
+  }
+
+  return anIndex;
 }
 
 void GEOMGUI_AnnotationMgr::RemoveView( SALOME_View* theView )

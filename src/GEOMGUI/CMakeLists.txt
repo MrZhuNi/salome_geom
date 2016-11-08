@@ -76,6 +76,7 @@ SET(GEOMGUI_HEADERS
   GEOM_GEOMGUI.hxx
   GEOMGUI_CreationInfoWdg.h
   GEOMGUI_TextTreeWdg.h
+  GEOMGUI_TextTreeSelector.h
   GEOMGUI_DimensionProperty.h
   GEOMGUI_AnnotationAttrs.h
   )
@@ -85,6 +86,7 @@ SET(_moc_HEADERS
   GEOMGUI_AnnotationMgr.h
   GEOMGUI_CreationInfoWdg.h
   GEOMGUI_TextTreeWdg.h
+  GEOMGUI_TextTreeSelector.h
   GeometryGUI.h
   )
 
@@ -119,6 +121,7 @@ SET(GEOMGUI_SOURCES
   GEOMGUI_Selection.cxx
   GEOMGUI_CreationInfoWdg.cxx
   GEOMGUI_TextTreeWdg.cxx
+  GEOMGUI_TextTreeSelector.cxx
   GEOMGUI_DimensionProperty.cxx
   GEOMGUI_AnnotationAttrs.cxx
   ${_moc_SOURCES}

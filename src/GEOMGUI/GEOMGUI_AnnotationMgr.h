@@ -29,6 +29,7 @@
 #include <GEOMGUI_AnnotationAttrs.h>
 
 #include <SALOME_Prs.h>
+#include <SALOME_InteractiveObject.hxx>
 
 class SalomeApp_Application;
 class GEOM_Displayer;
@@ -47,8 +48,10 @@ public:
   GEOMGUI_AnnotationMgr( SalomeApp_Application* theApplication );
   ~GEOMGUI_AnnotationMgr() {}
 
+  static QString GetEntrySeparator();
+
   SALOME_Prs* CreatePresentation( const GEOMGUI_AnnotationAttrs::Properties& theProperty,
-                                  GEOM::GEOM_Object_ptr theObject );
+                                  GEOM::GEOM_Object_ptr theObject, const QString& theEntry = QString() );
 
   bool IsDisplayed( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 ) const;
   void Display( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 );
@@ -58,6 +61,12 @@ public:
   void EraseVisibleAnnotations( const QString& theEntry, SALOME_View* theView = 0 );
 
   void RemoveView( SALOME_View* theView);
+
+  int FindAnnotationIndex( Handle(SALOME_InteractiveObject) theIO,
+                           SALOME_View* theView = 0 );
+
+  Handle(SALOME_InteractiveObject) FindInteractiveObject( const QString& theEntry, const int theIndex,
+                                                          SALOME_View* theView = 0 ) const;
 
   QString getDisplayedIndicesInfo( const QString& theEntry, SALOME_View* theView ) const;
 
