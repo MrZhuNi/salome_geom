@@ -48,9 +48,6 @@ namespace
   std::string PARAMETER_IS_2D( const int i ) {
     return PARAMETER_I( "GEOMGUI_AnnotationAttrs_Is2D", i );
   }
-  std::string PARAMETER_NAME( const int i ) {
-    return PARAMETER_I( "GEOMGUI_AnnotationAttrs_Name", i );
-  }
   std::string PARAMETER_TEXT( const int i ) {
     return PARAMETER_I( "GEOMGUI_AnnotationAttrs_Text", i );
   }
@@ -63,7 +60,34 @@ namespace
   std::string PARAMETER_SHAPE(  const int i ) {
     return PARAMETER_I( "GEOMGUI_AnnotationAttrs_Shape", i );
   }
-}
+
+  // REGEXP pattern for converting array of entries into plain text string.
+  // The pattern has the following structure:
+  // ENTRY: { text[string] : visibility[bool] : screen fixed[bool] : position[xyz] : attach[xyz] }
+  static const QString PATTERN_ITEM_GROUP = "\\{ (Text=(?::{2,}|.)*:(?!:)Screen=.*:Position=\\{(.*):(.*):(.*)\\}:Attach=\\{(.*):(.*):(.*)\\}:ShapeIdx=.*:ShapeType=.*) \\}";
+  static const QString PATTERN_ITEM = "Text=((?::{2,}|.)*):(?!:)Screen=(\\d{1}):Position=\\{(.*):(.*):(.*)\\}:Attach=\\{(.*):(.*):(.*)\\}:ShapeIdx=(\\-?\\d{1,}):ShapeType=(\\d{1})";
+  static QString toPattern (const QString& theText,
+                            const bool theIsFixed,
+                            const gp_Pnt& thePosition,
+                            const gp_Pnt& theAttach,
+                            const int theShapeIndex,
+                            const int theShapeType)
+  {
+    return QString( "{ Text=" ) + theText +
+           QString( ":" ) + QString( "Screen=" ) + QString::number( theIsFixed ? 1 : 0 ) +
+           QString( ":" ) + QString( "Position={" ) +
+             QString::number( thePosition.X() ) + QString( ":" ) + 
+             QString::number( thePosition.Y() ) + QString( ":" ) + 
+             QString::number( thePosition.Z() ) + QString( "}" ) + 
+           QString( ":" ) + QString( "Attach={" ) +
+             QString::number( theAttach.X() ) + QString( ":" ) + 
+             QString::number( theAttach.Y() ) + QString( ":" ) + 
+             QString::number( theAttach.Z() ) + QString( "}" ) +
+           QString( ":" ) + QString( "ShapeIdx=" ) + QString::number( theShapeIndex ) +
+           QString( ":" ) + QString( "ShapeType=" ) + QString::number( theShapeType ) +
+           QString( " }" );
+  }
+};
 
 //=================================================================================
 // function : FindAttributes
@@ -133,7 +157,6 @@ void GEOMGUI_AnnotationAttrs::Remove( const _PTR(SObject)& theObject )
   {
     aParameterMap->RemoveID( PARAMETER_IS_VISIBLE( anI ), PT_BOOLEAN );
     aParameterMap->RemoveID( PARAMETER_IS_2D( anI ), PT_BOOLEAN );
-    aParameterMap->RemoveID( PARAMETER_NAME( anI ), PT_STRING );
     aParameterMap->RemoveID( PARAMETER_TEXT( anI ), PT_STRING );
     aParameterMap->RemoveID( PARAMETER_POSITION( anI ), PT_REALARRAY );
     aParameterMap->RemoveID( PARAMETER_ATTACH( anI ), PT_REALARRAY );
@@ -141,6 +164,85 @@ void GEOMGUI_AnnotationAttrs::Remove( const _PTR(SObject)& theObject )
   }
 
   aParameterMap->RemoveID( PARAMETER_COUNT, PT_INTEGER );
+}
+
+//=================================================================================
+// function : ExportAsPropertyString
+// purpose  : 
+//=================================================================================
+QString GEOMGUI_AnnotationAttrs::ExportAsPropertyString() const
+{
+  QStringList anItems;
+
+  for ( int anI = 0; anI < GetNbAnnotation(); ++anI )
+  {
+    Properties aEntry;
+
+    GetProperties( anI, aEntry );
+
+    anItems.append( toPattern( aEntry.Text,
+                               aEntry.IsScreenFixed,
+                               aEntry.Position,
+                               aEntry.Attach,
+                               aEntry.ShapeIndex,
+                               aEntry.ShapeType ) );
+  }
+
+  return anItems.join( ":" );
+}
+
+//=================================================================================
+// function : ImportFromPropertyString
+// purpose  : 
+//=================================================================================
+void GEOMGUI_AnnotationAttrs::ImportFromPropertyString( const QString& theString )
+{
+  SetNbAnnotation( 0 );
+
+  QRegExp aRegExpItemGroups( PATTERN_ITEM_GROUP );
+  QRegExp aRegExpItem( "^" + PATTERN_ITEM + "$" );
+  aRegExpItemGroups.setMinimal( true );
+  aRegExpItem.setMinimal( true );
+
+  int aPos = 0;
+  while ( ( aPos = aRegExpItemGroups.indexIn( theString, aPos ) ) != -1 )
+  {
+    aPos += aRegExpItemGroups.matchedLength();
+
+    QString aStrItem = aRegExpItemGroups.cap(1);
+
+    if ( aRegExpItem.indexIn( aStrItem ) < 0 )
+    {
+      continue;
+    }
+
+    QString aStrText       = aRegExpItem.cap( 1 );
+    QString aStrFixed      = aRegExpItem.cap( 2 );
+    QString aStrPosX       = aRegExpItem.cap( 3 );
+    QString aStrPosY       = aRegExpItem.cap( 4 );
+    QString aStrPosZ       = aRegExpItem.cap( 5 );
+    QString aStrAttX       = aRegExpItem.cap( 6 );
+    QString aStrAttY       = aRegExpItem.cap( 7 );
+    QString aStrAttZ       = aRegExpItem.cap( 8 );
+    QString aStrShapeIdx   = aRegExpItem.cap( 9 );
+    QString aStrShapeType  = aRegExpItem.cap( 10 );
+    aStrText.replace( "::", ":" );
+
+    Properties aEntry;
+    aEntry.Text = aStrText;
+    aEntry.IsVisible = false;
+    aEntry.IsScreenFixed = aStrFixed.toInt() != 0;
+    aEntry.Position.SetX( aStrPosX.toDouble() );
+    aEntry.Position.SetY( aStrPosY.toDouble() );
+    aEntry.Position.SetZ( aStrPosZ.toDouble() );
+    aEntry.Attach.SetX( aStrAttX.toDouble() );
+    aEntry.Attach.SetY( aStrAttY.toDouble() );
+    aEntry.Attach.SetZ( aStrAttZ.toDouble() );
+    aEntry.ShapeIndex = aStrShapeIdx.toInt();
+    aEntry.ShapeType = aStrShapeType.toInt();
+
+    Append( aEntry );
+  }
 }
 
 //=================================================================================
@@ -158,7 +260,6 @@ void GEOMGUI_AnnotationAttrs::SetNbAnnotation( const int theCount ) const
     {
       myParameterMap->SetBool( PARAMETER_IS_VISIBLE( anI ), true );
       myParameterMap->SetBool( PARAMETER_IS_2D( anI ), false );
-      myParameterMap->SetString( PARAMETER_NAME( anI ), std::string() );
       myParameterMap->SetString( PARAMETER_TEXT( anI ), std::string() );
       myParameterMap->SetRealArray( PARAMETER_POSITION( anI ), std::vector<double>(3, 0.0) );
       myParameterMap->SetRealArray( PARAMETER_ATTACH( anI ), std::vector<double>(3, 0.0) );
@@ -172,7 +273,6 @@ void GEOMGUI_AnnotationAttrs::SetNbAnnotation( const int theCount ) const
     {
       myParameterMap->RemoveID( PARAMETER_IS_VISIBLE( anI ), PT_BOOLEAN );
       myParameterMap->RemoveID( PARAMETER_IS_2D( anI ), PT_BOOLEAN );
-      myParameterMap->RemoveID( PARAMETER_NAME( anI ), PT_STRING );
       myParameterMap->RemoveID( PARAMETER_TEXT( anI ), PT_STRING );
       myParameterMap->RemoveID( PARAMETER_POSITION( anI ), PT_REALARRAY );
       myParameterMap->RemoveID( PARAMETER_ATTACH( anI ), PT_REALARRAY );
@@ -190,24 +290,6 @@ void GEOMGUI_AnnotationAttrs::SetNbAnnotation( const int theCount ) const
 int GEOMGUI_AnnotationAttrs::GetNbAnnotation() const
 {
   return myParameterMap->GetInt( PARAMETER_COUNT );
-}
-
-//=================================================================================
-// function : SetName
-// purpose  : 
-//=================================================================================
-void GEOMGUI_AnnotationAttrs::SetName( const int theIndex, const QString& theName )
-{
-  myParameterMap->SetString( PARAMETER_NAME( theIndex ), theName.toStdString() );
-}
-
-//=================================================================================
-// function : GetName
-// purpose  : 
-//=================================================================================
-QString GEOMGUI_AnnotationAttrs::GetName( const int theIndex ) const
-{
-  return QString::fromStdString( myParameterMap->GetString( PARAMETER_NAME( theIndex ) ) );
 }
 
 //=================================================================================
@@ -384,7 +466,6 @@ void GEOMGUI_AnnotationAttrs::SetProperties( const int theIndex, const Propertie
   gp_Trsf aToShapeLCS;
   aToShapeLCS.SetTransformation( gp_Ax3(), theShapeLCS );
 
-  this->SetName( theIndex, theProps.Name );
   this->SetText( theIndex, theProps.Text );
   this->SetIsVisible( theIndex, theProps.IsVisible );
   this->SetIsScreenFixed( theIndex, theProps.IsScreenFixed );
@@ -400,7 +481,6 @@ void GEOMGUI_AnnotationAttrs::SetProperties( const int theIndex, const Propertie
 //=================================================================================
 void GEOMGUI_AnnotationAttrs::GetProperties( const int theIndex, Properties& theProps ) const
 {
-  theProps.Name = this->GetName( theIndex );
   theProps.Text = this->GetText( theIndex );
   theProps.IsVisible = this->GetIsVisible( theIndex );
   theProps.IsScreenFixed = this->GetIsScreenFixed( theIndex );

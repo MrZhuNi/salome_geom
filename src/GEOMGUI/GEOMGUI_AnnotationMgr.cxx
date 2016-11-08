@@ -75,7 +75,7 @@ SALOME_Prs* GEOMGUI_AnnotationMgr::CreatePresentation( const GEOMGUI_AnnotationA
     aPresentation->SetOwner( anIO );
   }
 
-  aPresentation->SetOwner( new SALOME_InteractiveObject( getEntry( theObject ).c_str(), "GEOM", getName( theObject ).c_str() ) );
+  //aPresentation->SetOwner( new SALOME_InteractiveObject( getEntry( theObject ).c_str(), "GEOM", getName( theObject ).c_str() ) );
 
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   const QFont  aFont      = aResMgr->fontValue( "Geometry", "shape_annotation_font", QFont( "Y14.5M-2009", 24 ) );
@@ -170,7 +170,7 @@ void GEOMGUI_AnnotationMgr::Display( const QString& theEntry, const int theIndex
   myVisualized[aView] = anEntryToMap;
 
   // change persistent for the entry: set visible state in true for indices which presentations are shown
-  storeVisibleState( theEntry, theView );
+  storeVisibleState( theEntry, theView, theIndex );
 }
 
 void GEOMGUI_AnnotationMgr::Erase( const QString& theEntry, const int theIndex, SALOME_View* theView )
@@ -190,7 +190,6 @@ void GEOMGUI_AnnotationMgr::Erase( const QString& theEntry, const int theIndex, 
   if ( !anAnnotationToPrs.contains( theIndex ) )
     return;
 
-
   // erase presentation from the viewer
   SALOME_Prs* aPrs = anAnnotationToPrs[theIndex];
   aView->Erase( getDisplayer(), aPrs );
@@ -208,7 +207,7 @@ void GEOMGUI_AnnotationMgr::Erase( const QString& theEntry, const int theIndex, 
   myVisualized[aView] = anEntryToAnnotation;
 
   // change persistent for the entry: set visible state in true for indices which presentations are shown
-  storeVisibleState( theEntry, theView );
+  storeVisibleState( theEntry, theView, theIndex );
 }
 
 void GEOMGUI_AnnotationMgr::DisplayVisibleAnnotations( const QString& theEntry, SALOME_View* theView )
@@ -347,6 +346,10 @@ QString GEOMGUI_AnnotationMgr::getDisplayedIndicesInfo( const QString& theEntry,
 
   SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( getApplication()->activeStudy() );
   _PTR(SObject) aSObj = aStudy->studyDS()->FindObjectID( theEntry.toStdString() );
+  if ( !aSObj )
+  {
+    return aDisplayedIndices;
+  }
   const Handle(GEOMGUI_AnnotationAttrs) aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
   if ( !aShapeAnnotations.IsNull() )
   {
@@ -406,7 +409,7 @@ void GEOMGUI_AnnotationMgr::getObject( const QString& theEntry, const int theInd
   }
 }
 
-void GEOMGUI_AnnotationMgr::storeVisibleState( const QString& theEntry, SALOME_View* theView )
+void GEOMGUI_AnnotationMgr::storeVisibleState( const QString& theEntry, SALOME_View* theView, const int theIndex )
 {
   SALOME_View* aView = viewOrActiveView( theView );
   if ( !aView || !myVisualized.contains( aView ) )
@@ -422,12 +425,9 @@ void GEOMGUI_AnnotationMgr::storeVisibleState( const QString& theEntry, SALOME_V
   _PTR(SObject) aSObj = aStudy->studyDS()->FindObjectID( theEntry.toStdString() );
   const Handle(GEOMGUI_AnnotationAttrs) aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
   if ( !aShapeAnnotations.IsNull() ) {
-    const int aCount = aShapeAnnotations->GetNbAnnotation();
-    for ( int anIndex = 0; anIndex < aCount; ++anIndex )
-    {
-      bool aVisible = anAnnotationToPrs.contains( anIndex );
-      aShapeAnnotations->SetIsVisible( anIndex, aVisible );
-    }
+    
+    bool aVisible = anAnnotationToPrs.contains( theIndex );
+    aShapeAnnotations->SetIsVisible( theIndex, aVisible );
   }
 }
 

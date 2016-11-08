@@ -223,7 +223,6 @@ void MeasureGUI_AnnotationDlg::Init()
 
     // default presentation values
     myIsPositionDefined = false;
-    myAnnotationProperties.Name = getNewObjectName();
     myAnnotationProperties.Text = tr( "ANNOTATION_PREFIX" );
     myAnnotationProperties.IsVisible = false;
     myAnnotationProperties.IsScreenFixed = false;
@@ -708,7 +707,6 @@ bool MeasureGUI_AnnotationDlg::execute()
     Handle(GEOMGUI_AnnotationAttrs) aShapeAnnotations =
       GEOMGUI_AnnotationAttrs::FindOrCreateAttributes( aSObj, aStudy );
 
-    myAnnotationProperties.Name = getNewObjectName(); // update here as we do not listen name modification
     myAnnotationProperties.IsVisible = true; // initially created annotation is hidden
 
     aShapeAnnotations->Append( myAnnotationProperties );

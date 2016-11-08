@@ -85,7 +85,7 @@ protected:
                   GEOM::GEOM_Object_ptr& anObject,
                   GEOMGUI_AnnotationAttrs::Properties& aProperty );
 
-  void storeVisibleState( const QString& theEntry, SALOME_View* theView );
+  void storeVisibleState( const QString& theEntry, SALOME_View* theView, const int theIndex );
 
   std::string getEntry( const GEOM::GEOM_Object_ptr theObject );
 

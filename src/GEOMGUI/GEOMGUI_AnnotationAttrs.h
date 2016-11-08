@@ -61,6 +61,15 @@ public:
   //! Remove annotation data fields for an object.
   GEOMGUI_EXPORT static void Remove( const _PTR(SObject)& theObject );
 
+// Import / Export
+public:
+
+  //! Exports annotation records as a property string.
+  GEOMGUI_EXPORT QString ExportAsPropertyString() const;
+
+  //! Imports annotation records from a property string.
+  GEOMGUI_EXPORT void ImportFromPropertyString( const QString& theString );
+
 public:
 
   /*!
@@ -68,7 +77,6 @@ public:
    */
   struct Properties
   {
-    QString Name;          //!< Application name of annotation.
     QString Text;          //!< Displayed annotation text.
     bool    IsVisible;     //!< Application visibility flag of annotation.
     bool    IsScreenFixed; //!< Fixed screen mode flag.
@@ -104,15 +112,6 @@ public:
 
   //! Returns number of annotation definitions stored on the object.
   GEOMGUI_EXPORT int GetNbAnnotation() const;
-
-  //! Sets application name property of an annotation definition.
-  //! @param theIndex [in] the index of the annotation definition.
-  //! @param theName [in] the new application name.
-  GEOMGUI_EXPORT void SetName( const int theIndex, const QString& theName );
-
-  //! Returns application name of an annotation definition.
-  //! @param theIndex [in] the index of the annotation definition.
-  GEOMGUI_EXPORT QString GetName( const int theIndex ) const;
 
   //! Sets application visibility state of an annotation definition.
   //! @param theIndex [in] the index of the annotation definition.
@@ -196,8 +195,7 @@ public:
 
 private:
 
-  GEOMGUI_AnnotationAttrs( const _PTR(SObject)& theObject,
-		                   const _PTR(AttributeParameter)& theParameter )
+  GEOMGUI_AnnotationAttrs( const _PTR(SObject)& theObject, const _PTR(AttributeParameter)& theParameter )
   : myObj( theObject ),
     myParameterMap( theParameter ) {}
 

@@ -2897,6 +2897,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
   if ( !appStudy || !appStudy->studyDS() )
     return;
+
   _PTR(Study) studyDS = appStudy->studyDS();
 
   // componentName is used for encoding of entries when storing them in IParameters
@@ -2913,6 +2914,8 @@ void GeometryGUI::storeVisualParameters (int savePoint)
   QSet<QString> anEntriesToStoreShared;
   QList<SUIT_ViewManager*> lst;
   QList<SUIT_ViewManager*>::Iterator it;
+
+  GEOMGUI_AnnotationMgr* aAnnotationMgr = GetAnnotationMgr();
 
   // main cycle to store parameters of displayed objects
   lst.clear();
@@ -3045,39 +3048,39 @@ void GeometryGUI::storeVisualParameters (int savePoint)
           ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::IsosWidth )).toString().toStdString());
         }
 
-        std::string anAnnotationInfo = GetAnnotationMgr()->getDisplayedIndicesInfo(entry.c_str(), aView).toStdString();
-        if (!anAnnotationInfo.empty()) {
-          param = occParam + "AttributeParameter";
-          ip->setParameter(entry, param.toStdString(), anAnnotationInfo);
+        if ( aAnnotationMgr ) {
+          std::string anAnnotationInfo = GetAnnotationMgr()->getDisplayedIndicesInfo( o_it.key().toLatin1().data(), aView ).toStdString();
+          if (!anAnnotationInfo.empty()) {
+            param = occParam + "ShapeAnnotationVisibleItems";
+            ip->setParameter(entry, param.toStdString(), anAnnotationInfo);
+          }
         }
-
       } // object iterator
     } // for (views)
   } // for (viewManagers)
 
-  // store dimension attributes of objects:
+  // store shape annotation and dimension attributes of objects:
   // since the displayed object always persists in property map, we remember the object entries
   // on the passes when we store viewer related properties - to avoid extra iterations on GEOM component tree.
-  QString aDimensionParam = OCCViewer_Viewer::Type() + GEOM::sectionSeparator() + GEOM::propertyName( GEOM::Dimensions );
+  const QString aDimensionParam = OCCViewer_Viewer::Type() + GEOM::sectionSeparator() + GEOM::propertyName( GEOM::Dimensions );
+  const QString aAnnotationParam = OCCViewer_Viewer::Type() + GEOM::sectionSeparator() + GEOM::propertyName( GEOM::ShapeAnnotations );
   QSet<QString>::ConstIterator aEntryIt = anEntriesToStoreShared.constBegin();
   for ( ; aEntryIt != anEntriesToStoreShared.constEnd(); ++aEntryIt )
   {
     std::string aStudyEntry = (*aEntryIt).toLatin1().data();
-    std::string aStoreEntry = ip->encodeEntry( aStudyEntry, componentName);
+    std::string aStoreEntry = ip->encodeEntry( aStudyEntry, componentName );
 
     // store dimension parameters
     GEOMGUI_DimensionProperty aDimensions( appStudy, aStudyEntry );
-
-    if ( aDimensions.GetNumber() == 0 )
-    {
-      continue;
+    if ( aDimensions.GetNumber() != 0 ) {
+      ip->setParameter( aStoreEntry, aDimensionParam.toStdString(), ((QString)aDimensions).toLatin1().data() );
     }
 
-    ip->setParameter( aStoreEntry, aDimensionParam.toStdString(), ((QString)aDimensions).toLatin1().data() );
-
-    // store annotation parameters
-    //GetAnnotationMgr()->storeVisualParameters(ip, aStudyEntry);
-    //_PTR(IParameters) ip = ClientFactory::getIParameters(ap);
+    _PTR(SObject) aObj( studyDS->FindObjectID( aStudyEntry ) );
+    const Handle(GEOMGUI_AnnotationAttrs) aShapeAnnAttr = GEOMGUI_AnnotationAttrs::FindAttributes( aObj );
+    if ( !aShapeAnnAttr.IsNull() ) {
+      ip->setParameter( aStoreEntry, aAnnotationParam.toStdString(), aShapeAnnAttr->ExportAsPropertyString().toLatin1().data() );
+    }
   }
 }
 
@@ -3160,6 +3163,13 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
           GEOMGUI_DimensionProperty aDimensionProp( aValuesStr );
           aDimensionProp.SaveToAttribute( appStudy, entry.toLatin1().data() );
         }
+        else if ( aParamNameStr == GEOM::propertyName( GEOM::ShapeAnnotations ) )
+        {
+          Handle(GEOMGUI_AnnotationAttrs) anAttr =
+            GEOMGUI_AnnotationAttrs::FindOrCreateAttributes( so, appStudy );
+
+          anAttr->ImportFromPropertyString( aValuesStr );
+        }
 
         continue;
       }
@@ -3215,8 +3225,8 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::LineWidth ), val.toInt());
       } else if (paramNameStr == GEOM::propertyName( GEOM::IsosWidth )) {
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::IsosWidth ), val.toInt());
-      } else if (paramNameStr == "AttributeParameter") {
-        aListOfMap[viewIndex].insert( "AttributeParameter", val);
+      } else if (paramNameStr == "ShapeAnnotationVisibleItems") {
+        aListOfMap[viewIndex].insert( "ShapeAnnotationVisibleItems", val);
       }
 
     } // for names/parameters iterator
@@ -3233,9 +3243,9 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
         SALOME_View* aView = dynamic_cast<SALOME_View*>(vmodel);
         displayer()->Display(entry, true, aView);
 
-        PropMap aProps = aListOfMap[index];
-        if ( aProps.contains( "AttributeParameter" ) )
-          GetAnnotationMgr()->setDisplayedIndicesInfo( entry, aView, aProps["AttributeParameter"].toString() );
+        PropMap& aProps = aListOfMap[index];
+        if ( aProps.contains( "ShapeAnnotationVisibleItems" ) )
+          GetAnnotationMgr()->setDisplayedIndicesInfo( entry, aView, aProps["ShapeAnnotationVisibleItems"].toString() );
       }
     }
   } // for entries iterator
@@ -3258,6 +3268,10 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
       if (occVMod)
         occVMod->Repaint();
     }
+  }
+
+  if ( myTextTreeWdg ) {
+    myTextTreeWdg->updateTree();
   }
 }
 

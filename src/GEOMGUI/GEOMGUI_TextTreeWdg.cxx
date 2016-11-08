@@ -106,10 +106,19 @@ namespace
       return !myAttr.IsNull() ? myAttr->GetText( theIndex ) : QString();
     }
     virtual bool GetIsVisible( const int theIndex ) Standard_OVERRIDE {
-      return annotationMgr()->IsDisplayed(myEntry, theIndex);
+      GEOMGUI_AnnotationMgr* aMgr = annotationMgr();
+      if (!aMgr) {
+        return false;
+      }
+      return aMgr->IsDisplayed( myEntry, theIndex );
+      //return annotationMgr()->IsDisplayed(myEntry, theIndex);
       //return !myAttr.IsNull() ? myAttr->GetIsVisible( theIndex ) : false;
     }
     virtual void SetIsVisible( const int theIndex, const bool theIsVisible ) Standard_OVERRIDE {
+      GEOMGUI_AnnotationMgr* aMgr = annotationMgr();
+      if (!aMgr) {
+        return;
+      }
       if (theIsVisible)
         annotationMgr()->Display(myEntry, theIndex);
       else
@@ -128,6 +137,9 @@ protected:
     {
       CAM_Application* anApp = dynamic_cast<CAM_Application*>(myStudy->application());
       GeometryGUI* aModule = dynamic_cast<GeometryGUI*>(anApp->activeModule());
+      if (!aModule) {
+        return NULL;
+      }
       return aModule->GetAnnotationMgr();
     }
 
