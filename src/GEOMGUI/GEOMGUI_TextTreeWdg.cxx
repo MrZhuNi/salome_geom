@@ -524,6 +524,13 @@ void GEOMGUI_TextTreeWdg::showContextMenu( const QPoint& pos )
       if ( aProp->GetNumber() == 0 )
         return;
       aMenu.clear();
+      // Edit annotation action
+      CAM_Application* anApp = dynamic_cast<CAM_Application*>(myStudy->application());
+      GeometryGUI* aModule = dynamic_cast<GeometryGUI*>(anApp->activeModule());
+      QAction* anEditAction = aModule->action(GEOMOp::OpEditAnnotation);
+      if ( anEditAction )
+        aMenu.addAction( anEditAction );
+      // Show/Hide actions
       if ( aProp->GetIsVisible( idFromItem( anItem ) ) )
         aMenu.addAction( myActions[GEOMOp::OpHide] );
       else

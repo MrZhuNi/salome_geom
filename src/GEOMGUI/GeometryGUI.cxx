@@ -676,6 +676,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpFastCheckInters:    // MENU MEASURE - FAST CHECK INTERSECTIONS
   case GEOMOp::OpManageDimensions:   // MENU MEASURE - MANAGE DIMENSIONS
   case GEOMOp::OpAnnotation:         // MENU MEASURE - ANNOTATION
+  case GEOMOp::OpEditAnnotation:     // POPUP MENU - EDIT ANNOTATION
 #ifndef DISABLE_PLOT2DVIEWER
   case GEOMOp::OpShapeStatistics:    // MENU MEASURE - SHAPE STATISTICS
 #endif
@@ -1060,6 +1061,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpAngle,            "MEASURE_ANGLE" );
   createGeomAction( GEOMOp::OpManageDimensions, "MANAGE_DIMENSIONS" );
   createGeomAction( GEOMOp::OpAnnotation,       "ANNOTATION" );
+  createGeomAction( GEOMOp::OpEditAnnotation,   "EDIT_ANNOTATION" );
 
   createGeomAction( GEOMOp::OpTolerance,        "TOLERANCE" );
   createGeomAction( GEOMOp::OpWhatIs,           "WHAT_IS" );
@@ -1607,6 +1609,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( GEOMOp::OpAutoColor ), autoColorPrefix + " and isAutoColor=false", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpNoAutoColor ), -1, -1 ); // disable auto color
   mgr->setRule( action( GEOMOp::OpNoAutoColor ), autoColorPrefix + " and isAutoColor=true", QtxPopupMgr::VisibleRule );
+  mgr->insert( separator(), -1, -1 );     // -----------
+
+  mgr->insert( action(  GEOMOp::OpEditAnnotation ), -1, -1 );  // edit annotation
+  mgr->setRule( action( GEOMOp::OpEditAnnotation ),  QString("($component={'GEOM'}) and type='Shape' and selcount=1"), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
 
   QString canDisplay = "($component={'GEOM'}) and (selcount>0) and ({true} in $canBeDisplayed) ",

@@ -5017,6 +5017,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Annotation</translation>
     </message>
     <message>
+        <source>TOP_EDIT_ANNOTATION</source>
+        <translation>Edit Annotation</translation>
+    </message>
+    <message>
+        <source>MEN_EDIT_ANNOTATION</source>
+        <translation>Edit</translation>
+    </message>
+    <message>
+        <source>STB_EDIT_ANNOTATION</source>
+        <translation>Edit Annotation</translation>
+    </message>
+    <message>
         <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
         <translation>Show dependency tree</translation>
     </message>

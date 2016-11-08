@@ -113,14 +113,12 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpAngle: 
     dlg = new MeasureGUI_AngleDlg( getGeometryGUI(), parent );
     break; // ANGLE
-  case GEOMOp::OpAnnotation: {
-	dlg = new MeasureGUI_AnnotationDlg( getGeometryGUI(), true, parent );
-    } // ANNOTATION
-    break;
-  case GEOMOp::OpEditAnnotation: {
+  case GEOMOp::OpAnnotation:
+    dlg = new MeasureGUI_AnnotationDlg( getGeometryGUI(), true, parent );
+    break; // ANNOTATION
+  case GEOMOp::OpEditAnnotation:
     dlg = new MeasureGUI_AnnotationDlg( getGeometryGUI(), false, parent );
-	} // ANNOTATION
-	break;
+    break; // ANNOTATION
   case GEOMOp::OpTolerance: 
     dlg = new MeasureGUI_MaxToleranceDlg( getGeometryGUI(), parent );
     break; // MAXTOLERANCE
