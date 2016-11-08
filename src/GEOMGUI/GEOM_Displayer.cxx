@@ -702,10 +702,12 @@ void GEOM_Displayer::Redisplay( const Handle(SALOME_InteractiveObject)& theIO,
   SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
   GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
   if ( aModule ) {
-    if ( !theViewFrame->isVisible( theIO ) )
+    if ( !theViewFrame->isVisible( theIO ) ) {
       aModule->GetAnnotationMgr()->EraseVisibleAnnotations(QString(theIO->getEntry()), theViewFrame);
-    else
+    }
+    else {
       aModule->GetAnnotationMgr()->DisplayVisibleAnnotations(QString(theIO->getEntry()), theViewFrame);
+    }
   }
 }
 
@@ -2073,13 +2075,17 @@ void GEOM_Displayer::BeforeDisplay( SALOME_View* v, const SALOME_OCCPrs* )
 void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
 {
   UpdateColorScale(false,false);
-  if ( !myIsRedisplayed ) {
-    // visualize annotations for displayed presentation
-    SUIT_Session* session = SUIT_Session::session();
-    SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
-    GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
-    if ( aModule )
+
+  // visualize annotations for displayed presentation
+  SUIT_Session* session = SUIT_Session::session();
+  SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+  GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
+  if ( aModule ) {
+    if ( !myIsRedisplayed ) {
       aModule->GetAnnotationMgr()->DisplayVisibleAnnotations(QString(p->GetEntry()), v);
+    } else {
+      aModule->GetAnnotationMgr()->UpdateVisibleAnnotations(QString(p->GetEntry()), v);
+    }
   }
 }
 

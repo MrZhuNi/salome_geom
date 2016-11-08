@@ -174,6 +174,12 @@ public:
   //!        to the world frame of reference.
   GEOMGUI_EXPORT void Append( const Properties& theProps, const gp_Ax3& theShapeLCS );
 
+  //! Removes annotation definition by the given index.
+  //! This methods performs iterative reindexing of elements starting
+  //! from the given index, so sequential removal should be performed
+  //! from the last element, or avoided at all.
+  GEOMGUI_EXPORT void Remove( const Standard_Integer theIndex );
+
   //! Sets complete properties of an annotation definition.
   //! @param theIndex [in] the index of the annotation definition.
   //! @param theProps [in] the structure containing the properties.

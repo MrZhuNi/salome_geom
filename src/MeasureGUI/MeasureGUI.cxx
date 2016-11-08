@@ -249,7 +249,7 @@ void MeasureGUI::ChangeAnnotationsVisibility( const bool theIsVisible )
 
     SUIT_OverrideCursor wc;
 
-    for ( int anI = 0; anI <= aCount; ++anI ) {
+    for ( int anI = 0; anI < aCount; ++anI ) {
 
       if ( !theIsVisible ) {
         getGeometryGUI()->GetAnnotationMgr()->Erase( aEntry, anI );

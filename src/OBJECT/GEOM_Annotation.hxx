@@ -203,6 +203,9 @@ public:
 // Helper tools:
 public:
 
+  //! Restores default z-layer for this presentation.
+  Standard_EXPORT void SetDefaultZLayer();
+
   //! Returns default position for placing annotation when its attachment point
   //! has been determined.
   //! @param theIsScreenFixed [in] the state of annotation's "2D screen fixed" mode.

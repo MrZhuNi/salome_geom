@@ -448,6 +448,29 @@ void GEOMGUI_AnnotationAttrs::Append( const Properties& theProps, const gp_Ax3& 
 }
 
 //=================================================================================
+// function : Remove
+// purpose  : 
+//=================================================================================
+void GEOMGUI_AnnotationAttrs::Remove( const Standard_Integer theIndex )
+{
+  const int aCount = this->GetNbAnnotation();
+  if ( theIndex < 0 || theIndex >= aCount ) {
+    return;
+  }
+
+  std::vector<Properties> aEntries( (aCount - 1) - theIndex );
+  for ( int anI = theIndex + 1; anI < aCount; ++anI ) {
+    GetProperties( anI, aEntries[ anI - (theIndex + 1) ] );
+  }
+
+  SetNbAnnotation( theIndex );
+
+  for ( int anI = 0; anI < static_cast<int>( aEntries.size() ); ++anI ) {
+    Append( aEntries[anI] );
+  }
+}
+
+//=================================================================================
 // function : SetProperties
 // purpose  : 
 //=================================================================================

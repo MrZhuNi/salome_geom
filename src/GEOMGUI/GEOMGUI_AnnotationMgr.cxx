@@ -39,6 +39,7 @@
 
 #include <SOCC_Prs.h>
 #include <SOCC_ViewModel.h>
+#include <SOCC_ViewWindow.h>
 
 #include <Quantity_Color.hxx>
 #include <TCollection_AsciiString.hxx>
@@ -58,7 +59,7 @@ GEOMGUI_AnnotationMgr::GEOMGUI_AnnotationMgr( SalomeApp_Application* theApplicat
 
 QString GEOMGUI_AnnotationMgr::GetEntrySeparator()
 {
-  return "_annotation:";
+	return "_annotation:";
 }
 
 //================================================================
@@ -78,47 +79,13 @@ SALOME_Prs* GEOMGUI_AnnotationMgr::CreatePresentation( const GEOMGUI_AnnotationA
     aPresentation->SetOwner( anIO );
   }
 
-  //aPresentation->SetOwner( new SALOME_InteractiveObject( getEntry( theObject ).c_str(), "GEOM", getName( theObject ).c_str() ) );
-
-  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
-  const QFont  aFont      = aResMgr->fontValue( "Geometry", "shape_annotation_font", QFont( "Y14.5M-2009", 24 ) );
-  const QColor aFontColor = aResMgr->colorValue( "Geometry", "shape_annotation_font_color", QColor( 255, 255, 255 ) );
-  const QColor aLineColor = aResMgr->colorValue( "Geometry", "shape_annotation_line_color", QColor( 255, 255, 255 ) );
-  const double aLineWidth = aResMgr->doubleValue( "Geometry", "shape_annotation_line_width", 1.0 );
-  const int aLineStyle    = aResMgr->integerValue( "Geometry", "shape_annotation_line_style", 0 );
-  const bool isAutoHide   = aResMgr->booleanValue( "Geometry", "shape_annotation_autohide", false );
-
-  const Quantity_Color aOcctFontColor( aFontColor.redF(), aFontColor.greenF(), aFontColor.blueF(), Quantity_TOC_RGB );
-  const Quantity_Color aOcctLineColor( aLineColor.redF(), aLineColor.greenF(), aLineColor.blueF(), Quantity_TOC_RGB );
-  const Standard_Real aFontHeight = aFont.pixelSize() != -1 ? aFont.pixelSize() : aFont.pointSize();
-
-  aPresentation->SetFont( TCollection_AsciiString( aFont.family().toLatin1().data() ) );
-  aPresentation->SetTextHeight( aFontHeight );
-  aPresentation->SetTextColor( Quantity_Color( aFontColor.redF(), aFontColor.greenF(), aFontColor.blueF(), Quantity_TOC_RGB ) );
-  aPresentation->SetLineColor( Quantity_Color( aLineColor.redF(), aLineColor.greenF(), aLineColor.blueF(), Quantity_TOC_RGB ) );
-  aPresentation->SetLineWidth( aLineWidth );
-  aPresentation->SetLineStyle( static_cast<Aspect_TypeOfLine>( aLineStyle ) );
-  aPresentation->SetAutoHide( isAutoHide ? Standard_True : Standard_False );
   aPresentation->SetIsScreenFixed( theProperty.IsScreenFixed );
 
+  setDisplayProperties( aPresentation, theView, getEntry( theObject ).c_str() );
+
   TopoDS_Shape aShape = GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), theObject );
-  //TopoDS_Shape aShape;
-  //GEOMBase::GetShape( theObject.get(), aShape );
   gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
   GEOMGUI_AnnotationAttrs::SetupPresentation( aPresentation, theProperty, aShapeLCS );
-
-  SALOME_View* aView = viewOrActiveView( theView );
-  if ( aView ) {
-
-    // set top-level flag correspondingly
-    SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( getApplication()->activeStudy() );
-    int aMgrId = dynamic_cast< SUIT_ViewModel* >( aView )->getViewManager()->getGlobalId();
-    QVariant aVal = aStudy->getObjectProperty( aMgrId, QString( getEntry( theObject ).c_str() ), GEOM::propertyName( GEOM::TopLevel ), QVariant() );
-    bool isBringToFront = aVal.isValid() ? aVal.toBool() : false;
-    if( isBringToFront ) {
-      aPresentation->SetZLayer( Graphic3d_ZLayerId_Topmost );
-    }
-  }
 
   // add Prs to preview
   SUIT_ViewWindow* vw = getApplication()->desktop()->activeWindow();
@@ -156,11 +123,11 @@ bool GEOMGUI_AnnotationMgr::IsDisplayed( const QString& theEntry, const int theI
 //=======================================================================
 void GEOMGUI_AnnotationMgr::Display( const QString& theEntry, const int theIndex, SALOME_View* theView )
 {
-  if ( IsDisplayed( theEntry, theIndex ) )
-    return;
-
   SALOME_View* aView = viewOrActiveView( theView );
   if ( !aView )
+    return;
+
+  if ( IsDisplayed( theEntry, theIndex, aView ) )
     return;
 
   GEOMGUI_AnnotationAttrs::Properties aProperty;
@@ -274,6 +241,43 @@ void GEOMGUI_AnnotationMgr::EraseVisibleAnnotations( const QString& theEntry, SA
   getDisplayer()->UpdateViewer();
   anEntryToAnnotation.remove( theEntry );
   myVisualized[aView] = anEntryToAnnotation;
+}
+
+//=======================================================================
+// function : GEOMGUI_AnnotationMgr::UpdateVisibleAnnotations
+// purpose  : 
+//=======================================================================
+void GEOMGUI_AnnotationMgr::UpdateVisibleAnnotations( const QString& theEntry, SALOME_View* theView )
+{
+  SALOME_View* aView = viewOrActiveView( theView );
+  if ( !myVisualized.contains( aView ) )
+    return;
+
+  EntryToAnnotations& anEntryToAnnotation = myVisualized[aView];
+  if ( !anEntryToAnnotation.contains( theEntry ) )
+    return;
+
+  AnnotationToPrs& anAnnotationToPrs = anEntryToAnnotation[theEntry];
+  AnnotationToPrs::iterator anIt = anAnnotationToPrs.begin();
+  for (; anIt != anAnnotationToPrs.end(); ++anIt ) {
+    SOCC_Prs* aPrs =
+      dynamic_cast<SOCC_Prs*> (anIt.value());
+
+    AIS_ListOfInteractive aIObjects;
+    aPrs->GetObjects( aIObjects );
+    AIS_ListOfInteractive::Iterator aIOIt( aIObjects );
+    for ( ; aIOIt.More(); aIOIt.Next() ) {
+
+      Handle(GEOM_Annotation) aPresentation =
+        Handle(GEOM_Annotation)::DownCast( aIOIt.Value() );
+
+      if ( aPresentation.IsNull() )
+        continue;
+
+      setDisplayProperties( aPresentation, aView, theEntry );
+    }
+  }
+  getDisplayer()->UpdateViewer();
 }
 
 Handle(SALOME_InteractiveObject) GEOMGUI_AnnotationMgr::FindInteractiveObject( const QString& theEntry,
@@ -406,14 +410,17 @@ GEOM_Displayer* GEOMGUI_AnnotationMgr::getDisplayer() const
 
 SALOME_View* GEOMGUI_AnnotationMgr::viewOrActiveView(SALOME_View* theView) const
 {
-  SALOME_View* aView = theView;
-  if ( !aView ) {
+  if ( theView ) {
+    return dynamic_cast<SOCC_Viewer*>( theView );
+  }
+  else {
     SalomeApp_Application* anApp = getApplication();
     SUIT_ViewWindow* anActiveWindow = anApp->desktop()->activeWindow();
-    if (anActiveWindow)
-      aView = dynamic_cast<SALOME_View*>(anActiveWindow->getViewManager()->getViewModel());
+    if ( anActiveWindow ) {
+      return dynamic_cast<SOCC_Viewer*>( anActiveWindow->getViewManager()->getViewModel() );
+    }
   }
-  return aView;
+  return NULL;
 }
 
 void GEOMGUI_AnnotationMgr::getObject( const QString& theEntry, const int theIndex,
@@ -502,4 +509,51 @@ std::string GEOMGUI_AnnotationMgr::getName( const GEOM::GEOM_Object_ptr theObjec
     }
   }
   return std::string();
+}
+
+//=======================================================================
+// function : GEOMGUI_AnnotationMgr::setDisplayProperties
+// purpose  : 
+//=======================================================================
+void GEOMGUI_AnnotationMgr::setDisplayProperties( const Handle(GEOM_Annotation)& thePrs,
+                                                  SALOME_View* theView,
+                                                  const QString& theEntry )
+{
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+  const QFont  aFont      = aResMgr->fontValue( "Geometry", "shape_annotation_font", QFont( "Y14.5M-2009", 24 ) );
+  const QColor aFontColor = aResMgr->colorValue( "Geometry", "shape_annotation_font_color", QColor( 255, 255, 255 ) );
+  const QColor aLineColor = aResMgr->colorValue( "Geometry", "shape_annotation_line_color", QColor( 255, 255, 255 ) );
+  const double aLineWidth = aResMgr->doubleValue( "Geometry", "shape_annotation_line_width", 1.0 );
+  const int aLineStyle    = aResMgr->integerValue( "Geometry", "shape_annotation_line_style", 0 );
+  const bool isAutoHide   = aResMgr->booleanValue( "Geometry", "shape_annotation_autohide", false );
+
+  const Quantity_Color aOcctFontColor( aFontColor.redF(), aFontColor.greenF(), aFontColor.blueF(), Quantity_TOC_RGB );
+  const Quantity_Color aOcctLineColor( aLineColor.redF(), aLineColor.greenF(), aLineColor.blueF(), Quantity_TOC_RGB );
+  const Standard_Real aFontHeight = aFont.pixelSize() != -1 ? aFont.pixelSize() : aFont.pointSize();
+
+  thePrs->SetFont( TCollection_AsciiString( aFont.family().toLatin1().data() ) );
+  thePrs->SetTextHeight( aFontHeight );
+  thePrs->SetTextColor( Quantity_Color( aFontColor.redF(), aFontColor.greenF(), aFontColor.blueF(), Quantity_TOC_RGB ) );
+  thePrs->SetLineColor( Quantity_Color( aLineColor.redF(), aLineColor.greenF(), aLineColor.blueF(), Quantity_TOC_RGB ) );
+  thePrs->SetLineWidth( aLineWidth );
+  thePrs->SetLineStyle( static_cast<Aspect_TypeOfLine>( aLineStyle ) );
+  thePrs->SetAutoHide( isAutoHide ? Standard_True : Standard_False );
+
+  SALOME_View* aView = viewOrActiveView( theView );
+  if ( aView && !theEntry.isEmpty() ) {
+
+    SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( getApplication()->activeStudy() );
+    int aMgrId = dynamic_cast< SUIT_ViewModel* >( aView )->getViewManager()->getGlobalId();
+    QVariant aVal = aStudy->getObjectProperty( aMgrId, theEntry, GEOM::propertyName( GEOM::TopLevel ), QVariant() );
+    bool isBringToFront = aVal.isValid() ? aVal.toBool() : false;
+    if( isBringToFront ) {
+      thePrs->SetZLayer( Graphic3d_ZLayerId_Topmost );
+    }
+    else {
+      thePrs->SetDefaultZLayer();
+    }
+  }
+  else {
+    thePrs->SetDefaultZLayer();
+  }
 }

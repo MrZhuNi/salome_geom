@@ -32,6 +32,7 @@
 #include <SALOME_InteractiveObject.hxx>
 
 class SalomeApp_Application;
+class GEOM_Annotation;
 class GEOM_Displayer;
 
 /*!
@@ -61,6 +62,7 @@ public:
   
   void DisplayVisibleAnnotations( const QString& theEntry, SALOME_View* theView = 0 );
   void EraseVisibleAnnotations( const QString& theEntry, SALOME_View* theView = 0 );
+  void UpdateVisibleAnnotations( const QString& theEntry, SALOME_View* theView = 0 );
 
   void RemoveView( SALOME_View* theView);
 
@@ -91,6 +93,10 @@ protected:
   std::string getEntry( const GEOM::GEOM_Object_ptr theObject );
 
   std::string getName( const GEOM::GEOM_Object_ptr theObject );
+
+  void setDisplayProperties( const Handle(GEOM_Annotation)& thePrs,
+                             SALOME_View* theView = 0,
+                             const QString& theEntry = QString() );
 
 private:
   SalomeApp_Application* myApplication;
