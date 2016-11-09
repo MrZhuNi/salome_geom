@@ -101,6 +101,8 @@ private:
 
 private:
   TopAbs_ShapeEnum                    mySelectionMode;
+  QString                             myEditAnnotationEntry;
+  int                                 myEditAnnotationIndex;
   GEOMGUI_AnnotationAttrs::Properties myAnnotationProperties;
   bool                                myIsPositionDefined;
   /// an index of edited annotation in the list shape annotations, -1 in create operation

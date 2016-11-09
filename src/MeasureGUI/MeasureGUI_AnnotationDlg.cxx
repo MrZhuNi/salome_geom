@@ -32,6 +32,7 @@
 #include <GEOM_Displayer.h>
 #include <GeometryGUI.h>
 #include <GEOMGUI_AnnotationMgr.h>
+#include <GEOMGUI_TextTreeWdg.h>
 
 #include <SOCC_Prs.h>
 #include <SOCC_ViewModel.h>
@@ -161,6 +162,7 @@ MeasureGUI_AnnotationDlg::MeasureGUI_AnnotationDlg( GeometryGUI* theGeometryGUI,
 
   QLabel* shapeTypeLabel = new QLabel( tr( "ANNOTATION_SUB_SHAPE" ), propGroup );
   mySubShapeTypeCombo = new QComboBox( propGroup );
+  mySubShapeTypeCombo->setEnabled( myIsCreation );
   mySubShapeTypeCombo->addItem( tr( "WHOLE_SHAPE" ), TopAbs_SHAPE );
   mySubShapeTypeCombo->addItem( tr( "GEOM_VERTEX" ), TopAbs_VERTEX );
   mySubShapeTypeCombo->addItem( tr( "GEOM_EDGE" ), TopAbs_EDGE );
@@ -232,9 +234,10 @@ void MeasureGUI_AnnotationDlg::Init()
 
     // update internal controls and fields following to default values
     activateSelectionArgument( myShapeSelBtn );
+
     myTextEdit->setText( myAnnotationProperties.Text );
     myShapeNameModified = false;
-    myTypeCombo->setCurrentIndex( 0 );
+    myTypeCombo->setCurrentIndex( !myAnnotationProperties.IsScreenFixed ? 0 : 1 );
 
     int aSubShapeTypeIndex = -1;
     int aTypesCount = aTypesCount = mySubShapeTypeCombo->count();
@@ -261,10 +264,69 @@ void MeasureGUI_AnnotationDlg::Init()
         this, SLOT( onSubShapeTypeChange() ) );
 
     //SelectionIntoArgument();
-  } else { // edition
 
+    redisplayPreview();
+  } else { // edition
+    mySelectionMode = TopAbs_SHAPE;
+    // find annotation
+    GEOMGUI_TextTreeWdg* aTextTreeWdg = myGeomGUI->GetTextTreeWdg();
+    // text tree widget should be not empty
+    QMap<QString, QList<int> > anAnnotations;
+    aTextTreeWdg->getSelected( anAnnotations );
+    // there is only one annotation selected when edit is started
+    QMap<QString, QList<int> >::const_iterator anIt = anAnnotations.begin();
+    myEditAnnotationEntry = anIt.key();
+    myEditAnnotationIndex = anIt.value()[0];
+
+    SalomeApp_Study* aStudy = getStudy();
+    _PTR(SObject) aSObj = aStudy->studyDS()->FindObjectID( myEditAnnotationEntry.toStdString() );
+    const Handle(GEOMGUI_AnnotationAttrs) aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
+    if ( !aShapeAnnotations.IsNull() ) {
+      aShapeAnnotations->GetProperties( myEditAnnotationIndex, myAnnotationProperties );
+
+      myShape = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject(aSObj) );
+    }
+
+    /// fill dialog controls
+    myTextEdit->setText( myAnnotationProperties.Text );
+    myShapeNameModified = false;
+    myTypeCombo->setCurrentIndex( !myAnnotationProperties.IsScreenFixed ? 0 : 1 );
+
+    int aSubShapeTypeIndex = -1;
+    int aTypesCount = aTypesCount = mySubShapeTypeCombo->count();
+    for ( int i = 0; i < aTypesCount && aSubShapeTypeIndex < 0; i++ ) {
+      int aType = mySubShapeTypeCombo->itemData( i ).toInt();
+      if ( aType == myAnnotationProperties.ShapeType )
+        aSubShapeTypeIndex = i;
+    }
+    mySubShapeTypeCombo->setCurrentIndex( aSubShapeTypeIndex );
+
+    QString aShapeName = "";
+    _PTR(GenericAttribute) anAttr;
+    if ( aSObj && aSObj->FindAttribute( anAttr, "AttributeName") ) {
+      _PTR(AttributeName) aNameAttr( anAttr );
+      aNameAttr->Value();
+      aShapeName = aNameAttr->Value().c_str();
+    }
+    myShapeName->setText( aShapeName );
+
+    QString aSubShapeName = "";
+    TopAbs_ShapeEnum aShapeType = ( TopAbs_ShapeEnum ) myAnnotationProperties.ShapeType;
+    if ( aShapeType != TopAbs_SHAPE ) {
+      aSubShapeName = QString( "%1:%2_%3" ).arg( aShapeName )
+                                           .arg( GEOMBase::TypeName( aShapeType ) )
+                                           .arg( myAnnotationProperties.ShapeIndex );
+    }
+    mySubShapeName->setText( aSubShapeName );
+
+    mySelectionMode = ( TopAbs_ShapeEnum ) myAnnotationProperties.ShapeType;
+    //SelectionIntoArgument();
+    updateSubShapeEnableState();
+
+    // connect controls
+    connect( myTextEdit, SIGNAL( textChanged( const QString& ) ), this, SLOT( onTextChange() ) );
+    connect( myTypeCombo, SIGNAL( currentIndexChanged( int ) ), this, SLOT( onTypeChange() ) );
   }
-  redisplayPreview();
 }
 
 //=================================================================================
@@ -693,15 +755,13 @@ bool MeasureGUI_AnnotationDlg::execute()
   if ( !isValid( anError ) )
     return false;
 
+  SalomeApp_Study* aStudy = getStudy();
+  _PTR(SObject) aSObj = aStudy->studyDS()->FindObjectID( myShape->GetStudyEntry() );
+
+  Handle(GEOMGUI_AnnotationAttrs) aShapeAnnotations =
+    GEOMGUI_AnnotationAttrs::FindOrCreateAttributes( aSObj, aStudy );
+
   if ( myIsCreation ) {
-
-    SalomeApp_Study* aStudy = getStudy();
-
-    _PTR(SObject) aSObj = aStudy->studyDS()->FindObjectID( myShape->GetStudyEntry() );
-
-    Handle(GEOMGUI_AnnotationAttrs) aShapeAnnotations =
-      GEOMGUI_AnnotationAttrs::FindOrCreateAttributes( aSObj, aStudy );
-
     myAnnotationProperties.IsVisible = true; // initially created annotation is hidden
 
     aShapeAnnotations->Append( myAnnotationProperties );
@@ -713,13 +773,8 @@ bool MeasureGUI_AnnotationDlg::execute()
     myGeomGUI->GetAnnotationMgr()->Display( myShape->GetStudyEntry(), aShapeAnnotations->GetNbAnnotation()-1 );
   }
   else {
-    /*SalomeApp_Study* aStudy = getStudy();
-    myAnnotationProperties = aStudy->getObjectProperty( GEOM::sharedPropertiesId(),
-                                   myShape->GetStudyEntry(),
-                                   GEOM::propertyName( GEOM::ShapeAnnotations ),
-                                   QVariant() )
-                                   .value<GEOMGUI_ShapeAnnotations>();
-    mySavedPropertyState.SaveToAttribute( aStudy, myEditObject->GetStudyEntry() );*/
+
+    aShapeAnnotations->SetProperties( myEditAnnotationIndex, myAnnotationProperties );
   }
   return true;
 }
@@ -765,23 +820,30 @@ void MeasureGUI_AnnotationDlg::updateSubShapeEnableState()
 //=================================================================================
 void MeasureGUI_AnnotationDlg::redisplayPreview()
 {
-  QString aMess;
-  if ( !isValid( aMess ) ) {
-    erasePreview( true );
-    return;
+  if ( myIsCreation ) {
+
+    QString aMess;
+    if ( !isValid( aMess ) ) {
+      erasePreview( true );
+      return;
+    }
+
+    erasePreview( false );
+
+    try {
+      SUIT_OverrideCursor wc;
+      getDisplayer()->SetToActivate( true );
+
+      if ( SALOME_Prs* aPrs = buildPrs() )
+        displayPreview( aPrs );
+    } catch ( const SALOME::SALOME_Exception& e ) {
+      SalomeApp_Tools::QtCatchCorbaException( e );
+    } catch ( ... ) {
+    }
   }
-
-  erasePreview( false );
-
-  try {
-    SUIT_OverrideCursor wc;
-    getDisplayer()->SetToActivate( true );
-
-    if ( SALOME_Prs* aPrs = buildPrs() )
-      displayPreview( aPrs );
-  } catch ( const SALOME::SALOME_Exception& e ) {
-    SalomeApp_Tools::QtCatchCorbaException( e );
-  } catch ( ... ) {
+  else {
+    myGeomGUI->GetAnnotationMgr()->Redisplay( myEditAnnotationEntry, myEditAnnotationIndex,
+                                              myAnnotationProperties );
   }
 }
 

@@ -391,6 +391,15 @@ GEOMGUI_AnnotationMgr* GeometryGUI::GetAnnotationMgr()
 // function : GeometryGUI::SetActiveDialogBox()
 // purpose  : Set active dialog box
 //=======================================================================
+GEOMGUI_TextTreeWdg* GeometryGUI::GetTextTreeWdg() const
+{
+  return myTextTreeWdg;
+}
+
+//=======================================================================
+// function : GeometryGUI::SetActiveDialogBox()
+// purpose  : Set active dialog box
+//=======================================================================
 void GeometryGUI::SetActiveDialogBox( QDialog* aDlg )
 {
   myActiveDialogBox = (QDialog*)aDlg;

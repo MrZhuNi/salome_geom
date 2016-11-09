@@ -102,6 +102,8 @@ public:
 
   GEOMGUI_AnnotationMgr*      GetAnnotationMgr();
 
+  GEOMGUI_TextTreeWdg*        GetTextTreeWdg() const;
+
   // Get active dialog box
   QDialog*                    GetActiveDialogBox(){ return myActiveDialogBox; }
   // Set active dialog box

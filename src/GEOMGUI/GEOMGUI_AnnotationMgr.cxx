@@ -156,6 +156,78 @@ void GEOMGUI_AnnotationMgr::Display( const QString& theEntry, const int theIndex
   storeVisibleState( theEntry, theView );
 }
 
+void GEOMGUI_AnnotationMgr::Redisplay( const QString& theEntry, const int theIndex,
+                                       const GEOMGUI_AnnotationAttrs::Properties& theProperty )
+{
+  SUIT_Session* ses = SUIT_Session::session();
+  SUIT_Application* app = ses->activeApplication();
+  if ( app )
+  {
+    SUIT_Desktop* desk = app->desktop();
+    QList<SUIT_ViewWindow*> wnds = desk->windows();
+    SUIT_ViewWindow* wnd;
+    QListIterator<SUIT_ViewWindow*> it( wnds );
+    while ( it.hasNext() && (wnd = it.next()) )
+    {
+      SUIT_ViewManager* vman = wnd->getViewManager();
+      if ( vman )
+      {
+        SUIT_ViewModel* vmodel = vman->getViewModel();
+        if ( vmodel )
+        {
+          SALOME_View* aView = dynamic_cast<SALOME_View*>(vmodel);
+          if ( aView )
+            Redisplay( theEntry, theIndex, theProperty, aView );
+        }
+      }
+    }
+  }
+}
+
+void GEOMGUI_AnnotationMgr::Redisplay( const QString& theEntry, const int theIndex,
+                                       const GEOMGUI_AnnotationAttrs::Properties& theProperty,
+                                       SALOME_View* theView )
+{
+  SALOME_View* aView = viewOrActiveView( theView );
+  if ( !aView )
+    return;
+
+  if ( !myVisualized.contains( aView ) )
+    return;
+
+  EntryToAnnotations anEntryToAnnotation = myVisualized[aView];
+  if ( !anEntryToAnnotation.contains( theEntry ) )
+    return;
+
+  AnnotationToPrs anAnnotationToPrs = anEntryToAnnotation[theEntry];
+  if ( !anAnnotationToPrs.contains( theIndex ) )
+    return;
+
+  GEOMGUI_AnnotationAttrs::Properties aProperty;
+  GEOM::GEOM_Object_ptr anObject;
+  getObject( theEntry, theIndex, anObject, aProperty );
+  TopoDS_Shape aShape = GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), anObject );
+  gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
+
+  // erase presentation from the viewer
+  SALOME_Prs* aPrs = anAnnotationToPrs[theIndex];
+  SOCC_Prs* anOCCPrs = dynamic_cast<SOCC_Prs*>( aPrs );
+  SOCC_Viewer* anOCCViewer = dynamic_cast<SOCC_Viewer*>(theView);
+  if ( anOCCPrs && anOCCViewer ) {
+    AIS_ListOfInteractive anIOs;
+    anOCCPrs->GetObjects( anIOs );
+    AIS_ListIteratorOfListOfInteractive anIter( anIOs );
+
+    for ( ; anIter.More(); anIter.Next() ) {
+      Handle(AIS_InteractiveObject) aPrs = anIter.Value();
+      Handle(GEOM_Annotation) aPresentation = Handle(GEOM_Annotation)::DownCast( aPrs );
+
+      GEOMGUI_AnnotationAttrs::SetupPresentation( aPresentation, theProperty, aShapeLCS );
+      anOCCViewer->getAISContext()->Redisplay(aPresentation);
+    }
+  }
+}
+
 void GEOMGUI_AnnotationMgr::Erase( const QString& theEntry, const int theIndex, SALOME_View* theView )
 {
   SALOME_View* aView = viewOrActiveView( theView );

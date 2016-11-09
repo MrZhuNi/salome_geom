@@ -59,7 +59,11 @@ public:
   bool IsDisplayed( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 ) const;
   void Display( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 );
   void Erase( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 );
-  
+  void Redisplay( const QString& theEntry, const int theIndex,
+                  const GEOMGUI_AnnotationAttrs::Properties& theProperties);
+  void Redisplay( const QString& theEntry, const int theIndex,
+                  const GEOMGUI_AnnotationAttrs::Properties& theProperties, SALOME_View* theView );
+
   void DisplayVisibleAnnotations( const QString& theEntry, SALOME_View* theView = 0 );
   void EraseVisibleAnnotations( const QString& theEntry, SALOME_View* theView = 0 );
   void UpdateVisibleAnnotations( const QString& theEntry, SALOME_View* theView = 0 );
