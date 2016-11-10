@@ -326,6 +326,10 @@ void MeasureGUI_AnnotationDlg::Init()
     // connect controls
     connect( myTextEdit, SIGNAL( textChanged( const QString& ) ), this, SLOT( onTextChange() ) );
     connect( myTypeCombo, SIGNAL( currentIndexChanged( int ) ), this, SLOT( onTypeChange() ) );
+
+    myGeomGUI->GetAnnotationMgr()->SetPreviewStyle( myEditAnnotationEntry, myEditAnnotationIndex, true );
+
+    redisplayPreview();
   }
 }
 
@@ -673,33 +677,17 @@ void MeasureGUI_AnnotationDlg::onSubShapeTypeChange()
 //=================================================================================
 void MeasureGUI_AnnotationDlg::onDragged( Handle_GEOM_Annotation theAnnotation )
 {
-  const PrsList& aPreview = getPreview();
-  PrsList::const_iterator anIt = aPreview.cbegin();
-  for ( ; anIt != aPreview.cend(); ++anIt ) {
+  TopoDS_Shape aShape;
+  GEOMBase::GetShape( myShape.get(), aShape );
+  gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
+  gp_Trsf aToShapeLCS;
+  aToShapeLCS.SetTransformation( gp_Ax3(), aShapeLCS );
 
-    AIS_ListOfInteractive aIObjects;
-    ((SOCC_Prs*)(*anIt))->GetObjects( aIObjects );
-    AIS_ListOfInteractive::Iterator aIOIt( aIObjects );
-    for ( ; aIOIt.More(); aIOIt.Next() ) {
-
-      if ( aIOIt.Value() == theAnnotation ) {
-
-        TopoDS_Shape aShape;
-        GEOMBase::GetShape( myShape.get(), aShape );
-        gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
-        gp_Trsf aToShapeLCS;
-        aToShapeLCS.SetTransformation( gp_Ax3(), aShapeLCS );
-
-        if ( !myAnnotationProperties.IsScreenFixed ) {
-          myAnnotationProperties.Position = theAnnotation->GetPosition().Transformed( aToShapeLCS );
-        }
-        else {
-          myAnnotationProperties.Position = theAnnotation->GetPosition();
-        }
-
-        return;
-      }
-    }
+  if ( !myAnnotationProperties.IsScreenFixed ) {
+    myAnnotationProperties.Position = theAnnotation->GetPosition().Transformed( aToShapeLCS );
+  }
+  else {
+    myAnnotationProperties.Position = theAnnotation->GetPosition();
   }
 }
 
@@ -785,14 +773,19 @@ bool MeasureGUI_AnnotationDlg::execute()
 //=================================================================================
 SALOME_Prs* MeasureGUI_AnnotationDlg::buildPrs()
 {
-  SALOME_Prs* aPrs = myGeomGUI->GetAnnotationMgr()->CreatePresentation( myAnnotationProperties, myShape.get() );
+  QString aEntry = myIsCreation ? 
+    myGeomGUI->GetAnnotationMgr()->makeAnnotationEntry( myShape->GetStudyEntry(), - 1 ) :
+    myGeomGUI->GetAnnotationMgr()->makeAnnotationEntry( myEditAnnotationEntry, myEditAnnotationIndex );
+
+  SALOME_Prs* aPrs = myGeomGUI->GetAnnotationMgr()->CreatePresentation(
+    myAnnotationProperties, myShape.get(), 0, aEntry );
 
   // set preview style for the created presentation
   AIS_ListOfInteractive aIObjects;
   ((SOCC_Prs*)aPrs)->GetObjects( aIObjects );
   AIS_ListOfInteractive::Iterator aIOIt( aIObjects );
   for ( ; aIOIt.More(); aIOIt.Next() ) {
-
+  
     Handle( GEOM_Annotation ) aPresentation = Handle( GEOM_Annotation )::DownCast( aIOIt.Value() );
     aPresentation->SetTextColor( Quantity_NOC_VIOLET );
     aPresentation->SetLineColor( Quantity_NOC_VIOLET );
@@ -836,15 +829,25 @@ void MeasureGUI_AnnotationDlg::redisplayPreview()
 
       if ( SALOME_Prs* aPrs = buildPrs() )
         displayPreview( aPrs );
-    } catch ( const SALOME::SALOME_Exception& e ) {
-      SalomeApp_Tools::QtCatchCorbaException( e );
-    } catch ( ... ) {
+      } catch ( const SALOME::SALOME_Exception& e ) {
+        SalomeApp_Tools::QtCatchCorbaException( e );
+      } catch ( ... ) {
     }
   }
   else {
     myGeomGUI->GetAnnotationMgr()->Redisplay( myEditAnnotationEntry, myEditAnnotationIndex,
                                               myAnnotationProperties );
   }
+
+  QString anEntry;
+  if ( myIsCreation && !myShape->_is_nil() ) {
+    anEntry = myGeomGUI->GetAnnotationMgr()->makeAnnotationEntry( myShape->GetStudyEntry(), -1 );
+  }
+  else if ( !myIsCreation ) {
+    anEntry = myGeomGUI->GetAnnotationMgr()->makeAnnotationEntry( myEditAnnotationEntry, myEditAnnotationIndex );
+  }
+
+  myInteractor->SetEditEntry( anEntry );
 }
 
 //=================================================================================

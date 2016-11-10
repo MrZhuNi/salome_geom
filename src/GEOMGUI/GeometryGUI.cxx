@@ -2079,7 +2079,10 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
           break;
         }
   }
-  GetAnnotationMgr()->RemoveView(dynamic_cast<SALOME_View*>(viewer));
+  SOCC_Viewer* aSOCCView = dynamic_cast<SOCC_Viewer*>(viewer);
+  if ( aSOCCView ) {
+    GetAnnotationMgr()->RemoveView( aSOCCView );
+  }
 }
 
 //================================================================================
@@ -2851,6 +2854,12 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
         SALOME_ListIO aVisible;
         aViewer->GetVisible( aVisible );
         aDisplayer.Redisplay( aVisible, false, aViewer );
+
+        GEOMGUI_AnnotationMgr* aAnnotationMgr = GetAnnotationMgr();
+        SALOME_ListIteratorOfListIO Iter( aVisible );
+        for ( ; Iter.More(); Iter.Next() ) {
+          aAnnotationMgr->DisplayVisibleAnnotations( QString(Iter.Value()->getEntry()), aViewer );
+        }
       }
       if ( param == QString( "label_color" ) ) {
         ViewManagerList aVMsVTK;
@@ -3057,8 +3066,9 @@ void GeometryGUI::storeVisualParameters (int savePoint)
           ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::IsosWidth )).toString().toStdString());
         }
 
-        if ( aAnnotationMgr ) {
-          std::string anAnnotationInfo = GetAnnotationMgr()->getDisplayedIndicesInfo( o_it.key().toLatin1().data(), aView ).toStdString();
+        if ( vType == SOCC_Viewer::Type() && aAnnotationMgr ) {
+          std::string anAnnotationInfo = GetAnnotationMgr()->getDisplayedIndicesInfo(
+                                            o_it.key().toLatin1().data(), dynamic_cast<SOCC_Viewer*>(aView) ).toStdString();
           if (!anAnnotationInfo.empty()) {
             param = occParam + "ShapeAnnotationVisibleItems";
             ip->setParameter(entry, param.toStdString(), anAnnotationInfo);
@@ -3252,9 +3262,13 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
         SALOME_View* aView = dynamic_cast<SALOME_View*>(vmodel);
         displayer()->Display(entry, true, aView);
 
-        PropMap& aProps = aListOfMap[index];
-        if ( aProps.contains( "ShapeAnnotationVisibleItems" ) )
-          GetAnnotationMgr()->setDisplayedIndicesInfo( entry, aView, aProps["ShapeAnnotationVisibleItems"].toString() );
+        if ( vmodel->getType() == SOCC_Viewer::Type() ) {
+          PropMap& aProps = aListOfMap[index];
+          if ( aProps.contains( "ShapeAnnotationVisibleItems" ) ) {
+            SOCC_Viewer* aSOCCView = dynamic_cast<SOCC_Viewer*>( aView );
+            GetAnnotationMgr()->setDisplayedIndicesInfo( entry, aSOCCView, aProps["ShapeAnnotationVisibleItems"].toString() );
+          }
+        }
       }
     }
   } // for entries iterator

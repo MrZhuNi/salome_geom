@@ -63,7 +63,7 @@ GEOM_Annotation::GEOM_Annotation() : AIS_InteractiveObject()
   SetIsScreenFixed( Standard_False );
   SetAttachPoint( gp_Pnt( 0.0, 0.0, 0.0 ) );
   SetDisplayMode( 0 );
-  SetZLayer( Graphic3d_ZLayerId_Default );
+  SetZLayer( Graphic3d_ZLayerId_Top );
   SetAutoHide( Standard_True );
   SetHilightMode( HighlightAll );
   SetMutable( Standard_True );
@@ -118,10 +118,12 @@ void GEOM_Annotation::SetPosition( const gp_Pnt& thePosition, const Standard_Boo
 {
   myPosition = thePosition;
 
-  Handle(Graphic3d_TransformPers) aPersistence;
   if ( !myIsScreenFixed )
   {
-    AIS_InteractiveObject::SetTransformPersistence( Graphic3d_TMF_ZoomPers | Graphic3d_TMF_RotatePers, thePosition );
+    Handle(Graphic3d_TransformPers) aPersistence =
+      new Graphic3d_TransformPers( Graphic3d_TMF_ZoomRotatePers, thePosition );
+
+    AIS_InteractiveObject::SetTransformPersistence( aPersistence );
   }
 
   SetToUpdate();
@@ -140,16 +142,20 @@ void GEOM_Annotation::SetIsScreenFixed( const Standard_Boolean theIsFixed )
 {
   myIsScreenFixed = theIsFixed;
 
+  Handle(Graphic3d_TransformPers) aPersistence;
+
   if (!myIsScreenFixed)
   {
-    AIS_InteractiveObject::SetTransformPersistence( Graphic3d_TMF_ZoomPers | Graphic3d_TMF_RotatePers, myPosition );
+    aPersistence = new Graphic3d_TransformPers( Graphic3d_TMF_ZoomRotatePers, myPosition );
   }
   else
   {
-    AIS_InteractiveObject::SetTransformPersistence( Graphic3d_TMF_2d );
+    aPersistence = new Graphic3d_TransformPers( Graphic3d_TMF_2d, Aspect_TOTP_CENTER );
   }
 
-  SetZLayer( myIsScreenFixed ? Graphic3d_ZLayerId_Topmost : Graphic3d_ZLayerId_Default );
+  AIS_InteractiveObject::SetTransformPersistence( aPersistence );
+
+  SetZLayer( myIsScreenFixed ? Graphic3d_ZLayerId_Topmost : Graphic3d_ZLayerId_Top );
 
   SetToUpdate();
 
@@ -340,7 +346,7 @@ void GEOM_Annotation::SetDepthCulling( const Standard_Boolean theToEnable )
 // =======================================================================
 void GEOM_Annotation::SetDefaultZLayer()
 {
-  SetZLayer( myIsScreenFixed ? Graphic3d_ZLayerId_Topmost : Graphic3d_ZLayerId_Default );
+  SetZLayer( myIsScreenFixed ? Graphic3d_ZLayerId_Topmost : Graphic3d_ZLayerId_Top );
 
   SetToUpdate();
 }
@@ -856,9 +862,9 @@ void GEOM_Annotation::OpenGl_Annotation::Render( const Handle(OpenGl_Workspace)&
 // function : HilightWithColor
 // purpose  : Perform highlighting of the presentation.
 // =======================================================================
-void GEOM_Annotation::GEOM_AnnotationOwner::HilightWithColor( const Handle(PrsMgr_PresentationManager3d)& thePresentationMgr,
-                                                              const Quantity_NameOfColor theColor,
+void GEOM_Annotation::GEOM_AnnotationOwner::HilightWithColor( const Handle(PrsMgr_PresentationManager3d)& thePM,
+                                                              const Handle(Graphic3d_HighlightStyle)& theStyle,
                                                               const Standard_Integer theMode )
 {
-  thePresentationMgr->Color( Selectable(), theColor, theMode, NULL, Selectable()->ZLayer() );
+  thePM->Color( Selectable(), theStyle, theMode, NULL, Selectable()->ZLayer() );
 }

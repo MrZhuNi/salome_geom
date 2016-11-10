@@ -199,6 +199,11 @@ bool MeasureGUI_AnnotationInteractor::eventFilter( QObject* theObject, QEvent* t
     {
       QMouseEvent* aMouseEv = dynamic_cast<QMouseEvent*>( theEvent );
 
+      if ( myEditEntry.isEmpty() )
+      {
+        return false;
+      }
+
       if ( !( aMouseEv->buttons() & Qt::LeftButton ) )
       {
         return false;
@@ -224,6 +229,14 @@ bool MeasureGUI_AnnotationInteractor::eventFilter( QObject* theObject, QEvent* t
         Handle(GEOM_Annotation)::DownCast( aDetected->Selectable() );
 
       if ( aAnnotation.IsNull() )
+      {
+        return false;
+      }
+
+      const Handle(SALOME_InteractiveObject) anIO = 
+        Handle(SALOME_InteractiveObject)::DownCast( aAnnotation->GetOwner() );
+
+      if ( anIO.IsNull() || anIO->getEntry() != myEditEntry )
       {
         return false;
       }

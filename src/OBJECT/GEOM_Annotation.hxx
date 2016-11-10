@@ -261,10 +261,9 @@ private:
   virtual void ComputeSelection( const Handle(SelectMgr_Selection)& theSelection,
                                  const Standard_Integer theMode ) Standard_OVERRIDE;
 
-  virtual void SetLocalTransformation( const gp_Trsf& /*theTransformation*/ ) Standard_OVERRIDE {}
+  virtual void setLocalTransformation( const Handle(Geom_Transformation)& /*theTransformation*/ ) Standard_OVERRIDE {}
 
-  virtual void SetTransformPersistence( const Graphic3d_TransModeFlags& /*theFlag*/,
-                                        const gp_Pnt& /*thePoint*/ ) Standard_OVERRIDE {}
+  virtual void SetTransformPersistence( const Handle(Graphic3d_TransformPers)& /*theTrsfPers*/ ) Standard_OVERRIDE {}
 
   Bnd_Box TextBoundingBox() const;
 
@@ -351,8 +350,8 @@ public:
     //! \param theColor [in] the highlighting color.
     //! \param theMode [in] the display mode.
     virtual void
-      HilightWithColor( const Handle(PrsMgr_PresentationManager3d)& thePresentationMgr,
-                        const Quantity_NameOfColor theColor,
+      HilightWithColor( const Handle(PrsMgr_PresentationManager3d)& thePM,
+                        const Handle(Graphic3d_HighlightStyle)& theStyle,
                         const Standard_Integer theMode = 0 ) Standard_OVERRIDE;
   };
 

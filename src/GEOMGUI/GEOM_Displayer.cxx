@@ -515,7 +515,8 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
 #if OCC_VERSION_MAJOR >= 7
   myColorScale = new AIS_ColorScale;
   myColorScale->SetZLayer (Graphic3d_ZLayerId_TopOSD);
-  myColorScale->SetTransformPersistence (Graphic3d_TMF_2d, gp_Pnt (-1,-1,0));
+  myColorScale->SetTransformPersistence (
+    Graphic3d_TransformPers::FromDeprecatedParams(Graphic3d_TMF_2d, gp_Pnt (-1,-1,0)));
 #endif
 
   myFieldDataType = GEOM::FDT_Double;
@@ -703,10 +704,10 @@ void GEOM_Displayer::Redisplay( const Handle(SALOME_InteractiveObject)& theIO,
   GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
   if ( aModule ) {
     if ( !theViewFrame->isVisible( theIO ) ) {
-      aModule->GetAnnotationMgr()->EraseVisibleAnnotations(QString(theIO->getEntry()), theViewFrame);
+      aModule->GetAnnotationMgr()->EraseVisibleAnnotations(QString(theIO->getEntry()), dynamic_cast<SOCC_Viewer*>( theViewFrame ));
     }
     else {
-      aModule->GetAnnotationMgr()->DisplayVisibleAnnotations(QString(theIO->getEntry()), theViewFrame);
+      aModule->GetAnnotationMgr()->DisplayVisibleAnnotations(QString(theIO->getEntry()), dynamic_cast<SOCC_Viewer*>( theViewFrame ));
     }
   }
 }
@@ -2082,9 +2083,9 @@ void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
   GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
   if ( aModule ) {
     if ( !myIsRedisplayed ) {
-      aModule->GetAnnotationMgr()->DisplayVisibleAnnotations(QString(p->GetEntry()), v);
+      aModule->GetAnnotationMgr()->DisplayVisibleAnnotations(QString(p->GetEntry()), dynamic_cast<SOCC_Viewer*>( v ));
     } else {
-      aModule->GetAnnotationMgr()->UpdateVisibleAnnotations(QString(p->GetEntry()), v);
+      aModule->GetAnnotationMgr()->UpdateVisibleAnnotations(QString(p->GetEntry()), dynamic_cast<SOCC_Viewer*>( v ));
     }
   }
 }
@@ -2106,7 +2107,7 @@ void GEOM_Displayer::AfterErase( SALOME_View* v, const SALOME_OCCPrs* p )
     SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
     GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( anApp->activeModule() );
     if ( aModule )
-      aModule->GetAnnotationMgr()->EraseVisibleAnnotations(QString(p->GetEntry()), v);
+      aModule->GetAnnotationMgr()->EraseVisibleAnnotations(QString(p->GetEntry()), dynamic_cast<SOCC_Viewer*>( v ));
   }
 }
 

@@ -31,6 +31,8 @@
 #include <SALOME_Prs.h>
 #include <SALOME_InteractiveObject.hxx>
 
+#include <SOCC_ViewModel.h>
+
 class SalomeApp_Application;
 class GEOM_Annotation;
 class GEOM_Displayer;
@@ -53,32 +55,35 @@ public:
 
   SALOME_Prs* CreatePresentation( const GEOMGUI_AnnotationAttrs::Properties& theProperty,
                                   GEOM::GEOM_Object_ptr theObject,
-                                  SALOME_View* theView = 0,
+                                  SOCC_Viewer* theView = 0,
                                   const QString& theEntry = QString() );
 
-  bool IsDisplayed( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 ) const;
-  void Display( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 );
-  void Erase( const QString& theEntry, const int theIndex, SALOME_View* theView = 0 );
+  bool IsDisplayed( const QString& theEntry, const int theIndex, SOCC_Viewer* theView = 0 ) const;
+  void Display( const QString& theEntry, const int theIndex, SOCC_Viewer* theView = 0 );
+  void Erase( const QString& theEntry, const int theIndex, SOCC_Viewer* theView = 0 );
   void Redisplay( const QString& theEntry, const int theIndex,
                   const GEOMGUI_AnnotationAttrs::Properties& theProperties);
   void Redisplay( const QString& theEntry, const int theIndex,
-                  const GEOMGUI_AnnotationAttrs::Properties& theProperties, SALOME_View* theView );
+                  const GEOMGUI_AnnotationAttrs::Properties& theProperties, SOCC_Viewer* theView );
 
-  void DisplayVisibleAnnotations( const QString& theEntry, SALOME_View* theView = 0 );
-  void EraseVisibleAnnotations( const QString& theEntry, SALOME_View* theView = 0 );
-  void UpdateVisibleAnnotations( const QString& theEntry, SALOME_View* theView = 0 );
+  void DisplayVisibleAnnotations( const QString& theEntry, SOCC_Viewer* theView = 0 );
+  void EraseVisibleAnnotations( const QString& theEntry, SOCC_Viewer* theView = 0 );
+  void UpdateVisibleAnnotations( const QString& theEntry, SOCC_Viewer* theView = 0 );
+  void SetPreviewStyle( const QString& theEntry, const int theIndex, const bool theIsPreview );
 
-  void RemoveView( SALOME_View* theView);
+  void RemoveView( SOCC_Viewer* theView );
 
   int FindAnnotationIndex( Handle(SALOME_InteractiveObject) theIO,
-                           SALOME_View* theView = 0 );
+                           SOCC_Viewer* theView = 0 );
 
   Handle(SALOME_InteractiveObject) FindInteractiveObject( const QString& theEntry, const int theIndex,
-                                                          SALOME_View* theView = 0 ) const;
+                                                          SOCC_Viewer* theView = 0 ) const;
 
-  QString getDisplayedIndicesInfo( const QString& theEntry, SALOME_View* theView ) const;
+  QString getDisplayedIndicesInfo( const QString& theEntry, SOCC_Viewer* theView ) const;
 
-  void setDisplayedIndicesInfo( const QString& theEntry, SALOME_View* theView, const QString theIndicesInfo );
+  void setDisplayedIndicesInfo( const QString& theEntry, SOCC_Viewer* theView, const QString theIndicesInfo );
+
+  QString makeAnnotationEntry( const QString& theEntry, const int theIndex );
 
 protected:
 
@@ -86,27 +91,31 @@ protected:
 
   GEOM_Displayer* getDisplayer() const;
 
-  SALOME_View* viewOrActiveView(SALOME_View* theView) const;
+  SOCC_Viewer* viewOrActiveView( SOCC_Viewer* theView ) const;
 
   void getObject( const QString& theEntry, const int theIndex,
                   GEOM::GEOM_Object_ptr& anObject,
                   GEOMGUI_AnnotationAttrs::Properties& aProperty );
 
-  void storeVisibleState( const QString& theEntry, SALOME_View* theView );
+  void storeVisibleState( const QString& theEntry, SOCC_Viewer* theView );
 
   std::string getEntry( const GEOM::GEOM_Object_ptr theObject );
 
   std::string getName( const GEOM::GEOM_Object_ptr theObject );
 
   void setDisplayProperties( const Handle(GEOM_Annotation)& thePrs,
-                             SALOME_View* theView = 0,
+                             SOCC_Viewer* theView = 0,
                              const QString& theEntry = QString() );
+
+  Handle(GEOM_Annotation) getAISPresentation ( const QString& theEntry,
+                                               const int theIndex,
+                                               SOCC_Viewer* theView );
 
 private:
   SalomeApp_Application* myApplication;
 
   typedef QMap<int, SALOME_Prs*> AnnotationToPrs;
   typedef QMap<QString, AnnotationToPrs> EntryToAnnotations;
-  QMap<SALOME_View*, EntryToAnnotations> myVisualized;
+  QMap<SOCC_Viewer*, EntryToAnnotations> myVisualized;
 };
 #endif

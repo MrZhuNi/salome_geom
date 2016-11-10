@@ -70,6 +70,9 @@ public:
   //! Disables event processing and interaction handlers.
   void Disable();
 
+  //! Set entry of allowed annotation presentations.
+  void SetEditEntry( const QString& theEntry ) { myEditEntry = theEntry; }
+
 protected:
 
   //! Connect interactor's event handler to the view window given.
@@ -113,6 +116,7 @@ private:
   Handle(GEOM_Annotation)   myActiveIO;
   SelectMgr_SequenceOfOwner mySelection;
   QPoint                    myStartPoint;
+  QString                   myEditEntry;
 };
 
 #endif
