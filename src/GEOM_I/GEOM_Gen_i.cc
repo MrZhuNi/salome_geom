@@ -595,7 +595,7 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
   TCollection_AsciiString aNameWithExt("");
   if (isMultiFile)
     aNameWithExt = TCollection_AsciiString((char*)(SALOMEDS_Tool::GetNameFromPath
-                                                   (GetStudy()->URL())).c_str());
+                                                   (theComponent->GetStudy()->URL())).c_str());
 #if OCC_VERSION_MAJOR > 6
   aNameWithExt += TCollection_AsciiString("_GEOM.cbf");
 #else
@@ -661,7 +661,7 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
 
   // Prepare a file name to open
   TCollection_AsciiString aNameWithExt("");
-  SALOMEDS::Study_var study = GetStudy();
+  SALOMEDS::Study_var study = theComponent->GetStudy();
 
 #if OCC_VERSION_MAJOR > 6
   // Get the file name.
@@ -800,7 +800,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
                                             CORBA::Long theObjectID,
                                             SALOMEDS::SObject_ptr theObject) {
   // Find the current Study and StudyBuilder
-  SALOMEDS::Study_var aStudy = GetStudy();
+  SALOMEDS::Study_var aStudy = theObject->GetStudy();
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
   SALOMEDS::UseCaseBuilder_var anUseCaseBuilder = aStudy->GetUseCaseBuilder();
   SALOMEDS::SObject_var aNewSO;
@@ -2857,7 +2857,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::CreateFolder(const char* theName,
     aLocalID->UnRegister();
   }
 
-  SALOMEDS::Study_var aStudy = GetStudy();
+  SALOMEDS::Study_var aStudy = theFather->GetStudy();
   SALOMEDS::StudyBuilder_var aStudyBuilder( aStudy->NewBuilder() );
   aFolderSO = aStudyBuilder->NewObject( theFather );
 
@@ -2892,7 +2892,7 @@ void GEOM_Gen_i::MoveToFolder(GEOM::GEOM_Object_ptr theObject,
                               SALOMEDS::SObject_ptr theFolder) {
   GEOM::object_list_var objects = new GEOM::object_list();
   objects->length( 1 );
-  SALOMEDS::SObject_var aSO = GetStudy()->FindObjectID( theObject->GetStudyEntry() );
+  SALOMEDS::SObject_var aSO = theFolder->GetStudy()->FindObjectID( theObject->GetStudyEntry() );
   objects[0] = aSO;
   Move( objects, theFolder, -1 );
 }
@@ -2910,7 +2910,7 @@ void GEOM_Gen_i::MoveListToFolder (const GEOM::ListOfGO& theListOfGO,
   SALOMEDS::SObject_var aSO;
   for (int i = 0; i < aLen; i++) {
     aGO = GEOM::GEOM_Object::_duplicate( theListOfGO[i] );
-    aSO = GetStudy()->FindObjectID( aGO->GetStudyEntry() );
+    aSO = theFolder->GetStudy()->FindObjectID( aGO->GetStudyEntry() );
     objects[i] = aSO;
   }
   if ( objects->length() > 0 )
@@ -2928,7 +2928,7 @@ void GEOM_Gen_i::Move( const GEOM::object_list& what,
 {
   if ( CORBA::is_nil( where ) ) return;
 
-  SALOMEDS::Study_var study = GetStudy();
+  SALOMEDS::Study_var study = where->GetStudy();
   SALOMEDS::StudyBuilder_var studyBuilder = study->NewBuilder();
   SALOMEDS::UseCaseBuilder_var useCaseBuilder = study->GetUseCaseBuilder();
   SALOMEDS::SComponent_var father = where->GetFatherComponent();
