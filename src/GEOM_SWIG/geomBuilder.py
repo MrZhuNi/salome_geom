@@ -924,7 +924,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestAll.py
             try:
-                aSObject = self.AddInStudy(self.myStudy, aShape, aName, aFather)
+                aSObject = self.AddInStudy(aShape, aName, aFather)
                 if aSObject and aName: aSObject.SetAttrString("AttributeName", aName)
             except:
                 print "addToStudyInFather() failed"

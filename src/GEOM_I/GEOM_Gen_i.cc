@@ -1093,8 +1093,8 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(GEOM::GEOM_Object_ptr   theObject,
       if (aList[0]->GetMarkerType() == GEOM::MT_USER)
         theObject->SetMarkerTexture(aList[0]->GetMarkerTexture());
     }
-
-    anArgSO->UnRegister();
+    if (!CORBA::is_nil(anArgSO))
+      anArgSO->UnRegister();
   }
   else {
     // Get interface, containing method, which we will use to reconstruct sub-shapes
@@ -1322,7 +1322,8 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(GEOM::GEOM_Object_ptr   theObject,
             }
           }
         } // try to build from published parts
-        anArgSO->UnRegister();
+    	if (!CORBA::is_nil(anArgSO))
+          anArgSO->UnRegister();
       }
     } // process arguments
   }
