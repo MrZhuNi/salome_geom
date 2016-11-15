@@ -1990,12 +1990,6 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
   action( GEOMOp::OpEditField )->setEnabled( ViewOCC ); // Edit Field
 
   action( GEOMOp::OpMultiTransform )->setEnabled( ViewOCC ); // MENU BLOCKS - MULTI-TRANSFORMATION
-
-  if ( ViewOCC )
-  {
-    SUIT_ViewModel* vmodel = win->getViewManager()->getViewModel();
-    myTextTreeWdg->updateVisibility(dynamic_cast<SALOME_View*>(vmodel));
-  }
 }
 
 void GeometryGUI::windows( QMap<int, int>& mappa ) const
