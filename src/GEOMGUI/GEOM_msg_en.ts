@@ -5029,6 +5029,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Edit Annotation</translation>
     </message>
     <message>
+      <source>TOP_DELETE_ANNOTATION</source>
+      <translation>Delete Annotation</translation>
+    </message>
+    <message>
+      <source>MEN_DELETE_ANNOTATION</source>
+      <translation>Delete</translation>
+    </message>
+    <message>
+      <source>STB_DELETE_ANNOTATION</source>
+      <translation>Delete Annotation</translation>
+    </message>
+    <message>
         <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
         <translation>Show dependency tree</translation>
     </message>

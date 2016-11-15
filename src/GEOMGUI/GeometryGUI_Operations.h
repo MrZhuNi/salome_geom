@@ -211,6 +211,7 @@ namespace GEOMOp {
     OpEditAnnotation      = 5021,   // POPUP MENU - EDIT ANNOTATION
     OpShowAllAnnotations  = 5022,   // POPUP MENU - SHOW ALL ANNOTATIONS
     OpHideAllAnnotations  = 5023,   // POPUP MENU - HIDE ALL ANNOTATIONS
+    OpDeleteAnnotation    = 5024,   // POPUP MENU - DELETE ANNOTATION
     // GroupGUI --------------------//--------------------------------
     OpGroupCreate         = 6000,   // MENU GROUP - CREATE
     OpGroupEdit           = 6001,   // MENU GROUP - EDIT

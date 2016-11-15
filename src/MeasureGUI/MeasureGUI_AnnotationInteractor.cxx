@@ -249,13 +249,8 @@ bool MeasureGUI_AnnotationInteractor::eventFilter( QObject* theObject, QEvent* t
         mySelection.Append( anAISContext->SelectedOwner() );
       }
 
-      if ( anAISContext->IsHilighted( myActiveIO ) )
-      {
-        anAISContext->Unhilight( myActiveIO, Standard_False );
-      }
-
       anAISContext->ClearSelected( Standard_False );
-      anAISContext->AddOrRemoveSelected( aDetected );
+      anAISContext->Unhilight( myActiveIO, Standard_True );
 
       myActiveViewPort = aViewPort;
       myActiveViewPort->grabMouse();

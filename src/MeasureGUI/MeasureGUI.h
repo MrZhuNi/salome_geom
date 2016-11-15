@@ -60,6 +60,9 @@ public:
   // Show/hide all shape annotations created for GEOM object
   void ChangeAnnotationsVisibility( const bool theIsVisible );
 
+  // Deletes the selected annotation
+  void DeleteAnnotation();
+
 private:
   // Returns selected interactive object for single selection
   Handle(SALOME_InteractiveObject) getSingleSelectedIO();

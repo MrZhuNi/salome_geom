@@ -686,6 +686,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpManageDimensions:   // MENU MEASURE - MANAGE DIMENSIONS
   case GEOMOp::OpAnnotation:         // MENU MEASURE - ANNOTATION
   case GEOMOp::OpEditAnnotation:     // POPUP MENU - EDIT ANNOTATION
+  case GEOMOp::OpDeleteAnnotation:   // POPUP MENU - DELETE ANNOTATION
 #ifndef DISABLE_PLOT2DVIEWER
   case GEOMOp::OpShapeStatistics:    // MENU MEASURE - SHAPE STATISTICS
 #endif
@@ -1071,6 +1072,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpManageDimensions, "MANAGE_DIMENSIONS" );
   createGeomAction( GEOMOp::OpAnnotation,       "ANNOTATION" );
   createGeomAction( GEOMOp::OpEditAnnotation,   "EDIT_ANNOTATION" );
+  createGeomAction( GEOMOp::OpDeleteAnnotation, "DELETE_ANNOTATION" );
 
   createGeomAction( GEOMOp::OpTolerance,        "TOLERANCE" );
   createGeomAction( GEOMOp::OpWhatIs,           "WHAT_IS" );
@@ -1622,6 +1624,8 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   mgr->insert( action(  GEOMOp::OpEditAnnotation ), -1, -1 );  // edit annotation
   mgr->setRule( action( GEOMOp::OpEditAnnotation ),  QString("($component={'GEOM'}) and type='Shape' and selcount=1"), QtxPopupMgr::VisibleRule );
+  mgr->insert( action(  GEOMOp::OpDeleteAnnotation ), -1, -1 );  // delete annotation
+  mgr->setRule( action( GEOMOp::OpDeleteAnnotation ),  QString("($component={'GEOM'}) and type='Shape' and selcount=1"), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
 
   QString canDisplay = "($component={'GEOM'}) and (selcount>0) and ({true} in $canBeDisplayed) ",
@@ -2847,13 +2851,21 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
 
         SALOME_ListIO aVisible;
         aViewer->GetVisible( aVisible );
-        aDisplayer.Redisplay( aVisible, false, aViewer );
 
-        GEOMGUI_AnnotationMgr* aAnnotationMgr = GetAnnotationMgr();
-        SALOME_ListIteratorOfListIO Iter( aVisible );
-        for ( ; Iter.More(); Iter.Next() ) {
-          aAnnotationMgr->DisplayVisibleAnnotations( QString(Iter.Value()->getEntry()), aViewer );
+        GEOMGUI_AnnotationMgr* anAnnotationMgr = GetAnnotationMgr();
+        if ( anAnnotationMgr ) {
+          SALOME_ListIteratorOfListIO anIter( aVisible );
+          while ( anIter.More() ) {
+            if ( anAnnotationMgr->isAnnotationEntry( anIter.Value()->getEntry() ) ) {
+              aVisible.Remove( anIter );
+            }
+            else {
+              anIter.Next();
+            }
+          }
         }
+
+        aDisplayer.Redisplay( aVisible, false, aViewer );
       }
       if ( param == QString( "label_color" ) ) {
         ViewManagerList aVMsVTK;

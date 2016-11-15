@@ -169,6 +169,9 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpHideAllAnnotations:
     ChangeAnnotationsVisibility( false );
     break; // HIDE ALL ANNOTATIONS
+  case GEOMOp::OpDeleteAnnotation:
+    DeleteAnnotation();
+    break; // DELETE ANNOTATIOn
   default: 
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
     break;
@@ -232,7 +235,7 @@ void MeasureGUI::ChangeAnnotationsVisibility( const bool theIsVisible )
    || !anIObject->hasEntry() )
     return;
 
-  const QString aEntry = anIObject->getEntry(),c_str();
+  const QString aEntry = anIObject->getEntry();
 
   _PTR(SObject) aSObj = anActiveStudy->studyDS()->FindObjectID( aEntry.toStdString() );
 
@@ -258,6 +261,52 @@ void MeasureGUI::ChangeAnnotationsVisibility( const bool theIsVisible )
         getGeometryGUI()->GetAnnotationMgr()->Display( aEntry , anI );
       }
     }
+
+    getGeometryGUI()->emitAnnotationsUpdated( aEntry );
+  }
+}
+
+//=======================================================================
+// function : DeleteAnnotation
+// purpose  : 
+//=======================================================================
+void MeasureGUI::DeleteAnnotation()
+{
+  SalomeApp_Application* anApp = getGeometryGUI()->getApp();
+  if ( !anApp )
+    return;
+
+  SalomeApp_Study* anActiveStudy = dynamic_cast<SalomeApp_Study*>( anApp->activeStudy() );
+  if ( !anActiveStudy )
+    return;
+
+  Handle(SALOME_InteractiveObject) anIObject = getSingleSelectedIO();
+  if ( anIObject.IsNull()
+   || !anIObject->hasEntry() )
+    return;
+
+  const QString aEntry = anIObject->getEntry();
+
+  QString aObjEntry;
+
+  int aIndex = 0;
+
+  if ( getGeometryGUI()->GetAnnotationMgr()->getIndexFromEntry( aEntry, aObjEntry, aIndex ) )
+  {
+    _PTR(SObject) aSObj = anActiveStudy->studyDS()->FindObjectID( aObjEntry.toStdString() );
+
+    const Handle(GEOMGUI_AnnotationAttrs)
+      aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
+
+    if ( aShapeAnnotations.IsNull() ) {
+      return;
+    }
+
+    aShapeAnnotations->Remove( aIndex );
+
+    getGeometryGUI()->GetAnnotationMgr()->EraseRemovedAnnotation( aObjEntry, aIndex );
+
+    getGeometryGUI()->emitAnnotationsUpdated( aObjEntry );
   }
 }
 

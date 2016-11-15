@@ -41,6 +41,7 @@
 #include <PrsMgr_PresentationManager3d.hxx>
 #include <Select3D_SensitiveBox.hxx>
 #include <SelectMgr_EntityOwner.hxx>
+#include <StdSelect_Shape.hxx>
 #include <TCollection_ExtendedString.hxx>
 
 class OpenGl_GraphicDriver;
@@ -120,6 +121,12 @@ public:
 
   //! Returns attachment point of extension line.
   const gp_Pnt& GetAttachPoint() const { return myAttach; }
+
+  //! Sets shape (annotated shape) that will be used for hilighting.
+  Standard_EXPORT void SetHilightShape( const TopoDS_Shape& theShape );
+
+  //! Returns the hilighting shape.
+  const TopoDS_Shape HilightShape() const { return myShape; }
 
 public:
 
@@ -279,6 +286,7 @@ private:
   Standard_Boolean myIsDepthCulling; //!< Flag indiciating whether the "depth culling" is turned on.
   HighlightMode myHilightMode; //!< Highlight mode for presentation.
   TCollection_ExtendedString myText; //!< Text string of the label presentation.
+  TopoDS_Shape myShape; //!< Hilighting shape.
 
 private:
 
@@ -341,9 +349,11 @@ public:
   public:
 
     //! Constructor.
-    GEOM_AnnotationOwner( const Handle(SelectMgr_SelectableObject)& theSelectable,
-                          const Standard_Integer thePriority = 0 )
-      : SelectMgr_EntityOwner( theSelectable, thePriority ) {}
+    GEOM_AnnotationOwner( const TopoDS_Shape& theShape,
+                          const Handle(SelectMgr_SelectableObject)& theSelectable,
+                          const Standard_Integer thePriority )
+      : SelectMgr_EntityOwner( theSelectable, thePriority ),
+        myShape( theShape ) {}
 
     //! Perform highlighting of the presentation.
     //! \param thePresentationMgr [in] the presentation manager.
@@ -353,6 +363,22 @@ public:
       HilightWithColor( const Handle(PrsMgr_PresentationManager3d)& thePM,
                         const Handle(Graphic3d_HighlightStyle)& theStyle,
                         const Standard_Integer theMode = 0 ) Standard_OVERRIDE;
+
+    //! Removes highlighting from the type of shape.
+    virtual void
+      Unhilight ( const Handle(PrsMgr_PresentationManager)& thePM,
+                  const Standard_Integer theMode = 0 ) Standard_OVERRIDE;
+
+    //! Clears the presentation manager object aPM of all shapes
+    //! with the given selection mode.
+    virtual void
+      Clear ( const Handle(PrsMgr_PresentationManager)& thePM,
+              const Standard_Integer theMode = 0 ) Standard_OVERRIDE;
+
+  private:
+
+    TopoDS_Shape myShape;
+    Handle(StdSelect_Shape) myPrsSh;
   };
 
   //! Custom sensitive entity with implementing option to support selection

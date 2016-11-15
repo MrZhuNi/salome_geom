@@ -43,7 +43,9 @@
 #include <Quantity_Color.hxx>
 #include <TCollection_AsciiString.hxx>
 
+#include <TopExp.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 #include <gp_Ax3.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 
@@ -88,8 +90,26 @@ SALOME_Prs* GEOMGUI_AnnotationMgr::CreatePresentation( const GEOMGUI_AnnotationA
   setDisplayProperties( aPresentation, aView, getEntry( theObject ).c_str() );
 
   TopoDS_Shape aShape = GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), theObject );
-  gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
-  GEOMGUI_AnnotationAttrs::SetupPresentation( aPresentation, theProperty, aShapeLCS );
+  if ( !aShape.IsNull() ) {
+
+    gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
+
+    GEOMGUI_AnnotationAttrs::SetupPresentation( aPresentation, theProperty, aShapeLCS );
+
+    if ( theProperty.ShapeType == TopAbs_SHAPE ) {
+
+      aPresentation->SetHilightShape( aShape );
+    }
+    else if ( theProperty.ShapeIndex > 0 ) {
+
+      TopTools_IndexedMapOfShape aSubShapeMap;
+      TopExp::MapShapes( aShape, static_cast<TopAbs_ShapeEnum>( theProperty.ShapeType ), aSubShapeMap );
+      if ( theProperty.ShapeIndex <= aSubShapeMap.Extent() ) {
+
+        aPresentation->SetHilightShape( aSubShapeMap( theProperty.ShapeIndex ) );
+      }
+    }
+  }
 
   // add Prs to preview
   SUIT_ViewWindow* vw = getApplication()->desktop()->activeWindow();
@@ -319,6 +339,43 @@ void GEOMGUI_AnnotationMgr::EraseVisibleAnnotations( const QString& theEntry, SO
 }
 
 //=======================================================================
+// function : GEOMGUI_AnnotationMgr::EraseRemovedAnnotation
+// purpose  : Method to update internal maps after removing an
+//  annotation from the object.
+//=======================================================================
+void GEOMGUI_AnnotationMgr::EraseRemovedAnnotation( const QString& theEntry, const int theIndex )
+{
+  QMap<SOCC_Viewer*, EntryToAnnotations>::iterator aEntryMapIt = myVisualized.begin();
+  for ( ; aEntryMapIt != myVisualized.end(); ++aEntryMapIt ) {
+    SOCC_Viewer* aView = aEntryMapIt.key();
+    EntryToAnnotations& anEntryToAnnotation = aEntryMapIt.value();
+    if ( !anEntryToAnnotation.contains( theEntry ) )
+      continue;
+
+    AnnotationToPrs aUpdatedToPrs;
+    AnnotationToPrs& anAnnotationToPrs = anEntryToAnnotation[theEntry];
+    AnnotationToPrs::iterator anAnnotationIt = anAnnotationToPrs.begin();
+    for ( ; anAnnotationIt != anAnnotationToPrs.end(); ++anAnnotationIt ) {
+
+      const int aIndex = anAnnotationIt.key();
+      SALOME_Prs* aPrs = anAnnotationIt.value();
+      if ( aIndex > theIndex ) {
+        aUpdatedToPrs[aIndex - 1] = aPrs;
+      }
+      else if ( aIndex != theIndex ) {
+        aUpdatedToPrs[aIndex] = aPrs;
+      }
+      else {
+        ((SALOME_View*)aView)->Erase( getDisplayer(), aPrs );
+      }
+    }
+
+    anAnnotationToPrs = aUpdatedToPrs;
+  }
+  getDisplayer()->UpdateViewer();
+}
+
+//=======================================================================
 // function : GEOMGUI_AnnotationMgr::UpdateVisibleAnnotations
 // purpose  : 
 //=======================================================================
@@ -532,6 +589,18 @@ QString GEOMGUI_AnnotationMgr::makeAnnotationEntry( const QString& theEntry, con
   return QString("%1%2%3").arg(theEntry).arg(GetEntrySeparator()).arg(theIndex);
 }
 
+bool GEOMGUI_AnnotationMgr::getIndexFromEntry( const QString& theEntry, QString& theObjEntry, int& theIndex )
+{
+  QStringList aSplit = theEntry.split( GetEntrySeparator() );
+  if ( aSplit.size() < 2 )
+    return false;
+
+  bool isOk = true;
+  theObjEntry = aSplit.at( 0 );
+  theIndex = aSplit.at( 1 ).toInt( &isOk );
+  return isOk;
+}
+
 void GEOMGUI_AnnotationMgr::getObject( const QString& theEntry, const int theIndex,
                                        GEOM::GEOM_Object_ptr& theObject,
                                        GEOMGUI_AnnotationAttrs::Properties& theProperty )
@@ -671,8 +740,8 @@ void GEOMGUI_AnnotationMgr::setDisplayProperties( const Handle(GEOM_Annotation)&
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   const QFont  aFont      = aResMgr->fontValue( "Geometry", "shape_annotation_font", QFont( "Y14.5M-2009", 24 ) );
-  const QColor aFontColor = aResMgr->colorValue( "Geometry", "shape_annotation_font_color", QColor( 255, 255, 255 ) );
-  const QColor aLineColor = aResMgr->colorValue( "Geometry", "shape_annotation_line_color", QColor( 255, 255, 255 ) );
+  const QColor aFontColor = aResMgr->colorValue( "Geometry", "shape_annotation_font_color", QColor( 0, 0, 127 ) );
+  const QColor aLineColor = aResMgr->colorValue( "Geometry", "shape_annotation_line_color", QColor( 0, 0, 127 ) );
   const double aLineWidth = aResMgr->doubleValue( "Geometry", "shape_annotation_line_width", 1.0 );
   const int aLineStyle    = aResMgr->integerValue( "Geometry", "shape_annotation_line_style", 0 );
   const bool isAutoHide   = aResMgr->booleanValue( "Geometry", "shape_annotation_autohide", false );

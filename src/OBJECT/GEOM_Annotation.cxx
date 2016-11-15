@@ -46,6 +46,7 @@
 #include <Prs3d_PointAspect.hxx>
 #include <Prs3d_Root.hxx>
 #include <Prs3d_Text.hxx>
+#include <Prs3d_IsoAspect.hxx>
 #include <Select3D_SensitiveBox.hxx>
 #include <SelectMgr_EntityOwner.hxx>
 #include <V3d_Viewer.hxx>
@@ -205,6 +206,22 @@ void GEOM_Annotation::Set3dPosition( const Handle(V3d_View)& theView )
 void GEOM_Annotation::SetAttachPoint( const gp_Pnt& thePoint )
 {
   myAttach = thePoint;
+}
+
+// =======================================================================
+// function : SetHilightShape
+// purpose  : Sets shape (annotated shape) that will be used for hilighting.
+// =======================================================================
+void GEOM_Annotation::SetHilightShape( const TopoDS_Shape& theShape )
+{
+  if ( myShape.IsEqual( theShape ) )
+  {
+    return;
+  }
+
+  myShape = theShape;
+  SetToUpdate();
+  UpdateSelection();
 }
 
 // =======================================================================
@@ -505,7 +522,7 @@ void GEOM_Annotation::ComputeSelection( const Handle(SelectMgr_Selection)& theSe
     aBox = aBox.Transformed( aOffset2d );
   }
 
-  const Handle(GEOM_AnnotationOwner) anEntityOwner = new GEOM_AnnotationOwner( this, 10 );
+  const Handle(GEOM_AnnotationOwner) anEntityOwner = new GEOM_AnnotationOwner( myShape, this, 10 );
   const Handle(GEOM_AnnotationSensEntity) aSensitive =
     new GEOM_AnnotationSensEntity( anEntityOwner, aBox, myIsDepthCulling );
 
@@ -866,5 +883,60 @@ void GEOM_Annotation::GEOM_AnnotationOwner::HilightWithColor( const Handle(PrsMg
                                                               const Handle(Graphic3d_HighlightStyle)& theStyle,
                                                               const Standard_Integer theMode )
 {
+  if ( myPrsSh.IsNull() )
+  {
+    Handle(Prs3d_Drawer) aDrawer = new Prs3d_Drawer;
+    aDrawer->Link( Selectable()->HilightAttributes() );
+
+    Handle(Prs3d_IsoAspect) aUIsoAspect = new Prs3d_IsoAspect(
+      aDrawer->UIsoAspect()->Aspect()->Color(),
+      aDrawer->UIsoAspect()->Aspect()->Type(),
+      aDrawer->UIsoAspect()->Aspect()->Width(), 0 );
+
+    Handle(Prs3d_IsoAspect) aVIsoAspect = new Prs3d_IsoAspect(
+      aDrawer->UIsoAspect()->Aspect()->Color(),
+      aDrawer->UIsoAspect()->Aspect()->Type(),
+      aDrawer->UIsoAspect()->Aspect()->Width(), 0 );
+
+    aDrawer->SetIsoOnPlane( Standard_False );
+    aDrawer->SetUIsoAspect( aUIsoAspect );
+    aDrawer->SetVIsoAspect( aVIsoAspect );
+    myPrsSh = new StdSelect_Shape( myShape, aDrawer );
+  }
+
+  myPrsSh->SetZLayer ( Selectable()->ZLayer() );
+
   thePM->Color( Selectable(), theStyle, theMode, NULL, Selectable()->ZLayer() );
+  thePM->Color( myPrsSh, theStyle, theMode, Selectable(), Graphic3d_ZLayerId_Topmost );
+}
+
+// =======================================================================
+// subclass : GEOM_AnnotationOwner
+// function : Unhilight
+// purpose  : Removes highlighting from the type of shape.
+// =======================================================================
+void GEOM_Annotation::GEOM_AnnotationOwner::Unhilight ( const Handle(PrsMgr_PresentationManager)& thePM,
+                                                        const Standard_Integer theMode )
+{
+  SelectMgr_EntityOwner::Unhilight( thePM, theMode );
+
+  thePM->Unhighlight( myPrsSh, theMode );
+}
+
+// =======================================================================
+// subclass : GEOM_AnnotationOwner
+// function : Clear
+// purpose  : Clears the presentation manager object aPM of all shapes
+// with the given selection mode.
+// =======================================================================
+void GEOM_Annotation::GEOM_AnnotationOwner::Clear ( const Handle(PrsMgr_PresentationManager)& thePM,
+                                                    const Standard_Integer theMode )
+{
+  SelectMgr_EntityOwner::Clear( thePM, theMode );
+
+  if ( !myPrsSh.IsNull() ) {
+    thePM->Clear( myPrsSh, theMode );
+  }
+
+  myPrsSh.Nullify();
 }

@@ -97,7 +97,9 @@ namespace
       myEntry = theEntry.c_str();
       myStudy = theStudy;
       _PTR(SObject) aSObj = theStudy->studyDS()->FindObjectID( theEntry );
-      myAttr = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
+      if ( aSObj ) {
+        myAttr = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
+      }
     }
     virtual int GetNumber() Standard_OVERRIDE {
       return !myAttr.IsNull() ? myAttr->GetNbAnnotation() : 0;
@@ -542,6 +544,9 @@ void GEOMGUI_TextTreeWdg::showContextMenu( const QPoint& pos )
       QAction* anEditAction = aModule->action(GEOMOp::OpEditAnnotation);
       if ( anEditAction )
         aMenu.addAction( anEditAction );
+      QAction* aDeleteAction = aModule->action(GEOMOp::OpDeleteAnnotation);
+      if ( aDeleteAction )
+        aMenu.addAction( aDeleteAction );
       // Show/Hide actions
       if ( aProp->GetIsVisible( idFromItem( anItem ) ) )
         aMenu.addAction( myActions[GEOMOp::OpHide] );

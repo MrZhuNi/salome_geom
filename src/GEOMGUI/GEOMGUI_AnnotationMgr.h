@@ -61,6 +61,7 @@ public:
   bool IsDisplayed( const QString& theEntry, const int theIndex, SOCC_Viewer* theView = 0 ) const;
   void Display( const QString& theEntry, const int theIndex, SOCC_Viewer* theView = 0 );
   void Erase( const QString& theEntry, const int theIndex, SOCC_Viewer* theView = 0 );
+  void EraseRemovedAnnotation( const QString& theEntry, const int theIndex );
   void Redisplay( const QString& theEntry, const int theIndex,
                   const GEOMGUI_AnnotationAttrs::Properties& theProperties);
   void Redisplay( const QString& theEntry, const int theIndex,
@@ -86,6 +87,10 @@ public:
   QString makeAnnotationEntry( const QString& theEntry, const int theIndex );
 
   void storeFixedPosition( const QString& theEntry, SOCC_Viewer* theView );
+
+  bool getIndexFromEntry( const QString& theEntry, QString& theObjEntry, int& theIndex );
+
+  bool isAnnotationEntry( const QString& theEntry ) { return theEntry.indexOf( GetEntrySeparator() ) != -1; }
 
 protected:
 

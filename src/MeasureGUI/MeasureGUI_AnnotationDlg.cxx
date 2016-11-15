@@ -326,6 +326,14 @@ void MeasureGUI_AnnotationDlg::Init()
 
     myGeomGUI->GetAnnotationMgr()->SetPreviewStyle( myEditAnnotationEntry, myEditAnnotationIndex, true );
 
+    SalomeApp_Application* anApp = myGeomGUI->getApp();
+    if ( anApp )
+    {
+      OCCViewer_ViewManager* aVM = (OCCViewer_ViewManager*)anApp->getViewManager( OCCViewer_Viewer::Type(), false );
+      OCCViewer_Viewer* aViewer = (OCCViewer_Viewer*)aVM->getViewModel();
+      aViewer->unHighlightAll( true, true );
+    }
+
     redisplayPreview();
   }
 }
@@ -758,6 +766,8 @@ bool MeasureGUI_AnnotationDlg::execute()
     myGeomGUI->emitAnnotationsUpdated( QString( myShape->GetStudyEntry() ) );
 
     erasePreview( true );
+
+    globalSelection( myGeomGUI->getLocalSelectionMode() , true );
 
     myGeomGUI->GetAnnotationMgr()->Display( myShape->GetStudyEntry(), aShapeAnnotations->GetNbAnnotation()-1 );
   }
