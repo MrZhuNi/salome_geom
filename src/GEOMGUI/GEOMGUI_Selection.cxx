@@ -26,6 +26,7 @@
 #include "GEOMGUI_Selection.h"
 #include <GEOMGUI_DimensionProperty.h>
 #include <GEOMGUI_AnnotationAttrs.h>
+#include <GEOMGUI_AnnotationMgr.h>
 
 #include "GeometryGUI.h"
 #include "GEOM_Displayer.h"
@@ -152,6 +153,8 @@ QVariant GEOMGUI_Selection::parameter( const QString& p ) const
     v = hasImported();
   else if ( p == "allImported" )
     v = allImported();
+  else if (p == "annotationsCount")
+    v = annotationsCount();
   else
     v = LightApp_Selection::parameter( p );
   return v;
@@ -212,6 +215,9 @@ QVariant GEOMGUI_Selection::parameter( const int idx, const QString& p ) const
 // the method to skip temporary objects from selection (called from LightApp)
 bool GEOMGUI_Selection::processOwner( const LightApp_DataOwner* theOwner )
 {
+  if ( theOwner->entry().contains( GEOMGUI_AnnotationMgr::GetEntrySeparator() ) ) {
+    myAnnotationEntries.append( theOwner->entry() );
+  }
   return !theOwner->entry().contains("_");
 }
 
@@ -856,6 +862,11 @@ bool GEOMGUI_Selection::hasVisibleDimensions( const int theIndex ) const
   }
 
   return isAnyVisible;
+}
+
+int GEOMGUI_Selection::annotationsCount() const
+{
+  return myAnnotationEntries.size();
 }
 
 bool GEOMGUI_Selection::hasAnnotations( const int theIndex, bool& theHidden, bool& theVisible ) const
