@@ -263,6 +263,7 @@ void MeasureGUI_AnnotationDlg::Init()
 
     redisplayPreview();
   } else { // edition
+    myIsPositionDefined = true;
     mySelectionMode = TopAbs_SHAPE;
     // find annotation
     GEOMGUI_TextTreeWdg* aTextTreeWdg = myGeomGUI->GetTextTreeWdg();
