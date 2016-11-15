@@ -64,7 +64,7 @@ GEOM_Annotation::GEOM_Annotation() : AIS_InteractiveObject()
   SetIsScreenFixed( Standard_False );
   SetAttachPoint( gp_Pnt( 0.0, 0.0, 0.0 ) );
   SetDisplayMode( 0 );
-  SetZLayer( Graphic3d_ZLayerId_Top );
+  SetZLayer( Graphic3d_ZLayerId_Default );
   SetAutoHide( Standard_True );
   SetHilightMode( HighlightAll );
   SetMutable( Standard_True );
@@ -156,7 +156,7 @@ void GEOM_Annotation::SetIsScreenFixed( const Standard_Boolean theIsFixed )
 
   AIS_InteractiveObject::SetTransformPersistence( aPersistence );
 
-  SetZLayer( myIsScreenFixed ? Graphic3d_ZLayerId_Topmost : Graphic3d_ZLayerId_Top );
+  SetZLayer( myIsScreenFixed ? Graphic3d_ZLayerId_Topmost : Graphic3d_ZLayerId_Default );
 
   SetToUpdate();
 
@@ -363,7 +363,7 @@ void GEOM_Annotation::SetDepthCulling( const Standard_Boolean theToEnable )
 // =======================================================================
 void GEOM_Annotation::SetDefaultZLayer()
 {
-  SetZLayer( myIsScreenFixed ? Graphic3d_ZLayerId_Topmost : Graphic3d_ZLayerId_Top );
+  SetZLayer( myIsScreenFixed ? Graphic3d_ZLayerId_Topmost : Graphic3d_ZLayerId_Default );
 
   SetToUpdate();
 }
@@ -906,7 +906,8 @@ void GEOM_Annotation::GEOM_AnnotationOwner::HilightWithColor( const Handle(PrsMg
 
   myPrsSh->SetZLayer ( Selectable()->ZLayer() );
 
-  thePM->Color( Selectable(), theStyle, theMode, NULL, Selectable()->ZLayer() );
+  thePM->Color( Selectable(), theStyle, theMode, NULL, Graphic3d_ZLayerId_Topmost );
+
   thePM->Color( myPrsSh, theStyle, theMode, Selectable(), Graphic3d_ZLayerId_Topmost );
 }
 

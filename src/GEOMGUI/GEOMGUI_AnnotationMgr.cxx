@@ -395,6 +395,12 @@ void GEOMGUI_AnnotationMgr::UpdateVisibleAnnotations( const QString& theEntry, S
     SOCC_Prs* aPrs =
       dynamic_cast<SOCC_Prs*> (anIt.value());
 
+    GEOMGUI_AnnotationAttrs::Properties aProperty;
+    GEOM::GEOM_Object_ptr anObject;
+    getObject( theEntry, anIt.key(), anObject, aProperty );
+    TopoDS_Shape aShape = GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), anObject );
+    gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
+
     AIS_ListOfInteractive aIObjects;
     aPrs->GetObjects( aIObjects );
     AIS_ListOfInteractive::Iterator aIOIt( aIObjects );
@@ -407,6 +413,24 @@ void GEOMGUI_AnnotationMgr::UpdateVisibleAnnotations( const QString& theEntry, S
         continue;
 
       setDisplayProperties( aPresentation, aView, theEntry );
+
+      if ( !aShape.IsNull() ) {
+
+        gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
+        GEOMGUI_AnnotationAttrs::SetupPresentation( aPresentation, aProperty, aShapeLCS );
+        if ( aProperty.ShapeType == TopAbs_SHAPE ) {
+          aPresentation->SetHilightShape( aShape );
+        }
+        else if ( aProperty.ShapeIndex > 0 ) {
+          TopTools_IndexedMapOfShape aSubShapeMap;
+          TopExp::MapShapes( aShape, static_cast<TopAbs_ShapeEnum>( aProperty.ShapeType ), aSubShapeMap );
+          if ( aProperty.ShapeIndex <= aSubShapeMap.Extent() ) {
+            aPresentation->SetHilightShape( aSubShapeMap( aProperty.ShapeIndex ) );
+          }
+        }
+      }
+
+      aView->getAISContext()->Redisplay( aPresentation );
     }
   }
   getDisplayer()->UpdateViewer();
