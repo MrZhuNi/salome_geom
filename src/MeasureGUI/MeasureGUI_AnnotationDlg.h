@@ -46,6 +46,7 @@ class QGroupBox;
 class QLineEdit;
 class QPushButton;
 class QComboBox;
+class QCheckBox;
 class SalomeApp_IntSpinBox;
 class MeasureGUI_AnnotationInteractor;
 
@@ -115,7 +116,7 @@ private:
   // update shape name by shape selection if it has not been manually modified yet
   bool                                myShapeNameModified;
   QLineEdit*                          myShapeName;
-  QComboBox*                          myTypeCombo;
+  QCheckBox*                          myIsScreenFixed;
 
   QComboBox*                          mySubShapeTypeCombo;
 

@@ -147,17 +147,13 @@ MeasureGUI_AnnotationDlg::MeasureGUI_AnnotationDlg( GeometryGUI* theGeometryGUI,
   myShapeName->setEnabled( myIsCreation );
 
   // data type
-  QLabel* typeLabel = new QLabel( tr( "ANNOTATION_TYPE" ), propGroup );
-  myTypeCombo = new QComboBox( propGroup );
-  myTypeCombo->addItem( tr( "3D" ), 0 );
-  myTypeCombo->addItem( tr( "2D" ), 1 );
-  myTypeCombo->setCurrentIndex( 0 ); // 3D, not fixed
+  myIsScreenFixed = new QCheckBox( tr( "ANNOTATION_IS_SCREEN_FIXED" ), propGroup );
+  myIsScreenFixed->setChecked( false ); // 3D, not fixed
 
   propLayout->addWidget( shapeLabel, 1, 0 );
   propLayout->addWidget( myShapeSelBtn, 1, 1 );
   propLayout->addWidget( myShapeName, 1, 2 );
-  propLayout->addWidget( typeLabel, 2, 0, 1, 2 );
-  propLayout->addWidget( myTypeCombo, 2, 2 );
+  propLayout->addWidget( myIsScreenFixed, 2, 0, 1, 3 );
   propLayout->setColumnStretch( 2, 5 );
 
   QLabel* shapeTypeLabel = new QLabel( tr( "ANNOTATION_SUB_SHAPE" ), propGroup );
@@ -237,7 +233,7 @@ void MeasureGUI_AnnotationDlg::Init()
 
     myTextEdit->setText( myAnnotationProperties.Text );
     myShapeNameModified = false;
-    myTypeCombo->setCurrentIndex( !myAnnotationProperties.IsScreenFixed ? 0 : 1 );
+    myIsScreenFixed->setChecked( myAnnotationProperties.IsScreenFixed );
 
     int aSubShapeTypeIndex = -1;
     int aTypesCount = aTypesCount = mySubShapeTypeCombo->count();
@@ -259,7 +255,7 @@ void MeasureGUI_AnnotationDlg::Init()
         SLOT( SetEditCurrentArgument() ) );
 
     connect( myTextEdit, SIGNAL( textChanged( const QString& ) ), this, SLOT( onTextChange() ) );
-    connect( myTypeCombo, SIGNAL( currentIndexChanged( int ) ), this, SLOT( onTypeChange() ) );
+    connect( myIsScreenFixed, SIGNAL( clicked( bool ) ), this, SLOT( onTypeChange() ) );
     connect( mySubShapeTypeCombo, SIGNAL( currentIndexChanged( int ) ),
         this, SLOT( onSubShapeTypeChange() ) );
 
@@ -290,7 +286,7 @@ void MeasureGUI_AnnotationDlg::Init()
     /// fill dialog controls
     myTextEdit->setText( myAnnotationProperties.Text );
     myShapeNameModified = false;
-    myTypeCombo->setCurrentIndex( !myAnnotationProperties.IsScreenFixed ? 0 : 1 );
+    myIsScreenFixed->setChecked( myAnnotationProperties.IsScreenFixed );
 
     int aSubShapeTypeIndex = -1;
     int aTypesCount = aTypesCount = mySubShapeTypeCombo->count();
@@ -325,7 +321,7 @@ void MeasureGUI_AnnotationDlg::Init()
 
     // connect controls
     connect( myTextEdit, SIGNAL( textChanged( const QString& ) ), this, SLOT( onTextChange() ) );
-    connect( myTypeCombo, SIGNAL( currentIndexChanged( int ) ), this, SLOT( onTypeChange() ) );
+    connect( myIsScreenFixed, SIGNAL( clicked( bool ) ), this, SLOT( onTypeChange() ) );
 
     myGeomGUI->GetAnnotationMgr()->SetPreviewStyle( myEditAnnotationEntry, myEditAnnotationIndex, true );
 
@@ -604,7 +600,7 @@ void MeasureGUI_AnnotationDlg::onTypeChange()
 {
   const bool isScreenFixedBefore = myAnnotationProperties.IsScreenFixed;
 
-  myAnnotationProperties.IsScreenFixed = myTypeCombo->currentIndex() == 1;
+  myAnnotationProperties.IsScreenFixed = myIsScreenFixed->isChecked();
 
   // convert point position from screen space to 3D space
   if ( myIsPositionDefined ) {
@@ -685,6 +681,10 @@ void MeasureGUI_AnnotationDlg::onDragged( Handle_GEOM_Annotation theAnnotation )
 
   if ( !myAnnotationProperties.IsScreenFixed ) {
     myAnnotationProperties.Position = theAnnotation->GetPosition().Transformed( aToShapeLCS );
+
+    if ( !myIsCreation ) {
+      myGeomGUI->GetAnnotationMgr()->storeFixedPosition( myEditAnnotationEntry, 0 );
+    }
   }
   else {
     myAnnotationProperties.Position = theAnnotation->GetPosition();

@@ -6798,6 +6798,10 @@ Please specify suitable arguments.</translation>
         <translation>Sub-shape type</translation>
     </message>
     <message>
+        <source>ANNOTATION_IS_SCREEN_FIXED</source>
+        <translation>Fixed screen position</translation>
+    </message>
+    <message>
         <source>WHOLE_SHAPE</source>
         <translation>Whole shape</translation>
     </message>

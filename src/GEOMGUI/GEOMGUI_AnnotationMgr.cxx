@@ -157,6 +157,7 @@ void GEOMGUI_AnnotationMgr::Display( const QString& theEntry, const int theIndex
 
   // change persistent for the entry: set visible state in true for indices which presentations are shown
   storeVisibleState( theEntry, theView );
+  storeFixedPosition( theEntry, theView );
 }
 
 void GEOMGUI_AnnotationMgr::Redisplay( const QString& theEntry, const int theIndex,
@@ -542,6 +543,47 @@ void GEOMGUI_AnnotationMgr::getObject( const QString& theEntry, const int theInd
     aShapeAnnotations->GetProperties( theIndex, theProperty );
 
     theObject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject(aSObj) );
+  }
+}
+
+void GEOMGUI_AnnotationMgr::storeFixedPosition( const QString& theEntry, SOCC_Viewer* theView )
+{
+  SOCC_Viewer* aView = viewOrActiveView( theView );
+  if ( !aView || !myVisualized.contains( aView ) )
+    return;
+
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( getApplication()->activeStudy() );
+  _PTR(SObject) aSObj = aStudy->studyDS()->FindObjectID( theEntry.toStdString() );
+  const Handle(GEOMGUI_AnnotationAttrs) aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
+  if ( aShapeAnnotations.IsNull() )
+    return;
+
+
+  EntryToAnnotations anEntryToAnnotation = myVisualized[aView];
+  AnnotationToPrs anAnnotationToPrs;
+  if ( anEntryToAnnotation.contains( theEntry ) )
+    anAnnotationToPrs = anEntryToAnnotation[theEntry];
+
+  AnnotationToPrs::iterator anIt = anAnnotationToPrs.begin();
+  for (; anIt != anAnnotationToPrs.end(); ++anIt ) {
+    int anIndex = anIt.key();
+    bool isFixedAnnotation = aShapeAnnotations->GetIsScreenFixed( anIndex );
+    if ( !isFixedAnnotation )
+      continue;
+
+    SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*> (anIt.value());
+    Handle(GEOM_Annotation) anAnnotationPresentation;
+
+    AIS_ListOfInteractive aIObjects;
+    aPrs->GetObjects( aIObjects );
+    AIS_ListOfInteractive::Iterator aIOIt( aIObjects );
+    for ( ; aIOIt.More(); aIOIt.Next() ) {
+      anAnnotationPresentation = Handle(GEOM_Annotation)::DownCast( aIOIt.Value() );
+      if ( !anAnnotationPresentation.IsNull() )
+        break;
+    }
+    if ( !anAnnotationPresentation.IsNull() )
+      aShapeAnnotations->SetPosition( anIndex, anAnnotationPresentation->GetPosition() );
   }
 }
 

@@ -85,6 +85,8 @@ public:
 
   QString makeAnnotationEntry( const QString& theEntry, const int theIndex );
 
+  void storeFixedPosition( const QString& theEntry, SOCC_Viewer* theView );
+
 protected:
 
   SalomeApp_Application* getApplication() const { return myApplication; }
