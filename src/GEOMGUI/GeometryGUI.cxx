@@ -1625,7 +1625,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpEditAnnotation ), -1, -1 );  // edit annotation
   mgr->setRule( action( GEOMOp::OpEditAnnotation ),  clientOCC + " and annotationsCount=1", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpDeleteAnnotation ), -1, -1 );  // delete annotation
-  mgr->setRule( action( GEOMOp::OpDeleteAnnotation ),  clientOCC + " and (annotationsCount>1)", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpDeleteAnnotation ),  clientOCC + " and annotationsCount>0", QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
 
   QString canDisplay = "($component={'GEOM'}) and (selcount>0) and ({true} in $canBeDisplayed) ",
