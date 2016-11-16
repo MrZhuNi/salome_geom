@@ -1062,7 +1062,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 list of published sub-shapes
             """
             # Example: see GEOM_TestAll.py
-            return self.RestoreGivenSubShapesO(self.myStudy, theObject, theArgs,
+            return self.RestoreGivenSubShapesO(theObject, theArgs,
                                                theFindMethod, theInheritFirstArg, theAddPrefix)
 
         # end of l3_restore_ss
