@@ -503,12 +503,11 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
         TopoDS_Shape aShape;
         GEOMBase::GetShape( myShape.get(), aShape );
 
-        if ( !getPickedPoint( anAttachPoint, aShape ) ) {
+        hasAttachPoint = getPickedPoint( anAttachPoint, aShape );
+        if ( !hasAttachPoint ) {
 
-          anAttachPoint = getAttachPoint( aShape );
+          anAttachPoint = getAttachPoint( aShape, hasAttachPoint );
         }
-
-        hasAttachPoint = true;
       }
     } else if ( myEditCurrentArgument == mySubShapeName ) {
       if ( !myShape->_is_nil() ) {
@@ -537,11 +536,11 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
             TopoDS_Shape aShape;
             GEOMBase::GetShape( myShape.get(), aShape );
 
-            if ( !getPickedPoint( anAttachPoint, aSubShape ) ) {
+            hasAttachPoint = getPickedPoint( anAttachPoint, aSubShape );
+            if ( !hasAttachPoint ) {
 
-              anAttachPoint = getAttachPoint( aSubShape );
+              anAttachPoint = getAttachPoint( aSubShape, hasAttachPoint );
             }
-            hasAttachPoint = true;
           }
         }
       }
@@ -739,6 +738,11 @@ bool MeasureGUI_AnnotationDlg::isValid( QString& theMessage )
       //RETURN_WITH_MSG( CORBA::is_nil( myShape ), tr( "NO_FIELD" ) )
     }
   }
+
+  if ( myIsCreation ) {
+    RETURN_WITH_MSG( !myIsPositionDefined, tr( "NO_POSITION" ) )
+  }
+
   return true;
 }
 
@@ -869,8 +873,9 @@ bool MeasureGUI_AnnotationDlg::getPickedPoint( gp_Pnt& thePnt, const TopoDS_Shap
 {
   if ( theShape.ShapeType() == TopAbs_VERTEX )
   {
-    thePnt = getAttachPoint( theShape );
-    return true;
+    bool isOk = false;
+    thePnt = getAttachPoint( theShape, isOk );
+    return isOk;
   }
 
   const SUIT_ViewWindow* anActiveView = GEOMBase_Helper::getActiveView();
@@ -902,80 +907,55 @@ bool MeasureGUI_AnnotationDlg::getPickedPoint( gp_Pnt& thePnt, const TopoDS_Shap
 // function : getAttachPoint
 // purpose  : computes default attachment point on the shape
 //=================================================================================
-gp_Pnt MeasureGUI_AnnotationDlg::getAttachPoint( const TopoDS_Shape& theShape )
+gp_Pnt MeasureGUI_AnnotationDlg::getAttachPoint( const TopoDS_Shape& theShape, bool& theIsOk )
 {
-  TopoDS_Shape aAttachShape;
-  if ( theShape.ShapeType() == TopAbs_COMPOUND )
-  {
-    QStack< NCollection_Handle<TopoDS_Iterator> > aItStack;
-    aItStack.push( NCollection_Handle<TopoDS_Iterator>( new TopoDS_Iterator( theShape ) ) );
-    while ( aAttachShape.IsNull() && !aItStack.empty() )
-    {
-      NCollection_Handle<TopoDS_Iterator> anIt = aItStack.top();
-      if ( !anIt->More() )
-      {
-        aItStack.pop();
-      }
-      else
-      {
-        const TopoDS_Shape& aShape = anIt->Value();
-        if ( aShape.ShapeType() != TopAbs_COMPSOLID )
-        {
-          aAttachShape = aShape;
-        }
-        else
-        {
-          aItStack.push( NCollection_Handle<TopoDS_Iterator>( new TopoDS_Iterator( aShape ) ) );
-        }
-      }
-    }
-  }
-  else
-  {
-    aAttachShape = theShape;
-  }
-
-  if ( aAttachShape.ShapeType() == TopAbs_COMPSOLID
-    || aAttachShape.ShapeType() == TopAbs_SOLID
-    || aAttachShape.ShapeType() == TopAbs_SHELL )
+  gp_Pnt aPnt( 0.0, 0.0, 0.0 );
+  theIsOk = true;
+  if ( theShape.ShapeType() == TopAbs_COMPSOLID
+    || theShape.ShapeType() == TopAbs_SOLID
+    || theShape.ShapeType() == TopAbs_SHELL )
   {
     Bnd_Box aBox;
-    BRepBndLib::Add( aAttachShape, aBox );
+    BRepBndLib::Add( theShape, aBox );
     const gp_Pnt aMin = aBox.CornerMin();
     const gp_Pnt aMax = aBox.CornerMax();
-    return gp_Pnt( (aMin.X() + aMax.X()) / 2.0,
+    aPnt = gp_Pnt( (aMin.X() + aMax.X()) / 2.0,
                    (aMin.Y() + aMax.Y()) / 2.0,
                    (aMin.Z() + aMax.Z()) / 2.0 );
   }
-  else if ( aAttachShape.ShapeType() == TopAbs_FACE )
+  else if ( theShape.ShapeType() == TopAbs_FACE )
   {
-    BRepAdaptor_Surface aFace( TopoDS::Face( aAttachShape ) );
+    BRepAdaptor_Surface aFace( TopoDS::Face( theShape ) );
     const Standard_Real aU1 = aFace.FirstUParameter();
     const Standard_Real aU2 = aFace.LastUParameter();
     const Standard_Real aV1 = aFace.FirstVParameter();
     const Standard_Real aV2 = aFace.LastVParameter();
-    return aFace.Value( ( aU1 + aU2 ) / 2.0, ( aV1 + aV2 ) / 2.0 );
+    aPnt = aFace.Value( ( aU1 + aU2 ) / 2.0, ( aV1 + aV2 ) / 2.0 );
   }
-  else if ( aAttachShape.ShapeType() == TopAbs_WIRE )
+  else if ( theShape.ShapeType() == TopAbs_WIRE )
   {
-    BRepAdaptor_CompCurve aWire( TopoDS::Wire( aAttachShape ) );
+    BRepAdaptor_CompCurve aWire( TopoDS::Wire( theShape ) );
     const Standard_Real aP1 = aWire.FirstParameter();
     const Standard_Real aP2 = aWire.LastParameter();
-    return aWire.Value( ( aP1 + aP2 ) / 2.0 );
+    aPnt = aWire.Value( ( aP1 + aP2 ) / 2.0 );
   }
-  else if ( aAttachShape.ShapeType() == TopAbs_EDGE )
+  else if ( theShape.ShapeType() == TopAbs_EDGE )
   {
-    BRepAdaptor_Curve aEdge( TopoDS::Edge( aAttachShape ) );
+    BRepAdaptor_Curve aEdge( TopoDS::Edge( theShape ) );
     const Standard_Real aP1 = aEdge.FirstParameter();
     const Standard_Real aP2 = aEdge.LastParameter();
-    return aEdge.Value( ( aP1 + aP2 ) / 2.0 );
+    aPnt = aEdge.Value( ( aP1 + aP2 ) / 2.0 );
   }
-  else if ( aAttachShape.ShapeType() == TopAbs_VERTEX )
+  else if ( theShape.ShapeType() == TopAbs_VERTEX )
   {
-    return BRep_Tool::Pnt( TopoDS::Vertex( aAttachShape ) );
+    aPnt = BRep_Tool::Pnt( TopoDS::Vertex( theShape ) );
+  }
+  else
+  {
+    theIsOk = false;
   }
 
-  return gp_Pnt( 0.0, 0.0, 0.0 );
+  return aPnt;
 }
 
 //=================================================================================

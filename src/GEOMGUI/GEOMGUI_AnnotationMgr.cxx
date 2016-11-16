@@ -87,8 +87,6 @@ SALOME_Prs* GEOMGUI_AnnotationMgr::CreatePresentation( const GEOMGUI_AnnotationA
 
   aPresentation->SetIsScreenFixed( theProperty.IsScreenFixed );
 
-  setDisplayProperties( aPresentation, aView, getEntry( theObject ).c_str() );
-
   TopoDS_Shape aShape = GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), theObject );
   if ( !aShape.IsNull() ) {
 
@@ -110,6 +108,8 @@ SALOME_Prs* GEOMGUI_AnnotationMgr::CreatePresentation( const GEOMGUI_AnnotationA
       }
     }
   }
+
+  setDisplayProperties( aPresentation, aView, getEntry( theObject ).c_str() );
 
   // add Prs to preview
   SUIT_ViewWindow* vw = getApplication()->desktop()->activeWindow();
@@ -412,8 +412,6 @@ void GEOMGUI_AnnotationMgr::UpdateVisibleAnnotations( const QString& theEntry, S
       if ( aPresentation.IsNull() )
         continue;
 
-      setDisplayProperties( aPresentation, aView, theEntry );
-
       if ( !aShape.IsNull() ) {
 
         gp_Ax3 aShapeLCS = gp_Ax3().Transformed( aShape.Location().Transformation() );
@@ -429,6 +427,8 @@ void GEOMGUI_AnnotationMgr::UpdateVisibleAnnotations( const QString& theEntry, S
           }
         }
       }
+
+      setDisplayProperties( aPresentation, aView, theEntry );
 
       aView->getAISContext()->Redisplay( aPresentation );
     }

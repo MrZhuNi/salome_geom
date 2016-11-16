@@ -97,7 +97,7 @@ private:
   TopAbs_ShapeEnum                    getShapeType() const;
 
   bool                                getPickedPoint( gp_Pnt& thePnt, const TopoDS_Shape& theShape );
-  gp_Pnt                              getAttachPoint( const TopoDS_Shape& theShape );
+  gp_Pnt                              getAttachPoint( const TopoDS_Shape& theShape, bool& theIsOk );
   gp_Pnt                              getDefaultPosition( const gp_Pnt& theAttach );
 
 private:
