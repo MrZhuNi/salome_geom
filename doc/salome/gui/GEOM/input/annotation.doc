@@ -26,24 +26,25 @@ In this dialog you can:
   <li>Select a <b>Shape Type</b> to which the annotation will be assigned on the shape.
   It contains "Whole shape", "Vertex", "Edge", "Face" and "Solid" choices.</li>
   <li>Select a sub shape to assign annotation to. Text control contains information about local selection in the viewer.</li>
-  <li>Push \b Apply or <b>Apply and Close</b> button to commit creation of the field.<li>
-  <li>Dragging of annotation presentation in 3D view to select an appropriate position.
+  <li>Push \b Apply or <b>Apply and Close</b> button to commit creation of the field.</li>
+  <li>Move annotation dragging it in 3D view to select an appropriate position.</li>
 </ul>
 
 Annotations appear in an Annotations sub-tree in Text Browser.</li>
-All annotations may be shown/hidden in a 3D view using corresponded popup menu on Annotations item in Text Browser.
-Annotations of a shape may be shown/hidden in a 3D view using corresponded popup menu on the shape item in Object Browser.
-
 The foolowing context menu commands are provided for annotation object in Text Browser:
 <ul>
   <li><b>Edit</b> allows modifying the annotation text, the positioning algorithm and the annotation position.</li>
   <li><b>Delete</b> deletes selected annotation.</li>
   <li><b>Show</b>/<b>Hide</b> change visibility of annotation in the active view.</li>
 </ul>
-
 <b>Edit</b> and <b>Delete</b> actions are also available in View 3d for selected annotation object/s.
 
-Synchronization of selection between 3D view and Text browser is available. That means that selection of annotation in 3D view will select this annotation in Text browser and vice versa.
+All annotations may be shown/hidden in a 3D view using corresponded popup menu on Annotations item in Text Browser.
+
+Annotations of a shape may be shown/hidden in a 3D view using corresponded popup menu on the shape item in Object Browser.
+
+Synchronization of selection between 3D view and Text browser is available. It means that selection of annotation in 3D view will select this annotation in Text browser and vice versa.
+
 Annotation is logically connected to the shape:
 <ul>
   <li>Selection of an annotation will highlight corresponding shape/subshape in 3D view.</li>
