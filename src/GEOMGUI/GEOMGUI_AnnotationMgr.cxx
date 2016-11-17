@@ -24,6 +24,7 @@
 #include <GEOM_Client.hxx>
 #include <GEOM_Constants.h>
 #include <GEOM_Displayer.h>
+#include <GEOMGUI_TextTreeWdg.h>
 
 #include <GeometryGUI.h>
 
@@ -144,7 +145,8 @@ bool GEOMGUI_AnnotationMgr::IsDisplayed( const QString& theEntry, const int theI
 // purpose  : Displays annotation shape presentation in view. It creates an annotation presentation
 // and stores it in an internal container
 //=======================================================================
-void GEOMGUI_AnnotationMgr::Display( const QString& theEntry, const int theIndex, SOCC_Viewer* theView )
+void GEOMGUI_AnnotationMgr::Display( const QString& theEntry, const int theIndex, SOCC_Viewer* theView,
+                                     const bool isStoreViewState, const bool isUpdateViewer )
 {
   SOCC_Viewer* aView = viewOrActiveView( theView );
   if ( !aView )
@@ -161,7 +163,8 @@ void GEOMGUI_AnnotationMgr::Display( const QString& theEntry, const int theIndex
   QString anEntry = QString("%1%2%3").arg(theEntry).arg(GetEntrySeparator()).arg(theIndex);
   SALOME_Prs* aPrs = CreatePresentation( aProperty, anObject, aView, anEntry );
   ((SALOME_View*)aView)->Display( getDisplayer(), aPrs );
-  getDisplayer()->UpdateViewer();
+  if ( isUpdateViewer )
+    getDisplayer()->UpdateViewer();
 
   EntryToAnnotations anEntryToMap;
   if ( myVisualized.contains( aView ) )
@@ -175,9 +178,11 @@ void GEOMGUI_AnnotationMgr::Display( const QString& theEntry, const int theIndex
   anEntryToMap[theEntry] = anAnnotationToPrsMap;
   myVisualized[aView] = anEntryToMap;
 
-  // change persistent for the entry: set visible state in true for indices which presentations are shown
-  storeVisibleState( theEntry, theView );
-  storeFixedPosition( theEntry, theView );
+  if ( isStoreViewState ) {
+    // change persistent for the entry: set visible state in true for indices which presentations are shown
+    storeVisibleState( theEntry, theView );
+    storeFixedPosition( theEntry, theView );
+  }
 }
 
 void GEOMGUI_AnnotationMgr::Redisplay( const QString& theEntry, const int theIndex,
@@ -251,7 +256,8 @@ void GEOMGUI_AnnotationMgr::Redisplay( const QString& theEntry, const int theInd
   }
 }
 
-void GEOMGUI_AnnotationMgr::Erase( const QString& theEntry, const int theIndex, SOCC_Viewer* theView )
+void GEOMGUI_AnnotationMgr::Erase( const QString& theEntry, const int theIndex, SOCC_Viewer* theView,
+                                   const bool isUpdateViewer )
 {
   SOCC_Viewer* aView = viewOrActiveView( theView );
   if ( !aView )
@@ -271,7 +277,8 @@ void GEOMGUI_AnnotationMgr::Erase( const QString& theEntry, const int theIndex, 
   // erase presentation from the viewer
   SALOME_Prs* aPrs = anAnnotationToPrs[theIndex];
   ((SALOME_View*)aView)->Erase( getDisplayer(), aPrs );
-  getDisplayer()->UpdateViewer();
+  if ( isUpdateViewer )
+    getDisplayer()->UpdateViewer();
 
   // remove displayed parameters from an internal container
   anAnnotationToPrs.remove( theIndex );
@@ -288,7 +295,8 @@ void GEOMGUI_AnnotationMgr::Erase( const QString& theEntry, const int theIndex, 
   storeVisibleState( theEntry, theView );
 }
 
-void GEOMGUI_AnnotationMgr::DisplayVisibleAnnotations( const QString& theEntry, SOCC_Viewer* theView )
+void GEOMGUI_AnnotationMgr::DisplayVisibleAnnotations( const QString& theEntry, SOCC_Viewer* theView,
+                                                       const bool isUpdateViewer )
 {
   SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( getApplication()->activeStudy() );
   _PTR(SObject) aSObj = aStudy->studyDS()->FindObjectID( theEntry.toStdString() );
@@ -303,12 +311,13 @@ void GEOMGUI_AnnotationMgr::DisplayVisibleAnnotations( const QString& theEntry, 
     for ( int anIndex = 0; anIndex < aCount; ++anIndex )
     {
       if ( isVisible[anIndex] )
-        Display( theEntry, anIndex, theView );
+        Display( theEntry, anIndex, theView, true, isUpdateViewer );
     }
   }
 }
 
-void GEOMGUI_AnnotationMgr::EraseVisibleAnnotations( const QString& theEntry, SOCC_Viewer* theView )
+void GEOMGUI_AnnotationMgr::EraseVisibleAnnotations( const QString& theEntry, SOCC_Viewer* theView,
+                                                     const bool isUpdateViewer )
 {
   SOCC_Viewer* aView = viewOrActiveView( theView );
   if ( !myVisualized.contains( aView ) )
@@ -333,7 +342,8 @@ void GEOMGUI_AnnotationMgr::EraseVisibleAnnotations( const QString& theEntry, SO
     SALOME_Prs* aPrs = anAnnotationToPrs[anIndex];
     ((SALOME_View*)aView)->Erase( getDisplayer(), aPrs );
   }
-  getDisplayer()->UpdateViewer();
+  if ( isUpdateViewer )
+    getDisplayer()->UpdateViewer();
   anEntryToAnnotation.remove( theEntry );
   myVisualized[aView] = anEntryToAnnotation;
 }
@@ -432,6 +442,57 @@ void GEOMGUI_AnnotationMgr::UpdateVisibleAnnotations( const QString& theEntry, S
 
       aView->getAISContext()->Redisplay( aPresentation );
     }
+  }
+  getDisplayer()->UpdateViewer();
+}
+
+void GEOMGUI_AnnotationMgr::DisplayAllAnnotations( SOCC_Viewer* theView )
+{
+  SOCC_Viewer* aView = viewOrActiveView( theView );
+  if ( !myVisualized.contains( aView ) )
+    return;
+
+  GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( getApplication()->activeModule() );
+  GEOMGUI_TextTreeWdg* aTextWidget = aModule->GetTextTreeWdg();
+  QList<QString> anEntries = aTextWidget->getAllEntries( GEOMGUI_TextTreeWdg::AnnotationShape );
+
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( getApplication()->activeStudy() );
+  for ( int i = 0, aCount = anEntries.size(); i < aCount; i++ ) {
+     QString anEntry = anEntries[i];
+
+    _PTR(SObject) aSObj = aStudy->studyDS()->FindObjectID( anEntry.toStdString() );
+    if ( !aSObj )
+      continue;
+
+    const Handle(GEOMGUI_AnnotationAttrs) aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
+    if ( !aShapeAnnotations.IsNull() )
+      continue;
+
+    int anAnnotationsCount = aShapeAnnotations->GetNbAnnotation();
+    for ( int anIndex = 0; anIndex < anAnnotationsCount; ++anIndex )
+    {
+      Display( anEntry, anIndex, aView, false, false );
+    }
+    getDisplayer()->UpdateViewer();
+    storeVisibleState( anEntry, aView );
+    storeFixedPosition( anEntry, aView );
+  }
+}
+
+void GEOMGUI_AnnotationMgr::EraseAllAnnotations( SOCC_Viewer* theView )
+{
+  SOCC_Viewer* aView = viewOrActiveView( theView );
+  if ( !myVisualized.contains( aView ) )
+    return;
+
+  GeometryGUI* aModule = dynamic_cast<GeometryGUI*>( getApplication()->activeModule() );
+  GEOMGUI_TextTreeWdg* aTextWidget = aModule->GetTextTreeWdg();
+  QList<QString> anEntries = aTextWidget->getAllEntries( GEOMGUI_TextTreeWdg::AnnotationShape );
+
+  for ( int i = 0, aCount = anEntries.size(); i < aCount; i++ ) {
+    QString anEntry = anEntries[i];
+    EraseVisibleAnnotations( anEntry, aView, false );
+    storeVisibleState( anEntry, aView );
   }
   getDisplayer()->UpdateViewer();
 }

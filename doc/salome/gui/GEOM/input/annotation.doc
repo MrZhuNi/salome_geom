@@ -1,0 +1,48 @@
+/*! 
+
+\page annotation_page Shape annotation
+
+<b> Annotation </b> functionality allows showing in the viewer special user-defined text label connected to corresponding part of a CAD model with a line.
+
+\image html annotation_preview.png
+
+Shape annotation behavior are summarized below:
+<ul>
+  <li>Annotation text is always parallel to the screen and horizontal.</li>
+  <li>Annotation text is not zoomed or rotated when a 3D scene is zoomed or rotated by the user.</li>
+  <li>The user is able to modify the font, the style, the color and the size of the annotation text and the color, the width and the style of the connection line applied to all annotations.
+It can be accessed from the main menu via <b>File -> Preferences</b>. The Shape annotations group on Geometry Settings pane contains controls for it.
+  </li>
+  <li>The annotation text is defined using UTF-8 encoding and thus support any Unicode characters.</li>
+  <li>Position of an annotation in a 3D view is defined by dragging it with the mouse.</li>
+  <li>There are several algorithms for the annotation position calculation during the scene manipulations (panning, zooming, rotation):</li>
+  <ul>
+    <li> Algorithm 1: an annotation has fixed position in 2D screen coordinates (fixed screen position mode). In this mode, the annotations are always visible (appear as “topmost objects”), never hidden by the (annotated) geometry.</li>
+    <li>Algorithm 2: an annotation has fixed position in 3D model space, this position is projected onto the screen just as normal point coordinates. In this mode, some annotations may be invisible depending on the camera (position, orientation, zoom).</li>
+  </ul>
+  <li>Annotations appear in an Annotations sub-tree in Text Browser.</li>
+  <li>All annotations may be shown/hidden in a 3D view using corresponded popup menu on Annotations item in Text Browser.</li>
+  <li>Annotations of a shape may be shown/hidden in a 3D view using corresponded popup menu on the shape item in Object Browser.</li>
+  <li>Annotation is logically connected to the shape:</li>
+  <ul>
+    <li>Selection of an annotation will highlight corresponding shape/subshape in 3D view.</li>
+    <li>When the shape is deleted, the annotation will be also deleted.</li>
+  </ul>
+</ul>
+
+It can be accessed from the main menu via <b>Inspection -> Annotation </b>
+
+\image html annotation.png "Create Annotation dialog"
+
+In this dialog you can:
+<ul>
+  <li>Set <b>Text</b> text shown in View 3d and a name of annotation presented in the Text Browser.</li>
+  <li>Select a \b Shape to which the annotation will be assigned.</li>
+  <li>Set <b>Fixed screen position</b> to select alogithm for the annotation position caldulation.</li>
+  <li>Select a <b>Shape Type</b> to which the annotation will be assigned on the shape.
+  It contains "Whole shape", "Vertex", "Edge", "Face" and "Solid" choices.</li>
+  <li>Select a sub shape to assign annotation to. Text control contains information about local selection in the viewer.</li>
+  <li>Push \b Apply or <b>Apply and Close</b> button to commit creation of the field.<li>
+</ul>
+
+*/

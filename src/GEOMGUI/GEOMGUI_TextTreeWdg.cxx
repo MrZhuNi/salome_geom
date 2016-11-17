@@ -521,13 +521,14 @@ void GEOMGUI_TextTreeWdg::updateVisibilityColumn( const BranchType& theBranchTyp
 //=================================================================================
 void GEOMGUI_TextTreeWdg::showContextMenu( const QPoint& pos )
 {
-  if ( selectedItems().isEmpty() )
-    return;
-  QMenu aMenu;
-  aMenu.addAction( myActions[GEOMOp::OpShow] );
-  aMenu.addAction( myActions[GEOMOp::OpHide] );
+  CAM_Application* anApp = dynamic_cast<CAM_Application*>(myStudy->application());
+  GeometryGUI* aModule = dynamic_cast<GeometryGUI*>(anApp->activeModule());
 
-  if ( selectedItems().count() == 1 ) {
+  QMenu aMenu;
+  aMenu.addAction( aModule->action(GEOMOp::OpShowAllAnnotations) );
+  aMenu.addAction( aModule->action(GEOMOp::OpHideAllAnnotations) );
+
+  if ( !selectedItems().isEmpty() && selectedItems().count() == 1 ) {
     QTreeWidgetItem* anItem = selectedItems().first();
     QString anEntry = entryFromItem( anItem->parent() );
     if ( !anEntry.isEmpty() ) {
@@ -539,8 +540,6 @@ void GEOMGUI_TextTreeWdg::showContextMenu( const QPoint& pos )
         return;
       aMenu.clear();
       // Edit annotation action
-      CAM_Application* anApp = dynamic_cast<CAM_Application*>(myStudy->application());
-      GeometryGUI* aModule = dynamic_cast<GeometryGUI*>(anApp->activeModule());
       QAction* anEditAction = aModule->action(GEOMOp::OpEditAnnotation);
       if ( anEditAction )
         aMenu.addAction( anEditAction );
@@ -728,6 +727,15 @@ void GEOMGUI_TextTreeWdg::setSelected( const QMap<QString, QList<int> >& theAnno
       }
     }
   }
+}
+
+//=================================================================================
+// function : getAllEntries
+// purpose  :
+//=================================================================================
+QList<QString> GEOMGUI_TextTreeWdg::getAllEntries( const BranchType& theBranchType )
+{
+  return getObjects( theBranchType ).keys();
 }
 
 //=================================================================================

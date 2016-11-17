@@ -73,6 +73,8 @@ public:
   void                          getSelected( QMap<QString, QList<int> >& theAnnotations );
   void                          setSelected( const QMap<QString, QList<int> >& theAnnotations );
 
+  QList<QString>                getAllEntries( const BranchType& theBranchType );
+
 protected:
   void                          createActions();
   void                          redisplay( QString theEntry );

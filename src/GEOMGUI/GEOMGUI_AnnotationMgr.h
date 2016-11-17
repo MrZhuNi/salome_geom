@@ -59,17 +59,25 @@ public:
                                   const QString& theEntry = QString() );
 
   bool IsDisplayed( const QString& theEntry, const int theIndex, SOCC_Viewer* theView = 0 ) const;
-  void Display( const QString& theEntry, const int theIndex, SOCC_Viewer* theView = 0 );
-  void Erase( const QString& theEntry, const int theIndex, SOCC_Viewer* theView = 0 );
+  void Display( const QString& theEntry, const int theIndex, SOCC_Viewer* theView = 0,
+                const bool isStoreViewState = true, const bool isUpdateViewer = true );
+  void Erase( const QString& theEntry, const int theIndex, SOCC_Viewer* theView = 0,
+              const bool isUpdateViewer = true );
   void EraseRemovedAnnotation( const QString& theEntry, const int theIndex );
   void Redisplay( const QString& theEntry, const int theIndex,
                   const GEOMGUI_AnnotationAttrs::Properties& theProperties);
   void Redisplay( const QString& theEntry, const int theIndex,
                   const GEOMGUI_AnnotationAttrs::Properties& theProperties, SOCC_Viewer* theView );
 
-  void DisplayVisibleAnnotations( const QString& theEntry, SOCC_Viewer* theView = 0 );
-  void EraseVisibleAnnotations( const QString& theEntry, SOCC_Viewer* theView = 0 );
+  void DisplayVisibleAnnotations( const QString& theEntry, SOCC_Viewer* theView = 0,
+                                  const bool isUpdateViewer = true );
+  void EraseVisibleAnnotations( const QString& theEntry, SOCC_Viewer* theView = 0,
+                                const bool isUpdateViewer = true );
   void UpdateVisibleAnnotations( const QString& theEntry, SOCC_Viewer* theView = 0 );
+
+  void DisplayAllAnnotations( SOCC_Viewer* theView = 0 );
+  void EraseAllAnnotations( SOCC_Viewer* theView = 0 );
+
   void SetPreviewStyle( const QString& theEntry, const int theIndex, const bool theIsPreview );
 
   void RemoveView( SOCC_Viewer* theView );

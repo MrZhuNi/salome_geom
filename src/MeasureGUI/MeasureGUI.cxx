@@ -231,38 +231,44 @@ void MeasureGUI::ChangeAnnotationsVisibility( const bool theIsVisible )
     return;
 
   Handle(SALOME_InteractiveObject) anIObject = getSingleSelectedIO();
-  if ( anIObject.IsNull()
-   || !anIObject->hasEntry() )
-    return;
+  if ( !anIObject.IsNull() && anIObject->hasEntry() ) {
+    const QString aEntry = anIObject->getEntry();
 
-  const QString aEntry = anIObject->getEntry();
+    _PTR(SObject) aSObj = anActiveStudy->studyDS()->FindObjectID( aEntry.toStdString() );
 
-  _PTR(SObject) aSObj = anActiveStudy->studyDS()->FindObjectID( aEntry.toStdString() );
+    const Handle(GEOMGUI_AnnotationAttrs)
+      aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
 
-  const Handle(GEOMGUI_AnnotationAttrs)
-    aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
-
-  if ( aShapeAnnotations.IsNull() ) {
-    return;
-  }
-
-  const int aCount = aShapeAnnotations->GetNbAnnotation();
-
-  if ( aCount > 0 ) {
-
-    SUIT_OverrideCursor wc;
-
-    for ( int anI = 0; anI < aCount; ++anI ) {
-
-      if ( !theIsVisible ) {
-        getGeometryGUI()->GetAnnotationMgr()->Erase( aEntry, anI );
-      }
-      else {
-        getGeometryGUI()->GetAnnotationMgr()->Display( aEntry , anI );
-      }
+    if ( aShapeAnnotations.IsNull() ) {
+      return;
     }
 
-    getGeometryGUI()->emitAnnotationsUpdated( aEntry );
+    const int aCount = aShapeAnnotations->GetNbAnnotation();
+
+    if ( aCount > 0 ) {
+
+      SUIT_OverrideCursor wc;
+
+      for ( int anI = 0; anI < aCount; ++anI ) {
+
+        if ( !theIsVisible ) {
+          getGeometryGUI()->GetAnnotationMgr()->Erase( aEntry, anI );
+        }
+        else {
+          getGeometryGUI()->GetAnnotationMgr()->Display( aEntry , anI );
+        }
+      }
+
+      getGeometryGUI()->emitAnnotationsUpdated( aEntry );
+    }
+  }
+  else {
+    if ( theIsVisible ) {
+      getGeometryGUI()->GetAnnotationMgr()->DisplayAllAnnotations();
+    }
+    else {
+      getGeometryGUI()->GetAnnotationMgr()->EraseAllAnnotations();
+    }
   }
 }
 
