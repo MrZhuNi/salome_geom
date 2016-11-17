@@ -465,7 +465,7 @@ void GEOMGUI_AnnotationMgr::DisplayAllAnnotations( SOCC_Viewer* theView )
       continue;
 
     const Handle(GEOMGUI_AnnotationAttrs) aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
-    if ( !aShapeAnnotations.IsNull() )
+    if ( aShapeAnnotations.IsNull() )
       continue;
 
     int anAnnotationsCount = aShapeAnnotations->GetNbAnnotation();
