@@ -26,8 +26,8 @@ In this dialog you can:
   <li>Select a <b>Shape Type</b> to which the annotation will be assigned on the shape.
   It contains "Whole shape", "Vertex", "Edge", "Face" and "Solid" choices.</li>
   <li>Select a sub shape to assign annotation to. Text control contains information about local selection in the viewer.</li>
-  <li>Push \b Apply or <b>Apply and Close</b> button to commit creation of the field.</li>
   <li>Move annotation dragging it in 3D view to select an appropriate position.</li>
+  <li>Push \b Apply or <b>Apply and Close</b> button to commit creation of the field.</li>
 </ul>
 
 Annotations appear in an Annotations sub-tree in Text Browser.</li>
