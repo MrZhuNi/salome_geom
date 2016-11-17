@@ -43,6 +43,18 @@ In this dialog you can:
   It contains "Whole shape", "Vertex", "Edge", "Face" and "Solid" choices.</li>
   <li>Select a sub shape to assign annotation to. Text control contains information about local selection in the viewer.</li>
   <li>Push \b Apply or <b>Apply and Close</b> button to commit creation of the field.<li>
+  <li>Dragging of annotation presentation in 3D view to select an appropriate position.
 </ul>
+
+The foolowing context menu commands are provided for annotation object in Text Browser:
+<ul>
+  <li><b>Edit</b> allows modifying the annotation text, the positioning algorithm and the annotation position.</li>
+  <li><b>Delete</b> deletes selected annotation.</li>
+  <li><b>Show</b>/<b>Hide</b> change visibility of annotation in the active view.</li>
+</ul>
+
+<b>Edit</b> and <b>Delete</b> actions are also available in View 3d for selected annotation object/s.
+
+Synchronization of selection between 3D view and Text browser is available. That means that selection of annotation in 3D view will select this annotation in Text browser and vice versa.
 
 */
