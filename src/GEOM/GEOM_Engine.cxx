@@ -550,9 +550,14 @@ void GEOM_Engine::Close()
 {
   if (_document) {
     //Remove all GEOM Objects associated to the document
+    TColStd_SequenceOfAsciiString aSeq;
     GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It (_objects);
-    for (; It.More(); It.Next())
-      _objects.UnBind(It.Key());
+    for (; It.More(); It.Next()) {
+      aSeq.Append(It.Key());
+    }
+    for (Standard_Integer i=1; i<=aSeq.Length(); i++) {
+      _objects.UnBind(aSeq.Value(i));
+    }
 
     // Forget free labels for document
     _freeLabels.clear();
