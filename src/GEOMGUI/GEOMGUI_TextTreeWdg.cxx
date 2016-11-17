@@ -525,9 +525,6 @@ void GEOMGUI_TextTreeWdg::showContextMenu( const QPoint& pos )
   GeometryGUI* aModule = dynamic_cast<GeometryGUI*>(anApp->activeModule());
 
   QMenu aMenu;
-  aMenu.addAction( aModule->action(GEOMOp::OpShowAllAnnotations) );
-  aMenu.addAction( aModule->action(GEOMOp::OpHideAllAnnotations) );
-
   if ( !selectedItems().isEmpty() && selectedItems().count() == 1 ) {
     QTreeWidgetItem* anItem = selectedItems().first();
     QString anEntry = entryFromItem( anItem->parent() );
@@ -538,7 +535,6 @@ void GEOMGUI_TextTreeWdg::showContextMenu( const QPoint& pos )
 
       if ( aProp->GetNumber() == 0 )
         return;
-      aMenu.clear();
       // Edit annotation action
       QAction* anEditAction = aModule->action(GEOMOp::OpEditAnnotation);
       if ( anEditAction )
@@ -553,6 +549,8 @@ void GEOMGUI_TextTreeWdg::showContextMenu( const QPoint& pos )
         aMenu.addAction( myActions[GEOMOp::OpShow] );
     }
   }
+  aMenu.addAction( aModule->action(GEOMOp::OpShowAllAnnotations) );
+  aMenu.addAction( aModule->action(GEOMOp::OpHideAllAnnotations) );
   QAction* selPopupItem = aMenu.exec( viewport()->mapToGlobal(pos) );
 
   if ( selPopupItem == myActions[GEOMOp::OpShow] ||
