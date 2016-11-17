@@ -39,9 +39,9 @@ The foolowing context menu commands are provided for annotation object in Text B
 </ul>
 <b>Edit</b> and <b>Delete</b> actions are also available in View 3d for selected annotation object/s.
 
-All annotations may be shown/hidden in a 3D view using corresponded popup menu on Annotations item in Text Browser.
+All annotations may be shown/hidden in a 3D view. The corresponded popup menu is available in Text Browser.
 
-Annotations of a shape may be shown/hidden in a 3D view using corresponded popup menu on the shape item in Object Browser.
+All annotations of a shape may be shown/hidden in a 3D view using corresponded popup menu on the shape item in Object Browser.
 
 Synchronization of selection between 3D view and Text browser is available. It means that selection of annotation in 3D view will select this annotation in Text browser and vice versa.
 
