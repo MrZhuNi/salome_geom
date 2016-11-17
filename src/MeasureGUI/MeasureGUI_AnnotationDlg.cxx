@@ -450,6 +450,18 @@ void MeasureGUI_AnnotationDlg::activateSelectionArgument
   if ( theSelectionButton == myShapeSelBtn ) {
     myEditCurrentArgument = myShapeName;
     anOtherButton = mySubShapeSelBtn;
+    // throw down current sub-shape selection
+    TopAbs_ShapeEnum aShapeType = TopAbs_SHAPE;
+
+    mySubShapeTypeCombo->setCurrentIndex( 0 );
+    mySubShapeName->setText( "" );
+
+    myAnnotationProperties.ShapeType = aShapeType;
+    myAnnotationProperties.ShapeIndex = -1;
+
+    mySelectionMode = aShapeType;
+
+    updateSubShapeEnableState();
   } else if ( theSelectionButton == mySubShapeSelBtn ) {
     myEditCurrentArgument = mySubShapeName;
     anOtherButton = myShapeSelBtn;
@@ -489,6 +501,8 @@ void MeasureGUI_AnnotationDlg::SelectionIntoArgument()
         if ( !myShapeNameModified ) {
           myTextEdit->setText( aName );
           onTextChange();
+          // modified state should not be changed as modification was performed not manually
+          myShapeNameModified = false;
         }
       }
 
@@ -816,6 +830,9 @@ SALOME_Prs* MeasureGUI_AnnotationDlg::buildPrs()
 //=================================================================================
 void MeasureGUI_AnnotationDlg::updateSubShapeEnableState()
 {
+  if ( !myIsCreation )
+    return;
+
   bool isWholeShape = getShapeType() == TopAbs_SHAPE;
   bool aNullShape = myShape->_is_nil();
   mySubShapeSelBtn->setEnabled( !aNullShape && !isWholeShape );
