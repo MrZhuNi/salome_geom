@@ -588,18 +588,21 @@ TCollection_AsciiString GEOM_Engine::DumpPython(std::vector<TObjectData>& theObj
   {
     TCollection_AsciiString anEmptyScript;
     if( isMultiFile )
-      anEmptyScript = "def RebuildData(theStudy): pass\n";
+      anEmptyScript = "def RebuildData(): pass\n";
     return anEmptyScript;
   }
+  
+  if( isMultiFile )
+    aScript  = "import salome\n";
 
-  aScript  = "import GEOM\n";
+  aScript += "import GEOM\n";
   aScript += "from salome.geom import geomBuilder\n";
   aScript += "import math\n";
   aScript += "import SALOMEDS\n\n";
   if( isMultiFile )
-    aScript += "def RebuildData(theStudy):";
+    aScript += "def RebuildData():";
 
-  aScript += "\n\tgeompy = geomBuilder.New(theStudy)\n";
+  aScript += "\n\tgeompy = geomBuilder.New(salome.myStudy)\n";
 
   AddTextures(aScript);
 

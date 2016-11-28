@@ -831,12 +831,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Dump component to the Python script
         #  This method overrides IDL function to allow default values for the parameters.
-        def DumpPython(self, theStudy, theIsPublished=True, theIsMultiFile=True):
+        def DumpPython(self, theIsPublished=True, theIsMultiFile=True):
             """
             Dump component to the Python script
             This method overrides IDL function to allow default values for the parameters.
             """
-            return GEOM._objref_GEOM_Gen.DumpPython(self, theStudy, theIsPublished, theIsMultiFile)
+            return GEOM._objref_GEOM_Gen.DumpPython(self, theIsPublished, theIsMultiFile)
 
         ## Get name for sub-shape aSubObj of shape aMainObj
         #
