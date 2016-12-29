@@ -38,7 +38,7 @@ is already provided in the Python context of the node, with <em>my_container</em
 \code
 from salome.geom import geomBuilder
 my_container.load_component_Library("GEOM")
-engineGeom = my_container.create_component_instance("GEOM", 0)
+engineGeom = my_container.create_component_instance("GEOM")
 geompy = geomBuilder.New(theStudy, engineGeom)
 \endcode
 
