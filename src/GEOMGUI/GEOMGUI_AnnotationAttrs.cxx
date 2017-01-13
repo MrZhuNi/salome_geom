@@ -32,6 +32,7 @@
 // STL includes
 #include <string>
 #include <vector>
+#include <sstream>
 
 IMPLEMENT_STANDARD_RTTIEXT( GEOMGUI_AnnotationAttrs, Standard_Transient )
 
@@ -40,7 +41,9 @@ namespace
   static const std::string PARAMETER_COUNT = "GEOMGUI_AnnotationAttrs_Count";
 
   std::string PARAMETER_I( const std::string& s, const int i ) {
-    return std::string( s ) + std::to_string( i );
+    std::stringstream ss;
+    ss << i;
+    return std::string( s ) + ss.str();
   }
   std::string PARAMETER_IS_VISIBLE( const int i ) {
     return PARAMETER_I( "GEOMGUI_AnnotationAttrs_IsVisible", i );
