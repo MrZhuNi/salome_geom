@@ -589,8 +589,8 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
   }
 
   // Create a list to store names of created files
-  SALOMEDS::ListOfFileNames_var aSeq = new SALOMEDS::ListOfFileNames;
-  aSeq->length(1);
+  SALOMEDS_Tool::ListOfFiles aSeq;
+  aSeq.reserve(1);
   // Prepare a file name to open
   TCollection_AsciiString aNameWithExt("");
   if (isMultiFile)
@@ -601,15 +601,15 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
 #else
   aNameWithExt += TCollection_AsciiString("_GEOM.sgd");
 #endif
-  aSeq[0] = CORBA::string_dup(aNameWithExt.ToCString());
+  aSeq.push_back(CORBA::string_dup(aNameWithExt.ToCString()));
   // Build a full file name of temporary file
   TCollection_AsciiString aFullName = TCollection_AsciiString((char*)aTmpDir.c_str()) + aNameWithExt;
   // Save GEOM component in this file
   _impl->Save((char*) aFullName.ToCString());
   // Conver a file to the byte stream
-  aStreamFile = SALOMEDS_Tool::PutFilesToStream(aTmpDir.c_str(), aSeq.in(), isMultiFile);
+  aStreamFile = SALOMEDS_Tool::PutFilesToStream(aTmpDir.c_str(), aSeq, isMultiFile);
   // Remove the created file and tmp directory
-  if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.c_str(), aSeq.in(), true);
+  if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.c_str(), aSeq, true);
 
   // Return the created byte stream
   return aStreamFile._retn();
@@ -656,7 +656,7 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
   }
 
   // Conver the byte stream theStream to a file and place it in tmp directory
-  SALOMEDS::ListOfFileNames_var aSeq =
+  SALOMEDS_Tool::ListOfFiles aSeq =
     SALOMEDS_Tool::PutStreamToFiles(theStream, aTmpDir.c_str(), isMultiFile);
 
   // Prepare a file name to open
@@ -666,7 +666,7 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
 #if OCC_VERSION_MAJOR > 6
   // Get the file name.
   int         i;
-  int         aLength  = aSeq->length();
+  int         aLength  = aSeq.size();
   const char *aGeomSgd = "_GEOM.sgd";
   const char *aGeomcbf = "_GEOM.cbf";
 
@@ -694,7 +694,7 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
   if (!_impl->Load((char*) aFullName.ToCString())) return false;
 
   // Remove the created file and tmp directory
-  if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.c_str(), aSeq.in(), true);
+  if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.c_str(), aSeq, true);
 
   // creation of tree nodes for all data objects in the study
   // to support tree representation customization and drag-n-drop:
