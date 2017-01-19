@@ -113,8 +113,6 @@ namespace
         return false;
       }
       return aMgr->IsDisplayed( myEntry, theIndex );
-      //return annotationMgr()->IsDisplayed(myEntry, theIndex);
-      //return !myAttr.IsNull() ? myAttr->GetIsVisible( theIndex ) : false;
     }
     virtual void SetIsVisible( const int theIndex, const bool theIsVisible ) Standard_OVERRIDE {
       GEOMGUI_AnnotationMgr* aMgr = annotationMgr();
@@ -125,9 +123,6 @@ namespace
         annotationMgr()->Display(myEntry, theIndex);
       else
         annotationMgr()->Erase(myEntry, theIndex);
-      /*if ( !myAttr.IsNull() ) {
-        myAttr->SetIsVisible( theIndex, theIsVisible );
-      }*/
     }
     virtual void Save() Standard_OVERRIDE {
       /* every change is automatically saved */
@@ -219,6 +214,9 @@ GEOMGUI_TextTreeWdg::GEOMGUI_TextTreeWdg( SalomeApp_Application* app )
            this, SLOT( updateDimensionBranch( const QString& ) ) );
   connect( aGeomGUI, SIGNAL( SignalAnnotationsUpdated( const QString& ) ),
            this, SLOT( updateAnnotationBranch( const QString& ) ) );
+  connect( aGeomGUI, SIGNAL( SignalTextTreeRenameObject( const QString& ) ),
+           this, SLOT( updateObjectName( const QString& ) ) );
+
   connect( this, SIGNAL( itemClicked( QTreeWidgetItem*, int) ), 
            this, SLOT( onItemClicked( QTreeWidgetItem*, int ) ) );
   connect( myStudy, SIGNAL( objVisibilityChanged( QString, Qtx::VisibilityState ) ),
@@ -251,7 +249,8 @@ void GEOMGUI_TextTreeWdg::createActions()
 
 //=================================================================================
 // function : updateTree
-// purpose  :
+// purpose  : Rebuild branches of objects and remove objects if there are no more annotations
+//            for it
 //=================================================================================
 void GEOMGUI_TextTreeWdg::updateTree()
 {
@@ -288,7 +287,7 @@ void GEOMGUI_TextTreeWdg::updateTree()
 
 //=================================================================================
 // function : updateBranches
-// purpose  :
+// purpose  : Rebuild branches for object of the given entry
 //=================================================================================
 void GEOMGUI_TextTreeWdg::updateBranches( const QString& theEntry )
 {
@@ -298,7 +297,7 @@ void GEOMGUI_TextTreeWdg::updateBranches( const QString& theEntry )
 
 //=================================================================================
 // function : updateDimensionBranch
-// purpose  :
+// purpose  : Rebuild branch of dimension type for object of the given entry
 //=================================================================================
 void GEOMGUI_TextTreeWdg::updateDimensionBranch( const QString& theEntry )
 {
@@ -307,11 +306,41 @@ void GEOMGUI_TextTreeWdg::updateDimensionBranch( const QString& theEntry )
 
 //=================================================================================
 // function : updateAnnotationBranch
-// purpose  :
+// purpose  : Rebuild branch of annotation type for object of the given entry
 //=================================================================================
 void GEOMGUI_TextTreeWdg::updateAnnotationBranch( const QString& theEntry )
 {
   fillBranch( AnnotationShape, theEntry );
+}
+
+//=================================================================================
+// function : updateObjectName
+// purpose  : Find name of the given object and set the name for corresponded tree item
+//=================================================================================
+void GEOMGUI_TextTreeWdg::updateObjectName( const QString& theEntry )
+{
+  QTreeWidgetItem* anObjectItem;
+
+  QHash<QString, QTreeWidgetItem*> anObjects = getObjects( DimensionShape );
+  if ( anObjects.contains( theEntry ) )
+    anObjectItem = anObjects.value( theEntry );
+  else {
+    anObjects = getObjects( AnnotationShape );
+    if ( anObjects.contains( theEntry ) )
+      anObjectItem = anObjects.value( theEntry );
+  }
+  if ( !anObjectItem )
+    return;
+
+  myStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  if ( myStudy ) {
+    _PTR(Study) aStudyDS = myStudy->studyDS();
+    if ( aStudyDS ) {
+      _PTR(SObject) anObject( aStudyDS->FindObjectID( theEntry.toStdString() ) );
+      if ( anObject.get() )
+        anObjectItem->setText( 0, anObject->GetName().c_str() );
+    }
+  }
 }
 
 //=================================================================================
@@ -324,7 +353,6 @@ void GEOMGUI_TextTreeWdg::fillBranch( const BranchType& theBranchType, const QSt
 
   if ( myStudy && !theEntry.isEmpty() ) {
     QSharedPointer<VisualProperty> aProp = getVisualProperty( theBranchType, myStudy, theEntry.toStdString() );
-    const std::string anEntry = theEntry.toStdString();
     if ( !aProp ) {
       return;
     }
@@ -452,7 +480,7 @@ int GEOMGUI_TextTreeWdg::idFromItem( QTreeWidgetItem* theItem )
 // function : entryFromItem
 // purpose  :
 //=================================================================================
-QString GEOMGUI_TextTreeWdg::entryFromItem( QTreeWidgetItem* theShapeItem )
+QString GEOMGUI_TextTreeWdg::entryFromItem( QTreeWidgetItem* theShapeItem ) const
 {
   if ( !theShapeItem )
     return "";
@@ -549,8 +577,25 @@ void GEOMGUI_TextTreeWdg::showContextMenu( const QPoint& pos )
         aMenu.addAction( myActions[GEOMOp::OpShow] );
     }
   }
-  aMenu.addAction( aModule->action(GEOMOp::OpShowAllAnnotations) );
-  aMenu.addAction( aModule->action(GEOMOp::OpHideAllAnnotations) );
+
+  if (selectedItems().isEmpty() && currentItem()) {
+    QTreeWidgetItem* anItem = currentItem();
+    bool aShowAll = false;
+    if (anItem == getPropertyRootItem(AnnotationShape))
+      aShowAll = true;
+    else {
+      QHash<QString, QTreeWidgetItem*> anObjects = getObjects( AnnotationShape );
+      QHash<QString, QTreeWidgetItem*>::const_iterator anIt = anObjects.begin(),
+                                                       aLast = anObjects.end();
+      for (; anIt != aLast && !aShowAll; anIt++) {
+        aShowAll = anIt.value() == anItem;
+      }
+    }
+    if (aShowAll) {
+      aMenu.addAction( aModule->action(GEOMOp::OpShowAllAnnotations) );
+      aMenu.addAction( aModule->action(GEOMOp::OpHideAllAnnotations) );
+    }
+  }
   QAction* selPopupItem = aMenu.exec( viewport()->mapToGlobal(pos) );
 
   if ( selPopupItem == myActions[GEOMOp::OpShow] ||
@@ -640,7 +685,7 @@ void GEOMGUI_TextTreeWdg::setShapeItemVisibility( const BranchType& theBranchTyp
 // function : setShapeItemVisibility
 // purpose  : 
 //=================================================================================
-void GEOMGUI_TextTreeWdg::updateVisibility( SALOME_View* theView )
+void GEOMGUI_TextTreeWdg::updateVisibility()
 {
   //QList<QString> aDimensionObjEntries = getObjects( DimensionShape ).keys();
   BranchType aBranchType = AnnotationShape;
@@ -737,6 +782,28 @@ QList<QString> GEOMGUI_TextTreeWdg::getAllEntries( const BranchType& theBranchTy
 }
 
 //=================================================================================
+// function : getSingleSelectedObject
+// purpose  :
+//=================================================================================
+QString GEOMGUI_TextTreeWdg::getSingleSelectedObject()
+{
+  QString anEntry;
+  QTreeWidgetItem* anItem = currentItem();
+  if (anItem) {
+    QHash<QString, QTreeWidgetItem*> anObjects = getObjects( AnnotationShape );
+    QHash<QString, QTreeWidgetItem*>::const_iterator anIt = anObjects.begin(),
+                                                     aLast = anObjects.end();
+    for (; anIt != aLast; anIt++) {
+      if ( anIt.value() == anItem ) {
+        anEntry = anIt.key();
+        break;
+      }
+    }
+  }
+  return anEntry;
+}
+
+//=================================================================================
 // function : setShapeItemVisibility
 // purpose  :
 //=================================================================================
@@ -807,4 +874,3 @@ GEOMGUI_TextTreeWdg::BranchType GEOMGUI_TextTreeWdg::branchTypeFromItem( QTreeWi
 
   return aBranchType;
 }
-

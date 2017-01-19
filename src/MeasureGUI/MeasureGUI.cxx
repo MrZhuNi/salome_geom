@@ -28,6 +28,7 @@
 
 #include <GeometryGUI.h>
 #include "GeometryGUI_Operations.h"
+#include <GEOMGUI_TextTreeWdg.h>
 
 #include <GEOMGUI_DimensionProperty.h>
 #include <GEOMGUI_AnnotationAttrs.h>
@@ -230,11 +231,17 @@ void MeasureGUI::ChangeAnnotationsVisibility( const bool theIsVisible )
   if ( !anActiveStudy )
     return;
 
+  QString anEntry;
   Handle(SALOME_InteractiveObject) anIObject = getSingleSelectedIO();
   if ( !anIObject.IsNull() && anIObject->hasEntry() ) {
-    const QString aEntry = anIObject->getEntry();
+    anEntry = anIObject->getEntry();
+  }
+  if ( anEntry.isEmpty() ) {
+    anEntry = getGeometryGUI()->GetTextTreeWdg()->getSingleSelectedObject();
+  }
 
-    _PTR(SObject) aSObj = anActiveStudy->studyDS()->FindObjectID( aEntry.toStdString() );
+  if ( !anEntry.isEmpty() ) {
+    _PTR(SObject) aSObj = anActiveStudy->studyDS()->FindObjectID( anEntry.toStdString() );
 
     const Handle(GEOMGUI_AnnotationAttrs)
       aShapeAnnotations = GEOMGUI_AnnotationAttrs::FindAttributes( aSObj );
@@ -252,14 +259,14 @@ void MeasureGUI::ChangeAnnotationsVisibility( const bool theIsVisible )
       for ( int anI = 0; anI < aCount; ++anI ) {
 
         if ( !theIsVisible ) {
-          getGeometryGUI()->GetAnnotationMgr()->Erase( aEntry, anI );
+          getGeometryGUI()->GetAnnotationMgr()->Erase( anEntry, anI );
         }
         else {
-          getGeometryGUI()->GetAnnotationMgr()->Display( aEntry , anI );
+          getGeometryGUI()->GetAnnotationMgr()->Display( anEntry , anI );
         }
       }
 
-      getGeometryGUI()->emitAnnotationsUpdated( aEntry );
+      getGeometryGUI()->emitAnnotationsUpdated( anEntry );
     }
   }
   else {
@@ -269,6 +276,7 @@ void MeasureGUI::ChangeAnnotationsVisibility( const bool theIsVisible )
     else {
       getGeometryGUI()->GetAnnotationMgr()->EraseAllAnnotations();
     }
+    getGeometryGUI()->GetTextTreeWdg()->updateVisibility();
   }
 }
 

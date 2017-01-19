@@ -32,7 +32,11 @@
 
 /*!
   \class GEOMGUI_TextTreeSelector
-  \brief Text tree selection handler class.
+  \brief Text tree selection handler class. It provides selection synchronization between
+  application and text tree widget. This selector listens item selection changed signal of
+  text tree widget to emit common selection changed signal of SUIT selector to start selection
+  synchronization. In get/setSelection selector processes annotation items. These items have
+  specific entry generated in annotation manager, having the "object entry:annotation_id" structure.
 */
 
 /*!
@@ -60,7 +64,7 @@ GEOMGUI_TextTreeSelector::~GEOMGUI_TextTreeSelector()
 
 /*!
   \brief Get object browser.
-  \return a pointer to the object browser
+  \return a pointer to the text tree widget
 */
 GEOMGUI_TextTreeWdg* GEOMGUI_TextTreeSelector::textTree() const
 {
@@ -68,7 +72,7 @@ GEOMGUI_TextTreeWdg* GEOMGUI_TextTreeSelector::textTree() const
 }
 
 /*!
-  \brief Get selector type.
+  \brief Get selector unique type.
   \return selector type
 */
 QString GEOMGUI_TextTreeSelector::type() const
@@ -77,20 +81,19 @@ QString GEOMGUI_TextTreeSelector::type() const
 }
 
 /*!
-  \brief Called when the Object browser selection is changed.
+  \brief Called when the Object browser selection is changed. It emits signal to synchronize
+  selection in application.
 */
 void GEOMGUI_TextTreeSelector::onSelectionChanged()
 {
-  //QTime t1 = QTime::currentTime();
   mySelectedList.clear();
   selectionChanged();
-  //QTime t2 = QTime::currentTime();
-  //qDebug( QString( "selection time = %1 msecs" ).arg( t1.msecsTo( t2 ) ).toLatin1().constData() );
 }
 
 /*!
-  \brief Get list of currently selected objects.
+  \brief Get list of currently selected annotation objects.
   \param theList list to be filled with the selected objects owners
+  The list contains owners for interactive objects of annotations
 */
 void GEOMGUI_TextTreeSelector::getSelection( SUIT_DataOwnerPtrList& theList ) const
 {
@@ -118,35 +121,6 @@ void GEOMGUI_TextTreeSelector::getSelection( SUIT_DataOwnerPtrList& theList ) co
     }
   }
   theList = mySelectedList;
-
-  /*if ( aSelectedAnnotations.count() == 0 ) {
-    SUIT_Session* session = SUIT_Session::session();
-    SUIT_Application* sapp = session ? session->activeApplication() : 0;
-    LightApp_Application* app = dynamic_cast<LightApp_Application*>( sapp );
-    if( !app || !myBrowser )
-      return;
-
-    DataObjectList objlist;
-    myBrowser->getSelected( objlist );
-    GEOMGUI_TextTreeSelector* that = (GEOMGUI_TextTreeSelector*)this;
-    QListIterator<SUIT_DataObject*> it( objlist );
-    while ( it.hasNext() ) {
-      LightApp_DataObject* obj = dynamic_cast<LightApp_DataObject*>( it.next() );
-      if ( obj && app->checkDataObject( obj) ) {
-#ifndef DISABLE_SALOMEOBJECT
-        Handle(SALOME_InteractiveObject) aSObj = new SALOME_InteractiveObject
-          ( obj->entry().toLatin1().constData(),
-            obj->componentDataType().toLatin1().constData(),
-            obj->name().toLatin1().constData() );
-        LightApp_DataOwner* owner = new LightApp_DataOwner( aSObj  );
-#else
-        LightApp_DataOwner* owner = new LightApp_DataOwner( obj->entry() );
-#endif
-        that->mySelectedList.append( SUIT_DataOwnerPtr( owner ) );
-      }
-    }
-  }
-  theList = mySelectedList;*/
 }
 
 /*!
@@ -157,9 +131,6 @@ void GEOMGUI_TextTreeSelector::setSelection( const SUIT_DataOwnerPtrList& theLis
 {
   if ( !myTextTree )
     return;
-
-  //if( myEntries.count() == 0 || myModifiedTime < myBrowser->getModifiedTime() )
-  //  fillEntries( myEntries );
 
   QMap<QString, QList<int> > aSelectedAnnotations;
   DataObjectList objList;
@@ -178,7 +149,7 @@ void GEOMGUI_TextTreeSelector::setSelection( const SUIT_DataOwnerPtrList& theLis
       continue;
 
     QString anEntry = anAnnotationInfo[0];
-    int anAnnotationId = anAnnotationInfo[1].toInt();//myAnnotationMgr->FindAnnotationIndex( anIO );
+    int anAnnotationId = anAnnotationInfo[1].toInt();
     if ( anAnnotationId <  0)
       continue;
 
@@ -194,25 +165,4 @@ void GEOMGUI_TextTreeSelector::setSelection( const SUIT_DataOwnerPtrList& theLis
   myTextTree->setSelected(aSelectedAnnotations);
   mySelectedList.clear();
 }
-
-/*!
-  \brief Fill map of the data objects currently shown in the Object Browser.
-  \param entries map to be filled
-*/
-/*void GEOMGUI_TextTreeSelector::fillEntries( QMap<QString, LightApp_DataObject*>& entries )
-{
-  entries.clear();
-
-  if ( !myBrowser )
-    return;
-
-  for ( SUIT_DataObjectIterator it( myBrowser->root(),
-                                    SUIT_DataObjectIterator::DepthLeft ); it.current(); ++it ) {
-    LightApp_DataObject* obj = dynamic_cast<LightApp_DataObject*>( it.current() );
-    if ( obj )
-      entries.insert( obj->entry(), obj );
-  }
-
-  setModified();
-}*/
 

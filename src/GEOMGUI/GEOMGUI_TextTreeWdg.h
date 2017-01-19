@@ -59,7 +59,7 @@ public:
   void                          removeBranch( const BranchType& theBranchType, const QString& theEntry,
                                               bool force = true );
   int                           idFromItem( QTreeWidgetItem* theItem );
-  QString                       entryFromItem( QTreeWidgetItem* theShapeItem );
+  QString                       entryFromItem( QTreeWidgetItem* theShapeItem ) const;
   QTreeWidgetItem*              itemFromEntry( const BranchType& theBranchType, QString theEntry );
   void                          setAllShapeItemsVisibility( const BranchType& theBranchType,
                                                             const QString& theEntry,
@@ -68,12 +68,14 @@ public:
                                                         const QString& theEntry,
                                                         QTreeWidgetItem* theWidgetItem,
                                                         const bool theVisibility );
-  void                          updateVisibility( SALOME_View* theView );
+  void                          updateVisibility();
 
   void                          getSelected( QMap<QString, QList<int> >& theAnnotations );
   void                          setSelected( const QMap<QString, QList<int> >& theAnnotations );
 
   QList<QString>                getAllEntries( const BranchType& theBranchType );
+
+  QString                       getSingleSelectedObject();
 
 protected:
   void                          createActions();
@@ -84,6 +86,7 @@ public slots:
   void                          updateBranches( const QString& theEntry );
   void                          updateDimensionBranch( const QString& theEntry );
   void                          updateAnnotationBranch( const QString& theEntry );
+  void                          updateObjectName( const QString& theEntry );
 
 private slots:
   void                          onUpdateVisibilityColumn( QString theEntry, Qtx::VisibilityState theState );

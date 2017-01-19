@@ -3534,6 +3534,7 @@ bool GeometryGUI::renameObject( const QString& entry, const QString& name)
       if (!CORBA::is_nil(anObj)) {
         anObj->SetName( name.toLatin1().data() );  // Rename the corresponding GEOM_Object
         emit SignalDependencyTreeRenameObject( anObj->GetEntry() );
+        emit SignalTextTreeRenameObject( entry );
       }
       result = true;
     }

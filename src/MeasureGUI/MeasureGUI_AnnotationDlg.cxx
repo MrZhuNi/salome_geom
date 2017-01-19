@@ -610,7 +610,6 @@ void MeasureGUI_AnnotationDlg::onTextChange()
   myAnnotationProperties.Text = myTextEdit->text();
   if ( !myShapeNameModified )
     myShapeNameModified = true;
-
   redisplayPreview();
 }
 
@@ -792,6 +791,7 @@ bool MeasureGUI_AnnotationDlg::execute()
   else {
 
     aShapeAnnotations->SetProperties( myEditAnnotationIndex, myAnnotationProperties );
+    myGeomGUI->emitAnnotationsUpdated( QString( myShape->GetStudyEntry() ) );
   }
   return true;
 }

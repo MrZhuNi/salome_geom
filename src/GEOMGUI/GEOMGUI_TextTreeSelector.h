@@ -32,7 +32,6 @@
 
 class GEOMGUI_TextTreeWdg;
 class GEOMGUI_AnnotationMgr;
-//class LightApp_DataObject;
 
 class GEOMGUI_EXPORT GEOMGUI_TextTreeSelector : public QObject, public SUIT_Selector
 {
@@ -46,17 +45,14 @@ public:
 
   GEOMGUI_TextTreeWdg* textTree() const;
 
-  virtual QString    type() const;
+  virtual QString type() const;
 
 private slots:
-  void               onSelectionChanged();
+  void onSelectionChanged();
 
 protected:
-  virtual void       getSelection( SUIT_DataOwnerPtrList& ) const;
-  virtual void       setSelection( const SUIT_DataOwnerPtrList& );
-
-//private:
-  //void               fillEntries( QMap<QString, LightApp_DataObject*>& );
+  virtual void getSelection( SUIT_DataOwnerPtrList& ) const;
+  virtual void setSelection( const SUIT_DataOwnerPtrList& );
 
 private:
   GEOMGUI_TextTreeWdg* myTextTree;

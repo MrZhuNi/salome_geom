@@ -186,6 +186,7 @@ signals :
   void                        SignalDefaultStepValueChanged( double newVal );
   void                        SignalDependencyTreeParamChanged( const QString&, const QString& );
   void                        SignalDependencyTreeRenameObject( const QString& );
+  void                        SignalTextTreeRenameObject( const QString& );
   void                        SignalAnnotationsUpdated( const QString& );
   void                        DimensionsUpdated( const QString& );
 
