@@ -101,7 +101,7 @@ Handle(GEOMGUI_AnnotationAttrs) GEOMGUI_AnnotationAttrs::FindAttributes( const _
   _PTR(GenericAttribute) aGenericAttr;
   _PTR(AttributeParameter) aParameterMap;
 
-  if ( !theObject->FindAttribute( aGenericAttr, "AttributeParameter" ) )
+  if ( !theObject || !theObject->FindAttribute( aGenericAttr, "AttributeParameter" ) )
   {
     return Handle(GEOMGUI_AnnotationAttrs)();
   }
