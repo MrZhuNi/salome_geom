@@ -80,8 +80,9 @@ static QString getParentComponent( _PTR( SObject ) obj )
 // purpose  : check if the object(s) passed as the the second arguments are used
 //            by the other objects in the study
 //=====================================================================================
-static bool inUse( _PTR(Study) study, const QString& component, const QMap<QString,QString>& objects )
+static bool inUse( const QString& component, const QMap<QString,QString>& objects )
 {
+  _PTR(Study) study = SalomeApp_Application::getStudy();
   _PTR(SObject) comp = study->FindObjectID( component.toLatin1().data() );
   if ( !comp )
     return false;
@@ -154,7 +155,7 @@ static void getGeomChildrenAndFolders( _PTR(SObject) theSO,
                                        QMap<QString,QString>& geomObjList, 
                                        QMap<QString,QString>& folderList ) {
   if ( !theSO ) return;
-  _PTR(Study) aStudy = theSO->GetStudy();
+  _PTR(Study) aStudy = SalomeApp_Application::getStudy();
   if ( !aStudy ) return;
   _PTR(UseCaseBuilder) aUseCaseBuilder = aStudy->GetUseCaseBuilder();
 
@@ -355,8 +356,7 @@ void GEOMToolsGUI::OnEditDelete()
     return;
 
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  if ( !aSelMgr || !appStudy )
+  if ( !aSelMgr )
     return;
 
   // get selection
@@ -364,7 +364,7 @@ void GEOMToolsGUI::OnEditDelete()
   if ( selected.IsEmpty() )
     return;
 
-  _PTR(Study) aStudy = appStudy->studyDS();
+  _PTR(Study) aStudy = SalomeApp_Application::getStudy();
   _PTR(UseCaseBuilder) aUseCaseBuilder = aStudy->GetUseCaseBuilder();
 
   // check if study is locked
@@ -469,7 +469,7 @@ void GEOMToolsGUI::OnEditDelete()
     for ( it->InitEx( false ); it->More(); it->Next() ) {
       _PTR(SObject) child( it->Value() );
       // remove object from GEOM engine
-      removeObjectWithChildren( child, aStudy, views, disp );
+      removeObjectWithChildren( child, views, disp );
       // remove object from study
       aStudyBuilder->RemoveObjectWithChildren( child );
       // remove object from use case tree
@@ -478,7 +478,7 @@ void GEOMToolsGUI::OnEditDelete()
   }
   else {
     // GEOM component is not selected: check if selected objects are in use
-    if ( inUse( aStudy, geomComp, allDeleted ) && 
+    if ( inUse( geomComp, allDeleted ) &&
          SUIT_MessageBox::question( app->desktop(),
                                     QObject::tr("WRN_WARNING"),
                                     QObject::tr("DEP_OBJECT"),
@@ -491,7 +491,7 @@ void GEOMToolsGUI::OnEditDelete()
     for ( it = toBeDeleted.begin(); it != toBeDeleted.end(); ++it ) {
       _PTR(SObject) obj ( aStudy->FindObjectID( it.key().toLatin1().data() ) );
       // remove object from GEOM engine
-      removeObjectWithChildren( obj, aStudy, views, disp );
+      removeObjectWithChildren( obj, views, disp );
       // remove objects from study
       aStudyBuilder->RemoveObjectWithChildren( obj );
       // remove object from use case tree
@@ -501,7 +501,7 @@ void GEOMToolsGUI::OnEditDelete()
     for ( it = toBeDelFolders.begin(); it != toBeDelFolders.end(); ++it ) {
       _PTR(SObject) obj ( aStudy->FindObjectID( it.key().toLatin1().data() ) );
       // remove object from GEOM engine
-      removeObjectWithChildren( obj, aStudy, views, disp );
+      removeObjectWithChildren( obj, views, disp );
       // remove objects from study
       aStudyBuilder->RemoveObjectWithChildren( obj );
       // remove object from use case tree
@@ -520,15 +520,15 @@ void GEOMToolsGUI::OnEditDelete()
 // purpose  : used by OnEditDelete() method
 //=====================================================================================
 void GEOMToolsGUI::removeObjectWithChildren(_PTR(SObject) obj,
-                                            _PTR(Study) aStudy,
                                             QList<SALOME_View*> views,
                                             GEOM_Displayer* disp)
 {
+  _PTR(Study) aStudy = SalomeApp_Application::getStudy();
   // iterate through all children of obj
   for (_PTR(ChildIterator) it (aStudy->NewChildIterator(obj)); it->More(); it->Next()) {
   // for (_PTR(UseCaseIterator) it (aStudy->GetUseCaseBuilder()->GetUseCaseIterator(obj)); it->More(); it->Next()) {
     _PTR(SObject) child (it->Value());
-    removeObjectWithChildren(child, aStudy, views, disp);
+    removeObjectWithChildren(child, views, disp);
   }
 
   // erase object and remove it from engine

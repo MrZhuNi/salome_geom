@@ -50,8 +50,7 @@ GEOMToolsGUI_ReduceStudyDlg::GEOMToolsGUI_ReduceStudyDlg( QWidget* parent )
 
   myApp = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( !myApp ) return;
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
-  myStudy = study->studyDS();
+
   myDisplayer = GEOM_Displayer();
 
   setWindowTitle( tr( "GEOM_REDUCE_STUDY_TITLE" ) );
@@ -370,10 +369,11 @@ void GEOMToolsGUI_ReduceStudyDlg::checkVisibleIcon( QTreeWidget* theWidget )
 //=================================================================================
 bool GEOMToolsGUI_ReduceStudyDlg::isObjectDrawable( std::string theStudyEntry )
 {
-  _PTR(StudyBuilder) aStudyBuilder = myStudy->NewBuilder();
+  _PTR(Study) aStudy = SalomeApp_Application::getStudy();
+  _PTR(StudyBuilder) aStudyBuilder = aStudy->NewBuilder();
   //If object hasn't "AttributeDrawable" => it visible
   bool isDrawable = true;
-  _PTR(SObject) SO ( myStudy->FindObjectID( theStudyEntry ) );
+  _PTR(SObject) SO ( aStudy->FindObjectID( theStudyEntry ) );
   _PTR(GenericAttribute) anAttr;
   if ( SO && SO->FindAttribute( anAttr, "AttributeDrawable" ) ) {
     _PTR(AttributeDrawable) aDrw (anAttr);
@@ -388,7 +388,8 @@ bool GEOMToolsGUI_ReduceStudyDlg::isObjectDrawable( std::string theStudyEntry )
 //=================================================================================
 void GEOMToolsGUI_ReduceStudyDlg::unpublishObjects( std::set<std::string>& theObjects )
 {
-  _PTR(StudyBuilder) aStudyBuilder = myStudy->NewBuilder();
+  _PTR(Study) aStudy = SalomeApp_Application::getStudy();
+  _PTR(StudyBuilder) aStudyBuilder = aStudy->NewBuilder();
   std::set<std::string>::iterator it;
   for( it = theObjects.begin(); it != theObjects.end(); ++it ) {
     std::string objectEntry = *it;
@@ -396,14 +397,14 @@ void GEOMToolsGUI_ReduceStudyDlg::unpublishObjects( std::set<std::string>& theOb
     std::string studyEntry = GeomBaseObject->GetStudyEntry();
     if ( studyEntry == "" || !isObjectDrawable( studyEntry ) )
       continue;
-    _PTR(SObject) obj ( myStudy->FindObjectID( studyEntry.c_str() ) );
+    _PTR(SObject) obj ( aStudy->FindObjectID( studyEntry.c_str() ) );
     _PTR(GenericAttribute) anAttr;
     if ( obj ) {
       _PTR(AttributeDrawable) aDrw = aStudyBuilder->FindOrCreateAttribute( obj, "AttributeDrawable" );
       aDrw->SetDrawable( false );
       myDisplayer.EraseWithChildren( new SALOME_InteractiveObject( studyEntry.c_str(), "GEOM", "TEMP_IO" ) );
       // hide references if any
-      std::vector< _PTR(SObject) > vso = myStudy->FindDependances(obj);
+      std::vector< _PTR(SObject) > vso = aStudy->FindDependances(obj);
       for ( int i = 0; i < vso.size(); i++ ) {
         _PTR(SObject) refObj = vso[i];
         aDrw = aStudyBuilder->FindOrCreateAttribute( refObj, "AttributeDrawable" );
@@ -445,10 +446,11 @@ void GEOMToolsGUI_ReduceStudyDlg::removeObjects( std::set<std::string>& theObjec
 void GEOMToolsGUI_ReduceStudyDlg::removeObject( std::string& theStudyEntry )
 {
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
-  _PTR(StudyBuilder) aStudyBuilder = myStudy->NewBuilder();
-  _PTR(UseCaseBuilder) aUseCaseBuilder = myStudy->GetUseCaseBuilder();
+  _PTR(Study) aStudy = SalomeApp_Application::getStudy();
+  _PTR(StudyBuilder) aStudyBuilder = aStudy->NewBuilder();
+  _PTR(UseCaseBuilder) aUseCaseBuilder = aStudy->GetUseCaseBuilder();
 
-  _PTR(SObject) obj ( myStudy->FindObjectID( theStudyEntry.c_str() ) );
+  _PTR(SObject) obj ( aStudy->FindObjectID( theStudyEntry.c_str() ) );
   if ( obj ) {
     // remove visual properties of the object
     appStudy->removeObjectProperties(obj->GetID().c_str());
@@ -470,10 +472,11 @@ void GEOMToolsGUI_ReduceStudyDlg::removeEmptyFolders()
 {
   std::set<std::string> emptyFolders;
 
-  _PTR(SComponent) SC ( myStudy->FindComponent( "GEOM" ) );
+  _PTR(Study) aStudy = SalomeApp_Application::getStudy();
+  _PTR(SComponent) SC ( aStudy->FindComponent( "GEOM" ) );
   if ( !SC )
     return;
-  _PTR(ChildIterator) anIter ( myStudy->NewChildIterator( SC ) );
+  _PTR(ChildIterator) anIter ( aStudy->NewChildIterator( SC ) );
   anIter->InitEx( true );
   while( anIter->More() ) {
     _PTR(SObject) valSO ( anIter->Value() );
@@ -498,7 +501,7 @@ void GEOMToolsGUI_ReduceStudyDlg::removeEmptyFolders()
 //=================================================================================
 void GEOMToolsGUI_ReduceStudyDlg::getEmptyFolders( _PTR(SObject) theSO, std::set<std::string>& theFolders )
 {
-  _PTR(UseCaseBuilder) aUseCaseBuilder = myStudy->GetUseCaseBuilder();
+  _PTR(UseCaseBuilder) aUseCaseBuilder = SalomeApp_Application::getStudy()->GetUseCaseBuilder();
 
   bool isFolder = false;
   _PTR(GenericAttribute) anAttr;

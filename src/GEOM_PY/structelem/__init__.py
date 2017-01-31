@@ -476,8 +476,7 @@ class StructuralElement:
         """
         if theSObject is not None:
             gg = salome.ImportComponentGUI("GEOM")
-            aStudy = theSObject.GetStudy()
-            useCaseBuilder = aStudy.GetUseCaseBuilder()
+            useCaseBuilder = salome.myStudy.GetUseCaseBuilder()
             editor = getStudyEditor()
             aIterator = useCaseBuilder.GetUseCaseIterator(theSObject)
             aIterator.Init(False)

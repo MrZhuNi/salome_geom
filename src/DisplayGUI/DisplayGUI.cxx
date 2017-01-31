@@ -180,12 +180,7 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 //=====================================================================================
 void DisplayGUI::DisplayAll()
 {
-  SalomeApp_Application* app = getGeometryGUI()->getApp();
-  if ( !app ) return;
-
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  if ( !appStudy ) return;
-  _PTR(Study) aStudy = appStudy->studyDS();
+  _PTR(Study) aStudy = SalomeApp_Application::getStudy();
   if ( !aStudy ) return;
   _PTR(SComponent) SC ( aStudy->FindComponent( "GEOM" ) );
   if ( !SC )

@@ -529,7 +529,7 @@ bool GEOMGUI_Selection::hasChildren( const _PTR(SObject)& obj )
 {
   if ( obj ) {
     // as soon as Use Case browser data tree was added
-    return obj->GetStudy()->GetUseCaseBuilder()->HasChildren( obj );
+    return SalomeApp_Application::getStudy()->GetUseCaseBuilder()->HasChildren( obj );
   }
 }
 
@@ -592,8 +592,8 @@ int GEOMGUI_Selection::nbChildren( const int index ) const
     _PTR(Study) study = appStudy->studyDS();
     if ( study && !anEntry.isEmpty() ) {
       _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
-      if ( aSO && aSO->GetStudy()->GetUseCaseBuilder()->IsUseCaseNode(aSO) ) {
-        _PTR(UseCaseIterator) it = aSO->GetStudy()->GetUseCaseBuilder()->GetUseCaseIterator( aSO ); 
+      if ( aSO && study->GetUseCaseBuilder()->IsUseCaseNode(aSO) ) {
+        _PTR(UseCaseIterator) it = study->GetUseCaseBuilder()->GetUseCaseIterator( aSO );
         for (it->Init(false); it->More(); it->Next()) nb++;
       }
     }

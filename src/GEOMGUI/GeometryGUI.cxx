@@ -3399,7 +3399,7 @@ bool GeometryGUI::isDraggable( const SUIT_DataObject* what ) const
       _PTR(SObject) aSO = dataObj->object();
       if ( aSO ) {
         _PTR(GenericAttribute) anAttr;
-        _PTR(SObject) aFatherSO = aSO->GetStudy()->GetUseCaseBuilder()->GetFather( aSO );
+        _PTR(SObject) aFatherSO = SalomeApp_Application::getStudy()->GetUseCaseBuilder()->GetFather( aSO );
         if ( aFatherSO && aFatherSO->FindAttribute(anAttr, "AttributeLocalID") ) {
           _PTR(AttributeLocalID) aLocalID( anAttr );
           anObjectInFolder = aLocalID->Value() == 999;
@@ -3476,7 +3476,7 @@ void GeometryGUI::dropObjects( const DataObjectList& what, SUIT_DataObject* wher
   _PTR(SObject) parentObj = dataObj->object();
 
   // Find the current Study and StudyBuilder
-  _PTR(Study) aStudy = parentObj->GetStudy();
+  _PTR(Study) aStudy = SalomeApp_Application::getStudy();
   _PTR(UseCaseBuilder) aUseCaseBuilder = aStudy->GetUseCaseBuilder();
   // collect all parents of the target node
   QStringList parentIDs;
