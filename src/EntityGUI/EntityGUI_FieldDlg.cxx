@@ -1857,7 +1857,7 @@ bool EntityGUI_FieldDlg::isValid(QString& theMessage)
 //=================================================================================
 bool EntityGUI_FieldDlg::execute()
 {
-  SALOMEDS::Study_var aStudyDS = GeometryGUI::GetStudy();
+  SALOMEDS::Study_var aStudyDS = GeometryGUI::getStudyServant();
   SALOMEDS::StudyBuilder_var aBuilder = aStudyDS->NewBuilder();
 
   QString aName = getNewObjectName().trimmed();

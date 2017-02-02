@@ -109,7 +109,7 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   SALOME_NamingService* GetNS() { return name_service; }
 
   // Get Study
-  SALOMEDS::Study_var GetStudy();
+  SALOMEDS::Study_var getStudyServant();
 
   //-----------------------------------------------------------------------//
   // Inherited methods from SALOMEDS::Driver                               //

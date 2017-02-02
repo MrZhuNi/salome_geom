@@ -180,7 +180,7 @@ CORBA::Object_var GeometryGUI::ClientSObjectToObject (_PTR(SObject) theSObject)
 // function : GetStudy
 // purpose  :
 //=======================================================================
-SALOMEDS::Study_var GeometryGUI::GetStudy()
+SALOMEDS::Study_var GeometryGUI::getStudyServant()
 {
   SALOME_NamingService *aNamingService = SalomeApp_Application::namingService();
   CORBA::Object_var aStudyObject = aNamingService->Resolve("/Study");
@@ -2934,7 +2934,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
     std::string aStudyEntry = (*aEntryIt).toLatin1().data();
     std::string aStoreEntry = ip->encodeEntry( aStudyEntry, componentName);
 
-    GEOMGUI_DimensionProperty aDimensions( appStudy, aStudyEntry );
+    GEOMGUI_DimensionProperty aDimensions( aStudyEntry );
 
     if ( aDimensions.GetNumber() == 0 )
     {
@@ -3022,7 +3022,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
         if ( aParamNameStr == GEOM::propertyName( GEOM::Dimensions ) )
         {
           GEOMGUI_DimensionProperty aDimensionProp( aValuesStr );
-          aDimensionProp.SaveToAttribute( appStudy, entry.toLatin1().data() );
+          aDimensionProp.SaveToAttribute( entry.toLatin1().data() );
         }
 
         continue;

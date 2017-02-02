@@ -215,7 +215,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::SObject_ptr theSObjec
 {
   Unexpect aCatch(SALOME_SalomeException);
   SALOMEDS::SObject_var aResultSO;
-  SALOMEDS::Study_var aStudy = GetStudy();
+  SALOMEDS::Study_var aStudy = getStudyServant();
   if(CORBA::is_nil(theObject) || aStudy->_is_nil()) return aResultSO;
   GEOM::GEOM_BaseObject_var aBaseObj = GEOM::GEOM_BaseObject::_narrow(theObject);
   GEOM::GEOM_Object_var       aShape = GEOM::GEOM_Object::_narrow(theObject);
@@ -595,7 +595,7 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
   TCollection_AsciiString aNameWithExt("");
   if (isMultiFile)
     aNameWithExt = TCollection_AsciiString((char*)(SALOMEDS_Tool::GetNameFromPath
-                                                   (GetStudy()->URL())).c_str());
+                                                   (getStudyServant()->URL())).c_str());
 #if OCC_VERSION_MAJOR > 6
   aNameWithExt += TCollection_AsciiString("_GEOM.cbf");
 #else
@@ -661,7 +661,7 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
 
   // Prepare a file name to open
   TCollection_AsciiString aNameWithExt("");
-  SALOMEDS::Study_var study = GetStudy();
+  SALOMEDS::Study_var study = getStudyServant();
 
 #if OCC_VERSION_MAJOR > 6
   // Get the file name.
@@ -800,7 +800,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
                                             CORBA::Long theObjectID,
                                             SALOMEDS::SObject_ptr theObject) {
   // Find the current Study and StudyBuilder
-  SALOMEDS::Study_var aStudy = GetStudy();
+  SALOMEDS::Study_var aStudy = getStudyServant();
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
   SALOMEDS::UseCaseBuilder_var anUseCaseBuilder = aStudy->GetUseCaseBuilder();
   SALOMEDS::SObject_var aNewSO;
@@ -865,7 +865,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (GEOM::GEOM_BaseObject_ptr theObjec
                                               GEOM::GEOM_BaseObject_ptr theFather)
 {
   SALOMEDS::SObject_var aResultSO;
-  SALOMEDS::Study_var aStudy = GetStudy();
+  SALOMEDS::Study_var aStudy = getStudyServant();
   if(theObject->_is_nil() || aStudy->_is_nil()) return aResultSO;
 
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
@@ -917,7 +917,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesO (GEOM::GEOM_Object_ptr   theObject
                                                CORBA::Boolean          theAddPrefix)
 {
   GEOM::ListOfGO_var aParts = new GEOM::ListOfGO;
-  SALOMEDS::Study_var aStudy = GetStudy();
+  SALOMEDS::Study_var aStudy = getStudyServant();
   if (CORBA::is_nil(aStudy) || CORBA::is_nil(theObject))
     return aParts._retn();
 
@@ -947,12 +947,12 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapesO (GEOM::GEOM_Object_ptr   theO
                                                     CORBA::Boolean          theAddPrefix)
 {
   GEOM::ListOfGO_var aParts = new GEOM::ListOfGO;
-  if (CORBA::is_nil(GetStudy()) || CORBA::is_nil(theObject))
+  if (CORBA::is_nil(getStudyServant()) || CORBA::is_nil(theObject))
     return aParts._retn();
 
   // find SObject in the study if it is already published
   CORBA::String_var anIORo = _orb->object_to_string(theObject);
-  SALOMEDS::SObject_var aSO = GetStudy()->FindObjectIOR(anIORo.in());
+  SALOMEDS::SObject_var aSO = getStudyServant()->FindObjectIOR(anIORo.in());
   //PTv, IMP 0020001, The salome object <aSO>
   // is not obligatory in case of invokation from script
   // if (CORBA::is_nil(aSO))
@@ -976,7 +976,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesSO (SALOMEDS::SObject_ptr   theSObje
                                                 CORBA::Boolean          theAddPrefix)
 {
   GEOM::ListOfGO_var aParts = new GEOM::ListOfGO;
-  if (CORBA::is_nil(GetStudy()) || CORBA::is_nil(theSObject))
+  if (CORBA::is_nil(getStudyServant()) || CORBA::is_nil(theSObject))
     return aParts._retn();
 
   SALOMEDS::GenericAttribute_var anAttr;
@@ -1035,7 +1035,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(GEOM::GEOM_Object_ptr   theObject,
                                              CORBA::Boolean          theAddPrefix)
 {
   GEOM::ListOfGO_var aParts = new GEOM::ListOfGO;
-  SALOMEDS::Study_var aStudy = GetStudy();
+  SALOMEDS::Study_var aStudy = getStudyServant();
   //PTv, IMP 0020001, The salome object <theSObject>
   //     is not obligatory in case of invokation from script
   if (CORBA::is_nil(aStudy) || CORBA::is_nil(theObject) /*|| CORBA::is_nil(theSObject)*/)
@@ -1408,7 +1408,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesOneLevel (SALOMEDS::SObject_ptr   th
                                                       CORBA::Boolean          theAddPrefix)
 {
   int i = 0;
-  SALOMEDS::Study_var aStudy = GetStudy();
+  SALOMEDS::Study_var aStudy = getStudyServant();
   GEOM::ListOfGO_var aParts = new GEOM::ListOfGO;
   GEOM::ListOfGO_var aNewParts = new GEOM::ListOfGO;
   if (CORBA::is_nil(aStudy) || CORBA::is_nil(theOldSO) ||
@@ -1628,7 +1628,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(GEOM::GEOM_Object_ptr   theObj
                                                   CORBA::Boolean          theAddPrefix)
 {
   GEOM::ListOfGO_var aParts = new GEOM::ListOfGO;
-  SALOMEDS::Study_var aStudy = GetStudy();
+  SALOMEDS::Study_var aStudy = getStudyServant();
   //PTv, IMP 0020001, The salome object <theSObject>
   //     is not obligatory in case of invokation from script
   if (CORBA::is_nil(aStudy) || CORBA::is_nil(theObject) /*|| CORBA::is_nil(theSObject)*/)
@@ -1952,7 +1952,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapesOneLevel (SALOMEDS::SObject_ptr
                                                            CORBA::Boolean          theAddPrefix)
 {
   int i = 0;
-  SALOMEDS::Study_var aStudy = GetStudy();
+  SALOMEDS::Study_var aStudy = getStudyServant();
   GEOM::ListOfGO_var aParts = new GEOM::ListOfGO;
   GEOM::ListOfGO_var aNewParts = new GEOM::ListOfGO;
   if (CORBA::is_nil(aStudy) || CORBA::is_nil(theOldSO) ||
@@ -2170,10 +2170,10 @@ void GEOM_Gen_i::register_name(char * name)
 }
 
 //============================================================================
-// function : GetStudy()
+// function : getStudyServant()
 // purpose  : Get Study
 //============================================================================
-SALOMEDS::Study_var GEOM_Gen_i::GetStudy()
+SALOMEDS::Study_var GEOM_Gen_i::getStudyServant()
 {
   static SALOMEDS::Study_var aStudy;
   if(CORBA::is_nil(aStudy)){
@@ -2684,7 +2684,7 @@ char* GEOM_Gen_i::getObjectInfo(const char* entry)
 {
   GEOM::GEOM_Object_var aGeomObject;
 
-  SALOMEDS::SObject_var aSObj = GetStudy()->FindObjectID( entry );
+  SALOMEDS::SObject_var aSObj = getStudyServant()->FindObjectID( entry );
   SALOMEDS::SObject_var aResultSObj;
   if (aSObj->ReferencedObject(aResultSObj))
     aSObj = aResultSObj;
@@ -2694,7 +2694,7 @@ char* GEOM_Gen_i::getObjectInfo(const char* entry)
     SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
     CORBA::String_var aVal = anIOR->Value();
     anIOR->UnRegister();
-    CORBA::Object_var anObject = GetStudy()->ConvertIORToObject(aVal);
+    CORBA::Object_var anObject = getStudyServant()->ConvertIORToObject(aVal);
     aGeomObject = GEOM::GEOM_Object::_narrow(anObject);
   }
   if (!aSObj->_is_nil() )
@@ -2858,7 +2858,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::CreateFolder(const char* theName,
     aLocalID->UnRegister();
   }
 
-  SALOMEDS::Study_var aStudy = GetStudy();
+  SALOMEDS::Study_var aStudy = getStudyServant();
   SALOMEDS::StudyBuilder_var aStudyBuilder( aStudy->NewBuilder() );
   aFolderSO = aStudyBuilder->NewObject( theFather );
 
@@ -2893,7 +2893,7 @@ void GEOM_Gen_i::MoveToFolder(GEOM::GEOM_Object_ptr theObject,
                               SALOMEDS::SObject_ptr theFolder) {
   GEOM::object_list_var objects = new GEOM::object_list();
   objects->length( 1 );
-  SALOMEDS::SObject_var aSO = GetStudy()->FindObjectID( theObject->GetStudyEntry() );
+  SALOMEDS::SObject_var aSO = getStudyServant()->FindObjectID( theObject->GetStudyEntry() );
   objects[0] = aSO;
   Move( objects, theFolder, -1 );
 }
@@ -2911,7 +2911,7 @@ void GEOM_Gen_i::MoveListToFolder (const GEOM::ListOfGO& theListOfGO,
   SALOMEDS::SObject_var aSO;
   for (int i = 0; i < aLen; i++) {
     aGO = GEOM::GEOM_Object::_duplicate( theListOfGO[i] );
-    aSO = GetStudy()->FindObjectID( aGO->GetStudyEntry() );
+    aSO = getStudyServant()->FindObjectID( aGO->GetStudyEntry() );
     objects[i] = aSO;
   }
   if ( objects->length() > 0 )
@@ -2929,7 +2929,7 @@ void GEOM_Gen_i::Move( const GEOM::object_list& what,
 {
   if ( CORBA::is_nil( where ) ) return;
 
-  SALOMEDS::Study_var study = GetStudy();
+  SALOMEDS::Study_var study = getStudyServant();
   SALOMEDS::StudyBuilder_var studyBuilder = study->NewBuilder();
   SALOMEDS::UseCaseBuilder_var useCaseBuilder = study->GetUseCaseBuilder();
   SALOMEDS::SComponent_var father = where->GetFatherComponent();

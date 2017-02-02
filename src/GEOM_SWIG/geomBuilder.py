@@ -752,11 +752,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## @addtogroup l1_geomBuilder_auxiliary
         ## @{
-        def init_geom(self,theStudy):
-            self.myStudy = theStudy
+        def init_geom(self):
+            self.myStudy = salome.myStudy
             self.myBuilder = self.myStudy.NewBuilder()
             self.father = self.myStudy.FindComponent("GEOM")
-            notebook.myStudy = theStudy
+            notebook.myStudy = salome.myStudy
             if self.father is None:
                 self.father = self.myBuilder.NewComponent("GEOM")
                 A1 = self.myBuilder.FindOrCreateAttribute(self.father, "AttributeName")

@@ -799,21 +799,13 @@ bool GEOMGUI_Selection::isFolder( const int index ) const
 
 bool GEOMGUI_Selection::hasDimensions( const int theIndex, bool& theHidden, bool& theVisible ) const
 {
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( study() );
-
-  if ( !appStudy )
-  {
-    return false;
-  }
-
   QString anEntry = entry( theIndex );
-  _PTR(Study) aStudy = appStudy->studyDS();
-  if ( !aStudy || anEntry.isNull() )
+  if ( anEntry.isNull() )
   {
     return false;
   }
 
-  GEOMGUI_DimensionProperty aDimensions( appStudy, anEntry.toStdString() );
+  GEOMGUI_DimensionProperty aDimensions( anEntry.toStdString() );
 
   theHidden  = false;
   theVisible = false;

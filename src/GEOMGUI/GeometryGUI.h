@@ -92,7 +92,7 @@ public:
   static  GEOM::GEOM_Gen_var  GetGeomGen();
 
   static CORBA::Object_var    ClientSObjectToObject (_PTR(SObject) theSObject);
-  static SALOMEDS::Study_var  GetStudy();
+  static SALOMEDS::Study_var  getStudyServant();
 
   static void                 Modified( bool = true );
 

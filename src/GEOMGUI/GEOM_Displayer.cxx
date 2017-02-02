@@ -1260,7 +1260,7 @@ void GEOM_Displayer::updateDimensions( const Handle(SALOME_InteractiveObject)& t
   }
   else
   {
-    aRecords.LoadFromAttribute( getStudy(), theIO->getEntry() );
+    aRecords.LoadFromAttribute( theIO->getEntry() );
   }
   
   // create up-to-date dimension presentations

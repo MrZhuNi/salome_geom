@@ -87,7 +87,7 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Boolean isPublished,
                                          CORBA::Boolean isMultiFile,
                                          CORBA::Boolean& isValidScript)
 {
-  SALOMEDS::Study_var aStudy = GetStudy();
+  SALOMEDS::Study_var aStudy = getStudyServant();
   if(CORBA::is_nil(aStudy))
     return new Engines::TMPFile(0);   
 

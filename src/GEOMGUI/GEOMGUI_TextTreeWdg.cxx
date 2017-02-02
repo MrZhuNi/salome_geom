@@ -170,7 +170,7 @@ void GEOMGUI_TextTreeWdg::updateBranch( const QString& theEntry )
       QString aName = obj->GetName().c_str();
   
       GEOMGUI_DimensionProperty aProp;
-      aProp.LoadFromAttribute( myStudy, theEntry.toStdString() );
+      aProp.LoadFromAttribute( theEntry.toStdString() );
       int nbProps = aProp.GetNumber();
 
       QTreeWidgetItem* objectItem = itemFromEntry( theEntry );
@@ -237,7 +237,7 @@ void GEOMGUI_TextTreeWdg::onItemClicked( QTreeWidgetItem* theItem, int theColumn
   std::string anEntry = entryFromItem( theItem->parent() ).toStdString();
   int aDimIndex = idFromItem( theItem );
   GEOMGUI_DimensionProperty aProp;
-  aProp.LoadFromAttribute( myStudy, anEntry );
+  aProp.LoadFromAttribute( anEntry );
   if ( aProp.IsVisible( aDimIndex ) ) {
     aProp.SetVisible( aDimIndex, false );
     theItem->setIcon( 1, myInvisibleIcon );
@@ -245,7 +245,7 @@ void GEOMGUI_TextTreeWdg::onItemClicked( QTreeWidgetItem* theItem, int theColumn
     aProp.SetVisible( aDimIndex, true );
     theItem->setIcon( 1, myVisibleIcon );
   }
-  aProp.SaveToAttribute( myStudy, anEntry );
+  aProp.SaveToAttribute( anEntry );
   redisplay( anEntry.c_str() );
 }
 
@@ -303,7 +303,7 @@ void GEOMGUI_TextTreeWdg::updateVisibilityColumn( QString theEntry, Qtx::Visibil
   for ( int i=0; i < anItem->childCount(); i++ ) {
     aChildItem = anItem->child( i );
     if ( theState == Qtx::ShownState ) {
-      aProp.LoadFromAttribute( myStudy, theEntry.toStdString() );
+      aProp.LoadFromAttribute( theEntry.toStdString() );
       if ( aProp.GetNumber() == 0 )
 	continue;
       aChildItem->setIcon( 1, aProp.IsVisible( idFromItem( aChildItem ) ) ? myVisibleIcon : myInvisibleIcon );
@@ -331,7 +331,7 @@ void GEOMGUI_TextTreeWdg::showContextMenu( const QPoint& pos )
     QString anEntry = entryFromItem( anItem->parent() );
     if ( !anEntry.isEmpty() ) {
       GEOMGUI_DimensionProperty aProp;
-      aProp.LoadFromAttribute( myStudy, anEntry.toStdString() );
+      aProp.LoadFromAttribute( anEntry.toStdString() );
       if ( aProp.GetNumber() == 0 )
 	return;
       aMenu.clear();
@@ -401,12 +401,12 @@ void GEOMGUI_TextTreeWdg::setShapeDimensionsVisibility( QString theEntry, bool t
 void GEOMGUI_TextTreeWdg::setDimensionVisibility( QString theEntry, QTreeWidgetItem* theDimItem, bool theVisibility )
 {
   GEOMGUI_DimensionProperty aProp;
-  aProp.LoadFromAttribute( myStudy, theEntry.toStdString() );
+  aProp.LoadFromAttribute( theEntry.toStdString() );
   int aDimIndex = idFromItem( theDimItem );
   if ( aProp.GetNumber() == 0  || aProp.IsVisible( aDimIndex ) == theVisibility )
     return;;
   aProp.SetVisible( aDimIndex, theVisibility );
-  aProp.SaveToAttribute( myStudy, theEntry.toStdString() );
+  aProp.SaveToAttribute( theEntry.toStdString() );
 
   theDimItem->setIcon( 1, theVisibility ? myVisibleIcon : myInvisibleIcon );
   redisplay( theEntry );
