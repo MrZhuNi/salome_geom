@@ -52,7 +52,7 @@
 ## @code
 ## import salome
 ## from salome.geom import geomBuilder
-## geompy = geomBuilder.New(salome.myStudy)
+## geompy = geomBuilder.New()
 ## box = geompy.MakeBoxDXDYDZ(100, 100, 100) # box is not published in the study yet
 ## geompy.addToStudy(box, "box")             # explicit publishing
 ## @endcode
@@ -115,7 +115,7 @@
 ## @code
 ## import salome
 ## from salome.geom import geomBuilder
-## geompy = geomBuilder.New(salome.myStudy)
+## geompy = geomBuilder.New()
 ## geompy.addToStudyAuto() # enable automatic publication
 ## box = geompy.MakeBoxDXDYDZ(100, 100, 100)
 ## # the box is created and published in the study with default name
@@ -157,7 +157,7 @@
 ## @code
 ## import salome
 ## from salome.geom import geomBuilder
-## geompy = geomBuilder.New(salome.myStudy)
+## geompy = geomBuilder.New()
 ## box = geompy.MakeBoxDXDYDZ(100, 100, 100, "Box")
 ## # the box was created and published in the study
 ## folder = geompy.NewFolder("Primitives")
@@ -438,7 +438,7 @@ def PackData(data):
 ## For example,
 ## \code
 ## from salome.geom import geomBuilder
-## geompy = geomBuilder.New(salome.myStudy)
+## geompy = geomBuilder.New()
 ## texture = geompy.readtexture('mytexture.dat')
 ## texture = geompy.AddTexture(*texture)
 ## obj.SetMarkerTexture(texture)
@@ -464,7 +464,7 @@ def ReadTexture(fname):
 
     Example of usage:
         from salome.geom import geomBuilder
-        geompy = geomBuilder.New(salome.myStudy)
+        geompy = geomBuilder.New()
         texture = geompy.readtexture('mytexture.dat')
         texture = geompy.AddTexture(*texture)
         obj.SetMarkerTexture(texture)
@@ -13869,12 +13869,11 @@ omniORB.registerObjref(GEOM._objref_GEOM_Field._NP_RepositoryId, geomField)
 #    import salome
 #    salome.salome_init()
 #    from salome.geom import geomBuilder
-#    geompy = geomBuilder.New(salome.myStudy)
+#    geompy = geomBuilder.New()
 #  \endcode
-#  @param  study     SALOME study, generally obtained by salome.myStudy.
 #  @param  instance  CORBA proxy of GEOM Engine. If None, the default Engine is used.
 #  @return geomBuilder instance
-def New( study, instance=None):
+def New( instance=None):
     """
     Create a new geomBuilder instance.The geomBuilder class provides the Python
     interface to GEOM operations.
@@ -13883,10 +13882,9 @@ def New( study, instance=None):
         import salome
         salome.salome_init()
         from salome.geom import geomBuilder
-        geompy = geomBuilder.New(salome.myStudy)
+        geompy = geomBuilder.New()
 
     Parameters:
-        study     SALOME study, generally obtained by salome.myStudy.
         instance  CORBA proxy of GEOM Engine. If None, the default Engine is used.
     Returns:
         geomBuilder instance
@@ -13900,7 +13898,7 @@ def New( study, instance=None):
       doLcc = True
     geom = geomBuilder()
     assert isinstance(geom,geomBuilder), "Geom engine class is %s but should be geomBuilder.geomBuilder. Import geomBuilder before creating the instance."%geom.__class__
-    geom.init_geom(study)
+    geom.init_geom()
     return geom
 
 

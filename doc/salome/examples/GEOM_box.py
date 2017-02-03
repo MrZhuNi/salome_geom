@@ -5,7 +5,7 @@ salome.salome_init()
 # --- geom Python interface
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 # --- Create a box and publish it into the salome study
 Box_1 = geompy.MakeBoxDXDYDZ(200, 200, 200)

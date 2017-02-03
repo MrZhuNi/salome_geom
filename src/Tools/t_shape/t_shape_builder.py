@@ -139,7 +139,7 @@ def build_shape(r1, r2, h1, h2, solid_thickness=0, progressBar=None ):
     with_solid = True
   
   global geompy
-  geompy = geomBuilder.New(salome.myStudy)
+  geompy = geomBuilder.New()
   
   O = geompy.MakeVertex(0, 0, 0)
   OX = geompy.MakeVectorDXDYDZ(1, 0, 0) 
@@ -385,7 +385,7 @@ def jonction(r1, r2, h1, h2, a1):
 def test_t_shape_builder():
   """For testing purpose"""
   salome.salome_init()
-  geompy = geomBuilder.New(salome.myStudy)
+  geompy = geomBuilder.New()
   for r1 in [1., 100.]:
     for r2 in [0.9*r1, 0.5*r1, 0.1*r1, 0.05*r1]:
       for thickness in [r1/100., r1/10., r1/2.]:

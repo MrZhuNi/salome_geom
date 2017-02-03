@@ -51,7 +51,7 @@ try:
 except:
     pass
 
-_geompy = geomBuilder.New(salome.myStudy)
+_geompy = geomBuilder.New()
 
 ## Return an object behaving exactly like geompy module.
 #  \ingroup geomtools

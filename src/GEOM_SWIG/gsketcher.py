@@ -30,7 +30,7 @@
 #  @code
 #  import GEOM
 #  from salome.geom import geomBuilder
-#  geompy = geomBuilder.New(salome.myStudy)
+#  geompy = geomBuilder.New()
 #
 #  # create a wire for sketcher
 #  geomObj_1 = geompy.MakeMarker(0, 0, 0, 1, 0, 0, 0, 1, 0)

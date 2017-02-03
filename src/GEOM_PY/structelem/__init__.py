@@ -495,9 +495,9 @@ def TEST_CreateGeometry():
     salome.salome_init()
     import GEOM
     from salome.geom import geomBuilder
-    geompy = geomBuilder.New(salome.myStudy)
+    geompy = geomBuilder.New()
     import SALOMEDS
-    geompy.init_geom(salome.myStudy)
+    geompy.init_geom()
     Box_1 = geompy.MakeBoxDXDYDZ(200, 200, 200)
     edges = geompy.SubShapeAllSorted(Box_1, geompy.ShapeType["EDGE"])
     geompy.addToStudy(Box_1, "Box_1")

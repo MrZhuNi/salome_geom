@@ -31,7 +31,7 @@ import salome
 salome.salome_init()
 import GEOM
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 #Box creation (2.2)
 Box_1 = geompy.MakeBoxDXDYDZ(200, 400, 300)

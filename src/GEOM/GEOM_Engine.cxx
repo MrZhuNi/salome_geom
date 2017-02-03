@@ -602,7 +602,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(std::vector<TObjectData>& theObj
   if( isMultiFile )
     aScript += "def RebuildData():";
 
-  aScript += "\n\tgeompy = geomBuilder.New(salome.myStudy)\n";
+  aScript += "\n\tgeompy = geomBuilder.New()\n";
 
   AddTextures(aScript);
 
