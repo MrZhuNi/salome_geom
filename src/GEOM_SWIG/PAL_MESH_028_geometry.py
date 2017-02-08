@@ -80,11 +80,11 @@ theFilenameToSave = theHomePath + "/Pyramid.hdf"
 if os.access(theFilenameToSave, os.F_OK):
     if os.access(theFilenameToSave, os.W_OK):
         os.remove(theFilenameToSave)
-        salome.myStudy.SaveAs(theFilenameToSave, 0)
+        salome.myStudy.SaveAs(theFilenameToSave, 0, 0)
     else:
         print "You have no enough permissions to overwrite HDF file: ",theFilenameToSave
 else:
-    salome.myStudy.SaveAs(theFilenameToSave, 0)
+    salome.myStudy.SaveAs(theFilenameToSave, 0, 0)
     
 
 salome.sg.updateObjBrowser()
