@@ -21,7 +21,7 @@
 
 # additional include directories
 INCLUDE_DIRECTORIES(
-  ${CAS_INCLUDE_DIRS}
+  ${OpenCASCADE_INCLUDE_DIR}
   ${PTHREAD_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/src/SKETCHER
@@ -30,23 +30,16 @@ INCLUDE_DIRECTORIES(
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
-  ${CAS_DEFINITIONS}
+  ${OpenCASCADE_DEFINITIONS}
   )
 
 # libraries to link to
 SET(_link_LIBRARIES
-  ${CAS_OCAFVIS}
-  ${CAS_TKLCAF}
-  ${CAS_TKCDF}
-  ${CAS_TKG3d}
+  ${OpenCASCADE_ApplicationFramework_LIBRARIES} ${OpenCASCADE_ModelingData_LIBRARIES}
   ${KERNEL_SALOMELocalTrace}
   ${KERNEL_OpUtil}
   GEOMSketcher
   )
-
-IF(CAS_VERSION_STR VERSION_GREATER "7.0.0")
-  LIST(APPEND _link_LIBRARIES ${CAS_TKStd} ${CAS_TKBin})
-ENDIF()
 
 # --- headers ---
 

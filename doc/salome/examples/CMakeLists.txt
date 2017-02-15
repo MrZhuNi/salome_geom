@@ -133,7 +133,7 @@ SET(GOOD_TESTS
   working_with_groups_ex06.py
   GEOM_Field.py
 )
-IF(CAS_VERSION_STR VERSION_GREATER "6.9.0")
+IF(OpenCASCADE_VERSION_STR VERSION_GREATER "6.9.0")
   LIST(APPEND GOOD_TESTS
     check_self_intersections_fast.py
   )
