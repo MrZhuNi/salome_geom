@@ -1362,10 +1362,10 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
         anObjFun->SetDescription( "" );
       if ( j > 0 )
         pd << ", ";
-      pd << aGeomObj;
+      pd << aGeomObj->GetName();
       j++;
     }
-    pd <<"]" << " = geompy.RestoreGivenSubShapes(" << aMainObj << ", " << "[";
+    pd <<"]" << " = geompy.RestoreGivenSubShapes(" << aMainObj->GetName() << ", " << "[";
     //i = 0; nb = theArgs.length(); j = 0;
     i = 0; nb = anOutArgs->length(); j = 0;
     for ( ; i < nb; i++ )
@@ -1377,7 +1377,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
       HANDLE_NAMESPACE(GEOM_BaseObject) aGeomObj = _impl->GetObject(anObj->GetStudyID(), anObj->GetEntry());
       if ( j > 0 )
         pd << ", ";
-      pd << aGeomObj;
+      pd << aGeomObj->GetName();
       j++;
     }
     pd <<"]" << ", " <<"GEOM.";
@@ -1908,10 +1908,10 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
         anObjFun->SetDescription( "" );
       if ( j > 0 )
         pd << ", ";
-      pd << aGeomObj;
+      pd << aGeomObj->GetName();
       j++;
     }
-    pd <<"]" << " = geompy.RestoreGivenSubShapes(" << aMainObj << ", " << "[";
+    pd <<"]" << " = geompy.RestoreGivenSubShapes(" << aMainObj->GetName() << ", " << "[";
     i = 0; nb = theArgs.length(); j = 0;
     for ( ; i < nb; i++ )
     {
@@ -1921,7 +1921,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
       HANDLE_NAMESPACE(GEOM_BaseObject) aGeomObj = _impl->GetObject(anObj->GetStudyID(), anObj->GetEntry());
       if ( j > 0 )
         pd << ", ";
-      pd << aGeomObj;
+      pd << aGeomObj->GetName();
       j++;
     }
     pd <<"]" << ", " <<"GEOM.";
