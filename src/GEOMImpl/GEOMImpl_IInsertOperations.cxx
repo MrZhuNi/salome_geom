@@ -231,18 +231,39 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::RestoreShape (std::istringstream
   //Set function value
   aFunction->SetValue(aShape);
 
-  //Special dump to avoid restored shapes publication.
-  //See correcponding code in GEOM_Engine.cxx (method ProcessFunction)
-  //GEOM::TPythonDump(aFunction) << "#";
+  //Real dump if the stream comes from Shaper
+  std::string firstLine;
+  std::string shaperPrefix = "FromShaperExportToGeom;";
+  std::size_t shaperPrefixSize = shaperPrefix.size();
 
-  bool ignore = false;
+  //Go back to the start of the istringstream
+  theStream.seekg(0);
 
-  if ( const char* env_var = getenv( "GEOM_IGNORE_RESTORE_SHAPE" ) )
-    ignore = atoi( env_var ) > 1;
+  //Get first line
+  std::getline(theStream, firstLine);
+  MESSAGE("firstLine: " << firstLine);
 
-  if ( !ignore ) {
-    GEOM::TPythonDump(aFunction) << result
-    << " = geompy.RestoreShape(\"\") # the shape string has not been dump for performance reason";
+  if (firstLine.substr(0, shaperPrefixSize) == shaperPrefix) {
+    //Special dump for shape stream coming from Shaper
+    std::string partName = firstLine.substr(shaperPrefixSize);
+    MESSAGE("Part from Shaper: " << partName);
+    GEOM::TPythonDump(aFunction) << result << " = geompy.RestoreShape(model.makeShape("
+    << partName.c_str() << ".document()).getShapeStream())";
+  }
+  else {
+    //Special dump to avoid restored shapes publication.
+    //See correcponding code in GEOM_Engine.cxx (method ProcessFunction)
+    //GEOM::TPythonDump(aFunction) << "#";
+
+    bool ignore = false;
+
+    if ( const char* env_var = getenv( "GEOM_IGNORE_RESTORE_SHAPE" ) )
+      ignore = atoi( env_var ) > 1;
+
+    if ( !ignore ) {
+      GEOM::TPythonDump(aFunction) << result
+      << " = geompy.RestoreShape(\"\") # the shape string has not been dump for performance reason";
+    }
   }
 
   SetErrorCode(OK);
