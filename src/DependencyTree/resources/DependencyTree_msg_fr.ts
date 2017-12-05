@@ -5,15 +5,15 @@
     <name>DependencyTree_View</name>
     <message>
         <source>DEPENDENCY_TREE</source>
-        <translation>Arbre des dépendances</translation>
+        <translation>Arbre des dependances</translation>
     </message>
     <message>
         <source>MOVE_NODES</source>
-        <translation>Déplacer les noeuds</translation>
+        <translation>Deplacer les noeuds</translation>
     </message>
     <message>
         <source>HIERARCHY_DEPTH</source>
-        <translation>Niveau hiérarchique</translation>
+        <translation>Niveau hierarchique</translation>
     </message>
     <message>
         <source>DISPLAY_ASCENDANTS</source>
@@ -38,7 +38,7 @@
     </message>
     <message>
         <source>MEN_REDUCE_STUDY</source>
-        <translation>Réduire l'étude</translation>
+        <translation>Reduire l'etude</translation>
     </message>
 </context>
 </TS>

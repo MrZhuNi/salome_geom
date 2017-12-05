@@ -44,15 +44,15 @@
     </message>
     <message>
         <source>SCALE_DIMENSIONS</source>
-        <translation>Voulez-vous prendre les unités du fichier (%1) en considération?
-Sinon le modèle sera mis à l&apos;échelle GEOM (unités interprétées comme des mètres).</translation>
+        <translation>Voulez-vous prendre les unites du fichier (%1) en consideration?
+Sinon le modele sera mis à l&apos;echelle GEOM (unites interpretees comme des metres).</translation>
     </message>
 </context>
 <context>
     <name>STEPPlugin_ExportDlg</name>
     <message>
         <source>STEP_LENGTH_UNITS</source>
-        <translation>Unités de longueur</translation>
+        <translation>Unites de longueur</translation>
     </message>
     <message>
         <source>STEP_UNITS_INCH</source>
@@ -60,7 +60,7 @@ Sinon le modèle sera mis à l&apos;échelle GEOM (unités interprétées comme 
     </message>
     <message>
         <source>STEP_UNITS_MILLIMETER</source>
-        <translation>millimètre</translation>
+        <translation>millimetre</translation>
     </message>
     <message>
         <source>STEP_UNITS_FOOT</source>
@@ -72,11 +72,11 @@ Sinon le modèle sera mis à l&apos;échelle GEOM (unités interprétées comme 
     </message>
     <message>
         <source>STEP_UNITS_METER</source>
-        <translation>mètre</translation>
+        <translation>metre</translation>
     </message>
     <message>
         <source>STEP_UNITS_KILOMETER</source>
-        <translation>kilomètre</translation>
+        <translation>kilometre</translation>
     </message>
     <message>
         <source>STEP_UNITS_MILLIINCH</source>
@@ -84,11 +84,11 @@ Sinon le modèle sera mis à l&apos;échelle GEOM (unités interprétées comme 
     </message>
     <message>
         <source>STEP_UNITS_MICROMETER</source>
-        <translation>micromètre</translation>
+        <translation>micrometre</translation>
     </message>
     <message>
         <source>STEP_UNITS_CENTIMETER</source>
-        <translation>centimètre</translation>
+        <translation>centimetre</translation>
     </message>
     <message>
         <source>STEP_UNITS_MICROINCH</source>
@@ -99,7 +99,7 @@ Sinon le modèle sera mis à l&apos;échelle GEOM (unités interprétées comme 
     <name>STEPPlugin_ImportDlg</name>
     <message>
         <source>STEP_CREATE_ASSEMBLIES</source>
-        <translation>Crée les assemblages</translation>
+        <translation>Cree les assemblages</translation>
     </message>
 </context>
 </TS>

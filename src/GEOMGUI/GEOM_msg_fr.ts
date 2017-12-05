@@ -9,7 +9,7 @@
     </message>
     <message>
         <source>PAL_NOT_DONE_ERROR</source>
-        <translation>Opération annulée</translation>
+        <translation>Operation annulee</translation>
     </message>
     <message>
         <source>CHANGE_ORIENTATION_NEW_OBJ_NAME</source>
@@ -17,7 +17,7 @@
     </message>
     <message>
         <source>EDGE_WIDTH_TLT</source>
-        <translation>Epaisseur des arêtes</translation>
+        <translation>Epaisseur des aretes</translation>
     </message>
     <message>
         <source>ISOS_WIDTH_TLT</source>
@@ -25,14 +25,14 @@
     </message>
     <message>
         <source>CLOSE_CONTOUR_NEW_OBJ_NAME</source>
-        <translation>Contour fermé</translation>
+        <translation>Contour ferme</translation>
     </message>
     <message>
         <source>DEP_OBJECT</source>
-        <translation>L&apos;objet choisi a été utilisé pour créer un autre objet ou est référencé par un autre module.
+        <translation>L&apos;objet choisi a ete utilise pour creer un autre objet ou est reference par un autre module.
 La suppression de cet objet peut entrainer un export python invalide.
 
-Voulez-vous tout de même supprimer ces objets ?</translation>
+Voulez-vous tout de meme supprimer ces objets ?</translation>
     </message>
     <message>
         <source>DEVIDE_EDGE_NEW_OBJECT_NAME</source>
@@ -40,11 +40,11 @@ Voulez-vous tout de même supprimer ces objets ?</translation>
     </message>
     <message>
         <source>DEVIDE_EDGE_BAD_PROJ_MSG</source>
-        <translation>Projection en dehors de l&apos;arête</translation>
+        <translation>Projection en dehors de l&apos;arete</translation>
     </message>
     <message>
         <source>DEVIDE_EDGE_BY_PROJ_POINT</source>
-        <translation>Points à projeter</translation>
+        <translation>Points a projeter</translation>
     </message>
     <message>
         <source>ERROR_SHAPE_TYPE</source>
@@ -61,15 +61,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source> iErr : 12</source>
-        <translation>Type d&apos;objet non autorisé</translation>
+        <translation>Type d&apos;objet non autorise</translation>
     </message>
     <message>
         <source> iErr : 13</source>
-        <translation>Cet état n&apos;est pas autorisé</translation>
+        <translation>Cet etat n&apos;est pas autorise</translation>
     </message>
     <message>
         <source> iErr : 15</source>
-        <translation>Ce type de surface n&apos;est pas autorisé</translation>
+        <translation>Ce type de surface n&apos;est pas autorise</translation>
     </message>
     <message>
         <source> iErr : 20</source>
@@ -77,7 +77,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source> iErr : 30</source>
-        <translation>Impossible d&apos;obtenir la ligne à partir du lien</translation>
+        <translation>Impossible d&apos;obtenir la ligne a partir du lien</translation>
     </message>
     <message>
         <source> iErr : 40</source>
@@ -85,11 +85,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source> iErr : 41</source>
-        <translation>Les données ne sont pas valides pour le classificateur</translation>
+        <translation>Les donnees ne sont pas valides pour le classificateur</translation>
     </message>
     <message>
         <source>GEOM_2D_CONTINUTY</source>
-        <translation>Continuité 2D </translation>
+        <translation>Continuite 2D </translation>
     </message>
     <message>
         <source>GEOM_2D_CURVE_MODE</source>
@@ -97,11 +97,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_2D_TOLERANCE</source>
-        <translation>Tolérance 2D</translation>
+        <translation>Tolerance 2D</translation>
     </message>
     <message>
         <source>GEOM_3D_CONTINUTY</source>
-        <translation>Continuité 3D</translation>
+        <translation>Continuite 3D</translation>
     </message>
     <message>
         <source>GEOM_3D_CURVE_MODE</source>
@@ -109,7 +109,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_3D_TOLERANCE</source>
-        <translation>Tolérance 3D</translation>
+        <translation>Tolerance 3D</translation>
     </message>
     <message>
         <source>GEOM_3_POINTS</source>
@@ -149,11 +149,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_ARCHIMEDE</source>
-        <translation>Archimède</translation>
+        <translation>Archimede</translation>
     </message>
     <message>
         <source>GEOM_ARCHIMEDE_TITLE</source>
-        <translation>Construction Archimède</translation>
+        <translation>Construction Archimede</translation>
     </message>
     <message>
         <source>GEOM_ARC_TITLE</source>
@@ -165,7 +165,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_AXE_MIRROR</source>
-        <translation>Axe de symétrie</translation>
+        <translation>Axe de symetrie</translation>
     </message>
     <message>
         <source>GEOM_AXIS</source>
@@ -185,7 +185,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_BEZIER</source>
-        <translation>Bézier</translation>
+        <translation>Bezier</translation>
     </message>
     <message>
         <source>GEOM_BINORMAL</source>
@@ -193,7 +193,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_BLOCK</source>
-        <translation>Solide hexaédrique</translation>
+        <translation>Solide hexaedrique</translation>
     </message>
     <message>
         <source>GEOM_BLOCKS_COMPOUND</source>
@@ -205,7 +205,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_BLOCK_EXPLODE_TITLE</source>
-        <translation>Sélection des sous-blocs </translation>
+        <translation>Selection des sous-blocs </translation>
     </message>
     <message>
         <source>GEOM_BLOCK_MULTITRSF</source>
@@ -225,11 +225,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_BLOCK_TITLE</source>
-        <translation>Construction d&apos;un solide hexaédrique</translation>
+        <translation>Construction d&apos;un solide hexaedrique</translation>
     </message>
     <message>
         <source>GEOM_BNDBOX</source>
-        <translation>Boîte englobante</translation>
+        <translation>Boite englobante</translation>
     </message>
     <message>
         <source>GEOM_BNDBOX_OBJDIM</source>
@@ -237,19 +237,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_BNDBOX_TITLE</source>
-        <translation>Informations sur la Boîte englobante</translation>
+        <translation>Informations sur la Boite englobante</translation>
     </message>
     <message>
         <source>GEOM_BOX</source>
-        <translation>Boîte</translation>
+        <translation>Boite</translation>
     </message>
     <message>
         <source>GEOM_BOX_OBJ</source>
-        <translation>Dimensions à l&apos;origine</translation>
+        <translation>Dimensions a l&apos;origine</translation>
     </message>
     <message>
         <source>GEOM_BOX_TITLE</source>
-        <translation>Construction d&apos;une boîte </translation>
+        <translation>Construction d&apos;une boite </translation>
     </message>
     <message>
         <source>GEOM_BSplineRestriction</source>
@@ -305,7 +305,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_BY_PARAMETER</source>
-        <translation>Par paramètre</translation>
+        <translation>Par parametre</translation>
     </message>
     <message>
         <source>GEOM_CENTER</source>
@@ -313,7 +313,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CENTER_DEFAULT</source>
-        <translation> (Origine par défaut)</translation>
+        <translation> (Origine par defaut)</translation>
     </message>
     <message>
         <source>GEOM_CENTER_POINT</source>
@@ -337,11 +337,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_EDGES</source>
-        <translation>Chanfrein sur des arêtes</translation>
+        <translation>Chanfrein sur des aretes</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_FACES</source>
-        <translation>Chanfrein sur les faces sélectionnées</translation>
+        <translation>Chanfrein sur les faces selectionnees</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_TITLE</source>
@@ -349,7 +349,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CHANGE_ORIENTATION</source>
-        <translation>Objets à modifier</translation>
+        <translation>Objets a modifier</translation>
     </message>
     <message>
         <source>GEOM_CHANGE_DIRECTION</source>
@@ -365,7 +365,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CHECK_BLOCKS_COMPOUND_FAILED</source>
-        <translation>La vérification n&apos;a pas abouti</translation>
+        <translation>La verification n&apos;a pas abouti</translation>
     </message>
     <message>
         <source>GEOM_CHECK_BLOCKS_COMPOUND_ERRORS</source>
@@ -381,7 +381,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES</source>
-        <translation>Sous-objets incriminés</translation>
+        <translation>Sous-objets incrimines</translation>
     </message>
     <message>
         <source>GEOM_CHECK_BLOCKS_NOT_BLOCK</source>
@@ -389,7 +389,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CHECK_BLOCKS_EXTRA_EDGE</source>
-        <translation>Arête supplémentaire</translation>
+        <translation>Arete supplementaire</translation>
     </message>
     <message>
         <source>GEOM_CHECK_BLOCKS_INVALID_CONNECTION</source>
@@ -397,19 +397,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CHECK_BLOCKS_NOT_CONNECTED</source>
-        <translation>Non connecté</translation>
+        <translation>Non connecte</translation>
     </message>
     <message>
         <source>GEOM_CHECK_BLOCKS_NOT_GLUED</source>
-        <translation>Pas collé # %1</translation>
+        <translation>Pas colle # %1</translation>
     </message>
     <message>
         <source>GEOM_GETNONBLOCKS_TITLE</source>
-        <translation>Récupérer les solides qui ne sontpas des hexahédres et les faces qui ne sont pas des quadrangles</translation>
+        <translation>Recuperer les solides qui ne sontpas des hexahedres et les faces qui ne sont pas des quadrangles</translation>
     </message>
     <message>
         <source>GEOM_GETNONBLOCKS</source>
-        <translation>Récupérer les solides qui ne sont pas des blocs</translation>
+        <translation>Recuperer les solides qui ne sont pas des blocs</translation>
     </message>
     <message>
         <source>GEOM_NONBLOCKS</source>
@@ -417,7 +417,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_USE_C1_CRITERION</source>
-        <translation>Utiliser un critère C1</translation>
+        <translation>Utiliser un critere C1</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INFOS</source>
@@ -425,7 +425,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CHECK_SELF_INTERSECTIONS</source>
-        <translation>Détecter les auto-intersections</translation>
+        <translation>Detecter les auto-intersections</translation>
     </message>
     <message>
         <source>GEOM_FAST_CHECK_INTERSECTIONS</source>
@@ -449,11 +449,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CMASS</source>
-        <translation>Centre de gravité</translation>
+        <translation>Centre de gravite</translation>
     </message>
     <message>
         <source>GEOM_CMASS_TITLE</source>
-        <translation>Construction du centre de gravité</translation>
+        <translation>Construction du centre de gravite</translation>
     </message>
     <message>
         <source>GEOM_COMMON</source>
@@ -477,7 +477,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_COMPOUND_TITLE</source>
-        <translation>Créer un assemblage</translation>
+        <translation>Creer un assemblage</translation>
     </message>
     <message>
         <source>GEOM_CONE</source>
@@ -489,7 +489,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CONFIRM</source>
-        <translation>Confirmer l&apos;opération</translation>
+        <translation>Confirmer l&apos;operation</translation>
     </message>
     <message>
         <source>GEOM_CONFIRM_INFO</source>
@@ -501,19 +501,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_COORDINATES</source>
-        <translation>Coordonnées</translation>
+        <translation>Coordonnees</translation>
     </message>
     <message>
         <source>GEOM_COORDINATES_RES</source>
-        <translation>Coordonnées résultantes</translation>
+        <translation>Coordonnees resultantes</translation>
     </message>
     <message>
         <source>GEOM_CREATE_COPY</source>
-        <translation>Créer une copie</translation>
+        <translation>Creer une copie</translation>
     </message>
     <message>
         <source>GEOM_CREATE_SINGLE_SOLID</source>
-        <translation>Créer un solide unique</translation>
+        <translation>Creer un solide unique</translation>
     </message>
     <message>
         <source>GEOM_CURVE</source>
@@ -521,7 +521,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CURVE_CONTINUTY</source>
-        <translation>Continuité des courbes </translation>
+        <translation>Continuite des courbes </translation>
     </message>
     <message>
         <source>GEOM_CURVE_TITLE</source>
@@ -529,11 +529,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CUT</source>
-        <translation>Découpe</translation>
+        <translation>Decoupe</translation>
     </message>
     <message>
         <source>GEOM_CUT_TITLE</source>
-        <translation>Découpe des objets</translation>
+        <translation>Decoupe des objets</translation>
     </message>
     <message>
         <source>GEOM_CYLINDER</source>
@@ -545,7 +545,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CYLINDER_ANGLE_ERR</source>
-        <translation>Les valeurs de l&apos;angle 0 et 360 sont à éviter pour construire des volumes sains. Veuillez décocher la case &quot;Angle&quot; pour utiliser le constructeur de cylindre complet.</translation>
+        <translation>Les valeurs de l&apos;angle 0 et 360 sont a eviter pour construire des volumes sains. Veuillez decocher la case &quot;Angle&quot; pour utiliser le constructeur de cylindre complet.</translation>
     </message>
     <message>
         <source>GEOM_D1</source>
@@ -557,7 +557,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_DETECT</source>
-        <translation>Détecter</translation>
+        <translation>Detecter</translation>
     </message>
     <message>
         <source>GEOM_DIAGONAL_POINTS</source>
@@ -601,15 +601,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_DropSmallEdges</source>
-        <translation>Arêtes mineures omises</translation>
+        <translation>Aretes mineures omises</translation>
     </message>
     <message>
         <source>GEOM_DRAFT_ANGLE</source>
-        <translation>Angle de dépouille</translation>
+        <translation>Angle de depouille</translation>
     </message>
     <message>
         <source>GEOM_EDGE</source>
-        <translation>Arête</translation>
+        <translation>Arete</translation>
     </message>
     <message>
         <source>GEOM_EDGES</source>
@@ -617,7 +617,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_EDGE_TITLE</source>
-        <translation>Créer une arête</translation>
+        <translation>Creer une arete</translation>
     </message>
     <message>
         <source>GEOM_ELLIPSE</source>
@@ -625,7 +625,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_ELLIPSE_ERROR_1</source>
-        <translation>Impossible de créer une ellipse: le demi petit axe est plus grand que le demi grand axe.</translation>
+        <translation>Impossible de creer une ellipse: le demi petit axe est plus grand que le demi grand axe.</translation>
     </message>
     <message>
         <source>GEOM_ELLIPSE_TITLE</source>
@@ -641,7 +641,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_ERROR_STATUS</source>
-        <translation>Etat de l&apos;opération</translation>
+        <translation>Etat de l&apos;operation</translation>
     </message>
     <message>
         <source>GEOM_ERR_GET_ENGINE</source>
@@ -649,23 +649,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_ERR_LIB_NOT_FOUND</source>
-        <translation>Il est impossible de trouver ou d&apos;ouvrir la librairie IHM correspondante à l&apos;action de l&apos;utilisateur</translation>
+        <translation>Il est impossible de trouver ou d&apos;ouvrir la librairie IHM correspondante a l&apos;action de l&apos;utilisateur</translation>
     </message>
     <message>
         <source>GEOM_EXTRUDED_CUT_TITLE</source>
-        <translation>Enlèvement de matière extrudé</translation>
+        <translation>Enlevement de matiere extrude</translation>
     </message>
     <message>
         <source>GEOM_EXTRUDED_CUT</source>
-        <translation>Enlèvement_extrudé</translation>
+        <translation>Enlevement_extrude</translation>
     </message>
     <message>
         <source>GEOM_EXTRUDED_BOSS_TITLE</source>
-        <translation>Bossage extrudé</translation>
+        <translation>Bossage extrude</translation>
     </message>
     <message>
         <source>GEOM_EXTRUDED_BOSS</source>
-        <translation>Bossage_extrudé</translation>
+        <translation>Bossage_extrude</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION</source>
@@ -697,11 +697,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_TOWARDS_INSIDE</source>
-        <translation>Epaissit vers l&apos;intérieur</translation>
+        <translation>Epaissit vers l&apos;interieur</translation>
     </message>
     <message>
         <source>GEOM_SCALE_PRISM</source>
-        <translation>Appliquer le facteur d&apos;échelle</translation>
+        <translation>Appliquer le facteur d&apos;echelle</translation>
     </message>
     <message>
         <source>GEOM_FACE</source>
@@ -709,15 +709,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CS</source>
-        <translation>Système de coordonnées</translation>
+        <translation>Systeme de coordonnees</translation>
     </message>
     <message>
         <source>GEOM_GCS</source>
-        <translation>Système de coordonnées global</translation>
+        <translation>Systeme de coordonnees global</translation>
     </message>
     <message>
         <source>GEOM_LCS</source>
-        <translation>Système de coordonnées local</translation>
+        <translation>Systeme de coordonnees local</translation>
     </message>
     <message>
         <source>GEOM_LOCATIONS</source>
@@ -729,19 +729,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_FACE_FFW</source>
-        <translation>Création d&apos;une face à partir des contours et/ou arêtes</translation>
+        <translation>Creation d&apos;une face a partir des contours et/ou aretes</translation>
     </message>
     <message>
         <source>GEOM_FACE_FROM_SURFACE</source>
-        <translation>Création de face depuis une surface bornée par un contour</translation>
+        <translation>Creation de face depuis une surface bornee par un contour</translation>
     </message>
     <message>
         <source>GEOM_FACE_OPT</source>
-        <translation>Privilégier la création d&apos;une face plane</translation>
+        <translation>Privilegier la creation d&apos;une face plane</translation>
     </message>
     <message>
         <source>GEOM_FACE_FFWC</source>
-        <translation>Création d&apos;une face depuis un contour et des contraintes</translation>
+        <translation>Creation d&apos;une face depuis un contour et des contraintes</translation>
     </message>
     <message>
         <source>GEOM_CONSTRAINTS</source>
@@ -758,7 +758,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
         <translation>Impossible de construire une face plane: 
-        la face créée a une tolérance trop élevée</translation>
+        la face creee a une tolerance trop elevee</translation>
     </message>
     <message>
         <source>GEOM_FACE_OR_LCS</source>
@@ -766,11 +766,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_FACE_SELECTION</source>
-        <translation>Sélection d&apos;une face </translation>
+        <translation>Selection d&apos;une face </translation>
     </message>
     <message>
         <source>GEOM_FACE_TITLE</source>
-        <translation>Créer une face</translation>
+        <translation>Creer une face</translation>
     </message>
     <message>
         <source>GEOM_RECTANGLE_TITLE</source>
@@ -782,47 +782,47 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_FILLET</source>
-        <translation>Congé</translation>
+        <translation>Conge</translation>
     </message>
     <message>
         <source>GEOM_FILLET_2D</source>
-        <translation>Congé 2D</translation>
+        <translation>Conge 2D</translation>
     </message>
     <message>
         <source>GEOM_FILLET_1D</source>
-        <translation>Congé 1D</translation>
+        <translation>Conge 1D</translation>
     </message>
     <message>
         <source>GEOM_FILLET_1D_IGNORE_SECANT</source>
-        <translation>Fusionner les arêtes collinéaires pour permettre des rayons plus grands</translation>
+        <translation>Fusionner les aretes collineaires pour permettre des rayons plus grands</translation>
     </message>
     <message>
         <source>GEOM_FILLET_ABORT</source>
-        <translation>Il n&apos;est pas possible de calculer un congé avec le rayon %1</translation>
+        <translation>Il n&apos;est pas possible de calculer un conge avec le rayon %1</translation>
     </message>
     <message>
         <source>GEOM_FILLET_ALL</source>
-        <translation>Congé sur l&apos;objet</translation>
+        <translation>Conge sur l&apos;objet</translation>
     </message>
     <message>
         <source>GEOM_FILLET_EDGES</source>
-        <translation>Congé sur des arêtes</translation>
+        <translation>Conge sur des aretes</translation>
     </message>
     <message>
         <source>GEOM_FILLET_FACES</source>
-        <translation>Congé sur des faces</translation>
+        <translation>Conge sur des faces</translation>
     </message>
     <message>
         <source>GEOM_FILLET_TITLE</source>
-        <translation>Construction d&apos;un congé</translation>
+        <translation>Construction d&apos;un conge</translation>
     </message>
     <message>
         <source>GEOM_FILLET_2D_TITLE</source>
-        <translation>Construction d&apos;un congé 2D </translation>
+        <translation>Construction d&apos;un conge 2D </translation>
     </message>
     <message>
         <source>GEOM_FILLET_1D_TITLE</source>
-        <translation>Construction d&apos;un congé 1D </translation>
+        <translation>Construction d&apos;un conge 1D </translation>
     </message>
     <message>
         <source>GEOM_FILLING</source>
@@ -830,27 +830,27 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_FILLING_ARG</source>
-        <translation>Arguments et paramètres</translation>
+        <translation>Arguments et parametres</translation>
     </message>
     <message>
         <source>GEOM_FILLING_COMPOUND</source>
-        <translation>Assemblage d&apos;entrée</translation>
+        <translation>Assemblage d&apos;entree</translation>
     </message>
     <message>
         <source>GEOM_FILLING_MAX_DEG</source>
-        <translation>Degré maximal</translation>
+        <translation>Degre maximal</translation>
     </message>
     <message>
         <source>GEOM_FILLING_MIN_DEG</source>
-        <translation>Degré minimal</translation>
+        <translation>Degre minimal</translation>
     </message>
     <message>
         <source>GEOM_FILLING_NB_ITER</source>
-        <translation>Nb. Itér :</translation>
+        <translation>Nb. Iter :</translation>
     </message>
     <message>
         <source>GEOM_FILLING_TITLE</source>
-        <translation>Remplir une surface avec des arêtes</translation>
+        <translation>Remplir une surface avec des aretes</translation>
     </message>
     <message>
         <source>GEOM_FILLING_TOL_2D</source>
@@ -866,11 +866,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_FREE_BOUNDS_ERROR</source>
-        <translation>L&apos;objet n&apos;est pas sélectionné</translation>
+        <translation>L&apos;objet n&apos;est pas selectionne</translation>
     </message>
     <message>
         <source>GEOM_FREE_BOUNDS_MSG</source>
-        <translation>Contours libres trouvés: %1 (%2 fermés, %3 ouverts)</translation>
+        <translation>Contours libres trouves: %1 (%2 fermes, %3 ouverts)</translation>
     </message>
     <message>
         <source>GEOM_FREE_BOUNDS_TLT</source>
@@ -894,15 +894,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_FUSE_TITLE</source>
-        <translation>Réunir des objets</translation>
+        <translation>Reunir des objets</translation>
     </message>
     <message>
         <source>GEOM_FixFaceSize</source>
-        <translation>Répare la taille des faces</translation>
+        <translation>Repare la taille des faces</translation>
     </message>
     <message>
         <source>GEOM_FixShape</source>
-        <translation>Répare l&apos;objet</translation>
+        <translation>Repare l&apos;objet</translation>
     </message>
     <message>
         <source>GEOM_GLUE</source>
@@ -914,23 +914,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_GLUE_EDGES_TITLE</source>
-        <translation>Recoller les arêtes</translation>
+        <translation>Recoller les aretes</translation>
     </message>
     <message>
         <source>GEOM_GLUE_EDGES_DETECT_TITLE</source>
-        <translation>Détection des arêtes coïncidentes</translation>
+        <translation>Detection des aretes coïncidentes</translation>
     </message>
     <message>
         <source>GEOM_GLUE_FACES_DETECT_TITLE</source>
-        <translation>Détection des faces coïncidentes</translation>
+        <translation>Detection des faces coïncidentes</translation>
     </message>
     <message>
         <source>GLUE_ERROR_STICKED_SHAPES</source>
-        <translation>La valeur de la tolérance est trop importante. Détection de shapes &quot;sticked&quot;.</translation>
+        <translation>La valeur de la tolerance est trop importante. Detection de shapes &quot;sticked&quot;.</translation>
     </message>
     <message>
         <source>GEOM_LIMIT_TOLERANCE_TITLE</source>
-        <translation>Limiter la tolérance</translation>
+        <translation>Limiter la tolerance</translation>
     </message>
     <message>
         <source>GEOM_HEIGHT</source>
@@ -938,7 +938,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_HEXAGON</source>
-        <translation>Héxagone</translation>
+        <translation>Hexagone</translation>
     </message>
     <message>
         <source>GEOM_HOLES</source>
@@ -950,15 +950,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_IDENTICAL_NAMES_SELECT_BY_MOUSE</source>
-        <translation>Noms identiques : sélectionner à la souris !</translation>
+        <translation>Noms identiques : selectionner a la souris !</translation>
     </message>
     <message>
         <source>GEOM_IMPORT</source>
-        <translation>Objet_importé</translation>
+        <translation>Objet_importe</translation>
     </message>
     <message>
         <source>GEOM_INCORRECT_INPUT</source>
-        <translation>Les données d&apos;entrée ne sont pas valides!</translation>
+        <translation>Les donnees d&apos;entree ne sont pas valides!</translation>
     </message>
     <message>
         <source>GEOM_INERTIA_CONSTR</source>
@@ -1002,19 +1002,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_MARKER</source>
-        <translation>Repère</translation>
+        <translation>Repere</translation>
     </message>
     <message>
         <source>GEOM_MARKER_TITLE</source>
-        <translation>Créer une repère</translation>
+        <translation>Creer une repere</translation>
     </message>
     <message>
         <source>GEOM_MATERIAL_ID</source>
-        <translation>ID matériau:</translation>
+        <translation>ID materiau:</translation>
     </message>
     <message>
         <source>GEOM_MATERIAL_MATERIAL</source>
-        <translation>Matériau</translation>
+        <translation>Materiau</translation>
     </message>
     <message>
         <source>GEOM_MATERIAL_SET</source>
@@ -1026,7 +1026,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_MATERIAL_TITLE</source>
-        <translation>Définir les matériaux pour la fusion dominante</translation>
+        <translation>Definir les materiaux pour la fusion dominante</translation>
     </message>
     <message>
         <source>GEOM_MATRIX</source>
@@ -1038,11 +1038,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_MAX_3D_TOLERANCE</source>
-        <translation>Tolérance 3D maximale</translation>
+        <translation>Tolerance 3D maximale</translation>
     </message>
     <message>
         <source>GEOM_MAX_TOLERANCE</source>
-        <translation>Tolérance maximale</translation>
+        <translation>Tolerance maximale</translation>
     </message>
     <message>
         <source>GEOM_MEN_ALL_FILES</source>
@@ -1054,11 +1054,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_MEN_COMPONENT</source>
-        <translation>Géométrie</translation>
+        <translation>Geometrie</translation>
     </message>
     <message>
         <source>GEOM_MEN_ENTER_ANGLE</source>
-        <translation>Indiquez l&apos;angle en degrés</translation>
+        <translation>Indiquez l&apos;angle en degres</translation>
     </message>
     <message>
         <source>GEOM_MEN_ISOS</source>
@@ -1082,7 +1082,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_MEN_SHADING_WITH_EDGES</source>
-        <translation>Ombrage avec arêtes</translation>
+        <translation>Ombrage avec aretes</translation>
     </message>
     <message>
         <source>GEOM_MEN_SKETCHER_X</source>
@@ -1118,7 +1118,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_MESHING_DEFLECTION</source>
-        <translation>Déflection de maillage. :</translation>
+        <translation>Deflection de maillage. :</translation>
     </message>
     <message>
         <source>GEOM_MIN</source>
@@ -1130,19 +1130,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_NO_SOL</source>
-        <translation>Aucune solution trouvée</translation>
+        <translation>Aucune solution trouvee</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_OBJ</source>
-        <translation>Objets et résultats</translation>
+        <translation>Objets et resultats</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_PUBLISH_TITLE</source>
-        <translation>Plusieurs solutions trouvées</translation>
+        <translation>Plusieurs solutions trouvees</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_PUBLISH_TEXT</source>
-        <translation>Voulez-vous publier dans l&apos;étude toutes les solutions trouvées ? Si non, seule la solution actuellement sélectionnées sera publiée.</translation>
+        <translation>Voulez-vous publier dans l&apos;etude toutes les solutions trouvees ? Si non, seule la solution actuellement selectionnees sera publiee.</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_TITLE</source>
@@ -1154,7 +1154,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_MIRROR_TITLE</source>
-        <translation>Refléter un objet</translation>
+        <translation>Refleter un objet</translation>
     </message>
     <message>
         <source>GEOM_MODE</source>
@@ -1194,15 +1194,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_NAME_INCORRECT</source>
-        <translation>Le nom de l&apos;objet n&apos;a pas été trouvé</translation>
+        <translation>Le nom de l&apos;objet n&apos;a pas ete trouve</translation>
     </message>
     <message>
         <source>GEOM_NB_BLOCKS_NO_OTHERS</source>
-        <translation>Il y a %1 bloc(s) spécifié(s) et PAS d&apos;autres solides</translation>
+        <translation>Il y a %1 bloc(s) specifie(s) et PAS d&apos;autres solides</translation>
     </message>
     <message>
         <source>GEOM_NB_BLOCKS_SOME_OTHERS</source>
-        <translation>Il y a %1 bloc(s) spécifié(s) et d&apos;autres solides</translation>
+        <translation>Il y a %1 bloc(s) specifie(s) et d&apos;autres solides</translation>
     </message>
     <message>
         <source>GEOM_NB_TIMES</source>
@@ -1222,7 +1222,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_NUM_SPLIT_POINTS</source>
-        <translation>Nombre de points de découpe</translation>
+        <translation>Nombre de points de decoupe</translation>
     </message>
     <message>
         <source>GEOM_OBJECT</source>
@@ -1242,19 +1242,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_OBJECT_RESULT</source>
-        <translation>Objet et résultat</translation>
+        <translation>Objet et resultat</translation>
     </message>
     <message>
         <source>GEOM_OFFSET</source>
-        <translation>Décalage</translation>
+        <translation>Decalage</translation>
     </message>
     <message>
         <source>GEOM_OFFSET_TITLE</source>
-        <translation>Décaler une surface</translation>
+        <translation>Decaler une surface</translation>
     </message>
     <message>
         <source>GEOM_PATTERN</source>
-        <translation>Schema de découpe</translation>
+        <translation>Schema de decoupe</translation>
     </message>
     <message>
         <source>GEOM_PROJECTION_ON_FACE</source>
@@ -1266,7 +1266,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PROJECTION_ON_EDGE</source>
-        <translation>Projection sur une arête</translation>
+        <translation>Projection sur une arete</translation>
     </message>
     <message>
         <source>GEOM_PROJECTION_TITLE</source>
@@ -1278,7 +1278,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PROJ_ON_FACE_SOURCE</source>
-        <translation>Point, arête ou contour source</translation>
+        <translation>Point, arete ou contour source</translation>
     </message>
     <message>
         <source>GEOM_PROJ_ON_FACE_TARGET</source>
@@ -1298,7 +1298,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PROJ_ON_EDGE_TARGET</source>
-        <translation>Arête cible</translation>
+        <translation>Arete cible</translation>
     </message>
     <message>
         <source>GEOM_SOLUTION</source>
@@ -1318,7 +1318,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_OPERATIONS</source>
-        <translation>Opérations</translation>
+        <translation>Operations</translation>
     </message>
     <message>
         <source>GEOM_ORIENTATION</source>
@@ -1334,27 +1334,27 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PARAMETER</source>
-        <translation>Paramètre :</translation>
+        <translation>Parametre :</translation>
     </message>
     <message>
         <source>GEOM_PARAMETERS</source>
-        <translation>Paramètres</translation>
+        <translation>Parametres</translation>
     </message>
     <message>
         <source>GEOM_POINT_ON_EDGE</source>
-        <translation>Créer un point sur une arête</translation>
+        <translation>Creer un point sur une arete</translation>
     </message>
     <message>
         <source>GEOM_POINT_ON_FACE</source>
-        <translation>Créer un point sur une face</translation>
+        <translation>Creer un point sur une face</translation>
     </message>
     <message>
         <source>GEOM_PARAM_VALUE</source>
-        <translation>Par paramètre</translation>
+        <translation>Par parametre</translation>
     </message>
     <message>
         <source>GEOM_COORD_VALUE</source>
-        <translation>Par coordonnée</translation>
+        <translation>Par coordonnee</translation>
     </message>
     <message>
         <source>GEOM_LENGTH_VALUE</source>
@@ -1366,7 +1366,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_WRN_PARTITION_RESULT_EMPTY</source>
-        <translation>Le résultat de la partition est vide, vérifiez le paramètre &quot;Type résultant&quot;</translation>
+        <translation>Le resultat de la partition est vide, verifiez le parametre &quot;Type resultant&quot;</translation>
     </message>
     <message>
         <source>GEOM_PARTITION_HALFSPACE</source>
@@ -1398,7 +1398,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PIPE_PATH_TITLE</source>
-        <translation>Récupérer le chemin</translation>
+        <translation>Recuperer le chemin</translation>
     </message>
     <message>
         <source>GEOM_PIPE_LIKE_SHAPE</source>
@@ -1406,11 +1406,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PIPE_BASE1_OBJECT</source>
-        <translation>Premier(ère) face/contour/arête de base</translation>
+        <translation>Premier(ere) face/contour/arete de base</translation>
     </message>
     <message>
         <source>GEOM_PIPE_BASE2_OBJECT</source>
-        <translation>Dernier(ère) face/contour/arête de base</translation>
+        <translation>Dernier(ere) face/contour/arete de base</translation>
     </message>
     <message>
         <source>GEOM_PROFILE</source>
@@ -1422,15 +1422,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SELECT_UNPUBLISHED_EDGES</source>
-        <translation>Choisir les arêtes non-publiées</translation>
+        <translation>Choisir les aretes non-publiees</translation>
     </message>
     <message>
         <source>GEOM_GENERATE_GROUPS</source>
-        <translation>Générer les groupes</translation>
+        <translation>Generer les groupes</translation>
     </message>
     <message>
         <source>GEOM_GROUP_NAME_PREFIX</source>
-        <translation>Préfixe des groupes</translation>
+        <translation>Prefixe des groupes</translation>
     </message>
     <message>
         <source>GEOM_PLANE</source>
@@ -1446,7 +1446,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PLANE_PVC</source>
-        <translation>Point + vecteur de coordonnées </translation>
+        <translation>Point + vecteur de coordonnees </translation>
     </message>
     <message>
         <source>GEOM_PLANE_SIZE</source>
@@ -1490,11 +1490,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_START_POINT</source>
-        <translation>Point de départ</translation>
+        <translation>Point de depart</translation>
     </message>
     <message>
         <source>GEOM_POLYLINE</source>
-        <translation>Ligne brisée</translation>
+        <translation>Ligne brisee</translation>
     </message>
     <message>
         <source>GEOM_POSITION</source>
@@ -1506,7 +1506,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PRECISION</source>
-        <translation>Précision :</translation>
+        <translation>Precision :</translation>
     </message>
     <message>
         <source>GEOM_PROPAGATE</source>
@@ -1518,11 +1518,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PROPERTIES</source>
-        <translation>Propriétés de base</translation>
+        <translation>Proprietes de base</translation>
     </message>
     <message>
         <source>GEOM_PROPERTIES_CONSTR</source>
-        <translation>Objet et ses propriétés</translation>
+        <translation>Objet et ses proprietes</translation>
     </message>
     <message>
         <source>GEOM_PROPERTIES_SURFACE</source>
@@ -1530,7 +1530,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PROPERTIES_TITLE</source>
-        <translation>Propriétés de base</translation>
+        <translation>Proprietes de base</translation>
     </message>
     <message>
         <source>GEOM_PROPERTIES_VOLUME</source>
@@ -1538,19 +1538,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PRP_ABORT</source>
-        <translation>L&apos;opération a été annulée</translation>
+        <translation>L&apos;operation a ete annulee</translation>
     </message>
     <message>
         <source>GEOM_PRP_COMMAND</source>
-        <translation>Pas de commandes associées avec cet id = %1.</translation>
+        <translation>Pas de commandes associees avec cet id = %1.</translation>
     </message>
     <message>
         <source>GEOM_PRP_DONE</source>
-        <translation>L&apos;opération a abouti</translation>
+        <translation>L&apos;operation a abouti</translation>
     </message>
     <message>
         <source>GEOM_PRP_EXPORT</source>
-        <translation>Exporter la géométrie à %1 ...</translation>
+        <translation>Exporter la geometrie a %1 ...</translation>
     </message>
     <message>
         <source>GEOM_PRP_LOADING</source>
@@ -1558,7 +1558,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PRP_MIN_DIST</source>
-        <translation>La distance minimale n&apos;est pas calculée</translation>
+        <translation>La distance minimale n&apos;est pas calculee</translation>
     </message>
     <message>
         <source>GEOM_PRP_NOT_FOR_VTK_VIEWER</source>
@@ -1570,15 +1570,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PRP_READY</source>
-        <translation>Prêt</translation>
+        <translation>Pret</translation>
     </message>
     <message>
         <source>GEOM_PRP_SELECT_EDGE</source>
-        <translation>Choisissez les arêtes et cliquez sur Appliquer</translation>
+        <translation>Choisissez les aretes et cliquez sur Appliquer</translation>
     </message>
     <message>
         <source>GEOM_PRP_SELECT_FACE</source>
-        <translation>Choisissez les faces à supprimer et cliquez sur Oui/Appliquer</translation>
+        <translation>Choisissez les faces a supprimer et cliquez sur Oui/Appliquer</translation>
     </message>
     <message>
         <source>GEOM_PRP_SELECT_FIRST</source>
@@ -1618,11 +1618,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_RECONSTRUCTION_LIMIT</source>
-        <translation>Type résultant </translation>
+        <translation>Type resultant </translation>
     </message>
     <message>
         <source>GEOM_RECONSTRUCTION_LIMIT_EDGE</source>
-        <translation>Arête</translation>
+        <translation>Arete</translation>
     </message>
     <message>
         <source>GEOM_RECONSTRUCTION_LIMIT_FACE</source>
@@ -1650,7 +1650,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_REF_POINT</source>
-        <translation>Point avec référence</translation>
+        <translation>Point avec reference</translation>
     </message>
     <message>
         <source>GEOM_REMOVE_ALL_HOLES</source>
@@ -1670,7 +1670,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_REQUIRED_DEGREE</source>
-        <translation>Degré nécessaire</translation>
+        <translation>Degre necessaire</translation>
     </message>
     <message>
         <source>GEOM_REQUIRED_NUM_SEGMENTS</source>
@@ -1702,11 +1702,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_REVOLUTION</source>
-        <translation>Révolution</translation>
+        <translation>Revolution</translation>
     </message>
     <message>
         <source>GEOM_REVOLUTION_TITLE</source>
-        <translation>Construction par révolution</translation>
+        <translation>Construction par revolution</translation>
     </message>
     <message>
         <source>GEOM_ROTATION</source>
@@ -1722,7 +1722,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SCALE_FACTOR</source>
-        <translation>Facteur d&apos;échelle :</translation>
+        <translation>Facteur d&apos;echelle :</translation>
     </message>
     <message>
         <source>GEOM_SCALE_TITLE</source>
@@ -1738,27 +1738,27 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SELECTED_FACE</source>
-        <translation>Face sélectionnée </translation>
+        <translation>Face selectionnee </translation>
     </message>
     <message>
         <source>GEOM_SELECTED_OBJECTS</source>
-        <translation>Objets sélectionnés</translation>
+        <translation>Objets selectionnes</translation>
     </message>
     <message>
         <source>GEOM_SELECTED_SHAPE</source>
-        <translation>Forme sélectionnée</translation>
+        <translation>Forme selectionnee</translation>
     </message>
     <message>
         <source>GEOM_SELECTED_SHAPES</source>
-        <translation>Formes sélectionnées</translation>
+        <translation>Formes selectionnees</translation>
     </message>
     <message>
         <source>GEOM_SELECTION</source>
-        <translation>Sélection</translation>
+        <translation>Selection</translation>
     </message>
     <message>
         <source>GEOM_SET_MATERIALS</source>
-        <translation>Définir les matériaux</translation>
+        <translation>Definir les materiaux</translation>
     </message>
     <message>
         <source>GEOM_SEWING</source>
@@ -1770,7 +1770,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_ALLOW_NON_MANIFOLD</source>
-        <translation>Non conformes autorisés</translation>
+        <translation>Non conformes autorises</translation>
     </message>
     <message>
         <source>GEOM_SHAPE</source>
@@ -1806,7 +1806,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SHOW_POINTS_COORD</source>
-        <translation>Afficher les points de départ/arrivée</translation>
+        <translation>Afficher les points de depart/arrivee</translation>
     </message>
     <message>
         <source>GEOM_SKETCH</source>
@@ -1818,7 +1818,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_ADD_PARAMS</source>
-        <translation>Paramètre additionnel</translation>
+        <translation>Parametre additionnel</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_ANGLE</source>
@@ -1886,7 +1886,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_EL</source>
-        <translation>Type d&apos;élément </translation>
+        <translation>Type d&apos;element </translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_RESTORE</source>
@@ -1918,7 +1918,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_END_POINT2</source>
-        <translation>Point d&apos;arrivée :</translation>
+        <translation>Point d&apos;arrivee :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_RADIUS</source>
@@ -1938,7 +1938,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_SEL</source>
-        <translation>Sélection</translation>
+        <translation>Selection</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_TAN</source>
@@ -1974,7 +1974,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_WPLANE</source>
-        <translation>Sélectionnez une face plane ou un plan</translation>
+        <translation>Selectionnez une face plane ou un plan</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_VY2</source>
@@ -2014,11 +2014,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_COORDINATES_TYPE</source>
-        <translation>Type de coordonnées</translation>
+        <translation>Type de coordonnees</translation>
     </message>
     <message>
         <source>GEOM_CONTROLS</source>
-        <translation>Eléments de contrôle</translation>
+        <translation>Elements de contrôle</translation>
     </message>
     <message>
         <source>GEOM_SOLID</source>
@@ -2038,11 +2038,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SOLID_FACES</source>
-        <translation>Construire un solide depuis des coques/faces connectées</translation>
+        <translation>Construire un solide depuis des coques/faces connectees</translation>
     </message>
     <message>
         <source>GEOM_SPHERE</source>
-        <translation>Sphère</translation>
+        <translation>Sphere</translation>
     </message>
     <message>
         <source>GEOM_SPHERE_CR</source>
@@ -2050,11 +2050,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SPHERE_RO</source>
-        <translation>Rayon (centre à l&apos;origine)</translation>
+        <translation>Rayon (centre a l&apos;origine)</translation>
     </message>
     <message>
         <source>GEOM_SPHERE_TITLE</source>
-        <translation>Construction d&apos;une sphère</translation>
+        <translation>Construction d&apos;une sphere</translation>
     </message>
     <message>
         <source>GEOM_SPLINE</source>
@@ -2066,23 +2066,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SQUARE</source>
-        <translation>Carré</translation>
+        <translation>Carre</translation>
     </message>
     <message>
         <source>GEOM_START</source>
-        <translation>Départ :</translation>
+        <translation>Depart :</translation>
     </message>
     <message>
         <source>GEOM_END</source>
-        <translation>Arrivée :</translation>
+        <translation>Arrivee :</translation>
     </message>
     <message>
         <source>GEOM_START_LCS</source>
-        <translation>SCL du Début</translation>
+        <translation>SCL du Debut</translation>
     </message>
     <message>
         <source>SELECT_UNPUBLISHED_EDGES</source>
-        <translation>Choisir les arêtes non-publiées</translation>
+        <translation>Choisir les aretes non-publiees</translation>
     </message>
     <message>
         <source>GEOM_STEP</source>
@@ -2106,7 +2106,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_STUDY_LOCKED</source>
-        <translation>L&apos;étude en cours est fermée et il n&apos;est pas possible de la modifier</translation>
+        <translation>L&apos;etude en cours est fermee et il n&apos;est pas possible de la modifier</translation>
     </message>
     <message>
         <source>GEOM_SUBSHAPE_SELECT</source>
@@ -2114,7 +2114,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SUBSHAPE_TITLE</source>
-        <translation>Sélection des sous-objets</translation>
+        <translation>Selection des sous-objets</translation>
     </message>
     <message>
         <source>GEOM_SUBSHAPE_TYPE</source>
@@ -2154,15 +2154,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SUPPRESS_RESULT</source>
-        <translation>Supprimer le résultat</translation>
+        <translation>Supprimer le resultat</translation>
     </message>
     <message>
         <source>GEOM_SUPPRESS_RESULT_INSIDE</source>
-        <translation>A l&apos;intérieur</translation>
+        <translation>A l&apos;interieur</translation>
     </message>
     <message>
         <source>GEOM_SUPPRESS_RESULT_OUTSIDE</source>
-        <translation>A l&apos;extérieur</translation>
+        <translation>A l&apos;exterieur</translation>
     </message>
     <message>
         <source>GEOM_SUPRESSFACE</source>
@@ -2170,7 +2170,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SUPRESSFACE_SELECT</source>
-        <translation>Choisissez les faces à supprimer</translation>
+        <translation>Choisissez les faces a supprimer</translation>
     </message>
     <message>
         <source>GEOM_SUPRESSFACE_TITLE</source>
@@ -2178,7 +2178,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SURFACE_CONTINUTY</source>
-        <translation>Continuité des surfaces</translation>
+        <translation>Continuite des surfaces</translation>
     </message>
     <message>
         <source>GEOM_SURFACE_MODE</source>
@@ -2194,7 +2194,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SURFSPHERE</source>
-        <translation>Face sphérique</translation>
+        <translation>Face spherique</translation>
     </message>
     <message>
         <source>GEOM_SURFTORUS</source>
@@ -2202,19 +2202,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SameParameter</source>
-        <translation>Paramètre identique</translation>
+        <translation>Parametre identique</translation>
     </message>
     <message>
         <source>GEOM_SplitAngle</source>
-        <translation>Séparer angle</translation>
+        <translation>Separer angle</translation>
     </message>
     <message>
         <source>GEOM_SplitClosedFaces</source>
-        <translation>Séparer faces fermées</translation>
+        <translation>Separer faces fermees</translation>
     </message>
     <message>
         <source>GEOM_SplitContinuity</source>
-        <translation>Séparer continuité</translation>
+        <translation>Separer continuite</translation>
     </message>
     <message>
         <source>GEOM_THICKNESS</source>
@@ -2222,23 +2222,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_TOLERANCE</source>
-        <translation>Tolérance</translation>
+        <translation>Tolerance</translation>
     </message>
     <message>
         <source>GEOM_LINEAR_TOLERANCE</source>
-        <translation>Tolérance linéaire</translation>
+        <translation>Tolerance lineaire</translation>
     </message>
     <message>
         <source>GEOM_ANGULAR_TOLERANCE</source>
-        <translation>Tolérance angulaire</translation>
+        <translation>Tolerance angulaire</translation>
     </message>
     <message>
         <source>GEOM_TOLERANCE_CONSTR</source>
-        <translation>Objet et ses tolérances</translation>
+        <translation>Objet et ses tolerances</translation>
     </message>
     <message>
         <source>GEOM_TOLERANCE_EDGE</source>
-        <translation>Arête :</translation>
+        <translation>Arete :</translation>
     </message>
     <message>
         <source>GEOM_TOLERANCE_FACE</source>
@@ -2246,7 +2246,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_TOLERANCE_TITLE</source>
-        <translation>Tolérance maximale </translation>
+        <translation>Tolerance maximale </translation>
     </message>
     <message>
         <source>GEOM_TOLERANCE_VERTEX</source>
@@ -2270,7 +2270,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_TRANSLATION_COOR</source>
-        <translation>Translation avec coordonnées</translation>
+        <translation>Translation avec coordonnees</translation>
     </message>
     <message>
         <source>GEOM_TRANSLATION_TITLE</source>
@@ -2290,7 +2290,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_TRIHEDRON</source>
-        <translation>Trièdre</translation>
+        <translation>Triedre</translation>
     </message>
     <message>
         <source>GEOM_ToBezier</source>
@@ -2306,7 +2306,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_AXIS_DEFAULT</source>
-        <translation> (Axe Z par défaut)</translation>
+        <translation> (Axe Z par defaut)</translation>
     </message>
     <message>
         <source>GEOM_VECTOR_LENGTH</source>
@@ -2334,7 +2334,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_WATER_DENSITY</source>
-        <translation>Densité de l&apos;eau :</translation>
+        <translation>Densite de l&apos;eau :</translation>
     </message>
     <message>
         <source>GEOM_WEIGHT</source>
@@ -2350,7 +2350,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_WHATIS_OBJECT</source>
-        <translation>Objet et ses caractéristiques topologiques </translation>
+        <translation>Objet et ses caracteristiques topologiques </translation>
     </message>
     <message>
         <source>GEOM_WHATIS_TITLE</source>
@@ -2366,7 +2366,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_WIRES_TO_REMOVE</source>
-        <translation>Contours à supprimer</translation>
+        <translation>Contours a supprimer</translation>
     </message>
     <message>
         <source>GEOM_WIREZ</source>
@@ -2374,11 +2374,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_WIRE_CONNECT</source>
-        <translation>Création d&apos;un contour à partir de contours/arêtes connecté(e)s</translation>
+        <translation>Creation d&apos;un contour a partir de contours/aretes connecte(e)s</translation>
     </message>
     <message>
         <source>GEOM_WIRE_TITLE</source>
-        <translation>Création d&apos;un contour</translation>
+        <translation>Creation d&apos;un contour</translation>
     </message>
     <message>
         <source>GEOM_WPLANE</source>
@@ -2406,7 +2406,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_WPLANE_TITLE</source>
-        <translation>Sélection du plan de travail</translation>
+        <translation>Selection du plan de travail</translation>
     </message>
     <message>
         <source>GEOM_WPLANE_VECTOR</source>
@@ -2430,23 +2430,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_WRN_FACES_NOT_SHELL</source>
-        <translation>Impossible de créer une coque. Le résultat est un assemblage de coques.</translation>
+        <translation>Impossible de creer une coque. Le resultat est un assemblage de coques.</translation>
     </message>
     <message>
         <source>GEOM_WRN_FACES_NOT_FACE</source>
-        <translation>Impossible de créer une face. Le résultat est un assemblage de faces.</translation>
+        <translation>Impossible de creer une face. Le resultat est un assemblage de faces.</translation>
     </message>
     <message>
         <source>WRN_SHAPE_UNCLOSED</source>
-        <translation>Impossible de créer un solide à partir d&apos;une forme non-fermée %1</translation>
+        <translation>Impossible de creer un solide a partir d&apos;une forme non-fermee %1</translation>
     </message>
     <message>
         <source>WRN_SHAPE_NOT_SHELL</source>
-        <translation>Impossible de créer un solide à partir de la forme %1 car ce n&apos;est pas une coque</translation>
+        <translation>Impossible de creer un solide a partir de la forme %1 car ce n&apos;est pas une coque</translation>
     </message>
     <message>
         <source>WRN_NULL_OBJECT_OR_SHAPE</source>
-        <translation>La forme %1 pour la création d&apos;un solide est invalide</translation>
+        <translation>La forme %1 pour la creation d&apos;un solide est invalide</translation>
     </message>
     <message>
         <source>GROUP_DOWN</source>
@@ -2486,23 +2486,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>LIMIT_TOLERANCE_NEW_OBJ_NAME</source>
-        <translation>Tolérance_limite</translation>
+        <translation>Tolerance_limite</translation>
     </message>
     <message>
         <source>MEN_CURVE_CREATOR</source>
-        <translation>Créateur de courbe</translation>
+        <translation>Createur de courbe</translation>
     </message>
     <message>
         <source>TOP_CURVE_CREATOR</source>
-        <translation>Créer une courbe</translation>
+        <translation>Creer une courbe</translation>
     </message>
     <message>
         <source>STB_CURVE_CREATOR</source>
-        <translation>Créer une courbe</translation>
+        <translation>Creer une courbe</translation>
     </message>
     <message>
         <source>MEN_ALL_SEL_ONLY</source>
-        <translation>Sélectionner tout</translation>
+        <translation>Selectionner tout</translation>
     </message>
     <message>
         <source>MEN_ARC</source>
@@ -2510,7 +2510,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_ARCHIMEDE</source>
-        <translation>Archimède</translation>
+        <translation>Archimede</translation>
     </message>
     <message>
         <source>MEN_BASIC</source>
@@ -2518,7 +2518,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_BASIC_PROPS</source>
-        <translation>Propriétés de base </translation>
+        <translation>Proprietes de base </translation>
     </message>
     <message>
         <source>MEN_BLOCKS</source>
@@ -2526,15 +2526,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_BND_BOX</source>
-        <translation>Boîte englobante</translation>
+        <translation>Boite englobante</translation>
     </message>
     <message>
         <source>MEN_BOOLEAN</source>
-        <translation>Opérations booléennes</translation>
+        <translation>Operations booleennes</translation>
     </message>
     <message>
         <source>MEN_BOX</source>
-        <translation>Boîte</translation>
+        <translation>Boite</translation>
     </message>
     <message>
         <source>MEN_BUILD</source>
@@ -2566,11 +2566,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_GET_NON_BLOCKS</source>
-        <translation>Récupérer les solides non blocs</translation>
+        <translation>Recuperer les solides non blocs</translation>
     </message>
     <message>
         <source>MEN_CHECK_SELF_INTERSECTIONS</source>
-        <translation>Détections des auto-intersections</translation>
+        <translation>Detections des auto-intersections</translation>
     </message>
     <message>
         <source>MEN_FAST_CHECK_INTERSECTIONS</source>
@@ -2590,7 +2590,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_CHECK_GEOMETRY</source>
-        <translation>Contrôler la géométrie</translation>
+        <translation>Contrôler la geometrie</translation>
     </message>
     <message>
         <source>MEN_CIRCLE</source>
@@ -2622,7 +2622,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_CUT</source>
-        <translation>Découpe</translation>
+        <translation>Decoupe</translation>
     </message>
     <message>
         <source>MEN_CYLINDER</source>
@@ -2690,11 +2690,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_EDGE</source>
-        <translation>Arête</translation>
+        <translation>Arete</translation>
     </message>
     <message>
         <source>MEN_EDGE_SEL_ONLY</source>
-        <translation>Arête</translation>
+        <translation>Arete</translation>
     </message>
     <message>
         <source>MEN_EDIT</source>
@@ -2730,11 +2730,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_EXTRUDED_CUT</source>
-        <translation>Enlèvement de matière extrudé</translation>
+        <translation>Enlevement de matiere extrude</translation>
     </message>
     <message>
         <source>MEN_EXTRUDED_BOSS</source>
-        <translation>Bossage extrudé</translation>
+        <translation>Bossage extrude</translation>
     </message>
     <message>
         <source>MEN_FACE</source>
@@ -2750,15 +2750,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_FILLET</source>
-        <translation>Congé 3D</translation>
+        <translation>Conge 3D</translation>
     </message>
     <message>
         <source>MEN_FILLET_1D</source>
-        <translation>Congé 1D</translation>
+        <translation>Conge 1D</translation>
     </message>
     <message>
         <source>MEN_FILLET_2D</source>
-        <translation>Congé 2D</translation>
+        <translation>Conge 2D</translation>
     </message>
     <message>
         <source>MEN_FILLING</source>
@@ -2770,7 +2770,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_GENERATION</source>
-        <translation>Génération</translation>
+        <translation>Generation</translation>
     </message>
     <message>
         <source>MEN_GLUE_FACES</source>
@@ -2778,7 +2778,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_GLUE_EDGES</source>
-        <translation>Recoller les arêtes</translation>
+        <translation>Recoller les aretes</translation>
     </message>
     <message>
         <source>MEN_GROUP</source>
@@ -2786,7 +2786,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_GROUP_CREATE</source>
-        <translation>Créer un groupe</translation>
+        <translation>Creer un groupe</translation>
     </message>
     <message>
         <source>MEN_GROUP_EDIT</source>
@@ -2802,7 +2802,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_GROUP_CUT</source>
-        <translation>Découpe de groupes</translation>
+        <translation>Decoupe de groupes</translation>
     </message>
     <message>
         <source>MEN_FIELD</source>
@@ -2810,7 +2810,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_FIELD_CREATE</source>
-        <translation>Créer un champ</translation>
+        <translation>Creer un champ</translation>
     </message>
     <message>
         <source>MEN_FIELD_EDIT</source>
@@ -2822,11 +2822,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_RELOAD_IMPORTED</source>
-        <translation>Recharger à partir du disque</translation>
+        <translation>Recharger a partir du disque</translation>
     </message>
     <message>
         <source>MEN_HEX_SOLID</source>
-        <translation>Solide hexaédrique</translation>
+        <translation>Solide hexaedrique</translation>
     </message>
     <message>
         <source>MEN_IMPORT</source>
@@ -2842,7 +2842,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_LIMIT_TOLERANCE</source>
-        <translation>Tolérance limite</translation>
+        <translation>Tolerance limite</translation>
     </message>
     <message>
         <source>MEN_LINE</source>
@@ -2850,11 +2850,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_LOCAL_CS</source>
-        <translation>Système de coordonnées local </translation>
+        <translation>Systeme de coordonnees local </translation>
     </message>
     <message>
         <source>MEN_MASS_CENTER</source>
-        <translation>Centre de gravité</translation>
+        <translation>Centre de gravite</translation>
     </message>
     <message>
         <source>MEN_MEASURES</source>
@@ -2866,7 +2866,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_MIRROR</source>
-        <translation>Symétrie</translation>
+        <translation>Symetrie</translation>
     </message>
     <message>
         <source>MEN_MODIFY_LOCATION</source>
@@ -2890,7 +2890,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_OFFSET</source>
-        <translation>Décaler une surface</translation>
+        <translation>Decaler une surface</translation>
     </message>
     <message>
         <source>MEN_PROJECTION</source>
@@ -2902,7 +2902,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_OPERATIONS</source>
-        <translation>Opérations</translation>
+        <translation>Operations</translation>
     </message>
     <message>
         <source>MEN_ORIGIN_AND_VECTORS</source>
@@ -2934,11 +2934,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_POINT_COORDS</source>
-        <translation>Coordonnées d&apos;un point </translation>
+        <translation>Coordonnees d&apos;un point </translation>
     </message>
     <message>
         <source>MEN_POINT_ON_EDGE</source>
-        <translation>Ajouter un point sur l&apos;arête</translation>
+        <translation>Ajouter un point sur l&apos;arete</translation>
     </message>
     <message>
         <source>MEN_POP_COLOR</source>
@@ -2946,7 +2946,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_POP_CREATE_GROUP</source>
-        <translation>Créer un groupe</translation>
+        <translation>Creer un groupe</translation>
     </message>
     <message>
         <source>MEN_POP_EDIT_FIELD</source>
@@ -2954,15 +2954,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_POP_DISCLOSE_CHILDREN</source>
-        <translation>Publier les sous-éléments</translation>
+        <translation>Publier les sous-elements</translation>
     </message>
     <message>
         <source>MEN_POP_CONCEAL_CHILDREN</source>
-        <translation>Retirer les sous-éléments</translation>
+        <translation>Retirer les sous-elements</translation>
     </message>
     <message>
         <source>MEN_POP_UNPUBLISH_OBJ</source>
-        <translation>Dépublier</translation>
+        <translation>Depublier</translation>
     </message>
     <message>
         <source>MEN_POP_PUBLISH_OBJ</source>
@@ -2974,7 +2974,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_POP_DEFLECTION</source>
-        <translation>Coefficient de déformation</translation>
+        <translation>Coefficient de deformation</translation>
     </message>
     <message>
         <source>MEN_POP_RENAME</source>
@@ -2986,7 +2986,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_POP_SHADING_WITH_EDGES</source>
-        <translation>Ombrage avec arêtes</translation>
+        <translation>Ombrage avec aretes</translation>
     </message>
     <message>
         <source>MEN_POP_TEXTURE</source>
@@ -2994,15 +2994,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_EDGE_WIDTH</source>
-        <translation>Epaisseur d&apos;arête</translation>
+        <translation>Epaisseur d&apos;arete</translation>
     </message>
     <message>
         <source>TOP_EDGE_WIDTH</source>
-        <translation>Epaisseur d&apos;arête</translation>
+        <translation>Epaisseur d&apos;arete</translation>
     </message>
     <message>
         <source>STB_EDGE_WIDTH</source>
-        <translation>Epaisseur d&apos;arête</translation>
+        <translation>Epaisseur d&apos;arete</translation>
     </message>
     <message>
         <source>MEN_ISOS_WIDTH</source>
@@ -3034,7 +3034,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_POP_VECTORS</source>
-        <translation>Afficher l&apos;orientation des arêtes</translation>
+        <translation>Afficher l&apos;orientation des aretes</translation>
     </message>
     <message>
         <source>MEN_POP_VERTICES</source>
@@ -3046,11 +3046,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_PREFERENCES</source>
-        <translation>Préférences</translation>
+        <translation>Preferences</translation>
     </message>
     <message>
         <source>MEN_PREFERENCES_GEOM</source>
-        <translation>Géométrie</translation>
+        <translation>Geometrie</translation>
     </message>
     <message>
         <source>MEN_PRIMITIVES</source>
@@ -3058,7 +3058,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_ADVANCED</source>
-        <translation>Avancé</translation>
+        <translation>Avance</translation>
     </message>
     <message>
         <source>MEN_PROPAGATE</source>
@@ -3070,11 +3070,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_REPAIR</source>
-        <translation>Réparer</translation>
+        <translation>Reparer</translation>
     </message>
     <message>
         <source>MEN_REVOLUTION</source>
-        <translation>Révolution</translation>
+        <translation>Revolution</translation>
     </message>
     <message>
         <source>MEN_ROTATION</source>
@@ -3090,7 +3090,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_SELECT_ONLY</source>
-        <translation>Sélectionner uniquement</translation>
+        <translation>Selectionner uniquement</translation>
     </message>
     <message>
         <source>MEN_SEWING</source>
@@ -3102,7 +3102,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_SHADING_WITH_EDGES</source>
-        <translation>Ombrage avec arêtes</translation>
+        <translation>Ombrage avec aretes</translation>
     </message>
     <message>
         <source>MEN_SHADING_COLOR</source>
@@ -3142,7 +3142,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_SOLID_FROM_FACES</source>
-        <translation>Solide depuis des faces connectées</translation>
+        <translation>Solide depuis des faces connectees</translation>
     </message>
     <message>
         <source>MEN_SOLID_SEL_ONLY</source>
@@ -3150,7 +3150,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_SPHERE</source>
-        <translation>Sphère</translation>
+        <translation>Sphere</translation>
     </message>
     <message>
         <source>MEN_STEP_VALUE</source>
@@ -3170,7 +3170,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_TOLERANCE</source>
-        <translation>Tolérance</translation>
+        <translation>Tolerance</translation>
     </message>
     <message>
         <source>MEN_TOOLS</source>
@@ -3218,11 +3218,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_VECTOR_MODE_ON</source>
-        <translation>Montrer l&apos;orientation de l&apos;arête</translation>
+        <translation>Montrer l&apos;orientation de l&apos;arete</translation>
     </message>
     <message>
         <source>MEN_VECTOR_MODE_OFF</source>
-        <translation>Cacher l&apos;orientation de l&apos;arête</translation>
+        <translation>Cacher l&apos;orientation de l&apos;arete</translation>
     </message>
     <message>
         <source>MEN_VERTICES_MODE_ON</source>
@@ -3258,19 +3258,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_POP_MATERIAL_PROPERTIES</source>
-        <translation>Propriétés des matériaux</translation>
+        <translation>Proprietes des materiaux</translation>
     </message>
     <message>
         <source>MEN_POP_PREDEF_MATER_CUSTOM</source>
-        <translation>Personnalisé...</translation>
+        <translation>Personnalise...</translation>
     </message>
     <message>
         <source>MEN_EDGE_EXTEND</source>
-        <translation>Arête étendue</translation>
+        <translation>Arete etendue</translation>
     </message>
     <message>
         <source>MEN_FACE_EXTEND</source>
-        <translation>Face étendue</translation>
+        <translation>Face etendue</translation>
     </message>
     <message>
         <source>NAME_LBL</source>
@@ -3278,51 +3278,51 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>NON_GEOM_OBJECTS_SELECTED</source>
-        <translation>Il y a des objets n&apos;appartenant pas au composant %1 dans la sélection </translation>
+        <translation>Il y a des objets n&apos;appartenant pas au composant %1 dans la selection </translation>
     </message>
     <message>
         <source>PREF_DEFLECTION</source>
-        <translation>Coefficient de déformation par défaut</translation>
+        <translation>Coefficient de deformation par defaut</translation>
     </message>
     <message>
         <source>GEOM_PREF_def_precision</source>
-        <translation>Précision par défaut</translation>
+        <translation>Precision par defaut</translation>
     </message>
     <message>
         <source>GEOM_PREF_length_precision</source>
-        <translation>Précision de longueur</translation>
+        <translation>Precision de longueur</translation>
     </message>
     <message>
         <source>GEOM_PREF_angle_precision</source>
-        <translation>Précision angulaire</translation>
+        <translation>Precision angulaire</translation>
     </message>
     <message>
         <source>GEOM_PREF_len_tol_precision</source>
-        <translation>Précision de la tolérance sur la longueur</translation>
+        <translation>Precision de la tolerance sur la longueur</translation>
     </message>
     <message>
         <source>GEOM_PREF_ang_tol_precision</source>
-        <translation>Précision de la tolérance angulaire</translation>
+        <translation>Precision de la tolerance angulaire</translation>
     </message>
     <message>
         <source>GEOM_PREF_weight_precision</source>
-        <translation>Précision de poids </translation>
+        <translation>Precision de poids </translation>
     </message>
     <message>
         <source>GEOM_PREF_density_precision</source>
-        <translation>Précision de densité </translation>
+        <translation>Precision de densite </translation>
     </message>
     <message>
         <source>GEOM_PREF_parametric_precision</source>
-        <translation>Précision paramétrique</translation>
+        <translation>Precision parametrique</translation>
     </message>
     <message>
         <source>GEOM_PREF_param_tol_precision</source>
-        <translation>Précision de la tolérance paramétrique</translation>
+        <translation>Precision de la tolerance parametrique</translation>
     </message>
     <message>
         <source>PREF_AUTO_CREATE</source>
-        <translation>Créer automatiquement</translation>
+        <translation>Creer automatiquement</translation>
     </message>
     <message>
         <source>PREF_DISPLAY_MODE</source>
@@ -3330,7 +3330,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_TRANSPARENCY</source>
-        <translation>Transparence par défaut</translation>
+        <translation>Transparence par defaut</translation>
     </message>
     <message>
         <source>PREF_FREE_BOUND_COLOR</source>
@@ -3342,19 +3342,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_GROUP_OPERATIONS</source>
-        <translation>Opérations</translation>
+        <translation>Operations</translation>
     </message>
     <message>
         <source>PREF_GROUP_GENERAL</source>
-        <translation>Général</translation>
+        <translation>General</translation>
     </message>
     <message>
         <source>GEOM_PREF_GROUP_PRECISION</source>
-        <translation>Précision des champs d&apos;entrée</translation>
+        <translation>Precision des champs d&apos;entree</translation>
     </message>
     <message>
         <source>PREF_GROUP_VERTEX</source>
-        <translation>Marqueurs de points par défaut</translation>
+        <translation>Marqueurs de points par defaut</translation>
     </message>
     <message>
         <source>PREF_ISOS_COLOR</source>
@@ -3362,7 +3362,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_LABEL_COLOR</source>
-        <translation>Couleur des étiquettes</translation>
+        <translation>Couleur des etiquettes</translation>
     </message>
     <message>
         <source>PREF_TOPLEVEL_COLOR</source>
@@ -3382,7 +3382,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_LINE_COLOR</source>
-        <translation>Couleur des arêtes, vecteurs, contours</translation>
+        <translation>Couleur des aretes, vecteurs, contours</translation>
     </message>
     <message>
         <source>PREF_MARKER_SCALE</source>
@@ -3402,11 +3402,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_STEP_VALUE</source>
-        <translation>Valeur du pas pour les boîtes d&apos;incrément</translation>
+        <translation>Valeur du pas pour les boites d&apos;increment</translation>
     </message>
     <message>
         <source>PREF_TAB_SETTINGS</source>
-        <translation>Préférences</translation>
+        <translation>Preferences</translation>
     </message>
     <message>
         <source>PREF_TYPE_OF_MARKER</source>
@@ -3422,11 +3422,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_MATERIAL</source>
-        <translation>Matériau</translation>
+        <translation>Materiau</translation>
     </message>
     <message>
         <source>PREF_PREDEF_MATERIALS</source>
-        <translation>Affichier les matériaux prédéfinis dans le menu contextuel</translation>
+        <translation>Affichier les materiaux predefinis dans le menu contextuel</translation>
     </message>
     <message>
         <source>PREF_EDITGROUP_COLOR</source>
@@ -3434,15 +3434,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_EDGE_WIDTH</source>
-        <translation>Epaisseur des arêtes par défaut</translation>
+        <translation>Epaisseur des aretes par defaut</translation>
     </message>
     <message>
         <source>PREF_ISOLINES_WIDTH</source>
-        <translation>Epaisseur des isolignes par défaut</translation>
+        <translation>Epaisseur des isolignes par defaut</translation>
     </message>
     <message>
         <source>PREF_PREVIEW_EDGE_WIDTH</source>
-        <translation>Prévisualiser l&apos;épaisseur des arêtes</translation>
+        <translation>Previsualiser l&apos;epaisseur des aretes</translation>
     </message>
     <message>
         <source>PREF_MEASURES_LINE_WIDTH</source>
@@ -3470,23 +3470,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
-        <translation>Epaisseur des flèches</translation>
+        <translation>Epaisseur des fleches</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_LENGTH_UNITS</source>
-        <translation>Unité de mesure</translation>
+        <translation>Unite de mesure</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_ANGLE_UNITS</source>
-        <translation>Unité de mesure des angles</translation>
+        <translation>Unite de mesure des angles</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_DEFAULT_FLYOUT</source>
-        <translation>Distance par défaut</translation>
+        <translation>Distance par defaut</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_SHOW_UNITS</source>
-        <translation>Afficher les unités</translation>
+        <translation>Afficher les unites</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_USE_TEXT3D</source>
@@ -3538,11 +3538,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_HIDE_INPUT_OBJECT</source>
-        <translation>Cacher dans la vue les objets en entrée</translation>
+        <translation>Cacher dans la vue les objets en entree</translation>
     </message>
     <message>
         <source>PREF_ISOS</source>
-        <translation>Nombre d&apos;isolignes par défaut</translation>
+        <translation>Nombre d&apos;isolignes par defaut</translation>
     </message>
     <message>
         <source>PREF_ISOS_U</source>
@@ -3554,7 +3554,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_GROUP_SCALAR_BAR</source>
-        <translation>Légende des champs</translation>
+        <translation>Legende des champs</translation>
     </message>
     <message>
         <source>PREF_SCALAR_BAR_X_POSITION</source>
@@ -3606,23 +3606,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_ARC</source>
-        <translation>Créer un arc</translation>
+        <translation>Creer un arc</translation>
     </message>
     <message>
         <source>STB_ARCHIMEDE</source>
-        <translation>Opération archimède </translation>
+        <translation>Operation archimede </translation>
     </message>
     <message>
         <source>STB_BASIC_PROPS</source>
-        <translation>Montrer les propriétés de base de l&apos;objet</translation>
+        <translation>Montrer les proprietes de base de l&apos;objet</translation>
     </message>
     <message>
         <source>STB_BND_BOX</source>
-        <translation>Calculer la boîte englobante de l&apos;objet</translation>
+        <translation>Calculer la boite englobante de l&apos;objet</translation>
     </message>
     <message>
         <source>STB_BOX</source>
-        <translation>Créer une boîte</translation>
+        <translation>Creer une boite</translation>
     </message>
     <message>
         <source>STB_FEATURE_DETECTION</source>
@@ -3634,7 +3634,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_CHAMFER</source>
-        <translation>Créer un chanfrein</translation>
+        <translation>Creer un chanfrein</translation>
     </message>
     <message>
         <source>STB_CHANGE_ORIENTATION</source>
@@ -3650,11 +3650,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_GET_NON_BLOCKS</source>
-        <translation>Récupérer les solides non-blocs</translation>
+        <translation>Recuperer les solides non-blocs</translation>
     </message>
     <message>
         <source>STB_CHECK_SELF_INTERSECTIONS</source>
-        <translation>Détecte les auto-intersections</translation>
+        <translation>Detecte les auto-intersections</translation>
     </message>
     <message>
         <source>STB_FAST_CHECK_INTERSECTIONS</source>
@@ -3666,7 +3666,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_CHECK_FREE_BNDS</source>
-        <translation>Vérifier les contours libres</translation>
+        <translation>Verifier les contours libres</translation>
     </message>
     <message>
         <source>STB_CHECK_FREE_FACES</source>
@@ -3674,11 +3674,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_CHECK_GEOMETRY</source>
-        <translation>Contrôler la géométrie</translation>
+        <translation>Contrôler la geometrie</translation>
     </message>
     <message>
         <source>STB_CIRCLE</source>
-        <translation>Créer un cercle</translation>
+        <translation>Creer un cercle</translation>
     </message>
     <message>
         <source>STB_CLOSE_CONTOUR</source>
@@ -3698,23 +3698,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_CONE</source>
-        <translation>Créer un cône</translation>
+        <translation>Creer un cône</translation>
     </message>
     <message>
         <source>STB_CURVE</source>
-        <translation>Créer une courbe</translation>
+        <translation>Creer une courbe</translation>
     </message>
     <message>
         <source>STB_CUT</source>
-        <translation>Découpe</translation>
+        <translation>Decoupe</translation>
     </message>
     <message>
         <source>STB_CYLINDER</source>
-        <translation>Créer un cylindre</translation>
+        <translation>Creer un cylindre</translation>
     </message>
     <message>
         <source>STB_RECTANGLE</source>
-        <translation>Créer une face rectangulaire </translation>
+        <translation>Creer une face rectangulaire </translation>
     </message>
     <message>
         <source>STB_DELETE</source>
@@ -3722,7 +3722,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_DISK</source>
-        <translation>Créer un disque</translation>
+        <translation>Creer un disque</translation>
     </message>
     <message>
         <source>STB_DISPLAY</source>
@@ -3742,15 +3742,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_EDGE</source>
-        <translation>Créer une arête</translation>
+        <translation>Creer une arete</translation>
     </message>
     <message>
         <source>STB_EDGE_SEL_ONLY</source>
-        <translation>Ne choisir que des arêtes</translation>
+        <translation>Ne choisir que des aretes</translation>
     </message>
     <message>
         <source>STB_ELLIPSE</source>
-        <translation>Créer un ellipse</translation>
+        <translation>Creer un ellipse</translation>
     </message>
     <message>
         <source>STB_ERASE</source>
@@ -3770,15 +3770,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_EXTRUSION</source>
-        <translation>Créer une extrusion</translation>
+        <translation>Creer une extrusion</translation>
     </message>
     <message>
         <source>STB_EXTRUDED_CUT</source>
-        <translation>Enlèvement de matière extrudé</translation>
+        <translation>Enlevement de matiere extrude</translation>
     </message>
     <message>
         <source>STB_EXTRUDED_BOSS</source>
-        <translation>Bossage extrudé</translation>
+        <translation>Bossage extrude</translation>
     </message>
     <message>
         <source>STB_FACE</source>
@@ -3790,19 +3790,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_FILLET</source>
-        <translation>Créer un congé 3D</translation>
+        <translation>Creer un conge 3D</translation>
     </message>
     <message>
         <source>STB_FILLET_1D</source>
-        <translation>Créer un congé 1D</translation>
+        <translation>Creer un conge 1D</translation>
     </message>
     <message>
         <source>STB_FILLET_2D</source>
-        <translation>Créer un congé 2D</translation>
+        <translation>Creer un conge 2D</translation>
     </message>
     <message>
         <source>STB_FILLING</source>
-        <translation>Créer une nappe</translation>
+        <translation>Creer une nappe</translation>
     </message>
     <message>
         <source>STB_FUSE</source>
@@ -3814,11 +3814,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_GLUE_EDGES</source>
-        <translation>Recoller les arêtes</translation>
+        <translation>Recoller les aretes</translation>
     </message>
     <message>
         <source>STB_GROUP_CREATE</source>
-        <translation>Créer un groupe</translation>
+        <translation>Creer un groupe</translation>
     </message>
     <message>
         <source>STB_GROUP_EDIT</source>
@@ -3834,11 +3834,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_GROUP_CUT</source>
-        <translation>Découpe de groupes</translation>
+        <translation>Decoupe de groupes</translation>
     </message>
     <message>
         <source>STB_FIELD_CREATE</source>
-        <translation>Créer un champ</translation>
+        <translation>Creer un champ</translation>
     </message>
     <message>
         <source>STB_FIELD_EDIT</source>
@@ -3846,11 +3846,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_RELOAD_IMPORTED</source>
-        <translation>Recharger l&apos;objet importé depuis le disque</translation>
+        <translation>Recharger l&apos;objet importe depuis le disque</translation>
     </message>
     <message>
         <source>STB_HEX_SOLID</source>
-        <translation>Solide hexaédrique</translation>
+        <translation>Solide hexaedrique</translation>
     </message>
     <message>
         <source>STB_INERTIA</source>
@@ -3858,23 +3858,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_ISOS</source>
-        <translation>Définir le nombre d&apos;isolignes</translation>
+        <translation>Definir le nombre d&apos;isolignes</translation>
     </message>
     <message>
         <source>STB_LINE</source>
-        <translation>Créer une ligne</translation>
+        <translation>Creer une ligne</translation>
     </message>
     <message>
         <source>STB_LIMIT_TOLERANCE</source>
-        <translation>Tolérance limite</translation>
+        <translation>Tolerance limite</translation>
     </message>
     <message>
         <source>STB_LOCAL_CS</source>
-        <translation>Créer un système local de coordonnées</translation>
+        <translation>Creer un systeme local de coordonnees</translation>
     </message>
     <message>
         <source>STB_MASS_CENTER</source>
-        <translation>Calculer le centre de gravité de l&apos;objet</translation>
+        <translation>Calculer le centre de gravite de l&apos;objet</translation>
     </message>
     <message>
         <source>STB_MIN_DIST</source>
@@ -3882,7 +3882,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_MIRROR</source>
-        <translation>Refléter un objet</translation>
+        <translation>Refleter un objet</translation>
     </message>
     <message>
         <source>STB_MODIFY_LOCATION</source>
@@ -3902,19 +3902,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_OFFSET</source>
-        <translation>Décaler une surface </translation>
+        <translation>Decaler une surface </translation>
     </message>
     <message>
         <source>STB_PROJECTION</source>
-        <translation>Projeter un point, une arête ou un contour sur une face</translation>
+        <translation>Projeter un point, une arete ou un contour sur une face</translation>
     </message>
     <message>
         <source>STB_PROJ_ON_CYL</source>
-        <translation>Projète un contour ou une face sur un cylindre</translation>
+        <translation>Projete un contour ou une face sur un cylindre</translation>
     </message>
     <message>
         <source>STB_ORIGIN_AND_VECTORS</source>
-        <translation>Créer les vecteurs de base et l&apos;origine</translation>
+        <translation>Creer les vecteurs de base et l&apos;origine</translation>
     </message>
     <message>
         <source>STB_PARTITION</source>
@@ -3922,31 +3922,31 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_PIPE</source>
-        <translation>Créer un objet par extrusion suivant un chemin</translation>
+        <translation>Creer un objet par extrusion suivant un chemin</translation>
     </message>
     <message>
         <source>STB_PIPE_PATH</source>
-        <translation>Retrouver le chemin à partir d&apos;un objet de type tuyau</translation>
+        <translation>Retrouver le chemin a partir d&apos;un objet de type tuyau</translation>
     </message>
     <message>
         <source>STB_THICKNESS</source>
-        <translation>Crée un solide par ajout d&apos;épaisseur</translation>
+        <translation>Cree un solide par ajout d&apos;epaisseur</translation>
     </message>
     <message>
         <source>STB_PLANE</source>
-        <translation>Créer un plan</translation>
+        <translation>Creer un plan</translation>
     </message>
     <message>
         <source>STB_POINT</source>
-        <translation>Créer un point</translation>
+        <translation>Creer un point</translation>
     </message>
     <message>
         <source>STB_POINT_COORDS</source>
-        <translation>Montrer les coordonnées du point</translation>
+        <translation>Montrer les coordonnees du point</translation>
     </message>
     <message>
         <source>STB_POINT_ON_EDGE</source>
-        <translation>Ajouter un point sur l&apos;arête</translation>
+        <translation>Ajouter un point sur l&apos;arete</translation>
     </message>
     <message>
         <source>STB_POP_COLOR</source>
@@ -3954,7 +3954,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_POP_CREATE_GROUP</source>
-        <translation>Créer un groupe</translation>
+        <translation>Creer un groupe</translation>
     </message>
     <message>
         <source>STB_POP_EDIT_FIELD</source>
@@ -3962,7 +3962,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_POP_UNPUBLISH_OBJ</source>
-        <translation>Dépublier l&apos;objet</translation>
+        <translation>Depublier l&apos;objet</translation>
     </message>
     <message>
         <source>STB_POP_PUBLISH_OBJ</source>
@@ -3982,7 +3982,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_POP_DEFLECTION</source>
-        <translation>Coefficient de déformation</translation>
+        <translation>Coefficient de deformation</translation>
     </message>
     <message>
         <source>STB_POP_RENAME</source>
@@ -3994,7 +3994,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_POP_SHADING_WITH_EDGES</source>
-        <translation>Ombrage avec arêtes</translation>
+        <translation>Ombrage avec aretes</translation>
     </message>
     <message>
         <source>STB_POP_TEXTURE</source>
@@ -4002,7 +4002,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_POP_VECTORS</source>
-        <translation>Afficher l&apos;orientation des arêtes</translation>
+        <translation>Afficher l&apos;orientation des aretes</translation>
     </message>
     <message>
         <source>STB_POP_VERTICES</source>
@@ -4026,11 +4026,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_MATERIALS_LIBRARY</source>
-        <translation>Affichier le contenu de la librarie des matériaux</translation>
+        <translation>Affichier le contenu de la librarie des materiaux</translation>
     </message>
     <message>
         <source>STB_POP_PREDEF_MATER_CUSTOM</source>
-        <translation>Personnalisé...</translation>
+        <translation>Personnalise...</translation>
     </message>
     <message>
         <source>STB_PROPAGATE</source>
@@ -4042,7 +4042,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_REVOLUTION</source>
-        <translation>Créer une révolution</translation>
+        <translation>Creer une revolution</translation>
     </message>
     <message>
         <source>STB_ROTATION</source>
@@ -4070,11 +4070,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_SHADING_WITH_EDGES</source>
-        <translation>Ombrage avec arêtes</translation>
+        <translation>Ombrage avec aretes</translation>
     </message>
     <message>
         <source>STB_VECTOR_MODE</source>
-        <translation>Changer le mode de représentation des arêtes</translation>
+        <translation>Changer le mode de representation des aretes</translation>
     </message>
     <message>
         <source>STB_NAME_MODE</source>
@@ -4082,7 +4082,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_SHADING_COLOR</source>
-        <translation>Définir la couleur d&apos;ombrage</translation>
+        <translation>Definir la couleur d&apos;ombrage</translation>
     </message>
     <message>
         <source>STB_SHAPE_PROCESS</source>
@@ -4098,19 +4098,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_SKETCH</source>
-        <translation>Créer une esquisse 2D</translation>
+        <translation>Creer une esquisse 2D</translation>
     </message>
     <message>
         <source>STB_3DSKETCH</source>
-        <translation>Créer une esquisse 3D</translation>
+        <translation>Creer une esquisse 3D</translation>
     </message>
     <message>
         <source>STB_ISOLINE</source>
-        <translation>Créer une U ou V isoligne</translation>
+        <translation>Creer une U ou V isoligne</translation>
     </message>
     <message>
         <source>STB_SURFACE_FROM_FACE</source>
-        <translation>Créer une surface depuis une face</translation>
+        <translation>Creer une surface depuis une face</translation>
     </message>
     <message>
         <source>STB_SOLID</source>
@@ -4122,11 +4122,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_SPHERE</source>
-        <translation>Créer une sphère</translation>
+        <translation>Creer une sphere</translation>
     </message>
     <message>
         <source>STB_STEP_VALUE</source>
-        <translation>Définir le valeur du pas</translation>
+        <translation>Definir le valeur du pas</translation>
     </message>
     <message>
         <source>STB_SUPPERSS_HOLES</source>
@@ -4142,11 +4142,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_TOLERANCE</source>
-        <translation>Calculer la tolérance d&apos;un objet</translation>
+        <translation>Calculer la tolerance d&apos;un objet</translation>
     </message>
     <message>
         <source>STB_TORUS</source>
-        <translation>Créer un tore</translation>
+        <translation>Creer un tore</translation>
     </message>
     <message>
         <source>STB_TRANSLATION</source>
@@ -4154,7 +4154,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_VECTOR</source>
-        <translation>Créer un vecteur</translation>
+        <translation>Creer un vecteur</translation>
     </message>
     <message>
         <source>STB_VERTEX_SEL_ONLY</source>
@@ -4174,19 +4174,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_WORK_PLANE</source>
-        <translation>Créer un plan de travail</translation>
+        <translation>Creer un plan de travail</translation>
     </message>
     <message>
         <source>STB_POP_POINT_MARKER</source>
-        <translation>Définir un marqueur de point</translation>
+        <translation>Definir un marqueur de point</translation>
     </message>
     <message>
         <source>STB_POP_MATERIAL_PROPERTIES</source>
-        <translation>Définir les propriétés du matériau</translation>
+        <translation>Definir les proprietes du materiau</translation>
     </message>
     <message>
         <source>SUPPRESS_RESULT</source>
-        <translation>Supprimer le résultat</translation>
+        <translation>Supprimer le resultat</translation>
     </message>
     <message>
         <source>SUPRESS_FACE_NEW_OBJ_NAME</source>
@@ -4198,7 +4198,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>ShHealOper_InvalidParameters_msg</source>
-        <translation>Les paramètres de l&apos;algorithme de traitement de formes sont incorrects</translation>
+        <translation>Les parametres de l&apos;algorithme de traitement de formes sont incorrects</translation>
     </message>
     <message>
         <source>ShHealOper_NotError_msg</source>
@@ -4246,23 +4246,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_ARC</source>
-        <translation>Créer un arc</translation>
+        <translation>Creer un arc</translation>
     </message>
     <message>
         <source>TOP_ARCHIMEDE</source>
-        <translation>Archimède</translation>
+        <translation>Archimede</translation>
     </message>
     <message>
         <source>TOP_BASIC_PROPS</source>
-        <translation>Propriétés de base</translation>
+        <translation>Proprietes de base</translation>
     </message>
     <message>
         <source>TOP_BND_BOX</source>
-        <translation>Boîte englobante</translation>
+        <translation>Boite englobante</translation>
     </message>
     <message>
         <source>TOP_BOX</source>
-        <translation>Créer une boîte</translation>
+        <translation>Creer une boite</translation>
     </message>
     <message>
         <source>TOP_CHAMFER</source>
@@ -4282,11 +4282,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_GET_NON_BLOCKS</source>
-        <translation>Récupérer les solides non-blocs</translation>
+        <translation>Recuperer les solides non-blocs</translation>
     </message>
     <message>
         <source>TOP_CHECK_SELF_INTERSECTIONS</source>
-        <translation>Détection des auto-intersections</translation>
+        <translation>Detection des auto-intersections</translation>
     </message>
     <message>
         <source>TOP_FAST_CHECK_INTERSECTIONS</source>
@@ -4306,11 +4306,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_CHECK_GEOMETRY</source>
-        <translation>Contrôler la géométrie</translation>
+        <translation>Contrôler la geometrie</translation>
     </message>
     <message>
         <source>TOP_CIRCLE</source>
-        <translation>Créer un cercle</translation>
+        <translation>Creer un cercle</translation>
     </message>
     <message>
         <source>TOP_CLOSE_CONTOUR</source>
@@ -4326,19 +4326,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_CONE</source>
-        <translation>Créer un cône</translation>
+        <translation>Creer un cône</translation>
     </message>
     <message>
         <source>TOP_CURVE</source>
-        <translation>Créer une courbe</translation>
+        <translation>Creer une courbe</translation>
     </message>
     <message>
         <source>TOP_CUT</source>
-        <translation>Découpe</translation>
+        <translation>Decoupe</translation>
     </message>
     <message>
         <source>TOP_CYLINDER</source>
-        <translation>Créer un cylindre</translation>
+        <translation>Creer un cylindre</translation>
     </message>
     <message>
         <source>TOP_DELETE</source>
@@ -4346,11 +4346,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_RECTANGLE</source>
-        <translation>Créer une face rectangulaire</translation>
+        <translation>Creer une face rectangulaire</translation>
     </message>
     <message>
         <source>TOP_DISK</source>
-        <translation>Créer un disque</translation>
+        <translation>Creer un disque</translation>
     </message>
     <message>
         <source>TOP_DISPLAY</source>
@@ -4370,11 +4370,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_EDGE</source>
-        <translation>Construire une arête</translation>
+        <translation>Construire une arete</translation>
     </message>
     <message>
         <source>TOP_ELLIPSE</source>
-        <translation>Créer un ellipse</translation>
+        <translation>Creer un ellipse</translation>
     </message>
     <message>
         <source>TOP_ERASE</source>
@@ -4394,15 +4394,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_EXTRUSION</source>
-        <translation>Créer une extrusion</translation>
+        <translation>Creer une extrusion</translation>
     </message>
     <message>
         <source>TOP_EXTRUDED_BOSS</source>
-        <translation>Bossage extrudé</translation>
+        <translation>Bossage extrude</translation>
     </message>
     <message>
         <source>TOP_EXTRUDED_CUT</source>
-        <translation>Enlèvement de matière extrudé</translation>
+        <translation>Enlevement de matiere extrude</translation>
     </message>
     <message>
         <source>TOP_FACE</source>
@@ -4410,19 +4410,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_FILLET</source>
-        <translation>Congé 3D</translation>
+        <translation>Conge 3D</translation>
     </message>
     <message>
         <source>TOP_FILLET_1D</source>
-        <translation>Congé 1D</translation>
+        <translation>Conge 1D</translation>
     </message>
     <message>
         <source>TOP_FILLET_2D</source>
-        <translation>Congé 2D</translation>
+        <translation>Conge 2D</translation>
     </message>
     <message>
         <source>TOP_FILLING</source>
-        <translation>Créer une nappe</translation>
+        <translation>Creer une nappe</translation>
     </message>
     <message>
         <source>TOP_FUSE</source>
@@ -4434,11 +4434,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_GLUE_EDGES</source>
-        <translation>Recoller les arêtes</translation>
+        <translation>Recoller les aretes</translation>
     </message>
     <message>
         <source>TOP_GROUP_CREATE</source>
-        <translation>Créer un groupe</translation>
+        <translation>Creer un groupe</translation>
     </message>
     <message>
         <source>TOP_GROUP_EDIT</source>
@@ -4454,11 +4454,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_GROUP_CUT</source>
-        <translation>Découpe de groupes</translation>
+        <translation>Decoupe de groupes</translation>
     </message>
     <message>
         <source>TOP_FIELD_CREATE</source>
-        <translation>Créer un champ</translation>
+        <translation>Creer un champ</translation>
     </message>
     <message>
         <source>TOP_FIELD_EDIT</source>
@@ -4466,7 +4466,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_HEX_SOLID</source>
-        <translation>Solide hexaédrique</translation>
+        <translation>Solide hexaedrique</translation>
     </message>
     <message>
         <source>TOP_INERTIA</source>
@@ -4474,23 +4474,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_ISOS</source>
-        <translation>Définir le nombre d&apos;isolignes</translation>
+        <translation>Definir le nombre d&apos;isolignes</translation>
     </message>
     <message>
         <source>TOP_LINE</source>
-        <translation>Créer une ligne</translation>
+        <translation>Creer une ligne</translation>
     </message>
     <message>
         <source>TOP_LIMIT_TOLERANCE</source>
-        <translation>Tolérance limite</translation>
+        <translation>Tolerance limite</translation>
     </message>
     <message>
         <source>TOP_LOCAL_CS</source>
-        <translation>Créer un système local de coordonnées</translation>
+        <translation>Creer un systeme local de coordonnees</translation>
     </message>
     <message>
         <source>TOP_MASS_CENTER</source>
-        <translation>Centre de gravité</translation>
+        <translation>Centre de gravite</translation>
     </message>
     <message>
         <source>TOP_MIN_DIST</source>
@@ -4498,7 +4498,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_MIRROR</source>
-        <translation>Symétrie</translation>
+        <translation>Symetrie</translation>
     </message>
     <message>
         <source>TOP_MODIFY_LOCATION</source>
@@ -4526,7 +4526,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_OFFSET</source>
-        <translation>Décaler une surface </translation>
+        <translation>Decaler une surface </translation>
     </message>
     <message>
         <source>TOP_PROJECTION</source>
@@ -4538,7 +4538,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_ORIGIN_AND_VECTORS</source>
-        <translation>Créer l&apos;origine et les vecteurs de base</translation>
+        <translation>Creer l&apos;origine et les vecteurs de base</translation>
     </message>
     <message>
         <source>TOP_PARTITION</source>
@@ -4558,19 +4558,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_PLANE</source>
-        <translation>Créer un plan</translation>
+        <translation>Creer un plan</translation>
     </message>
     <message>
         <source>TOP_POINT</source>
-        <translation>Créer un point</translation>
+        <translation>Creer un point</translation>
     </message>
     <message>
         <source>TOP_POINT_COORDS</source>
-        <translation>Coordonnées d&apos;un point</translation>
+        <translation>Coordonnees d&apos;un point</translation>
     </message>
     <message>
         <source>TOP_POINT_ON_EDGE</source>
-        <translation>Ajouter un point sur l&apos;arête</translation>
+        <translation>Ajouter un point sur l&apos;arete</translation>
     </message>
     <message>
         <source>TOP_POP_COLOR</source>
@@ -4578,7 +4578,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_POP_CREATE_GROUP</source>
-        <translation>Créer un groupe</translation>
+        <translation>Creer un groupe</translation>
     </message>
     <message>
         <source>TOP_POP_EDIT_FIELD</source>
@@ -4586,7 +4586,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_POP_UNPUBLISH_OBJ</source>
-        <translation>Dépublier l&apos;objet</translation>
+        <translation>Depublier l&apos;objet</translation>
     </message>
     <message>
         <source>TOP_POP_PUBLISH_OBJ</source>
@@ -4606,7 +4606,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_POP_DEFLECTION</source>
-        <translation>Coefficient de déformation </translation>
+        <translation>Coefficient de deformation </translation>
     </message>
     <message>
         <source>TOP_POP_RENAME</source>
@@ -4618,7 +4618,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_POP_SHADING_WITH_EDGES</source>
-        <translation>Ombrage avec arêtes</translation>
+        <translation>Ombrage avec aretes</translation>
     </message>
     <message>
         <source>TOP_POP_SETTEXTURE</source>
@@ -4642,7 +4642,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_REVOLUTION</source>
-        <translation>Créer une révolution</translation>
+        <translation>Creer une revolution</translation>
     </message>
     <message>
         <source>TOP_ROTATION</source>
@@ -4666,7 +4666,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_SHADING_COLOR</source>
-        <translation>Définir la couleur d&apos;ombrage</translation>
+        <translation>Definir la couleur d&apos;ombrage</translation>
     </message>
     <message>
         <source>TOP_SHAPE_PROCESS</source>
@@ -4694,15 +4694,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_SOLID</source>
-        <translation>Créer un solide</translation>
+        <translation>Creer un solide</translation>
     </message>
     <message>
         <source>TOP_SPHERE</source>
-        <translation>Créer une sphère</translation>
+        <translation>Creer une sphere</translation>
     </message>
     <message>
         <source>TOP_STEP_VALUE</source>
-        <translation>Définir la valeur du pas</translation>
+        <translation>Definir la valeur du pas</translation>
     </message>
     <message>
         <source>TOP_SUPPERSS_HOLES</source>
@@ -4718,11 +4718,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_TOLERANCE</source>
-        <translation>Tolérance</translation>
+        <translation>Tolerance</translation>
     </message>
     <message>
         <source>TOP_TORUS</source>
-        <translation>Créer un tore</translation>
+        <translation>Creer un tore</translation>
     </message>
     <message>
         <source>TOP_TRANSLATION</source>
@@ -4730,7 +4730,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_VECTOR</source>
-        <translation>Créer un vecteur</translation>
+        <translation>Creer un vecteur</translation>
     </message>
     <message>
         <source>TOP_WHAT_IS</source>
@@ -4742,7 +4742,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_WORK_PLANE</source>
-        <translation>Créer un plan de travail</translation>
+        <translation>Creer un plan de travail</translation>
     </message>
     <message>
         <source>TOP_POP_POINT_MARKER</source>
@@ -4750,11 +4750,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_POP_MATERIAL_PROPERTIES</source>
-        <translation>Propriétés des matériaux</translation>
+        <translation>Proprietes des materiaux</translation>
     </message>
     <message>
         <source>WRN_NOT_IMPLEMENTED</source>
-        <translation>Désolé, cette fonctionnalité n&apos;est pas encore implémentée</translation>
+        <translation>Desole, cette fonctionnalite n&apos;est pas encore implementee</translation>
     </message>
     <message>
         <source>_S_</source>
@@ -4762,7 +4762,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>NOT_FOUND_ANY</source>
-        <translation>Aucune entité n&apos;a été trouvée</translation>
+        <translation>Aucune entite n&apos;a ete trouvee</translation>
     </message>
     <message>
         <source>GEOM_FACE_I</source>
@@ -4786,7 +4786,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_NORMALE</source>
-        <translation>Normale à une face</translation>
+        <translation>Normale a une face</translation>
     </message>
     <message>
         <source>GEOM_VECTOR_NORMALE</source>
@@ -4806,19 +4806,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_EDGE</source>
-        <translation>Chanfrein sur des arêtes communes à 2 faces</translation>
+        <translation>Chanfrein sur des aretes communes a 2 faces</translation>
     </message>
     <message>
         <source>SELECTED_EDGE</source>
-        <translation>Arêtes</translation>
+        <translation>Aretes</translation>
     </message>
     <message>
         <source>GEOM_NORMALE_TITLE</source>
-        <translation>Créer un vecteur normal à une face</translation>
+        <translation>Creer un vecteur normal a une face</translation>
     </message>
     <message>
         <source>GEOM_MEASURE_ANGLE_TITLE</source>
-        <translation>Angle entre deux arêtes/lignes/vecteurs droits</translation>
+        <translation>Angle entre deux aretes/lignes/vecteurs droits</translation>
     </message>
     <message>
         <source>GEOM_MEASURE_ANGLE_ANGLE</source>
@@ -4826,11 +4826,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_MEASURE_ANGLE_OBJ</source>
-        <translation>Objets et résultats</translation>
+        <translation>Objets et resultats</translation>
     </message>
     <message>
         <source>GEOM_MEASURE_ANGLE_DEG</source>
-        <translation>Angle en degrés :</translation>
+        <translation>Angle en degres :</translation>
     </message>
     <message>
         <source>GEOM_MEASURE_ANGLE_RAD</source>
@@ -4838,11 +4838,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_LINE_INTERSECTION</source>
-        <translation>Point à l&apos;Intersection de deux lignes</translation>
+        <translation>Point a l&apos;Intersection de deux lignes</translation>
     </message>
     <message>
         <source>GEOM_KEEP_NONLIMIT_SHAPES</source>
-        <translation>Préserver les formes inférieures</translation>
+        <translation>Preserver les formes inferieures</translation>
     </message>
     <message>
         <source>GEOM_NO_SELF_INTERSECTION</source>
@@ -4878,59 +4878,59 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_REMOVE_EXTRA_EDGES_TITLE</source>
-        <translation>Supprimer les arêtes inutiles</translation>
+        <translation>Supprimer les aretes inutiles</translation>
     </message>
     <message>
         <source>GEOM_BOOL_REMOVE_EXTRA_EDGES</source>
-        <translation>Supprimer les arêtes inutiles</translation>
+        <translation>Supprimer les aretes inutiles</translation>
     </message>
     <message>
         <source>GEOM_REMOVE_EXTRA_EDGES</source>
-        <translation>Objet dont on supprime les arêtes inutiles</translation>
+        <translation>Objet dont on supprime les aretes inutiles</translation>
     </message>
     <message>
         <source>GEOM_RMEE_UNION_FACES</source>
-        <translation>Union des faces, qui appartiennent à la même surface</translation>
+        <translation>Union des faces, qui appartiennent a la meme surface</translation>
     </message>
     <message>
         <source>REMOVE_EXTRA_EDGES_NEW_OBJ_NAME</source>
-        <translation>Pas d&apos;arêtes supplémentaires</translation>
+        <translation>Pas d&apos;aretes supplementaires</translation>
     </message>
     <message>
         <source>TOP_REMOVE_EXTRA_EDGES</source>
-        <translation>Supprimer les arêtes inutiles</translation>
+        <translation>Supprimer les aretes inutiles</translation>
     </message>
     <message>
         <source>MEN_REMOVE_EXTRA_EDGES</source>
-        <translation>Supprimer les arêtes inutiles</translation>
+        <translation>Supprimer les aretes inutiles</translation>
     </message>
     <message>
         <source>STB_REMOVE_EXTRA_EDGES</source>
-        <translation>Supprimer les arêtes inutiles</translation>
+        <translation>Supprimer les aretes inutiles</translation>
     </message>
     <message>
         <source>GEOM_FUSE_EDGES_TITLE</source>
-        <translation>Fusionner les arêtes collinéaires au sein d&apos;un contour</translation>
+        <translation>Fusionner les aretes collineaires au sein d&apos;un contour</translation>
     </message>
     <message>
         <source>GEOM_FUSE_EDGES</source>
-        <translation>Fusionner les arêtes</translation>
+        <translation>Fusionner les aretes</translation>
     </message>
     <message>
         <source>FUSE_EDGES_NEW_OBJ_NAME</source>
-        <translation>FusionArêtes</translation>
+        <translation>FusionAretes</translation>
     </message>
     <message>
         <source>TOP_FUSE_EDGES</source>
-        <translation>Fusionner les arêtes collinéaires au sein d&apos;un contour</translation>
+        <translation>Fusionner les aretes collineaires au sein d&apos;un contour</translation>
     </message>
     <message>
         <source>MEN_FUSE_EDGES</source>
-        <translation>Fusionner les arêtes collinéaires au sein d&apos;un contour</translation>
+        <translation>Fusionner les aretes collineaires au sein d&apos;un contour</translation>
     </message>
     <message>
         <source>STB_FUSE_EDGES</source>
-        <translation>Fusionner les arêtes collinéaires au sein d&apos;un contour</translation>
+        <translation>Fusionner les aretes collineaires au sein d&apos;un contour</translation>
     </message>
     <message>
         <source>TOP_UNION_FACES</source>
@@ -4958,15 +4958,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_NORMALE</source>
-        <translation>Vecteur normal à une face</translation>
+        <translation>Vecteur normal a une face</translation>
     </message>
     <message>
         <source>MEN_NORMALE</source>
-        <translation>Vecteur normal à une face</translation>
+        <translation>Vecteur normal a une face</translation>
     </message>
     <message>
         <source>STB_NORMALE</source>
-        <translation>Vecteur normal à une face</translation>
+        <translation>Vecteur normal a une face</translation>
     </message>
     <message>
         <source>TOP_MEASURE_ANGLE</source>
@@ -4978,35 +4978,35 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_MEASURE_ANGLE</source>
-        <translation>Calculer l&apos;angle entre deux lignes ou arêtes linéaires</translation>
+        <translation>Calculer l&apos;angle entre deux lignes ou aretes lineaires</translation>
     </message>
     <message>
         <source>TOP_MANAGE_DIMENSIONS</source>
-        <translation>Gérer les cotations</translation>
+        <translation>Gerer les cotations</translation>
     </message>
     <message>
         <source>MEN_MANAGE_DIMENSIONS</source>
-        <translation>Gérer les cotations</translation>
+        <translation>Gerer les cotations</translation>
     </message>
     <message>
         <source>STB_MANAGE_DIMENSIONS</source>
-        <translation>Gérer la cotation d&apos;un objet</translation>
+        <translation>Gerer la cotation d&apos;un objet</translation>
     </message>
     <message>
         <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
-        <translation>Montrer l&apos;arbre des dépendances</translation>
+        <translation>Montrer l&apos;arbre des dependances</translation>
     </message>
     <message>
         <source>STB_POP_SHOW_DEPENDENCY_TREE</source>
-        <translation>Montrer l&apos;arbre des dépendances</translation>
+        <translation>Montrer l&apos;arbre des dependances</translation>
     </message>
     <message>
         <source>MEN_POP_REDUCE_STUDY</source>
-        <translation>Etude réduite</translation>
+        <translation>Etude reduite</translation>
     </message>
     <message>
         <source>STB_POP_REDUCE_STUDY</source>
-        <translation>Etude réduite</translation>
+        <translation>Etude reduite</translation>
     </message>
     <message>
         <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
@@ -5014,11 +5014,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_POP_SHOW_ALL_DIMENSIONS</source>
-        <translation>Afficher toutes les cotations cachées pour un objet</translation>
+        <translation>Afficher toutes les cotations cachees pour un objet</translation>
     </message>
     <message>
         <source>TOP_POP_SHOW_ALL_DIMENSIONS</source>
-        <translation>Afficher toutes les cotations cachées sur l&apos;objet</translation>
+        <translation>Afficher toutes les cotations cachees sur l&apos;objet</translation>
     </message>
     <message>
         <source>MEN_POP_HIDE_ALL_DIMENSIONS</source>
@@ -5026,11 +5026,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_POP_HIDE_ALL_DIMENSIONS</source>
-        <translation>Afficher toutes les cotations visibles créées sur l&apos;objet</translation>
+        <translation>Afficher toutes les cotations visibles creees sur l&apos;objet</translation>
     </message>
     <message>
         <source>TOP_POP_HIDE_ALL_DIMENSIONS</source>
-        <translation>Afficher toutes les cotations visibles créées sur l&apos;objet</translation>
+        <translation>Afficher toutes les cotations visibles creees sur l&apos;objet</translation>
     </message>
     <message>
         <source>MEN_POP_SHOW_ALL_ANNOTATIONS</source>
@@ -5070,23 +5070,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_POP_DISABLE_AUTO_COLOR</source>
-        <translation>Désactiver la couleur automatique</translation>
+        <translation>Desactiver la couleur automatique</translation>
     </message>
     <message>
         <source>MEN_POP_DISABLE_AUTO_COLOR</source>
-        <translation>Désactiver la couleur automatique</translation>
+        <translation>Desactiver la couleur automatique</translation>
     </message>
     <message>
         <source>STB_POP_DISABLE_AUTO_COLOR</source>
-        <translation>Désactiver la couleur automatique</translation>
+        <translation>Desactiver la couleur automatique</translation>
     </message>
     <message>
         <source>MEN_POP_CREATE_FOLDER</source>
-        <translation>Créer dossier</translation>
+        <translation>Creer dossier</translation>
     </message>
     <message>
         <source>STB_POP_CREATE_FOLDER</source>
-        <translation>Créer un nouveau dossier</translation>
+        <translation>Creer un nouveau dossier</translation>
     </message>
     <message>
         <source>NEW_FOLDER_NAME</source>
@@ -5102,7 +5102,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_RESULT_NAME_GRP</source>
-        <translation>Nom du résultat</translation>
+        <translation>Nom du resultat</translation>
     </message>
     <message>
         <source>GEOM_RESULT_NAME_LBL</source>
@@ -5114,31 +5114,31 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_FILLING_METHOD</source>
-        <translation>Méthode</translation>
+        <translation>Methode</translation>
     </message>
     <message>
         <source>GEOM_FILLING_DEFAULT</source>
-        <translation>Défaut (comportement standardisé)</translation>
+        <translation>Defaut (comportement standardise)</translation>
     </message>
     <message>
         <source>GEOM_FILLING_USEORI</source>
-        <translation>Utiliser l&apos;orientation des arêtes</translation>
+        <translation>Utiliser l&apos;orientation des aretes</translation>
     </message>
     <message>
         <source>GEOM_FILLING_AUTO</source>
-        <translation>Auto-corriger l&apos;orientation des arêtes</translation>
+        <translation>Auto-corriger l&apos;orientation des aretes</translation>
     </message>
     <message>
         <source>GEOM_WRN_NO_APPROPRIATE_SELECTION</source>
-        <translation>Pas d&apos;objets appropriés choisis</translation>
+        <translation>Pas d&apos;objets appropries choisis</translation>
     </message>
     <message>
         <source>GEOM_SHAPES_ON_SHAPE</source>
-        <translation>Trouver les éléments d&apos;un objet</translation>
+        <translation>Trouver les elements d&apos;un objet</translation>
     </message>
     <message>
         <source>GEOM_SHAPES_ON_SHAPE_ESHAPE</source>
-        <translation>L&apos;objet à éclater</translation>
+        <translation>L&apos;objet a eclater</translation>
     </message>
     <message>
         <source>GEOM_SHAPES_ON_SHAPE_CSHAPE</source>
@@ -5154,7 +5154,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CLOSED</source>
-        <translation>Fermé</translation>
+        <translation>Ferme</translation>
     </message>
     <message>
         <source>GEOM_UNCLOSED</source>
@@ -5162,7 +5162,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CLOSEDUNCLOSED</source>
-        <translation>Il n&apos;est pas défini, si l&apos;objet est fermé ou ouvert. , il y a potentiellement une erreur.</translation>
+        <translation>Il n&apos;est pas defini, si l&apos;objet est ferme ou ouvert. , il y a potentiellement une erreur.</translation>
     </message>
     <message>
         <source>GEOM_DISK_CIRCLE</source>
@@ -5178,7 +5178,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PLANAR_EDGE_WIRE</source>
-        <translation>Contour avec des arêtes planes</translation>
+        <translation>Contour avec des aretes planes</translation>
     </message>
     <message>
         <source>GEOM_POLYGON</source>
@@ -5186,7 +5186,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_POLYHEDRON</source>
-        <translation>Polyèdre</translation>
+        <translation>Polyedre</translation>
     </message>
     <message>
         <source>GEOM_NORMAL</source>
@@ -5198,11 +5198,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_UPARAMETER</source>
-        <translation>Paramètre-U :</translation>
+        <translation>Parametre-U :</translation>
     </message>
     <message>
         <source>GEOM_VPARAMETER</source>
-        <translation>Paramètre-V :</translation>
+        <translation>Parametre-V :</translation>
     </message>
     <message>
         <source>GEOM_X_I</source>
@@ -5222,7 +5222,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SHAPES_ON_SHAPE_TITLE</source>
-        <translation>Trouver les éléments d&apos;un objet</translation>
+        <translation>Trouver les elements d&apos;un objet</translation>
     </message>
     <message>
         <source>GEOM_SCALE_FACTOR_X</source>
@@ -5262,39 +5262,39 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_GET_SHAPES_ON_SHAPE</source>
-        <translation>Trouver les éléments d&apos;un objet</translation>
+        <translation>Trouver les elements d&apos;un objet</translation>
     </message>
     <message>
         <source>MEN_GET_SHAPES_ON_SHAPE</source>
-        <translation>Trouver les éléments d&apos;un objet</translation>
+        <translation>Trouver les elements d&apos;un objet</translation>
     </message>
     <message>
         <source>STB_GET_SHAPES_ON_SHAPE</source>
-        <translation>Trouve les éléments d&apos;un objet</translation>
+        <translation>Trouve les elements d&apos;un objet</translation>
     </message>
     <message>
         <source>TOP_GET_SHARED_SHAPES</source>
-        <translation>Trouver les éléments d&apos;un objet</translation>
+        <translation>Trouver les elements d&apos;un objet</translation>
     </message>
     <message>
         <source>MEN_GET_SHARED_SHAPES</source>
-        <translation>Trouver les éléments partagés</translation>
+        <translation>Trouver les elements partages</translation>
     </message>
     <message>
         <source>STB_GET_SHARED_SHAPES</source>
-        <translation>Trouve les éléments partagés</translation>
+        <translation>Trouve les elements partages</translation>
     </message>
     <message>
         <source>TOP_TRANSFER_DATA</source>
-        <translation>Transfert de données</translation>
+        <translation>Transfert de donnees</translation>
     </message>
     <message>
         <source>MEN_TRANSFER_DATA</source>
-        <translation>Transfert de données</translation>
+        <translation>Transfert de donnees</translation>
     </message>
     <message>
         <source>STB_TRANSFER_DATA</source>
-        <translation>Transfert de données</translation>
+        <translation>Transfert de donnees</translation>
     </message>
     <message>
         <source>TOP_EXTRACTION</source>
@@ -5322,27 +5322,27 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PUBLISH_RESULT_GRP</source>
-        <translation>Options avancées</translation>
+        <translation>Options avancees</translation>
     </message>
     <message>
         <source>GEOM_RESTORE_SUB_SHAPES</source>
-        <translation>Récupérer les groupes et les sous-objets</translation>
+        <translation>Recuperer les groupes et les sous-objets</translation>
     </message>
     <message>
         <source>GEOM_RSS_ADD_FREFIX</source>
-        <translation>Ajouter un préfixe aux noms des sous-objets restaurés</translation>
+        <translation>Ajouter un prefixe aux noms des sous-objets restaures</translation>
     </message>
     <message>
         <source>GEOM_PREVIEW</source>
-        <translation>Prévisualiser</translation>
+        <translation>Previsualiser</translation>
     </message>
     <message>
         <source>PREF_TAB_DEPENDENCY_VIEW</source>
-        <translation>Arbre des dépendances</translation>
+        <translation>Arbre des dependances</translation>
     </message>
     <message>
         <source>PREF_HIERARCHY_TYPE</source>
-        <translation>Type de hiérarchie</translation>
+        <translation>Type de hierarchie</translation>
     </message>
     <message>
         <source>MEN_ONLY_ASCENDANTS</source>
@@ -5358,7 +5358,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_MOVE_POSSIBILITY</source>
-        <translation>Possibilité de déplacer des noeuds</translation>
+        <translation>Possibilite de deplacer des noeuds</translation>
     </message>
     <message>
         <source>PREF_GROUP_DEPENDENCY_VIEW_COLOR</source>
@@ -5370,7 +5370,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_NODE_COLOR</source>
-        <translation>Couleur des noeuds par défaut</translation>
+        <translation>Couleur des noeuds par defaut</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR</source>
@@ -5378,31 +5378,31 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR</source>
-        <translation>Couleur des noeuds non publiés</translation>
+        <translation>Couleur des noeuds non publies</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</source>
-        <translation>Couleurs des noeuds sélectionnés</translation>
+        <translation>Couleurs des noeuds selectionnes</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_ARROW_COLOR</source>
-        <translation>Couleur des flèches par défaut</translation>
+        <translation>Couleur des fleches par defaut</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</source>
-        <translation>Couleur des flèches en surbrillance</translation>
+        <translation>Couleur des fleches en surbrillance</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR</source>
-        <translation>Couleur des flèches sélectionnées</translation>
+        <translation>Couleur des fleches selectionnees</translation>
     </message>
     <message>
         <source>GEOM_ALL_IMPORT_FILES</source>
-        <translation>Tous les formats supportés ( %1 )</translation>
+        <translation>Tous les formats supportes ( %1 )</translation>
     </message>
     <message>
         <source>GEOM_UNSUPPORTED_TYPE</source>
-        <translation>Le format de ficher n&apos;est pas supporté</translation>
+        <translation>Le format de ficher n&apos;est pas supporte</translation>
     </message>
     <message>
         <source>GEOM_UNKNOWN_IMPORT_ERROR</source>
@@ -5414,19 +5414,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>EXPORT_IGES_HETEROGENEOUS_COMPOUND</source>
-        <translation>Cet assemblage ne peut pas être exporté au format IGES
-sans perte car il contient des entités qui doivent être sauvegardées
-dans des modes différents. Les sommets, arêtes et contours d&apos;un côté et
+        <translation>Cet assemblage ne peut pas etre exporte au format IGES
+sans perte car il contient des entites qui doivent etre sauvegardees
+dans des modes differents. Les sommets, aretes et contours d&apos;un côte et
 les coques et solides d&apos;un autre.</translation>
     </message>
     <message>
         <source>GEOM_PUBLISH_NAMED_SHAPES</source>
-        <translation>Créer des groupes pour les objets indiqués (s&apos;ils existent)?</translation>
+        <translation>Creer des groupes pour les objets indiques (s&apos;ils existent)?</translation>
     </message>
     <message>
         <source>GEOM_PRECISION_HINT</source>
-        <translation>Il est possible d&apos;ajuster la précision de la valeur d&apos;entrée avec 
-le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translation>
+        <translation>Il est possible d&apos;ajuster la precision de la valeur d&apos;entree avec 
+le parametre &apos;%1&apos; aux preferences du module Geometrie.</translation>
     </message>
     <message>
         <source>GEOM_PLUGINS_OTHER</source>
@@ -5434,11 +5434,11 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>SHOW_ONLY_SELECTED</source>
-        <translation>Afficher uniquement la sélection</translation>
+        <translation>Afficher uniquement la selection</translation>
     </message>
     <message>
         <source>HIDE_SELECTED</source>
-        <translation>Cacher la sélection</translation>
+        <translation>Cacher la selection</translation>
     </message>
     <message>
         <source>SHOW_ALL_SUB_SHAPES</source>
@@ -5446,11 +5446,11 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>TOP_SMOOTHINGSURFACE</source>
-        <translation>Surface lissée</translation>
+        <translation>Surface lissee</translation>
     </message>
     <message>
         <source>GEOM_SELECT_IMAGE</source>
-        <translation>Sélectionner une image...</translation>
+        <translation>Selectionner une image...</translation>
     </message>
     <message>
         <source>CC_PNT_ITEM_X_Y</source>
@@ -5482,19 +5482,19 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>GEOM_SOME_SHAPES_SELECTED</source>
-        <translation>%1 forme(s) a(ont) été sélectionnée(s)</translation>
+        <translation>%1 forme(s) a(ont) ete selectionnee(s)</translation>
     </message>
     <message>
         <source>GEOM_NO_SHAPES_SELECTED</source>
-        <translation>Aucune forme ne correspond aux paramètres de filtrage</translation>
+        <translation>Aucune forme ne correspond aux parametres de filtrage</translation>
     </message>
     <message>
         <source>GEOM_HEALING_STATS_TITLE</source>
-        <translation>Modifications réalisées</translation>
+        <translation>Modifications realisees</translation>
     </message>
     <message>
         <source>GEOM_HEALING_STATS_COL_1</source>
-        <translation>Décompte</translation>
+        <translation>Decompte</translation>
     </message>
     <message>
         <source>GEOM_HEALING_STATS_COL_2</source>
@@ -5533,7 +5533,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>TOOL_BOOLEAN</source>
-        <translation>Opérations booléennes </translation>
+        <translation>Operations booleennes </translation>
     </message>
     <message>
         <source>TOOL_FEATURES</source>
@@ -5541,7 +5541,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>TOOL_GENERATION</source>
-        <translation>Génération</translation>
+        <translation>Generation</translation>
     </message>
     <message>
         <source>TOOL_PRIMITIVES</source>
@@ -5557,7 +5557,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>TOOL_OPERATIONS</source>
-        <translation>Opérations</translation>
+        <translation>Operations</translation>
     </message>
     <message>
         <source>TOOL_PICTURES</source>
@@ -5565,7 +5565,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>TOOL_ADVANCED</source>
-        <translation>Avancé</translation>
+        <translation>Avance</translation>
     </message>
     <message>
         <source>TOOL_MEASURES</source>
@@ -5580,15 +5580,15 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     <name>BasicGUI_CurveDlg</name>
     <message>
         <source>GEOM_IS_CLOSED</source>
-        <translation>Construire une arête fermée</translation>
+        <translation>Construire une arete fermee</translation>
     </message>
     <message>
         <source>GEOM_BUILD_CLOSED_WIRE</source>
-        <translation>Construire un contour fermé</translation>
+        <translation>Construire un contour ferme</translation>
     </message>
     <message>
         <source>GEOM_IS_REORDER</source>
-        <translation>Réarranger les points en prenant en compte les distances</translation>
+        <translation>Rearranger les points en prenant en compte les distances</translation>
     </message>
     <message>
         <source>GEOM_INTERPOL_TANGENTS</source>
@@ -5604,15 +5604,15 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>GEOM_BOTH_TANGENTS_REQUIRED</source>
-        <translation>Les deux vecteurs tangents doivent être définis</translation>
+        <translation>Les deux vecteurs tangents doivent etre definis</translation>
     </message>
     <message>
         <source>GEOM_CURVE_CRMODE</source>
-        <translation>Mode de création</translation>
+        <translation>Mode de creation</translation>
     </message>
     <message>
         <source>GEOM_CURVE_SELECTION</source>
-        <translation>Par sélection</translation>
+        <translation>Par selection</translation>
     </message>
     <message>
         <source>GEOM_CURVE_ANALITICAL</source>
@@ -5623,7 +5623,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     <name>BasicGUI_ParamCurveWidget</name>
     <message>
         <source>GEOM_PCURVE_TITLE</source>
-        <translation>Paramètres de la courbe</translation>
+        <translation>Parametres de la courbe</translation>
     </message>
     <message>
         <source>GEOM_PCURVE_X</source>
@@ -5662,15 +5662,15 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>ORIGIN_DEFAULT</source>
-        <translation>Origine par défaut</translation>
+        <translation>Origine par defaut</translation>
     </message>
     <message>
         <source>X_AXIS_DEFAULT</source>
-        <translation>Axe X par défaut</translation>
+        <translation>Axe X par defaut</translation>
     </message>
     <message>
         <source>Z_AXIS_DEFAULT</source>
-        <translation>Axe Z par défaut</translation>
+        <translation>Axe Z par defaut</translation>
     </message>
 </context>
 <context>
@@ -5697,15 +5697,15 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>LOCALCS</source>
-        <translation>Système de coordonnées local</translation>
+        <translation>Systeme de coordonnees local</translation>
     </message>
     <message>
         <source>ORIGIN</source>
-        <translation>Coordonnées de l&apos;origine</translation>
+        <translation>Coordonnees de l&apos;origine</translation>
     </message>
     <message>
         <source>VEC_PARALLEL</source>
-        <translation>Les axes du système de coordonnées ne doivent pas être parallèles</translation>
+        <translation>Les axes du systeme de coordonnees ne doivent pas etre paralleles</translation>
     </message>
     <message>
         <source>XDIR</source>
@@ -5758,19 +5758,19 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     <name>BlocksGUI_QuadFaceDlg</name>
     <message>
         <source>EDGE_1</source>
-        <translation>Arête 1</translation>
+        <translation>Arete 1</translation>
     </message>
     <message>
         <source>EDGE_2</source>
-        <translation>Arête 2</translation>
+        <translation>Arete 2</translation>
     </message>
     <message>
         <source>EDGE_3</source>
-        <translation>Arête 3</translation>
+        <translation>Arete 3</translation>
     </message>
     <message>
         <source>EDGE_4</source>
-        <translation>Arête 4</translation>
+        <translation>Arete 4</translation>
     </message>
     <message>
         <source>VERTEX_1</source>
@@ -5836,7 +5836,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>SECTION_LINE_CLOSED</source>
-        <translation>Fermée</translation>
+        <translation>Fermee</translation>
     </message>
     <message>
         <source>SECTION_ADD_BTN</source>
@@ -5909,11 +5909,11 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>REDO</source>
-        <translation>Rétablir</translation>
+        <translation>Retablir</translation>
     </message>
     <message>
         <source>REDO_TLT</source>
-        <translation>Rétablir</translation>
+        <translation>Retablir</translation>
     </message>
     <message>
         <source>NEW_SECTION</source>
@@ -5921,7 +5921,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>NEW_SECTION_TLT</source>
-        <translation>Insérer une nouvelle section</translation>
+        <translation>Inserer une nouvelle section</translation>
     </message>
     <message>
         <source>ADDITION_MODE</source>
@@ -5941,11 +5941,11 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>DETECTION_MODE</source>
-        <translation>Mode Détection</translation>
+        <translation>Mode Detection</translation>
     </message>
     <message>
         <source>DETECTION_MODE_TLT</source>
-        <translation>Mode Détection</translation>
+        <translation>Mode Detection</translation>
     </message>
     <message>
         <source>CLOSE_SECTIONS</source>
@@ -5953,7 +5953,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>CLOSE_SECTIONS_TLT</source>
-        <translation>Fermer les sections sélectionnées</translation>
+        <translation>Fermer les sections selectionnees</translation>
     </message>
     <message>
         <source>UNCLOSE_SECTIONS</source>
@@ -5961,23 +5961,23 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>UNCLOSE_SECTIONS_TLT</source>
-        <translation>Ouvrir les sections sélectionnées</translation>
+        <translation>Ouvrir les sections selectionnees</translation>
     </message>
     <message>
         <source>SET_SECTIONS_POLYLINE</source>
-        <translation>Définir la polyligne</translation>
+        <translation>Definir la polyligne</translation>
     </message>
     <message>
         <source>SET_SECTIONS_POLYLINE_TLT</source>
-        <translation>Affecter le type de section sélectionné à la polyligne</translation>
+        <translation>Affecter le type de section selectionne a la polyligne</translation>
     </message>
     <message>
         <source>SET_SECTIONS_SPLINE</source>
-        <translation>Définir la spline</translation>
+        <translation>Definir la spline</translation>
     </message>
     <message>
         <source>SET_SECTIONS_SPLINE_TLT</source>
-        <translation>Affecter le type de section sélectionné à la spline</translation>
+        <translation>Affecter le type de section selectionne a la spline</translation>
     </message>
     <message>
         <source>REMOVE</source>
@@ -5993,7 +5993,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>JOIN_TLT</source>
-        <translation>Joindre les sections sélectionnées</translation>
+        <translation>Joindre les sections selectionnees</translation>
     </message>
     <message>
         <source>BRING_TOGETHER</source>
@@ -6001,7 +6001,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>BRING_TOGETHER_TLT</source>
-        <translation>Assembler deux points aux extrémités de deux sections</translation>
+        <translation>Assembler deux points aux extremites de deux sections</translation>
     </message>
     <message>
         <source>CLEAR_ALL</source>
@@ -6059,23 +6059,23 @@ Le nombre de points n&apos;est pas suffisant</translation>
     <name>EntityGUI_FeatureDetectorDlg</name>
     <message>
         <source>GEOM_DETECT_TITLE</source>
-        <translation>Détecter les angles</translation>
+        <translation>Detecter les angles</translation>
     </message>
     <message>
         <source>GEOM_SCALING</source>
-        <translation>Mise à l&apos;échelle</translation>
+        <translation>Mise a l&apos;echelle</translation>
     </message>
     <message>
         <source>GEOM_PNT1</source>
-        <translation>Coin supérieur gauche</translation>
+        <translation>Coin superieur gauche</translation>
     </message>
     <message>
         <source>GEOM_PNT2</source>
-        <translation>Coin supérieur droit</translation>
+        <translation>Coin superieur droit</translation>
     </message>
     <message>
         <source>GEOM_CORNER</source>
-        <translation>Angles_détectés</translation>
+        <translation>Angles_detectes</translation>
     </message>
     <message>
         <source>GEOM_CORNERS</source>
@@ -6087,12 +6087,12 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>GEOM_FEATURES</source>
-        <translation>Caractéristiques</translation>
+        <translation>Caracteristiques</translation>
     </message>
     <message>
         <source>GEOM_DETECT_ZONE</source>
-        <translation>Sélectionner une zone de détection
-(toute l&apos;image par défaut)</translation>
+        <translation>Selectionner une zone de detection
+(toute l&apos;image par defaut)</translation>
     </message>
     <message>
         <source>GEOM_DETECT_OUTPUT</source>
@@ -6124,7 +6124,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>USE_ROI</source>
-        <translation>Utiliser la région d&apos;intérêt</translation>
+        <translation>Utiliser la region d&apos;interet</translation>
     </message>
     <message>
         <source>KERNEL_SIZE</source>
@@ -6132,7 +6132,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>QUALITY_LEVEL</source>
-        <translation>Niveau de qualité</translation>
+        <translation>Niveau de qualite</translation>
     </message>
     <message>
         <source>MIN_DISTANCE</source>
@@ -6140,11 +6140,11 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>TYPE_CRITERIA</source>
-        <translation>Critère de type</translation>
+        <translation>Critere de type</translation>
     </message>
     <message>
         <source>CV_TERMCRIT_ITER</source>
-        <translation>Nombre max d&apos;itérations</translation>
+        <translation>Nombre max d&apos;iterations</translation>
     </message>
     <message>
         <source>CV_TERMCRIT_EPS</source>
@@ -6152,7 +6152,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>CV_TERMCRIT_ITER | CV_TERMCRIT_EPS</source>
-        <translation>Nombre max d&apos;itérations ou epsilon</translation>
+        <translation>Nombre max d&apos;iterations ou epsilon</translation>
     </message>
     <message>
         <source>MAX_ITER</source>
@@ -6196,7 +6196,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>CV_HIST_SPARSE</source>
-        <translation>Tableau clairsemé multi-dimensionnel</translation>
+        <translation>Tableau clairseme multi-dimensionnel</translation>
     </message>
     <message>
         <source>THRESHOLD_VALUE</source>
@@ -6208,7 +6208,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>FIND_CONTOURS_METHOD</source>
-        <translation>Méthode d&apos;approximation des chaînes</translation>
+        <translation>Methode d&apos;approximation des chaines</translation>
     </message>
     <message>
         <source>CV_CHAIN_APPROX_NONE</source>
@@ -6257,14 +6257,14 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>GEOM_ADD_THICKNESS</source>
-        <translation>Epaissir (arêtes ou contours uniquement)</translation>
+        <translation>Epaissir (aretes ou contours uniquement)</translation>
     </message>
 </context>
 <context>
     <name>GroupGUI</name>
     <message>
         <source>NO_GROUP</source>
-        <translation>Choisissez un groupe à éditer</translation>
+        <translation>Choisissez un groupe a editer</translation>
     </message>
 </context>
 <context>
@@ -6287,11 +6287,11 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>GEOM_CUT</source>
-        <translation>Découpe</translation>
+        <translation>Decoupe</translation>
     </message>
     <message>
         <source>GEOM_CUT_TITLE</source>
-        <translation>Découpe de groupes</translation>
+        <translation>Decoupe de groupes</translation>
     </message>
     <message>
         <source>GEOM_GROUPS</source>
@@ -6314,7 +6314,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>CREATE_GROUP_TITLE</source>
-        <translation>Créer un groupe</translation>
+        <translation>Creer un groupe</translation>
     </message>
     <message>
         <source>EDIT_GROUP_TITLE</source>
@@ -6322,7 +6322,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>EMPTY_LIST</source>
-        <translation>Choisissez un ou plusieurs sous-objets à placer dans le groupe</translation>
+        <translation>Choisissez un ou plusieurs sous-objets a placer dans le groupe</translation>
     </message>
     <message>
         <source>EMPTY_NAME</source>
@@ -6346,7 +6346,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>NO_GROUP</source>
-        <translation>Choisissez un groupe à éditer</translation>
+        <translation>Choisissez un groupe a editer</translation>
     </message>
     <message>
         <source>NO_MAIN_OBJ</source>
@@ -6358,11 +6358,11 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>SELECT_ALL</source>
-        <translation>Tout sélectionner</translation>
+        <translation>Tout selectionner</translation>
     </message>
     <message>
         <source>SHAPE_SEL_RESTR</source>
-        <translation>Restriction de la sélection</translation>
+        <translation>Restriction de la selection</translation>
     </message>
     <message>
         <source>SHAPE_TYPE</source>
@@ -6374,7 +6374,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>GEOM_PARTS_OF_SHAPE2</source>
-        <translation>Parties géométriques de l&apos;objet secondaire </translation>
+        <translation>Parties geometriques de l&apos;objet secondaire </translation>
     </message>
     <message>
         <source>SUBSHAPES_OF_SHAPE2</source>
@@ -6386,21 +6386,21 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>WRN_NOT_SUBSHAPE</source>
-        <translation>La forme sélectionnée n&apos;est pas un sous-élémént de la forme principale. Pour choisir plus facilement, cacher les formes en trop dans la vue.</translation>
+        <translation>La forme selectionnee n&apos;est pas un sous-element de la forme principale. Pour choisir plus facilement, cacher les formes en trop dans la vue.</translation>
     </message>
 </context>
 <context>
     <name>EntityGUI</name>
     <message>
         <source>NO_FIELD</source>
-        <translation>Sélectioner le champ à éditer</translation>
+        <translation>Selectioner le champ a editer</translation>
     </message>
 </context>
 <context>
     <name>EntityGUI_FieldDlg</name>
     <message>
         <source>CREATE_FIELD_TITLE</source>
-        <translation>Créer un champ</translation>
+        <translation>Creer un champ</translation>
     </message>
     <message>
         <source>EDIT_FIELD_TITLE</source>
@@ -6412,7 +6412,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>PROPERTIES</source>
-        <translation>Propriétés</translation>
+        <translation>Proprietes</translation>
     </message>
     <message>
         <source>SHAPE</source>
@@ -6424,7 +6424,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>BOOL</source>
-        <translation>Booléen</translation>
+        <translation>Booleen</translation>
     </message>
     <message>
         <source>INT</source>
@@ -6436,7 +6436,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>STRING</source>
-        <translation>Chaîne</translation>
+        <translation>Chaine</translation>
     </message>
     <message>
         <source>SHAPE_TYPE</source>
@@ -6448,7 +6448,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>EDGE</source>
-        <translation>Arête</translation>
+        <translation>Arete</translation>
     </message>
     <message>
         <source>FACE</source>
@@ -6472,7 +6472,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>PREV_STEP</source>
-        <translation>Pas précédent</translation>
+        <translation>Pas precedent</translation>
     </message>
     <message>
         <source>STEP</source>
@@ -6500,19 +6500,19 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>GEOM_NO_STUDY</source>
-        <translation>Pas d&apos;étude disponible</translation>
+        <translation>Pas d&apos;etude disponible</translation>
     </message>
     <message>
         <source>NO_SHAPE</source>
-        <translation>Forme non sélectionnée</translation>
+        <translation>Forme non selectionnee</translation>
     </message>
     <message>
         <source>NO_FIELD</source>
-        <translation>Champ non sélectionné</translation>
+        <translation>Champ non selectionne</translation>
     </message>
     <message>
         <source>EMPTY_NAME</source>
-        <translation>Spécifier un nom de champ</translation>
+        <translation>Specifier un nom de champ</translation>
     </message>
     <message>
         <source>NO_VALUES</source>
@@ -6536,29 +6536,29 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>WRN_NOT_SUBSHAPE</source>
-        <translation>La forme sélectionnée n&apos;est pas un élément de la forme principale. Pour choisir plus facilement, cacher les formes en trop dans la vue.</translation>
+        <translation>La forme selectionnee n&apos;est pas un element de la forme principale. Pour choisir plus facilement, cacher les formes en trop dans la vue.</translation>
     </message>
     <message>
         <source>ERR_STEP_EXISTS</source>
-        <translation>Un pas avec cet identifiant existe déjà.</translation>
+        <translation>Un pas avec cet identifiant existe deja.</translation>
     </message>
 </context>
 <context>
     <name>MeasureGUI_1Sel1TextView1Check_QTD</name>
     <message>
         <source>CHECK_SHAPE_GEOMETRY</source>
-        <translation>Vérifier la géométrie</translation>
+        <translation>Verifier la geometrie</translation>
     </message>
 </context>
 <context>
     <name>MeasureGUI_PointDlg</name>
     <message>
         <source>CAPTION</source>
-        <translation>Coordonnées d&apos;un point</translation>
+        <translation>Coordonnees d&apos;un point</translation>
     </message>
     <message>
         <source>COORDINATES</source>
-        <translation>Le point et ses coordonnées</translation>
+        <translation>Le point et ses coordonnees</translation>
     </message>
     <message>
         <source>POINT</source>
@@ -6581,7 +6581,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     <name>MeasureGUI_ManageDimensionsDlg</name>
     <message>
         <source>MANAGE_DIMENSIONS_TITLE</source>
-        <translation>Gérer les cotations</translation>
+        <translation>Gerer les cotations</translation>
     </message>
     <message>
         <source>OBJECT_LABEL</source>
@@ -6613,7 +6613,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>DIAMETER_ITEM</source>
-        <translation>Diamètre</translation>
+        <translation>Diametre</translation>
     </message>
     <message>
         <source>ANGLE_ITEM</source>
@@ -6621,21 +6621,21 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>WRN_TITLE_UNSAVED</source>
-        <translation>Modifications non sauvegardées</translation>
+        <translation>Modifications non sauvegardees</translation>
     </message>
     <message>
         <source>WRN_MSG_CHANGES_LOST</source>
-        <translation>Les changements non sauvegardés seront perdus.
+        <translation>Les changements non sauvegardes seront perdus.
 Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>WRN_MSG_CHANGES_SAVE</source>
-        <translation>Les changements non sauvegardés seront perdus.
+        <translation>Les changements non sauvegardes seront perdus.
 Voulez-vous les sauvegarder?</translation>
     </message>
     <message>
         <source>WRN_MSG_UNSAVED</source>
-        <translation>Les changements non sauvegardés seront perdus.
+        <translation>Les changements non sauvegardes seront perdus.
 Voulez-vous continuer?</translation>
     </message>
 </context>
@@ -6655,7 +6655,7 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>DIAMETER</source>
-        <translation>Diamètre</translation>
+        <translation>Diametre</translation>
     </message>
     <message>
         <source>ANGLE</source>
@@ -6667,7 +6667,7 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>EDGE_LENGTH</source>
-        <translation>Longeur d&apos;arête</translation>
+        <translation>Longeur d&apos;arete</translation>
     </message>
     <message>
         <source>TWO_POINTS</source>
@@ -6675,11 +6675,11 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>PARALLEL_EDGES</source>
-        <translation>Arêtes parallèles</translation>
+        <translation>Aretes paralleles</translation>
     </message>
     <message>
         <source>TWO_EDGES</source>
-        <translation>Deux arêtes</translation>
+        <translation>Deux aretes</translation>
     </message>
     <message>
         <source>THREE_POINTS</source>
@@ -6687,15 +6687,15 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>EDGE</source>
-        <translation>Arête</translation>
+        <translation>Arete</translation>
     </message>
     <message>
         <source>EDGE_1</source>
-        <translation>Arête 1</translation>
+        <translation>Arete 1</translation>
     </message>
     <message>
         <source>EDGE_2</source>
-        <translation>Arête 2</translation>
+        <translation>Arete 2</translation>
     </message>
     <message>
         <source>POINT_1</source>
@@ -6719,7 +6719,7 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>NAME_DIAMETER</source>
-        <translation>Diamètre</translation>
+        <translation>Diametre</translation>
     </message>
     <message>
         <source>NAME_ANGLE</source>
@@ -6727,7 +6727,7 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>WARNING_TITLE_CANNOT_CREATE_DIMENSION</source>
-        <translation>Impossible de créer la cotation</translation>
+        <translation>Impossible de creer la cotation</translation>
     </message>
     <message>
         <source>WARNING_MSG_INVALID_ARGUMENTS</source>
@@ -6739,7 +6739,7 @@ Please specify suitable arguments.</translation>
     <name>MeasureGUI_CheckShapeDlg</name>
     <message>
         <source>GEOM_CHECK_TITLE</source>
-        <translation>Contrôler la validité de l&apos;objet</translation>
+        <translation>Contrôler la validite de l&apos;objet</translation>
     </message>
     <message>
         <source>GEOM_CHECK_SHAPE</source>
@@ -6747,7 +6747,7 @@ Please specify suitable arguments.</translation>
     </message>
     <message>
         <source>GEOM_CHECK_SHAPE_NAME</source>
-        <translation>Eronné</translation>
+        <translation>Eronne</translation>
     </message>
     <message>
         <source>GEOM_CHECK_SHAPE_VALID</source>
@@ -6791,15 +6791,15 @@ Please specify suitable arguments.</translation>
     </message>
     <message>
         <source>CHECK_ERROR_INVALID_CURVE_ON_CLOSED_SURFACE</source>
-        <translation>Courbe invalide sur la surface fermée</translation>
+        <translation>Courbe invalide sur la surface fermee</translation>
     </message>
     <message>
         <source>CHECK_ERROR_INVALID_SAME_RANGE_FLAG</source>
-        <translation>Invalide Même indicateur de plage</translation>
+        <translation>Invalide Meme indicateur de plage</translation>
     </message>
     <message>
         <source>CHECK_ERROR_INVALID_SAME_PARAMETER_FLAG</source>
-        <translation>Invalide Même paramètre</translation>
+        <translation>Invalide Meme parametre</translation>
     </message>
     <message>
         <source>CHECK_ERROR_INVALID_DEGENERATED_FLAG</source>
@@ -6807,11 +6807,11 @@ Please specify suitable arguments.</translation>
     </message>
     <message>
         <source>CHECK_ERROR_FREE_EDGE</source>
-        <translation>Arête libre</translation>
+        <translation>Arete libre</translation>
     </message>
     <message>
         <source>CHECK_ERROR_INVALID_MULTI_CONNEXITY</source>
-        <translation>Multi-connectivité invalide</translation>
+        <translation>Multi-connectivite invalide</translation>
     </message>
     <message>
         <source>CHECK_ERROR_INVALID_RANGE</source>
@@ -6823,11 +6823,11 @@ Please specify suitable arguments.</translation>
     </message>
     <message>
         <source>CHECK_ERROR_REDUNDANT_EDGE</source>
-        <translation>Arête redondante</translation>
+        <translation>Arete redondante</translation>
     </message>
     <message>
         <source>CHECK_ERROR_SELF_INTERSECTING_WIRE</source>
-        <translation>Arête auto-intersectée</translation>
+        <translation>Arete auto-intersectee</translation>
     </message>
     <message>
         <source>CHECK_ERROR_NO_SURFACE</source>
@@ -6843,7 +6843,7 @@ Please specify suitable arguments.</translation>
     </message>
     <message>
         <source>CHECK_ERROR_INTERSECTING_WIRES</source>
-        <translation>Contours intersectés</translation>
+        <translation>Contours intersectes</translation>
     </message>
     <message>
         <source>CHECK_ERROR_INVALID_IMBRICATION_OF_WIRES</source>
@@ -6863,11 +6863,11 @@ Please specify suitable arguments.</translation>
     </message>
     <message>
         <source>CHECK_ERROR_NOT_CLOSED</source>
-        <translation>Non fermé</translation>
+        <translation>Non ferme</translation>
     </message>
     <message>
         <source>CHECK_ERROR_NOT_CONNECTED</source>
-        <translation>Non connecté</translation>
+        <translation>Non connecte</translation>
     </message>
     <message>
         <source>CHECK_ERROR_SUBSHAPE_NOT_IN_SHAPE</source>
@@ -6883,7 +6883,7 @@ Please specify suitable arguments.</translation>
     </message>
     <message>
         <source>CHECK_ERROR_INVALID_TOLERANCE_VALUE</source>
-        <translation>Valeur de tolérance invalide</translation>
+        <translation>Valeur de tolerance invalide</translation>
     </message>
     <message>
         <source>CHECK_ERROR_CHECK_FAIL</source>
@@ -6913,7 +6913,7 @@ Please specify suitable arguments.</translation>
     <name>OperationGUI_FilletDlg</name>
     <message>
         <source>SELECTED_EDGES</source>
-        <translation>Arêtes</translation>
+        <translation>Aretes</translation>
     </message>
     <message>
         <source>SELECTED_FACES</source>
@@ -6924,7 +6924,7 @@ Please specify suitable arguments.</translation>
     <name>RepairGUI_FreeBoundDlg</name>
     <message>
         <source>CAPTION</source>
-        <translation>Vérifier les contours libres</translation>
+        <translation>Verifier les contours libres</translation>
     </message>
     <message>
         <source>FREE_BOUND</source>
@@ -6932,7 +6932,7 @@ Please specify suitable arguments.</translation>
     </message>
     <message>
         <source>NUMBER_CLOSED</source>
-        <translation>Nombre de contours libres fermés</translation>
+        <translation>Nombre de contours libres fermes</translation>
     </message>
     <message>
         <source>NUMBER_OPEN</source>
@@ -6951,13 +6951,13 @@ Please specify suitable arguments.</translation>
     <name>RepairGUI_GlueDlg</name>
     <message>
         <source>FACES_FOR_GLUING_ARE_DETECTED</source>
-        <translation>Il y a %1 face(s) à recoller surlignées en couleur rouge.
-Fermez cette boîte d&apos;alerte et choisissez les faces à recoller</translation>
+        <translation>Il y a %1 face(s) a recoller surlignees en couleur rouge.
+Fermez cette boite d&apos;alerte et choisissez les faces a recoller</translation>
     </message>
     <message>
         <source>EDGES_FOR_GLUING_ARE_DETECTED</source>
-        <translation>Il y a %1 arête(s) à recoller surlignées en rouge.
-Fermez cette boîte d&apos;alerte et choisissez les arêtes à recoller.</translation>
+        <translation>Il y a %1 arete(s) a recoller surlignees en rouge.
+Fermez cette boite d&apos;alerte et choisissez les aretes a recoller.</translation>
     </message>
     <message>
         <source>GLUE_FACES</source>
@@ -6965,7 +6965,7 @@ Fermez cette boîte d&apos;alerte et choisissez les arêtes à recoller.</transl
     </message>
     <message>
         <source>GLUE_EDGES</source>
-        <translation>Recoller les arêtes</translation>
+        <translation>Recoller les aretes</translation>
     </message>
     <message>
         <source>SELECT_FACES</source>
@@ -6973,39 +6973,39 @@ Fermez cette boîte d&apos;alerte et choisissez les arêtes à recoller.</transl
     </message>
     <message>
         <source>SELECT_EDGES</source>
-        <translation>Choisir les arêtes</translation>
+        <translation>Choisir les aretes</translation>
     </message>
     <message>
         <source>GLUE_ALL_EDGES</source>
-        <translation>Recoller toutes les arêtes coïncidentes</translation>
+        <translation>Recoller toutes les aretes coïncidentes</translation>
     </message>
     <message>
         <source>THERE_ARE_NO_FACES_FOR_GLUING</source>
-        <translation>Il n&apos;y a pas de face à coller</translation>
+        <translation>Il n&apos;y a pas de face a coller</translation>
     </message>
     <message>
         <source>THERE_ARE_NO_EDGES_FOR_GLUING</source>
-        <translation>Il n&apos;y a pas d&apos;arête à coller</translation>
+        <translation>Il n&apos;y a pas d&apos;arete a coller</translation>
     </message>
 </context>
 <context>
     <name>RepairGUI_ShapeProcessDlg</name>
     <message>
         <source>ERROR_NO_OBJECTS</source>
-        <translation>Choisissez un objet géométrique pour le traitement de forme.</translation>
+        <translation>Choisissez un objet geometrique pour le traitement de forme.</translation>
     </message>
     <message>
         <source>ERROR_NO_OPERATORS</source>
-        <translation>Choisissez au moins une opération de traitement de forme pour donner suite à l&apos;opération</translation>
+        <translation>Choisissez au moins une operation de traitement de forme pour donner suite a l&apos;operation</translation>
     </message>
     <message>
         <source>TIME_CONSUMING</source>
-        <translation>L&apos;activation de cette option peut résulter en une perte de temps sur certains objets.
+        <translation>L&apos;activation de cette option peut resulter en une perte de temps sur certains objets.
 Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>WIDTH_FACTOR_TOL</source>
-        <translation>Tol. du facteur d&apos;épaisseur</translation>
+        <translation>Tol. du facteur d&apos;epaisseur</translation>
     </message>
     <message>
         <source>VOLUME_TOL</source>
@@ -7013,11 +7013,11 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>TO_MERGE_SOLIDS</source>
-        <translation>Réunir les solides</translation>
+        <translation>Reunir les solides</translation>
     </message>
     <message>
         <source>SELECT_ALL</source>
-        <translation>Tout sélectionner</translation>
+        <translation>Tout selectionner</translation>
     </message>
 </context>
 <context>
@@ -7039,11 +7039,11 @@ Voulez-vous continuer?</translation>
     <name>GEOMToolsGUI_DeflectionDlg</name>
     <message>
         <source>GEOM_DEFLECTION_TLT</source>
-        <translation>Choisir le degré de déformation d&apos;un objet</translation>
+        <translation>Choisir le degre de deformation d&apos;un objet</translation>
     </message>
     <message>
         <source>GEOM_DEFLECTION</source>
-        <translation>Déformation :</translation>
+        <translation>Deformation :</translation>
     </message>
 </context>
 <context>
@@ -7057,7 +7057,7 @@ Voulez-vous continuer?</translation>
     <name>GEOMToolsGUI_MarkerDlg</name>
     <message>
         <source>SET_MARKER_TLT</source>
-        <translation>Définir le marqueur de point</translation>
+        <translation>Definir le marqueur de point</translation>
     </message>
     <message>
         <source>STANDARD_MARKER</source>
@@ -7065,7 +7065,7 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>CUSTOM_MARKER</source>
-        <translation>Personnalisé</translation>
+        <translation>Personnalise</translation>
     </message>
     <message>
         <source>TYPE</source>
@@ -7104,7 +7104,7 @@ Voulez-vous continuer?</translation>
     <name>GEOMToolsGUI_MaterialPropertiesDlg</name>
     <message>
         <source>MATERIAL_PROPERTIES_TLT</source>
-        <translation>Couleur et propriétés des matériaux</translation>
+        <translation>Couleur et proprietes des materiaux</translation>
     </message>
     <message>
         <source>FRONT_FACE</source>
@@ -7112,7 +7112,7 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>BACK_FACE</source>
-        <translation>Face arrière</translation>
+        <translation>Face arriere</translation>
     </message>
     <message>
         <source>REFLECTION_0</source>
@@ -7124,7 +7124,7 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>REFLECTION_2</source>
-        <translation>Spéculaire</translation>
+        <translation>Speculaire</translation>
     </message>
     <message>
         <source>REFLECTION_3</source>
@@ -7136,19 +7136,19 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>PHYSICAL</source>
-        <translation>Couleur imposée</translation>
+        <translation>Couleur imposee</translation>
     </message>
     <message>
         <source>ADD_MATERIAL</source>
-        <translation>Ajouter un matériau</translation>
+        <translation>Ajouter un materiau</translation>
     </message>
     <message>
         <source>DELETE_MATERIAL</source>
-        <translation>Supprimer un matériau</translation>
+        <translation>Supprimer un materiau</translation>
     </message>
     <message>
         <source>RENAME_MATERIAL</source>
-        <translation>Renommer un matériau</translation>
+        <translation>Renommer un materiau</translation>
     </message>
     <message>
         <source>CURRENT_MATERIAL</source>
@@ -7160,16 +7160,16 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>CUSTOM_MATERIAL</source>
-        <translation>matériau personnalisé</translation>
+        <translation>materiau personnalise</translation>
     </message>
     <message>
         <source>QUE_CREATE_NEW_MATERIAL</source>
-        <translation>Il n&apos;est pas possible de changer les propriétés d&apos;un matériau pré-défini.
-Voulez-vous en créer un nouveau ?</translation>
+        <translation>Il n&apos;est pas possible de changer les proprietes d&apos;un materiau pre-defini.
+Voulez-vous en creer un nouveau ?</translation>
     </message>
     <message>
         <source>QUE_REMOVE_MATERIAL</source>
-        <translation>Supprimer le matériau %1?</translation>
+        <translation>Supprimer le materiau %1?</translation>
     </message>
     <message>
         <source>OK_BTN</source>
@@ -7188,27 +7188,27 @@ Voulez-vous en créer un nouveau ?</translation>
     <name>OperationGUI_GetSharedShapesDlg</name>
     <message>
         <source>GEOM_SHARED_SHAPES_TITLE</source>
-        <translation>Trouver les éléments partagés</translation>
+        <translation>Trouver les elements partages</translation>
     </message>
     <message>
         <source>GEOM_GET_SHARED_SHAPES</source>
-        <translation>Eléments partagés</translation>
+        <translation>Elements partages</translation>
     </message>
     <message>
         <source>GEOM_SHARED_SHAPES_INPUT</source>
-        <translation>Paramètres d&apos;entrée</translation>
+        <translation>Parametres d&apos;entree</translation>
     </message>
     <message>
         <source>MSG_SHARED_SHAPES_TOO_FEW_SHAPES</source>
-        <translation>Pas assez d&apos;éléments sélectionnés</translation>
+        <translation>Pas assez d&apos;elements selectionnes</translation>
     </message>
     <message>
         <source>GEOM_SHARED_SHAPE</source>
-        <translation>Partagé_%1</translation>
+        <translation>Partage_%1</translation>
     </message>
     <message>
         <source>GEOM_SHARED_SHAPES_MULTISHARE</source>
-        <translation>Partagé par tous</translation>
+        <translation>Partage par tous</translation>
     </message>
 </context>
 <context>
@@ -7223,15 +7223,15 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>OBJECT_ENTRY</source>
-        <translation>Entrée</translation>
+        <translation>Entree</translation>
     </message>
     <message>
         <source>UNSELECT_ALL</source>
-        <translation>Tout désélectio&amp;nner</translation>
+        <translation>Tout deselectio&amp;nner</translation>
     </message>
     <message>
         <source>SELECT_ALL</source>
-        <translation>&amp;Sélectionner tout</translation>
+        <translation>&amp;Selectionner tout</translation>
     </message>
     <message>
         <source>GEOM_PUBLISH_BTN</source>
@@ -7246,15 +7246,15 @@ Voulez-vous en créer un nouveau ?</translation>
     <name>GEOMToolsGUI_ReduceStudyDlg</name>
     <message>
         <source>GEOM_REDUCE_STUDY_TITLE</source>
-        <translation>Etude réduite</translation>
+        <translation>Etude reduite</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_KEPT_OBJECTS</source>
-        <translation>Objets à conserver</translation>
+        <translation>Objets a conserver</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_REMOVE_OBJECTS</source>
-        <translation>Objets à enlever</translation>
+        <translation>Objets a enlever</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_NAME</source>
@@ -7266,7 +7266,7 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_INTERMEDIATES</source>
-        <translation>Objets intermédiaires</translation>
+        <translation>Objets intermediaires</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_SUB_OBJECTS</source>
@@ -7278,7 +7278,7 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_UNPUBLISH</source>
-        <translation>Dépublier</translation>
+        <translation>Depublier</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_REMOVE</source>
@@ -7290,11 +7290,11 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_SOFT_REMOVAL</source>
-        <translation>Dépublication seulement</translation>
+        <translation>Depublication seulement</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_WARNING_DELETE</source>
-        <translation>Voulez-vous vraiment supprimer les objets intermédiaires ? Après la confirmation de cette opération, l&apos;étude sera cassée.</translation>
+        <translation>Voulez-vous vraiment supprimer les objets intermediaires ? Apres la confirmation de cette operation, l&apos;etude sera cassee.</translation>
     </message>
 </context>
 <context>
@@ -7305,7 +7305,7 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_UNION_FACES</source>
-        <translation>Objet à traiter</translation>
+        <translation>Objet a traiter</translation>
     </message>
     <message>
         <source>UNION_FACES_NEW_OBJ_NAME</source>
@@ -7324,7 +7324,7 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
       <source>GEOM_INSPECT_TOLERANCE_FILTER</source>
-      <translation>Tolérance</translation>
+      <translation>Tolerance</translation>
     </message>
     <message>
       <source>GEOM_INSPECT_RESET_MIN</source>
@@ -7336,19 +7336,19 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_INSPECT_OBJECT_SHOW</source>
-        <translation>Afficher la sélection</translation>
+        <translation>Afficher la selection</translation>
     </message>
     <message>
         <source>GEOM_INSPECT_OBJECT_SHOW_ONLY</source>
-        <translation>Afficher la sélection seulement</translation>
+        <translation>Afficher la selection seulement</translation>
     </message>
     <message>
         <source>GEOM_INSPECT_OBJECT_HIDE</source>
-        <translation>Cacher la sélection</translation>
+        <translation>Cacher la selection</translation>
     </message>
     <message>
         <source>GEOM_INSPECT_OBJECT_PUBLISH</source>
-        <translation>Publier la sélection</translation>
+        <translation>Publier la selection</translation>
     </message>
     <message>
         <source>GEOM_INSPECT_OBJECT_NAME</source>
@@ -7363,11 +7363,11 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>OPERATION</source>
-        <translation>Création</translation>
+        <translation>Creation</translation>
     </message>
     <message>
         <source>PARAMETER</source>
-        <translation>Paramètre</translation>
+        <translation>Parametre</translation>
     </message>
     <message>
         <source>VALUE</source>
@@ -7412,7 +7412,7 @@ Voulez-vous en créer un nouveau ?</translation>
     <name>MeasureGUI_CheckSelfIntersectionsDlg</name>
     <message>
         <source>GEOM_CHECK_INTERSECT_TYPE</source>
-        <translation>Détection du type d&apos;auto-intersection</translation>
+        <translation>Detection du type d&apos;auto-intersection</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_INTERSECTIONS</source>
@@ -7424,11 +7424,11 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_CHECK_LEVEL</source>
-        <translation>Niveau de vérification</translation>
+        <translation>Niveau de verification</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_SUMMARY</source>
-        <translation>Résumé</translation>
+        <translation>Resume</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_COMPUTE</source>
@@ -7440,62 +7440,62 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_NO_SELF_INTERSECTIONS</source>
-        <translation>Il n&apos;y a pas d&apos;auto-intersection dans la géométrie</translation>
+        <translation>Il n&apos;y a pas d&apos;auto-intersection dans la geometrie</translation>
     </message>
     <message>
         <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
-        <translation>Des auto-intersections ont été détectées</translation>
+        <translation>Des auto-intersections ont ete detectees</translation>
     </message>
     <message>
         <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
-        <translation>La détection d&apos;auto-intersections a échoué</translation>
+        <translation>La detection d&apos;auto-intersections a echoue</translation>
     </message>
     <message>
         <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
-        <translation>Avertissement: il y a eu des erreurs pendant l&apos;opération, la liste peut donc être incomplète.</translation>
+        <translation>Avertissement: il y a eu des erreurs pendant l&apos;operation, la liste peut donc etre incomplete.</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_V_V</source>
-        <translation>Point à point</translation>
+        <translation>Point a point</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_V_E</source>
-        <translation>Point à arête + tout au-delà</translation>
+        <translation>Point a arete + tout au-dela</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_E_E</source>
-        <translation>Arête à arête + tout au-delà</translation>
+        <translation>Arete a arete + tout au-dela</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_V_F</source>
-        <translation>Point à face + tout au-delà</translation>
+        <translation>Point a face + tout au-dela</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_E_F</source>
-        <translation>Arête à Face + tout au-delà</translation>
+        <translation>Arete a Face + tout au-dela</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_ALL</source>
-        <translation>Face à Face + tout au-delà</translation>
+        <translation>Face a Face + tout au-dela</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INT_DEFLECT</source>
-        <translation>Coefficient de déflexion</translation>
+        <translation>Coefficient de deflexion</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INT_DETECT_GAPS</source>
-        <translation>Détection des écarts avec tolérance</translation>
+        <translation>Detection des ecarts avec tolerance</translation>
     </message>
 </context>
 <context>
     <name>MeasureGUI_FastCheckIntersectionsDlg</name>
     <message>
         <source>GEOM_FAST_CHECK_INT_DEFLECT</source>
-        <translation>Coefficient de déflection</translation>
+        <translation>Coefficient de deflection</translation>
     </message>
     <message>
         <source>GEOM_FAST_CHECK_INT_DETECT_GAPS</source>
-        <translation>Détecter les écarts avec la tolérance</translation>
+        <translation>Detecter les ecarts avec la tolerance</translation>
     </message>
     <message>
         <source>GEOM_FAST_CHECK_INT_SUBSHAPES</source>
@@ -7515,7 +7515,7 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_FAST_CHECK_OBJ</source>
-        <translation>Objets et résultats</translation>
+        <translation>Objets et resultats</translation>
     </message>
 </context>
 <context>
@@ -7526,7 +7526,7 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_LENGTH</source>
-        <translation>Longueur des arêtes</translation>
+        <translation>Longueur des aretes</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_AREA</source>
@@ -7558,34 +7558,34 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_CREATE_GROUPS</source>
-        <translation>Créer des groupes</translation>
+        <translation>Creer des groupes</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_DISTRIBUTION_NB_ENT</source>
-        <translation>Nombre d&apos;entités</translation>
+        <translation>Nombre d&apos;entites</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_MIN_ERROR</source>
-        <translation>Spécifier une valeur minimale ou ignorer l&apos;échelle de dimension</translation>
+        <translation>Specifier une valeur minimale ou ignorer l&apos;echelle de dimension</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_MAX_ERROR</source>
-        <translation>Spécifier une valeur maximale ou ignorer l&apos;échelle de dimension</translation>
+        <translation>Specifier une valeur maximale ou ignorer l&apos;echelle de dimension</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_MIN_MAX_ERROR</source>
-        <translation>La valeur minimal ne peut pas être plus grande que la maximale</translation>
+        <translation>La valeur minimal ne peut pas etre plus grande que la maximale</translation>
     </message>
     <message>
         <source>GEOM_MSG_GROUPS_CREATED</source>
-        <translation>%1 groupes créés</translation>
+        <translation>%1 groupes crees</translation>
     </message>
 </context>
 <context>
     <name>TransformationGUI_ExtensionDlg</name>
     <message>
         <source>GEOM_EXTENSION_TITLE</source>
-        <translation>Extension d&apos;arête ou de face</translation>
+        <translation>Extension d&apos;arete ou de face</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION</source>
@@ -7593,27 +7593,27 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_MIN</source>
-        <translation>Premier paramètre</translation>
+        <translation>Premier parametre</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_MAX</source>
-        <translation>Dernier paramètre</translation>
+        <translation>Dernier parametre</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_MIN_U</source>
-        <translation>Premier U-paramètre</translation>
+        <translation>Premier U-parametre</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_MAX_U</source>
-        <translation>Dernier U-paramètre</translation>
+        <translation>Dernier U-parametre</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_MIN_V</source>
-        <translation>Premier V-paramètre</translation>
+        <translation>Premier V-parametre</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_MAX_V</source>
-        <translation>Dernier V-paramètre</translation>
+        <translation>Dernier V-parametre</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_EDGE_NAME</source>
@@ -7643,11 +7643,11 @@ Voulez-vous en créer un nouveau ?</translation>
     <name>OperationGUI_TransferDataDlg</name>
     <message>
         <source>GEOM_TRANSFER_DATA_TITLE</source>
-        <translation>Transfert de données</translation>
+        <translation>Transfert de donnees</translation>
     </message>
     <message>
         <source>GEOM_TRANSFER_DATA</source>
-        <translation>Transfert de données</translation>
+        <translation>Transfert de donnees</translation>
     </message>
     <message>
         <source>GEOM_TRANSFER_DATA_FROM</source>
@@ -7659,7 +7659,7 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_TRANSFER_DATA_METHOD</source>
-        <translation>Type d&apos;opération de détection</translation>
+        <translation>Type d&apos;operation de detection</translation>
     </message>
     <message>
         <source>GEOM_TD_METHOD_GETINPLACE</source>
@@ -7675,15 +7675,15 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_TRANSFER_DATA_INFO</source>
-        <translation>Transfert de données: Information</translation>
+        <translation>Transfert de donnees: Information</translation>
     </message>
     <message>
         <source>GEOM_TRANSFER_DATA_NOT_COPIED</source>
-        <translation>Il n&apos;y a rien à copier.</translation>
+        <translation>Il n&apos;y a rien a copier.</translation>
     </message>
     <message>
         <source>GEOM_TRANSFER_DATA_COPIED</source>
-        <translation>Les données suivantes ont été copiées:</translation>
+        <translation>Les donnees suivantes ont ete copiees:</translation>
     </message>
     <message>
         <source>GEOM_TRANSFER_DATA_NAMES</source>
@@ -7691,7 +7691,7 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_TRANSFER_DATA_MATERIALS</source>
-        <translation>Matériaux: %1 de %2</translation>
+        <translation>Materiaux: %1 de %2</translation>
     </message>
 </context>
 <context>
@@ -7702,7 +7702,7 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_PROJ_ON_CYL_START_ANGLE</source>
-        <translation>Angle de départ</translation>
+        <translation>Angle de depart</translation>
     </message>
     <message>
         <source>GEOM_PROJ_ON_CYL_LENGTH_ANGLE</source>

@@ -5,7 +5,7 @@
     <name>@default</name>
     <message>
         <source>GEOM_ADVANCED</source>
-        <translation>Objet géométrique avancé : type %1</translation>
+        <translation>Objet geometrique avance : type %1</translation>
     </message>
     <message>
         <source>GEOM_ADVANCED_201</source>
@@ -13,55 +13,55 @@
     </message>
     <message>
         <source>GEOM_ADVANCED_202</source>
-        <translation>Disque prédécoupé</translation>
+        <translation>Disque predecoupe</translation>
     </message>
     <message>
         <source>GEOM_ADVANCED_203</source>
-        <translation>Cylindre prédécoupé</translation>
+        <translation>Cylindre predecoupe</translation>
     </message>
     <message>
         <source>GEOM_DIVIDEDDISK</source>
-        <translation>Disque prédécoupé</translation>
+        <translation>Disque predecoupe</translation>
     </message>
     <message>
         <source>GEOM_DIVIDEDDISK_TITLE</source>
-        <translation>Construction d&apos;un disque prédécoupé</translation>
+        <translation>Construction d&apos;un disque predecoupe</translation>
     </message>
     <message>
         <source>GEOM_DIVIDEDCYLINDER</source>
-        <translation>Cylinder prédécoupé</translation>
+        <translation>Cylinder predecoupe</translation>
     </message>
     <message>
         <source>GEOM_DIVIDEDCYLINDER_TITLE</source>
-        <translation>Construction d&apos;un cylindre prédécoupé</translation>
+        <translation>Construction d&apos;un cylindre predecoupe</translation>
     </message>
     <message>
         <source>MEN_DIVIDEDCYLINDER</source>
-        <translation>Cylinder prédécoupé</translation>
+        <translation>Cylinder predecoupe</translation>
     </message>
     <message>
         <source>TOP_DIVIDEDCYLINDER</source>
-        <translation>Cylinder prédécoupé</translation>
+        <translation>Cylinder predecoupe</translation>
     </message>
     <message>
         <source>STB_DIVIDEDCYLINDER</source>
-        <translation>Cylinder prédécoupé</translation>
+        <translation>Cylinder predecoupe</translation>
     </message>
     <message>
         <source>MEN_DIVIDEDDISK</source>
-        <translation>Disque prédécoupé</translation>
+        <translation>Disque predecoupe</translation>
     </message>
     <message>
         <source>TOP_DIVIDEDDISK</source>
-        <translation>Disque prédécoupé</translation>
+        <translation>Disque predecoupe</translation>
     </message>
     <message>
         <source>STB_DIVIDEDDISK</source>
-        <translation>Disque prédécoupé</translation>
+        <translation>Disque predecoupe</translation>
     </message>
     <message>
         <source>TOP_PIPETSHAPE</source>
-        <translation>Créer un tuyau en T</translation>
+        <translation>Creer un tuyau en T</translation>
     </message>
     <message>
         <source>MEN_PIPETSHAPE</source>
@@ -69,7 +69,7 @@
     </message>
     <message>
         <source>STB_PIPETSHAPE</source>
-        <translation>Créer un tuyau en T</translation>
+        <translation>Creer un tuyau en T</translation>
     </message>
     <message>
         <source>TOP_SMOOTHINGSURFACE</source>
@@ -105,7 +105,7 @@
     </message>
     <message>
         <source>CHAMFER_OR_FILLET</source>
-        <translation>Chanfrein ou congé</translation>
+        <translation>Chanfrein ou conge</translation>
     </message>
     <message>
         <source>CHAMFER</source>
@@ -113,7 +113,7 @@
     </message>
     <message>
         <source>FILLET</source>
-        <translation>Congé</translation>
+        <translation>Conge</translation>
     </message>
     <message>
         <source>JUNCTION_FACE_1</source>
@@ -176,15 +176,15 @@
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_FILLET</source>
-        <translation>Congé</translation>
+        <translation>Conge</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_HEX</source>
-        <translation>Préparer pour un maillage hexaédrique</translation>
+        <translation>Preparer pour un maillage hexaedrique</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_POSITION</source>
-        <translation>Définir la position</translation>
+        <translation>Definir la position</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_POSITION_P1</source>
@@ -208,15 +208,15 @@
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_LEFT_TR</source>
-        <translation>Réduction d&apos;épaisseur à gauche</translation>
+        <translation>Reduction d&apos;epaisseur a gauche</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_RIGHT_TR</source>
-        <translation>Réduction d&apos;épaisseur à droite</translation>
+        <translation>Reduction d&apos;epaisseur a droite</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_INCI_TR</source>
-        <translation>Réduction d&apos;épaisseur du tuyau incident</translation>
+        <translation>Reduction d&apos;epaisseur du tuyau incident</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_TR_R</source>
@@ -232,15 +232,15 @@
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_TR_L_THIN</source>
-        <translation>Longueur de la partie étroite (lthin%1)</translation>
+        <translation>Longueur de la partie etroite (lthin%1)</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_GROUPMAIN</source>
-        <translation>Paramètres principaux</translation>
+        <translation>Parametres principaux</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_GROUPREDUCT</source>
-        <translation>Réduction d&apos;épaisseur</translation>
+        <translation>Reduction d&apos;epaisseur</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_GROUPPOS</source>
@@ -248,27 +248,27 @@
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_L</source>
-        <translation>Le rayon du tuyau principal ne peut pas être égal à la réduction d&apos;épaisseur à gauche (rL)</translation>
+        <translation>Le rayon du tuyau principal ne peut pas etre egal a la reduction d&apos;epaisseur a gauche (rL)</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_L</source>
-        <translation>Le rayon extérieur du tuyau principal (Rayon + épaisseur) ne peut pas être égal au rayon externe de la réduction d&apos;épaisseur à gauche (rL + wL)</translation>
+        <translation>Le rayon exterieur du tuyau principal (Rayon + epaisseur) ne peut pas etre egal au rayon externe de la reduction d&apos;epaisseur a gauche (rL + wL)</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_R</source>
-        <translation>Le rayon du tuyau principal ne peut pas être égal au rayon de la réduction d&apos;épaisseur à droite (rR)</translation>
+        <translation>Le rayon du tuyau principal ne peut pas etre egal au rayon de la reduction d&apos;epaisseur a droite (rR)</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_R</source>
-        <translation>Le rayon extérieur du tuyau principal (Rayon + épaisseur) ne peut pas être égal au rayon externe de la réduction d&apos;épaisseur à droite (rL + wL)</translation>
+        <translation>Le rayon exterieur du tuyau principal (Rayon + epaisseur) ne peut pas etre egal au rayon externe de la reduction d&apos;epaisseur a droite (rL + wL)</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_I</source>
-        <translation>Le rayon du tuyau incident ne peut pas être égal au rayon de la réduction d&apos;épaisseur du tuyau incident (rI)</translation>
+        <translation>Le rayon du tuyau incident ne peut pas etre egal au rayon de la reduction d&apos;epaisseur du tuyau incident (rI)</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_I</source>
-        <translation>Le rayon externe du tuyau incident (Rayon + Epaisseur) ne peut pas être égal au rayon extérieur de la réduction du tuyau incident (rI + wI)</translation>
+        <translation>Le rayon externe du tuyau incident (Rayon + Epaisseur) ne peut pas etre egal au rayon exterieur de la reduction du tuyau incident (rI + wI)</translation>
     </message>
 </context>
 <context>
@@ -283,7 +283,7 @@
     </message>
     <message>
         <source>GEOM_SMOOTHINGSURFACE_RESULT</source>
-        <translation>Nom du résultat</translation>
+        <translation>Nom du resultat</translation>
     </message>
     <message>
         <source>GEOM_SMOOTHINGSURFACE_ARG</source>
@@ -299,7 +299,7 @@
     </message>
     <message>
         <source>GEOM_SMOOTHINGSURFACE_ARG_DEG_MAX</source>
-        <translation>Degré max de la surface</translation>
+        <translation>Degre max de la surface</translation>
     </message>
     <message>
         <source>GEOM_SMOOTHINGSURFACE_ARG_D_MAX</source>
@@ -307,7 +307,7 @@
     </message>
     <message>
         <source>GEOM_SMOOTHINGSURFACE_NO_POINTS</source>
-        <translation>Aucun point sélectionné</translation>
+        <translation>Aucun point selectionne</translation>
     </message>
 </context>
 </TS>

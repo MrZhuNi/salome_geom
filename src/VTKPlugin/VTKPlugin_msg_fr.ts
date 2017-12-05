@@ -43,7 +43,7 @@
     <name>VTKPlugin_ExportDlg</name>
     <message>
         <source>DEFLECTION</source>
-        <translation>Déflexion</translation>
+        <translation>Deflexion</translation>
     </message>
 </context>
 </TS>

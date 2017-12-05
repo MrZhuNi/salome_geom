@@ -44,8 +44,8 @@
     </message>
     <message>
         <source>SCALE_DIMENSIONS</source>
-        <translation>Voulez-vous prendre les unités du fichier (%1) en considération?
-Sinon le modèle sera mis à l&apos;échelle GEOM (unités interprétées comme des mètres).</translation>
+        <translation>Voulez-vous prendre les unites du fichier (%1) en consideration?
+Sinon le modele sera mis à l&apos;echelle GEOM (unites interpretees comme des metres).</translation>
     </message>
 </context>
 <context>
