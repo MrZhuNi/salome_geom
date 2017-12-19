@@ -642,9 +642,9 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
         sff.SetMaxTolerance(Max(1.,myTolerance*1000.));
         //Setting modes
         sff.FixOrientationMode() = 0;
-#if OCC_VERSION_LARGE > 0x07020001
+        //#if OCC_VERSION_LARGE > 0x07020001
         sff.FixWireTool()->CheckMissingEdgesMode() = Standard_False;
-#endif
+        //#endif
         //sff.FixWireMode() = 0;
         sff.SetContext(aContext);
         // Applying the fixes

@@ -29,9 +29,6 @@
 #include <BlockFix.hxx>
 #include <BlockFix_UnionFaces.hxx>
 #include <BlockFix_UnionEdges.hxx>
-#include <ShapeUpgrade_UnifySameDomain.hxx>
-
-#include <Basics_OCCTVersion.hxx>
 
 #include <ShapeUpgrade_RemoveLocations.hxx>
 
@@ -69,30 +66,6 @@ void BlockFix_BlockFixAPI::Perform()
   // with singularities on boundaries by filling
   myShape = BlockFix::RefillProblemFaces(myShape);
 
-  //Unification
-  // default values
-  Standard_Boolean anUFaces = Standard_True;
-  if (myOptimumNbFaces == -1)
-    anUFaces = Standard_False;
-  Standard_Boolean anUEdges = Standard_True;
-  Standard_Boolean anConBS = Standard_False;
-  Standard_Boolean isAllowInternal = Standard_False;
-  Standard_Boolean isSafeInputMode = Standard_True;
-  Standard_Real aLinTol = Precision::Confusion();
-  Standard_Real aAngTol = Precision::Angular();
-  TopTools_MapOfShape aMapOfShapes;
-
-  ShapeUpgrade_UnifySameDomain Unifier;
-  Unifier.Initialize(myShape, anUEdges, anUFaces, anConBS);
-  Unifier.KeepShapes(aMapOfShapes);
-  Unifier.SetSafeInputMode(isSafeInputMode);
-  Unifier.AllowInternalEdges(isAllowInternal);
-  Unifier.SetLinearTolerance(aLinTol);
-  Unifier.SetAngularTolerance(aAngTol);
-  Unifier.Build();
-  TopoDS_Shape aRes = Unifier.Shape();
-
-  /*
   // faces unification
   BlockFix_UnionFaces aFaceUnifier;
   aFaceUnifier.GetTolerance() = myTolerance;
@@ -110,7 +83,5 @@ void BlockFix_BlockFixAPI::Perform()
   myShape = anEdgeUnifier.Perform(aResult,myTolerance);
 
   TopoDS_Shape aRes = BlockFix::FixRanges(myShape,myTolerance);
-  */
-  
   myShape = aRes;
 }
