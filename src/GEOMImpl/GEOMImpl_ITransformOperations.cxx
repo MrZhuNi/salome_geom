@@ -1053,8 +1053,10 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorAxisCopy
  *  OffsetShape
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShape
-                              (Handle(GEOM_Object) theObject, double theOffset)
+Handle(GEOM_Object)
+GEOMImpl_ITransformOperations::OffsetShape (Handle(GEOM_Object) theObject,
+                                            double              theOffset,
+                                            bool                theJoinByPipes)
 {
   SetErrorCode(KO);
 
@@ -1072,8 +1074,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShape
   if (aFunction->GetDriverGUID() != GEOMImpl_OffsetDriver::GetID()) return NULL;
 
   GEOMImpl_IOffset aTI (aFunction);
-  aTI.SetShape(anOriginal);
-  aTI.SetValue(theOffset);
+  aTI.SetShape( anOriginal );
+  aTI.SetValue( theOffset );
+  aTI.SetJoinByPipes( theJoinByPipes );
 
   //Compute the offset
   try {
@@ -1102,8 +1105,10 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShape
  *  OffsetShapeCopy
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
-                              (Handle(GEOM_Object) theObject, double theOffset)
+Handle(GEOM_Object)
+GEOMImpl_ITransformOperations::OffsetShapeCopy( Handle(GEOM_Object) theObject,
+                                                double              theOffset,
+                                                bool                theJoinByPipes)
 {
   SetErrorCode(KO);
 
@@ -1124,8 +1129,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
   if (aFunction->GetDriverGUID() != GEOMImpl_OffsetDriver::GetID()) return NULL;
 
   GEOMImpl_IOffset aTI (aFunction);
-  aTI.SetShape(anOriginal);
-  aTI.SetValue(theOffset);
+  aTI.SetShape( anOriginal );
+  aTI.SetValue( theOffset );
+  aTI.SetJoinByPipes( theJoinByPipes );
 
   //Compute the offset
   try {
