@@ -305,6 +305,23 @@ static Standard_Boolean IsTangentFaces(const TopoDS_Edge& theEdge,
 
   return Standard_True;
 }
+
+//=======================================================================
+//function : HasSeamEdge
+//purpose  : Detects if a face contains a seam edge
+//=======================================================================
+static Standard_Boolean HasSeamEdge(const TopoDS_Face& theFace)
+{
+  TopExp_Explorer Explo(theFace, TopAbs_EDGE);
+  for (; Explo.More(); Explo.Next())
+  {
+    const TopoDS_Edge& anEdge = TopoDS::Edge(Explo.Current());
+    if (BRepTools::IsReallyClosed(anEdge, theFace))
+      return Standard_True;
+  }
+
+  return Standard_False;
+}
 #endif
 
 //=======================================================================
@@ -317,11 +334,14 @@ static Standard_Boolean IsTangentFaces(const TopoDS_Edge& theEdge,
 static Standard_Boolean IsEdgeValidToMerge(const TopoDS_Edge& theEdge,
                                            const TopoDS_Face& theFace,
                                            const Handle(Geom_Surface)& theSurface,
+                                           Standard_Boolean& theIsEdgeOnSeam,
                                            Standard_Boolean& theToMakeUPeriodic,
                                            Standard_Boolean& theToMakeVPeriodic)
 {
   Standard_Boolean isValid = Standard_True;
 
+  theIsEdgeOnSeam |= BRep_Tool::IsClosed(theEdge, theFace);
+  
   if (BRepTools::IsReallyClosed(theEdge, theFace)) {
     // Mantis issue 0023451, now code corresponds to the comment to this method
     isValid = Standard_False;
@@ -348,7 +368,7 @@ static Standard_Boolean IsEdgeValidToMerge(const TopoDS_Edge& theEdge,
       }
     }
   }
-  else if (BRep_Tool::IsClosed(theEdge, theFace))
+  else if (theIsEdgeOnSeam)
   {
     Standard_Real fpar, lpar;
     Handle(Geom2d_Curve) aPCurve = BRep_Tool::CurveOnSurface(theEdge, theFace, fpar, lpar);
@@ -483,10 +503,14 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
       Standard_Integer i;
       for (i = 1; i <= edges.Length(); i++) {
         TopoDS_Edge edge = TopoDS::Edge(edges(i));
+#if OCC_VERSION_LARGE > 0x07020001
+// for Mantis issue 0023451 by JGV
+        Standard_Boolean IsEdgeOnSeam = Standard_False;
+#endif
         if (BRep_Tool::Degenerated(edge) ||
 #if OCC_VERSION_LARGE > 0x07020001
 // for Mantis issue 0023451 by JGV
-            !IsEdgeValidToMerge(edge, aFace, aBaseSurface, ToMakeUPeriodic, ToMakeVPeriodic))
+            !IsEdgeValidToMerge(edge, aFace, aBaseSurface, IsEdgeOnSeam, ToMakeUPeriodic, ToMakeVPeriodic))
 #else
             !IsEdgeValidToMerge(edge, aFace))
 #endif
@@ -504,8 +528,8 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
 
 #if OCC_VERSION_LARGE > 0x07020001
 // for Mantis issue 0023451 by JGV
-          if (!IsEdgeValidToMerge(edge, anCheckedFace,
-                                  aBaseSurface, ToMakeUPeriodic, ToMakeVPeriodic)) {
+          if (!IsEdgeValidToMerge(edge, anCheckedFace, aBaseSurface,
+                                  IsEdgeOnSeam, ToMakeUPeriodic, ToMakeVPeriodic)) {
 #else
           if (!IsEdgeValidToMerge(edge, anCheckedFace)) {
 #endif
@@ -524,6 +548,14 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
               // non mainfold case is not processed
               continue;
             }
+
+#if OCC_VERSION_LARGE > 0x07020001
+// for Mantis issue 0023451 by JGV
+            //Prevent creating a face with parametric range more than period
+            if (IsEdgeOnSeam &&
+                (HasSeamEdge(aFace) || HasSeamEdge(anCheckedFace)))
+              continue;
+#endif
 
             // replacing pcurves
             TopoDS_Face aMockUpFace;
