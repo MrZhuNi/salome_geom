@@ -1570,7 +1570,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( GEOMOp::OpConcealChildren ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and hasDisclosedChildren=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpGroupEdit ), -1, -1 );  // edit group
   mgr->setRule( action( GEOMOp::OpGroupEdit ),  QString("client='ObjectBrowser' and type='Group' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
-  mgr->insert( separator(), -1, -1 );     // -----------
+//   mgr->insert( separator(), -1, -1 );     // -----------
 
   //QString bringRule = clientOCCorOB + " and ($component={'GEOM'}) and (selcount>0) and isOCC=true and topLevel=false";
   QString bringRule = clientOCCorOB + " and ($component={'GEOM'}) and isFolder=false and (selcount>0) and isOCC=true";
@@ -1579,7 +1579,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule(action(GEOMOp::OpBringToFront), "topLevel=true", QtxPopupMgr::ToggleRule );
   mgr->insert( action(GEOMOp::OpClsBringToFront ), -1, -1 ); // clear bring to front
   mgr->setRule( action(GEOMOp::OpClsBringToFront ), clientOCC + " and autoBringToFront = false", QtxPopupMgr::VisibleRule );
-  mgr->insert( separator(), -1, -1 );     // -----------
+//   mgr->insert( separator(), -1, -1 );     // -----------
   dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
   mgr->insert( action(  GEOMOp::OpWireframe ), dispmodeId, -1 ); // wireframe
   mgr->setRule( action( GEOMOp::OpWireframe ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
@@ -1593,7 +1593,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpTexture ), dispmodeId, -1 ); // wireframe
   mgr->setRule( action( GEOMOp::OpTexture ), clientOCC_AndSomeVisible, QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpTexture), clientOCC + " and displaymode='Texture'", QtxPopupMgr::ToggleRule );
-  mgr->insert( separator(), dispmodeId, -1 );
+//   mgr->insert( separator(), dispmodeId, -1 );
   mgr->insert( action(  GEOMOp::OpVectors ), dispmodeId, -1 ); // vectors
   mgr->setRule( action( GEOMOp::OpVectors ), clientOCCorVTK_AndSomeVisible  + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpVectors ), clientOCCorVTK + " and isVectorsMode", QtxPopupMgr::ToggleRule );
@@ -1603,7 +1603,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpShowName ), dispmodeId, -1 ); // show name
   mgr->setRule( action( GEOMOp::OpShowName ), clientOCCorVTK_AndSomeVisible  + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpShowName ), clientOCCorVTK + " and isNameMode", QtxPopupMgr::ToggleRule );
-  mgr->insert( separator(), -1, -1 );     // -----------
+//   mgr->insert( separator(), -1, -1 );     // -----------
 
   mgr->insert( action(  GEOMOp::OpColor ), -1, -1 ); // color
   mgr->setRule( action( GEOMOp::OpColor ), clientOCCorVTKorOB_AndSomeVisible + " and ($component={'GEOM'})" + "and isPhysicalMaterial=false", QtxPopupMgr::VisibleRule );
@@ -1631,18 +1631,18 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpIsosWidth ), lineW, -1 ); // isos width
   mgr->setRule( action( GEOMOp::OpIsosWidth ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
 
-  mgr->insert( separator(), -1, -1 );     // -----------
+//   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpAutoColor ), -1, -1 ); // auto color
   mgr->setRule( action( GEOMOp::OpAutoColor ), autoColorPrefix + " and isAutoColor=false", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpNoAutoColor ), -1, -1 ); // disable auto color
   mgr->setRule( action( GEOMOp::OpNoAutoColor ), autoColorPrefix + " and isAutoColor=true", QtxPopupMgr::VisibleRule );
-  mgr->insert( separator(), -1, -1 );     // -----------
+//   mgr->insert( separator(), -1, -1 );     // -----------
 
   mgr->insert( action(  GEOMOp::OpEditAnnotation ), -1, -1 );  // edit annotation
   mgr->setRule( action( GEOMOp::OpEditAnnotation ),  clientOCC + " and annotationsCount=1", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpDeleteAnnotation ), -1, -1 );  // delete annotation
   mgr->setRule( action( GEOMOp::OpDeleteAnnotation ),  clientOCC + " and annotationsCount>0", QtxPopupMgr::VisibleRule );
-  mgr->insert( separator(), -1, -1 );     // -----------
+//   mgr->insert( separator(), -1, -1 );     // -----------
 
   QString canDisplay = "($component={'GEOM'}) and (selcount>0) and ({true} in $canBeDisplayed) ",
           onlyComponent = "((type='Component') and selcount=1)",
@@ -1682,7 +1682,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(GEOMOp::OpSelectCompound), selectonlyId, -1);                                  //Compound
   mgr->setRule(action(GEOMOp::OpSelectCompound), selectOnly, QtxPopupMgr::VisibleRule);
   mgr->setRule(action(GEOMOp::OpSelectCompound), selectOnly + " and selectionmode='COMPOUND'", QtxPopupMgr::ToggleRule);
-  mgr->insert( separator(), selectonlyId, -1);
+//   mgr->insert( separator(), selectonlyId, -1);
   mgr->insert( action(GEOMOp::OpSelectAll),      selectonlyId, -1);                                  //Clear selection filter
   mgr->setRule(action(GEOMOp::OpSelectAll),      selectOnly, QtxPopupMgr::VisibleRule);
   mgr->setRule(action(GEOMOp::OpSelectAll),      selectOnly + " and selectionmode='ALL'", QtxPopupMgr::ToggleRule);
@@ -1693,7 +1693,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   QString aDimensionRule = "($component={'GEOM'}) and selcount=1 and isVisible and type='Shape' and %1";
 
-  mgr->insert( separator(), -1, -1 ); // -----------
+//   mgr->insert( separator(), -1, -1 ); // -----------
   mgr->insert( action( GEOMOp::OpShowAllDimensions ), -1, -1 ); // show all dimensions
   mgr->setRule( action( GEOMOp::OpShowAllDimensions ), aDimensionRule.arg( "hasHiddenDimensions" ), QtxPopupMgr::VisibleRule );
   mgr->insert( action( GEOMOp::OpHideAllDimensions ), -1, -1 ); // hide all dimensions
@@ -1703,7 +1703,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action( GEOMOp::OpHideAllAnnotations ), -1, -1 ); // hide all annotations
   mgr->setRule( action( GEOMOp::OpHideAllAnnotations ), aDimensionRule.arg( "hasVisibleAnnotations" ), QtxPopupMgr::VisibleRule );
 
-  mgr->insert( separator(), -1, -1 );     // -----------
+//   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpUnpublishObject ), -1, -1 ); // Unpublish object
   mgr->setRule( action( GEOMOp::OpUnpublishObject ), QString("client='ObjectBrowser' and $type in {'Shape' 'Group' 'Field' 'FieldStep'} and selcount>0"), QtxPopupMgr::VisibleRule );
 
@@ -1713,21 +1713,21 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpReimport ), -1, -1 );  // delete
   mgr->setRule( action( GEOMOp::OpReimport ), QString("$imported in {'true'} and selcount>0"), QtxPopupMgr::VisibleRule );
 
-  mgr->insert( separator(), -1, -1 );     // -----------
+//   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpCreateFolder ), -1, -1 ); // Create Folder
   mgr->setRule( action( GEOMOp::OpCreateFolder ), QString("client='ObjectBrowser' and $component={'GEOM'} and (isComponent=true or isFolder=true)"), QtxPopupMgr::VisibleRule );
 
-  mgr->insert( separator(), -1, -1 );     // -----------
+//   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpSortChildren ), -1, -1 ); // Sort child items
   mgr->setRule( action( GEOMOp::OpSortChildren ), QString("client='ObjectBrowser' and $component={'GEOM'} and nbChildren>1"), QtxPopupMgr::VisibleRule );
 
 #ifndef DISABLE_GRAPHICSVIEW
-  mgr->insert( separator(), -1, -1 );     // -----------
+//   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpShowDependencyTree ), -1, -1 ); // Show dependency tree
   mgr->setRule( action( GEOMOp::OpShowDependencyTree ), clientOCCorVTKorOB + " and selcount>0 and ($component={'GEOM'}) and type='Shape'", QtxPopupMgr::VisibleRule );
 #endif
 
-  mgr->insert( separator(), -1, -1 );     // -----------
+//   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpReduceStudy ), -1, -1 ); // Reduce Study
   mgr->setRule( action( GEOMOp::OpReduceStudy ), clientOCCorVTKorOB + " and selcount>0 and ($component={'GEOM'}) and type='Shape'", QtxPopupMgr::VisibleRule );
 
@@ -2266,55 +2266,55 @@ void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString&
   getApp()->selectionMgr()->selectedObjects( lst );
 
   //Add submenu for predefined materials
-  bool isPredefMat = SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "predef_materials" );
-  if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() > 0 ) {
-    QtxPopupMgr* mgr = popupMgr();
-    //get parrent for submenu
-    QAction* act = mgr->action( mgr->actionId( action(  GEOMOp::OpMaterialProperties ) ) );
-    //Clear old  menu
-    QMenu* oldMenu = act->menu() ;
-    if( oldMenu ) {
-      delete oldMenu;
-    }
-    if( isPredefMat ){
-      QMenu* matMenu = new QMenu();
-      QSignalMapper* signalMapper = new QSignalMapper( matMenu );
-
-      //Get current material model for the object
-      QVariant v;
-      LightApp_Application* anApp = dynamic_cast<LightApp_Application*>( getApp() );
-      if ( anApp && anApp->activeViewManager() ) {
-        LightApp_Study* aStudy = dynamic_cast<LightApp_Study*>( anApp->activeStudy() );
-        if( aStudy ) {
-          v = aStudy->getObjectProperty( anApp->activeViewManager()->getGlobalId(), lst.Last()->getEntry(), GEOM::propertyName( GEOM::Material ), QVariant() );
-        }
-      }
-      QString curModel = "";
-      if ( v.canConvert<QString>() ) curModel = v.toString();
-      // get list of all predefined materials
-      QStringList materials = Material_ResourceMgr::resourceMgr()->materials();
-      bool found = false;
-      foreach ( QString material, materials )
-      {
-        QAction* menAct = matMenu->addAction( material );
-        connect(menAct, SIGNAL( toggled( bool ) ), signalMapper, SLOT( map() ) );
-        signalMapper->setMapping( menAct, material );
-        menAct->setCheckable( true );
-        // Set checked if this material is current
-        Material_Model aModel;
-        aModel.fromResources( material );
-        if ( !found && aModel.toProperties() == curModel ) {
-          menAct->setChecked( true );
-          found = true;
-        }
-      }
-      matMenu->insertAction( matMenu->addSeparator(), action(  GEOMOp::OpPredefMaterCustom ) );
-      matMenu->insertSeparator( action(  GEOMOp::OpPredefMaterCustom ) );
-      connect( signalMapper, SIGNAL( mapped( const QString & ) ),
-                 this, SLOT( OnSetMaterial( const QString & ) ) );
-      act->setMenu( matMenu );
-    }
-  }
+//   bool isPredefMat = SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "predef_materials" );
+//   if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() > 0 ) {
+//     QtxPopupMgr* mgr = popupMgr();
+//     //get parrent for submenu
+//     QAction* act = mgr->action( mgr->actionId( action(  GEOMOp::OpMaterialProperties ) ) );
+//     //Clear old  menu
+//     QMenu* oldMenu = act->menu() ;
+//     if( oldMenu ) {
+//       delete oldMenu;
+//     }
+//     if( isPredefMat ){
+//       QMenu* matMenu = new QMenu();
+//       QSignalMapper* signalMapper = new QSignalMapper( matMenu );
+// 
+//       //Get current material model for the object
+//       QVariant v;
+//       LightApp_Application* anApp = dynamic_cast<LightApp_Application*>( getApp() );
+//       if ( anApp && anApp->activeViewManager() ) {
+//         LightApp_Study* aStudy = dynamic_cast<LightApp_Study*>( anApp->activeStudy() );
+//         if( aStudy ) {
+//           v = aStudy->getObjectProperty( anApp->activeViewManager()->getGlobalId(), lst.Last()->getEntry(), GEOM::propertyName( GEOM::Material ), QVariant() );
+//         }
+//       }
+//       QString curModel = "";
+//       if ( v.canConvert<QString>() ) curModel = v.toString();
+//       // get list of all predefined materials
+//       QStringList materials = Material_ResourceMgr::resourceMgr()->materials();
+//       bool found = false;
+//       foreach ( QString material, materials )
+//       {
+//         QAction* menAct = matMenu->addAction( material );
+//         connect(menAct, SIGNAL( toggled( bool ) ), signalMapper, SLOT( map() ) );
+//         signalMapper->setMapping( menAct, material );
+//         menAct->setCheckable( true );
+//         // Set checked if this material is current
+//         Material_Model aModel;
+//         aModel.fromResources( material );
+//         if ( !found && aModel.toProperties() == curModel ) {
+//           menAct->setChecked( true );
+//           found = true;
+//         }
+//       }
+//       matMenu->insertAction( matMenu->addSeparator(), action(  GEOMOp::OpPredefMaterCustom ) );
+//       matMenu->insertSeparator( action(  GEOMOp::OpPredefMaterCustom ) );
+//       connect( signalMapper, SIGNAL( mapped( const QString & ) ),
+//                  this, SLOT( OnSetMaterial( const QString & ) ) );
+//       act->setMenu( matMenu );
+//     }
+//   }
   //Set name
   if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() == 1 ) {
     Handle(SALOME_InteractiveObject) io = lst.First();
