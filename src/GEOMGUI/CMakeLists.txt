@@ -79,11 +79,13 @@ SET(GEOMGUI_HEADERS
   GEOMGUI_TextTreeSelector.h
   GEOMGUI_DimensionProperty.h
   GEOMGUI_AnnotationAttrs.h
+  GEOMGUI_MaterialAction.h
   )
 
 # header files / to be processed by moc
 SET(_moc_HEADERS 
   GEOMGUI_AnnotationMgr.h
+  GEOMGUI_MaterialAction.h
   GEOMGUI_CreationInfoWdg.h
   GEOMGUI_TextTreeWdg.h
   GEOMGUI_TextTreeSelector.h
@@ -124,6 +126,7 @@ SET(GEOMGUI_SOURCES
   GEOMGUI_TextTreeSelector.cxx
   GEOMGUI_DimensionProperty.cxx
   GEOMGUI_AnnotationAttrs.cxx
+  GEOMGUI_MaterialAction.cxx
   ${_moc_SOURCES}
   ${_rcc_SOURCES}
   )

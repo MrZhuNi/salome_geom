@@ -41,6 +41,7 @@
 #include "GEOMUtils_XmlHandler.hxx"
 #include "GEOMGUI_AnnotationMgr.h"
 #include "GEOMGUI_TextTreeSelector.h"
+#include "GEOMGUI_MaterialAction.h"
 
 #include "GEOM_Actor.h"
 
@@ -1155,7 +1156,23 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpUnpublishObject,  "POP_UNPUBLISH_OBJ" );
   createGeomAction( GEOMOp::OpPublishObject,    "POP_PUBLISH_OBJ" );
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
-  createGeomAction( GEOMOp::OpMaterialProperties,   "POP_MATERIAL_PROPERTIES" );
+
+  // Custom action for Material properties
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  LightApp_Application* anApp = dynamic_cast<LightApp_Application*> ( SUIT_Session::session()->activeApplication() );
+  QPixmap icon = resMgr ? resMgr->loadPixmap( "GEOM", tr("ICO_POP_MATERIAL_PROPERTIES"), false ) : QPixmap();
+  GEOMGUI_MaterialAction* matAction = new GEOMGUI_MaterialAction( tr("TOP_POP_MATERIAL_PROPERTIES"),
+								  QIcon(icon),
+								  tr("MEN_POP_MATERIAL_PROPERTIES"),
+								  0,
+								  anApp->desktop(),
+								  false,
+								  QString("") );
+  matAction->setStatusTip( tr("STB_POP_MATERIAL_PROPERTIES") );
+  registerAction( GEOMOp::OpMaterialProperties, matAction );
+  connect( matAction, SIGNAL( triggered( bool ) ), this , SLOT( OnGUIEvent() ) );
+
+  
   createGeomAction( GEOMOp::OpPredefMaterCustom,    "POP_PREDEF_MATER_CUSTOM" );
   createGeomAction( GEOMOp::OpCreateFolder, "POP_CREATE_FOLDER" );
   createGeomAction( GEOMOp::OpSortChildren, "POP_SORT_CHILD_ITEMS" );
@@ -1733,7 +1750,6 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   mgr->hide( mgr->actionId( action( myEraseAll ) ) );
 
-  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   if (resMgr) {
     GEOM_AISShape::setTopLevelDisplayMode((GEOM_AISShape::TopLevelDispMode)resMgr->integerValue("Geometry", "toplevel_dm", 0));
     QColor c = resMgr->colorValue( "Geometry", "toplevel_color", QColor( 170, 85, 0 ) );
@@ -2264,57 +2280,6 @@ void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString&
   SalomeApp_Module::contextMenuPopup( client, menu, title );
   SALOME_ListIO lst;
   getApp()->selectionMgr()->selectedObjects( lst );
-
-  //Add submenu for predefined materials
-  bool isPredefMat = SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "predef_materials" );
-  if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() > 0 ) {
-    QtxPopupMgr* mgr = popupMgr();
-    //get parrent for submenu
-    QAction* act = mgr->action( mgr->actionId( action(  GEOMOp::OpMaterialProperties ) ) );
-    //Clear old  menu
-    QMenu* oldMenu = act->menu() ;
-    if( oldMenu ) {
-      delete oldMenu;
-    }
-    if( isPredefMat ){
-      QMenu* matMenu = new QMenu();
-      QSignalMapper* signalMapper = new QSignalMapper( matMenu );
-
-      //Get current material model for the object
-      QVariant v;
-      LightApp_Application* anApp = dynamic_cast<LightApp_Application*>( getApp() );
-      if ( anApp && anApp->activeViewManager() ) {
-        LightApp_Study* aStudy = dynamic_cast<LightApp_Study*>( anApp->activeStudy() );
-        if( aStudy ) {
-          v = aStudy->getObjectProperty( anApp->activeViewManager()->getGlobalId(), lst.Last()->getEntry(), GEOM::propertyName( GEOM::Material ), QVariant() );
-        }
-      }
-      QString curModel = "";
-      if ( v.canConvert<QString>() ) curModel = v.toString();
-      // get list of all predefined materials
-      QStringList materials = Material_ResourceMgr::resourceMgr()->materials();
-      bool found = false;
-      foreach ( QString material, materials )
-      {
-        QAction* menAct = matMenu->addAction( material );
-        connect(menAct, SIGNAL( toggled( bool ) ), signalMapper, SLOT( map() ) );
-        signalMapper->setMapping( menAct, material );
-        menAct->setCheckable( true );
-        // Set checked if this material is current
-        Material_Model aModel;
-        aModel.fromResources( material );
-        if ( !found && aModel.toProperties() == curModel ) {
-          menAct->setChecked( true );
-          found = true;
-        }
-      }
-      matMenu->insertAction( matMenu->addSeparator(), action(  GEOMOp::OpPredefMaterCustom ) );
-      matMenu->insertSeparator( action(  GEOMOp::OpPredefMaterCustom ) );
-      connect( signalMapper, SIGNAL( mapped( const QString & ) ),
-                 this, SLOT( OnSetMaterial( const QString & ) ) );
-      act->setMenu( matMenu );
-    }
-  }
   //Set name
   if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() == 1 ) {
     Handle(SALOME_InteractiveObject) io = lst.First();
@@ -2387,8 +2352,8 @@ void GeometryGUI::createPreferences()
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
 
   addPreference( tr( "PREF_PREDEF_MATERIALS" ), genGroup,
-                 LightApp_Preferences::Bool, "Geometry", "predef_materials" );
-
+		 LightApp_Preferences::Bool, "Geometry", "predef_materials" );
+  
   int material = addPreference( tr( "PREF_MATERIAL" ), genGroup,
                                 LightApp_Preferences::Selector,
                                 "Geometry", "material" );
