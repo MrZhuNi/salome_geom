@@ -24,6 +24,10 @@
 #include "CurveCreator_UtilsICurve.hxx"
 #include "CurveCreator_TableView.h"
 
+#include "CurveCreator_Curve.hxx"
+#include "CurveCreator_Section.hxx"
+#include <QColorDialog>
+
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_ResourceMgr.h>
@@ -95,7 +99,10 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
 
   QGroupBox* aSectionGroup = new QGroupBox(tr("SECTION_GROUP_TITLE"),this);
 
-  mySectionView = new CurveCreator_TreeView(myCurve, aSectionGroup);
+
+  bool toDrawSectColor = !(theActionFlags & DisableSetColor);
+
+  mySectionView = new CurveCreator_TreeView(myCurve, aSectionGroup, toDrawSectColor);
   mySectionView->setSelectionMode( QTreeView::ExtendedSelection );
   connect( mySectionView, SIGNAL(selectionChanged()), this, SLOT( onSelectionChanged() ) );
   connect( mySectionView, SIGNAL(sectionEntered(int)), this, SLOT(onEditSection(int)) );
@@ -122,6 +129,7 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
   QPixmap aBringTogetherPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_BRING_TOGETHER")));
   QPixmap aStepUpPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_ARROW_UP")));
   QPixmap aStepDownPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_ARROW_DOWN")));
+  QPixmap aSetColorPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_SETCOLOR")));
 
   QAction* anAct = createAction( UNDO_ID, tr("UNDO"), anUndoPixmap, tr("UNDO_TLT"), 
                                  QKeySequence(Qt::ControlModifier|Qt::Key_Z) );
@@ -189,6 +197,13 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
                         QKeySequence(Qt::ControlModifier|Qt::Key_Delete ) );
   connect(anAct, SIGNAL(triggered()), this, SLOT(onRemove()) );
   aTB->addAction(anAct);
+
+  anAct = createAction( SETCOLOR_ID, tr("SETCOLOR"), aSetColorPixmap, tr("SETCOLOR_TLT"), 
+                        QKeySequence(Qt::ControlModifier|Qt::Key_C ) );
+  connect(anAct, SIGNAL(triggered()), this, SLOT(onSetColor()) );
+
+  if ( !(theActionFlags & DisableSetColor) )
+    aTB->addAction(anAct);
   
   anAct = createAction( JOIN_ID, tr("JOIN"), aJoinPixmap, tr("JOIN_TLT"), 
                         QKeySequence(Qt::ControlModifier|Qt::Key_Plus ) );
@@ -357,6 +372,8 @@ void CurveCreator_Widget::updateActionsStates()
     if ( removeEnabled() )
       anEnabledAct << REMOVE_ID;
     QList<int> aSelSections = mySectionView->getSelectedSections();
+    if (aSelSections.size() == 1)
+      anEnabledAct << SETCOLOR_ID;
     CurveCreator_TreeView::SelectionType aSelType = mySectionView->getSelectionType();
     switch( aSelType ){
     case CurveCreator_TreeView::ST_NOSEL:{
@@ -682,6 +699,31 @@ void CurveCreator_Widget::onRemove()
       break;
   }
 }
+
+void CurveCreator_Widget::onSetColor()
+{
+  if( !myCurve )
+    return;
+
+  QList<int> aSections = mySectionView->getSelectedSections();
+  if (aSections.size() != 1)
+    return;
+
+  int aSectNum = aSections[0];  
+  Quantity_Color aColor = ((CurveCreator_Curve*)myCurve)->getColorSection( aSectNum );;
+
+  QColor aQColor = CurveCreator_Utils::colorConv(aColor);
+  QColor aNewQColor = QColorDialog::getColor( aQColor, this );
+  if( !aNewQColor.isValid() )
+    return;
+
+  Quantity_Color aNewColor = CurveCreator_Utils::colorConv(aNewQColor);
+
+  ((CurveCreator_Curve*)myCurve)->setColorSection( aSectNum, aNewColor);
+
+  updateUndoRedo();
+}
+
 
 void CurveCreator_Widget::onClearAll()
 {

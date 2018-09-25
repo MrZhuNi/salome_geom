@@ -108,7 +108,7 @@ protected:
 
 public: // TODO: remove public
   void getCoordinates( int theISection, int theIPoint, double& theX, double& theY, double& theZ ) const;
-protected:  // TODO: remove public
+protected:  //TODO 
   void redisplayCurve(bool preEraseAllObjects = true);
 
 public:
@@ -162,7 +162,8 @@ public:
   virtual int addSectionInternal( const std::string &theName, 
                                   const CurveCreator::SectionType theType,
                                   const bool theIsClosed,
-                                  const CurveCreator::Coordinates &thePoints);
+                                  const CurveCreator::Coordinates &thePoints,
+                                  const Quantity_Color& aColor);
   //! Add a new section.
   virtual int addSection( const std::string &theName, 
                            const CurveCreator::SectionType theType,
@@ -190,6 +191,19 @@ public:
    */
   virtual bool setClosed( const int theISection, 
                           const bool theIsClosed );
+
+  //! Sets color of section by index
+  virtual bool setColorSection(  int SectInd, Quantity_Color theNewColor );
+  
+  //! For internal use only! Undo/Redo are not used here.
+  virtual void setColorSectionInternal( int SectInd, Quantity_Color theNewColor );
+
+  virtual Quantity_Color getLastRemovedColor() const; 
+
+  virtual void popLastRemovedColor();
+
+  //! Gets color of section by index
+  virtual Quantity_Color getColorSection( int SectInd ) const;
 
   //! Returns specifyed section name
   virtual std::string getSectionName( const int theISection ) const;
@@ -305,6 +319,8 @@ public:
    */
   virtual Handle(AIS_InteractiveObject) getAISObject( const bool theNeedToBuild = false) const;
 
+
+
 protected:
   /**
    *  Removes the points from the section. It sortes the points and remove them
@@ -327,6 +343,8 @@ protected:
 
 protected:
   bool                            mySkipSorting;
+  AIS_Shape*                      myAISShape;   //!< AIS shape
+
 
 public:
   bool                            myIsLocked;
@@ -334,7 +352,7 @@ public:
   CurveCreator::Dimension         myDimension;  //!< curve dimension
   CurveCreator_Displayer*         myDisplayer;  //!< curve displayer
   Quantity_Color myPointAspectColor;
-  Quantity_Color myCurveColor;
+  //Quantity_Color myCurveColor;
   double myLineWidth;
 
 private:
@@ -345,8 +363,8 @@ private:
   ListDiff                        myListDiffs;
   int                             myUndoDepth;
   int                             myOpLevel;
-  AIS_Shape*                      myAISShape;   //!< AIS shape
   bool                            myEraseAll;
+  std::vector<Quantity_Color>     myRemColors;
 };
 
 #endif
