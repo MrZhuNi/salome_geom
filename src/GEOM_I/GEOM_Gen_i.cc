@@ -1103,7 +1103,8 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
 
     // Reconstruct arguments and tree of sub-shapes of the arguments
     CORBA::String_var anIOR;
-    SALOMEDS::StudyBuilder_var aStudyBuilder = theStudy->NewBuilder();
+    SALOMEDS::StudyBuilder_var      aStudyBuilder = theStudy->NewBuilder();
+    SALOMEDS::UseCaseBuilder_wrap  useCaseBuilder = theStudy->GetUseCaseBuilder();
     for (Standard_Integer i = 0; i < aLength; i++)
     {
       GEOM::GEOM_Object_var anArgO = aList[i];
@@ -1123,7 +1124,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
         GEOM::GEOM_Object_var aSubO;
         switch (theFindMethod) {
         case GEOM::FSM_GetInPlace:
-          {
+        {
             // Use GetInPlace
             aSubO = aShapesOp->GetInPlace(theObject, anArgO);
           }
@@ -1270,7 +1271,10 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
           if (!CORBA::is_nil(anArgSO)) {
             SALOMEDS::SObject_var aSubSO;
             if (!CORBA::is_nil(theSObject))
+            {
               aSubSO = aStudyBuilder->NewObject(theSObject);
+              useCaseBuilder->AppendTo( theSObject, aSubSO );
+            }
 
             // Restore published sub-shapes of the argument
             GEOM::ListOfGO_var aSubParts =
@@ -1410,7 +1414,8 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesOneLevel (SALOMEDS::Study_ptr     th
       CORBA::is_nil(theNewO) /*|| CORBA::is_nil(theNewSO)*/)
     return aParts._retn();
 
-  SALOMEDS::StudyBuilder_var aStudyBuilder = theStudy->NewBuilder();
+  SALOMEDS::StudyBuilder_var      aStudyBuilder = theStudy->NewBuilder();
+  SALOMEDS::UseCaseBuilder_wrap  useCaseBuilder = theStudy->GetUseCaseBuilder();
 
   // Get interface, containing method, which we will use to reconstruct sub-shapes
   GEOM::GEOM_IShapesOperations_var  aShapesOp = GetIShapesOperations(theStudy->StudyId());
@@ -1529,6 +1534,10 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesOneLevel (SALOMEDS::Study_ptr     th
               if (anOldSubO->GetMarkerType() == GEOM::MT_USER)
                 aNewSubO->SetMarkerTexture(anOldSubO->GetMarkerTexture());
             }
+            // reference to arg
+            SALOMEDS::SObject_wrap aReferenceSO = aStudyBuilder->NewObject( aNewSubSO );
+            aStudyBuilder->Addreference( aReferenceSO, anOldSubSO );
+            useCaseBuilder->AppendTo( theNewSO, aReferenceSO );
           }
           // Restore published sub-shapes of the argument
           GEOM::ListOfGO_var aSubParts;
@@ -1545,8 +1554,10 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesOneLevel (SALOMEDS::Study_ptr     th
         else { // GetInPlace failed, try to build from published parts
           SALOMEDS::SObject_var aNewSubSO;
           if (!CORBA::is_nil(theNewSO))
+          {
             aNewSubSO = aStudyBuilder->NewObject(theNewSO);
-
+            useCaseBuilder->AppendTo( theNewSO, aNewSubSO );
+          }
           // Restore published sub-shapes of the argument
           GEOM::ListOfGO_var aSubParts =
             RestoreSubShapesOneLevel(theStudy, anOldSubSO, aNewSubSO,
@@ -1700,7 +1711,8 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
 
     // Reconstruct arguments and tree of sub-shapes of the arguments
     CORBA::String_var anIOR;
-    SALOMEDS::StudyBuilder_var aStudyBuilder = theStudy->NewBuilder();
+    SALOMEDS::StudyBuilder_var      aStudyBuilder = theStudy->NewBuilder();
+    SALOMEDS::UseCaseBuilder_wrap  useCaseBuilder = theStudy->GetUseCaseBuilder();
     for (Standard_Integer i = 0; i < nbArgsActual; i++)
     {
       GEOM::GEOM_Object_var anArgO = aList[i];
@@ -1819,8 +1831,10 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
           if (!CORBA::is_nil(anArgSO)) {
             SALOMEDS::SObject_var aSubSO;
             if (!CORBA::is_nil(theSObject))
+            {
               aSubSO = aStudyBuilder->NewObject(theSObject);
-
+              useCaseBuilder->AppendTo( theSObject, aSubSO );
+            }
             // Restore published sub-shapes of the argument
             GEOM::ListOfGO_var aSubParts =
               RestoreGivenSubShapesOneLevel(theStudy, anArgSO, aSubSO,
@@ -1954,7 +1968,8 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapesOneLevel (SALOMEDS::Study_ptr  
       CORBA::is_nil(theNewO) /*|| CORBA::is_nil(theNewSO)*/)
     return aParts._retn();
 
-  SALOMEDS::StudyBuilder_var aStudyBuilder = theStudy->NewBuilder();
+  SALOMEDS::StudyBuilder_var      aStudyBuilder = theStudy->NewBuilder();
+  SALOMEDS::UseCaseBuilder_wrap  useCaseBuilder = theStudy->GetUseCaseBuilder();
 
   // Get interface, containing method, which we will use to reconstruct sub-shapes
   GEOM::GEOM_IShapesOperations_var  aShapesOp = GetIShapesOperations(theStudy->StudyId());
@@ -2078,6 +2093,10 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapesOneLevel (SALOMEDS::Study_ptr  
               if (anOldSubO->GetMarkerType() == GEOM::MT_USER)
                 aNewSubO->SetMarkerTexture(anOldSubO->GetMarkerTexture());
             }
+            // reference to arg
+            SALOMEDS::SObject_wrap aReferenceSO = aStudyBuilder->NewObject( aNewSubSO );
+            aStudyBuilder->Addreference( aReferenceSO, anOldSubSO );
+            useCaseBuilder->AppendTo( theNewSO, aReferenceSO );
           }
           // Restore published sub-shapes of the argument
           GEOM::ListOfGO_var aSubParts;
@@ -2094,8 +2113,10 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapesOneLevel (SALOMEDS::Study_ptr  
         else { // GetInPlace failed, try to build from published parts
           SALOMEDS::SObject_var aNewSubSO;
           if (!CORBA::is_nil(theNewSO))
+          {
             aNewSubSO = aStudyBuilder->NewObject(theNewSO);
-
+            useCaseBuilder->AppendTo( theNewSO, aNewSubSO );
+          }
           // Restore published sub-shapes of the argument
           GEOM::ListOfGO_var aSubParts =
             RestoreGivenSubShapesOneLevel(theStudy, anOldSubSO, aNewSubSO,
