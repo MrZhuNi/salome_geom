@@ -33,6 +33,9 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_ViewManager.h>
 
+#include <TopExp_Explorer.hxx>
+#include "CurveCreator_ShapeFilter.hxx"
+
 #include <OCCViewer_ViewManager.h>
 #include <OCCViewer_ViewPort3d.h>
 #include <OCCViewer_Utilities.h>
@@ -362,6 +365,11 @@ void CurveCreator_Widget::onSelectionChanged()
   updateActionsStates();
   updateUndoRedo();
   emit selectionChanged();
+  QList<int> selectedSections = mySectionView->getSelectedSections();
+  CurveCreator_Curve* Curve =  ((CurveCreator_Curve*)myCurve);
+  Curve->myCurSectInd.clear();
+  foreach (int sectInd, selectedSections)
+    Curve->myCurSectInd.push_back(sectInd);
 }
 
 void CurveCreator_Widget::updateActionsStates()
@@ -1158,6 +1166,28 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
     Handle(V3d_View) aView3d = aView->getViewPort()->getView();
     if ( !aView3d.IsNull() )
     {
+      CurveCreator_Curve* Curve =  ((CurveCreator_Curve*)myCurve);
+      //if (!Curve->myCurSectInd.empty())
+      //{
+        aCtx->RemoveFilters();
+        Handle(CurveCreator_ShapeFilter) filter = new CurveCreator_ShapeFilter();
+        for (int i=0; i<Curve->myCurSectInd.size(); i++)
+        {
+          int sectInd = Curve->myCurSectInd[i];
+          const TopoDS_Shape& W = Curve->mySect2Wire(sectInd+1);
+          TopExp_Explorer exp(W, TopAbs_VERTEX);
+          for (;exp.More();exp.Next())
+            filter->AddShape(exp.Current());    
+        }
+        aCtx->AddFilter(filter);
+        if (aCtx->HasOpenedContext())
+        {
+          Handle(AIS_LocalContext) aLctx = aCtx->LocalContext();
+          aLctx->Filter()->Clear();
+          aLctx->AddFilter(filter);
+        }
+      //}
+
       // Initialize the single selection if start and end points are equal,
       // otherwise a rectangular selection.
       if ( myStartPoint == myEndPoint )

@@ -295,7 +295,7 @@ TopoDS_Wire CurveCreator_Utils::ConstructWire(
 //=======================================================================
 void CurveCreator_Utils::constructShape(
   const CurveCreator_ICurve* theCurve, TopoDS_Shape& theShape, 
-  std::map<CurveCreator_Section*, TopoDS_Shape>* theSect2Wire )
+  NCollection_IndexedDataMap<int, TopoDS_Shape>* theSect2Wire )
 {
   BRep_Builder aBuilder;
   TopoDS_Compound aShape;
@@ -329,8 +329,8 @@ void CurveCreator_Utils::constructShape(
       aBuilder.Add(aShape, aWire);
       if (theSect2Wire)
       {
-         CurveCreator_Section* aSection = (CurveCreator_Section*)theCurve->getSection(aSectionI);
-        (*theSect2Wire)[aSection] = aWire;
+         //CurveCreator_Section* aSection = (CurveCreator_Section*)theCurve->getSection(aSectionI);
+        (*theSect2Wire).Add(aSectionI, aWire);
       }
     }
   }

@@ -31,12 +31,14 @@
 
 #include <list>
 #include <map>
+#include <NCollection_IndexedDataMap.hxx>
 
 struct CurveCreator_Section;
 class CurveCreator_Displayer;
 class AIS_Shape;
 class AIS_InteractiveObject;
 class Quantity_Color;
+class TopoDS_Shape;
 
 /**
  *  The CurveCreator_Curve object is represented as one or more sets of
@@ -354,6 +356,8 @@ public:
   Quantity_Color myPointAspectColor;
   //Quantity_Color myCurveColor;
   double myLineWidth;
+  NCollection_IndexedDataMap<int, TopoDS_Shape> mySect2Wire;
+  std::vector<int> myCurSectInd;
 
 private:
 

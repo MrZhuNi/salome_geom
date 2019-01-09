@@ -36,6 +36,7 @@
 
 #include <list>
 #include <vector> // TODO: remove
+#include <NCollection_IndexedDataMap.hxx>
 
 class CurveCreator_Curve;
 
@@ -90,7 +91,7 @@ public:
    */
   CURVECREATOR_EXPORT static void constructShape( const CurveCreator_ICurve* theCurve,
                                                   TopoDS_Shape& theShape,
-                                                  std::map<CurveCreator_Section*, TopoDS_Shape>* Sect2Wire = NULL);
+                                                  NCollection_IndexedDataMap<int, TopoDS_Shape>* Sect2Wire = NULL);
 
   /**
    * Generates a curve from a shape.

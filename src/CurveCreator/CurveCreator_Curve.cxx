@@ -36,6 +36,7 @@
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Wire.hxx>
+#include <TopoDS_Shape.hxx>
 #include <AIS_ColoredShape.hxx>
 #include <Prs3d_PointAspect.hxx>
 #include <iostream>
@@ -1067,21 +1068,22 @@ void CurveCreator_Curve::constructAISObject()
 {
   //DEBTRACE("constructAISObject");
   TopoDS_Shape aShape;
-  std::map<CurveCreator_Section*, TopoDS_Shape> Sect2Wire;
-  CurveCreator_Utils::constructShape( this, aShape, &Sect2Wire );
+  mySect2Wire.Clear();
+  CurveCreator_Utils::constructShape( this, aShape, &mySect2Wire );
   myAISShape = new AIS_ColoredShape( aShape ); 
   AIS_ColoredShape* AISColoredShape = dynamic_cast<AIS_ColoredShape*>(myAISShape);
 
-  std::map<CurveCreator_Section*, TopoDS_Shape>::iterator it;
+  std::map<int, TopoDS_Shape>::iterator it;
 
-  for ( it = Sect2Wire.begin(); it != Sect2Wire.end(); it++ )
+  //for ( it = mySect2Wire.begin(); it != mySect2Wire.end(); it++ )
+  for (int i = 1; i <= mySect2Wire.Extent(); i++ )
   {
-    CurveCreator_Section* aSect = it->first;
+    CurveCreator_Section* aSect = (CurveCreator_Section*)getSection(mySect2Wire.FindKey(i));
     Quantity_Color aColor = aSect->myColor;
-    const TopoDS_Shape& aWire = it->second;
+    const TopoDS_Shape& aWire = mySect2Wire.FindFromIndex(i);
     AISColoredShape->SetCustomColor(aWire, aColor);
   }
-
+  
   // myAISShape->SetColor( myCurveColor );
   myAISShape->SetWidth( myLineWidth );
   Handle(Prs3d_PointAspect) anAspect = myAISShape->Attributes()->PointAspect();
