@@ -87,11 +87,11 @@ public:
    * Generates shape on the curve
    * \param theCurve a curve object, that contains data
    * \param theShape a generated shape
-   * \param Sect2Wire optional out map: section to constructed wire 
+   * \param Sect2Shape optional out map: section to constructed shape (wire+vertices) 
    */
   CURVECREATOR_EXPORT static void constructShape( const CurveCreator_ICurve* theCurve,
                                                   TopoDS_Shape& theShape,
-                                                  NCollection_IndexedDataMap<int, TopoDS_Shape>* Sect2Wire = NULL);
+                                                  NCollection_IndexedDataMap<int, TopoDS_Shape>* Sect2Shape = NULL);
 
   /**
    * Generates a curve from a shape.

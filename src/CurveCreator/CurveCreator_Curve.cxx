@@ -31,6 +31,7 @@
 #include <AIS_Shape.hxx>
 #include <AIS_InteractiveObject.hxx>
 #include <Geom_CartesianPoint.hxx>
+#include <TopoDS_Iterator.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Lin.hxx>
 #include <TopoDS_Edge.hxx>
@@ -1063,25 +1064,29 @@ Handle(TColgp_HArray1OfPnt) CurveCreator_Curve::GetDifferentPoints( int theISect
   CurveCreator_Section* aSection = (CurveCreator_Section*)getSection( theISection );
   return aSection ? aSection->GetDifferentPoints( (int)myDimension ) : Handle(TColgp_HArray1OfPnt)();
 }
-
 void CurveCreator_Curve::constructAISObject()
 {
   //DEBTRACE("constructAISObject");
   TopoDS_Shape aShape;
-  mySect2Wire.Clear();
-  CurveCreator_Utils::constructShape( this, aShape, &mySect2Wire );
+  mySect2Shape.Clear();
+  CurveCreator_Utils::constructShape( this, aShape, &mySect2Shape );
   myAISShape = new AIS_ColoredShape( aShape ); 
   AIS_ColoredShape* AISColoredShape = dynamic_cast<AIS_ColoredShape*>(myAISShape);
 
   std::map<int, TopoDS_Shape>::iterator it;
 
-  //for ( it = mySect2Wire.begin(); it != mySect2Wire.end(); it++ )
-  for (int i = 1; i <= mySect2Wire.Extent(); i++ )
+  //for ( it = mySect2Shape.begin(); it != mySect2Shape.end(); it++ )
+  for (int i = 1; i <= mySect2Shape.Extent(); i++ )
   {
-    CurveCreator_Section* aSect = (CurveCreator_Section*)getSection(mySect2Wire.FindKey(i));
+    CurveCreator_Section* aSect = (CurveCreator_Section*)getSection(mySect2Shape.FindKey(i));
     Quantity_Color aColor = aSect->myColor;
-    const TopoDS_Shape& aWire = mySect2Wire.FindFromIndex(i);
-    AISColoredShape->SetCustomColor(aWire, aColor);
+    const TopoDS_Shape& aShape = mySect2Shape.FindFromIndex(i); //should contain: one wire + vertices
+    TopoDS_Iterator it(aShape);
+    for (;it.More();it.Next())
+    {
+      if (it.Value().ShapeType() == TopAbs_WIRE)
+        AISColoredShape->SetCustomColor(it.Value(), aColor);
+    }
   }
   
   // myAISShape->SetColor( myCurveColor );

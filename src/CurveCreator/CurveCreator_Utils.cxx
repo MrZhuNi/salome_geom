@@ -295,11 +295,12 @@ TopoDS_Wire CurveCreator_Utils::ConstructWire(
 //=======================================================================
 void CurveCreator_Utils::constructShape(
   const CurveCreator_ICurve* theCurve, TopoDS_Shape& theShape, 
-  NCollection_IndexedDataMap<int, TopoDS_Shape>* theSect2Wire )
+  NCollection_IndexedDataMap<int, TopoDS_Shape>* theSect2Shape )
 {
   BRep_Builder aBuilder;
   TopoDS_Compound aShape;
   aBuilder.MakeCompound(aShape);
+
   const int aSectionCount = theCurve->getNbSections();
   for (int aSectionI = 0; aSectionI < aSectionCount; ++aSectionI)
   {
@@ -314,10 +315,18 @@ void CurveCreator_Utils::constructShape(
     const int aPointCount = aPoints->Length();
     const bool isClosed = theCurve->isClosed(aSectionI);
 
+    TopoDS_Compound ShapeWireWithV;
+    if (theSect2Shape)
+      aBuilder.MakeCompound(ShapeWireWithV);
+
     // Add the vertices to the shape.
     for (Standard_Integer aPN = 1; aPN <= aPointCount; ++aPN)
     {
-      aBuilder.Add(aShape, BRepBuilderAPI_MakeVertex(aPoints->Value(aPN)));
+      TopoDS_Vertex V;
+      aBuilder.MakeVertex(V,aPoints->Value(aPN),Precision::Confusion());
+      aBuilder.Add(aShape, V);
+      if (theSect2Shape)
+        aBuilder.Add(ShapeWireWithV, V);
     }
 
     // Add the wire to the shape.
@@ -327,10 +336,10 @@ void CurveCreator_Utils::constructShape(
     if (!aWire.IsNull())
     {
       aBuilder.Add(aShape, aWire);
-      if (theSect2Wire)
+      if (theSect2Shape)
       {
-         //CurveCreator_Section* aSection = (CurveCreator_Section*)theCurve->getSection(aSectionI);
-        (*theSect2Wire).Add(aSectionI, aWire);
+        aBuilder.Add(ShapeWireWithV, aWire);
+        (*theSect2Shape).Add(aSectionI, ShapeWireWithV);
       }
     }
   }

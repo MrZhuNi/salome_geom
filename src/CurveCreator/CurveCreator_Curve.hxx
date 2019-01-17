@@ -356,7 +356,7 @@ public:
   Quantity_Color myPointAspectColor;
   //Quantity_Color myCurveColor;
   double myLineWidth;
-  NCollection_IndexedDataMap<int, TopoDS_Shape> mySect2Wire;
+  NCollection_IndexedDataMap<int, TopoDS_Shape> mySect2Shape;
   std::vector<int> myCurSectInd;
 
 private:

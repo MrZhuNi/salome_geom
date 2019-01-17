@@ -1174,7 +1174,7 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
         for (int i=0; i<Curve->myCurSectInd.size(); i++)
         {
           int sectInd = Curve->myCurSectInd[i];
-          const TopoDS_Shape& W = Curve->mySect2Wire(sectInd+1);
+          const TopoDS_Shape& W = Curve->mySect2Shape(sectInd+1);
           TopExp_Explorer exp(W, TopAbs_VERTEX);
           for (;exp.More();exp.Next())
             filter->AddShape(exp.Current());    
