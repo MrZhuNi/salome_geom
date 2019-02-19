@@ -101,6 +101,8 @@
 #include <SALOMEDS_wrap.hxx>
 #include <GEOMImpl_Types.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #ifdef max
 #undef max
 #endif
@@ -908,9 +910,11 @@ bool MeasureGUI_AnnotationDlg::getPickedPoint( gp_Pnt& thePnt, const TopoDS_Shap
 
   Handle(AIS_InteractiveContext) anAISContext = aViewer->getAISContext();
   Handle(SelectMgr_ViewerSelector) aSelector;
+#if OCC_VERSION_LARGE <= 0x07030000
   if ( anAISContext->HasOpenedContext() )
     aSelector = anAISContext->LocalSelector();
   else
+#endif
     aSelector = anAISContext->MainSelector();
 
   if ( aSelector->NbPicked() < 1 )
