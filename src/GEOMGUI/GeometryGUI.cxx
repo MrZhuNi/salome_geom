@@ -2432,7 +2432,7 @@ void GeometryGUI::createPreferences()
   /*int fontID =*/ QFontDatabase::addApplicationFont( aFontFile );
 #if OCC_VERSION_LARGE <= 0x07030000
   Handle(Font_SystemFont) sf = new Font_SystemFont( 
-    new TCollection_HAsciiString("Y14.5M-2009") 
+    new TCollection_HAsciiString("Y14.5M-2009"), 
     Font_FA_Regular, 
     new TCollection_HAsciiString(aFontFile.toLatin1().data()) );
 # else
