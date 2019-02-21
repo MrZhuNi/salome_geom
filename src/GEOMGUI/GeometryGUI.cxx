@@ -256,11 +256,11 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
   if ( !myGUIMap.contains( libraryName ) ) {
     // try to load library if it is not loaded yet
 #if defined(WIN32)
-    QString dirs = getenv( "PATH" );
+    QString dirs = Qtx::getenv( "PATH" );
 #elif defined(__APPLE__)
-    QString dirs = getenv( "DYLD_LIBRARY_PATH" );
+    QString dirs = Qtx::getenv( "DYLD_LIBRARY_PATH" );
 #else
-    QString dirs = getenv( "LD_LIBRARY_PATH" );
+    QString dirs = Qtx::getenv( "LD_LIBRARY_PATH" );
 #endif
 #if defined(WIN32)
     QString sep  = ";";
@@ -307,11 +307,11 @@ GEOMPluginGUI* GeometryGUI::getPluginLibrary( const QString& libraryName )
     // try to load library if it is not loaded yet
 
 #if defined(WIN32)
-    QString dirs = getenv( "PATH" );
+    QString dirs = Qtx::getenv( "PATH" );
 #elif defined(__APPLE__)
-    QString dirs = getenv( "DYLD_LIBRARY_PATH" );
+    QString dirs = Qtx::getenv( "DYLD_LIBRARY_PATH" );
 #else
-    QString dirs = getenv( "LD_LIBRARY_PATH" );
+    QString dirs = Qtx::getenv( "LD_LIBRARY_PATH" );
 #endif
 #if defined(WIN32)
     QString sep  = ";";
