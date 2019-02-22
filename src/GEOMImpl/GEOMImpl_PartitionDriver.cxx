@@ -48,6 +48,7 @@
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <BOPDS_DS.hxx>
+#include <BRepTools_History.hxx>
 
 // Depth of self-intersection check (see BOPAlgo_CheckerSI::SetLevelOfCheck() for more details)
 // Default value for BOPAlgo_CheckerSI gives very long computation when checking face-to-face intersections;
@@ -463,6 +464,9 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(Handle(TFunction_Logbook)& lo
 
     for (Standard_Integer ie = 1; ie <= nbArgumentEntities; ie++) {
       TopoDS_Shape anEntity = anArgumentIndices.FindKey(ie);
+      if (!BRepTools_History::IsSupportedType(anEntity))
+        continue;
+
       // be sure to use aCopyMap here
       if (aCopyMap.IsBound(anEntity))
         anEntity = aCopyMap.Find(anEntity);
