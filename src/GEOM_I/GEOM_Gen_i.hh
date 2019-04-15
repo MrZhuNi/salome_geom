@@ -134,7 +134,7 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
                            const char* theURL,
                            bool isMultiFile);
 
-  void Close(SALOMEDS::SComponent_ptr theComponent);
+  void Close();
   char* ComponentDataType();
 
 

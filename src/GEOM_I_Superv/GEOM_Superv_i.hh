@@ -124,7 +124,7 @@ public:
                            const char* theURL,
                            CORBA::Boolean isMultiFile);
 
-  void Close(SALOMEDS::SComponent_ptr theComponent);
+  void Close();
   char* ComponentDataType();
 
 

@@ -721,7 +721,7 @@ CORBA::Boolean GEOM_Gen_i::LoadASCII(SALOMEDS::SComponent_ptr theComponent,
 // function : Close()
 // purpose  :
 //============================================================================
-void GEOM_Gen_i::Close(SALOMEDS::SComponent_ptr theComponent)
+void GEOM_Gen_i::Close()
 {
   _impl->Close();
 }
