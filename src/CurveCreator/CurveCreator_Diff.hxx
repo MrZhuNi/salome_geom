@@ -157,6 +157,20 @@ public:
   bool init(const CurveCreator_Curve *theCurve,
             const CurveCreator_ICurve::SectionToPointCoordsList &theOldParamList);
 
+  
+  /**
+   * This method initializes the difference with an operation with one
+   * integer and one array of integer[3] parameters.
+   * It is applicable to the following operations:
+   * <UL>
+   *   <LI>ColorSection</LI>
+   * </UL>
+   */
+  bool init(const CurveCreator_Curve *theCurve,
+            const CurveCreator_Operation::Type theType,
+            const int theIntParam1,
+            const int theIntParam2[3]);
+
   /**
    * This method applies undo operation to theCurve.
    */

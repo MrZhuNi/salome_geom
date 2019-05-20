@@ -59,7 +59,9 @@ public:
     Join,           //!< Method CurveCreator_Curve::join
     AddSection,     //!< Method CurveCreator_Curve::addSection
     RemoveSection,   //!< Method CurveCreator_Curve::removeSection
-    RenameSection   //!< Method CurveCreator_Curve::renameSection
+    RenameSection,  //!< Method CurveCreator_Curve::renameSection
+    SetColorSection //!< Method CurveCreator_Curve::setColorSection
+
   };
 
   /**
@@ -105,6 +107,14 @@ public:
    */
   bool init(const Type theType, const int theIntParam1,
             const int theIntParam2);
+
+  /**
+   * This method initializes the object with an operation with 4 integer
+   * parameter (1 as first param + 3 as interger array)
+   */
+  bool init(const Type theType, const int theIntParam1,
+            const int theIntParam2[3]);
+
 
   /**
    * This method initializes the object with an operation with two integer

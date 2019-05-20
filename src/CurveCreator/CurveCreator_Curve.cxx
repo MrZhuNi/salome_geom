@@ -31,12 +31,14 @@
 #include <AIS_Shape.hxx>
 #include <AIS_InteractiveObject.hxx>
 #include <Geom_CartesianPoint.hxx>
+#include <TopoDS_Iterator.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Lin.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Wire.hxx>
-
+#include <TopoDS_Shape.hxx>
+#include <AIS_ColoredShape.hxx>
 #include <Prs3d_PointAspect.hxx>
 #include <iostream>
 #define DEBTRACE(msg) {std::cerr<<std::flush<<__FILE__<<" ["<<__LINE__<<"] : "<<msg<<std::endl<<std::flush;}
@@ -58,7 +60,7 @@ CurveCreator_Curve::CurveCreator_Curve( const CurveCreator::Dimension theDimensi
   myOpLevel(0),
   mySkipSorting(false),
   myPointAspectColor (Quantity_NOC_ROYALBLUE4), 
-  myCurveColor (Quantity_NOC_RED),
+  //myCurveColor (Quantity_NOC_RED),
   myEraseAll(true),
   myLineWidth(1)
 {
@@ -480,7 +482,8 @@ int CurveCreator_Curve::getNbSections() const
 //! For internal use only! Undo/Redo are not used here.
 int CurveCreator_Curve::addSectionInternal
         (const std::string& theName, const CurveCreator::SectionType theType,
-         const bool theIsClosed, const CurveCreator::Coordinates &thePoints)
+         const bool theIsClosed, const CurveCreator::Coordinates &thePoints,
+         const Quantity_Color& aColor)
 {
   CurveCreator_Section *aSection = new CurveCreator_Section;
 
@@ -492,6 +495,7 @@ int CurveCreator_Curve::addSectionInternal
   aSection->myType     = theType;
   aSection->myIsClosed = theIsClosed;
   aSection->myPoints   = thePoints;
+  aSection->myColor    = aColor;//getRandColor();  //TODO temp
   mySections.push_back(aSection);
   redisplayCurve(false);
   return mySections.size()-1;
@@ -514,7 +518,9 @@ int CurveCreator_Curve::addSection
                             theName, aCoords, theType, theIsClosed);
   }
 
-  resISection = addSectionInternal(theName, theType, theIsClosed, aCoords);
+  Quantity_Color aRColor = CurveCreator_Utils::getRandColor();
+
+  resISection = addSectionInternal(theName, theType, theIsClosed, aCoords, aRColor);
 
   finishOperation();
   return resISection;
@@ -535,7 +541,7 @@ int CurveCreator_Curve::addSection
                             theName, thePoints, theType, theIsClosed);
   }
 
-  resISection = addSectionInternal(theName, theType, theIsClosed, thePoints);
+  resISection = addSectionInternal(theName, theType, theIsClosed, thePoints, Quantity_NOC_YELLOW);
 
   finishOperation();
   return resISection;
@@ -544,11 +550,15 @@ int CurveCreator_Curve::addSection
 //! For internal use only! Undo/Redo are not used here.
 bool CurveCreator_Curve::removeSectionInternal( const int theISection )
 {
-  if (theISection == -1) {
+  if (theISection == -1) 
+  {
+    myRemColors.push_back(mySections.back()->myColor); 
     delete mySections.back();
     mySections.pop_back();
   } else {
     CurveCreator::Sections::iterator anIterRm = mySections.begin() + theISection;
+
+    myRemColors.push_back((*anIterRm)->myColor); 
 
     delete *anIterRm;
     mySections.erase(anIterRm);
@@ -570,6 +580,49 @@ bool CurveCreator_Curve::removeSection( const int theISection )
 
   finishOperation();
   return res;
+}
+
+bool CurveCreator_Curve::setColorSection( int SectInd, Quantity_Color theNewColor )
+{
+  bool res = false;
+  // Set the difference.
+  startOperation();
+
+  int ColorParam[3] = { (int)( theNewColor.Red() * 255 ), 
+    (int)( theNewColor.Green() * 255 ), 
+    (int)( theNewColor.Blue() * 255 ) };
+
+  if (addEmptyDiff())
+    myListDiffs.back().init(this, CurveCreator_Operation::SetColorSection, SectInd, ColorParam);
+
+  setColorSectionInternal(SectInd, theNewColor);
+
+  finishOperation();
+  return res;
+}
+
+void CurveCreator_Curve::setColorSectionInternal( int SectInd, Quantity_Color theNewColor )
+{
+  CurveCreator_Section* aSec = (CurveCreator_Section*)(getSection(SectInd));
+  aSec->myColor = theNewColor;
+
+  redisplayCurve(false);
+}
+
+Quantity_Color CurveCreator_Curve::getColorSection( int SectInd ) const
+{
+  CurveCreator_Section* aSec = (CurveCreator_Section*)(getSection(SectInd));
+  return aSec->myColor;
+}
+
+Quantity_Color CurveCreator_Curve::getLastRemovedColor() const
+{
+  return myRemColors.empty() ? Quantity_NOC_BLACK : myRemColors.back();
+}
+
+void CurveCreator_Curve::popLastRemovedColor()
+{
+  myRemColors.pop_back();
 }
 
 /**
@@ -1011,14 +1064,32 @@ Handle(TColgp_HArray1OfPnt) CurveCreator_Curve::GetDifferentPoints( int theISect
   CurveCreator_Section* aSection = (CurveCreator_Section*)getSection( theISection );
   return aSection ? aSection->GetDifferentPoints( (int)myDimension ) : Handle(TColgp_HArray1OfPnt)();
 }
-
 void CurveCreator_Curve::constructAISObject()
 {
   //DEBTRACE("constructAISObject");
   TopoDS_Shape aShape;
-  CurveCreator_Utils::constructShape( this, aShape );
-  myAISShape = new AIS_Shape( aShape );  
-  myAISShape->SetColor( myCurveColor );
+  mySect2Shape.Clear();
+  CurveCreator_Utils::constructShape( this, aShape, &mySect2Shape );
+  myAISShape = new AIS_ColoredShape( aShape ); 
+  AIS_ColoredShape* AISColoredShape = dynamic_cast<AIS_ColoredShape*>(myAISShape);
+
+  std::map<int, TopoDS_Shape>::iterator it;
+
+  //for ( it = mySect2Shape.begin(); it != mySect2Shape.end(); it++ )
+  for (int i = 1; i <= mySect2Shape.Extent(); i++ )
+  {
+    CurveCreator_Section* aSect = (CurveCreator_Section*)getSection(mySect2Shape.FindKey(i));
+    Quantity_Color aColor = aSect->myColor;
+    const TopoDS_Shape& aShape = mySect2Shape.FindFromIndex(i); //should contain: one wire + vertices
+    TopoDS_Iterator it(aShape);
+    for (;it.More();it.Next())
+    {
+      if (it.Value().ShapeType() == TopAbs_WIRE)
+        AISColoredShape->SetCustomColor(it.Value(), aColor);
+    }
+  }
+  
+  // myAISShape->SetColor( myCurveColor );
   myAISShape->SetWidth( myLineWidth );
   Handle(Prs3d_PointAspect) anAspect = myAISShape->Attributes()->PointAspect();
   anAspect->SetScale( 3.0 );
