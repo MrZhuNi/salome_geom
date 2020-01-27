@@ -28,6 +28,7 @@
 #include <vtkPolyDataNormals.h>  
 #include <vtkActor.h> 
 #include <VTKViewer_Actor.h>
+#include <VTKViewer_Transform.h>
 #include <vtkRenderer.h> 
  
 vtkStandardNewMacro(GEOM_DeviceActor);
@@ -117,4 +118,11 @@ GEOM_DeviceActor::
 RemoveFromRender(vtkRenderer* theRenderer)
 {
   theRenderer->RemoveActor(myActor.GetPointer());
+}
+
+void
+GEOM_DeviceActor:: 
+SetTransform(VTKViewer_Transform* theTransform)
+{
+  myActor->SetTransform(theTransform);
 }

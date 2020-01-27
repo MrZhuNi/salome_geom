@@ -44,6 +44,7 @@ class vtkRenderer;
 #include <vtkObject.h> 
  
 class vtkAlgorithmOutput;
+class VTKViewer_Transform;
  
 class VTK_EXPORT GEOM_DeviceActor: public vtkObject 
 {  
@@ -66,6 +67,8 @@ public:
   void RemoveFromRender(vtkRenderer* theRenderer);
   
   PActor GetDeviceActor() {return myActor;}
+
+  void SetTransform(VTKViewer_Transform* theTransform); 
  
 protected: 
   PPolyDataNormals myPolyDataNormals; 

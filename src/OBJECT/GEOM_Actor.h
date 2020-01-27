@@ -80,6 +80,8 @@ public:
   void SetSelected(bool theIsSelected);
   bool IsSelected() const { return myIsSelected;}
 
+  void SetTransform(VTKViewer_Transform* theTransform); 
+
   // OLD METHODS
   // Properties
   void SetHighlightProperty(vtkProperty* Prop);

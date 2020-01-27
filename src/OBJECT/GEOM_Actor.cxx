@@ -1166,3 +1166,20 @@ void GEOM_Actor::SetWidth(const int width) {
 int GEOM_Actor::GetWidth() const {
   return (int)myIsolatedEdgeActor->GetProperty()->GetLineWidth();
 }
+
+void GEOM_Actor::SetTransform(VTKViewer_Transform* theTransform)
+{
+  SALOME_Actor::SetTransform(theTransform);
+
+  myVertexActor->SetTransform(theTransform);
+  myStandaloneVertexActor->SetTransform(theTransform);
+  myIsolatedEdgeActor->SetTransform(theTransform);
+  myOneFaceEdgeActor->SetTransform(theTransform);
+  mySharedEdgeActor->SetTransform(theTransform);
+  myWireframeFaceActor->SetTransform(theTransform);
+  myShadingFaceActor->SetTransform(theTransform);
+  myHighlightActor->SetTransform(theTransform);
+  //myTextActor->SetTransform(theTransform);
+
+  Modified();
+}
