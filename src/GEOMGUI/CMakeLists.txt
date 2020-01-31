@@ -59,7 +59,6 @@ SET(_link_LIBRARIES
   ${KERNEL_SALOMELocalTrace}
   ${KERNEL_SalomeDS}
   ${KERNEL_SalomeDSClient}
-  ${GUI_SalomeApp}
   )
 
 # --- headers ---

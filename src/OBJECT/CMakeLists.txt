@@ -17,13 +17,12 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-INCLUDE(${VTK_USE_FILE})
+find_package(ParaView REQUIRED)
 
 # --- options ---
 
 # additional include directories
 INCLUDE_DIRECTORIES(
-  ${VTK_INCLUDE_DIRS}
   ${PTHREAD_INCLUDE_DIR}
   ${OMNIORB_INCLUDE_DIR}
   ${OpenCASCADE_INCLUDE_DIR}
@@ -50,13 +49,12 @@ SET(_link_LIBRARIES
   ${OpenCASCADE_ModelingData_LIBRARIES}
   ${OpenCASCADE_Visualization_LIBRARIES}
   ${KERNEL_SALOMELocalTrace}
-  ${GUI_SalomeObject}
   ${GUI_SVTK}
   ${QT_QTCORE_LIBRARY}
-  vtkRenderingMatplotlib
-  vtkInteractionStyle
+  ParaView::pqApplicationComponents
+  VTK::RenderingMatplotlib
+  VTK::InteractionStyle
   GEOMUtils
-  #${VTK_LIBRARIES}
   )
 
 # --- headers ---

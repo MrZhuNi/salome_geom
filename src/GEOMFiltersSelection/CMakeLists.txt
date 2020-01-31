@@ -45,7 +45,6 @@ SET(_link_LIBRARIES
   GEOMClient
   ${OpenCASCADE_ModelingData_LIBRARIES}
   ${KERNEL_SALOMELocalTrace}
-  ${GUI_SalomeApp}
   )
 
 # --- headers ---
