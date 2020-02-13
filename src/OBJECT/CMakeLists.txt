@@ -54,6 +54,7 @@ SET(_link_LIBRARIES
   ParaView::pqApplicationComponents
   VTK::RenderingMatplotlib
   VTK::InteractionStyle
+  VTK::IOLegacy
   GEOMUtils
   )
 
