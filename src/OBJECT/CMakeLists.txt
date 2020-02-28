@@ -17,8 +17,6 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-find_package(ParaView REQUIRED)
-
 # --- options ---
 
 # additional include directories
@@ -51,7 +49,6 @@ SET(_link_LIBRARIES
   ${KERNEL_SALOMELocalTrace}
   ${GUI_SVTK}
   ${QT_QTCORE_LIBRARY}
-  ParaView::pqApplicationComponents
   VTK::RenderingMatplotlib
   VTK::InteractionStyle
   VTK::IOLegacy
