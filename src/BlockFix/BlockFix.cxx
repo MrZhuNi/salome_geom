@@ -52,6 +52,7 @@
 #include <BRep_Builder.hxx>
 
 #include <BRepAdaptor_Surface.hxx>
+#include <BRepBndLib.hxx>
 
 #include <BRepTools.hxx>
 #include <BRepTools_Modifier.hxx>
@@ -272,7 +273,16 @@ TopoDS_Shape BlockFix::RefillProblemFaces (const TopoDS_Shape& aShape)
   {
     TopoDS_Face aFace = TopoDS::Face(itl.Value());
     aFace.Orientation(TopAbs_FORWARD);
+
+    //Compute proper tolerance
     Standard_Real MaxTolOfFace = ComputeMaxTolOfFace(aFace);
+    Bnd_Box aBndBox;
+    BRepBndLib::Add(aFace, aBndBox);
+    Standard_Real Xmin, Ymin, Zmin, Xmax, Ymax, Zmax;
+    aBndBox.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
+    Standard_Real LinSize = Min(Xmax - Xmin, Min(Ymax - Ymin, Zmax - Zmin));
+    Standard_Real LinTol = Max(0.001*LinSize, 1.5*MaxTolOfFace);
+    
     BRepAdaptor_Surface BAsurf(aFace, Standard_False);
     BRepOffsetAPI_MakeFilling Filler(3, 10);
     TopExp_Explorer Explo(aFace, TopAbs_EDGE);
@@ -327,15 +337,19 @@ TopoDS_Shape BlockFix::RefillProblemFaces (const TopoDS_Shape& aShape)
           }
         }
       Standard_Real MaxDist = Sqrt(MaxSqDist);
-      if (MaxDist < Max(1.e-4, 1.5*MaxTolOfFace))
+      if (MaxDist < LinTol)
       {
         TopTools_IndexedMapOfShape Emap;
+        TopTools_MapOfShape Vmap;
         TopExp::MapShapes(aFace, TopAbs_EDGE, Emap);
         for (Standard_Integer i = 1; i <= Emap.Extent(); i++)
         {
           TopoDS_Edge anEdge = TopoDS::Edge(Emap(i));
           anEdge.Orientation(TopAbs_FORWARD);
-          TopTools_ListOfShape Ledge;
+          TopoDS_Vertex V1, V2;
+          TopExp::Vertices(anEdge, V1, V2);
+
+          TopTools_ListOfShape Ledge, ListV1, ListV2;
           if (!BRep_Tool::Degenerated(anEdge) &&
               !BRepTools::IsReallyClosed(anEdge, aFace))
           {
@@ -344,8 +358,27 @@ TopoDS_Shape BlockFix::RefillProblemFaces (const TopoDS_Shape& aShape)
               TopoDS_Edge NewEdge = TopoDS::Edge(Ledges.First());
               Ledge.Append(NewEdge.Oriented(TopAbs_FORWARD));
             }
+
+            TopoDS_Vertex NewV1 = TopoDS::Vertex(Filler.Generated(V1).First());
+            ListV1.Append(NewV1.Oriented(TopAbs_FORWARD));
+
+            if (!V1.IsSame(V2))
+            {
+              TopoDS_Vertex NewV2 = TopoDS::Vertex(Filler.Generated(V2).First());
+              ListV2.Append(NewV2.Oriented(TopAbs_FORWARD));
+            }
           }
           aSubst.Substitute(anEdge, Ledge);
+          if (!Vmap.Contains(V1))
+          {
+            aSubst.Substitute(V1, ListV1);
+            Vmap.Add(V1);
+          }
+          if (!Vmap.Contains(V2))
+          {
+            aSubst.Substitute(V2.Oriented(TopAbs_FORWARD), ListV2);
+            Vmap.Add(V2);
+          }
         }
         TopTools_ListOfShape Lface;
         BRepAdaptor_Surface NewBAsurf(aNewFace);
