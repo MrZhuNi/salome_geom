@@ -28,12 +28,11 @@
 #include "utilities.h"
 
 #include <opencv2/core/version.hpp>
+#include <opencv2/imgcodecs.hpp>
 
-
-#if CV_MAJOR_VERSION == 3
-#define cvCvtPixToPlane cvSplit
+#if CV_MAJOR_VERSION < 3
+#error OpenCV version below 3 is not supported
 #endif
-
 
 // TODO : All the following methods but ComputeContours use the C API of OpenCV while ComputContours
 // uses the C++ API of the library.
@@ -65,10 +64,16 @@ void ShapeRec_FeatureDetector::SetPath( const std::string& thePath )
   imagePath = thePath;
   if (imagePath != "")
   {
+#if CV_MAJOR_VERSION > 3
+    cv::Mat src = cv::imread(imagePath.c_str(), cv::IMREAD_COLOR);
+    imgHeight = src.size().height;
+    imgWidth = src.size().width;
+#else
     IplImage* src = cvLoadImage(imagePath.c_str(),CV_LOAD_IMAGE_COLOR);
     imgHeight = src->height;
     imgWidth = src->width;
     cvReleaseImage(&src);
+#endif
   }
 }
 
@@ -80,6 +85,31 @@ void ShapeRec_FeatureDetector::ComputeCorners( bool useROI, ShapeRec_Parameters*
   ShapeRec_CornersParameters* aCornersParameters = dynamic_cast<ShapeRec_CornersParameters*>( parameters );
   if ( !aCornersParameters ) aCornersParameters = new  ShapeRec_CornersParameters();
 
+#if CV_MAJOR_VERSION > 3
+  cv::Mat src_img_gray = cv::imread (imagePath.c_str(), cv::IMREAD_GRAYSCALE);
+
+  if ( useROI )
+  {
+    // If a ROI as been set use it for detection
+    src_img_gray = src_img_gray(rect);
+  }
+
+  std::vector<cv::Point2f> corners;
+  // image height and width
+  imgHeight = src_img_gray.size().height;
+  imgWidth  = src_img_gray.size().width;
+
+  cv::goodFeaturesToTrack (src_img_gray, corners, cornerCount,
+                           aCornersParameters->qualityLevel, aCornersParameters->minDistance,
+                           cv::noArray(), 3, false);
+
+  cv::cornerSubPix
+    (src_img_gray, corners,
+     cvSize (aCornersParameters->kernelSize, aCornersParameters->kernelSize),
+     cvSize (-1, -1),
+     cvTermCriteria (aCornersParameters->typeCriteria, aCornersParameters->maxIter, aCornersParameters->epsilon));
+
+#else
   // Images to be used for detection
   IplImage *eig_img, *temp_img, *src_img_gray;
 
@@ -109,7 +139,7 @@ void ShapeRec_FeatureDetector::ComputeCorners( bool useROI, ShapeRec_Parameters*
   cvReleaseImage (&eig_img);
   cvReleaseImage (&temp_img);
   cvReleaseImage (&src_img_gray);
-
+#endif
 }
 
 /*!
@@ -145,6 +175,68 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
   }
   else //COLORFILTER
   {
+#if CV_MAJOR_VERSION > 3
+    cv::Mat input_image = cv::imread(imagePath.c_str(), cv::IMREAD_COLOR);
+
+    ShapeRec_ColorFilterParameters* aColorFilterParameters = dynamic_cast<ShapeRec_ColorFilterParameters*>( parameters );
+    if ( !aColorFilterParameters ) aColorFilterParameters = new ShapeRec_ColorFilterParameters();
+
+    cv::GaussianBlur( input_image, input_image,
+                      cvSize (aColorFilterParameters->smoothSize, aColorFilterParameters->smoothSize), 0 );
+
+    cv::Mat sample_image = input_image(rect);
+
+    cv::Mat sample_hsv;
+
+    cv::cvtColor(sample_image, sample_hsv, CV_BGR2HSV);
+
+    /// Separate the image in 3 places ( H, S and V )
+    std::vector<cv::Mat> hsv_planes;
+    cv::split( sample_image, hsv_planes );
+
+    cv::Mat sample_planes[] = { hsv_planes[0], hsv_planes[1] };
+
+    // Create the hue / saturation histogram of the SAMPLE image.
+    // This histogramm will be representative of what is the zone
+    // we want to find the frontier of. Indeed, the sample image is meant to
+    // be representative of this zone
+    const float hranges[] = { 0, 180 };
+    const float sranges[] = { 0, 256 };
+    const float* ranges[] = { hranges, sranges };
+
+    cv::Mat sample_hist;
+    cv::calcHist( sample_planes, 2, 0, cv::Mat(), sample_hist, 1, aColorFilterParameters->histSize, ranges );
+
+    // Calculate the back projection of hue and saturation planes of the INPUT image
+    // by mean of the histogram of the SAMPLE image.
+    //
+    // The pixels which (h,s) coordinates correspond to high values in the histogram
+    // will have high values in the grey image result. It means that a pixel of the INPUT image
+    // which is more probably in the zone represented by the SAMPLE image, will be whiter
+    // in the back projection.
+
+    // Get hue and saturation planes of the INPUT image
+    cv::Mat input_hsv;
+    cv::cvtColor(input_image, input_hsv, CV_BGR2HSV);
+
+    /// Separate the image in 3 places ( H, S and V )
+    std::vector<cv::Mat> input_hsv_planes;
+    cv::split( input_hsv, input_hsv_planes );
+
+    cv::Mat input_planes[] = { input_hsv_planes[0], input_hsv_planes[1] };
+
+    cv::Mat backproject, binary_backproject;
+
+    // Compute the back projection
+    cv::calcBackProject(input_planes, 2, 0, sample_hist, backproject, ranges);
+
+    // Threshold in order to obtain a binary image
+    cv::threshold(backproject, binary_backproject,
+                  aColorFilterParameters->threshold, aColorFilterParameters->maxThreshold, cv::THRESH_BINARY);
+
+    detected_edges = cv::Mat(binary_backproject);
+
+#else
     // Load the input image where we want to detect contours
     IplImage* input_image = cvLoadImage(imagePath.c_str(),CV_LOAD_IMAGE_COLOR);
 
@@ -168,8 +260,8 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
     CvHistogram* sample_hist;
 
     cvCvtColor(sample_image, sample_hsv, CV_BGR2HSV);
-  
-    cvCvtPixToPlane(sample_hsv, sample_h_plane, sample_s_plane, 0, 0);
+
+    cvSplit(sample_hsv, sample_h_plane, sample_s_plane, 0, 0);
     IplImage* sample_planes[] = { sample_h_plane, sample_s_plane };
 
     // Create the hue / saturation histogram of the SAMPLE image.
@@ -224,7 +316,7 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
 
     // Get hue and saturation planes of the INPUT image
     cvCvtColor(input_image, input_hsv, CV_BGR2HSV);
-    cvCvtPixToPlane(input_hsv, input_hplane, input_splane, 0, 0);
+    cvSplit(input_hsv, input_hplane, input_splane, 0, 0);
     IplImage* input_planes[] = { input_hplane, input_splane };
 
     // Compute the back projection
@@ -242,10 +334,7 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
     cvReleaseImage(&input_splane);
     cvReleaseImage(&backproject);
 
-#if CV_MAJOR_VERSION == 3
     detected_edges = cv::cvarrToMat(binary_backproject);
-#else
-    detected_edges = cv::Mat(binary_backproject);
 #endif
   }
   // else if ( detection_method == RIDGE_DETECTOR )  // Method adapted for engineering drawings (e.g. watershed functionality could be used here cf.OpenCV documentation and samples)
