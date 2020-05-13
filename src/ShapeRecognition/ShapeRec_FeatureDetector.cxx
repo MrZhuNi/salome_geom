@@ -45,7 +45,7 @@
   Constructor
   \param theFilename - image to process
 */
-ShapeRec_FeatureDetector::ShapeRec_FeatureDetector(): 
+ShapeRec_FeatureDetector::ShapeRec_FeatureDetector():
   corners()
 {
   cornerCount = 2000;
@@ -58,11 +58,11 @@ ShapeRec_FeatureDetector::ShapeRec_FeatureDetector():
 
 /*!
   Sets the path of the image file to be processed
-  \param thePath - Location of the image file 
+  \param thePath - Location of the image file
 */
 void ShapeRec_FeatureDetector::SetPath( const std::string& thePath )
 {
-  imagePath = thePath; 
+  imagePath = thePath;
   if (imagePath != "")
   {
     IplImage* src = cvLoadImage(imagePath.c_str(),CV_LOAD_IMAGE_COLOR);
@@ -82,25 +82,25 @@ void ShapeRec_FeatureDetector::ComputeCorners( bool useROI, ShapeRec_Parameters*
 
   // Images to be used for detection
   IplImage *eig_img, *temp_img, *src_img_gray;
-  
+
   // Load image
   src_img_gray = cvLoadImage (imagePath.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
-  
+
   if ( useROI )
   {
     // If a ROI as been set use it for detection
     cvSetImageROI( src_img_gray, rect );
   }
-  
+
   eig_img = cvCreateImage (cvGetSize (src_img_gray), IPL_DEPTH_32F, 1);
   temp_img = cvCreateImage (cvGetSize (src_img_gray), IPL_DEPTH_32F, 1);
   corners = (CvPoint2D32f *) cvAlloc (cornerCount * sizeof (CvPoint2D32f));
-  
+
   // image height and width
   imgHeight = src_img_gray->height;
   imgWidth  = src_img_gray->width;
 
-  // Corner detection using cvCornerMinEigenVal 
+  // Corner detection using cvCornerMinEigenVal
   // (one of the methods available inOpenCV, there is also a cvConerHarris method that can be used by setting a flag in cvGoodFeaturesToTrack)
   cvGoodFeaturesToTrack (src_img_gray, eig_img, temp_img, corners, &cornerCount, aCornersParameters->qualityLevel, aCornersParameters->minDistance);
   cvFindCornerSubPix (src_img_gray, corners, cornerCount, cvSize (aCornersParameters->kernelSize, aCornersParameters->kernelSize), cvSize (-1, -1),
@@ -116,18 +116,18 @@ void ShapeRec_FeatureDetector::ComputeCorners( bool useROI, ShapeRec_Parameters*
   Computes the contours of the image located at imagePath
 */
 bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters* parameters )
-{ 
+{
   // Initialising images
   cv::Mat src, src_gray;
   cv::Mat detected_edges;
-  
+
   // Read image
   src = cv::imread( imagePath.c_str() );
   if( !src.data )
-    return false; 
-  
+    return false;
+
   if ( !useROI )   // CANNY: The problem is that with that filter the detector detects double contours
-  {   
+  {
     // Convert the image to grayscale
     if (src.channels() == 3)
       cv::cvtColor( src, src_gray, CV_BGR2GRAY );
@@ -137,7 +137,7 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
     ShapeRec_CannyParameters* aCannyParameters = dynamic_cast<ShapeRec_CannyParameters*>( parameters );
     if ( !aCannyParameters ) aCannyParameters = new ShapeRec_CannyParameters();
 
-    // Reduce noise              
+    // Reduce noise
     blur( src_gray, detected_edges, cv::Size( aCannyParameters->kernelSize, aCannyParameters->kernelSize ) );
     // Canny detector
     Canny( detected_edges, detected_edges, aCannyParameters->lowThreshold, aCannyParameters->lowThreshold * aCannyParameters->ratio,
@@ -153,7 +153,7 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
 
     // Reduce noise
     cvSmooth( input_image, input_image, CV_GAUSSIAN, aColorFilterParameters->smoothSize, aColorFilterParameters->smoothSize );
-  
+
     // Crop the image to the selected part only (sample_image)
     cvSetImageROI(input_image, rect);
     IplImage* sample_image = cvCreateImage(cvGetSize(input_image),
@@ -161,7 +161,7 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
                                            input_image->nChannels);
     cvCopy(input_image, sample_image, NULL);
     cvResetImageROI(input_image);
-  
+
     IplImage* sample_hsv = cvCreateImage( cvGetSize(sample_image),8,3 );
     IplImage* sample_h_plane  = cvCreateImage( cvGetSize(sample_image), 8, 1 );
     IplImage* sample_s_plane = cvCreateImage( cvGetSize(sample_image), 8, 1 );
@@ -171,22 +171,23 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
   
     cvCvtPixToPlane(sample_hsv, sample_h_plane, sample_s_plane, 0, 0);
     IplImage* sample_planes[] = { sample_h_plane, sample_s_plane };
-  
+
     // Create the hue / saturation histogram of the SAMPLE image.
     // This histogramm will be representative of what is the zone
-    // we want to find the frontier of. Indeed, the sample image is meant to 
+    // we want to find the frontier of. Indeed, the sample image is meant to
     // be representative of this zone
     float hranges[] = { 0, 180 };
     float sranges[] = { 0, 256 };
     float* ranges[] = { hranges, sranges };
+
     sample_hist = cvCreateHist( 2, aColorFilterParameters->histSize, aColorFilterParameters->histType, ranges );
-  
+
     //calculate hue /saturation histogram
     cvCalcHist(sample_planes, sample_hist, 0 ,0);
 
 //   // TEST print of the histogram for debugging
 //   IplImage* hist_image = cvCreateImage(cvSize(320,300),8,3);
-//   
+//
 //   //draw hist on hist_test image.
 //   cvZero(hist_image);
 //   float max_value = 0;
@@ -203,32 +204,32 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
 //     cvPoint((i+1)*bin_w,hist_image->height - val),
 //     color, -1, 8, 0 );
 //   }
-//  
-//    
+//
+//
 //   cvNamedWindow("hist", 1); cvShowImage("hist",hist_image);
-  
-  
+
+
     // Calculate the back projection of hue and saturation planes of the INPUT image
     // by mean of the histogram of the SAMPLE image.
     //
     // The pixels which (h,s) coordinates correspond to high values in the histogram
-    // will have high values in the grey image result. It means that a pixel of the INPUT image 
-    // which is more probably in the zone represented by the SAMPLE image, will be whiter 
+    // will have high values in the grey image result. It means that a pixel of the INPUT image
+    // which is more probably in the zone represented by the SAMPLE image, will be whiter
     // in the back projection.
     IplImage* backproject = cvCreateImage(cvGetSize(input_image), 8, 1);
     IplImage* binary_backproject = cvCreateImage(cvGetSize(input_image), 8, 1);
     IplImage* input_hsv = cvCreateImage(cvGetSize(input_image),8,3);
     IplImage* input_hplane = cvCreateImage(cvGetSize(input_image),8,1);
     IplImage* input_splane = cvCreateImage(cvGetSize(input_image),8,1);
-  
+
     // Get hue and saturation planes of the INPUT image
     cvCvtColor(input_image, input_hsv, CV_BGR2HSV);
     cvCvtPixToPlane(input_hsv, input_hplane, input_splane, 0, 0);
     IplImage* input_planes[] = { input_hplane, input_splane };
-    
+
     // Compute the back projection
     cvCalcBackProject(input_planes, backproject, sample_hist);
-  
+
     // Threshold in order to obtain a binary image
     cvThreshold(backproject, binary_backproject, aColorFilterParameters->threshold, aColorFilterParameters->maxThreshold, CV_THRESH_BINARY);
     cvReleaseImage(&sample_image);
@@ -258,7 +259,7 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
   findContours( detected_edges, contours, hierarchy, CV_RETR_CCOMP, parameters->findContoursMethod);
 
   return true;
-  
+
 }
 
 /*!
@@ -268,18 +269,18 @@ bool ShapeRec_FeatureDetector::ComputeLines(){
   MESSAGE("ShapeRec_FeatureDetector::ComputeLines()")
   // Initialising images
   cv::Mat src, src_gray, detected_edges, dst;
-  
+
   src=cv::imread(imagePath.c_str(), 0);
-  
+
   Canny( src, dst, 50, 200, 3 );
   HoughLinesP( dst, lines, 1, CV_PI/180, 80, 30, 10 );
   return true;
-  
+
 }
 
 /*!
   Stores a region of interest given by user in rect
-  \param theRect - Region Of Interest of the image located at imagePath 
+  \param theRect - Region Of Interest of the image located at imagePath
 */
 void ShapeRec_FeatureDetector::SetROI( const QRect& theRect )
 {
@@ -291,30 +292,32 @@ void ShapeRec_FeatureDetector::SetROI( const QRect& theRect )
 /*!
   Crops the image located at imagePath to the region of interest given by the user via SetROI
   and stores the result in /tmp
-  \param theRect - Region Of Interest of the image located at imagePath 
+  \param theRect - Region Of Interest of the image located at imagePath
 */
 std::string ShapeRec_FeatureDetector::CroppImage()
 {
+#if 0
   IplImage* src = cvLoadImage(imagePath.c_str(),CV_LOAD_IMAGE_COLOR);
- 
+
   cvSetImageROI(src, rect);
   IplImage* cropped_image = cvCreateImage(cvGetSize(src),
                                           src->depth,
                                           src->nChannels);
   cvCopy(src, cropped_image, NULL);
   cvResetImageROI(src);
-  
+
   cvSaveImage ("/tmp/cropped_image.bmp", cropped_image);
-  
+
   cvReleaseImage(&src);
   cvReleaseImage(&cropped_image);
-  
+
   return "/tmp/cropped_image.bmp";
+#endif
 }
 
 /*!
   \class ShapeRec_CornersParameters
-  \brief Parameters for the corners detection 
+  \brief Parameters for the corners detection
 */
 ShapeRec_CornersParameters::ShapeRec_CornersParameters()
 {
@@ -330,7 +333,7 @@ ShapeRec_CornersParameters::~ShapeRec_CornersParameters()
 
 /*!
   \class ShapeRec_Parameters
-  \brief Parameters for the contour/corners detection 
+  \brief Parameters for the contour/corners detection
 */
 ShapeRec_Parameters::ShapeRec_Parameters()
 {
@@ -343,7 +346,7 @@ ShapeRec_Parameters::~ShapeRec_Parameters()
 
 /*!
   \class ShapeRec_CannyParameters
-  \brief Parameters for the contour detection 
+  \brief Parameters for the contour detection
 */
 ShapeRec_CannyParameters::ShapeRec_CannyParameters()
 {
@@ -358,7 +361,7 @@ ShapeRec_CannyParameters::~ShapeRec_CannyParameters()
 
 /*!
   \class ShapeRec_ColorFilterParameters
-  \brief Parameters for the contour detection 
+  \brief Parameters for the contour detection
 */
 ShapeRec_ColorFilterParameters::ShapeRec_ColorFilterParameters()
 {

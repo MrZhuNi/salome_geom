@@ -82,7 +82,7 @@ class GEOM_SHAPEREC_EXPORT ShapeRec_CannyParameters : public ShapeRec_Parameters
 public:
   ShapeRec_CannyParameters();
   virtual ~ShapeRec_CannyParameters();
-  
+
   int lowThreshold;
   int ratio;
   bool L2gradient;
@@ -104,12 +104,12 @@ public:
 class GEOM_SHAPEREC_EXPORT ShapeRec_FeatureDetector
 {
 public:
-  
+
   typedef std::vector<cv::Point>               CvContour;
   typedef std::vector<std::vector<cv::Point> > CvContoursArray;
-  
+
   ShapeRec_FeatureDetector();                                            // Constructor
-  
+
   void                    SetPath( const std::string& );                 // Sets the image path
   void                    SetROI( const QRect& );                        // Sets a Region Of Interest in the image
   CvPoint2D32f*           GetCorners()           { return corners;     };
@@ -119,23 +119,23 @@ public:
   int                     GetCornerCount()       { return cornerCount; };
   int                     GetImgHeight()         { return imgHeight;   };
   int                     GetImgWidth()          { return imgWidth;    };
-  
+
   std::string             CroppImage();
   void                    ComputeCorners( bool useROI = false, ShapeRec_Parameters* parameters = 0 );  // Detects the corners from the image located at imagePath
   bool                    ComputeLines();                                                              // Detects the lines from the image located at imagePath
   bool                    ComputeContours( bool useROI = false, ShapeRec_Parameters* parameters = 0 ); // Detects the contours from the image located at imagePath
-  
-  
+
+
 private:
   std::string             imagePath;
-  
+
   CvPoint2D32f*           corners;
   int                     cornerCount;
-  
+
   CvContoursArray         contours;
   std::vector<cv::Vec4i>  hierarchy;
   std::vector<cv::Vec4i>  lines;
   int                     imgHeight;
-  int                     imgWidth; 
+  int                     imgWidth;
   CvRect                  rect;
 };
