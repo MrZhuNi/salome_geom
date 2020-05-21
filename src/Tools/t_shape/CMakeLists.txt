@@ -57,3 +57,17 @@ IF(SALOME_BUILD_GUI)
   # to avoid races problems when compiling in parallel
   ADD_DEPENDENCIES(${_target_name_pyuic_py} ${_target_name_pyuic})
 ENDIF()
+
+IF(SALOME_BUILD_TESTS)
+  SET(TEST_HELPER ${KERNEL_ROOT_DIR}/bin/salome/test_helper.py)
+  SALOME_GENERATE_TESTS_ENVIRONMENT(tests_env)
+  ADD_TEST(NAME t_shape_builder
+           COMMAND ${PYTHON_EXECUTABLE} -B ${TEST_HELPER} ${CMAKE_CURRENT_SOURCE_DIR}/test_t_shape_builder.py)
+
+  SET(TEST_INSTALL_DIRECTORY ${SALOME_INSTALL_SCRIPT_SCRIPTS}/test/t_shape)
+  INSTALL(FILES test_t_shape_builder.py DESTINATION ${TEST_INSTALL_DIRECTORY})
+
+  INSTALL(FILES CTestTestfileInstall.cmake
+          DESTINATION ${TEST_INSTALL_DIRECTORY}
+          RENAME CTestTestfile.cmake)
+ENDIF()

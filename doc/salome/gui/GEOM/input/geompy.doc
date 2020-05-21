@@ -16,7 +16,7 @@ linear documentation for geomBuilder.py</a>
 \n
 \anchor tui_sample_geom_script
 <br><h2>GEOM Python script example</h2>
-\tui_script{GEOM_box.py}
+\tui_script{box.py}
 
 \n By the links below you can find sample scripts for all operations
 provided by Geometry module.

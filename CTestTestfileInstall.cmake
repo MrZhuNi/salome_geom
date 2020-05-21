@@ -24,3 +24,4 @@ SET(TIMEOUT        300)
 
 SUBDIRS(examples)
 SUBDIRS(xao)
+SUBDIRS(t_shape)

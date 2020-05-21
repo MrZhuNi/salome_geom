@@ -26,6 +26,7 @@ SET(GOOD_TESTS
   advanced_geom_objs_ex01.py
   advanced_geom_objs_ex02.py
   advanced_geom_objs_ex03.py
+  advanced_geom_objs_smoothingsurface.py
   angle.py
   arranging_study_objects.py
   basic_geom_objs_ex01.py
@@ -51,11 +52,13 @@ SET(GOOD_TESTS
   boolean_operations_ex03.py
   boolean_operations_ex04.py
   bounding_box.py
+  box.py
   building_by_blocks_ex01.py
   building_by_blocks_ex02.py
   center_of_mass.py
   check_compound_of_blocks.py
   check_self_intersections.py
+  check_self_intersections_fast.py
   check_shape.py
   complex_objs_ex01.py
   complex_objs_ex02.py
@@ -69,17 +72,17 @@ SET(GOOD_TESTS
   complex_objs_ex10.py
   complex_objs_ex11.py
   fast_intersection.py
+  field.py
   free_boundaries.py
   free_faces.py
-  GEOM_box.py
   get_non_blocks.py
   import_export.py
   inertia.py
   min_distance.py
   normal_face.py
   notebook_geom.py
-  polyline.py
   point_coordinates.py
+  polyline.py
   primitives_ex01.py
   primitives_ex02.py
   primitives_ex03.py
@@ -106,6 +109,7 @@ SET(GOOD_TESTS
   topological_geom_objs_ex04.py
   topological_geom_objs_ex05.py
   topological_geom_objs_ex06.py
+  topological_geom_objs_ex07.py
   transformation_operations_ex01.py
   transformation_operations_ex02.py
   transformation_operations_ex03.py
@@ -131,8 +135,4 @@ SET(GOOD_TESTS
   working_with_groups_ex04.py
   working_with_groups_ex05.py
   working_with_groups_ex06.py
-  GEOM_Field.py
-  check_self_intersections_fast.py # OCC > 6.9.0
 )
-
-SET(EXAMPLES_TESTS ${BAD_TESTS} ${GOOD_TESTS} testme.py)

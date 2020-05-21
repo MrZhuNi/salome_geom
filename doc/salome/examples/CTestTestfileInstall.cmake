@@ -17,11 +17,13 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
+SET(TESTS_DIR "$ENV{GEOM_ROOT_DIR}/@SALOME_INSTALL_DOC@/examples/GEOM")
+
 INCLUDE(tests.set)
 
 FOREACH(tfile ${GOOD_TESTS})
   GET_FILENAME_COMPONENT(BASE_NAME ${tfile} NAME_WE)
   SET(TEST_NAME GEOM_${BASE_NAME})
-  ADD_TEST(${TEST_NAME} python ${SALOME_TEST_DRIVER} ${TIMEOUT} ${tfile})
+  ADD_TEST(${TEST_NAME} python ${SALOME_TEST_DRIVER} ${TIMEOUT} ${TESTS_DIR}/${tfile})
   SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES LABELS "${COMPONENT_NAME}")
 ENDFOREACH()

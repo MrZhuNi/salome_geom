@@ -114,14 +114,9 @@ SET(_python_VTK_SCRIPTS
 
 # scripts / shared
 
-SET(_shared_SCRIPTS
-  GEOM_shared_modules.py
-  )
-
 # --- rules ---
 
 SALOME_INSTALL_SCRIPTS("${_other_SCRIPTS}" ${SALOME_INSTALL_SCRIPT_DATA} DEF_PERMS)
-SALOME_INSTALL_SCRIPTS("${_shared_SCRIPTS}" ${SALOME_INSTALL_PYTHON_SHARED} DEF_PERMS)
 SALOME_INSTALL_SCRIPTS("${_python_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom DEF_PERMS)
 
 # Install plugin scripts

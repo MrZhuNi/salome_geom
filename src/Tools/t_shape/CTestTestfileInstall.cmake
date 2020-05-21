@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2020  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2015-2020  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,13 +17,11 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-SET(XAO_DATA_FILES
-    Box_1.brep
-    Box_2.brep
-    Cut_2.brep
-    test.xao
-  )
+SET(TESTS test_t_shape_builder.py)
 
-# --- rules ---
-SET(XAO_DATA_DIR ${SALOME_INSTALL_SCRIPT_SCRIPTS}/test/xao/data)
-INSTALL(FILES ${XAO_DATA_FILES} DESTINATION ${XAO_DATA_DIR})
+FOREACH(tfile ${TESTS})
+  GET_FILENAME_COMPONENT(BASE_NAME ${tfile} NAME_WE)
+  SET(TEST_NAME GEOM_${BASE_NAME})
+  ADD_TEST(${TEST_NAME} python ${SALOME_TEST_DRIVER} 1000 ${tfile})
+  SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES LABELS "${COMPONENT_NAME}")
+ENDFOREACH()
