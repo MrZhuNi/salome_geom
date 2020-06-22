@@ -8,7 +8,6 @@
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
@@ -33,6 +32,7 @@ SET(${PROJECT_NAME_UC}_VERSION
   ${${PROJECT_NAME_UC}_MAJOR_VERSION}.${${PROJECT_NAME_UC}_MINOR_VERSION}.${${PROJECT_NAME_UC}_PATCH_VERSION})
 SET(${PROJECT_NAME_UC}_VERSION_DEV 0)
 
+
 # Common CMake macros
 # ===================
 SET(CONFIGURATION_ROOT_DIR $ENV{CONFIGURATION_ROOT_DIR} CACHE PATH "Path to the Salome CMake configuration files")
@@ -47,7 +47,9 @@ ENDIF()
 # ===========
 SET(KERNEL_ROOT_DIR $ENV{KERNEL_ROOT_DIR} CACHE PATH "Path to the Salome KERNEL")
 IF(EXISTS ${KERNEL_ROOT_DIR})
+  #FIND_PACKAGE(SalomeLibXml2 REQUIRED)
   FIND_PACKAGE(SalomeKERNEL REQUIRED)
+  #FIND_PACKAGE(SalomeLibXml2 REQUIRED)
   KERNEL_WITH_CORBA() #check whether KERNEL built with CORBA
   ADD_DEFINITIONS(${KERNEL_DEFINITIONS})
   INCLUDE_DIRECTORIES(${KERNEL_INCLUDE_DIRS})
@@ -85,6 +87,7 @@ MARK_AS_ADVANCED(SALOME_BUILD_GUI SALOME_GEOM_USE_OPENCV SALOME_GEOM_USE_VTK)
 ##
 
 # Various
+#FIND_PACKAGE(SalomeLibXml2 REQUIRED)
 FIND_PACKAGE(SalomePythonInterp REQUIRED)
 FIND_PACKAGE(SalomePythonLibs REQUIRED)
 FIND_PACKAGE(SalomePThread REQUIRED)
@@ -92,6 +95,7 @@ FIND_PACKAGE(SalomeSWIG REQUIRED)
 FIND_PACKAGE(SalomeBoost REQUIRED)
 FIND_PACKAGE(SalomeOmniORB REQUIRED)
 FIND_PACKAGE(SalomeOmniORBPy REQUIRED)
+MESSAGE("!!!!RNV CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}")
 FIND_PACKAGE(SalomeLibXml2 REQUIRED)
 FIND_PACKAGE(SalomeHDF5 REQUIRED COMPONENTS C)
 
