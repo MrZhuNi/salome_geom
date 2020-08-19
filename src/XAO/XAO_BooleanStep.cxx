@@ -57,7 +57,6 @@ std::vector<bool> BooleanStep::getValues()
 }
 
 std::vector<bool> BooleanStep::getElement(const int& element)
-throw (XAO_Exception)
 {
     checkElementIndex(element);
 
@@ -66,7 +65,6 @@ throw (XAO_Exception)
 }
 
 std::vector<bool> BooleanStep::getComponent(const int& component)
-throw (XAO_Exception)
 {
     checkComponentIndex(component);
 
@@ -84,7 +82,6 @@ throw (XAO_Exception)
 }
 
 const bool BooleanStep::getValue(const int& element, const int& component)
-throw (XAO_Exception)
 {
     checkElementIndex(element);
     checkComponentIndex(component);
@@ -93,13 +90,11 @@ throw (XAO_Exception)
 }
 
 const std::string BooleanStep::getStringValue(const int& element, const int& component)
-throw (XAO_Exception)
 {
     return XaoUtils::booleanToString(getValue(element, component));
 }
 
 void BooleanStep::setValues(const std::vector<bool>& values)
-throw (XAO_Exception)
 {
     checkNbValues((int)values.size());
 
@@ -113,7 +108,6 @@ throw (XAO_Exception)
 }
 
 void BooleanStep::setElement(const int& element, const std::vector<bool>& elements)
-throw (XAO_Exception)
 {
     checkElementIndex(element);
     checkNbComponents(elements.size());
@@ -123,7 +117,6 @@ throw (XAO_Exception)
 }
 
 void BooleanStep::setComponent(const int& component, const std::vector<bool>& components)
-throw (XAO_Exception)
 {
     checkComponentIndex(component);
     checkNbElements(components.size());
@@ -133,7 +126,6 @@ throw (XAO_Exception)
 }
 
 void BooleanStep::setValue(const int& element, const int& component, const bool& value)
-throw (XAO_Exception)
 {
     checkElementIndex(element);
     checkComponentIndex(component);
@@ -142,7 +134,6 @@ throw (XAO_Exception)
 }
 
 void BooleanStep::setStringValue(const int& element, const int& component, const std::string& value)
-throw (XAO_Exception)
 {
     setValue(element, component, XaoUtils::stringToBoolean(value));
 }

@@ -25,7 +25,6 @@ using namespace XAO;
 
 
 Group::Group(const XAO::Dimension& dim, const int& nbElements, const std::string& name)
-throw (XAO_Exception)
 {
     if (dim == XAO::WHOLE)
         throw XAO_Exception("Dimension WHOLE is not valid for group.");
@@ -41,7 +40,6 @@ Group::~Group()
 }
 
 void Group::checkIndex(const int& element)
-throw (XAO_Exception)
 {
   if (element < (int)m_elements.size() && element >= 0)
         return;

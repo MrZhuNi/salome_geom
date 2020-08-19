@@ -212,7 +212,7 @@ bool GEOM_Gen_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
 SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::SObject_ptr theSObject,
                                                  CORBA::Object_ptr     theObject,
                                                  const char*           theName)
-  throw (SALOME::SALOME_Exception)
+  
 {
   Unexpect aCatch(SALOME_SalomeException);
   SALOMEDS::SObject_var aResultSO;
@@ -2237,7 +2237,6 @@ void GEOM_Gen_i::Redo()
 // purpose  :
 //============================================================================
 GEOM::GEOM_IBasicOperations_ptr GEOM_Gen_i::GetIBasicOperations()
-     throw ( SALOME::SALOME_Exception )
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIBasicOperations" );
@@ -2259,7 +2258,6 @@ GEOM::GEOM_IBasicOperations_ptr GEOM_Gen_i::GetIBasicOperations()
 // purpose  :
 //============================================================================
 GEOM::GEOM_ITransformOperations_ptr GEOM_Gen_i::GetITransformOperations()
-     throw ( SALOME::SALOME_Exception )
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetITransformOperations" );
@@ -2279,7 +2277,7 @@ GEOM::GEOM_ITransformOperations_ptr GEOM_Gen_i::GetITransformOperations()
 // purpose  :
 //============================================================================
 GEOM::GEOM_I3DPrimOperations_ptr GEOM_Gen_i::GetI3DPrimOperations()
-     throw ( SALOME::SALOME_Exception )
+     
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetI3DPrimOperations" );
@@ -2300,7 +2298,7 @@ GEOM::GEOM_I3DPrimOperations_ptr GEOM_Gen_i::GetI3DPrimOperations()
 // purpose  :
 //============================================================================
 GEOM::GEOM_IShapesOperations_ptr GEOM_Gen_i::GetIShapesOperations()
-     throw ( SALOME::SALOME_Exception )
+     
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIShapesOperations" );
@@ -2320,7 +2318,7 @@ GEOM::GEOM_IShapesOperations_ptr GEOM_Gen_i::GetIShapesOperations()
 // purpose  :
 //============================================================================
 GEOM::GEOM_IBlocksOperations_ptr GEOM_Gen_i::GetIBlocksOperations()
-     throw ( SALOME::SALOME_Exception )
+     
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIBlocksOperations" );
@@ -2340,7 +2338,7 @@ GEOM::GEOM_IBlocksOperations_ptr GEOM_Gen_i::GetIBlocksOperations()
 // purpose  :
 //============================================================================
 GEOM::GEOM_IBooleanOperations_ptr GEOM_Gen_i::GetIBooleanOperations()
-     throw ( SALOME::SALOME_Exception )
+     
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIBooleanOperations" );
@@ -2360,7 +2358,7 @@ GEOM::GEOM_IBooleanOperations_ptr GEOM_Gen_i::GetIBooleanOperations()
 // purpose  :
 //============================================================================
 GEOM::GEOM_ICurvesOperations_ptr GEOM_Gen_i::GetICurvesOperations()
-     throw ( SALOME::SALOME_Exception )
+     
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetICurvesOperations" );
@@ -2380,7 +2378,7 @@ GEOM::GEOM_ICurvesOperations_ptr GEOM_Gen_i::GetICurvesOperations()
 // purpose  :
 //============================================================================
 GEOM::GEOM_ILocalOperations_ptr GEOM_Gen_i::GetILocalOperations()
-     throw ( SALOME::SALOME_Exception )
+     
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetILocalOperations" );
@@ -2400,7 +2398,7 @@ GEOM::GEOM_ILocalOperations_ptr GEOM_Gen_i::GetILocalOperations()
 // purpose  :
 //============================================================================
 GEOM::GEOM_IHealingOperations_ptr GEOM_Gen_i::GetIHealingOperations()
-     throw ( SALOME::SALOME_Exception )
+     
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::IHealingOperations" );
@@ -2420,7 +2418,7 @@ GEOM::GEOM_IHealingOperations_ptr GEOM_Gen_i::GetIHealingOperations()
 // purpose  :
 //============================================================================
 GEOM::GEOM_IInsertOperations_ptr GEOM_Gen_i::GetIInsertOperations()
-     throw ( SALOME::SALOME_Exception )
+     
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIInsertOperations" );
@@ -2440,7 +2438,7 @@ GEOM::GEOM_IInsertOperations_ptr GEOM_Gen_i::GetIInsertOperations()
 // purpose  :
 //============================================================================
 GEOM::GEOM_IMeasureOperations_ptr GEOM_Gen_i::GetIMeasureOperations()
-     throw ( SALOME::SALOME_Exception )
+     
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIMeasureOperations" );
@@ -2460,7 +2458,7 @@ GEOM::GEOM_IMeasureOperations_ptr GEOM_Gen_i::GetIMeasureOperations()
 // purpose  :
 //============================================================================
 GEOM::GEOM_IGroupOperations_ptr GEOM_Gen_i::GetIGroupOperations()
-     throw ( SALOME::SALOME_Exception )
+     
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIGroupOperations" );
@@ -2480,7 +2478,7 @@ GEOM::GEOM_IGroupOperations_ptr GEOM_Gen_i::GetIGroupOperations()
 // purpose  :
 //============================================================================
 GEOM::GEOM_IFieldOperations_ptr GEOM_Gen_i::GetIFieldOperations()
-     throw ( SALOME::SALOME_Exception )
+     
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetIFieldOperations" );
@@ -2500,7 +2498,7 @@ GEOM::GEOM_IFieldOperations_ptr GEOM_Gen_i::GetIFieldOperations()
 // purpose  :
 //============================================================================
 GEOM::GEOM_IOperations_ptr GEOM_Gen_i::GetPluginOperations(const char* theLibName)
-     throw ( SALOME::SALOME_Exception )
+     
 {
   Unexpect aCatch(SALOME_SalomeException);
   MESSAGE( "GEOM_Gen_i::GetPluginOperations" );

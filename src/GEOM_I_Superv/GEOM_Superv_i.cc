@@ -523,7 +523,7 @@ CORBA::Boolean GEOM_Superv_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
 //============================================================================
 SALOMEDS::SObject_ptr GEOM_Superv_i::PublishInStudy(SALOMEDS::SObject_ptr theSObject,
                                                     CORBA::Object_ptr theObject,
-                                                    const char* theName) throw (SALOME::SALOME_Exception)
+                                                    const char* theName) 
 {
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();

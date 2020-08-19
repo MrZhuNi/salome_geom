@@ -35,7 +35,6 @@ const std::string XaoUtils::intToString(const int& value)
 }
 
 const int XaoUtils::stringToInt(const std::string& value)
-throw(XAO_Exception)
 {
     int res;
     std::istringstream convert(value);
@@ -52,7 +51,6 @@ const std::string XaoUtils::doubleToString(const double& value)
 }
 
 const double XaoUtils::stringToDouble(const std::string& value)
-throw(XAO_Exception)
 {
     double res;
     std::istringstream convert(value);
@@ -69,7 +67,6 @@ const std::string XaoUtils::booleanToString(const bool& value)
 }
 
 const bool XaoUtils::stringToBoolean(const std::string& value)
-throw(XAO_Exception)
 {
     if (value == "true" || value == "1")
         return true;
@@ -80,7 +77,6 @@ throw(XAO_Exception)
 }
 
 const std::string XaoUtils::dimensionToString(const XAO::Dimension& dimension)
-throw(XAO_Exception)
 {
     if (dimension == XAO::VERTEX)
         return "vertex";
@@ -97,7 +93,6 @@ throw(XAO_Exception)
 }
 
 const XAO::Dimension XaoUtils::stringToDimension(const std::string& dimension)
-throw(XAO_Exception)
 {
     if (dimension == "vertex")
         return XAO::VERTEX;
@@ -114,7 +109,6 @@ throw(XAO_Exception)
 }
 
 const std::string XaoUtils::fieldTypeToString(const XAO::Type& type)
-throw(XAO_Exception)
 {
     if (type ==XAO:: BOOLEAN)
         return "boolean";
@@ -129,7 +123,6 @@ throw(XAO_Exception)
 }
 
 const XAO::Type XaoUtils::stringToFieldType(const std::string& type)
-throw(XAO_Exception)
 {
     if (type == "boolean")
         return XAO::BOOLEAN;
@@ -144,7 +137,6 @@ throw(XAO_Exception)
 }
 
 const std::string XaoUtils::shapeFormatToString(const XAO::Format& format)
-throw(XAO_Exception)
 {
     if (format == XAO::BREP)
         return "BREP";
@@ -155,7 +147,6 @@ throw(XAO_Exception)
 }
 
 const XAO::Format XaoUtils::stringToShapeFormat(const std::string& format)
-throw(XAO_Exception)
 {
     if (format == "BREP")
         return XAO::BREP;
