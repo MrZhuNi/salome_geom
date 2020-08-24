@@ -39,7 +39,6 @@
 #include <ShHealOper_ShapeProcess.hxx>
 //#include <GEOMAlgo_Gluer.hxx>
 #include <BlockFix_BlockFixAPI.hxx>
-#include <BlockFix_UnionFaces.hxx>
 
 #include "utilities.h"
 
@@ -62,6 +61,7 @@
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepExtrema_ExtPF.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
+#include <ShapeUpgrade_UnifySameDomain.hxx>
 
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
@@ -734,7 +734,9 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(Handle(TFunction_Logbook)& log) c
       // Glue faces of the multi-block
       aShape = GEOMImpl_GlueDriver::GlueFaces(aMulti, aTol, Standard_False);
 
-    } else if (aType == BLOCK_UNION_FACES) {
+    }
+    else if (aType == BLOCK_UNION_FACES)
+    {
       GEOMImpl_IBlockTrsf aCI (aFunction);
       Handle(GEOM_Function) aRefShape = aCI.GetOriginal();
       TopoDS_Shape aBlockOrComp = aRefShape->GetValue();
@@ -742,11 +744,17 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(Handle(TFunction_Logbook)& log) c
         Standard_NullObject::Raise("Null Shape given");
       }
 
-      BlockFix_UnionFaces aFaceUnifier;
-  
-      aFaceUnifier.GetOptimumNbFaces() = 0; // To force union faces.
-      aShape = aFaceUnifier.Perform(aBlockOrComp);
-    } else { // unknown function type
+      Standard_Boolean isUnifyEdges = Standard_False;
+      Standard_Boolean isUnifyFaces = Standard_True;
+      Standard_Boolean isConcatBSplines = Standard_True;
+      ShapeUpgrade_UnifySameDomain aUnifier (aBlockOrComp,
+                                             isUnifyEdges, isUnifyFaces, isConcatBSplines);
+      aUnifier.SetLinearTolerance(Precision::Confusion());
+      aUnifier.SetAngularTolerance(Precision::Confusion());
+      aUnifier.Build();
+      aShape = aUnifier.Shape();
+    }
+    else { // unknown function type
       return 0;
     }
   }

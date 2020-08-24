@@ -27,8 +27,6 @@
 
 class TopoDS_Shape;
 class BlockFix_SphereSpaceModifier;
-class BlockFix_UnionFaces;
-class BlockFix_UnionEdges;
 class BlockFix_BlockFixAPI;
 class BlockFix_PeriodicSurfaceModifier;
 class BlockFix_CheckTool;
@@ -46,8 +44,6 @@ public:
 private:
 
 friend class BlockFix_SphereSpaceModifier;
-friend class BlockFix_UnionFaces;
-friend class BlockFix_UnionEdges;
 friend class BlockFix_BlockFixAPI;
 friend class BlockFix_PeriodicSurfaceModifier;
 friend class BlockFix_CheckTool;

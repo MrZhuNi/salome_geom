@@ -27,10 +27,9 @@
 #include <BlockFix_BlockFixAPI.hxx>
 
 #include <BlockFix.hxx>
-#include <BlockFix_UnionFaces.hxx>
-#include <BlockFix_UnionEdges.hxx>
 
 #include <ShapeUpgrade_RemoveLocations.hxx>
+#include <ShapeUpgrade_UnifySameDomain.hxx>
 
 #include <Precision.hxx>
 
@@ -67,10 +66,21 @@ void BlockFix_BlockFixAPI::Perform()
   myShape = BlockFix::RefillProblemFaces(myShape);
 
   // faces unification
-  BlockFix_UnionFaces aFaceUnifier;
-  aFaceUnifier.GetTolerance() = myTolerance;
-  aFaceUnifier.GetOptimumNbFaces() = myOptimumNbFaces;
-  TopoDS_Shape aResult = aFaceUnifier.Perform(myShape);
+  ShapeUpgrade_UnifySameDomain Unifier;
+  TopoDS_Shape aResult = myShape;
+  if (myOptimumNbFaces != -1)
+  {
+    //only faces
+    Standard_Boolean isUnifyEdges = Standard_False;
+    Standard_Boolean isUnifyFaces = Standard_True;
+    Standard_Boolean isConcatBSplines = Standard_True;
+    Unifier.Initialize(myShape, isUnifyEdges, isUnifyFaces, isConcatBSplines);
+    //Unifier.SetLinearTolerance(myTolerance);
+    Unifier.SetLinearTolerance(Precision::Confusion());
+    Unifier.SetAngularTolerance(Precision::Confusion());
+    Unifier.Build();
+    aResult = Unifier.Shape();
+  }
 
   // avoid problem with degenerated edges appearance
   // due to shape quality regress
@@ -79,8 +89,13 @@ void BlockFix_BlockFixAPI::Perform()
   aResult = RemLoc.GetResult();
 
   // edges unification
-  BlockFix_UnionEdges anEdgeUnifier;
-  myShape = anEdgeUnifier.Perform(aResult,myTolerance);
+  Standard_Boolean isUnifyEdges = Standard_True;
+  Standard_Boolean isUnifyFaces = Standard_False; //only edges
+  Standard_Boolean isConcatBSplines = Standard_True;
+  Unifier.Initialize(aResult, isUnifyEdges, isUnifyFaces, isConcatBSplines);
+  Unifier.SetLinearTolerance(myTolerance);
+  Unifier.Build();
+  myShape = Unifier.Shape();
 
   TopoDS_Shape aRes = BlockFix::FixRanges(myShape,myTolerance);
   myShape = aRes;

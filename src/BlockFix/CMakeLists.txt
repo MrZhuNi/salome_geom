@@ -47,8 +47,6 @@ SET(BlockFix_HEADERS
   BlockFix_CheckTool.hxx
   BlockFix_PeriodicSurfaceModifier.hxx
   BlockFix_SphereSpaceModifier.hxx
-  BlockFix_UnionEdges.hxx
-  BlockFix_UnionFaces.hxx
   )
 
 # --- sources ---
@@ -59,8 +57,6 @@ SET(BlockFix_SOURCES
   BlockFix.cxx
   BlockFix_PeriodicSurfaceModifier.cxx
   BlockFix_SphereSpaceModifier.cxx
-  BlockFix_UnionEdges.cxx
-  BlockFix_UnionFaces.cxx
   )
 
 # --- rules ---
