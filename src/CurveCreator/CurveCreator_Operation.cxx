@@ -23,6 +23,9 @@
 #include "CurveCreator_Operation.hxx"
 #include "CurveCreator_Curve.hxx"
 #include "CurveCreator.hxx"
+#include "CurveCreator_Section.hxx"
+#include "CurveCreator_Utils.hxx"
+#include <QColor>
 
 #include <string>
 #include <stdlib.h>
@@ -113,6 +116,28 @@ bool CurveCreator_Operation::init(const CurveCreator_Operation::Type theType,
 
   return isOK;
 }
+
+bool CurveCreator_Operation::init(const CurveCreator_Operation::Type theType,
+                                  const int theIntParam1,
+                                  const int theIntParam2[3])
+{
+  bool isOK = false;
+
+  if (theType == CurveCreator_Operation::SetColorSection)
+  {
+    int *pData = (int *)allocate(4*sizeof(int));
+
+    pData[0] = theIntParam1;
+    pData[1] = theIntParam2[0];
+    pData[2] = theIntParam2[1];
+    pData[3] = theIntParam2[2];
+    myType   = theType;
+    isOK     = true;
+  }
+
+  return isOK;
+}
+
 
 //=======================================================================
 // function: Constructor
@@ -414,7 +439,9 @@ void CurveCreator_Operation::apply(CurveCreator_Curve *theCurve)
           char* aPtr =  ((char*)&pInt[2]);
           aPtr += (aName.length()) + 1;
           getCoords((int*)aPtr, aCoords);
-          theCurve->addSectionInternal(aName, aType, (pInt[1] != 0), aCoords);
+          Quantity_Color aLastColor = theCurve->getLastRemovedColor();
+          theCurve->popLastRemovedColor();
+          theCurve->addSectionInternal(aName, aType, (pInt[1] != 0), aCoords, aLastColor);
         }
         break;
       case CurveCreator_Operation::RemoveSection:
@@ -424,6 +451,13 @@ void CurveCreator_Operation::apply(CurveCreator_Curve *theCurve)
         {
             std::string aName = std::string((char*)&pInt[1]);
             theCurve->setSectionNameInternal(pInt[0], aName);
+        }
+        break;
+      case CurveCreator_Operation::SetColorSection:
+        {
+          Quantity_Color aColor = CurveCreator_Utils::colorConv(QColor(pInt[1], pInt[2], pInt[3]));
+          theCurve->setColorSectionInternal(pInt[0], aColor);
+          //theCurve->redisplayCurve(false);
         }
         break;
       default:

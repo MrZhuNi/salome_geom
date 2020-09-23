@@ -26,10 +26,17 @@
 #include "CurveCreator_UtilsICurve.hxx"
 #include "CurveCreator_TableView.h"
 
+#include "CurveCreator_Curve.hxx"
+#include "CurveCreator_Section.hxx"
+#include <QColorDialog>
+
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_ViewManager.h>
+
+#include <TopExp_Explorer.hxx>
+#include "CurveCreator_ShapeFilter.hxx"
 
 #include <OCCViewer_ViewManager.h>
 #include <OCCViewer_ViewPort3d.h>
@@ -97,7 +104,10 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
 
   QGroupBox* aSectionGroup = new QGroupBox(tr("SECTION_GROUP_TITLE"),this);
 
-  mySectionView = new CurveCreator_TreeView(myCurve, aSectionGroup);
+
+  bool toDrawSectColor = !(theActionFlags & DisableSetColor);
+
+  mySectionView = new CurveCreator_TreeView(myCurve, aSectionGroup, toDrawSectColor);
   mySectionView->setSelectionMode( QTreeView::ExtendedSelection );
   connect( mySectionView, SIGNAL(selectionChanged()), this, SLOT( onSelectionChanged() ) );
   connect( mySectionView, SIGNAL(sectionEntered(int)), this, SLOT(onEditSection(int)) );
@@ -124,6 +134,7 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
   QPixmap aBringTogetherPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_BRING_TOGETHER")));
   QPixmap aStepUpPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_ARROW_UP")));
   QPixmap aStepDownPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_ARROW_DOWN")));
+  QPixmap aSetColorPixmap(aResMgr->loadPixmap("GEOM", tr("ICON_CC_SETCOLOR")));
 
   QAction* anAct = createAction( UNDO_ID, tr("UNDO"), anUndoPixmap, tr("UNDO_TLT"), 
                                  QKeySequence(Qt::ControlModifier|Qt::Key_Z) );
@@ -191,6 +202,13 @@ CurveCreator_Widget::CurveCreator_Widget(QWidget* parent,
                         QKeySequence(Qt::ControlModifier|Qt::Key_Delete ) );
   connect(anAct, SIGNAL(triggered()), this, SLOT(onRemove()) );
   aTB->addAction(anAct);
+
+  anAct = createAction( SETCOLOR_ID, tr("SETCOLOR"), aSetColorPixmap, tr("SETCOLOR_TLT"), 
+                        QKeySequence(Qt::ControlModifier|Qt::Key_C ) );
+  connect(anAct, SIGNAL(triggered()), this, SLOT(onSetColor()) );
+
+  if ( !(theActionFlags & DisableSetColor) )
+    aTB->addAction(anAct);
   
   anAct = createAction( JOIN_ID, tr("JOIN"), aJoinPixmap, tr("JOIN_TLT"), 
                         QKeySequence(Qt::ControlModifier|Qt::Key_Plus ) );
@@ -349,6 +367,11 @@ void CurveCreator_Widget::onSelectionChanged()
   updateActionsStates();
   updateUndoRedo();
   emit selectionChanged();
+  QList<int> selectedSections = mySectionView->getSelectedSections();
+  CurveCreator_Curve* Curve =  ((CurveCreator_Curve*)myCurve);
+  Curve->myCurSectInd.clear();
+  foreach (int sectInd, selectedSections)
+    Curve->myCurSectInd.push_back(sectInd);
 }
 
 void CurveCreator_Widget::updateActionsStates()
@@ -359,6 +382,8 @@ void CurveCreator_Widget::updateActionsStates()
     if ( removeEnabled() )
       anEnabledAct << REMOVE_ID;
     QList<int> aSelSections = mySectionView->getSelectedSections();
+    if (aSelSections.size() == 1)
+      anEnabledAct << SETCOLOR_ID;
     CurveCreator_TreeView::SelectionType aSelType = mySectionView->getSelectionType();
     switch( aSelType ){
     case CurveCreator_TreeView::ST_NOSEL:{
@@ -684,6 +709,31 @@ void CurveCreator_Widget::onRemove()
       break;
   }
 }
+
+void CurveCreator_Widget::onSetColor()
+{
+  if( !myCurve )
+    return;
+
+  QList<int> aSections = mySectionView->getSelectedSections();
+  if (aSections.size() != 1)
+    return;
+
+  int aSectNum = aSections[0];  
+  Quantity_Color aColor = ((CurveCreator_Curve*)myCurve)->getColorSection( aSectNum );;
+
+  QColor aQColor = CurveCreator_Utils::colorConv(aColor);
+  QColor aNewQColor = QColorDialog::getColor( aQColor, this );
+  if( !aNewQColor.isValid() )
+    return;
+
+  Quantity_Color aNewColor = CurveCreator_Utils::colorConv(aNewQColor);
+
+  ((CurveCreator_Curve*)myCurve)->setColorSection( aSectNum, aNewColor);
+
+  updateUndoRedo();
+}
+
 
 void CurveCreator_Widget::onClearAll()
 {
@@ -1118,6 +1168,28 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
     Handle(V3d_View) aView3d = aView->getViewPort()->getView();
     if ( !aView3d.IsNull() )
     {
+      CurveCreator_Curve* Curve =  ((CurveCreator_Curve*)myCurve);
+      //if (!Curve->myCurSectInd.empty())
+      //{
+        aCtx->RemoveFilters();
+        Handle(CurveCreator_ShapeFilter) filter = new CurveCreator_ShapeFilter();
+        for (int i=0; i<Curve->myCurSectInd.size(); i++)
+        {
+          int sectInd = Curve->myCurSectInd[i];
+          const TopoDS_Shape& W = Curve->mySect2Shape(sectInd+1);
+          TopExp_Explorer exp(W, TopAbs_VERTEX);
+          for (;exp.More();exp.Next())
+            filter->AddShape(exp.Current());    
+        }
+        aCtx->AddFilter(filter);
+        if (aCtx->HasOpenedContext())
+        {
+          Handle(AIS_LocalContext) aLctx = aCtx->LocalContext();
+          aLctx->Filter()->Clear();
+          aLctx->AddFilter(filter);
+        }
+      //}
+
       // Initialize the single selection if start and end points are equal,
       // otherwise a rectangular selection.
       if ( myStartPoint == myEndPoint )

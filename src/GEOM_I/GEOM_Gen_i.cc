@@ -1102,7 +1102,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(GEOM::GEOM_Object_ptr   theObject,
         GEOM::GEOM_Object_var aSubO;
         switch (theFindMethod) {
         case GEOM::FSM_GetInPlace:
-          {
+        {
             // Use GetInPlace
             aSubO = aShapesOp->GetInPlace(theObject, anArgO);
           }

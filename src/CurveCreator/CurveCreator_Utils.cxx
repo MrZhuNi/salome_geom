@@ -299,11 +299,13 @@ TopoDS_Wire CurveCreator_Utils::ConstructWire(
 // purpose  :
 //=======================================================================
 void CurveCreator_Utils::constructShape(
-  const CurveCreator_ICurve* theCurve, TopoDS_Shape& theShape)
+  const CurveCreator_ICurve* theCurve, TopoDS_Shape& theShape, 
+  NCollection_IndexedDataMap<int, TopoDS_Shape>* theSect2Shape )
 {
   BRep_Builder aBuilder;
   TopoDS_Compound aShape;
   aBuilder.MakeCompound(aShape);
+
   const int aSectionCount = theCurve->getNbSections();
   for (int aSectionI = 0; aSectionI < aSectionCount; ++aSectionI)
   {
@@ -318,10 +320,18 @@ void CurveCreator_Utils::constructShape(
     const int aPointCount = aPoints->Length();
     const bool isClosed = theCurve->isClosed(aSectionI);
 
+    TopoDS_Compound ShapeWireWithV;
+    if (theSect2Shape)
+      aBuilder.MakeCompound(ShapeWireWithV);
+
     // Add the vertices to the shape.
     for (Standard_Integer aPN = 1; aPN <= aPointCount; ++aPN)
     {
-      aBuilder.Add(aShape, BRepBuilderAPI_MakeVertex(aPoints->Value(aPN)));
+      TopoDS_Vertex V;
+      aBuilder.MakeVertex(V,aPoints->Value(aPN),Precision::Confusion());
+      aBuilder.Add(aShape, V);
+      if (theSect2Shape)
+        aBuilder.Add(ShapeWireWithV, V);
     }
 
     // Add the wire to the shape.
@@ -331,6 +341,11 @@ void CurveCreator_Utils::constructShape(
     if (!aWire.IsNull())
     {
       aBuilder.Add(aShape, aWire);
+      if (theSect2Shape)
+      {
+        aBuilder.Add(ShapeWireWithV, aWire);
+        (*theSect2Shape).Add(aSectionI, ShapeWireWithV);
+      }
     }
   }
   theShape = aShape;
@@ -348,6 +363,33 @@ struct Section3D
   bool                        myIsBSpline;
   Handle(TColgp_HArray1OfPnt) myPoints;
 };
+
+Quantity_Color CurveCreator_Utils::getRandColor() 
+{
+  float aHue = ( rand()%1000 ) * 0.001f;
+
+  QColor aColor;
+  aColor.setHsl( (int)(aHue*255.), 200, 128 );
+  int r = aColor.red();
+  int g = aColor.green();
+  int b = aColor.blue();
+
+  double r1 = r / 255.0;
+  double g1 = g / 255.0;
+  double b1 = b / 255.0;
+  return Quantity_Color( r1, g1, b1, Quantity_TOC_RGB );
+}
+
+Quantity_Color CurveCreator_Utils::colorConv(QColor color)
+{
+  return  Quantity_Color( color.red() / 255., 
+    color.green() / 255., color.blue() / 255., Quantity_TOC_RGB );
+}
+
+QColor CurveCreator_Utils::colorConv(Quantity_Color color)
+{
+  return QColor( (int)( color.Red() * 255 ), (int)( color.Green() * 255 ), (int)( color.Blue() * 255 ) );
+}
 
 //=======================================================================
 // function : constructCurve
@@ -521,7 +563,7 @@ bool CurveCreator_Utils::constructCurve
       CurveCreator::Spline : CurveCreator::Polyline;
 
     theCurve->addSectionInternal(aSecName, aSecType,
-                                 aSecIt->myIsClosed, aCoords);
+                                 aSecIt->myIsClosed, aCoords, Quantity_NOC_RED);
   }
 
   // Set the local coordinate system.
