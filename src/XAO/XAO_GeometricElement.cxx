@@ -40,7 +40,7 @@ GeometricElement::~GeometricElement()
 {
 }
 
-const bool GeometricElement::hasName()
+bool GeometricElement::hasName()
 {
     return !m_name.empty();
 }
@@ -50,12 +50,12 @@ GeometricElementList::GeometricElementList()
     setSize(0);
 }
 
-GeometricElementList::GeometricElementList(const int& count)
+GeometricElementList::GeometricElementList(int count)
 {
     setSize(count);
 }
 
-void GeometricElementList::setSize(const int& nb)
+void GeometricElementList::setSize(int nb)
 {
     m_count = nb;
     m_elements.clear();
@@ -65,7 +65,7 @@ void GeometricElementList::setSize(const int& nb)
     }
 }
 
-void GeometricElementList::checkElementIndex(const int& index) const
+void GeometricElementList::checkElementIndex(int index) const
 {
     if (m_count >= 0 && index < m_count)
         return;
@@ -74,44 +74,44 @@ void GeometricElementList::checkElementIndex(const int& index) const
                                      << m_count-1 << "]: " << index);
 }
 
-void GeometricElementList::setElement(const int& index, const std::string& name, const std::string& reference)
+void GeometricElementList::setElement(int index, const std::string& name, const std::string& reference)
 {
     checkElementIndex(index);
     m_elements[index].setName(name);
     m_elements[index].setReference(reference);
 }
 
-const std::string GeometricElementList::getName(const int& index)
+const std::string GeometricElementList::getName(int index)
 {
     checkElementIndex(index);
     return m_elements[index].getName();
 }
 
-void GeometricElementList::setName(const int& index, const std::string& name)
+void GeometricElementList::setName(int index, const std::string& name)
 {
     checkElementIndex(index);
     m_elements[index].setName(name);
 }
 
-const bool GeometricElementList::hasName(const int& index)
+bool GeometricElementList::hasName(int index)
 {
     checkElementIndex(index);
     return m_elements[index].hasName();
 }
 
-const std::string GeometricElementList::getReference(const int& index)
+const std::string GeometricElementList::getReference(int index)
 {
     checkElementIndex(index);
     return m_elements[index].getReference();
 }
 
-void GeometricElementList::setReference(const int& index, const std::string& name)
+void GeometricElementList::setReference(int index, const std::string& name)
 {
     checkElementIndex(index);
     m_elements[index].setReference(name);
 }
 
-const int GeometricElementList::getIndexByReference(const std::string& ref)
+int GeometricElementList::getIndexByReference(const std::string& ref)
 {
     for (int index = 0; index < m_count; ++index)
     {

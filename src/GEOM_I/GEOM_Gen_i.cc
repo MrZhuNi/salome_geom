@@ -152,10 +152,10 @@ GEOM_Gen_i::~GEOM_Gen_i() {
 // function : IORToLocalPersistentID()
 // purpose  :
 //============================================================================
-char* GEOM_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
+char* GEOM_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr /*theSObject*/,
                                          const char* IORString,
-                                         CORBA::Boolean isMultiFile,
-                                         CORBA::Boolean isASCII)
+                                         CORBA::Boolean /*isMultiFile*/,
+                                         CORBA::Boolean /*isASCII*/)
 {
   GEOM::GEOM_BaseObject_var anObject =
     GEOM::GEOM_BaseObject::_narrow(_orb->string_to_object(IORString));
@@ -172,10 +172,10 @@ char* GEOM_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
 //          : Used when a study is loaded
 //          : The IOR (IORName) of object created is returned
 //============================================================================
-char* GEOM_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
+char* GEOM_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr /*theSObject*/,
                                          const char* aLocalPersistentID,
-                                         CORBA::Boolean isMultiFile,
-                                         CORBA::Boolean isASCII)
+                                         CORBA::Boolean /*isMultiFile*/,
+                                         CORBA::Boolean /*isASCII*/)
 {
   Handle(::GEOM_BaseObject) anObject =
     _impl->GetObject(aLocalPersistentID);
@@ -440,9 +440,9 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::SObject_ptr theSObjec
 void GEOM_Gen_i::CreateAndPublishGroup(GEOM::GEOM_Object_var theMainShape,
                                        const TopTools_IndexedMapOfShape& anIndices,
                                        const TopTools_SequenceOfShape& SeqS,
-                                       const TColStd_SequenceOfAsciiString& SeqN,
+                                       const TColStd_SequenceOfAsciiString& /*SeqN*/,
                                        const Standard_CString& GrName,
-                                       GEOM::ListOfGO_var aResList)
+                                       GEOM::ListOfGO_var /*aResList*/)
 {
   CORBA::String_var entry = theMainShape->GetEntry();
   //Handle(::GEOM_Object) aMainShape = _impl->GetObject(entry);
@@ -558,7 +558,7 @@ GEOM::ListOfGO* GEOM_Gen_i::
 // function : Save()
 // purpose  : save OCAF/Geom document
 //============================================================================
-SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
+SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr /*theComponent*/,
                                     const char* theURL,
                                     bool isMultiFile) {
   SALOMEDS::TMPFile_var aStreamFile;
@@ -705,7 +705,7 @@ CORBA::Boolean GEOM_Gen_i::LoadASCII(SALOMEDS::SComponent_ptr theComponent,
 // function : Close()
 // purpose  :
 //============================================================================
-void GEOM_Gen_i::Close(SALOMEDS::SComponent_ptr theComponent)
+void GEOM_Gen_i::Close(SALOMEDS::SComponent_ptr /*theComponent*/)
 {
   _impl->Close();
 }
@@ -759,7 +759,7 @@ SALOMEDS::TMPFile* GEOM_Gen_i::CopyFrom(SALOMEDS::SObject_ptr theObject, CORBA::
 // function : CanPaste()
 // purpose  :
 //============================================================================
-CORBA::Boolean GEOM_Gen_i::CanPaste(const char* theComponentName, CORBA::Long theObjectID) {
+CORBA::Boolean GEOM_Gen_i::CanPaste(const char* theComponentName, CORBA::Long /*theObjectID*/) {
   // The Geometry component can paste only objects copied by Geometry component
   // and with the object type = 1
   if (strcmp(theComponentName, ComponentDataType()) != 0) return false;
@@ -784,7 +784,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
   BRep_Builder aBuilder;
   try {
     BRepTools::Read(aTopology, aStreamedBrep, aBuilder);
-  } catch (Standard_Failure) {
+  } catch (Standard_Failure&) {
     return aNewSO._retn();
   }
 
@@ -3228,7 +3228,7 @@ void GEOM_Gen_i::GetEntriesToReduceStudy(GEOM::string_array& theSelectedEntries,
         continue;
 
       stringIOR = handle_object->GetIOR();
-      if ( !stringIOR.Length() > 1 )
+      if ( stringIOR.Length() < 1 )
         continue;
 
       geomObj = GetIORFromString( stringIOR.ToCString() );

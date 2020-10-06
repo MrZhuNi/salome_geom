@@ -23,7 +23,7 @@
 
 using namespace XAO;
 
-IntegerStep::IntegerStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
+IntegerStep::IntegerStep(int step, int stamp, int nbElements, int nbComponents)
 {
     m_nbElements = nbElements;
     m_nbComponents = nbComponents;
@@ -56,7 +56,7 @@ std::vector<int> IntegerStep::getValues()
     return result;
 }
 
-std::vector<int> IntegerStep::getElement(const int& element)
+std::vector<int> IntegerStep::getElement(int element)
 
 {
     checkElementIndex(element);
@@ -65,7 +65,7 @@ std::vector<int> IntegerStep::getElement(const int& element)
     return result;
 }
 
-std::vector<int> IntegerStep::getComponent(const int& component)
+std::vector<int> IntegerStep::getComponent(int component)
 
 {
     checkComponentIndex(component);
@@ -83,7 +83,7 @@ std::vector<int> IntegerStep::getComponent(const int& component)
     return result;
 }
 
-const int IntegerStep::getValue(const int& element, const int& component)
+int IntegerStep::getValue(int element, int component)
 
 {
     checkElementIndex(element);
@@ -92,7 +92,7 @@ const int IntegerStep::getValue(const int& element, const int& component)
     return m_values[element][component];
 }
 
-const std::string IntegerStep::getStringValue(const int& element, const int& component)
+const std::string IntegerStep::getStringValue(int element, int component)
 
 {
     return XaoUtils::intToString(getValue(element, component));
@@ -112,7 +112,7 @@ void IntegerStep::setValues(const std::vector<int>& values)
     }
 }
 
-void IntegerStep::setElement(const int& element, const std::vector<int>& elements)
+void IntegerStep::setElement(int element, const std::vector<int>& elements)
 
 {
     checkElementIndex(element);
@@ -122,7 +122,7 @@ void IntegerStep::setElement(const int& element, const std::vector<int>& element
         m_values[element][i] = elements[i];
 }
 
-void IntegerStep::setComponent(const int& component, const std::vector<int>& components)
+void IntegerStep::setComponent(int component, const std::vector<int>& components)
 
 {
     checkElementIndex(component);
@@ -132,7 +132,7 @@ void IntegerStep::setComponent(const int& component, const std::vector<int>& com
         m_values[i][component] = components[i];
 }
 
-void IntegerStep::setValue(const int& element, const int& component, const int& value)
+void IntegerStep::setValue(int element, int component, int value)
 
 {
     checkElementIndex(element);
@@ -141,7 +141,7 @@ void IntegerStep::setValue(const int& element, const int& component, const int& 
     m_values[element][component] = value;
 }
 
-void IntegerStep::setStringValue(const int& element, const int& component, const std::string& value)
+void IntegerStep::setStringValue(int element, int component, const std::string& value)
 
 {
     setValue(element, component, XaoUtils::stringToInt(value));

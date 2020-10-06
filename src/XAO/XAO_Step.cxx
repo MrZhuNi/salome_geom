@@ -28,7 +28,7 @@
 
 using namespace XAO;
 
-void Step::checkElementIndex(const int& element)
+void Step::checkElementIndex(int element)
 {
     if (element < m_nbElements && element >= 0)
         return;
@@ -37,7 +37,7 @@ void Step::checkElementIndex(const int& element)
                                      << m_nbElements-1 << "]: " << element);
 }
 
-void Step::checkComponentIndex(const int& component)
+void Step::checkComponentIndex(int component)
 {
     if (component < m_nbComponents && component >= 0)
         return;
@@ -46,7 +46,7 @@ void Step::checkComponentIndex(const int& component)
                                      << m_nbComponents-1 << "]: " << component);
 }
 
-void Step::checkNbElements(const int& nbElements)
+void Step::checkNbElements(int nbElements)
 {
     if (nbElements == m_nbElements)
         return;
@@ -55,7 +55,7 @@ void Step::checkNbElements(const int& nbElements)
                                         << ", expected " << m_nbElements);
 }
 
-void Step::checkNbComponents(const int& nbComponents)
+void Step::checkNbComponents(int nbComponents)
 {
     if (nbComponents == m_nbComponents)
         return;
@@ -64,7 +64,7 @@ void Step::checkNbComponents(const int& nbComponents)
                                         << ", expected " << m_nbComponents);
 }
 
-void Step::checkNbValues(const int& nbValues)
+void Step::checkNbValues(int nbValues)
 {
     if (nbValues == m_nbElements * m_nbComponents)
         return;

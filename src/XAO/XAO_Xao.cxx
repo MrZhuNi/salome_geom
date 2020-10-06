@@ -69,12 +69,12 @@ Xao::~Xao()
     }
 }
 
-const int Xao::countGroups() const
+int Xao::countGroups() const
 {
     return m_groups.size();
 }
 
-Group* Xao::getGroup(const int& index)
+Group* Xao::getGroup(int index)
 
 {
     checkGroupIndex(index);
@@ -89,7 +89,7 @@ Group* Xao::getGroup(const int& index)
     return NULL;
 }
 
-Group* Xao::addGroup(const XAO::Dimension& dim, const std::string& name)
+Group* Xao::addGroup(XAO::Dimension dim, const std::string& name)
 
 {
     checkGeometry();
@@ -115,18 +115,18 @@ bool Xao::removeGroup(Group* group)
     return res;
 }
 
-const int Xao::countFields() const
+int Xao::countFields() const
 {
     return m_fields.size();
 }
 
-const XAO::Type Xao::getFieldType(const int& index)
+XAO::Type Xao::getFieldType(int index)
 
 {
     return getField(index)->getType();
 }
 
-Field* Xao::getField(const int& index)
+Field* Xao::getField(int index)
 
 {
     checkFieldIndex(index);
@@ -141,7 +141,7 @@ Field* Xao::getField(const int& index)
     throw XAO_Exception("Field not found.");
 }
 
-BooleanField* Xao::getBooleanField(const int& index)
+BooleanField* Xao::getBooleanField(int index)
 
 {
     Field* field = getField(index);
@@ -150,7 +150,7 @@ BooleanField* Xao::getBooleanField(const int& index)
     return (BooleanField*)field;
 }
 
-DoubleField* Xao::getDoubleField(const int& index)
+DoubleField* Xao::getDoubleField(int index)
 
 {
     Field* field = getField(index);
@@ -159,7 +159,7 @@ DoubleField* Xao::getDoubleField(const int& index)
     return (DoubleField*)field;
 }
 
-IntegerField* Xao::getIntegerField(const int& index)
+IntegerField* Xao::getIntegerField(int index)
 
 {
     Field* field = getField(index);
@@ -168,7 +168,7 @@ IntegerField* Xao::getIntegerField(const int& index)
     return (IntegerField*)field;
 }
 
-StringField* Xao::getStringField(const int& index)
+StringField* Xao::getStringField(int index)
 
 {
     Field* field = getField(index);
@@ -177,7 +177,7 @@ StringField* Xao::getStringField(const int& index)
     return (StringField*)field;
 }
 
-Field* Xao::addField(const XAO::Type& type, const XAO::Dimension& dim, const int& nbComponents, const std::string& name)
+Field* Xao::addField(XAO::Type type, XAO::Dimension dim, int nbComponents, const std::string& name)
 
 {
     checkGeometry();
@@ -187,7 +187,7 @@ Field* Xao::addField(const XAO::Type& type, const XAO::Dimension& dim, const int
     return field;
 }
 
-IntegerField* Xao::addIntegerField(const XAO::Dimension& dim, const int& nbComponents, const std::string& name)
+IntegerField* Xao::addIntegerField(XAO::Dimension dim, int nbComponents, const std::string& name)
 
 {
     checkGeometry();
@@ -196,7 +196,7 @@ IntegerField* Xao::addIntegerField(const XAO::Dimension& dim, const int& nbCompo
     m_fields.push_back(field);
     return field;
 }
-BooleanField* Xao::addBooleanField(const XAO::Dimension& dim, const int& nbComponents, const std::string& name)
+BooleanField* Xao::addBooleanField(XAO::Dimension dim, int nbComponents, const std::string& name)
 
 {
     checkGeometry();
@@ -205,7 +205,7 @@ BooleanField* Xao::addBooleanField(const XAO::Dimension& dim, const int& nbCompo
     m_fields.push_back(field);
     return field;
 }
-DoubleField* Xao::addDoubleField(const XAO::Dimension& dim, const int& nbComponents, const std::string& name)
+DoubleField* Xao::addDoubleField(XAO::Dimension dim, int nbComponents, const std::string& name)
 
 {
     checkGeometry();
@@ -214,7 +214,7 @@ DoubleField* Xao::addDoubleField(const XAO::Dimension& dim, const int& nbCompone
     m_fields.push_back(field);
     return field;
 }
-StringField* Xao::addStringField(const XAO::Dimension& dim, const int& nbComponents, const std::string& name)
+StringField* Xao::addStringField(XAO::Dimension dim, int nbComponents, const std::string& name)
 
 {
     checkGeometry();
@@ -241,7 +241,7 @@ bool Xao::removeField(Field* field)
     return res;
 }
 
-const bool Xao::exportXAO(const std::string& fileName, const std::string& shapeFileName)
+bool Xao::exportXAO(const std::string& fileName, const std::string& shapeFileName)
 {
     return XaoExporter::saveToFile(this, fileName, shapeFileName);
 }
@@ -251,12 +251,12 @@ const std::string Xao::getXML()
     return XaoExporter::saveToXml(this);
 }
 
-const bool Xao::importXAO(const std::string& fileName)
+bool Xao::importXAO(const std::string& fileName)
 {
     return XaoExporter::readFromFile(fileName, this);
 }
 
-const bool Xao::setXML(const std::string& xml)
+bool Xao::setXML(const std::string& xml)
 {
     return XaoExporter::setXML(xml, this);
 }
@@ -267,7 +267,7 @@ void Xao::checkGeometry() const
         throw XAO_Exception("Geometry is null");
 }
 
-void Xao::checkGroupIndex(const int& index) const
+void Xao::checkGroupIndex(int index) const
 {
     if (index >= 0 && index < countGroups())
         return;
@@ -276,7 +276,7 @@ void Xao::checkGroupIndex(const int& index) const
                                      << countGroups()-1 << "]: " << index);
 }
 
-void Xao::checkFieldIndex(const int& index) const
+void Xao::checkFieldIndex(int index) const
 {
     if (index >= 0 && index < countFields())
         return;
@@ -285,7 +285,7 @@ void Xao::checkFieldIndex(const int& index) const
                                      << countFields()-1 << "]: " << index);
 }
 
-void Xao::checkGroupDimension(const XAO::Dimension& dim) const
+void Xao::checkGroupDimension(XAO::Dimension dim) const
 {
     if (dim == XAO::WHOLE)
         throw XAO_Exception(MsgBuilder() << "Invalid dimension for group: " << dim);

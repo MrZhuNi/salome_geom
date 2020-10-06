@@ -24,24 +24,24 @@
 
 using namespace XAO;
 
-DoubleField::DoubleField(const XAO::Dimension& dimension, const int& nbElements, const int& nbComponents, const std::string& name)
+DoubleField::DoubleField(XAO::Dimension dimension, int nbElements, int nbComponents, const std::string& name)
     : Field(dimension, nbElements, nbComponents, name)
 {
 }
 
-Step* DoubleField::addNewStep(const int& step)
+Step* DoubleField::addNewStep(int step)
 
 {
     return addStep(step, 0);
 }
 
-DoubleStep* DoubleField::addStep(const int& step)
+DoubleStep* DoubleField::addStep(int step)
 
 {
     return addStep(step, 0);
 }
 
-DoubleStep* DoubleField::addStep(const int& step, const int& stamp)
+DoubleStep* DoubleField::addStep(int step, int stamp)
 
 {
     if (hasStep(step))
@@ -52,7 +52,7 @@ DoubleStep* DoubleField::addStep(const int& step, const int& stamp)
     return bstep;
 }
 
-DoubleStep* DoubleField::getStep(const int& index)
+DoubleStep* DoubleField::getStep(int index)
 
 {
     checkStepIndex(index);

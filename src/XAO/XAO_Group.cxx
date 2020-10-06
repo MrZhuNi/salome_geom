@@ -24,7 +24,7 @@
 using namespace XAO;
 
 
-Group::Group(const XAO::Dimension& dim, const int& nbElements, const std::string& name)
+Group::Group(XAO::Dimension dim, int nbElements, const std::string& name)
 {
     if (dim == XAO::WHOLE)
         throw XAO_Exception("Dimension WHOLE is not valid for group.");
@@ -39,7 +39,7 @@ Group::~Group()
 {
 }
 
-void Group::checkIndex(const int& element)
+void Group::checkIndex(int element)
 {
   if (element < (int)m_elements.size() && element >= 0)
         return;
@@ -48,12 +48,12 @@ void Group::checkIndex(const int& element)
                                      << m_elements.size()-1 << "]: " << element);
 }
 
-void Group::add(const int& value)
+void Group::add(int value)
 {
     m_elements.insert(value);
 }
 
-void Group::remove(const int& value)
+void Group::remove(int value)
 {
     m_elements.erase(value);
 }

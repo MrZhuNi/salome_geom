@@ -47,7 +47,7 @@ namespace XAO
          * @param shapeFileName if not empty save the shape in an this external file.
          * @return true if the export was successful, false otherwise.
          */
-        static const bool saveToFile(Xao* xaoObject, const std::string& fileName, const std::string& shapeFileName)
+        static bool saveToFile(Xao* xaoObject, const std::string& fileName, const std::string& shapeFileName)
         ;
 
         /**
@@ -64,7 +64,7 @@ namespace XAO
          * @param xaoObject the XAO object.
          * @return true if the XAO object was read successful, false otherwise.
          */
-        static const bool readFromFile(const std::string& fileName, Xao* xaoObject)
+        static bool readFromFile(const std::string& fileName, Xao* xaoObject)
         ;
 
         /**
@@ -73,7 +73,7 @@ namespace XAO
          * @param xaoObject the XAO object.
          * @return true if the XAO object was read successful, false otherwise.
          */
-        static const bool setXML(const std::string& xml, Xao* xaoObject)
+        static bool setXML(const std::string& xml, Xao* xaoObject)
         ;
     };
 }

@@ -128,8 +128,8 @@ private:
                   const Handle(Prs3d_Presentation)& aPresentation,
                   const Standard_Integer aMode);
 
-  void ComputeSelection (  const Handle(SelectMgr_Selection)& aSelection,
-                           const Standard_Integer aMode){} ;
+  void ComputeSelection (  const Handle(SelectMgr_Selection)& /*aSelection*/,
+                           const Standard_Integer /*aMode*/){} ;
 
 protected:
   TCollection_ExtendedString          aText;
@@ -169,11 +169,11 @@ AIS_Text::AIS_Text( const TCollection_ExtendedString& text, const gp_Pnt& positi
   aColor          = color;
   aFontAspect     = fontAspect;
   aFont           = font;
-};
+}
 
-void AIS_Text::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
+void AIS_Text::Compute(const Handle(PrsMgr_PresentationManager3d)& /*aPresentationManager*/,
                           const Handle(Prs3d_Presentation)& aPresentation,
-                          const Standard_Integer aMode)
+                          const Standard_Integer /*aMode*/)
 {
 
   aPresentation->Clear();
@@ -189,8 +189,8 @@ void AIS_Text::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentation
   asp->Aspect()->SetTextZoomable(aZoomable);
   asp->Aspect()->SetTextAngle(aAngle);
   asp->Aspect()->SetTextFontAspect(aFontAspect);
-  Prs3d_Text::Draw(aPresentation, asp, aText, aPosition);
-};
+  Prs3d_Text::Draw(aPresentation, asp, aText, aPosition); // todo: deprecated OCCT API
+}
 
 bool isSame (double d1, double d2)
 { 
@@ -208,11 +208,11 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg (GeometryGUI* theGeometryGUI, Q
                                                   bool modal, Qt::WindowFlags fl,
                                                   const double lineWidth)
   : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl),
+    myLengthIORedoList(),
     myMode(-1),
     myOK(false),
     myLineWidth(lineWidth),
     myGeometryGUI(theGeometryGUI),
-    myLengthIORedoList(),
     myIsUndoRedo(false)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
@@ -829,7 +829,7 @@ void EntityGUI_3DSketcherDlg::ActivateThisDialog()
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void EntityGUI_3DSketcherDlg::ValueChangedInSpinBox (double newValue)
+void EntityGUI_3DSketcherDlg::ValueChangedInSpinBox (double /*newValue*/)
 {
   GEOMBase_Helper::displayPreview(true, false, true, true, myLineWidth);
 }
@@ -915,7 +915,7 @@ void EntityGUI_3DSketcherDlg::BoxChecked (bool checked)
 // function : ButtonClicked()
 // purpose  :
 //=================================================================================
-void EntityGUI_3DSketcherDlg::ButtonClicked (bool checked)
+void EntityGUI_3DSketcherDlg::ButtonClicked (bool /*checked*/)
 {
   if (GroupAngles->radioButton_1->isChecked())
     myOrientation = OXY;
@@ -1324,8 +1324,8 @@ void EntityGUI_3DSketcherDlg::displayPreview (GEOM::GEOM_Object_ptr object,
                                               const bool            activate,
                                               const bool            update,
                                               const double          lineWidth,
-                                              const int             displayMode,
-                                              const int             color)
+                                              const int             /*displayMode*/,
+                                              const int             /*color*/)
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 

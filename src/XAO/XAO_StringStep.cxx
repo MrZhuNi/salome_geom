@@ -22,7 +22,7 @@
 
 using namespace XAO;
 
-StringStep::StringStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
+StringStep::StringStep(int step, int stamp, int nbElements, int nbComponents)
 {
     m_nbElements = nbElements;
     m_nbComponents = nbComponents;
@@ -55,7 +55,7 @@ std::vector<std::string> StringStep::getValues()
     return result;
 }
 
-std::vector<std::string> StringStep::getElement(const int& element)
+std::vector<std::string> StringStep::getElement(int element)
 
 {
     checkElementIndex(element);
@@ -64,7 +64,7 @@ std::vector<std::string> StringStep::getElement(const int& element)
     return result;
 }
 
-std::vector<std::string> StringStep::getComponent(const int& component)
+std::vector<std::string> StringStep::getComponent(int component)
 
 {
     checkComponentIndex(component);
@@ -82,7 +82,7 @@ std::vector<std::string> StringStep::getComponent(const int& component)
     return result;
 }
 
-const std::string StringStep::getValue(const int& element, const int& component)
+const std::string StringStep::getValue(int element, int component)
 
 {
     checkElementIndex(element);
@@ -91,7 +91,7 @@ const std::string StringStep::getValue(const int& element, const int& component)
     return m_values[element][component];
 }
 
-const std::string StringStep::getStringValue(const int& element, const int& component)
+const std::string StringStep::getStringValue(int element, int component)
 
 {
     return getValue(element, component);
@@ -111,7 +111,7 @@ void StringStep::setValues(const std::vector<std::string>& values)
     }
 }
 
-void StringStep::setElement(const int& element, const std::vector<std::string>& elements)
+void StringStep::setElement(int element, const std::vector<std::string>& elements)
 
 {
     checkElementIndex(element);
@@ -121,7 +121,7 @@ void StringStep::setElement(const int& element, const std::vector<std::string>& 
         m_values[element][i] = elements[i];
 }
 
-void StringStep::setComponent(const int& component, const std::vector<std::string>& components)
+void StringStep::setComponent(int component, const std::vector<std::string>& components)
 
 {
     checkElementIndex(component);
@@ -131,7 +131,7 @@ void StringStep::setComponent(const int& component, const std::vector<std::strin
         m_values[i][component] = components[i];
 }
 
-void StringStep::setValue(const int& element, const int& component, const std::string& value)
+void StringStep::setValue(int element, int component, const std::string& value)
 
 {
     checkElementIndex(element);
@@ -140,7 +140,7 @@ void StringStep::setValue(const int& element, const int& component, const std::s
     m_values[element][component] = value;
 }
 
-void StringStep::setStringValue(const int& element, const int& component, const std::string& value)
+void StringStep::setStringValue(int element, int component, const std::string& value)
 
 {
     setValue(element, component, value);

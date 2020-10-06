@@ -24,23 +24,23 @@
 
 using namespace XAO;
 
-BooleanField::BooleanField(const XAO::Dimension& dimension,
-                           const int& nbElements, const int& nbComponents, const std::string& name)
+BooleanField::BooleanField(XAO::Dimension dimension,
+                           int nbElements, int nbComponents, const std::string& name)
     : Field(dimension, nbElements, nbComponents, name)
 {
 }
 
-Step* BooleanField::addNewStep(const int& step)
+Step* BooleanField::addNewStep(int step)
 {
     return addStep(step, 0);
 }
 
-BooleanStep* BooleanField::addStep(const int& step)
+BooleanStep* BooleanField::addStep(int step)
 {
     return addStep(step, 0);
 }
 
-BooleanStep* BooleanField::addStep(const int& step, const int& stamp)
+BooleanStep* BooleanField::addStep(int step, int stamp)
 {
     if (hasStep(step))
         throw XAO_Exception(MsgBuilder() << "Step with number " << step << " already exists.");
@@ -50,7 +50,7 @@ BooleanStep* BooleanField::addStep(const int& step, const int& stamp)
     return bstep;
 }
 
-BooleanStep* BooleanField::getStep(const int& index)
+BooleanStep* BooleanField::getStep(int index)
 {
     checkStepIndex(index);
     return (BooleanStep*)m_steps[index];

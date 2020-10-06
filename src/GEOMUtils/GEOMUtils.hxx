@@ -390,6 +390,6 @@ namespace GEOMUtils
                                       const double              theTolShape,
                                       const double              theTolRef);
 
-};
+}
 
 #endif

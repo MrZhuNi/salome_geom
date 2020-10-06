@@ -23,7 +23,7 @@
 
 using namespace XAO;
 
-BooleanStep::BooleanStep(const int& step, const int& stamp, const int& nbElements, const int& nbComponents)
+BooleanStep::BooleanStep(int step, int stamp, int nbElements, int nbComponents)
 {
     m_nbElements = nbElements;
     m_nbComponents = nbComponents;
@@ -56,7 +56,7 @@ std::vector<bool> BooleanStep::getValues()
     return result;
 }
 
-std::vector<bool> BooleanStep::getElement(const int& element)
+std::vector<bool> BooleanStep::getElement(int element)
 {
     checkElementIndex(element);
 
@@ -64,7 +64,7 @@ std::vector<bool> BooleanStep::getElement(const int& element)
     return result;
 }
 
-std::vector<bool> BooleanStep::getComponent(const int& component)
+std::vector<bool> BooleanStep::getComponent(int component)
 {
     checkComponentIndex(component);
 
@@ -81,7 +81,7 @@ std::vector<bool> BooleanStep::getComponent(const int& component)
     return result;
 }
 
-const bool BooleanStep::getValue(const int& element, const int& component)
+bool BooleanStep::getValue(int element, int component)
 {
     checkElementIndex(element);
     checkComponentIndex(component);
@@ -89,7 +89,7 @@ const bool BooleanStep::getValue(const int& element, const int& component)
     return m_values[element][component];
 }
 
-const std::string BooleanStep::getStringValue(const int& element, const int& component)
+const std::string BooleanStep::getStringValue(int element, int component)
 {
     return XaoUtils::booleanToString(getValue(element, component));
 }
@@ -107,7 +107,7 @@ void BooleanStep::setValues(const std::vector<bool>& values)
     }
 }
 
-void BooleanStep::setElement(const int& element, const std::vector<bool>& elements)
+void BooleanStep::setElement(int element, const std::vector<bool>& elements)
 {
     checkElementIndex(element);
     checkNbComponents(elements.size());
@@ -116,7 +116,7 @@ void BooleanStep::setElement(const int& element, const std::vector<bool>& elemen
         m_values[element][i] = elements[i];
 }
 
-void BooleanStep::setComponent(const int& component, const std::vector<bool>& components)
+void BooleanStep::setComponent(int component, const std::vector<bool>& components)
 {
     checkComponentIndex(component);
     checkNbElements(components.size());
@@ -125,7 +125,7 @@ void BooleanStep::setComponent(const int& component, const std::vector<bool>& co
         m_values[i][component] = components[i];
 }
 
-void BooleanStep::setValue(const int& element, const int& component, const bool& value)
+void BooleanStep::setValue(int element, int component, bool value)
 {
     checkElementIndex(element);
     checkComponentIndex(component);
@@ -133,7 +133,7 @@ void BooleanStep::setValue(const int& element, const int& component, const bool&
     m_values[element][component] = value;
 }
 
-void BooleanStep::setStringValue(const int& element, const int& component, const std::string& value)
+void BooleanStep::setStringValue(int element, int component, const std::string& value)
 {
     setValue(element, component, XaoUtils::stringToBoolean(value));
 }
