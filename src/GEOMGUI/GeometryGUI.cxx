@@ -1867,7 +1867,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   int gb2 = app->infoPanel()->addGroup(tr("Import a shape"));
   lbl1 = wrap("brep", "li") + wrap("step", "li") + wrap("iges", "li") + wrap("stl", "li") + wrap("xao", "li");
   lbl1 = tr("Available formats:") + wrap(lbl1, "ul");
-  app->infoPanel()->addLabel(Qt::AlignLeft, gb2);
+  app->infoPanel()->addLabel(lbl1, Qt::AlignLeft, gb2);
   //end InfoPanel
 
   if ( CORBA::is_nil( myComponentGeom ) )
