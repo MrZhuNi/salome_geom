@@ -92,6 +92,8 @@
 
 #include <QtxFontEdit.h>
 
+#include <QtxInfoPanel.h>
+
 // External includes
 #include <QDir>
 #include <QSet>
@@ -1840,12 +1842,34 @@ void GeometryGUI::addPluginActions()
   }
 }
 
+namespace
+{
+  QString wrap(const QString& text, const QString& tag)
+  { return QString("<%1>%2</%3>").arg(tag).arg(text).arg(tag);}
+}
+
 //=======================================================================
 // function : GeometryGUI::activateModule()
 // purpose  : Called when GEOM module is activated
 //=======================================================================
 bool GeometryGUI::activateModule( SUIT_Study* study )
 {
+  //InfoPanel
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( application() ); 
+  app->infoPanel()->setTitle(tr("Welcome to GEOM"));
+
+  int gb1 = app->infoPanel()->addGroup(tr( "Create a shape"));
+  QString lbl1 = wrap("vertices", "li") + wrap("edges", "li") + wrap("wires", "li") + wrap("faces", "li") + wrap("shells", "li") + wrap("solids", "li");
+  QString lbl2 = wrap("box, cylinder...", "li") + wrap("boolean operations","li");
+  lbl1 = tr("Bottom-up construction:") + wrap(lbl1, "ul") + tr("Primitives construction:") + wrap(lbl2, "ul");
+  app->infoPanel()->addLabel(lbl1, Qt::AlignLeft, gb1);
+
+  int gb2 = app->infoPanel()->addGroup(tr("Import a shape"));
+  lbl1 = wrap("brep", "li") + wrap("step", "li") + wrap("iges", "li") + wrap("stl", "li") + wrap("xao", "li");
+  lbl1 = tr("Available formats:") + wrap(lbl1, "ul");
+  app->infoPanel()->addLabel(Qt::AlignLeft, gb2);
+  //end InfoPanel
+
   if ( CORBA::is_nil( myComponentGeom ) )
     return false;
 
@@ -1855,7 +1879,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     return false;
   setMenuShown( true );
   setToolShown( true );
-
+  
   // import Python module that manages GEOM plugins (need to be here because SalomePyQt API uses active module)
   PyGILState_STATE gstate = PyGILState_Ensure();
   PyObject* pluginsmanager = PyImport_ImportModuleNoBlock((char*)"salome_pluginsmanager");
@@ -1942,6 +1966,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   }
 
   Py_XDECREF(pluginsmanager);
+   
   return true;
 }
 
@@ -1957,7 +1982,7 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
 
   setMenuShown( false );
   setToolShown( false );
-
+  
   disconnect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
              this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
 
@@ -2027,6 +2052,7 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
 void GeometryGUI::windows( QMap<int, int>& mappa ) const
 {
   mappa.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::LeftDockWidgetArea );
+  mappa.insert( SalomeApp_Application::WT_InfoPanel, Qt::RightDockWidgetArea );
   mappa.insert( SalomeApp_Application::WT_NoteBook, Qt::LeftDockWidgetArea );
 #ifndef DISABLE_PYCONSOLE
   mappa.insert( SalomeApp_Application::WT_PyConsole, Qt::BottomDockWidgetArea );
