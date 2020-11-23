@@ -5567,6 +5567,10 @@
       <source>HIDE_ALL_BTN</source>
       <translation>全非表示</translation>
     </message>
+    <message>
+        <source>Create, import, repair CAD models</source>
+        <translation type="unfinished">Create, import, repair CAD models</translation>
+    </message>
   </context>
   <context>
     <name>GeometryGUI</name>

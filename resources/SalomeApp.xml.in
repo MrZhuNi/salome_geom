@@ -5,6 +5,7 @@
     <parameter name="icon" value="ModuleGeom.png"/>
     <parameter name="documentation" value="geom_help"/>
     <parameter name="version" value="@SALOMEGEOM_VERSION@"/>
+    <parameter name="description" value="Create, import, repair CAD models"/>
   </section>
   <section name="geom_help" >
     <parameter name="User's Guide/Geometry module/User's Guide"           value="%GEOM_ROOT_DIR%/share/doc/salome/gui/GEOM/index.html;;http://docs.salome-platform.org/latest/gui/GEOM/index.html"/>

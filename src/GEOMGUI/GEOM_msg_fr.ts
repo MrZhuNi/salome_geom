@@ -5560,6 +5560,10 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>GEOM_DIM_AXES</source>
         <translation>Dimensions sur les axes locaux</translation>
     </message>
+    <message>
+        <source>Create, import, repair CAD models</source>
+        <translation type="unfinished">Create, import, repair CAD models</translation>
+    </message>
 </context>
 <context>
     <name>GeometryGUI</name>
