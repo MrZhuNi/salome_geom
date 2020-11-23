@@ -91,7 +91,6 @@
 #include <SALOMEDS_SObject.hxx>
 
 #include <QtxFontEdit.h>
-
 #include <QtxInfoPanel.h>
 
 // External includes
@@ -1854,21 +1853,45 @@ namespace
 //=======================================================================
 bool GeometryGUI::activateModule( SUIT_Study* study )
 {
-  //InfoPanel
+  // Fill in: Help Panel
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( application() ); 
-  app->infoPanel()->setTitle(tr("Welcome to GEOM"));
+  app->infoPanel()->setTitle(tr("INFO_WELCOME_TO_GEOM"));
 
-  int gb1 = app->infoPanel()->addGroup(tr( "Create a shape"));
-  QString lbl1 = wrap("vertices", "li") + wrap("edges", "li") + wrap("wires", "li") + wrap("faces", "li") + wrap("shells", "li") + wrap("solids", "li");
-  QString lbl2 = wrap("box, cylinder...", "li") + wrap("boolean operations","li");
-  lbl1 = tr("Bottom-up construction:") + wrap(lbl1, "ul") + tr("Primitives construction:") + wrap(lbl2, "ul");
-  app->infoPanel()->addLabel(lbl1, Qt::AlignLeft, gb1);
+  int gb = app->infoPanel()->addGroup(tr("INFO_GRP_CREATE_MODEL"));
+  QString lab;
+  QStringList items;
+  items << wrap(tr("INFO_VERTICES"), "li")
+	<< wrap(tr("INFO_EDGES"),    "li")
+	<< wrap(tr("INFO_WIRES"),    "li")
+	<< wrap(tr("INFO_FACES"),    "li")
+	<< wrap(tr("INFO_SHELLS"),   "li")
+	<< wrap(tr("INFO_SOLIDS"),   "li");
+  lab = tr("INFO_BOTTOM_UP_CONSTRUCTION") + ":" + wrap(items.join(""), "ul");
+  items.clear();
 
-  int gb2 = app->infoPanel()->addGroup(tr("Import a shape"));
-  lbl1 = wrap("brep", "li") + wrap("step", "li") + wrap("iges", "li") + wrap("stl", "li") + wrap("xao", "li");
-  lbl1 = tr("Available formats:") + wrap(lbl1, "ul");
-  app->infoPanel()->addLabel(lbl1, Qt::AlignLeft, gb2);
-  //end InfoPanel
+  items << wrap(tr("INFO_BOX"),      "li")
+	<< wrap(tr("INFO_CYLINDER"), "li")
+	<< wrap(tr("INFO_CONE"),     "li")
+	<< wrap("...",               "li");
+  lab = lab + tr("INFO_PRIMITIVES") + ":" + wrap(items.join(""), "ul");
+  items.clear();
+
+  lab = lab + tr("INFO_BOOLEANS") + "<br/>";
+  lab = lab + tr("INFO_TRANSFORMATIONS");
+
+  app->infoPanel()->addLabel(lab, gb);
+
+  gb = app->infoPanel()->addGroup(tr("INFO_GRP_IMPORT_MODEL"));
+  items << wrap("BREP",  "li")
+	<< wrap("STEP",  "li")
+	<< wrap("IGES",  "li")
+	<< wrap("STL",   "li")
+	<< wrap("XAO",   "li");
+  lab = tr("INFO_AVAILABLE_FORMATS") + ":" + wrap(items.join(""), "ul");
+  items.clear();
+
+  app->infoPanel()->addLabel(lab, gb);
+  // << Help Panel
 
   if ( CORBA::is_nil( myComponentGeom ) )
     return false;
@@ -1879,7 +1902,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     return false;
   setMenuShown( true );
   setToolShown( true );
-  
+
   // import Python module that manages GEOM plugins (need to be here because SalomePyQt API uses active module)
   PyGILState_STATE gstate = PyGILState_Ensure();
   PyObject* pluginsmanager = PyImport_ImportModuleNoBlock((char*)"salome_pluginsmanager");
@@ -1966,7 +1989,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   }
 
   Py_XDECREF(pluginsmanager);
-   
+
   return true;
 }
 
@@ -1982,7 +2005,7 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
 
   setMenuShown( false );
   setToolShown( false );
-  
+
   disconnect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
              this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
 
