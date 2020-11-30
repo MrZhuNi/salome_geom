@@ -98,7 +98,7 @@ public:
   void setSelectedPoints( const CurveCreator_ICurve::SectionToPointList& =
                                CurveCreator_ICurve::SectionToPointList() );
 
-  void updateLocalPointView();
+  void updateLocalPointView(bool isGetSelected = true);
   void setLocalPointContext( const bool theOpen, const bool isUpdateTable = false );
 
 signals:

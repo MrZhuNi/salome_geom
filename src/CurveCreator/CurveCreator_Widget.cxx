@@ -1526,17 +1526,18 @@ void CurveCreator_Widget::moveSelectedPoints( const int theXPosition,
   finishCurveModification( myDragPoints );
 }
 
-void CurveCreator_Widget::updateLocalPointView()
+void CurveCreator_Widget::updateLocalPointView(bool isGetSelected)
 {
   if ( myDragStarted )
     return;
   Handle(AIS_InteractiveContext) aContext = getAISContext();
   if ( aContext.IsNull() )
     return;
-
-  CurveCreator_Utils::getSelectedPoints( aContext, myCurve, myLocalPoints );
+  if (isGetSelected)
+  {
+      CurveCreator_Utils::getSelectedPoints( aContext, myCurve, myLocalPoints );
+  }
   int aNbPoints = myLocalPoints.size();
-
   //bool isRowLimit = aNbPoints > myLocalPointRowLimit;
   myLocalPointView->setVisible( getActionMode() == ModificationMode/* && !isRowLimit */);
 
@@ -1606,8 +1607,8 @@ void CurveCreator_Widget::setSelectedPoints( const CurveCreator_ICurve::SectionT
     return;
 
   CurveCreator_Utils::setSelectedPoints( aContext, myCurve, thePoints );
-
-  updateLocalPointView();
+  bool keepSelected = (thePoints.size() != 0) && (getActionMode() == ModificationMode);
+  updateLocalPointView(!keepSelected);
 }
 
 void CurveCreator_Widget::stopActionMode()

@@ -219,7 +219,7 @@ void CurveCreator_TableView::OnHeaderClick( int theLogicalId )
     int point = item( r, 1 )->data( Qt::UserRole ).toInt();
     selected.push_back( CurveCreator_ICurve::SectionToPoint( section, point ) );
   }
-  myWidget->setSelectedPoints( selected );
+  //myWidget->setSelectedPoints( selected ); // seems unneeded and breaks the sorting
 
   myCurrentSortId = theLogicalId;
 }
