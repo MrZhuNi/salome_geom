@@ -44,7 +44,7 @@ std::string BuildGEOMInstance()
     //
     pman->activate();
     //
-    GEOM_Gen_i *servant = new GEOM_Gen_i(orb,poa,const_cast<PortableServer::ObjectId*>(&conId.in()),"GEOM_inst_2","GEOM");
+    GEOM_Gen_i *servant = new GEOM_Gen_i(orb,poa,const_cast<PortableServer::ObjectId*>(&conId.in()),"GEOM_inst_2","GEOM",false,false);
     PortableServer::ObjectId *zeId = servant->getId();
     CORBA::Object_var zeRef = poa->id_to_reference(*zeId);
     CORBA::String_var ior = orb->object_to_string(zeRef);

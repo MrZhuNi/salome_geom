@@ -95,7 +95,9 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
              PortableServer::POA_ptr poa,
              PortableServer::ObjectId * contId,
              const char *instanceName,
-             const char *interfaceName);
+             const char *interfaceName,
+             bool withRegistry = true,
+             bool withNS = true);
 
   // destructor, doing nothing (for now)
   virtual ~GEOM_Gen_i();
@@ -388,7 +390,7 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
  private:
 
    ::GEOMImpl_Gen* _impl;
-   SALOME_NamingService * name_service;
+   SALOME_NamingService * name_service = nullptr;
    char * _name;
 
    // plugin operations managing

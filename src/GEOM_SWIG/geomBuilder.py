@@ -246,7 +246,7 @@ import omniORB
 # to avoid problems in some cases, e.g. when generating documentation
 try:
     import salome
-    salome.salome_init()
+    #salome.salome_init()
     from salome import *
 except:
     pass

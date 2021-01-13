@@ -98,12 +98,15 @@ GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr            orb,
                        PortableServer::POA_ptr   poa,
                        PortableServer::ObjectId* contId,
                        const char*               instanceName,
-                       const char*               interfaceName) :
-  Engines_Component_i(orb, poa, contId, instanceName, interfaceName)
+                       const char*               interfaceName,
+                       bool withRegistry,
+                       bool withNS) :
+  Engines_Component_i(orb, poa, contId, instanceName, interfaceName, false, withRegistry)
 {
   _thisObj = this;
   _id = _poa->activate_object(_thisObj);
-  name_service = new SALOME_NamingService(_orb);
+  if(withNS)
+    name_service = new SALOME_NamingService(_orb);
 
   _impl = new ::GEOMImpl_Gen;
 
