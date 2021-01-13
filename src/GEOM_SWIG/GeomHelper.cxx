@@ -34,7 +34,6 @@ std::string BuildGEOMInstance()
     PortableServer::POAManager_var pman = poa->the_POAManager();
     CORBA::PolicyList policies;
     policies.length(0);
-    PortableServer::POA_var poa2 = poa->create_POA("POAGeom",pman,policies);
     PortableServer::ObjectId_var conId;
     //
     {
