@@ -20,3 +20,4 @@
 #include <string>
 
 std::string BuildGEOMInstance();
+std::string GetSessionInstance();

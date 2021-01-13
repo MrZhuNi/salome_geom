@@ -837,7 +837,8 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         ## @addtogroup l1_geomBuilder_auxiliary
         ## @{
         def init_geom(self):
-            self.myStudy = salome.myStudy
+            import GeomHelper
+            self.myStudy = GeomHelper.myStudy()
             self.myBuilder = self.myStudy.NewBuilder()
 
             # load data from the study file, if necessary

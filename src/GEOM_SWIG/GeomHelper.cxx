@@ -21,6 +21,8 @@
 
 #include "GEOM_Gen_i.hh"
 #include "SALOME_Container_i.hxx"
+#include "SALOME_KernelServices.hxx"
+#include "SALOMEDS_Study_i.hxx"
 
 #include <cstring>
 
@@ -48,5 +50,13 @@ std::string BuildGEOMInstance()
     PortableServer::ObjectId *zeId = servant->getId();
     CORBA::Object_var zeRef = poa->id_to_reference(*zeId);
     CORBA::String_var ior = orb->object_to_string(zeRef);
+    return std::string(ior.in());
+}
+
+std::string GetSessionInstance()
+{
+    SALOMEDS::Study_var study = KERNEL::getStudyServantSA();
+    CORBA::ORB_ptr orb = KERNEL::getORB();
+    CORBA::String_var ior = orb->object_to_string(study);
     return std::string(ior.in());
 }
