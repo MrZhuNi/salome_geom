@@ -705,7 +705,13 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                         # 1. CORBA resolution of server
                         # 2. the __new__ method is called again
                         #print "==== FindOrLoadComponent ", engine, geom, doLcc, created
-                        geom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
+                        #geom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
+                        import GeomHelper
+                        geom_ior = GeomHelper.BuildGEOMInstance()
+                        import GEOM
+                        import CORBA
+                        orb=CORBA.ORB_init([''])
+                        geom = orb.string_to_object(geom_ior)
                         #print "====1 ",geom
                 else:
                     # FindOrLoadComponent not called
