@@ -65,6 +65,7 @@
 
 #include <SALOMEDS_Tool.hxx>
 #include <SALOMEDS_wrap.hxx>
+#include "SALOMEDS_Study_i.hxx"
 #include <Basics_DirUtils.hxx>
 #include <Basics_Utils.hxx>
 
@@ -2174,12 +2175,7 @@ void GEOM_Gen_i::register_name(char * name)
 //============================================================================
 SALOMEDS::Study_var GEOM_Gen_i::getStudyServant()
 {
-  static SALOMEDS::Study_var aStudy;
-  if(CORBA::is_nil(aStudy)){
-    CORBA::Object_ptr anObject = name_service->Resolve("/Study");
-    aStudy = SALOMEDS::Study::_narrow(anObject);
-  }
-  return aStudy;
+  return SALOMEDS::Study::_duplicate(KERNEL::getStudyServantSA());
 }
 
 //============================================================================
