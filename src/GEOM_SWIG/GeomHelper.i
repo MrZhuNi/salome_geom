@@ -24,14 +24,4 @@
 %inline
 {
   std::string BuildGEOMInstance();
-  std::string GetSessionInstance();
 }
-%pythoncode %{
-
-def myStudy():
-  import SALOMEDS
-  import CORBA
-  orb=CORBA.ORB_init([''])
-  return orb.string_to_object(GetSessionInstance())
-
-%}

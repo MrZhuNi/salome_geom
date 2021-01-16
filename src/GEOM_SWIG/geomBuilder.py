@@ -246,7 +246,7 @@ import omniORB
 # to avoid problems in some cases, e.g. when generating documentation
 try:
     import salome
-    #salome.salome_init()
+    salome.salome_init()
     from salome import *
 except:
     pass
@@ -705,13 +705,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
                         # 1. CORBA resolution of server
                         # 2. the __new__ method is called again
                         #print "==== FindOrLoadComponent ", engine, geom, doLcc, created
-                        #geom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
-                        import GeomHelper
-                        geom_ior = GeomHelper.BuildGEOMInstance()
-                        import GEOM
-                        import CORBA
-                        orb=CORBA.ORB_init([''])
-                        geom = orb.string_to_object(geom_ior)
+                        geom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
                         #print "====1 ",geom
                 else:
                     # FindOrLoadComponent not called
@@ -837,8 +831,7 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
         ## @addtogroup l1_geomBuilder_auxiliary
         ## @{
         def init_geom(self):
-            import GeomHelper
-            self.myStudy = GeomHelper.myStudy()
+            self.myStudy = salome.myStudy
             self.myBuilder = self.myStudy.NewBuilder()
 
             # load data from the study file, if necessary
