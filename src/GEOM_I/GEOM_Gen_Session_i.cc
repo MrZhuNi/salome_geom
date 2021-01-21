@@ -59,8 +59,6 @@ extern "C"
                                                const char*                   interfaceName)
   {
     GEOM_Gen_Session_i* myGEOM_Gen_i = new GEOM_Gen_Session_i(orb, poa, contId, instanceName, interfaceName);
-    auto id = poa->activate_object(myGEOM_Gen_i);
-    myGEOM_Gen_i->setId(id);
-    return id;
+    return myGEOM_Gen_i->getId();
   }
 }

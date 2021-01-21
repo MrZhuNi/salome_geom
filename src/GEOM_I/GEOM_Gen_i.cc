@@ -103,7 +103,7 @@ GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr            orb,
   Engines_Component_i(orb, poa, contId, instanceName, interfaceName, false, withRegistry)
 {
   _thisObj = this;
-
+  _id = _poa->activate_object(_thisObj);
   _impl = new ::GEOMImpl_Gen;
 
   //PAL10867: disable signals catching with "noexcepthandler" option
