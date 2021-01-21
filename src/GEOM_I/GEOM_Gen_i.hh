@@ -81,7 +81,7 @@ class GEOM_I_EXPORT GEOM_GenericOperationsCreator
 //=====================================================================
 // GEOM_Gen_i : class definition
 //=====================================================================
-class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual public Engines_Component_i
+class GEOM_I_EXPORT GEOM_Gen_i : public POA_GEOM::GEOM_Gen, public Engines_Component_i
 {
  public:
 
