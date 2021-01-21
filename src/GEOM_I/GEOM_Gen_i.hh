@@ -96,23 +96,16 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
              PortableServer::ObjectId * contId,
              const char *instanceName,
              const char *interfaceName,
-             bool withRegistry = true,
-             bool withNS = true);
+             bool withRegistry = true);
 
   // destructor, doing nothing (for now)
   virtual ~GEOM_Gen_i();
 
-  // generic method to be put in a super class
-  void register_name(char * name);
-
   // Get ORB object
   CORBA::ORB_ptr GetORB() { return CORBA::ORB::_duplicate(_orb); }
 
-  // Get Naming Service object
-  SALOME_NamingService* GetNS() { return name_service; }
-
   // Get Study
-  SALOMEDS::Study_var getStudyServant();
+  virtual SALOMEDS::Study_var getStudyServant() = 0;
 
   //-----------------------------------------------------------------------//
   // Inherited methods from SALOMEDS::Driver                               //
@@ -390,7 +383,6 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
  private:
 
    ::GEOMImpl_Gen* _impl;
-   SALOME_NamingService * name_service = nullptr;
    char * _name;
 
    // plugin operations managing

@@ -19,7 +19,7 @@
 
 #include "GeomHelper.h"
 
-#include "GEOM_Gen_i.hh"
+#include "GEOM_Gen_No_Session_i.hh"
 #include "SALOME_Container_i.hxx"
 #include "SALOME_KernelServices.hxx"
 
@@ -44,8 +44,9 @@ std::string BuildGEOMInstance()
     //
     pman->activate();
     //
-    GEOM_Gen_i *servant = new GEOM_Gen_i(orb,poa,const_cast<PortableServer::ObjectId*>(&conId.in()),"GEOM_inst_2","GEOM",false,false);
-    PortableServer::ObjectId *zeId = servant->getId();
+    GEOM_Gen_No_Session_i *servant = new GEOM_Gen_No_Session_i(orb,poa,const_cast<PortableServer::ObjectId*>(&conId.in()),"GEOM_inst_2","GEOM");
+    PortableServer::ObjectId *zeId = poa->activate_object(servant);
+    servant->setId(zeId);
     CORBA::Object_var zeRef = poa->id_to_reference(*zeId);
     char *interfaceName = servant->interfaceName();
     std::string interfaceNameCpp(interfaceName);
