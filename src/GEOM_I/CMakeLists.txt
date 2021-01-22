@@ -52,6 +52,7 @@ SET(_link_LIBRARIES
   ${KERNEL_TOOLSDS}
   ${KERNEL_SalomeContainer}
   ${KERNEL_SalomeNS}
+  ${KERNEL_SalomeDS}
   )
 
 # --- headers ---
