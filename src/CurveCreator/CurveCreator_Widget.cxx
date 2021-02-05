@@ -1186,12 +1186,16 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
             filter->AddShape(exp.Current());
         }
         aCtx->AddFilter(filter);
+#if OCC_VERSION_LARGE <= 0x07030000
         if (aCtx->HasOpenedContext())
         {
           Handle(AIS_LocalContext) aLctx = aCtx->LocalContext();
           aLctx->Filter()->Clear();
           aLctx->AddFilter(filter);
         }
+#else
+        // TODO: check if something required
+#endif
       //}
 
       // Initialize the single selection if start and end points are equal,
