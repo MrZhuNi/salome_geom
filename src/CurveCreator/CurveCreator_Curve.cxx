@@ -31,11 +31,14 @@
 #include <AIS_Shape.hxx>
 #include <AIS_InteractiveObject.hxx>
 #include <Geom_CartesianPoint.hxx>
+#include <TopoDS_Iterator.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Lin.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Wire.hxx>
+#include <TopoDS_Shape.hxx>
+#include <AIS_ColoredShape.hxx>
 
 #include <Prs3d_PointAspect.hxx>
 #include <iostream>
