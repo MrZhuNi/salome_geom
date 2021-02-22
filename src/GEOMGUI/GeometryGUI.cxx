@@ -195,7 +195,7 @@ bool GeometryGUI::IsInGeomComponent( _PTR(SObject) sobject )
 //=======================================================================
 SALOMEDS::Study_var GeometryGUI::getStudyServant()
 {
-  SALOME_NamingService *aNamingService = SalomeApp_Application::namingService();
+  SALOME_NamingService_Abstract *aNamingService = SalomeApp_Application::namingService();
   CORBA::Object_var aStudyObject = aNamingService->Resolve("/Study");
   SALOMEDS::Study_var aStudy = SALOMEDS::Study::_narrow(aStudyObject);
   return aStudy._retn();

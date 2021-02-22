@@ -34,17 +34,12 @@ std::string BuildGEOMInstance()
     PortableServer::POAManager_var pman = poa->the_POAManager();
     CORBA::PolicyList policies;
     policies.length(0);
-    PortableServer::ObjectId_var conId;
-    //
-    {
-        char *argv[4] = {"Container","FactoryServer","GEOM",nullptr};
-        Engines_Container_i *cont = new Engines_Container_i(orb,poa,"FactoryServer",2,argv,false,false);
-        conId = poa->activate_object(cont);
-    }
+    Engines_Container_i *cont( KERNEL::getContainerSA() );
+    PortableServer::ObjectId * conId ( cont->getCORBAId() );
     //
     pman->activate();
     //
-    GEOM_Gen_No_Session_i *servant = new GEOM_Gen_No_Session_i(orb,poa,const_cast<PortableServer::ObjectId*>(&conId.in()),"GEOM_inst_2","GEOM");
+    GEOM_Gen_No_Session_i *servant = new GEOM_Gen_No_Session_i(orb,poa,conId,"GEOM_inst_2","GEOM");
     PortableServer::ObjectId *zeId = servant->getId();
     CORBA::Object_var zeRef = poa->id_to_reference(*zeId);
     char *interfaceName = servant->interfaceName();
