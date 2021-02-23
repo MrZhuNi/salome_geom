@@ -88,6 +88,7 @@
 
 #include <SALOMEDSClient_ClientFactory.hxx>
 #include <SALOMEDSClient_IParameters.hxx>
+#include "SALOME_KernelServices.hxx"
 
 #include <SALOMEDS_SObject.hxx>
 
@@ -230,6 +231,8 @@ GeometryGUI::GeometryGUI() : SalomeApp_Module( "GEOM" )
     else
     {
       comp = RetrieveGEOMInstance();
+      CORBA::Object_var comp2 = CORBA::Object::_narrow(comp);
+      KERNEL::RegisterCompo("GEOM",comp2);
     }
     myComponentGeom = GEOM::GEOM_Gen::_narrow( comp );
   }
