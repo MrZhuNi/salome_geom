@@ -41,6 +41,7 @@
 #include "GEOMUtils_XmlHandler.hxx"
 #include "GEOMGUI_AnnotationMgr.h"
 #include "GEOMGUI_TextTreeSelector.h"
+#include "GEOM_Component_Generator.hxx"
 
 #include "GEOM_Actor.h"
 
@@ -216,14 +217,20 @@ void GeometryGUI::Modified (bool theIsUpdateActions)
 // function : GeometryGUI::GeometryGUI()
 // purpose  : Constructor
 //=======================================================================
-GeometryGUI::GeometryGUI() :
-  SalomeApp_Module( "GEOM" ),
-  myTopLevelIOList()
+GeometryGUI::GeometryGUI() : SalomeApp_Module( "GEOM" )
 {
   if ( CORBA::is_nil( myComponentGeom ) )
   {
-    Engines::EngineComponent_var comp =
-      SalomeApp_Application::lcc()->FindOrLoad_Component( "FactoryServer", "GEOM" );
+    SALOME_NamingService_Abstract *ns = SalomeApp_Application::namingService();
+    Engines::EngineComponent_var comp;
+    if( dynamic_cast<SALOME_NamingService *>(ns) )
+    {
+      comp = SalomeApp_Application::lcc()->FindOrLoad_Component( "FactoryServer", "GEOM" );
+    }
+    else
+    {
+      comp = RetrieveGEOMInstance();
+    }
     myComponentGeom = GEOM::GEOM_Gen::_narrow( comp );
   }
 

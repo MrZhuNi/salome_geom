@@ -19,33 +19,16 @@
 
 #include "GeomHelper.h"
 
-#include "GEOM_Gen_No_Session_i.hh"
-#include "SALOME_Container_i.hxx"
-#include "SALOME_KernelServices.hxx"
-
-#include <cstring>
+#include "GEOM_Component_Generator.hxx"
 
 std::string BuildGEOMInstance()
 {
-    CORBA::ORB_var orb;
-    { int argc(0); orb = CORBA::ORB_init(argc,nullptr); }
-    CORBA::Object_var obj = orb->resolve_initial_references("RootPOA");
-    PortableServer::POA_var poa = PortableServer::POA::_narrow(obj);
-    PortableServer::POAManager_var pman = poa->the_POAManager();
-    CORBA::PolicyList policies;
-    policies.length(0);
-    Engines_Container_i *cont( KERNEL::getContainerSA() );
-    PortableServer::ObjectId * conId ( cont->getCORBAId() );
-    //
-    pman->activate();
-    //
-    GEOM_Gen_No_Session_i *servant = new GEOM_Gen_No_Session_i(orb,poa,conId,"GEOM_inst_2","GEOM");
-    PortableServer::ObjectId *zeId = servant->getId();
-    CORBA::Object_var zeRef = poa->id_to_reference(*zeId);
-    char *interfaceName = servant->interfaceName();
-    std::string interfaceNameCpp(interfaceName);
-    CORBA::string_free(interfaceName);
-    KERNEL::RegisterCompo(interfaceNameCpp,zeRef);
-    CORBA::String_var ior = orb->object_to_string(zeRef);
-    return std::string(ior.in());
+  CORBA::ORB_var orb;
+  {
+    int argc(0);
+    orb = CORBA::ORB_init(argc, nullptr);
+  }
+  Engines::EngineComponent_var zeRef = RetrieveGEOMInstance();
+  CORBA::String_var ior = orb->object_to_string(zeRef);
+  return std::string(ior.in());
 }
