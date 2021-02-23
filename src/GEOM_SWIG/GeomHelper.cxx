@@ -19,16 +19,13 @@
 
 #include "GeomHelper.h"
 
+#include "SALOME_KernelServices.hxx"
+
 #include "GEOM_Component_Generator.hxx"
 
 std::string BuildGEOMInstance()
 {
-  CORBA::ORB_var orb;
-  {
-    int argc(0);
-    orb = CORBA::ORB_init(argc, nullptr);
-  }
   Engines::EngineComponent_var zeRef = RetrieveGEOMInstance();
-  CORBA::String_var ior = orb->object_to_string(zeRef);
+  CORBA::String_var ior = KERNEL::getORB()->object_to_string(zeRef);
   return std::string(ior.in());
 }
