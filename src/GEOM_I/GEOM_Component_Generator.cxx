@@ -29,6 +29,7 @@ static Engines::EngineComponent_var _unique_compo;
 
 Engines::EngineComponent_var RetrieveGEOMInstance()
 {
+  constexpr char COMPO_NAME[]="GEOM";
   if (CORBA::is_nil(_unique_compo))
   {
     CORBA::ORB_var orb;
@@ -46,9 +47,10 @@ Engines::EngineComponent_var RetrieveGEOMInstance()
     //
     pman->activate();
     //
-    GEOM_Gen_No_Session_i *servant = new GEOM_Gen_No_Session_i(orb, poa, conId, "GEOM_inst_2", "GEOM");
+    GEOM_Gen_No_Session_i *servant = new GEOM_Gen_No_Session_i(orb, poa, conId, "GEOM_inst_2", COMPO_NAME);
     PortableServer::ObjectId *zeId = servant->getId();
     CORBA::Object_var zeRef = poa->id_to_reference(*zeId);
+    KERNEL::RegisterCompo(COMPO_NAME,zeRef);
     _unique_compo = Engines::EngineComponent::_narrow(zeRef);
   }
   return _unique_compo;
