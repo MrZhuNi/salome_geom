@@ -66,9 +66,9 @@ class GEOMAlgo_AlgoTools  {
 			    const Standard_Real V,
 			    gp_Vec& aN);
 
-  //! Computes a point <theP> inside the face <theF>. <br>
-  //!          <theP2D> - 2D representation of <theP> <br>
-  //!          on the surface of <theF> <br>
+  //! Computes a point \a theP inside the face \a theF. <br>
+  //!          \a theP2D - 2D representation of \a theP <br>
+  //!          on the surface of \a theF <br>
   //!          Returns 0 in case of success. <br>
   Standard_EXPORT
     static  Standard_Integer PntInFace(const TopoDS_Face& theF,

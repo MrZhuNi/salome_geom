@@ -36,9 +36,9 @@ namespace GEOM
   /*!
    * \brief Convert shape to the VTK data sources
    * \param theShape shape
-   * \param theEdgeMape map that stores face-to-edge relations
+   * \param theEdgeMap map that stores face-to-edge relations
    * \param theIsVector boolean flag, when \c true causes generating additional
-   * dataset for edges orientation vectors
+   *                    dataset for edges orientation vectors
    * \param theStandaloneVertexSource output standalone vertices data source
    * \param theIsolatedEdgeSource output standalone edges data source
    * \param theOneFaceEdgeSource output face edges data source

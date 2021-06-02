@@ -314,7 +314,8 @@ namespace GEOMUtils
   /*!
    * \brief Write shape to the BREP file
    *
-   * \param source shape
+   * \param shape the source shape
+   * \param fileName the file name
    * \return \c true if file was written or \c false otherwise
    */
   Standard_EXPORT bool Write( const TopoDS_Shape& shape,

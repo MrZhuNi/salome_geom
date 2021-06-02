@@ -181,7 +181,7 @@ namespace GEOMUtils
      *
      * \param theHatchingIndex the hatching curve index.
      */
-    Standard_EXPORT const Handle(Geom2d_Curve) &GetHatching
+    Standard_EXPORT const Handle(Geom2d_Curve)& GetHatching
       (const Standard_Integer theHatchingIndex) const;
 
   protected:

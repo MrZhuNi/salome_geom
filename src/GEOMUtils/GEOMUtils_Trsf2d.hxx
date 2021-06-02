@@ -98,7 +98,7 @@ namespace GEOMUtils
      * \param thePnt the point.
      * \param theVec1 the first derivative vector.
      * \param theVec2 the second derivative vector.
-     * \param theVec2 the third derivative vector.
+     * \param theVec3 the third derivative vector.
      */
     Standard_EXPORT void TransformD3(gp_Pnt2d &thePnt,
                                      gp_Vec2d &theVec1,

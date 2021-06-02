@@ -61,15 +61,13 @@ IGESPlugin_IOperations::~IGESPlugin_IOperations()
  *  Export a shape to IGES format
  *  \param theOriginal The shape to export
  *  \param theFileName The name of the file to exported
- *  \param theIsASCII The format of the exported file (ASCII or Binary)
- *  \param theDeflection The deflection of the shape to exported
  *  \param theVersion The version of IGES format which defines, whether to write
  *                    only faces (5.1 IGES format) or shells and solids also (5.3 IGES format).
  */
 //=============================================================================
 void IGESPlugin_IOperations::ExportIGES( const Handle(GEOM_Object)      theOriginal,
-                                                 const TCollection_AsciiString& theFileName,
-                                                 const TCollection_AsciiString& theVersion )
+                                         const TCollection_AsciiString& theFileName,
+                                         const TCollection_AsciiString& theVersion )
 {
   SetErrorCode(KO);
   if( theOriginal.IsNull() ) return;
@@ -119,12 +117,13 @@ void IGESPlugin_IOperations::ExportIGES( const Handle(GEOM_Object)      theOrigi
  *  ImportIGES
  *  Import a shape from IGES format
  *  \param theFileName The name of the file to import
+ *  \param theIsIgnoreUnits If False, scale model from its units to meters
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
 IGESPlugin_IOperations::ImportIGES( const TCollection_AsciiString& theFileName,
-                                            const bool theIsIgnoreUnits )
+                                    const bool theIsIgnoreUnits )
 {
   SetErrorCode(KO);
   if( theFileName.IsEmpty() ) return NULL;

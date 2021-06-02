@@ -52,9 +52,12 @@ STLPlugin_IOperations_i::~STLPlugin_IOperations_i()
  *  ExportSTL
  *  Export a shape to STL format
  *  \param theOriginal The shape to export
- *  \param theIsASCII The format of the exported file (ASCII or Binary)
  *  \param theFileName The name of the exported file
+ *  \param theIsASCII The format of the exported file (ASCII or Binary)
  *  \param theDeflection The deflection of the exported shape
+ *  \param theIsRelative The mode for writing the file. If True (default value),
+ *         the deflection is calculated relatively to the size of the shape;
+ *         if False, the user defined deflection is used.
  */
 //=============================================================================
 void STLPlugin_IOperations_i::ExportSTL( GEOM::GEOM_Object_ptr theOriginal,

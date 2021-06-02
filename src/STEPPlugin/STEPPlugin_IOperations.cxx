@@ -164,6 +164,8 @@ void STEPPlugin_IOperations::ExportSTEP
  *  ImportSTEP
  *  Import a shape from STEP format
  *  \param theFileName The name of the file to import
+ *  \param theIsIgnoreUnits If False, scale model from its units to meters
+ *  \param IsCreateAssemblies If True, create shape assemblies
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================

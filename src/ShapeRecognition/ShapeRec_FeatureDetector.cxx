@@ -35,7 +35,6 @@
 
 /*!
   Constructor
-  \param theFilename - image to process
 */
 ShapeRec_FeatureDetector::ShapeRec_FeatureDetector(): 
   corners()
@@ -283,7 +282,6 @@ void ShapeRec_FeatureDetector::SetROI( const QRect& theRect )
 /*!
   Crops the image located at imagePath to the region of interest given by the user via SetROI
   and stores the result in /tmp
-  \param theRect - Region Of Interest of the image located at imagePath 
 */
 std::string ShapeRec_FeatureDetector::CroppImage()
 {

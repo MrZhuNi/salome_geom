@@ -3235,8 +3235,11 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDisk (double theR, do
 /*!
  *  This function allows to create a disk already divided into blocks. It can be
  *  used to create divided pipes for later meshing in hexaedra.
+ *  \param thePnt The disk center
+ *  \param theVec The disk normal vector
  *  \param theR Radius of the disk
  *  \param theRatio Relative size of the central square diagonal against the disk diameter
+ *  \param thePattern The division pattern of the disk (hexagon or square in the center)
  *  \return New GEOM_Object, containing the created shape.
  */
 //=============================================================================
@@ -3311,6 +3314,7 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDiskPntVecR (Handle(G
  *  Builds a cylinder prepared for hexa meshes
  *  \param theR Radius of the cylinder
  *  \param theH Height of the cylinder
+ *  \param thePattern The division pattern of the disk (hexagon or square in the center)
  *  \return New GEOM_Object, containing the created shape.
  */
 //=============================================================================

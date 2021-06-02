@@ -83,7 +83,7 @@ protected:
   /*!
    * \brief Prepare for interactive operation.
    * 
-   * \param theOp [in] the operation.
+   * \param theOperation [in] the operation.
    * \param theView [in] the interacted view.
    * \param theX [in] the mouse position x.
    * \param theY [in] the mouse position y.

@@ -2550,10 +2550,10 @@ bool GEOMImpl_IShapesOperations::checkTypeShapesOn(const Standard_Integer theSha
     * \retval Handle(Geom_Surface) - resulting surface
    */
 //=======================================================================
-Handle(Geom_Surface) GEOMImpl_IShapesOperations::makePlane(const TopoDS_Shape& anAx1)
+Handle(Geom_Surface) GEOMImpl_IShapesOperations::makePlane(const TopoDS_Shape& theAx1)
 {
-  if (anAx1.ShapeType() != TopAbs_EDGE) return NULL;
-  TopoDS_Edge anEdge = TopoDS::Edge(anAx1);
+  if (theAx1.ShapeType() != TopAbs_EDGE) return NULL;
+  TopoDS_Edge anEdge = TopoDS::Edge(theAx1);
   TopoDS_Vertex V1, V2;
   TopExp::Vertices(anEdge, V1, V2, Standard_True);
   if (V1.IsNull() || V2.IsNull()) {
@@ -2573,7 +2573,7 @@ Handle(Geom_Surface) GEOMImpl_IShapesOperations::makePlane(const TopoDS_Shape& a
 //function : makeCylinder
   /*!
    * \brief Creates Geom_CylindricalSurface
-    * \param theAx1 - edge defining cylinder axis
+    * \param anAxis - edge defining cylinder axis
     * \param theRadius - cylinder radius
     * \retval Handle(Geom_Surface) - resulting surface
    */

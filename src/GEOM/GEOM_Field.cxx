@@ -40,7 +40,7 @@
 
 #include <limits>
 
-using namespace GEOM;
+//using namespace GEOM;
 
 namespace
 {
@@ -110,7 +110,7 @@ void GEOM_Field::Init(const Handle(GEOM_Object)&                     theShape,
   data.SetDimension ( theDimension );
   data.SetComponents( theCompNames );
 
-  TPythonDump py( fun ); // prevent dump of SetName
+  GEOM::TPythonDump py( fun ); // prevent dump of SetName
   SetName( theName );
   // PythonDump to be done by the operation creating this field
 }
@@ -381,7 +381,7 @@ Handle(GEOM_FieldStep) GEOM_Field::AddStep(const int stepID, const int stamp)
   // replaces this dump.
   // field.addStep(step, stamp, values)
   TCollection_AsciiString defaultVal( GetDataType() == 3 ? "''" : "0" );
-  TPythonDump( step->GetFunction(1) )
+  GEOM::TPythonDump( step->GetFunction(1) )
     << step << " = "
     << this << ".addStep( "
     << stepID << ", "
@@ -579,7 +579,7 @@ void GEOM_FieldStep::SetStamp(const int stamp)
     GEOM_IField data( fun );
     data.SetStepStamp( stamp );
 
-    TPythonDump( fun ) <<
+    GEOM::TPythonDump( fun ) <<
       GetField() << ".setStamp( " << GetID() << ", " << stamp << " )";
   }
 }
@@ -612,7 +612,7 @@ GEOM_FieldStep::getFunctionToSetValuesAndDump( const TCollection_AsciiString& va
   {
     // it's creation of the step: field.addStep(step, stamp, values)
     GEOM_IField data( fun );
-    TPythonDump( fun ) << this << " = " << GetField() << ".addStep( " <<
+    GEOM::TPythonDump( fun ) << this << " = " << GetField() << ".addStep( " <<
       data.GetStepID() << ", " << data.GetStepStamp() << ", " << valueStr << " )";
   }
   else
@@ -620,7 +620,7 @@ GEOM_FieldStep::getFunctionToSetValuesAndDump( const TCollection_AsciiString& va
     // it's value modification: field.setValues(step, values)
     fun = AddFunction( GEOM_Field::GetFieldID(), GEOM_Field::FUN_CHANGE_VALUE );
     GEOM_IField data( GetFunction(1) );
-    TPythonDump( fun ) << GetField() << ".setValues( " <<
+    GEOM::TPythonDump( fun ) << GetField() << ".setValues( " <<
       data.GetStepID() << ", " << valueStr << " )";
   }
   return fun;

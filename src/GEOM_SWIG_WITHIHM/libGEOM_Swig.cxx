@@ -149,7 +149,6 @@ void GEOM_Swig::createAndDisplayGO( const char* theEntry, bool theUpdateViewer )
 /*!
   \brief Same as createAndDisplayGO, but also fits the active view to the contents
   \param theEntry geometry object's entry
-  \param theUpdateViewer \c true to update active view's contents
 */
 void GEOM_Swig::createAndDisplayFitAllGO( const char* theEntry )
 {

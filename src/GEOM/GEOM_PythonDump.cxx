@@ -122,7 +122,7 @@ namespace GEOM
     return *this;
   }
 
-  TPythonDump& TPythonDump::operator<< (const Handle(GEOM_BaseObject)& theObject)
+  TPythonDump& TPythonDump::operator<< (const Handle(::GEOM_BaseObject)& theObject)
   {
     if (theObject.IsNull()) {
       myStream << "None";
@@ -148,7 +148,7 @@ namespace GEOM
     return *this;
   }
   Standard_EXPORT TPythonDump&
-  TPythonDump::operator<< (const std::list<Handle(GEOM_Object)>& theObjects)
+  TPythonDump::operator<< (const std::list<Handle(::GEOM_Object)>& theObjects)
   {
     Standard_Integer aLength = theObjects.size();
     if ( aLength != 1 ) {
@@ -177,7 +177,7 @@ namespace GEOM
     return *this;
   }
 
-  Handle(GEOM_BaseObject) GetCreatedLast(const Handle(Standard_Transient)& theObj1,
+  Handle(::GEOM_BaseObject) GetCreatedLast(const Handle(Standard_Transient)& theObj1,
                                          const Handle(Standard_Transient)& theObj2)
   {
     Handle(GEOM_BaseObject) bo1 = Handle(GEOM_Object)::DownCast(theObj1);

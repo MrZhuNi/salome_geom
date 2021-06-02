@@ -325,10 +325,12 @@ void XAOPlugin_IOperations::exportSubshapes( const Handle(GEOM_Object)& shape, X
 /*!
  *  Export a shape to XAO format
  *  \param shape The shape to export
- *  \param groups The list of groups to export
- *  \param fields The list of fields to export
- *  \param fileName The name of the file to exported
- *  \return boolean indicating if export was succeful.
+ *  \param groupList The list of groups to export
+ *  \param fieldList The list of fields to export
+ *  \param author The author name
+ *  \param fileName The name of the file to be exported
+ *  \param shapeFileName If not empty, export the shape to this external file
+ *  \return boolean indicating if export was successful.
  */
 //=============================================================================
 bool XAOPlugin_IOperations::ExportXAO( Handle(GEOM_Object) shape,

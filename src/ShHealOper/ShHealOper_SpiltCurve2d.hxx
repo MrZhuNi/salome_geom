@@ -39,7 +39,7 @@ class ShHealOper_SplitCurve2d : public ShapeUpgrade_SplitCurve2d
   // ---------- PUBLIC METHODS ----------
 
   
-  Standard_EXPORT ShHealOper_SplitCurve2d () : ShapeUpgrade_SplitCurve2d {}
+  Standard_EXPORT ShHealOper_SplitCurve2d () : ShapeUpgrade_SplitCurve2d() {}
   // Empty constructor
   
   Standard_EXPORT virtual void Compute();
