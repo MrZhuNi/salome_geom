@@ -77,7 +77,7 @@ public:
   //! Remove curve creator Displayer object
   virtual void removeDisplayer();
 
-  /** Set depth of undo operations (unlimited if \a theDepth is -1
+  /** Set depth of undo operations (unlimited if \a theDepth is '-1'
    *  or disabled if \a theDepth is 0)
    */
   virtual void setUndoDepth(const int theDepth = -1);
@@ -189,7 +189,7 @@ public:
                                   const bool theIsClosed );
   /**
    *  Set "closed" flag of the specified section (all sections if
-   *  \a theISection is -1).
+   *  \a theISection is '-1').
    */
   virtual bool setClosed( const int theISection,
                           const bool theIsClosed );
@@ -225,7 +225,7 @@ public:
                                        const CurveCreator::SectionType theType );
   /**
    *  Set type of the specified section (or all sections
-   *  if \a theISection is -1).
+   *  if \a theISection is '-1').
    */
   virtual bool setSectionType( const int theISection,
                                const CurveCreator::SectionType theType );
@@ -254,7 +254,7 @@ public:
   virtual bool addPointsInternal( const CurveCreator::SectionsMap &theSectionsMap );
   /**
    *  Add one point to the specified section starting from the given theIPnt index
-   *  (or at the end of points if \a theIPnt is -1).
+   *  (or at the end of points if \a theIPnt is '-1').
    */
   virtual bool addPoints( const CurveCreator::Coordinates &theCoords,
                           const int theISection,
@@ -284,7 +284,7 @@ public:
                                               const int theIPnt ) const;
 
   /**
-   * Get points of a section (the total points in Curve if theISection is equal to -1)..
+   * Get points of a section (the total points in Curve if theISection is equal to "-1")..
    */
   virtual Handle(TColgp_HArray1OfPnt) GetDifferentPoints( int theISection = -1 ) const;
 
@@ -293,7 +293,7 @@ public:
 
   /**
    *  Get number of points in specified section or (the total number of points
-   *  in Curve if theISection is equal to -1).
+   *  in Curve if theISection is equal to '-1').
    */
   virtual int getNbPoints( const int theISection ) const;
 

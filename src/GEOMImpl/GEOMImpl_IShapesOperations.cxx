@@ -2573,20 +2573,20 @@ Handle(Geom_Surface) GEOMImpl_IShapesOperations::makePlane(const TopoDS_Shape& t
 //function : makeCylinder
   /*!
    * \brief Creates Geom_CylindricalSurface
-    * \param anAxis - edge defining cylinder axis
+    * \param theAxis - edge defining cylinder axis
     * \param theRadius - cylinder radius
     * \retval Handle(Geom_Surface) - resulting surface
    */
 //=======================================================================
-Handle(Geom_Surface) GEOMImpl_IShapesOperations::makeCylinder(const TopoDS_Shape& anAxis,
+Handle(Geom_Surface) GEOMImpl_IShapesOperations::makeCylinder(const TopoDS_Shape& theAxis,
                                                               const Standard_Real theRadius)
 {
   //Axis of the cylinder
-  if (anAxis.ShapeType() != TopAbs_EDGE) {
+  if (theAxis.ShapeType() != TopAbs_EDGE) {
     SetErrorCode("Not an edge given for the axis");
     return NULL;
   }
-  TopoDS_Edge anEdge = TopoDS::Edge(anAxis);
+  TopoDS_Edge anEdge = TopoDS::Edge(theAxis);
   TopoDS_Vertex V1, V2;
   TopExp::Vertices(anEdge, V1, V2, Standard_True);
   if (V1.IsNull() || V2.IsNull()) {

@@ -370,8 +370,8 @@ public:
         myShape( theShape ) {}
 
     //! Perform highlighting of the presentation.
-    //! \param thePresentationMgr [in] the presentation manager.
-    //! \param theColor [in] the highlighting color.
+    //! \param thePM [in] the presentation manager.
+    //! \param theStyle [in] the highlighting style.
     //! \param theMode [in] the display mode.
     virtual void
       HilightWithColor( const Handle(PrsMgr_PresentationManager3d)& thePM,

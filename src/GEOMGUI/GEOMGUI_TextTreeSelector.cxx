@@ -41,7 +41,8 @@
 
 /*!
   \brief Constructor.
-  \param widget text tree widget
+  \param theWidget text tree widget
+  \param theAnnotationMgr annotation manager
   \param theManager selection manager
 */
 GEOMGUI_TextTreeSelector::GEOMGUI_TextTreeSelector( GEOMGUI_TextTreeWdg* theWidget,

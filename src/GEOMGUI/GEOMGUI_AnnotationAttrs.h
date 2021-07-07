@@ -107,7 +107,7 @@ public:
   //! Changes count of annotation definitions stored on the object.
   //! If the count is decreased the extra annotation definitions are
   //! cleared out from the attribute.
-  //! @param theNumber [in] the new number of annotation definitions.
+  //! @param theCount [in] the new number of annotation definitions.
   GEOMGUI_EXPORT void SetNbAnnotation( const int theCount ) const;
 
   //! Returns number of annotation definitions stored on the object.
@@ -170,6 +170,7 @@ public:
 
   //! Appends new annotation definition with the given properties and converts
   //! position and attachment points to the given shape's local frame of reference.
+  //! @param theProps [in] the properties
   //! @param theShapeLCS [in] the position of shape's local frame of reference with respect
   //!        to the world frame of reference.
   GEOMGUI_EXPORT void Append( const Properties& theProps, const gp_Ax3& theShapeLCS );

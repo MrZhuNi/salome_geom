@@ -535,11 +535,11 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
 
   /*!
    * \brief Creates Geom_CylindricalSurface
-   * \param theAx1 - edge defining cylinder axis
+   * \param theAxis - edge defining cylinder axis
    * \param theRadius - cylinder radius
    * \retval Handle(Geom_Surface) - resulting surface
    */
-  Handle(Geom_Surface) makeCylinder(const TopoDS_Shape& theAx1,
+  Handle(Geom_Surface) makeCylinder(const TopoDS_Shape& theAxis,
                                     const Standard_Real theRadius);
 
   /*!

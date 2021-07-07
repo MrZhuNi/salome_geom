@@ -62,7 +62,8 @@ GEOMImpl_IBaseIEOperations::~GEOMImpl_IBaseIEOperations()
 //=============================================================================
 /*!
  *  This method creates material groups for an imported object.
- *  \param theObject the imported object.
+ *  \param theObject [in] the imported object.
+ *  \param theSeq [out] the sequence of created groups.
  */
 //=============================================================================
 void GEOMImpl_IBaseIEOperations::MakeMaterialGroups

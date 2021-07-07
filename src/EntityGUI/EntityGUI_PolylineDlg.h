@@ -85,16 +85,15 @@ private:
    * construct an object using the interface
    * GEOM_ICurvesOperations::MakePolyline2DOnPlane.
    *
-   * \param theCurve a curve object, that contains data.
-   *  \param theCoordsList the list of coordinates list. theCoordsList[0]
-   *         is the coordinates list of the first section. theCoordsList[1]
-   *         is for the second section etc. Output parameter.
-   *  \param theNamesList the list of names. The order corresponds to
-   *         theCoordsList. Output parameter.
-   *  \param theTypesList the list of curve types. The order corresponds to
-   *         theCoordsList. Output parameter.
-   *  \param theClosedList the list of Closed flags. The order corresponds to
-   *         theCoordsList. Output parameter.
+   *  \param theCoords [out] the list of coordinates list.
+   *         theCoords[0] is the coordinates list of the first section.
+   *         theCoords[1] is for the second section etc.
+   *  \param theNames [out] the list of names. The order corresponds to
+   *         theCoords list.
+   *  \param theTypes [out] the list of curve types. The order corresponds to
+   *         theCoords list.
+   *  \param theCloseds [out] the list of Closed flags. The order corresponds to
+   *         theCoords list.
    */
   void GetCurveParams(GEOM::ListOfListOfDouble &theCoords,
                       GEOM::string_array       &theNames,
