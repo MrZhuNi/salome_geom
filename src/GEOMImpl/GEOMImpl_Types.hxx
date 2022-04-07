@@ -121,6 +121,8 @@
 
 #define GEOM_EXTRACTION 58
 
+#define GEOM_PATCH_FACE 59
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
