@@ -164,6 +164,30 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
   CORBA::Double MinSurfaceCurvatureByPoint (GEOM::GEOM_Object_ptr theSurf,
                                             GEOM::GEOM_Object_ptr thePoint);
 
+  // Methods for class CheckConformity
+  GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* selfIntersected2D(
+                               const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts);
+
+  GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* interferingSubshapes(
+                                                  const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts,
+                                                  const CORBA::Long theShapeType1,
+                                                  const CORBA::Long theShapeType2);
+
+  GEOM::ListOfGO* smallEdges(const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts);
+
+  GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* distantShapes(GEOM::GEOM_Object_ptr theShape,
+                                                                      const CORBA::Long theShapeType,
+                                                                      const CORBA::Long theSubShapeType,
+                                                                      const CORBA::Double theTolerance);
+
+  GEOM::GEOM_IMeasureOperations::CheckResults* checkConformityShape(GEOM::GEOM_Object_ptr theShape);
+
+  CORBA::Double updateTolerance(GEOM::GEOM_Object_ptr theShape);
+private:
+  void ConvertToList(const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts,
+                     std::list <GEOMImpl_IMeasureOperations::FailedChecks>& theListOfResults);
+
+
   ::GEOMImpl_IMeasureOperations* GetOperations()
   { return (::GEOMImpl_IMeasureOperations*)GetImpl(); }
 };

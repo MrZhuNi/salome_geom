@@ -1188,3 +1188,203 @@ CORBA::Double GEOM_IMeasureOperations_i::MinSurfaceCurvatureByPoint
 
   return GetOperations()->MinSurfaceCurvatureByPoint(aShape,aPoint);
 }
+
+//=============================================================================
+/*!
+ *  selfIntersected2D
+ *  Find all self-intersected 2D curves.
+ *  \param theShape Shape for check.
+ */
+ //=============================================================================
+GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* GEOM_IMeasureOperations_i::selfIntersected2D(
+                                          const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts)
+{
+  GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape_var aSeq =
+    new GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape;
+
+  // Perform patch face operation
+  std::list<GEOMImpl_IMeasureOperations::FailedChecks> aResults;
+  ConvertToList(theResuts, aResults);
+
+  std::list<GEOMImpl_IMeasureOperations::FailedShapes> aSelfInters = GetOperations()->selfIntersected2D(aResults);
+  if (!GetOperations()->IsDone() || aSelfInters.empty())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aSelfInters.size();
+  aSeq->length(aLength);
+  std::list<GEOMImpl_IMeasureOperations::FailedShapes>::iterator anIter(aSelfInters.begin());
+  for (Standard_Integer i = 0; i < aLength; i++, ++anIter)
+  {
+    aSeq[i].first = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).first));
+    aSeq[i].second = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).second));
+  }
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  interferingSubshapes
+ *  Find pairs of interfering sub-shapes, by default all pairs of interfering shapes are returned.
+ *  \param theShape Shape for check.
+ *  \param theShapeType1 Type of shape.
+ *  \param theShapeType2 Type of shape.
+ */
+ //=============================================================================
+GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* GEOM_IMeasureOperations_i::interferingSubshapes(
+                                                          const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts,
+                                                          const CORBA::Long theShapeType1,
+                                                          const CORBA::Long theShapeType2)
+{
+  GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape_var aSeq =
+    new GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape;
+
+  // Perform patch face operation
+  std::list<GEOMImpl_IMeasureOperations::FailedChecks> aResults;
+  ConvertToList(theResuts, aResults);
+
+  std::list<GEOMImpl_IMeasureOperations::FailedShapes> aSelfInterf =
+    GetOperations()->interferingSubshapes(aResults, theShapeType1, theShapeType2);
+  if (!GetOperations()->IsDone() || aSelfInterf.empty())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aSelfInterf.size();
+  aSeq->length(aLength);
+  std::list<GEOMImpl_IMeasureOperations::FailedShapes>::iterator anIter(aSelfInterf.begin());
+  for (Standard_Integer i = 0; i < aLength; i++, ++anIter)
+  {
+    aSeq[i].first = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).first));
+    aSeq[i].second = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).second));
+  }
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  smallEdges
+ *  Find edges, which are fully covered by tolerances of vertices.
+ *  \param theShape Shape for check.
+ */
+ //=============================================================================
+GEOM::ListOfGO* GEOM_IMeasureOperations_i::smallEdges(const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  std::list<GEOMImpl_IMeasureOperations::FailedChecks> aResults;
+  ConvertToList(theResuts, aResults);
+
+  //Get the reference shape
+  Handle(TColStd_HSequenceOfTransient) aSmallEdges = GetOperations()->smallEdges(aResults);
+  if (!GetOperations()->IsDone() || aSmallEdges.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aSmallEdges->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i - 1] = GetObject(Handle(::GEOM_Object)::DownCast(aSmallEdges->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  distantShapes
+ *  find remote objects (sub-shape on a shape).
+ *  \param theShape Shape for check.
+ *  \param theShapeType Type of shape.
+ *  \param theSubShapeType Type of sub-shape.
+ *  \param theTolerance tolerance.
+ */
+ //=============================================================================
+GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* GEOM_IMeasureOperations_i::distantShapes(
+                                                                                  GEOM::GEOM_Object_ptr theShape,
+                                                                                  const CORBA::Long theShapeType,
+                                                                                  const CORBA::Long theSubShapeType,
+                                                                                  const CORBA::Double theTolerance)
+{
+  GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape_var aSeq =
+    new GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape;
+
+  //Get the reference shape
+  Handle(::GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  if (aShapeRef.IsNull()) return aSeq._retn();
+
+  // Perform patch face operation
+  std::list<GEOMImpl_IMeasureOperations::FailedShapes> aDistantS =
+    GetOperations()->distantShapes(aShapeRef, theShapeType, theSubShapeType, theTolerance);
+  if (!GetOperations()->IsDone() || aDistantS.empty())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aDistantS.size();
+  aSeq->length(aLength);
+  std::list<GEOMImpl_IMeasureOperations::FailedShapes>::iterator anIter(aDistantS.begin());
+  for (Standard_Integer i = 0; i < aLength; i++, ++anIter)
+  {
+    aSeq[i].first = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).first));
+    aSeq[i].second = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).second));
+  }
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  checkShape
+ *
+ */
+ //=============================================================================
+GEOM::GEOM_IMeasureOperations::CheckResults* GEOM_IMeasureOperations_i::checkConformityShape(
+                                                                          GEOM::GEOM_Object_ptr theShape)
+{
+  GEOM::GEOM_IMeasureOperations::CheckResults_var aRes = new GEOM::GEOM_IMeasureOperations::CheckResults;
+
+  //Get the reference shape
+  Handle(::GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  if (aShapeRef.IsNull()) return false;
+
+  std::list<GEOMImpl_IMeasureOperations::FailedChecks> aChecks;
+  GetOperations()->checkConformityShape(aShapeRef, aChecks);
+
+  Standard_Integer aLength = aChecks.size();
+  aRes->length(aLength);
+  std::list<GEOMImpl_IMeasureOperations::FailedChecks>::const_iterator anIntIt = aChecks.cbegin();
+  for (Standard_Integer i = 0; i < aLength; i++, ++anIntIt)
+  {
+    aRes[i].type = (*anIntIt).TypeOfCheck;
+    aRes[i].failedShapes.first = GetObject(Handle(::GEOM_Object)::DownCast((*anIntIt).FailedShapes.first));
+    aRes[i].failedShapes.second = GetObject(Handle(::GEOM_Object)::DownCast((*anIntIt).FailedShapes.second));
+  }
+
+  return aRes._retn();
+}
+
+//=============================================================================
+/*!
+ *  updateTolerance
+ *  Compute possible tolerance for the shape, minimize tolerance of shape as well
+ *  as tolerance of sub-shapes as much as possible
+ *  \param theShape Shape for check.
+ */
+ //=============================================================================
+CORBA::Double GEOM_IMeasureOperations_i::updateTolerance(GEOM::GEOM_Object_ptr theShape)
+{
+  //Get the reference shape
+  Handle(::GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  if (aShapeRef.IsNull()) return false;
+
+  return GetOperations()->updateTolerance(aShapeRef);
+}
+
+void GEOM_IMeasureOperations_i::ConvertToList(const GEOM::GEOM_IMeasureOperations::CheckResults& theResuts,
+                                              std::list<GEOMImpl_IMeasureOperations::FailedChecks>& theListOfResults)
+{
+  for (Standard_Integer i = 0; i < theResuts.length(); ++i)
+  {
+    GEOMImpl_IMeasureOperations::FailedChecks aCheck;
+    aCheck.TypeOfCheck = theResuts[i].type;
+    aCheck.FailedShapes.first = GetObjectImpl(theResuts[i].failedShapes.first);
+    aCheck.FailedShapes.second = GetObjectImpl(theResuts[i].failedShapes.second);
+    theListOfResults.push_back(aCheck);
+  }
+}

@@ -59,13 +59,14 @@ ENDIF(WIN32)
 
 ADD_CUSTOM_TARGET(usr_docs ${CMAKE_COMMAND} -E make_directory tmp
   COMMAND ${CMAKE_COMMAND} -E make_directory tmp1
-  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/geomBuilder.py ${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/geomBuilder.py
-  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/gsketcher.py   ${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/gsketcher.py
-  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/geomtools.py   ${CMAKE_SOURCE_DIR}/src/GEOM_PY/geomtools.py
-  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/sketcher.py    ${CMAKE_SOURCE_DIR}/src/GEOM_PY/sketcher.py
-  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/structelem.py  ${CMAKE_SOURCE_DIR}/src/GEOM_PY/structelem/__init__.py
-  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/parts.py       ${CMAKE_SOURCE_DIR}/src/GEOM_PY/structelem/parts.py
-  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/orientation.py ${CMAKE_SOURCE_DIR}/src/GEOM_PY/structelem/orientation.py
+  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/geomBuilder.py 	${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/geomBuilder.py
+  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/gsketcher.py   	${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/gsketcher.py
+  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/CheckConformity.py   ${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/CheckConformity.py
+  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/geomtools.py   	${CMAKE_SOURCE_DIR}/src/GEOM_PY/geomtools.py
+  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/sketcher.py    	${CMAKE_SOURCE_DIR}/src/GEOM_PY/sketcher.py
+  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/structelem.py  	${CMAKE_SOURCE_DIR}/src/GEOM_PY/structelem/__init__.py
+  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/parts.py       	${CMAKE_SOURCE_DIR}/src/GEOM_PY/structelem/parts.py
+  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/orientation.py 	${CMAKE_SOURCE_DIR}/src/GEOM_PY/structelem/orientation.py
   COMMAND ${plugins_cmd}
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile_tui 
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile_py
@@ -77,7 +78,7 @@ ADD_CUSTOM_TARGET(usr_docs ${CMAKE_COMMAND} -E make_directory tmp
 )
 
 INSTALL(CODE "EXECUTE_PROCESS(COMMAND \"${CMAKE_COMMAND}\" --build ${PROJECT_BINARY_DIR} --target usr_docs)")
-INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/GEOM DESTINATION ${SALOME_INSTALL_DOC}/gui)
+INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} DESTINATION ${SALOME_INSTALL_DOC}/gui)
 INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/static/SALOME_BOA_PA.pdf DESTINATION ${SALOME_INSTALL_DOC}/gui/GEOM)
 INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/static/ExtractAndRebuild.pdf DESTINATION ${SALOME_INSTALL_DOC}/gui/GEOM)
 INSTALL(FILES input/geompy_migration.doc input/tui_auto_completion_documentation.doc input/tui_execution_distribution.doc DESTINATION ${SALOME_INSTALL_DOC}/gui/GEOM/input)

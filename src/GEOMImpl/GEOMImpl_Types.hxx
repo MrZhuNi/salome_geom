@@ -121,6 +121,8 @@
 
 #define GEOM_EXTRACTION 58
 
+#define GEOM_CHECKCONFORMITY 59
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -390,6 +392,15 @@
 #define TD_GET_IN_PLACE            1
 #define TD_GET_IN_PLACE_OLD        2
 #define TD_GET_IN_PLACE_BY_HISTORY 3
+
+// Conformity operations
+#define CONFORMITY_IS_VALID         2
+#define CONFORMITY_SELFINTERSECTED  3
+#define CONFORMITY_INTERFERENCE     4
+#define CONFORMITY_SMALL_EDGES      5
+#define CONFORMITY_DISTANT_SHAPES   6
+#define CONFORMITY_UPDATE_TOL       7
+#define CONFORMITY_CHECK_SHAPE      8
 
 // Plugins specified constants
 #define PLUGIN_NAME "Plugin Name"

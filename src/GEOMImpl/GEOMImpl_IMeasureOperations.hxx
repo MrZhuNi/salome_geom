@@ -215,8 +215,31 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                                             Standard_Real& theVParam);
   Standard_EXPORT Standard_Real MinSurfaceCurvatureByPoint (Handle(GEOM_Object) theSurf,
                                                             Handle(GEOM_Object) thePoint);
+  typedef std::pair< Handle(GEOM_Object), Handle(GEOM_Object)> FailedShapes;
+  struct FailedChecks
+  {
+    Standard_Integer TypeOfCheck;
+    FailedShapes FailedShapes;
+  };
+
+  Standard_EXPORT std::list<FailedShapes> selfIntersected2D(std::list<FailedChecks>& theChecks);
+  Standard_EXPORT std::list<FailedShapes> interferingSubshapes(std::list<FailedChecks>& theChecks,
+                                                               const int theShapeType1,
+                                                               const int theShapeType2);
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) smallEdges(std::list<FailedChecks>& theChecks);
+  Standard_EXPORT std::list<FailedShapes> distantShapes(Handle(GEOM_Object) theShape,
+                                                        const int theShapeType,
+                                                        const int theSubShapeType,
+                                                        double theTolerance);
+  Standard_EXPORT void checkConformityShape(Handle(GEOM_Object) theShape, std::list<FailedChecks>& theChecks);
+
+  Standard_EXPORT double updateTolerance(Handle(GEOM_Object) theShape);
 
  private:
+
+   bool checkTypes(const FailedShapes& theShapes,
+                   const int theShapeType1,
+                   const int theShapeType2);
 
    void FillErrorsSub
            (const BRepCheck_Analyzer                   &theAna,

@@ -119,6 +119,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_IPipePath.hxx
   GEOMImpl_IRevolution.hxx
   GEOMImpl_IMeasure.hxx
+  GEOMImpl_IConformity.hxx
   GEOMImpl_IShapes.hxx
   GEOMImpl_IShapeExtend.hxx
   GEOMImpl_IFilling.hxx
@@ -155,6 +156,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_BlockDriver.hxx
   GEOMImpl_Block6Explorer.hxx
   GEOMImpl_MeasureDriver.hxx
+  GEOMImpl_ConformityDriver.hxx
   GEOMImpl_PolylineDriver.hxx
   GEOMImpl_PolylineDumper.hxx
   GEOMImpl_CircleDriver.hxx
@@ -202,6 +204,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_ITestOperations.cxx
   GEOMImpl_IPolyline2D.cxx
   GEOMImpl_ITransferData.cxx
+  GEOMImpl_IConformity.cxx
   GEOMImpl_Gen.cxx
   GEOMImpl_PointDriver.cxx
   GEOMImpl_VectorDriver.cxx
@@ -230,6 +233,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_BlockDriver.cxx
   GEOMImpl_Block6Explorer.cxx
   GEOMImpl_MeasureDriver.cxx
+  GEOMImpl_ConformityDriver.cxx
   GEOMImpl_PolylineDriver.cxx
   GEOMImpl_PolylineDumper.cxx
   GEOMImpl_CircleDriver.cxx

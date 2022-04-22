@@ -25,6 +25,9 @@
 #include <GEOMImpl_MeasureDriver.hxx>
 #include <GEOMImpl_Types.hxx>
 
+#include <GEOMImpl_IConformity.hxx>
+#include <GEOMImpl_ConformityDriver.hxx>
+
 #include <GEOMUtils.hxx>
 
 #include <GEOMAlgo_AlgoTools.hxx>
@@ -2656,6 +2659,351 @@ Standard_Real GEOMImpl_IMeasureOperations::MinSurfaceCurvatureByPoint
   gp_Pnt2d UV = sas.ValueOfUV(aPoint,Precision::Confusion());
 
   return getSurfaceCurvatures(aSurf, UV.X(), UV.Y(), false);
+}
+
+//=============================================================================
+/*!
+ *  selfIntersected2D
+ *  Find all self-intersected 2D curves.
+ *  \param theChecks list of failed checks, contains type of check and failed shapes
+ */
+ //=============================================================================
+std::list<GEOMImpl_IMeasureOperations::FailedShapes> GEOMImpl_IMeasureOperations::selfIntersected2D(
+  std::list<FailedChecks>& theChecks)
+{
+  SetErrorCode(KO);
+  MESSAGE("GEOMImpl_IMeasureOperations::selfIntersected2D");
+
+  std::list<GEOMImpl_IMeasureOperations::FailedShapes> aSelfInters2D;
+  Handle(GEOM_Object) aConformity = GetEngine()->AddObject(GEOM_CHECKCONFORMITY);
+  Handle(GEOM_Function) aFunction = aConformity->AddFunction(GEOMImpl_ConformityDriver::GetID(), CONFORMITY_SELFINTERSECTED);
+  if (aFunction.IsNull()) return aSelfInters2D;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ConformityDriver::GetID()) return aSelfInters2D;
+
+  GEOMImpl_IConformity aCI(aFunction);
+  try
+  {
+    OCC_CATCH_SIGNALS;
+    for (std::list<FailedChecks>::iterator anIter(theChecks.begin());
+         anIter != theChecks.end(); ++anIter)
+    {
+      if (anIter->TypeOfCheck == BOPAlgo_CheckStatus::BOPAlgo_InvalidCurveOnSurface)
+        aSelfInters2D.push_back(anIter->FailedShapes);
+    }
+  }
+  catch (Standard_Failure& aFail)
+  {
+    SetErrorCode(aFail.GetMessageString());
+    return aSelfInters2D;
+  }
+
+  SetErrorCode(OK);
+  return aSelfInters2D;
+}
+
+//=============================================================================
+/*!
+ *  interferingSubshapes
+ *  Find pairs of interfering sub-shapes, by default all pairs of interfering shapes are returned.
+ *  \param theChecks list of failed checks, contains type of check and failed shapes
+ *  \param theShapeType1 Type of shape.
+ *  \param theShapeType2 Type of shape.
+ */
+ //=============================================================================
+std::list<GEOMImpl_IMeasureOperations::FailedShapes> GEOMImpl_IMeasureOperations::interferingSubshapes(
+  std::list<FailedChecks>& theChecks,
+  const int           theShapeType1,
+  const int           theShapeType2)
+{
+  SetErrorCode(KO);
+  MESSAGE("GEOMImpl_IMeasureOperations::interferingSubshapes");
+
+  std::list < GEOMImpl_IMeasureOperations::FailedShapes> anInterfer;
+  try
+  {
+    OCC_CATCH_SIGNALS;
+    for (std::list<FailedChecks>::iterator anIter(theChecks.begin());
+         anIter != theChecks.end(); ++anIter)
+    {
+      if (anIter->TypeOfCheck == BOPAlgo_CheckStatus::BOPAlgo_SelfIntersect &&
+          checkTypes(anIter->FailedShapes, theShapeType1, theShapeType2))
+        anInterfer.push_back(anIter->FailedShapes);
+    }
+  }
+  catch (Standard_Failure& aFail)
+  {
+    SetErrorCode(aFail.GetMessageString());
+    return anInterfer;
+  }
+
+  SetErrorCode(OK);
+  return anInterfer;
+}
+
+//=============================================================================
+/*!
+ *  smallEdges
+ *  Find edges, which are fully covered by tolerances of vertices.
+ *  \param theChecks list of failed checks, contains type of check and failed shapes
+ */
+ //=============================================================================
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IMeasureOperations::smallEdges(std::list<FailedChecks>& theChecks)
+{
+  SetErrorCode(KO);
+  MESSAGE("GEOMImpl_IMeasureOperations::smallEdges");
+
+  Handle(TColStd_HSequenceOfTransient) aSmallEdges = new TColStd_HSequenceOfTransient;
+  try
+  {
+    OCC_CATCH_SIGNALS;
+    for (std::list<FailedChecks>::iterator anIter(theChecks.begin());
+         anIter != theChecks.end(); ++anIter)
+    {
+      if (anIter->TypeOfCheck == BOPAlgo_CheckStatus::BOPAlgo_TooSmallEdge)
+        aSmallEdges->Append(anIter->FailedShapes.first);
+    }
+  }
+  catch (Standard_Failure& aFail)
+  {
+    SetErrorCode(aFail.GetMessageString());
+    return NULL;
+  }
+
+  SetErrorCode(OK);
+  return aSmallEdges;
+}
+
+//=============================================================================
+/*!
+ *  distantShapes
+ *  find remote objects (sub-shape on a shape).
+ *  \param theShape Shape for check.
+ *  \param theShapeType Type of shape.
+ *  \param theSubShapeType Type of sub-shape.
+ *  \param theTolerance tolerance.
+ */
+ //=============================================================================
+std::list<GEOMImpl_IMeasureOperations::FailedShapes> GEOMImpl_IMeasureOperations::distantShapes(
+  Handle(GEOM_Object) theShape,
+  const int           theShapeType,
+  const int           theSubShapeType,
+  double              theTolerance)
+{
+  SetErrorCode(KO);
+  MESSAGE("GEOMImpl_IMeasureOperations::distantShapes");
+
+  std::list<GEOMImpl_IMeasureOperations::FailedShapes> aDistantS;
+
+  Handle(GEOM_Object) aConformity = GetEngine()->AddObject(GEOM_CHECKCONFORMITY);
+  Handle(GEOM_Function) aFunction = aConformity->AddFunction(GEOMImpl_ConformityDriver::GetID(), CONFORMITY_DISTANT_SHAPES);
+  if (aFunction.IsNull()) return aDistantS;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ConformityDriver::GetID()) return aDistantS;
+
+  GEOMImpl_IConformity aCI(aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return aDistantS;
+
+  aCI.SetShape(aRefShape);
+  aCI.SetShapeType1(theShapeType);
+  aCI.SetShapeType2(theSubShapeType);
+  aCI.SetTolerance(theTolerance);
+
+  try
+  {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction))
+    {
+      SetErrorCode("Failed: distantShape");
+      return aDistantS;
+    }
+    TopTools_IndexedMapOfShape anIndices;
+    TopExp::MapShapes(theShape->GetValue(), anIndices);
+    Handle(TColStd_HArray1OfInteger) aRes = aFunction->GetIntegerArray(CHECKCONFORMITY_RET_SHAPES_IDS);
+    if (aRes.IsNull())
+      return aDistantS;
+    for (Standard_Integer anIndex = 1; anIndex <= aRes->Size() / 2; ++anIndex)
+    {
+      std::pair<Handle(GEOM_Object), Handle(GEOM_Object)> aPair;
+      Handle(TColStd_HArray1OfInteger) anArray;
+      anArray = new TColStd_HArray1OfInteger(1, 1);
+      anArray->SetValue(1, aRes->Value(2 * anIndex - 1));
+
+      Handle(GEOM_Object) anObj = GetEngine()->AddSubShape(theShape, anArray);
+      if (!anObj.IsNull())
+        aPair.first = anObj;
+
+      anArray = new TColStd_HArray1OfInteger(1, 1);
+      anArray->SetValue(1, aRes->Value(2 * anIndex));
+
+      anObj = GetEngine()->AddSubShape(theShape, anArray);
+      if (!anObj.IsNull())
+        aPair.second = anObj;
+      aDistantS.push_back(aPair);
+    }
+  }
+  catch (Standard_Failure& aFail)
+  {
+    SetErrorCode(aFail.GetMessageString());
+    return aDistantS;
+  }
+
+  SetErrorCode(OK);
+  return aDistantS;
+}
+
+//=============================================================================
+/*!
+ *  checkConformityShape
+ *  Perform analyse of shape and find imperfections in the shape.
+ *  \param theShape Shape for analyse.
+ */
+ //=============================================================================
+void GEOMImpl_IMeasureOperations::checkConformityShape(Handle(GEOM_Object) theShape, std::list<FailedChecks>& theChecks)
+{
+  SetErrorCode(KO);
+  MESSAGE("GEOMImpl_IMeasureOperations::checkShape");
+
+  Handle(GEOM_Object) aConformity = GetEngine()->AddObject(GEOM_CHECKCONFORMITY);
+  Handle(GEOM_Function) aFunction = aConformity->AddFunction(GEOMImpl_ConformityDriver::GetID(), CONFORMITY_CHECK_SHAPE);
+  if (aFunction.IsNull()) return;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ConformityDriver::GetID()) return;
+
+  GEOMImpl_IConformity aCI(aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return;
+
+  aCI.SetShape(aRefShape);
+
+  try
+  {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction))
+    {
+      SetErrorCode("Failed: checkShape");
+      return;
+    }
+    Handle(TColStd_HArray1OfInteger) aTypesChecks = aFunction->GetIntegerArray(CHECKCONFORMITY_RET_TYPES_CHECKS);
+    Handle(TColStd_HArray2OfInteger) aRes = aCI.GetListOfShapesIndices();
+    if (aRes.IsNull())
+      return;
+
+    for (Standard_Integer anIndex = 1; anIndex <= aRes->NbRows(); ++anIndex)
+    {
+      std::pair<Handle(GEOM_Object), Handle(GEOM_Object)> aPair;
+      Handle(TColStd_HArray1OfInteger) anArray;
+      anArray = new TColStd_HArray1OfInteger(1, 1);
+      anArray->SetValue(1, aRes->Value(anIndex, 1));
+
+      Handle(GEOM_Object) anObj = GetEngine()->AddSubShape(theShape, anArray);
+      if (!anObj.IsNull())
+        aPair.first = anObj;
+
+      anArray = new TColStd_HArray1OfInteger(1, 1);
+      anArray->SetValue(1, aRes->Value(anIndex, 2));
+
+      anObj = GetEngine()->AddSubShape(theShape, anArray);
+      if (!anObj.IsNull())
+        aPair.second = anObj;
+      theChecks.push_back({ aTypesChecks->Value(anIndex), aPair });
+    }
+  }
+  catch (Standard_Failure& aFail)
+  {
+    SetErrorCode(aFail.GetMessageString());
+    return;
+  }
+
+  SetErrorCode(OK);
+  return;
+}
+
+//=============================================================================
+/*!
+ *  updateTolerance
+ *  Compute possible tolerance for the shape, minimize tolerance of shape as well
+ *  as tolerance of sub-shapes as much as possible
+ *  \param theShape Shape for compute tolerance.
+ */
+ //=============================================================================
+double GEOMImpl_IMeasureOperations::updateTolerance(Handle(GEOM_Object) theShape)
+{
+  SetErrorCode(KO);
+  MESSAGE("GEOMImpl_IMeasureOperations::updateTolerance");
+
+  double aResTol = -1;
+  Handle(GEOM_Object) aConformity = GetEngine()->AddObject(GEOM_CHECKCONFORMITY);
+  Handle(GEOM_Function) aFunction = aConformity->AddFunction(GEOMImpl_ConformityDriver::GetID(), CONFORMITY_UPDATE_TOL);
+  if (aFunction.IsNull()) return aResTol;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ConformityDriver::GetID()) return aResTol;
+
+  GEOMImpl_IConformity aCI(aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return aResTol;
+
+  aCI.SetShape(aRefShape);
+
+  try
+  {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction))
+    {
+      SetErrorCode("Failed: updateTolerance");
+      return aResTol;
+    }
+    aResTol = aFunction->GetReal(CHECKCONFORMITY_RET_TOLERANCE);
+  }
+  catch (Standard_Failure& aFail)
+  {
+    SetErrorCode(aFail.GetMessageString());
+    return aResTol;
+  }
+
+  SetErrorCode(OK);
+  return aResTol;
+}
+
+//=======================================================================
+//function : checkTypes
+//purpose  :
+//=======================================================================
+bool GEOMImpl_IMeasureOperations::checkTypes(const FailedShapes& theShapes,
+                                             const int theShapeType1,
+                                             const int theShapeType2)
+{
+  TopAbs_ShapeEnum aShapeType1, aShapeType2;
+  if (!theShapes.first.IsNull())
+    aShapeType1 = theShapes.first->GetValue().ShapeType();
+  if (!theShapes.second.IsNull())
+    aShapeType2 = theShapes.second->GetValue().ShapeType();
+
+  if (theShapeType1 == -1 && theShapeType2 == -1)
+  {
+    return true;
+  }
+  else if (theShapeType1 == -1)
+  {
+    return aShapeType1 == theShapeType2 || aShapeType2 == theShapeType2;
+  }
+  else if (theShapeType2 == -1)
+  {
+    return aShapeType1 == theShapeType1 || aShapeType2 == theShapeType1;
+  }
+  else
+  {
+    return aShapeType1 == theShapeType1 && aShapeType2 == theShapeType2 ||
+      aShapeType1 == theShapeType2 && aShapeType2 == theShapeType1;
+  }
 }
 
 //=======================================================================
