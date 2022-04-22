@@ -72,6 +72,7 @@ SET(_python_SCRIPTS
   geomBuilder.py
   gsketcher.py
   proximity.py
+  conformity.py
   )
 
 # Advanced scripts
