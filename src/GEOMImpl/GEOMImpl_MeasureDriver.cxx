@@ -33,6 +33,7 @@
 #include <BRep_Tool.hxx>
 #include <BRepTools.hxx>
 #include <BRepGProp.hxx>
+#include <BRepLProp_SLProps.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
@@ -78,6 +79,101 @@ const Standard_GUID& GEOMImpl_MeasureDriver::GetID()
 //=======================================================================
 GEOMImpl_MeasureDriver::GEOMImpl_MeasureDriver() 
 {
+}
+
+//! This function is designed to evaluate normal curvature of the surface
+//! in the given point along the given direction.
+//! param[in] theFace face of interest.
+//! param[in] thePoint point of interest.
+//! param[in] theDir edge, giving the direction of interest.
+//! return Edge, representing the curvature vector
+TopoDS_Shape EvaluateAlongCurvature(const TopoDS_Shape& theFace,
+                                    const TopoDS_Shape& thePoint,
+                                    const TopoDS_Shape& theDir)
+{
+  if (theFace.IsNull())
+    Standard_NullObject::Raise("Face for curvature calculation is null");
+  if (theFace.ShapeType() != TopAbs_FACE)
+    Standard_NullObject::Raise("Shape for curvature calculation is not a face");
+  TopoDS_Face aFace = TopoDS::Face(theFace);
+  Handle(Geom_Surface) aSurf = BRep_Tool::Surface(aFace);
+  if (aSurf.IsNull())
+    Standard_NullObject::Raise("Surface for curvature calculation is null");
+
+  if (thePoint.IsNull())
+    Standard_NullObject::Raise("Point for curvature measurement is null");
+  if (thePoint.ShapeType() != TopAbs_VERTEX)
+    Standard_NullObject::Raise("Point for curvature calculation is not a vertex");
+  gp_Pnt aPnt = BRep_Tool::Pnt(TopoDS::Vertex(thePoint));
+
+  gp_Vec aV = GEOMUtils::GetVector(theDir, Standard_False);
+
+  // Point projection parameters on surface
+  ShapeAnalysis_Surface aSAS (aSurf);
+  gp_Pnt2d UV = aSAS.ValueOfUV(aPnt, Precision::Confusion());
+  aPnt = aSAS.Value(UV);
+
+  // Calculate differential properties
+  BRepAdaptor_Surface aSurfAdapt (aFace);
+  BRepLProp_SLProps Props (aSurfAdapt, UV.X(), UV.Y(), 2, 1e-7);
+  if (!Props.IsCurvatureDefined())
+    Standard_NullObject::Raise("Curvature calculation failed");
+
+  // Get differential properties
+  gp_Vec Xu  = Props.D1U();
+  gp_Vec Xv  = Props.D1V();
+  gp_Vec Xuu = Props.D2U();
+  gp_Vec Xuv = Props.DUV();
+  gp_Vec Xvv = Props.D2V();
+  gp_Vec n   = Props.Normal();
+
+  // Direction in 2d
+  gp_Dir aDirU (Xu);
+  gp_Dir aDirV (Xv);
+  gp_Vec2d T (aV.Dot(aDirU), aV.Dot(aDirV));
+  if (Abs(T.X()) < Precision::Confusion() &&
+      Abs(T.Y()) < Precision::Confusion())
+    Standard_NullObject::Raise("Curvature calculation failed: direction is normal to the face");
+
+  // Coefficients of the FFF
+  double E = Xu.Dot(Xu);
+  double F = Xu.Dot(Xv);
+  double G = Xv.Dot(Xv);
+
+  // Coefficients of the SFF
+  double L = n.Dot(Xuu);
+  double M = n.Dot(Xuv);
+  double N = n.Dot(Xvv);
+
+  // Calculate curvature using the coefficients of both fundamental forms
+  double k = 0.;
+  if (Abs(T.X()) < Precision::Confusion()) {
+    //if (Abs(G) < Precision::Confusion())
+    //  Standard_NullObject::Raise("Curvature calculation failed: G = 0");
+    //k = N / G; // curvature
+    if (Abs(N) < Precision::Confusion())
+      Standard_NullObject::Raise("Curvature calculation failed: N = 0");
+    k = G / N; // radius of curvature
+  }
+  else {
+    double lambda = T.Y() / T.X();
+    double detE = E + 2*F*lambda + G*lambda*lambda;
+    double detL = L + 2*M*lambda + N*lambda*lambda;
+    //if (Abs(detE) < Precision::Confusion())
+    if (Abs(detL) < Precision::Confusion())
+      Standard_NullObject::Raise("Curvature calculation failed: det = 0");
+    //k = detL / detE; // curvature
+    k = detE / detL; // radius of curvature
+  }
+
+  // Result
+  gp_Dir aNormal (n);
+  gp_Pnt aPntEnd (aPnt.XYZ() + aNormal.XYZ() * k);
+  BRepBuilderAPI_MakeEdge aBuilder (aPnt, aPntEnd);
+  if (!aBuilder.IsDone())
+    Standard_NullObject::Raise("Curvature calculation failed: edge is not built");
+
+  return aBuilder.Shape();
 }
 
 //=======================================================================
@@ -309,6 +405,17 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(Handle(TFunction_Logbook)& log)
     if (!aBuilder.IsDone())
       Standard_NullObject::Raise("Vector construction failed");
     aShape = aBuilder.Shape();
+  }
+  else if (aType == CURVATURE_VEC_MEASURE) {
+    Handle(GEOM_Function) aSrfFunc = aCI.GetBase();
+    Handle(GEOM_Function) aPntFunc = aCI.GetPoint();
+    Handle(GEOM_Function) aDirFunc = aCI.GetDirection();
+
+    TopoDS_Shape aFace   = aSrfFunc->GetValue();
+    TopoDS_Shape aVertex = aPntFunc->GetValue();
+    TopoDS_Shape anEdge  = aDirFunc->GetValue();
+
+    aShape = EvaluateAlongCurvature(aFace, aVertex, anEdge);
   }
   else {
   }

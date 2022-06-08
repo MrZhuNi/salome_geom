@@ -11172,6 +11172,51 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             return aSurf
         ## @}
 
+        ## Measure curvature of surface in the given point along the given direction.
+        #  @param theSurf the given face.
+        #  @param thePoint given point.
+        #  @param theDirection given direction.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing vector of curvature of theSurf.
+        #          The returned vector is codirectional with the normal to the face
+        #          in the given point in case of positive curvature value
+        #          and opposite to the normal in case of negative curvature.
+        #          The normal of the returned vector is equal to the
+        #          absolute value of the curvature.
+        #
+        ## @ref swig_todo "Example"
+        @ManageTransactions("MeasuOp")
+        def CurvatureOnFace(self, theSurf, thePoint, theDirection, theName=None):
+            """
+            Measure curvature of surface in the given point along the given direction.
+
+            Parameters:
+                theSurf the given face.
+                thePoint given point.
+                theDirection given direction.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing vector of curvature of theSurf.
+                The returned vector is codirectional with the normal to the face
+                in the given point in case of positive curvature value
+                and opposite to the normal in case of negative curvature.
+                The normal of the returned vector is equal to the
+                absolute value of the curvature.
+
+            Example of usage:
+                curvature_1 = geompy.CurvatureOnFace(Face_1, Vertex_1, OX)
+            """
+            aVec = self.MeasuOp.SurfaceCurvatureByPointAndDirection(theSurf,thePoint,theDirection)
+            RaiseIfFailed("CurvatureOnFace", self.MeasuOp)
+            self._autoPublish(aVec, theName, "curvature")
+            return aVec
+
         ## Get min and max tolerances of sub-shapes of theShape
         #  @param theShape Shape, to get tolerances of.
         #  @return [FaceMin,FaceMax, EdgeMin,EdgeMax, VertMin,VertMax]\n
