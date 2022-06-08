@@ -123,6 +123,8 @@
 
 #define GEOM_PATCH_FACE 59
 
+#define GEOM_CURVATURE_VEC 60
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -359,6 +361,7 @@
 #define BND_BOX_MEASURE_PRECISE 3
 #define VECTOR_FACE_NORMALE 4
 #define VERTEX_BY_INDEX 5
+#define CURVATURE_VEC_MEASURE 6
 
 #define GROUP_FUNCTION 1
 
