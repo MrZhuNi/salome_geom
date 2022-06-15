@@ -38,6 +38,7 @@
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
+#include <BRepOffsetAPI_NormalProjection.hxx>
 
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
@@ -50,7 +51,9 @@
 
 #include <GProp_GProps.hxx>
 #include <GeomLProp_SLProps.hxx>
+#include <GeomLProp_CLProps.hxx>
 #include <Geom_Surface.hxx>
+#include <GeomAPI_ProjectPointOnCurve.hxx>
 
 #include <Bnd_Box.hxx>
 #include <BRepBndLib.hxx>
@@ -91,33 +94,27 @@ TopoDS_Shape EvaluateAlongCurvature(const TopoDS_Shape& theFace,
                                     const TopoDS_Shape& thePoint,
                                     const TopoDS_Shape& theDir)
 {
-  if (theFace.IsNull())
-    Standard_NullObject::Raise("Face for curvature calculation is null");
-  if (theFace.ShapeType() != TopAbs_FACE)
-    Standard_NullObject::Raise("Shape for curvature calculation is not a face");
-  TopoDS_Face aFace = TopoDS::Face(theFace);
-  Handle(Geom_Surface) aSurf = BRep_Tool::Surface(aFace);
-  if (aSurf.IsNull())
-    Standard_NullObject::Raise("Surface for curvature calculation is null");
-
+  // Point
   if (thePoint.IsNull())
     Standard_NullObject::Raise("Point for curvature measurement is null");
   if (thePoint.ShapeType() != TopAbs_VERTEX)
-    Standard_NullObject::Raise("Point for curvature calculation is not a vertex");
+    Standard_TypeMismatch::Raise("Point for curvature calculation is not a vertex");
   gp_Pnt aPnt = BRep_Tool::Pnt(TopoDS::Vertex(thePoint));
 
-  gp_Vec aV = GEOMUtils::GetVector(theDir, Standard_False);
+  // Point projection on the face
+  Standard_Real U, V;
+  aPnt = GEOMUtils::ProjectPointOnFace(aPnt, theFace, U, V);
+  gp_Pnt2d UV (U, V);
 
-  // Point projection parameters on surface
-  ShapeAnalysis_Surface aSAS (aSurf);
-  gp_Pnt2d UV = aSAS.ValueOfUV(aPnt, Precision::Confusion());
-  aPnt = aSAS.Value(UV);
+  // Face and Vector
+  TopoDS_Face aFace = TopoDS::Face(theFace);
+  gp_Vec aV = GEOMUtils::GetVector(theDir, Standard_False);
 
   // Calculate differential properties
   BRepAdaptor_Surface aSurfAdapt (aFace);
   BRepLProp_SLProps Props (aSurfAdapt, UV.X(), UV.Y(), 2, 1e-7);
   if (!Props.IsCurvatureDefined())
-    Standard_NullObject::Raise("Curvature calculation failed");
+    Standard_ConstructionError::Raise("Curvature calculation failed");
 
   // Get differential properties
   gp_Vec Xu  = Props.D1U();
@@ -133,7 +130,8 @@ TopoDS_Shape EvaluateAlongCurvature(const TopoDS_Shape& theFace,
   gp_Vec2d T (aV.Dot(aDirU), aV.Dot(aDirV));
   if (Abs(T.X()) < Precision::Confusion() &&
       Abs(T.Y()) < Precision::Confusion())
-    Standard_NullObject::Raise("Curvature calculation failed: direction is normal to the face");
+    Standard_ConstructionError::Raise
+                   ("Curvature calculation failed: direction is normal to the face");
 
   // Coefficients of the FFF
   double E = Xu.Dot(Xu);
@@ -145,33 +143,29 @@ TopoDS_Shape EvaluateAlongCurvature(const TopoDS_Shape& theFace,
   double M = n.Dot(Xuv);
   double N = n.Dot(Xvv);
 
-  // Calculate curvature using the coefficients of both fundamental forms
-  double k = 0.;
+  // Calculate radius (or -radius) of curvature
+  // using the coefficients of both fundamental forms
+  double r = 0.;
   if (Abs(T.X()) < Precision::Confusion()) {
-    //if (Abs(G) < Precision::Confusion())
-    //  Standard_NullObject::Raise("Curvature calculation failed: G = 0");
-    //k = N / G; // curvature
     if (Abs(N) < Precision::Confusion())
-      Standard_NullObject::Raise("Curvature calculation failed: N = 0");
-    k = G / N; // radius of curvature
+      Standard_Failure::Raise("ZERO_CURVATURE");
+    r = G / N;
   }
   else {
     double lambda = T.Y() / T.X();
     double detE = E + 2*F*lambda + G*lambda*lambda;
     double detL = L + 2*M*lambda + N*lambda*lambda;
-    //if (Abs(detE) < Precision::Confusion())
     if (Abs(detL) < Precision::Confusion())
-      Standard_NullObject::Raise("Curvature calculation failed: det = 0");
-    //k = detL / detE; // curvature
-    k = detE / detL; // radius of curvature
+      Standard_Failure::Raise("ZERO_CURVATURE");
+    r = detE / detL;
   }
 
   // Result
   gp_Dir aNormal (n);
-  gp_Pnt aPntEnd (aPnt.XYZ() + aNormal.XYZ() * k);
+  gp_Pnt aPntEnd (aPnt.XYZ() + aNormal.XYZ() * r);
   BRepBuilderAPI_MakeEdge aBuilder (aPnt, aPntEnd);
   if (!aBuilder.IsDone())
-    Standard_NullObject::Raise("Curvature calculation failed: edge is not built");
+    Standard_ConstructionError::Raise("Curvature calculation failed: edge is not built");
 
   return aBuilder.Shape();
 }
@@ -465,6 +459,12 @@ GetCreationInformation(std::string&             theOperationName,
     theOperationName = "NORMALE";
     AddParam( theParams, "Face", aCI.GetBase() );
     AddParam( theParams, "Point", aCI.GetPoint(), "face center" );
+    break;
+  case CURVATURE_VEC_MEASURE:
+    theOperationName = "CURVATURE";
+    AddParam( theParams, "Face", aCI.GetBase() );
+    AddParam( theParams, "Point", aCI.GetPoint(), "point of interest" );
+    AddParam( theParams, "Vector", aCI.GetDirection(), "direction of interest" );
     break;
   default:
     return false;

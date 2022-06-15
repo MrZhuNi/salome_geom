@@ -595,5 +595,17 @@ def TestAll (geompy, math):
   geompy.MakeExtraction(Box, [18], "Ext_no_edge")
   geompy.MakeExtraction(Box, [16], "Ext_no_vertex")
 
+  # CurvatureOnFace
+  Cylinder_1 = geompy.MakeCylinderRH(100, 50, 'Cylinder_r100_h150')
+  [Face_1,Face_2,Face_3] = geompy.ExtractShapes(Cylinder_1, geompy.ShapeType["FACE"], True, "Face")
+  curvature_1 = geompy.CurvatureOnFace(Face_2, px, vy, 'curvature_cyl_px_vy')
+  assert(abs(geompy.BasicProperties(curvature_1)[0] - 100) < 1e-07)
+  isExcept = False
+  try:
+    geompy.CurvatureOnFace(Face_2, px, vz)
+  except:
+    isExcept = True
+    assert(geompy.MeasuOp.GetErrorCode() == "Curvature radius is infinite")
+  assert(isExcept)
 
   print("DONE")
