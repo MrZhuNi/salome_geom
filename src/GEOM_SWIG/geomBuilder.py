@@ -260,6 +260,7 @@ import os
 import functools
 
 from salome.geom.gsketcher import Sketcher3D, Sketcher2D, Polyline2D
+from salome.geom.canonicalrecognition import CanonicalRecognition
 
 # In case the omniORBpy EnumItem class does not fully support Python 3
 # (for instance in version 4.2.1-2), the comparison ordering methods must be
@@ -2785,6 +2786,21 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             """
             pl = Polyline2D (self)
             return pl
+
+        ## Obtain a 2D polyline creation interface
+        #  @return An instance of @ref gsketcher.Polyline2D "Polyline2D" interface
+        #
+        #  @ref tui_3dsketcher_page "Example"
+        def CanonicalRecognition (self):
+            """
+            Obtain a canonical recognition interface.
+
+            Example of usage:
+                cr = geompy.CanonicalRecognition()
+                cr.isLine(aLine, tolerance)
+            """
+            cr = CanonicalRecognition (self)
+            return cr
 
         # end of l3_sketcher
         ## @}
