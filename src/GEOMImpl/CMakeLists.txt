@@ -180,6 +180,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_GlueDriver.hxx
   GEOMImpl_Types.hxx
   GEOM_GEOMImpl.hxx
+  GEOMImpl_ICanonicalRecognition.hxx
   )
 # --- sources ---
 
@@ -254,6 +255,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_FillingDriver.cxx
   GEOMImpl_GlueDriver.cxx
   GEOMImpl_FieldDriver.cxx
+  GEOMImpl_ICanonicalRecognition.cxx
   )
 
 # --- rules ---
