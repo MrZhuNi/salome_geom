@@ -29,11 +29,14 @@ Sphere_1 = geompy.MakeSphereR(R, 'Sphere_1')
 curvature_1 = geompy.CurvatureOnFace(Sph, pXYZ, OX,    'curvature_sph_pXYZ_OX')
 curvature_2 = geompy.CurvatureOnFace(Sph, pXYZ, vZ_XY, 'curvature_sph_pXYZ_vt')
 curvature_3 = geompy.CurvatureOnFace(Sph, pY,   OX,    'curvature_sph_pY_OX')
+# Pole
+curvature_p = geompy.CurvatureOnFace(Sph, pZ,   OX,    'curvature_sph_pZ_OX')
 
 # All sphere curvature radiuces = R
 assert(abs(geompy.BasicProperties(curvature_1)[0] - R) < 1e-07)
 assert(abs(geompy.BasicProperties(curvature_2)[0] - R) < 1e-07)
 assert(abs(geompy.BasicProperties(curvature_3)[0] - R) < 1e-07)
+assert(abs(geompy.BasicProperties(curvature_p)[0] - R) < 1e-07)
 
 # Normal direction
 isExcept = False
@@ -41,15 +44,6 @@ try:
   geompy.CurvatureOnFace(Sph, pY,   OY)
 except:
   isExcept = True
-assert(isExcept)
-
-# Pole (min and max curvatures are not defined, find via line projection?)
-isExcept = False
-try:
-  geompy.CurvatureOnFace(Sph, pZ, OX, 'curvature_sph_pZ_OX')
-except:
-  isExcept = True
-  print(geompy.MeasuOp.GetErrorCode())
 assert(isExcept)
 
 # II. Curvature of a Cylinder

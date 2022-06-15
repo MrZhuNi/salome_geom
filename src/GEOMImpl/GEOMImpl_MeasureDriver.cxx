@@ -113,8 +113,9 @@ TopoDS_Shape EvaluateAlongCurvature(const TopoDS_Shape& theFace,
   // Calculate differential properties
   BRepAdaptor_Surface aSurfAdapt (aFace);
   BRepLProp_SLProps Props (aSurfAdapt, UV.X(), UV.Y(), 2, 1e-7);
-  if (!Props.IsCurvatureDefined())
-    Standard_ConstructionError::Raise("Curvature calculation failed");
+  if (!Props.IsNormalDefined())
+    Standard_ConstructionError::Raise
+      ("Curvature calculation failed: normal direction is not defined");
 
   // Get differential properties
   gp_Vec Xu  = Props.D1U();

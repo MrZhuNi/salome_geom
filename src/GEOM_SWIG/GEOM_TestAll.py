@@ -600,12 +600,15 @@ def TestAll (geompy, math):
   [Face_1,Face_2,Face_3] = geompy.ExtractShapes(Cylinder_1, geompy.ShapeType["FACE"], True, "Face")
   curvature_1 = geompy.CurvatureOnFace(Face_2, px, vy, 'curvature_cyl_px_vy')
   assert(abs(geompy.BasicProperties(curvature_1)[0] - 100) < 1e-07)
+  curvature_zero = geompy.CurvatureOnFace(Face_2, px, vz)
+  assert(geompy.MeasuOp.GetErrorCode() == "ZERO_CURVATURE")
+  assert(not curvature_zero)
   isExcept = False
   try:
-    geompy.CurvatureOnFace(Face_2, px, vz)
+    # p0 is on cylinder axis, projection should fail
+    geompy.CurvatureOnFace(Face_2, p0, vy)
   except:
     isExcept = True
-    assert(geompy.MeasuOp.GetErrorCode() == "Curvature radius is infinite")
   assert(isExcept)
 
   print("DONE")
