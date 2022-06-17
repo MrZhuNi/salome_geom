@@ -25,7 +25,9 @@
 #include <GEOMImpl_MeasureDriver.hxx>
 
 #include <GEOMImpl_IPatchFace.hxx>
+#include <GEOMImpl_IProximity.hxx>
 #include <GEOMImpl_PatchFaceDriver.hxx>
+#include <GEOMImpl_ShapeProximityDriver.hxx>
 
 #include <GEOMImpl_Types.hxx>
 
@@ -3277,4 +3279,194 @@ void GEOMImpl_IMeasureOperations::FillErrors
       theErrors.push_back(anError);
     }
   }
+}
+
+//=======================================================================
+//function : ShapeProximityCalculator
+//purpose  : returns an object to compute the proximity value
+//=======================================================================
+Handle(GEOM_Object) GEOMImpl_IMeasureOperations::ShapeProximityCalculator(
+    Handle(GEOM_Object) theShape1,
+    Handle(GEOM_Object) theShape2)
+{
+  SetErrorCode(KO);
+
+  if (theShape1.IsNull() || theShape2.IsNull())
+    return NULL;
+
+  Handle(GEOM_Object) aProximityCalc = GetEngine()->AddObject(GEOM_SHAPE_PROXIMITY);
+  if (aProximityCalc.IsNull())
+    return NULL;
+
+  Handle(GEOM_Function) aProximityFuncCoarse =
+      aProximityCalc->AddFunction(GEOMImpl_ShapeProximityDriver::GetID(), PROXIMITY_COARSE);
+  //Check if the function is set correctly
+  if (aProximityFuncCoarse.IsNull() ||
+      aProximityFuncCoarse->GetDriverGUID() != GEOMImpl_ShapeProximityDriver::GetID())
+    return NULL;
+
+  GEOMImpl_IProximity aProximity(aProximityFuncCoarse);
+  Handle(GEOM_Function) aShapeFunc1 = theShape1->GetLastFunction();
+  Handle(GEOM_Function) aShapeFunc2 = theShape2->GetLastFunction();
+  if (aShapeFunc1.IsNull() || aShapeFunc2.IsNull())
+    return NULL;
+
+  aProximity.SetShapes(aShapeFunc1, aShapeFunc2);
+
+  // Perform
+  try
+  {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aProximityFuncCoarse))
+    {
+      SetErrorCode("shape proximity driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure& aFail)
+  {
+    SetErrorCode(aFail.GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aProximityFuncCoarse) << "p = geompy.ShapeProximity()";
+  GEOM::TPythonDump(aProximityFuncCoarse) << "p.setShapes(" << theShape1 << ", " << theShape2 << ")";
+
+  SetErrorCode(OK);
+  return aProximityCalc;
+}
+
+//=======================================================================
+//function : SetShapeSampling
+//purpose  : set number sample points to compute the coarse proximity
+//=======================================================================
+void GEOMImpl_IMeasureOperations::SetShapeSampling(
+    Handle(GEOM_Object) theCalculator,
+    Handle(GEOM_Object) theShape,
+    const Standard_Integer theNbSamples)
+{
+  SetErrorCode(KO);
+  if (theShape.IsNull() ||
+      theCalculator.IsNull() ||
+      theCalculator->GetNbFunctions() <= 0 ||
+      theNbSamples <= 0)
+    return ;
+
+
+  Handle(GEOM_Function) aProximityFuncCoarse = theCalculator->GetFunction(1);
+  if (aProximityFuncCoarse.IsNull() ||
+      aProximityFuncCoarse->GetDriverGUID() != GEOMImpl_ShapeProximityDriver::GetID())
+    return ;
+
+  Handle(GEOM_Function) aShapeFunc = theShape->GetLastFunction();
+  if (aShapeFunc.IsNull())
+    return ;
+
+  GEOMImpl_IProximity aProximity(aProximityFuncCoarse);
+  Handle(GEOM_Function) aShape1, aShape2;
+  aProximity.GetShapes(aShape1, aShape2);
+  if (aShape1 == aShapeFunc)
+    aProximity.SetNbSamples(PROXIMITY_ARG_SAMPLES1, theNbSamples);
+  else if (aShape2 == aShapeFunc)
+    aProximity.SetNbSamples(PROXIMITY_ARG_SAMPLES2, theNbSamples);
+
+  //Make a Python command
+  GEOM::TPythonDump(aProximityFuncCoarse) << "p.setSampling(" << theShape << ", " << theNbSamples << ")";
+
+  SetErrorCode(OK);
+}
+
+//=======================================================================
+//function : GetCoarseProximity
+//purpose  : compute coarse proximity
+//=======================================================================
+Standard_Real GEOMImpl_IMeasureOperations::GetCoarseProximity(Handle(GEOM_Object) theCalculator)
+{
+  SetErrorCode(KO);
+  if (theCalculator.IsNull())
+    return NULL;
+
+  Handle(GEOM_Function) aProximityFuncCoarse;
+  for (int i = 1; i <= theCalculator->GetNbFunctions() && aProximityFuncCoarse.IsNull(); ++i)
+  {
+    Handle(GEOM_Function) aFunc = theCalculator->GetFunction(i);
+    if (!aFunc.IsNull() && aFunc->GetType() == PROXIMITY_COARSE)
+      aProximityFuncCoarse = aFunc;
+  }
+  //Check if the function is set correctly
+  if (aProximityFuncCoarse.IsNull() ||
+      aProximityFuncCoarse->GetDriverGUID() != GEOMImpl_ShapeProximityDriver::GetID())
+    return NULL;
+
+  GEOMImpl_IProximity aProximity(aProximityFuncCoarse);
+
+  //Make a Python command
+  GEOM::TPythonDump(aProximityFuncCoarse) << "value = p.coarseProximity()";
+
+  SetErrorCode(OK);
+  return aProximity.GetValue();
+}
+
+//=======================================================================
+//function : GetPreciseProximity
+//purpose  : compute precise proximity
+//=======================================================================
+Standard_Real GEOMImpl_IMeasureOperations::GetPreciseProximity(Handle(GEOM_Object) theCalculator)
+{
+  SetErrorCode(KO);
+  if (theCalculator.IsNull())
+    return NULL;
+
+  Handle(GEOM_Function) aProximityFuncFine = theCalculator->GetLastFunction();
+  if (aProximityFuncFine.IsNull())
+  {
+    // perform coarse computatiuon beforehand
+    GetCoarseProximity(theCalculator);
+    aProximityFuncFine = theCalculator->GetLastFunction();
+  }
+  if (aProximityFuncFine->GetType() != PROXIMITY_PRECISE)
+    aProximityFuncFine = theCalculator->AddFunction(GEOMImpl_ShapeProximityDriver::GetID(), PROXIMITY_PRECISE);
+  Handle(GEOM_Function) aProximityFuncCoarse = theCalculator->GetFunction(1);
+  //Check if the functions are set correctly
+  if (aProximityFuncCoarse.IsNull() ||
+      aProximityFuncCoarse->GetDriverGUID() != GEOMImpl_ShapeProximityDriver::GetID() ||
+      aProximityFuncFine.IsNull() ||
+      aProximityFuncFine->GetDriverGUID() != GEOMImpl_ShapeProximityDriver::GetID())
+    return NULL;
+
+  // transfer parameters from the coarse to precise calculator
+  GEOMImpl_IProximity aCoarseProximity(aProximityFuncCoarse);
+  Handle(GEOM_Function) aShape1, aShape2;
+  aCoarseProximity.GetShapes(aShape1, aShape2);
+  if (aShape1.IsNull() || aShape2.IsNull())
+    return NULL;
+  gp_Pnt aProxPnt1, aProxPnt2;
+  aCoarseProximity.GetProximityPoints(aProxPnt1, aProxPnt2);
+
+  GEOMImpl_IProximity aFineProximity(aProximityFuncFine);
+  aFineProximity.SetShapes(aShape1, aShape2);
+  aFineProximity.SetProximityPoints(aProxPnt1, aProxPnt2);
+
+  // Perform
+  try
+  {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aProximityFuncFine))
+    {
+      SetErrorCode("shape proximity driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure& aFail)
+  {
+    SetErrorCode(aFail.GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aProximityFuncCoarse) << "value = p.preciseProximity()";
+
+  SetErrorCode(OK);
+  return aFineProximity.GetValue();
 }
