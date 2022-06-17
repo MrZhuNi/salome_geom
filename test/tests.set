@@ -19,4 +19,6 @@
 
 SET(ALL_TESTS
   test_perf_01.py
+  test_proximity_edge_edge.py
+  test_proximity_face_face.py
   )

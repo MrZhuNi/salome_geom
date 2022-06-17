@@ -170,6 +170,15 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
                                                              GEOM::GEOM_Object_ptr thePoint,
                                                              GEOM::GEOM_Object_ptr theDirection);
 
+  // Methods to compute proximity between two shapes
+  GEOM::GEOM_Object_ptr ShapeProximityCalculator (GEOM::GEOM_Object_ptr theShape1,
+                                                  GEOM::GEOM_Object_ptr theShape2);
+  void SetShapeSampling(GEOM::GEOM_Object_ptr theCalculator,
+                        GEOM::GEOM_Object_ptr theShape,
+                        long theNbSamples);
+  CORBA::Double GetCoarseProximity(GEOM::GEOM_Object_ptr theCalculator);
+  CORBA::Double GetPreciseProximity(GEOM::GEOM_Object_ptr theCalculator);
+
   ::GEOMImpl_IMeasureOperations* GetOperations()
   { return (::GEOMImpl_IMeasureOperations*)GetImpl(); }
 };

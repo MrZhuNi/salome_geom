@@ -125,6 +125,8 @@
 
 #define GEOM_CURVATURE_VEC 60
 
+#define GEOM_SHAPE_PROXIMITY 61
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -362,6 +364,10 @@
 #define VECTOR_FACE_NORMALE 4
 #define VERTEX_BY_INDEX 5
 #define CURVATURE_VEC_MEASURE 6
+
+// Proximity algorithms
+#define PROXIMITY_COARSE  1
+#define PROXIMITY_PRECISE 2
 
 #define GROUP_FUNCTION 1
 
