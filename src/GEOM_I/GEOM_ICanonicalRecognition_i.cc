@@ -60,6 +60,11 @@ GEOM_ICanonicalRecognition_i::~GEOM_ICanonicalRecognition_i()
   MESSAGE("GEOM_ICanonicalRecognition_i::~GEOM_ICanonicalRecognition_i");
 }
 
+static bool isValidDirection(const GEOM::ListOfDouble& theDir)
+{
+  return (theDir.length() == 3) && (gp_Vec(theDir[0], theDir[1], theDir[2]).Magnitude() > 0.);
+}
+
 //=============================================================================
 /*
  *  \brief Check if the shape is planar
@@ -70,7 +75,7 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isPlane(GEOM::GEOM_Object_ptr theSh
 {
   Handle(::GEOM_Object) go = GetObjectImpl(theShape);
 
-  bool aIsValidNormal = theNormal.length() == 3;
+  bool aIsValidNormal = isValidDirection(theNormal);
   bool aIsValidOrigin = theOrigin.length() == 3;
   gp_Pln aPln;
   if (aIsValidNormal && aIsValidOrigin) {
@@ -78,18 +83,16 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isPlane(GEOM::GEOM_Object_ptr theSh
       gp_Dir(theNormal[0], theNormal[1], theNormal[2]));
   }
   bool aResult = GetOperation()->isPlane(go, theTolerance, aPln);
-  if (aResult && aIsValidNormal && aIsValidOrigin)
-  {
-    gp_Pnt aOrig = aPln.Location();
-    theOrigin[0] = aOrig.X();
-    theOrigin[1] = aOrig.Y();
-    theOrigin[2] = aOrig.Z();
+  gp_Pnt aOrig = aPln.Location();
+  theOrigin[0] = aOrig.X();
+  theOrigin[1] = aOrig.Y();
+  theOrigin[2] = aOrig.Z();
 
-    gp_Dir aNorm = aPln.Axis().Direction();
-    theNormal[0] = aNorm.X();
-    theNormal[1] = aNorm.Y();
-    theNormal[2] = aNorm.Z();
-  }
+  gp_Dir aNorm = aPln.Axis().Direction();
+  theNormal[0] = aNorm.X();
+  theNormal[1] = aNorm.Y();
+  theNormal[2] = aNorm.Z();
+
   return aResult;
 }
 
@@ -112,14 +115,12 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isSphere(GEOM::GEOM_Object_ptr theS
     aSphere.SetRadius(theRadius);
   }
   bool aResult = GetOperation()->isSphere(go, theTolerance, aSphere);
-  if (aResult && aIsValidOrigin && aIsValidRadius)
-  {
-    gp_Pnt aLoc = aSphere.Location();
-    theOrigin[0] = aLoc.X();
-    theOrigin[1] = aLoc.Y();
-    theOrigin[2] = aLoc.Z();
-    theRadius = aSphere.Radius();
-  }
+  gp_Pnt aLoc = aSphere.Location();
+  theOrigin[0] = aLoc.X();
+  theOrigin[1] = aLoc.Y();
+  theOrigin[2] = aLoc.Z();
+  theRadius = aSphere.Radius();
+
   return aResult;
 }
 
@@ -133,31 +134,28 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isCone(GEOM::GEOM_Object_ptr theSha
 {
   Handle(::GEOM_Object) go = GetObjectImpl(theShape);
 
-  bool aIsValidAxis = theAxis.length() == 3;
+  bool aIsValidAxis = isValidDirection(theAxis);
   bool aIsValidApex = theApex.length() == 3;
   bool aIsValidAngle = theHalfAngle > 0;
   gp_Cone aCone;
   if (aIsValidAxis && aIsValidApex && aIsValidAngle)
   {
     gp_Pnt aLoc(theApex[0], theApex[1], theApex[2]);
-    aCone.SetLocation(aLoc);
-    aCone.SetAxis(gp_Ax1(aLoc, gp_Dir(theAxis[0], theAxis[1], theAxis[2])));
+    gp_Ax3 aAx3(aLoc, gp_Dir(theAxis[0], theAxis[1], theAxis[2]));
+    aCone.SetPosition(aAx3);
   }
   bool aResult = GetOperation()->isCone(go, theTolerance, aCone);
-  if (aResult && aIsValidAxis && aIsValidApex && aIsValidAngle)
-  {
-    gp_Dir aDir = aCone.Axis().Direction();
-    theAxis[0] = aDir.X();
-    theAxis[1] = aDir.Y();
-    theAxis[2] = aDir.Z();
+  gp_Dir aDir = aCone.Axis().Direction();
+  theAxis[0] = aDir.X();
+  theAxis[1] = aDir.Y();
+  theAxis[2] = aDir.Z();
 
-    gp_Pnt aApex = aCone.Apex();
-    theApex[0] = aApex.X();
-    theApex[1] = aApex.Y();
-    theApex[2] = aApex.Z();
+  gp_Pnt aApex = aCone.Apex();
+  theApex[0] = aApex.X();
+  theApex[1] = aApex.Y();
+  theApex[2] = aApex.Z();
 
-    theHalfAngle = aCone.SemiAngle();
-  }
+  theHalfAngle = aCone.SemiAngle();
   return aResult;
 }
 
@@ -171,32 +169,30 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isCylinder(GEOM::GEOM_Object_ptr th
 {
   Handle(::GEOM_Object) go = GetObjectImpl(theShape);
 
-  bool aIsValidAxis = theAxis.length() == 3;
+  bool aIsValidAxis = isValidDirection(theAxis);
   bool aIsValidOrigin = theOrigin.length() == 3;
   bool aIsValidRadius = theRadius > 0;
   gp_Cylinder aCylinder;
   if (aIsValidAxis && aIsValidOrigin && aIsValidRadius)
   {
     gp_Pnt aLoc(theOrigin[0], theOrigin[0], theOrigin[0]);
-    aCylinder.SetLocation(aLoc);
-    aCylinder.SetAxis(gp_Ax1(aLoc, gp_Dir(theAxis[0], theAxis[1], theAxis[2])));
+    gp_Ax3 aAx3(aLoc, gp_Dir(theAxis[0], theAxis[1], theAxis[2]));
+    aCylinder.SetPosition(aAx3);
     aCylinder.SetRadius(theRadius);
   }
   bool aResult = GetOperation()->isCylinder(go, theTolerance, aCylinder);
-  if (aResult && aIsValidAxis && aIsValidOrigin && aIsValidRadius)
-  {
-    gp_Dir aDir = aCylinder.Axis().Direction();
-    theAxis[0] = aDir.X();
-    theAxis[1] = aDir.Y();
-    theAxis[2] = aDir.Z();
+  gp_Dir aDir = aCylinder.Axis().Direction();
+  theAxis[0] = aDir.X();
+  theAxis[1] = aDir.Y();
+  theAxis[2] = aDir.Z();
 
-    gp_Pnt aLoc = aCylinder.Location();
-    theOrigin[0] = aLoc.X();
-    theOrigin[1] = aLoc.Y();
-    theOrigin[2] = aLoc.Z();
+  gp_Pnt aLoc = aCylinder.Location();
+  theOrigin[0] = aLoc.X();
+  theOrigin[1] = aLoc.Y();
+  theOrigin[2] = aLoc.Z();
 
-    theRadius = aCylinder.Radius();
-  }
+  theRadius = aCylinder.Radius();
+
   return aResult;
 }
 
@@ -210,7 +206,7 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isLine(GEOM::GEOM_Object_ptr theEdg
 {
   Handle(::GEOM_Object) go = GetObjectImpl(theEdge);
 
-  bool aIsValidDir = theDir.length() == 3;
+  bool aIsValidDir = isValidDirection(theDir);
   bool aIsValidOrigin = theOrigin.length() == 3;
   gp_Lin aLine;
   if (aIsValidDir && aIsValidOrigin)
@@ -219,18 +215,16 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isLine(GEOM::GEOM_Object_ptr theEdg
     aLine.SetDirection(gp_Dir(theDir[0], theDir[1], theDir[2]));
   }
   bool aResult = GetOperation()->isLine(go, theTolerance, aLine);
-  if (aResult && aIsValidDir && aIsValidOrigin)
-  {
-    gp_Pnt aLoc = aLine.Location();
-    theOrigin[0] = aLoc.X();
-    theOrigin[1] = aLoc.Y();
-    theOrigin[2] = aLoc.Z();
+  gp_Pnt aLoc = aLine.Location();
+  theOrigin[0] = aLoc.X();
+  theOrigin[1] = aLoc.Y();
+  theOrigin[2] = aLoc.Z();
 
-    gp_Dir aDir = aLine.Direction();
-    theDir[0] = aDir.X();
-    theDir[1] = aDir.Y();
-    theDir[2] = aDir.Z();
-  }
+  gp_Dir aDir = aLine.Direction();
+  theDir[0] = aDir.X();
+  theDir[1] = aDir.Y();
+  theDir[2] = aDir.Z();
+
   return aResult;
 }
 
@@ -243,30 +237,29 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isCircle(GEOM::GEOM_Object_ptr theE
   GEOM::ListOfDouble& theNormal, GEOM::ListOfDouble& theOrigin, CORBA::Double& theRadius)
 {
   Handle(::GEOM_Object) go = GetObjectImpl(theEdge);
-  bool aIsValidNormal = theNormal.length() == 3;
+  bool aIsValidNormal = isValidDirection(theNormal);
   bool aIsValidOrigin = theOrigin.length() == 3;
   bool aIsValidRadius = theRadius > 0;
   gp_Circ aCircle;
   if (aIsValidNormal && aIsValidOrigin && aIsValidRadius)
   {
-    aCircle.SetAxis(gp_Ax1(gp_Pnt(theOrigin[0], theOrigin[1], theOrigin[2]),
-      gp_Dir(theNormal[0], theNormal[1], theNormal[2])));
+    gp_Ax2 aAx2(gp_Pnt(theOrigin[0], theOrigin[1], theOrigin[2]),
+      gp_Dir(theNormal[0], theNormal[1], theNormal[2]));
+    aCircle.SetPosition(aAx2);
     aCircle.SetRadius(theRadius);
   }
   bool aResult = GetOperation()->isCircle(go, theTolerance, aCircle);
-  if (aResult && aIsValidNormal && aIsValidOrigin && aIsValidRadius)
-  {
-    gp_Pnt aLoc = aCircle.Location();
-    theOrigin[0] = aLoc.X();
-    theOrigin[1] = aLoc.Y();
-    theOrigin[2] = aLoc.Z();
+  gp_Pnt aLoc = aCircle.Location();
+  theOrigin[0] = aLoc.X();
+  theOrigin[1] = aLoc.Y();
+  theOrigin[2] = aLoc.Z();
 
-    gp_Dir aDir = aCircle.Axis().Direction();
-    theNormal[0] = aDir.X();
-    theNormal[1] = aDir.Y();
-    theNormal[2] = aDir.Z();
-    theRadius = aCircle.Radius();
-  }
+  gp_Dir aDir = aCircle.Axis().Direction();
+  theNormal[0] = aDir.X();
+  theNormal[1] = aDir.Y();
+  theNormal[2] = aDir.Z();
+  theRadius = aCircle.Radius();
+
   return aResult;
 }
 
@@ -280,9 +273,9 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isEllipse(GEOM::GEOM_Object_ptr the
   CORBA::Double& theMajorRadius, CORBA::Double& theMinorRadius)
 {
   Handle(::GEOM_Object) go = GetObjectImpl(theEdge);
-  bool aIsValidNormal = theNormal.length() == 3;
+  bool aIsValidNormal = isValidDirection(theNormal);
   bool aIsValidOrigin = theOrigin.length() == 3;
-  bool aIsValidDirX = theDirX.length() == 3;
+  bool aIsValidDirX = isValidDirection(theDirX);
   bool aIsValidRad1 = (theMajorRadius > 0) && (theMajorRadius > theMinorRadius);
   bool aIsValidRad2 = (theMinorRadius > 0) && (theMajorRadius > theMinorRadius);
 
@@ -295,25 +288,25 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isEllipse(GEOM::GEOM_Object_ptr the
     aElips = gp_Elips(aAx2, theMajorRadius, theMinorRadius);
   }
   bool aResult = GetOperation()->isEllipse(go, theTolerance, aElips);
-  if (aResult && aIsValidNormal && aIsValidOrigin && aIsValidDirX && aIsValidRad1 && aIsValidRad2)
-  {
-    gp_Pnt aLoc = aElips.Position().Location();
-    theOrigin[0] = aLoc.X();
-    theOrigin[1] = aLoc.Y();
-    theOrigin[2] = aLoc.Z();
+  gp_Pnt aLoc = aElips.Position().Location();
+  if (theOrigin.length() != 3)
+    theOrigin.allocbuf(3);
+  theOrigin[0] = aLoc.X();
+  theOrigin[1] = aLoc.Y();
+  theOrigin[2] = aLoc.Z();
 
-    gp_Dir aNorm = aElips.Position().Direction();
-    theNormal[0] = aNorm.X();
-    theNormal[1] = aNorm.Y();
-    theNormal[2] = aNorm.Z();
+  gp_Dir aNorm = aElips.Position().Direction();
+  theNormal[0] = aNorm.X();
+  theNormal[1] = aNorm.Y();
+  theNormal[2] = aNorm.Z();
 
-    gp_Dir aDirX = aElips.Position().XDirection();
-    theDirX[0] = aDirX.X();
-    theDirX[1] = aDirX.Y();
-    theDirX[2] = aDirX.Z();
+  gp_Dir aDirX = aElips.Position().XDirection();
+  theDirX[0] = aDirX.X();
+  theDirX[1] = aDirX.Y();
+  theDirX[2] = aDirX.Z();
 
-    theMajorRadius = aElips.MajorRadius();
-    theMinorRadius = aElips.MinorRadius();
-  }
+  theMajorRadius = aElips.MajorRadius();
+  theMinorRadius = aElips.MinorRadius();
+
   return aResult;
 }

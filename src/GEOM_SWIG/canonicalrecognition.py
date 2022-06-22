@@ -21,6 +21,11 @@
 #  Author : Vitaly SMETANNIKOV, Open CASCADE S.A.S.
 #  Module : GEOM_SWIG
 
+def setVectorSize(theVec):
+    "We have to set the vector size because we need to have output values in this vector"
+    if len(theVec) != 3:
+        theVec = [0,0,0]
+    return theVec
 
 class CanonicalRecognition:
     "The class provides recognition of canonical shapes"
@@ -29,29 +34,57 @@ class CanonicalRecognition:
         self.CR = geompyD.GetICanonicalRecognition()
         
     def isPlane(self, shape, tolerance, normal = [], origin = []):
-        "Check if shape is planar"
-        return self.CR.isPlane(shape, tolerance, normal, origin)
+        """
+        Check if shape is planar
+        Usage:
+        > CR.isPlane(shape, tolerance, normal, origin)
+        """
+        return self.CR.isPlane(shape, tolerance, setVectorSize(normal), setVectorSize(origin))
 
     def isSphere(self, shape, tolerance, origin = [], radius = 0.0):
-        "Check if shape is spherical"
-        return self.CR.isSphere(shape, tolerance, origin, radius)
+        """
+        Check if shape is spherical
+        Usage:
+        > CR.isSphere(shape, tolerance, origin, radius)
+        """
+        return self.CR.isSphere(shape, tolerance, setVectorSize(origin), radius)
 
     def isCone(self, shape, tolerance, axis = [], apex = [], halfAngle = 0.0):
-        "Check if shape is conical"
-        return self.CR.isCone(shape, tolerance, axis, apex, halfAngle)
+        """
+        Check if shape is conical
+        Usage:
+        > CR.isCone(shape, tolerance, axis, apex, halfAngle)
+        """
+        return self.CR.isCone(shape, tolerance, setVectorSize(axis), setVectorSize(apex), halfAngle)
 
     def isCylinder(self, shape, tolerance, axis = [], origin = [], radius = 0.0):
-        "Check if shape is cylinder"
-        return self.CR.isCylinder(shape, tolerance, axis, origin, radius)
+        """
+        Check if shape is cylinder
+        Usage:
+        > CR.isCylinder(shape, tolerance, axis, origin, radius)
+        """
+        return self.CR.isCylinder(shape, tolerance, setVectorSize(axis), setVectorSize(origin), radius)
 
     def isLine(self, edge, tolerance, direction = [], origin = []):
-        "Check if edge/wire is line"
-        return self.CR.isLine(edge, tolerance, direction, origin)
+        """
+        Check if edge/wire is line
+        Usage:
+        > CR.isLine(edge, tolerance, direction, origin)
+        """
+        return self.CR.isLine(edge, tolerance, setVectorSize(direction), setVectorSize(origin))
 
     def isCircle(self, edge, tolerance, normal = [], origin = [], radius = 0.0):
-        "Check if edge/wire is circle"
-        return self.CR.isCircle(edge, tolerance, normal, origin, radius)
+        """
+        Check if edge/wire is circle
+        Usage:
+        > CR.isCircle(edge, tolerance, normal, origin, radius)
+        """
+        return self.CR.isCircle(edge, tolerance, setVectorSize(normal), setVectorSize(origin), radius)
 
     def isEllipse(self, edge, tolerance, normal = [], dirX = [], origin = [], majorRadius = 0.0, minorRadius = 0.0):
-        "Check if edge/wire is ellipse"
-        return self.CR.isEllipse(edge, tolerance, normal, dirX, origin, majorRadius, minorRadius)
+        """
+        Check if edge/wire is ellipse
+        Usage:
+        > CR.isEllipse(edge, tolerance, normal, dirX, origin, majorRadius, minorRadius)
+        """
+        return self.CR.isEllipse(edge, tolerance, setVectorSize(normal), setVectorSize(dirX), setVectorSize(origin), majorRadius, minorRadius)
