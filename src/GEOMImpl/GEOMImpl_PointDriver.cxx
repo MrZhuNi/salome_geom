@@ -301,13 +301,22 @@ Standard_Integer GEOMImpl_PointDriver::Execute(Handle(TFunction_Logbook)& log) c
   else if (aType == POINT_FACE_ANY) {
     Handle(GEOM_Function) aRefFunc = aPI.GetSurface();
     TopoDS_Shape aRefShape = aRefFunc->GetValue();
+    int aNbPnts = aPI.GetNumberOfPoints();
     if (aRefShape.ShapeType() != TopAbs_FACE) {
       Standard_TypeMismatch::Raise
         ("Point On Surface creation aborted : surface shape is not a face");
     }
     TopoDS_Face F = TopoDS::Face(aRefShape);
-    gp_Pnt2d aP2d;
-    GEOMAlgo_AlgoTools::PntInFace(F, aPnt, aP2d);
+    if (aNbPnts == 1)
+    {
+      gp_Pnt2d aP2d;
+      GEOMAlgo_AlgoTools::PntInFace(F, aPnt, aP2d);
+    }
+    else
+    {
+      GEOMAlgo_AlgoTools::PointCloudInFace (F, aNbPnts, aCompound);
+      retCompound = true;
+    }
   }
   else if (aType == POINT_LINES_INTERSECTION) {
     Handle(GEOM_Function) aRef1 = aPI.GetLine1();
