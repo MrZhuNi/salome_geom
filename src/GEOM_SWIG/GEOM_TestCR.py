@@ -35,6 +35,10 @@ geompy = geomBuilder.New()
 def GetShapeType(theShape):
     CR = geompy.CanonicalRecognition()
     if CR.isPlane(theShape, 0.1)[0]:
+        if CR.isCircle(theShape, 0.1)[0]:
+            return ("Plane","Circle")
+        if CR.isEllipse(theShape, 0.1)[0]:
+            return ("Plane","Ellipse")
         return "Plane"
     if CR.isSphere(theShape, 0.1)[0]:
         return "Sphere"
@@ -44,10 +48,6 @@ def GetShapeType(theShape):
         return "Cylinder"
     if CR.isLine(theShape, 0.1)[0]:
         return "Line"
-    if CR.isCircle(theShape, 0.1)[0]:
-        return "Circle"
-    if CR.isEllipse(theShape, 0.1)[0]:
-        return "Ellipse"
     return "Not defined"
 
 O = geompy.MakeVertex(0, 0, 0)
@@ -74,7 +74,7 @@ Partition_1 = geompy.MakePartition([Cylinder_2], [Rotation_1], [], [], geompy.Sh
 assert GetShapeType(Face_1) == "Plane"
 assert GetShapeType(Face_2) == "Cylinder"
 assert GetShapeType(Edge_3) == "Line"
-assert GetShapeType(Edge_2) == "Circle"
+assert GetShapeType(Edge_2)[1] == "Circle"
 assert GetShapeType(Shell_1) == "Sphere"
 assert GetShapeType(Shell_2) == "Cone"
-assert GetShapeType(Edge_5) == "Ellipse"
+assert GetShapeType(Edge_5)[1] == "Ellipse"
