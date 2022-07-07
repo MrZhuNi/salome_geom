@@ -104,6 +104,7 @@
 
 #include <GEOMAlgo_PassKeyShape.hxx>
 
+#include <algorithm>
 
 static
   void GetCount(const TopoDS_Shape& aS,
@@ -1080,7 +1081,7 @@ Standard_Integer GEOMAlgo_AlgoTools::PointCloudInFace(const TopoDS_Face& theFace
   if (aNbFaces != theNbPnts)
   {
     Standard_Real aTotalArea = 0.;
-    std::vector<std::pair<TopoDS_Shape, Standard_Real>> aFacesAndAreas (aNbFaces);
+    std::vector<std::pair<TopoDS_Shape, Standard_Real> > aFacesAndAreas (aNbFaces);
     for (Standard_Integer ii = 1; ii <= aNbFaces; ii++)
     {
       GProp_GProps aProps;
@@ -1174,7 +1175,6 @@ Standard_Integer GEOMAlgo_AlgoTools::PointCloudInFace(const TopoDS_Face& theFace
   aBB.Add (aGlobalRes, res);
 
   aBB.MakeCompound (theCompound);
-  Standard_Integer anIndPoint = 0;
   for (TopExp_Explorer aGlobalExplo(aGlobalRes, TopAbs_FACE); aGlobalExplo.More(); aGlobalExplo.Next())
   {
     const TopoDS_Face& aFace = TopoDS::Face (aGlobalExplo.Current());
