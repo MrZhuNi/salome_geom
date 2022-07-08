@@ -302,6 +302,10 @@ Standard_Integer GEOMImpl_PointDriver::Execute(Handle(TFunction_Logbook)& log) c
     Handle(GEOM_Function) aRefFunc = aPI.GetSurface();
     TopoDS_Shape aRefShape = aRefFunc->GetValue();
     int aNbPnts = aPI.GetNumberOfPoints();
+    if (aNbPnts < 1) {
+      Standard_TypeMismatch::Raise
+        ("Point On Surface creation aborted : number of points is zero or negative");
+    }
     if (aRefShape.ShapeType() != TopAbs_FACE) {
       Standard_TypeMismatch::Raise
         ("Point On Surface creation aborted : surface shape is not a face");

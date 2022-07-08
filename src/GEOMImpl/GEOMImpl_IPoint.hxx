@@ -74,7 +74,7 @@ class GEOMImpl_IPoint
 
   void SetParameter(double theParam) { _func->SetReal(ARG_PARAM, theParam); }
   void SetParameter2(double theParam) { _func->SetReal(ARG_PARAM2, theParam); }
-  void SetNumberOfPoints(double theNumberOfPnts) { _func->SetReal(ARG_NBPNTS, theNumberOfPnts); }
+  void SetNumberOfPoints(int theNumberOfPnts) { _func->SetInteger(ARG_NBPNTS, theNumberOfPnts); }
   void SetLength(double theLength) { _func->SetReal(ARG_LENGTH, theLength); }
   void SetTakeOrientationIntoAccount(bool takeOrientationIntoAccount)
         { _func->SetInteger(ARG_USE_ORIENTATION, takeOrientationIntoAccount); }
