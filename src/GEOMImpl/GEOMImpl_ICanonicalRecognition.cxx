@@ -74,7 +74,7 @@ bool GEOMImpl_ICanonicalRecognition::isPlane(const Handle(GEOM_Object)& theShape
 
   ShapeAnalysis_CanonicalRecognition aRecognition(aShape);
   SetErrorCode(OK);
-  return aRecognition.IsPlane(theTolerance, thePln);
+  return aRecognition.GetStatus() == 0 && aRecognition.IsPlane(theTolerance, thePln);
 }
 
 //=============================================================================
@@ -98,7 +98,7 @@ bool GEOMImpl_ICanonicalRecognition::isSphere(const Handle(GEOM_Object)& theShap
 
   ShapeAnalysis_CanonicalRecognition aRecognition(aShape);
   SetErrorCode(OK);
-  return aRecognition.IsSphere(theTolerance, theSphere);
+  return aRecognition.GetStatus() == 0 && aRecognition.IsSphere(theTolerance, theSphere);
 }
 
 //=============================================================================
@@ -122,7 +122,7 @@ bool GEOMImpl_ICanonicalRecognition::isCone(const Handle(GEOM_Object)& theShape,
 
   ShapeAnalysis_CanonicalRecognition aRecognition(aShape);
   SetErrorCode(OK);
-  return aRecognition.IsCone(theTolerance, theCone);
+  return aRecognition.GetStatus() == 0 && aRecognition.IsCone(theTolerance, theCone);
 }
 
 //=============================================================================
@@ -146,7 +146,7 @@ bool GEOMImpl_ICanonicalRecognition::isCylinder(const Handle(GEOM_Object)& theSh
 
   ShapeAnalysis_CanonicalRecognition aRecognition(aShape);
   SetErrorCode(OK);
-  return aRecognition.IsCylinder(theTolerance, theCylinder);
+  return aRecognition.GetStatus() == 0 && aRecognition.IsCylinder(theTolerance, theCylinder);
 }
 
 //=============================================================================
@@ -170,7 +170,7 @@ bool GEOMImpl_ICanonicalRecognition::isLine(const Handle(GEOM_Object)& theEdge, 
 
   ShapeAnalysis_CanonicalRecognition aRecognition(aShape);
   SetErrorCode(OK);
-  return aRecognition.IsLine(theTolerance, theLine);
+  return aRecognition.GetStatus() == 0 && aRecognition.IsLine(theTolerance, theLine);
 }
 
 //=============================================================================
@@ -194,7 +194,7 @@ bool GEOMImpl_ICanonicalRecognition::isCircle(const Handle(GEOM_Object)& theEdge
 
   ShapeAnalysis_CanonicalRecognition aRecognition(aShape);
   SetErrorCode(OK);
-  return aRecognition.IsCircle(theTolerance, theCircle);
+  return aRecognition.GetStatus() == 0 && aRecognition.IsCircle(theTolerance, theCircle);
 }
 
 //=============================================================================
@@ -218,5 +218,5 @@ bool GEOMImpl_ICanonicalRecognition::isEllipse(const Handle(GEOM_Object)& theEdg
 
   ShapeAnalysis_CanonicalRecognition aRecognition(aShape);
   SetErrorCode(OK);
-  return aRecognition.IsEllipse(theTolerance, theElips);
+  return aRecognition.GetStatus() == 0 && aRecognition.IsEllipse(theTolerance, theElips);
 }
