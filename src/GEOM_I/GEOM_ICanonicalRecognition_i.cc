@@ -114,6 +114,8 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isSphere(GEOM::GEOM_Object_ptr theS
     aSphere.SetLocation(gp_Pnt(theOrigin[0], theOrigin[1], theOrigin[2]));
     aSphere.SetRadius(theRadius);
   }
+  else
+    aSphere.SetRadius(1.0);
   bool aResult = GetOperation()->isSphere(go, theTolerance, aSphere);
   gp_Pnt aLoc = aSphere.Location();
   theOrigin[0] = aLoc.X();
@@ -144,6 +146,8 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isCone(GEOM::GEOM_Object_ptr theSha
     gp_Ax3 aAx3(aLoc, gp_Dir(theAxis[0], theAxis[1], theAxis[2]));
     aCone.SetPosition(aAx3);
   }
+  else
+    aCone.SetRadius(1.0);
   bool aResult = GetOperation()->isCone(go, theTolerance, aCone);
   gp_Dir aDir = aCone.Axis().Direction();
   theAxis[0] = aDir.X();
@@ -180,6 +184,8 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isCylinder(GEOM::GEOM_Object_ptr th
     aCylinder.SetPosition(aAx3);
     aCylinder.SetRadius(theRadius);
   }
+  else
+    aCylinder.SetRadius(1.0);
   bool aResult = GetOperation()->isCylinder(go, theTolerance, aCylinder);
   gp_Dir aDir = aCylinder.Axis().Direction();
   theAxis[0] = aDir.X();
@@ -248,6 +254,8 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isCircle(GEOM::GEOM_Object_ptr theE
     aCircle.SetPosition(aAx2);
     aCircle.SetRadius(theRadius);
   }
+  else
+    aCircle.SetRadius(1.0);
   bool aResult = GetOperation()->isCircle(go, theTolerance, aCircle);
   gp_Pnt aLoc = aCircle.Location();
   theOrigin[0] = aLoc.X();
@@ -287,6 +295,8 @@ CORBA::Boolean GEOM_ICanonicalRecognition_i::isEllipse(GEOM::GEOM_Object_ptr the
       gp_Dir(theDirX[0], theDirX[1], theDirX[2]));
     aElips = gp_Elips(aAx2, theMajorRadius, theMinorRadius);
   }
+  else
+    aElips.SetMajorRadius(1.0);
   bool aResult = GetOperation()->isEllipse(go, theTolerance, aElips);
   gp_Pnt aLoc = aElips.Position().Location();
   if (theOrigin.length() != 3)
