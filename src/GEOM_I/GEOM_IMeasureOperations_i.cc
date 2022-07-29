@@ -1477,7 +1477,7 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::ShapeProximityCalculator(GEOM::
  //=============================================================================
 void GEOM_IMeasureOperations_i::SetShapeSampling(GEOM::GEOM_Object_ptr theCalculator,
                                                  GEOM::GEOM_Object_ptr theShape,
-                                                 long theNbSamples)
+                                                 CORBA::Long theNbSamples)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();

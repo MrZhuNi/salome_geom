@@ -196,7 +196,7 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
                                                   GEOM::GEOM_Object_ptr theShape2);
   void SetShapeSampling(GEOM::GEOM_Object_ptr theCalculator,
                         GEOM::GEOM_Object_ptr theShape,
-                        long theNbSamples);
+                        CORBA::Long theNbSamples);
   CORBA::Double GetCoarseProximity(GEOM::GEOM_Object_ptr theCalculator);
   CORBA::Double GetPreciseProximity(GEOM::GEOM_Object_ptr theCalculator);
 
