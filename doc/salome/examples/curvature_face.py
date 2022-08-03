@@ -29,14 +29,19 @@ Sphere_1 = geompy.MakeSphereR(R, 'Sphere_1')
 curvature_1 = geompy.CurvatureOnFace(Sph, pXYZ, OX,    'curvature_sph_pXYZ_OX')
 curvature_2 = geompy.CurvatureOnFace(Sph, pXYZ, vZ_XY, 'curvature_sph_pXYZ_vt')
 curvature_3 = geompy.CurvatureOnFace(Sph, pY,   OX,    'curvature_sph_pY_OX')
-# Pole
-curvature_p = geompy.CurvatureOnFace(Sph, pZ,   OX,    'curvature_sph_pZ_OX')
 
 # All sphere curvature radiuces = R
 assert(abs(geompy.BasicProperties(curvature_1)[0] - R) < 1e-07)
 assert(abs(geompy.BasicProperties(curvature_2)[0] - R) < 1e-07)
 assert(abs(geompy.BasicProperties(curvature_3)[0] - R) < 1e-07)
-assert(abs(geompy.BasicProperties(curvature_p)[0] - R) < 1e-07)
+
+# Pole
+isExcept = False
+try:
+  geompy.CurvatureOnFace(Sph, pZ, OX)
+except:
+  isExcept = True
+assert(isExcept)
 
 # Normal direction
 isExcept = False

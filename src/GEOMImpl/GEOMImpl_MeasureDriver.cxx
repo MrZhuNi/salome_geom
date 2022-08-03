@@ -118,48 +118,46 @@ TopoDS_Shape EvaluateAlongCurvature(const TopoDS_Shape& theFace,
       ("Curvature calculation failed: normal direction is not defined");
 
   // Get differential properties
-  gp_Vec Xu  = Props.D1U();
-  gp_Vec Xv  = Props.D1V();
-  gp_Vec Xuu = Props.D2U();
-  gp_Vec Xuv = Props.DUV();
-  gp_Vec Xvv = Props.D2V();
-  gp_Vec n   = Props.Normal();
-
-  // Direction in 2d
-  gp_Dir aDirU (Xu);
-  gp_Dir aDirV (Xv);
-  gp_Vec2d T (aV.Dot(aDirU), aV.Dot(aDirV));
-  if (Abs(T.X()) < Precision::Confusion() &&
-      Abs(T.Y()) < Precision::Confusion())
+  gp_Vec n = Props.Normal();
+  if (aV.IsParallel(n, Precision::Angular()))
     Standard_ConstructionError::Raise
-                   ("Curvature calculation failed: direction is normal to the face");
+      ("Curvature calculation failed: direction is normal to the face");
 
-  // Coefficients of the FFF
-  double E = Xu.Dot(Xu);
-  double F = Xu.Dot(Xv);
-  double G = Xv.Dot(Xv);
+  if (!Props.IsCurvatureDefined())
+    Standard_ConstructionError::Raise
+      ("Curvature calculation failed: curvature is not defined");
 
-  // Coefficients of the SFF
-  double L = n.Dot(Xuu);
-  double M = n.Dot(Xuv);
-  double N = n.Dot(Xvv);
+  // Curvature
+  Standard_Real k = 0.;
 
-  // Calculate radius (or -radius) of curvature
-  // using the coefficients of both fundamental forms
-  double r = 0.;
-  if (Abs(T.X()) < Precision::Confusion()) {
-    if (Abs(N) < Precision::Confusion())
-      Standard_Failure::Raise("ZERO_CURVATURE");
-    r = G / N;
+  if (Props.IsUmbilic()) {
+    k = Props.MaxCurvature();
   }
   else {
-    double lambda = T.Y() / T.X();
-    double detE = E + 2*F*lambda + G*lambda*lambda;
-    double detL = L + 2*M*lambda + N*lambda*lambda;
-    if (Abs(detL) < Precision::Confusion())
-      Standard_Failure::Raise("ZERO_CURVATURE");
-    r = detE / detL;
+    gp_Dir aMaxDir, aMinDir;
+    Props.CurvatureDirections(aMaxDir, aMinDir);
+
+    gp_Vec2d T (aV.Dot(aMinDir), aV.Dot(aMaxDir));
+    if (Abs(T.X()) < Precision::Confusion() &&
+        Abs(T.Y()) < Precision::Confusion())
+      Standard_ConstructionError::Raise
+                     ("Curvature calculation failed: direction is normal to the face");
+    gp_Dir2d aDirT (T);
+    Standard_Real cosAlpha = aDirT.X();
+
+    Standard_Real aMinCurv = Props.MinCurvature();
+    Standard_Real aMaxCurv = Props.MaxCurvature();
+
+    // Euler formula: k = k1 * cos^2(alpha) + k2 * sin^2(alpha)
+    //                k = k2 + (k1 - k2) * cos^2(alpha)
+    k = aMaxCurv + (aMinCurv - aMaxCurv) * cosAlpha * cosAlpha;
   }
+
+  if (Abs(k) < Precision::Confusion())
+    Standard_Failure::Raise("ZERO_CURVATURE");
+
+  // Radius or -radius of curvature
+  Standard_Real r = 1.0 / k;
 
   // Result
   gp_Dir aNormal (n);
