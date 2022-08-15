@@ -249,19 +249,26 @@ NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> GEOMImpl_ConformityDrive
   Standard_Real          theTolerance) const
 {
   NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> aDistShapes;
+  NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> aDistShapesTmp;
   switch (theShapeType)
   {
   case TopAbs_VERTEX:
-    aDistShapes.Append(distantShapes(theShape, TopAbs_EDGE, theShapeType, theTolerance));
-    aDistShapes.Append(distantShapes(theShape, TopAbs_FACE, theShapeType, theTolerance));
+    aDistShapesTmp = distantShapes(theShape, TopAbs_EDGE, theShapeType, theTolerance);
+    aDistShapes.Append(aDistShapesTmp);
+    aDistShapesTmp = distantShapes(theShape, TopAbs_FACE, theShapeType, theTolerance);
+    aDistShapes.Append(aDistShapesTmp);
     break;
   case TopAbs_EDGE:
-    aDistShapes.Append(distantShapes(theShape, theShapeType, TopAbs_VERTEX, theTolerance));
-    aDistShapes.Append(distantShapes(theShape, TopAbs_FACE, theShapeType, theTolerance));
+    aDistShapesTmp = distantShapes(theShape, theShapeType, TopAbs_VERTEX, theTolerance);
+    aDistShapes.Append(aDistShapesTmp);
+    aDistShapesTmp = distantShapes(theShape, TopAbs_FACE, theShapeType, theTolerance);
+    aDistShapes.Append(aDistShapesTmp);
     break;
   case TopAbs_FACE:
-    aDistShapes.Append(distantShapes(theShape, theShapeType, TopAbs_VERTEX, theTolerance));
-    aDistShapes.Append(distantShapes(theShape, theShapeType, TopAbs_EDGE, theTolerance));
+    aDistShapesTmp = distantShapes(theShape, theShapeType, TopAbs_VERTEX, theTolerance);
+    aDistShapes.Append(aDistShapesTmp);
+    aDistShapesTmp = distantShapes(theShape, theShapeType, TopAbs_EDGE, theTolerance);
+    aDistShapes.Append(aDistShapesTmp);
     break;
   }
 
@@ -272,15 +279,19 @@ NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> GEOMImpl_ConformityDrive
 //function : distantShapes
 //purpose  : TODO: Not implemented! Wait for required functionality!
 //=======================================================================
-NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> GEOMImpl_ConformityDriver::distantShapes(
-  const TopoDS_Shape& theShape,
-  Standard_Real       theTolerance) const
+NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> GEOMImpl_ConformityDriver::distantShapes
+  (const TopoDS_Shape& theShape,
+   Standard_Real       theTolerance) const
 {
   NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> aDistShapes;
+  NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> aDistShapesTmp;
 
-  aDistShapes.Append(distantShapes(theShape, TopAbs_EDGE, TopAbs_VERTEX, theTolerance));
-  aDistShapes.Append(distantShapes(theShape, TopAbs_FACE, TopAbs_VERTEX, theTolerance));
-  aDistShapes.Append(distantShapes(theShape, TopAbs_FACE, TopAbs_EDGE, theTolerance));
+  aDistShapesTmp = distantShapes(theShape, TopAbs_EDGE, TopAbs_VERTEX, theTolerance);
+  aDistShapes.Append(aDistShapesTmp);
+  aDistShapesTmp = distantShapes(theShape, TopAbs_FACE, TopAbs_VERTEX, theTolerance);
+  aDistShapes.Append(aDistShapesTmp);
+  aDistShapesTmp = distantShapes(theShape, TopAbs_FACE, TopAbs_EDGE, theTolerance);
+  aDistShapes.Append(aDistShapesTmp);
 
   return aDistShapes;
 }

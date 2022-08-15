@@ -61,8 +61,8 @@ private:
 
   Standard_EXPORT Standard_Real updateTolerance(const TopoDS_Shape& theShape) const;
 
-  Standard_EXPORT  virtual bool GetCreationInformation(std::string& theOperationName,
-                                                       std::vector<GEOM_Param>& params)
+  Standard_EXPORT  virtual bool GetCreationInformation(std::string& /*theOperationName*/,
+                                                       std::vector<GEOM_Param>& /*params*/)
   {
     return Standard_False;
   }

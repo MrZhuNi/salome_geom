@@ -2798,13 +2798,13 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::SurfaceCurvatureByPointAndDirec
  *  \param theChecks list of failed checks, contains type of check and failed shapes
  */
  //=============================================================================
-std::list<GEOMImpl_IMeasureOperations::FailedShapes> GEOMImpl_IMeasureOperations::SelfIntersected2D(
-    const std::list<FailedChecks>& theChecks)
+std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects>
+  GEOMImpl_IMeasureOperations::SelfIntersected2D(const std::list<FailedChecks>& theChecks)
 {
   SetErrorCode(KO);
   MESSAGE("GEOMImpl_IMeasureOperations::selfIntersected2D");
 
-  std::list<GEOMImpl_IMeasureOperations::FailedShapes> aSelfInters2D;
+  std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects> aSelfInters2D;
   Handle(GEOM_Object) aConformity = GetEngine()->AddObject(GEOM_CHECKCONFORMITY);
   Handle(GEOM_Function) aFunction = aConformity->AddFunction(GEOMImpl_ConformityDriver::GetID(), CONFORMITY_SELFINTERSECTED);
   if (aFunction.IsNull()) return aSelfInters2D;
@@ -2835,7 +2835,7 @@ std::list<GEOMImpl_IMeasureOperations::FailedShapes> GEOMImpl_IMeasureOperations
 
 namespace
 {
-  static bool checkTypes(const GEOMImpl_IMeasureOperations::FailedShapes& theShapes,
+  static bool checkTypes(const GEOMImpl_IMeasureOperations::CoupleOfObjects& theShapes,
                          const int theShapeType1,
                          const int theShapeType2)
   {
@@ -2867,15 +2867,16 @@ namespace
  *  \param theShapeType2 Type of shape.
  */
  //=============================================================================
-std::list<GEOMImpl_IMeasureOperations::FailedShapes> GEOMImpl_IMeasureOperations::InterferingSubshapes(
-    const std::list<FailedChecks>& theChecks,
-    const int                      theShapeType1,
-    const int                      theShapeType2)
+std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects>
+  GEOMImpl_IMeasureOperations::InterferingSubshapes
+    (const std::list<FailedChecks>& theChecks,
+     const int                      theShapeType1,
+     const int                      theShapeType2)
 {
   SetErrorCode(KO);
   MESSAGE("GEOMImpl_IMeasureOperations::interferingSubshapes");
 
-  std::list < GEOMImpl_IMeasureOperations::FailedShapes> anInterfer;
+  std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects> anInterfer;
   try
   {
     OCC_CATCH_SIGNALS;
@@ -2941,16 +2942,17 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IMeasureOperations::SmallEdges(
  *  \param theTolerance tolerance.
  */
  //=============================================================================
-std::list<GEOMImpl_IMeasureOperations::FailedShapes> GEOMImpl_IMeasureOperations::DistantShapes(
-    const std::list<FailedChecks>& theChecks,
-    const int                      theShapeType,
-    const int                      theSubShapeType,
-    double                         theTolerance)
+std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects>
+  GEOMImpl_IMeasureOperations::DistantShapes
+    (const std::list<FailedChecks>& theChecks,
+     const int                      theShapeType,
+     const int                      theSubShapeType,
+     double                         theTolerance)
 {
   SetErrorCode(KO);
   MESSAGE("GEOMImpl_IMeasureOperations::distantShapes");
 
-  std::list<GEOMImpl_IMeasureOperations::FailedShapes> aDistShapes;
+  std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects> aDistShapes;
   try
   {
     OCC_CATCH_SIGNALS;
