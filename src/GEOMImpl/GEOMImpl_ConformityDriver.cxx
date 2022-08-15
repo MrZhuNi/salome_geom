@@ -43,54 +43,6 @@
 namespace
 {
   //=======================================================================
-  //function : GetPairsOfFaultyShapes
-  //purpose  :
-  //=======================================================================
-  NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> GetPairsOfFaultyShapes(
-                                                          const BOPAlgo_ArgumentAnalyzer& theAnalyzer,
-                                                          const BOPAlgo_CheckStatus       theErrorStatus)
-  {
-    NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> aResList;
-
-    const BOPAlgo_ListOfCheckResult& aResult = theAnalyzer.GetCheckResult();
-    BOPAlgo_ListIteratorOfListOfCheckResult anIt(aResult);
-    for (; anIt.More(); anIt.Next())
-    {
-      if (anIt.Value().GetCheckStatus() == theErrorStatus)
-      {
-        auto aFaultyShapes = anIt.Value().GetFaultyShapes1();
-
-        aResList.Append({ aFaultyShapes.First(),
-                        aFaultyShapes.Size() == 1 ? TopoDS_Shape() : aFaultyShapes.Last() });
-      }
-    }
-
-    return aResList;
-  }
-
-  //=======================================================================
-  //function : GetListOfSmallEdges
-  //purpose  :
-  //=======================================================================
-  TopTools_ListOfShape GetListOfSmallEdges(const BOPAlgo_ArgumentAnalyzer& theAnalyzer)
-  {
-    TopTools_ListOfShape aResList;
-
-    const BOPAlgo_ListOfCheckResult& aResult = theAnalyzer.GetCheckResult();
-    BOPAlgo_ListIteratorOfListOfCheckResult anIt(aResult);
-    for (; anIt.More(); anIt.Next())
-    {
-      if (anIt.Value().GetCheckStatus() == BOPAlgo_CheckStatus::BOPAlgo_TooSmallEdge)
-      {
-        auto aFaultyShapes = anIt.Value().GetFaultyShapes1();
-        aResList.Append(aFaultyShapes.First());
-      }
-    }
-
-    return aResList;
-  }
-
-  //=======================================================================
   //function : ConvertShapesToIndices
   //purpose  : Convert sub-shapes of shapes to sequence of indices
   //=======================================================================
@@ -176,34 +128,6 @@ Standard_Integer GEOMImpl_ConformityDriver::Execute(Handle(TFunction_Logbook)& l
 
   switch (aType)
   {
-  case CONFORMITY_DISTANT_SHAPES:
-  {
-    Standard_Integer aType1 = aCI.GetShapeType1();
-    Standard_Integer aType2 = aCI.GetShapeType2();
-    NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> aRes;
-    if (aType1 == -1 && aType2 == -1)
-    {
-      aRes = distantShapes(aShape);
-    }
-    else if (aType1 == -1)
-    {
-      aRes = distantShapes(aShape, (TopAbs_ShapeEnum)aType2);
-    }
-    else if (aType2 == -1)
-    {
-      aRes = distantShapes(aShape, (TopAbs_ShapeEnum)aType1);
-    }
-    else
-    {
-      aRes = distantShapes(aShape, (TopAbs_ShapeEnum)aType1, (TopAbs_ShapeEnum)aType2);
-    }
-    if (!aRes.IsEmpty())
-    {
-      Handle(TColStd_HArray2OfInteger) anArray = ConvertShapesToIndices(aShape, aRes);
-      aCI.SetListOfShapesIndices(anArray);
-    }
-  }
-  break;
   case CONFORMITY_UPDATE_TOL:
   {
     Standard_Real aTolerance = updateTolerance(aShape);
@@ -226,76 +150,9 @@ Standard_Integer GEOMImpl_ConformityDriver::Execute(Handle(TFunction_Logbook)& l
 }
 
 //=======================================================================
-//function : distantShapes
-//purpose  : TODO: Not implemented! Wait for required functionality!
+//function : checkShape
+//purpose  :
 //=======================================================================
-NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> GEOMImpl_ConformityDriver::distantShapes(
-  const TopoDS_Shape& theShape,
-  const TopAbs_ShapeEnum theShapeType,
-  const TopAbs_ShapeEnum theSubShapeType,
-  Standard_Real          theTolerance) const
-{
-  // TODO: Not implemented! Wait for required functionality!
-  return NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>>();
-}
-
-//=======================================================================
-//function : distantShapes
-//purpose  : TODO: Not implemented! Wait for required functionality!
-//=======================================================================
-NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> GEOMImpl_ConformityDriver::distantShapes(
-  const TopoDS_Shape& theShape,
-  const TopAbs_ShapeEnum theShapeType,
-  Standard_Real          theTolerance) const
-{
-  NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> aDistShapes;
-  NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> aDistShapesTmp;
-  switch (theShapeType)
-  {
-  case TopAbs_VERTEX:
-    aDistShapesTmp = distantShapes(theShape, TopAbs_EDGE, theShapeType, theTolerance);
-    aDistShapes.Append(aDistShapesTmp);
-    aDistShapesTmp = distantShapes(theShape, TopAbs_FACE, theShapeType, theTolerance);
-    aDistShapes.Append(aDistShapesTmp);
-    break;
-  case TopAbs_EDGE:
-    aDistShapesTmp = distantShapes(theShape, theShapeType, TopAbs_VERTEX, theTolerance);
-    aDistShapes.Append(aDistShapesTmp);
-    aDistShapesTmp = distantShapes(theShape, TopAbs_FACE, theShapeType, theTolerance);
-    aDistShapes.Append(aDistShapesTmp);
-    break;
-  case TopAbs_FACE:
-    aDistShapesTmp = distantShapes(theShape, theShapeType, TopAbs_VERTEX, theTolerance);
-    aDistShapes.Append(aDistShapesTmp);
-    aDistShapesTmp = distantShapes(theShape, theShapeType, TopAbs_EDGE, theTolerance);
-    aDistShapes.Append(aDistShapesTmp);
-    break;
-  }
-
-  return aDistShapes;
-}
-
-//=======================================================================
-//function : distantShapes
-//purpose  : TODO: Not implemented! Wait for required functionality!
-//=======================================================================
-NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> GEOMImpl_ConformityDriver::distantShapes
-  (const TopoDS_Shape& theShape,
-   Standard_Real       theTolerance) const
-{
-  NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> aDistShapes;
-  NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> aDistShapesTmp;
-
-  aDistShapesTmp = distantShapes(theShape, TopAbs_EDGE, TopAbs_VERTEX, theTolerance);
-  aDistShapes.Append(aDistShapesTmp);
-  aDistShapesTmp = distantShapes(theShape, TopAbs_FACE, TopAbs_VERTEX, theTolerance);
-  aDistShapes.Append(aDistShapesTmp);
-  aDistShapesTmp = distantShapes(theShape, TopAbs_FACE, TopAbs_EDGE, theTolerance);
-  aDistShapes.Append(aDistShapesTmp);
-
-  return aDistShapes;
-}
-
 void GEOMImpl_ConformityDriver::checkShape(const TopoDS_Shape & theShape,
                                            NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>>& theFailedShape,
                                            Handle(TColStd_HArray1OfInteger)& theTypesOfCheck) const
