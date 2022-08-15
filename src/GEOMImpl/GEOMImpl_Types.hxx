@@ -399,13 +399,8 @@
 #define TD_GET_IN_PLACE_BY_HISTORY 3
 
 // Conformity operations
-#define CONFORMITY_IS_VALID         2
-#define CONFORMITY_SELFINTERSECTED  3
-#define CONFORMITY_INTERFERENCE     4
-#define CONFORMITY_SMALL_EDGES      5
-#define CONFORMITY_DISTANT_SHAPES   6
-#define CONFORMITY_UPDATE_TOL       7
-#define CONFORMITY_CHECK_SHAPE      8
+#define CONFORMITY_UPDATE_TOL       2
+#define CONFORMITY_CHECK_SHAPE      3
 
 // Plugins specified constants
 #define PLUGIN_NAME "Plugin Name"

@@ -1261,13 +1261,13 @@ GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* GEOM_IMeasureOperations_i:
   std::list<GEOMImpl_IMeasureOperations::FailedChecks> aResults;
   ConvertToList(theResuts, aResults);
 
-  std::list<GEOMImpl_IMeasureOperations::FailedShapes> aSelfInters = GetOperations()->SelfIntersected2D(aResults);
+  std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects> aSelfInters = GetOperations()->SelfIntersected2D(aResults);
   if (!GetOperations()->IsDone() || aSelfInters.empty())
     return aSeq._retn();
 
   Standard_Integer aLength = aSelfInters.size();
   aSeq->length(aLength);
-  std::list<GEOMImpl_IMeasureOperations::FailedShapes>::iterator anIter(aSelfInters.begin());
+  std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects>::iterator anIter(aSelfInters.begin());
   for (Standard_Integer i = 0; i < aLength; i++, ++anIter)
   {
     aSeq[i].first = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).first));
@@ -1298,14 +1298,14 @@ GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* GEOM_IMeasureOperations_i:
   std::list<GEOMImpl_IMeasureOperations::FailedChecks> aResults;
   ConvertToList(theResuts, aResults);
 
-  std::list<GEOMImpl_IMeasureOperations::FailedShapes> aSelfInterf =
+  std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects> aSelfInterf =
     GetOperations()->InterferingSubshapes(aResults, theShapeType1, theShapeType2);
   if (!GetOperations()->IsDone() || aSelfInterf.empty())
     return aSeq._retn();
 
   Standard_Integer aLength = aSelfInterf.size();
   aSeq->length(aLength);
-  std::list<GEOMImpl_IMeasureOperations::FailedShapes>::iterator anIter(aSelfInterf.begin());
+  std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects>::iterator anIter(aSelfInterf.begin());
   for (Standard_Integer i = 0; i < aLength; i++, ++anIter)
   {
     aSeq[i].first = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).first));
@@ -1365,14 +1365,14 @@ GEOM::GEOM_IMeasureOperations::SequenceOfPairOfShape* GEOM_IMeasureOperations_i:
   ConvertToList(theResuts, aResults);
 
   // Perform patch face operation
-  std::list<GEOMImpl_IMeasureOperations::FailedShapes> aDistantS =
+  std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects> aDistantS =
       GetOperations()->DistantShapes(aResults, theShapeType, theSubShapeType, theTolerance);
   if (!GetOperations()->IsDone() || aDistantS.empty())
     return aSeq._retn();
 
   Standard_Integer aLength = aDistantS.size();
   aSeq->length(aLength);
-  std::list<GEOMImpl_IMeasureOperations::FailedShapes>::iterator anIter(aDistantS.begin());
+  std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects>::iterator anIter(aDistantS.begin());
   for (Standard_Integer i = 0; i < aLength; i++, ++anIter)
   {
     aSeq[i].first = GetObject(Handle(::GEOM_Object)::DownCast((*anIter).first));

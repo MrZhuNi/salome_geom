@@ -42,19 +42,6 @@ public:
   Standard_EXPORT virtual void             Validate(Handle(TFunction_Logbook)&) const {}
 
 private:
-
-  Standard_EXPORT NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> distantShapes(const TopoDS_Shape& theShape,
-                                                                                        const TopAbs_ShapeEnum theShapeType,
-                                                                                        const TopAbs_ShapeEnum theSubShapeType,
-                                                                                        Standard_Real          theTolerance = -1.) const;
-
-  Standard_EXPORT NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> distantShapes(const TopoDS_Shape& theShape,
-                                                                                        const TopAbs_ShapeEnum theShapeType,
-                                                                                        Standard_Real          theTolerance = -1.) const;
-
-  Standard_EXPORT NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>> distantShapes(const TopoDS_Shape& theShape,
-                                                                                        Standard_Real          theTolerance = -1.) const;
-
   Standard_EXPORT void checkShape(const TopoDS_Shape& theShape,
                                   NCollection_List<std::pair<TopoDS_Shape, TopoDS_Shape>>& theFailedShape,
                                   Handle(TColStd_HArray1OfInteger)& theTypesOfCheck) const;

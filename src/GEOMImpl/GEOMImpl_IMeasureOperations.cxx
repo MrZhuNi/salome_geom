@@ -2805,14 +2805,6 @@ std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects>
   MESSAGE("GEOMImpl_IMeasureOperations::selfIntersected2D");
 
   std::list<GEOMImpl_IMeasureOperations::CoupleOfObjects> aSelfInters2D;
-  Handle(GEOM_Object) aConformity = GetEngine()->AddObject(GEOM_CHECKCONFORMITY);
-  Handle(GEOM_Function) aFunction = aConformity->AddFunction(GEOMImpl_ConformityDriver::GetID(), CONFORMITY_SELFINTERSECTED);
-  if (aFunction.IsNull()) return aSelfInters2D;
-
-  //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_ConformityDriver::GetID()) return aSelfInters2D;
-
-  GEOMImpl_IConformity aCI(aFunction);
   try
   {
     OCC_CATCH_SIGNALS;
