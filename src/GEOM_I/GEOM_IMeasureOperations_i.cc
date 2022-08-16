@@ -1277,7 +1277,7 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::ShapeProximityCalculator(GEOM::
  //=============================================================================
 void GEOM_IMeasureOperations_i::SetShapeSampling(GEOM::GEOM_Object_ptr theCalculator,
                                                  GEOM::GEOM_Object_ptr theShape,
-                                                 long theNbSamples)
+                                                 CORBA::Long theNbSamples)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -1489,7 +1489,7 @@ GEOM::GEOM_IMeasureOperations::CheckResults* GEOM_IMeasureOperations_i::CheckCon
 
   //Get the reference shape
   Handle(::GEOM_Object) aShapeRef = GetObjectImpl(theShape);
-  if (aShapeRef.IsNull()) return false;
+  if (aShapeRef.IsNull()) return nullptr;
 
   std::list<GEOMImpl_IMeasureOperations::FailedChecks> aChecks;
   GetOperations()->CheckConformityShape(aShapeRef, aChecks);

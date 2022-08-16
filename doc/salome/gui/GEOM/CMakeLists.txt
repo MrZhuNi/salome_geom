@@ -61,7 +61,7 @@ ADD_CUSTOM_TARGET(usr_docs ${CMAKE_COMMAND} -E make_directory tmp
   COMMAND ${CMAKE_COMMAND} -E make_directory tmp1
   COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/geomBuilder.py     ${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/geomBuilder.py
   COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/gsketcher.py       ${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/gsketcher.py
-  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/CheckConformity.py ${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/CheckConformity.py
+  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/conformity.py ${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/conformity.py
   COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/geomtools.py       ${CMAKE_SOURCE_DIR}/src/GEOM_PY/geomtools.py
   COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/sketcher.py        ${CMAKE_SOURCE_DIR}/src/GEOM_PY/sketcher.py
   COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/structelem.py      ${CMAKE_SOURCE_DIR}/src/GEOM_PY/structelem/__init__.py
