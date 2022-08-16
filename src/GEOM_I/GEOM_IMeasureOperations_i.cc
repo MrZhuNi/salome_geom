@@ -1395,7 +1395,7 @@ GEOM::GEOM_IMeasureOperations::CheckResults* GEOM_IMeasureOperations_i::CheckCon
 
   //Get the reference shape
   Handle(::GEOM_Object) aShapeRef = GetObjectImpl(theShape);
-  if (aShapeRef.IsNull()) return false;
+  if (aShapeRef.IsNull()) return nullptr;
 
   std::list<GEOMImpl_IMeasureOperations::FailedChecks> aChecks;
   GetOperations()->CheckConformityShape(aShapeRef, aChecks);
