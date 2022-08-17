@@ -12,11 +12,15 @@ Sphere = geompy.MakeSphereR(10, "Sphere")
 [Face] = geompy.ExtractShapes(Sphere, geompy.ShapeType["FACE"], True, "Sphere_face")
 
 # make a cloud of 100 points on the spherical face
-CompoundOfVertices = geompy.MakeVertexInsideFace(Face, 100, "CompoundOfVertices")
-
-# check result
-nb_vert = geompy.NumberOfSubShapes(CompoundOfVertices, geompy.ShapeType["VERTEX"])
-assert(geompy.NumberOfSubShapes(CompoundOfVertices, geompy.ShapeType["VERTEX"]) == 100)
+try:
+    CompoundOfVertices = geompy.MakeVertexInsideFace(Face, 100, "CompoundOfVertices")
+except Exception as err:
+    print(err)
+    # this test should not fail in case of "Improper OCCT version"
+    assert("Improper OCCT version" in str(err))
+else:
+    # check result
+    assert(geompy.NumberOfSubShapes(CompoundOfVertices, geompy.ShapeType["VERTEX"]) == 100)
 
 # test point cloud on a "Horse saddle"
 OX = geompy.MakeVectorDXDYDZ(1, 0, 0, 'OX')
@@ -30,5 +34,11 @@ Translation_3 = geompy.MakeTranslation(Translation_2, 0, -200, 0, 'Translation_3
 Filling_1 = geompy.MakeFilling([Translation_2, Edge_3, Translation_3])
 geompy.addToStudy(Filling_1, 'Filling_1')
 
-PointCloudOnFilling = geompy.MakeVertexInsideFace(Face, 30, "PointCloudOnFilling")
-assert(geompy.NumberOfSubShapes(PointCloudOnFilling, geompy.ShapeType["VERTEX"]) == 30)
+try:
+    PointCloudOnFilling = geompy.MakeVertexInsideFace(Filling_1, 30, "PointCloudOnFilling")
+except Exception as err:
+    print(err)
+    # this test should not fail in case of "Improper OCCT version"
+    assert("Improper OCCT version" in str(err))
+else:
+    assert(geompy.NumberOfSubShapes(PointCloudOnFilling, geompy.ShapeType["VERTEX"]) == 30)

@@ -22,6 +22,8 @@
 
 #include <Standard_Stream.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <GEOMImpl_PointDriver.hxx>
 #include <GEOMImpl_IPoint.hxx>
 #include <GEOMImpl_Types.hxx>
@@ -57,6 +59,7 @@
 #include <Precision.hxx>
 
 #include <Standard_NullObject.hxx>
+#include <Standard_NotImplemented.hxx>
 
 //=======================================================================
 //function : GetID
@@ -318,8 +321,13 @@ Standard_Integer GEOMImpl_PointDriver::Execute(Handle(TFunction_Logbook)& log) c
     }
     else
     {
-      GEOMAlgo_AlgoTools::PointCloudInFace (F, aNbPnts, aCompound);
+#if OCC_VERSION_LARGE < 0x07050304
+      Standard_NotImplemented::Raise("Point cloud creation aborted. Improper OCCT version: please, use OCCT 7.5.3p4 or newer.");
+#else
+      if (GEOMAlgo_AlgoTools::PointCloudInFace(F, aNbPnts, aCompound) < 0)
+        Standard_ConstructionError::Raise("Point cloud creation aborted : algorithm failed");
       retCompound = true;
+#endif
     }
   }
   else if (aType == POINT_LINES_INTERSECTION) {

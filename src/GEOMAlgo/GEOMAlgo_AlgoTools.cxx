@@ -25,6 +25,8 @@
 
 #include <GEOMAlgo_AlgoTools.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <gp_Pnt.hxx>
 #include <gp_Pnt2d.hxx>
 #include <gp_Dir2d.hxx>
@@ -87,7 +89,6 @@
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_DataMapOfShapeReal.hxx>
-//#include <TColgp_Array1OfPnt.hxx>
 #include <TColgp_SequenceOfPnt2d.hxx>
 
 #include <TopTools_ListIteratorOfListOfShape.hxx>
@@ -1058,6 +1059,9 @@ Standard_Integer GEOMAlgo_AlgoTools::PointCloudInFace(const TopoDS_Face& theFace
                                                       const int          theNbPnts,
                                                       TopoDS_Compound&   theCompound)
 {
+#if OCC_VERSION_LARGE < 0x07050304
+  return -1;
+#else
   ShapeUpgrade_ShapeDivideArea tool (theFace);
   tool.SetSplittingByNumber (Standard_True);
   tool.NbParts() = theNbPnts;
@@ -1199,6 +1203,7 @@ Standard_Integer GEOMAlgo_AlgoTools::PointCloudInFace(const TopoDS_Face& theFace
   }
 
   return 0;
+#endif
 }
 
 Standard_Boolean comp(const std::pair<TopoDS_Shape, Standard_Real>& theA,
@@ -1531,6 +1536,9 @@ void ModifyFacesForGlobalResult(const TopoDS_Face&     theInputFace,
     Standard_Integer aNbFacesInLocalResult;
     if (aNumberToSplit > 1)
     {
+#if OCC_VERSION_LARGE < 0x07050304
+      aNbFacesInLocalResult = 0;
+#else
       ShapeUpgrade_ShapeDivideArea aLocalTool (aUnifiedShape);
       aLocalTool.SetSplittingByNumber (Standard_True);
       aLocalTool.MaxArea() = -1;
@@ -1541,6 +1549,7 @@ void ModifyFacesForGlobalResult(const TopoDS_Face&     theInputFace,
       aLocalTool.Perform();
       aLocalResult = aLocalTool.Result();
       aNbFacesInLocalResult = aNumberToSplit;
+#endif
     }
     else
     {
@@ -1605,6 +1614,9 @@ void ModifyFacesForGlobalResult(const TopoDS_Face&     theInputFace,
     Standard_Integer aNumberToSplit = (theIsToAddFaces)? aMaxNbFaces + (aDiff-aSum) : aMaxNbFaces - (aDiff-aSum);
     if (aNumberToSplit > 1)
     {
+#if OCC_VERSION_LARGE < 0x07050304
+      aNumberToSplit = 1;
+#else
       ShapeUpgrade_ShapeDivideArea aLocalTool (aUnifiedShape);
       aLocalTool.SetSplittingByNumber (Standard_True);
       aLocalTool.MaxArea() = -1;
@@ -1614,6 +1626,7 @@ void ModifyFacesForGlobalResult(const TopoDS_Face&     theInputFace,
         aLocalTool.SetNumbersUVSplits (1, aNumberToSplit);
       aLocalTool.Perform();
       aLocalResult = aLocalTool.Result();
+#endif
     }
     else
       aNumberToSplit = 1;
