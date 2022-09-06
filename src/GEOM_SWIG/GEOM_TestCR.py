@@ -34,6 +34,8 @@ geompy = geomBuilder.New()
 
 def GetShapeType(theShape):
     CR = geompy.CanonicalRecognition()
+    if CR.isLine(theShape, 0.1)[0]:
+        return "Line"
     if CR.isPlane(theShape, 0.1)[0]:
         if CR.isCircle(theShape, 0.1)[0]:
             return ("Plane","Circle")
@@ -46,8 +48,6 @@ def GetShapeType(theShape):
         return "Cone"
     if CR.isCylinder(theShape, 0.1)[0]:
         return "Cylinder"
-    if CR.isLine(theShape, 0.1)[0]:
-        return "Line"
     return "Not defined"
 
 O = geompy.MakeVertex(0, 0, 0)
