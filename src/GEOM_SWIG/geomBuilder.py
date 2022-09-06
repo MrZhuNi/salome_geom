@@ -2787,21 +2787,6 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             pl = Polyline2D (self)
             return pl
 
-        ## Obtain a 2D polyline creation interface
-        #  @return An instance of @ref gsketcher.Polyline2D "Polyline2D" interface
-        #
-        #  @ref tui_3dsketcher_page "Example"
-        def CanonicalRecognition (self):
-            """
-            Obtain a canonical recognition interface.
-
-            Example of usage:
-                cr = geompy.CanonicalRecognition()
-                cr.isLine(aLine, tolerance)
-            """
-            cr = CanonicalRecognition (self)
-            return cr
-
         # end of l3_sketcher
         ## @}
 
@@ -11770,6 +11755,22 @@ class geomBuilder(GEOM._objref_GEOM_Gen):
             """
             aDescr = self.MeasuOp.IsGoodForSolid(theShell)
             return aDescr
+
+        ## Obtain a canonical recognition interface.
+        #  @return An instance of
+        #          @ref canonicalrecognition.CanonicalRecognition "CanonicalRecognition" interface
+        #
+        #  @ref tui_3dsketcher_page "Example"
+        def CanonicalRecognition (self):
+            """
+            Obtain a canonical recognition interface.
+
+            Example of usage:
+                cr = geompy.CanonicalRecognition()
+                cr.isLine(aLine, tolerance)
+            """
+            cr = CanonicalRecognition (self)
+            return cr
 
         # end of l2_measure
         ## @}

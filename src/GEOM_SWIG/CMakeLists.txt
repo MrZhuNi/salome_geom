@@ -59,7 +59,6 @@ SET(_other_SCRIPTS
   GEOM_Nut.py
   GEOM_Sketcher.py
   GEOM_ObjectInfo.py
-  GEOM_TestCR.py
   PAL_MESH_019_020_geometry.py
   PAL_MESH_028_geometry.py
   PAL_MESH_030_geometry.py
