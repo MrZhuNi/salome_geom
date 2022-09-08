@@ -22,12 +22,17 @@
 
 #include "GEOMImpl_ICanonicalRecognition.hxx"
 
+#include <Basics_OCCTVersion.hxx>
+
 #include "GEOM_Function.hxx"
 #include "GEOM_Object.hxx"
 #include "GEOM_PythonDump.hxx"
 
-#include <TDataStd_ListIteratorOfListOfExtendedString.hxx>
+#if OCC_VERSION_LARGE > 0x07050303
 #include <ShapeAnalysis_CanonicalRecognition.hxx>
+#endif
+
+#include <TDataStd_ListIteratorOfListOfExtendedString.hxx>
 #include <gp_Pln.hxx>
 
 #include <utilities.h>
@@ -67,14 +72,19 @@ bool GEOMImpl_ICanonicalRecognition::isPlane(const Handle(GEOM_Object)& theShape
     return false;
   }
   TopoDS_Shape aShape = theShape->GetValue();
-  if (aShape.IsNull())
-  {
+  if (aShape.IsNull()) {
+    SetErrorCode("Error: NULL shape");
     return false;
   }
 
+#if OCC_VERSION_LARGE < 0x07050304
+  SetErrorCode("Shape type detection aborted. Improper OCCT version: please, use OCCT 7.5.3p5 or newer.");
+  return false;
+#else
   ShapeAnalysis_CanonicalRecognition aRecognition(aShape);
   SetErrorCode(OK);
   return aRecognition.GetStatus() == 0 && aRecognition.IsPlane(theTolerance, thePln);
+#endif
 }
 
 //=============================================================================
@@ -91,14 +101,19 @@ bool GEOMImpl_ICanonicalRecognition::isSphere(const Handle(GEOM_Object)& theShap
     return false;
   }
   TopoDS_Shape aShape = theShape->GetValue();
-  if (aShape.IsNull())
-  {
+  if (aShape.IsNull()) {
+    SetErrorCode("Error: NULL shape");
     return false;
   }
 
+#if OCC_VERSION_LARGE < 0x07050304
+  SetErrorCode("Shape type detection aborted. Improper OCCT version: please, use OCCT 7.5.3p5 or newer.");
+  return false;
+#else
   ShapeAnalysis_CanonicalRecognition aRecognition(aShape);
   SetErrorCode(OK);
   return aRecognition.GetStatus() == 0 && aRecognition.IsSphere(theTolerance, theSphere);
+#endif
 }
 
 //=============================================================================
@@ -115,14 +130,19 @@ bool GEOMImpl_ICanonicalRecognition::isCone(const Handle(GEOM_Object)& theShape,
     return false;
   }
   TopoDS_Shape aShape = theShape->GetValue();
-  if (aShape.IsNull())
-  {
+  if (aShape.IsNull()) {
+    SetErrorCode("Error: NULL shape");
     return false;
   }
 
+#if OCC_VERSION_LARGE < 0x07050304
+  SetErrorCode("Shape type detection aborted. Improper OCCT version: please, use OCCT 7.5.3p5 or newer.");
+  return false;
+#else
   ShapeAnalysis_CanonicalRecognition aRecognition(aShape);
   SetErrorCode(OK);
   return aRecognition.GetStatus() == 0 && aRecognition.IsCone(theTolerance, theCone);
+#endif
 }
 
 //=============================================================================
@@ -139,14 +159,19 @@ bool GEOMImpl_ICanonicalRecognition::isCylinder(const Handle(GEOM_Object)& theSh
     return false;
   }
   TopoDS_Shape aShape = theShape->GetValue();
-  if (aShape.IsNull())
-  {
+  if (aShape.IsNull()) {
+    SetErrorCode("Error: NULL shape");
     return false;
   }
 
+#if OCC_VERSION_LARGE < 0x07050304
+  SetErrorCode("Shape type detection aborted. Improper OCCT version: please, use OCCT 7.5.3p5 or newer.");
+  return false;
+#else
   ShapeAnalysis_CanonicalRecognition aRecognition(aShape);
   SetErrorCode(OK);
   return aRecognition.GetStatus() == 0 && aRecognition.IsCylinder(theTolerance, theCylinder);
+#endif
 }
 
 //=============================================================================
@@ -163,14 +188,19 @@ bool GEOMImpl_ICanonicalRecognition::isLine(const Handle(GEOM_Object)& theEdge, 
     return false;
   }
   TopoDS_Shape aShape = theEdge->GetValue();
-  if (aShape.IsNull())
-  {
+  if (aShape.IsNull()) {
+    SetErrorCode("Error: NULL shape");
     return false;
   }
 
+#if OCC_VERSION_LARGE < 0x07050304
+  SetErrorCode("Shape type detection aborted. Improper OCCT version: please, use OCCT 7.5.3p5 or newer.");
+  return false;
+#else
   ShapeAnalysis_CanonicalRecognition aRecognition(aShape);
   SetErrorCode(OK);
   return aRecognition.GetStatus() == 0 && aRecognition.IsLine(theTolerance, theLine);
+#endif
 }
 
 //=============================================================================
@@ -187,14 +217,19 @@ bool GEOMImpl_ICanonicalRecognition::isCircle(const Handle(GEOM_Object)& theEdge
     return false;
   }
   TopoDS_Shape aShape = theEdge->GetValue();
-  if (aShape.IsNull())
-  {
+  if (aShape.IsNull()) {
+    SetErrorCode("Error: NULL shape");
     return false;
   }
 
+#if OCC_VERSION_LARGE < 0x07050304
+  SetErrorCode("Shape type detection aborted. Improper OCCT version: please, use OCCT 7.5.3p5 or newer.");
+  return false;
+#else
   ShapeAnalysis_CanonicalRecognition aRecognition(aShape);
   SetErrorCode(OK);
   return aRecognition.GetStatus() == 0 && aRecognition.IsCircle(theTolerance, theCircle);
+#endif
 }
 
 //=============================================================================
@@ -211,12 +246,17 @@ bool GEOMImpl_ICanonicalRecognition::isEllipse(const Handle(GEOM_Object)& theEdg
     return false;
   }
   TopoDS_Shape aShape = theEdge->GetValue();
-  if (aShape.IsNull())
-  {
+  if (aShape.IsNull()) {
+    SetErrorCode("Error: NULL shape");
     return false;
   }
 
+#if OCC_VERSION_LARGE < 0x07050304
+  SetErrorCode("Shape type detection aborted. Improper OCCT version: please, use OCCT 7.5.3p5 or newer.");
+  return false;
+#else
   ShapeAnalysis_CanonicalRecognition aRecognition(aShape);
   SetErrorCode(OK);
   return aRecognition.GetStatus() == 0 && aRecognition.IsEllipse(theTolerance, theElips);
+#endif
 }

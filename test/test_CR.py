@@ -19,7 +19,7 @@
 #
 
 import salome
-
+###
 salome.salome_init()
 
 import GEOM
