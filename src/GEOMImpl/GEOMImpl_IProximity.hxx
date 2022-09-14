@@ -26,6 +26,8 @@
 #define PROXIMITY_ARG_POINT1   5
 #define PROXIMITY_ARG_POINT2   6
 #define PROXIMITY_ARG_VALUE    7
+#define PROXIMITY_ARG_STATUS1  8
+#define PROXIMITY_ARG_STATUS2  9
 
 class GEOMImpl_IProximity
 {
@@ -61,10 +63,22 @@ public:
     setPoint(PROXIMITY_ARG_POINT2, thePoint2);
   }
 
+  void SetStatusOfPoints(const Standard_Integer theStatus1, const Standard_Integer theStatus2)
+  {
+    setStatus(PROXIMITY_ARG_STATUS1, theStatus1);
+    setStatus(PROXIMITY_ARG_STATUS2, theStatus2);
+  }
+
   void GetProximityPoints(gp_Pnt& thePoint1, gp_Pnt& thePoint2)
   {
     thePoint1 = getPoint(PROXIMITY_ARG_POINT1);
     thePoint2 = getPoint(PROXIMITY_ARG_POINT2);
+  }
+
+  void GetStatusOfPoints(Standard_Integer& theStatus1, Standard_Integer& theStatus2)
+  {
+    theStatus1 = getStatus(PROXIMITY_ARG_STATUS1);
+    theStatus2 = getStatus(PROXIMITY_ARG_STATUS2);
   }
 
   void SetValue(const Standard_Real theValue)
@@ -87,10 +101,20 @@ private:
     _func->SetRealArray(thePosition, aCoords);
   }
 
+  void setStatus(const Standard_Integer thePosition, const Standard_Integer theStatus)
+  {
+    _func->SetInteger(thePosition, theStatus);
+  }
+
   gp_Pnt getPoint(const Standard_Integer thePosition)
   {
     Handle(TColStd_HArray1OfReal) aCoords = _func->GetRealArray(thePosition);
     return gp_Pnt(aCoords->Value(1), aCoords->Value(2), aCoords->Value(3));
+  }
+
+  Standard_Integer getStatus(const Standard_Integer thePosition)
+  {
+    return _func->GetInteger(thePosition);
   }
 
 private:
