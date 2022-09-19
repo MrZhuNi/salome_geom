@@ -3105,31 +3105,46 @@ Standard_Real GEOMImpl_IMeasureOperations::GetPreciseProximity(Handle(GEOM_Objec
   if (aShape1.IsNull() || aShape2.IsNull())
     return NULL;
   gp_Pnt aProxPnt1, aProxPnt2;
+  BRepExtrema_ProximityDistTool::ProxPnt_Status aStatus1, aStatus2;
+  Standard_Integer intStatus1, intStatus2;
   aCoarseProximity.GetProximityPoints(aProxPnt1, aProxPnt2);
+  aCoarseProximity.GetStatusOfPoints(intStatus1, intStatus2);
+  aStatus1 = (BRepExtrema_ProximityDistTool::ProxPnt_Status)intStatus1;
+  aStatus2 = (BRepExtrema_ProximityDistTool::ProxPnt_Status)intStatus2;
 
-  GEOMImpl_IProximity aFineProximity(aProximityFuncFine);
-  aFineProximity.SetShapes(aShape1, aShape2);
-  aFineProximity.SetProximityPoints(aProxPnt1, aProxPnt2);
+  Standard_Real aResultValue = aCoarseProximity.GetValue();
 
-  // Perform
-  try
+  // call precise calculator only if at least one point is in the middle of the shape
+  if (aStatus1 != BRepExtrema_ProximityDistTool::ProxPnt_Status_BORDER &&
+      aStatus2 != BRepExtrema_ProximityDistTool::ProxPnt_Status_BORDER)
   {
-    OCC_CATCH_SIGNALS;
-    if (!GetSolver()->ComputeFunction(aProximityFuncFine))
+    GEOMImpl_IProximity aFineProximity(aProximityFuncFine);
+    aFineProximity.SetShapes(aShape1, aShape2);
+    aFineProximity.SetProximityPoints(aProxPnt1, aProxPnt2);
+    aFineProximity.SetStatusOfPoints(intStatus1, intStatus2);
+    
+    // Perform
+    try
     {
-      SetErrorCode("shape proximity driver failed");
+      OCC_CATCH_SIGNALS;
+      if (!GetSolver()->ComputeFunction(aProximityFuncFine))
+      {
+        SetErrorCode("shape proximity driver failed");
+        return NULL;
+      }
+    }
+    catch (Standard_Failure& aFail)
+    {
+      SetErrorCode(aFail.GetMessageString());
       return NULL;
     }
-  }
-  catch (Standard_Failure& aFail)
-  {
-    SetErrorCode(aFail.GetMessageString());
-    return NULL;
+
+    aResultValue = aFineProximity.GetValue();
   }
 
   //Make a Python command
   GEOM::TPythonDump(aProximityFuncCoarse) << "value = p.preciseProximity()";
 
   SetErrorCode(OK);
-  return aFineProximity.GetValue();
+  return aResultValue;
 }
