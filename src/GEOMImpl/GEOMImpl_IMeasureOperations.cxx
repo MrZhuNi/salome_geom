@@ -3452,8 +3452,8 @@ Standard_Real GEOMImpl_IMeasureOperations::GetPreciseProximity(Handle(GEOM_Objec
   Standard_Real aResultValue = aCoarseProximity.GetValue();
 
   // call precise calculator only if at least one point is in the middle of the shape
-  if (aStatus1 != BRepExtrema_ProximityDistTool::ProxPnt_Status_BORDER &&
-      aStatus2 != BRepExtrema_ProximityDistTool::ProxPnt_Status_BORDER)
+  if (aStatus1 == BRepExtrema_ProximityDistTool::ProxPnt_Status_MIDDLE ||
+      aStatus2 == BRepExtrema_ProximityDistTool::ProxPnt_Status_MIDDLE)
   {
     GEOMImpl_IProximity aFineProximity(aProximityFuncFine);
     aFineProximity.SetShapes(aShape1, aShape2);
