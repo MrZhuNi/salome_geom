@@ -111,8 +111,18 @@ namespace {
     BRepAdaptor_Curve aCurve1(theEdge1);
     BRepAdaptor_Curve aCurve2(theEdge2);
 
-    Standard_Real aU1 = paramOnCurve(aCurve1, thePoint1, BRep_Tool::Tolerance(theEdge1));
-    Standard_Real aU2 = paramOnCurve(aCurve2, thePoint2, BRep_Tool::Tolerance(theEdge2));
+    TopLoc_Location aLoc;
+    Standard_Real aTol1 = BRep_Tool::Tolerance(theEdge1);
+    Handle(Poly_Polygon3D) aPoly1 = BRep_Tool::Polygon3D (theEdge1, aLoc);
+    if (!aPoly1.IsNull())
+      aTol1 = Max (aTol1, aPoly1->Deflection());
+    Standard_Real aTol2 = BRep_Tool::Tolerance(theEdge2);
+    Handle(Poly_Polygon3D) aPoly2 = BRep_Tool::Polygon3D (theEdge2, aLoc);
+    if (!aPoly2.IsNull())
+      aTol2 = Max (aTol2, aPoly2->Deflection());
+  
+    Standard_Real aU1 = paramOnCurve(aCurve1, thePoint1, 2*aTol1);
+    Standard_Real aU2 = paramOnCurve(aCurve2, thePoint2, 2*aTol2);
 
     Standard_Real aValue = -1.0;
     Extrema_LocateExtCC anExtr(aCurve1, aCurve2, aU1, aU2);
@@ -134,9 +144,19 @@ namespace {
     BRepAdaptor_Curve aCurve(theEdge);
     BRepAdaptor_Surface aSurf(theFace);
 
-    Standard_Real aP = paramOnCurve(aCurve, thePonE, BRep_Tool::Tolerance(theEdge));
+    TopLoc_Location aLoc;
+    Standard_Real aTolEdge = BRep_Tool::Tolerance(theEdge);
+    Handle(Poly_Polygon3D) aPoly = BRep_Tool::Polygon3D (theEdge, aLoc);
+    if (!aPoly.IsNull())
+      aTolEdge = Max (aTolEdge, aPoly->Deflection());
+    Standard_Real aTolFace = BRep_Tool::Tolerance(theFace);
+    Handle(Poly_Triangulation) aTria = BRep_Tool::Triangulation (theFace, aLoc);
+    if (!aTria.IsNull())
+      aTolFace = Max (aTolFace, aTria->Deflection());
+  
+    Standard_Real aP = paramOnCurve(aCurve, thePonE, 2*aTolEdge);
     Standard_Real aU, aV;
-    paramsOnSurf(aSurf, thePonF, BRep_Tool::Tolerance(theFace), aU, aV);
+    paramsOnSurf(aSurf, thePonF, 2*aTolFace, aU, aV);
 
     Standard_Real aValue = -1.0;
     Extrema_GenLocateExtCS anExtr(aCurve, aSurf, aP, aU, aV, Precision::PConfusion(), Precision::PConfusion());
@@ -155,10 +175,20 @@ namespace {
     BRepAdaptor_Surface aSurf1(theFace1);
     BRepAdaptor_Surface aSurf2(theFace2);
 
+    TopLoc_Location aLoc;
+    Standard_Real aTol1 = BRep_Tool::Tolerance(theFace1);
+    Handle(Poly_Triangulation) aTria1 = BRep_Tool::Triangulation (theFace1, aLoc);
+    if (!aTria1.IsNull())
+      aTol1 = Max (aTol1, aTria1->Deflection());
+    Standard_Real aTol2 = BRep_Tool::Tolerance(theFace2);
+    Handle(Poly_Triangulation) aTria2 = BRep_Tool::Triangulation (theFace2, aLoc);
+    if (!aTria2.IsNull())
+      aTol2 = Max (aTol2, aTria2->Deflection());
+  
     Standard_Real aU1, aV1;
-    paramsOnSurf(aSurf1, thePoint1, BRep_Tool::Tolerance(theFace1), aU1, aV1);
+    paramsOnSurf(aSurf1, thePoint1, 2*aTol1, aU1, aV1);
     Standard_Real aU2, aV2;
-    paramsOnSurf(aSurf2, thePoint2, BRep_Tool::Tolerance(theFace2), aU2, aV2);
+    paramsOnSurf(aSurf2, thePoint2, 2*aTol2, aU2, aV2);
 
     Standard_Real aValue = -1.0;
     Extrema_GenLocateExtSS anExtr(aSurf1, aSurf2, aU1, aV1, aU2, aV2, Precision::PConfusion(), Precision::PConfusion());
