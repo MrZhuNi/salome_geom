@@ -1,5 +1,6 @@
 # Shape Proximity
 
+import math
 import salome
 salome.salome_init_without_session()
 import GEOM
