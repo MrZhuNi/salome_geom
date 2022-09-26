@@ -56,7 +56,7 @@ class ShapeProximity():
     ## Computes proximity between two shapes of the same type
     def proximity(self, shape1, shape2):
         self.setShapes(shape1, shape2)
-        self.coarseProximity()
+        #self.coarseProximity()
         return self.preciseProximity()
         pass
 

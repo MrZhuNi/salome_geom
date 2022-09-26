@@ -247,7 +247,8 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
   // Methods to compute proximity between two shapes
   Standard_EXPORT Handle(GEOM_Object) ShapeProximityCalculator(Handle(GEOM_Object) theShape1,
                                                                Handle(GEOM_Object) theShape2);
-  Standard_EXPORT Standard_Real GetCoarseProximity(Handle(GEOM_Object) theCalculator);
+  Standard_EXPORT Standard_Real GetCoarseProximity(Handle(GEOM_Object) theCalculator,
+                                                   bool doPythonDump = true);
   Standard_EXPORT Standard_Real GetPreciseProximity(Handle(GEOM_Object) theCalculator);
   Standard_EXPORT void SetShapeSampling(Handle(GEOM_Object) theCalculator,
                                         Handle(GEOM_Object) theShape,

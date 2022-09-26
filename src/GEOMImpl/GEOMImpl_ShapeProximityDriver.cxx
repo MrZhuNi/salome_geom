@@ -278,7 +278,7 @@ Standard_Integer GEOMImpl_ShapeProximityDriver::Execute(Handle(TFunction_Logbook
     return 0;
 
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
-  GEOMImpl_IProximity aProximity(aFunction);
+  GEOMImpl_IProximity aProximity (aFunction);
 
   Handle(GEOM_Function) aShapeFunc1, aShapeFunc2;
   aProximity.GetShapes(aShapeFunc1, aShapeFunc2);
@@ -296,7 +296,7 @@ Standard_Integer GEOMImpl_ShapeProximityDriver::Execute(Handle(TFunction_Logbook
     tessellateShape(aShape1);
     tessellateShape(aShape2);
 
-    // compute proximity basing of the tessellation
+    // compute proximity basing on the tessellation
     BRepExtrema_ShapeProximity aCalcProx;
     aCalcProx.LoadShape1(aShape1);
     aCalcProx.LoadShape2(aShape2);
@@ -317,6 +317,11 @@ Standard_Integer GEOMImpl_ShapeProximityDriver::Execute(Handle(TFunction_Logbook
   }
   else if (aFunction->GetType() == PROXIMITY_PRECISE)
   {
+    // coarse proximity value
+    // in some cases this value cannot be precised
+    // it can be precised only if at least one point is in the middle of the shape
+    aValue = aProximity.GetValue();
+
     TopAbs_ShapeEnum aType1 = aShape1.ShapeType();
     TopAbs_ShapeEnum aType2 = aShape2.ShapeType();
 
