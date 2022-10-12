@@ -73,10 +73,6 @@
 
 //vtkStandardNewMacro(GEOM_Actor)
 
-#ifndef MYDEBUG
-//#define MYDEBUG
-#endif
-
 GEOM_Actor::GEOM_Actor(): 
   isOnlyVertex(false),
 
@@ -127,9 +123,8 @@ GEOM_Actor::GEOM_Actor():
   // defined in this class !!!
   myPolyDataMapper(GEOM_PainterPolyDataMapper::New(),true)
 { 
-#ifdef MYDEBUG
-  MESSAGE (this<< " GEOM_Actor::GEOM_Actor");
-#endif
+
+  MESSAGE(this<< " GEOM_Actor::GEOM_Actor");
 
   myPolyDataMapper->SetInputConnection(myAppendFilter->GetOutputPort()); 
   vtkProperty* aProperty; 
