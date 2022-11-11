@@ -25,7 +25,8 @@ Cut_1 = geompy.MakeCutList(Sph, [Translation_1], True, "Cut_1")
 Sph_face = geompy.SubShapeAllSortedCentres(Cut_1, geompy.ShapeType["FACE"], "Face")[1]
 
 pcalc = geompy.ShapeProximity()
-pcalc.setShapes(Cyl_face, Sph_face)
+#pcalc.setShapes(Cyl_face, Sph_face)
+pcalc.setShapes(Sph_face, Cyl_face)
 p_coarse = pcalc.coarseProximity()
 p_fine   = pcalc.preciseProximity()
 

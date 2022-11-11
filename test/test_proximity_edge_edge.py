@@ -51,6 +51,16 @@ p_precise = p.preciseProximity()
 print( "coarse = {} ; fine = {}".format(p_coarse,p_precise) )
 print( "Manually obtained value = {}".format( sqrt( (XY_red[0]-XY_blue[0])**2 + (XY_red[1]-XY_blue[1])**2 ) ) )
 
+assert(math.fabs(p_coarse - 223.00892775) < 1.e-7)
+
+prev = geompy.ShapeProximity()
+prev.setShapes(blueEdge, redEdge)
+prev.setSampling(redEdge, 1000)
+prev.setSampling(blueEdge, 1000)
+p_coarse  = prev.coarseProximity()
+p_precise = prev.preciseProximity()
+print( "coarse = {} ; fine = {}".format(p_coarse,p_precise) )
+
 assert(math.fabs(p_coarse - 84.89994110) < 1.e-7)
 
 # Case 2: two bezier curves (different coarse and fine proximities)
@@ -97,7 +107,7 @@ proximity2_coarse = p2.coarseProximity()
 proximity2_fine = p2.preciseProximity()
 
 assert(math.fabs(proximity1 - proximity2_fine) < 1.e-7)
-assert(math.fabs(proximity2_coarse - 0.9974949866) < 1.e-7)
+assert(math.fabs(proximity2_coarse - 0.99998769) < 1.e-7)
 assert(math.fabs(proximity2_fine - 1) < 1.e-7)
 
 # move second edge and check proximity
